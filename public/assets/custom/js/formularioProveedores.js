@@ -1,0 +1,107 @@
+var FormularioProveedores = {
+
+	load: function () {
+		$(document).on('change', '#region', function (e) {
+			e.preventDefault();
+			var idDepartamento = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			$('#distrito').html(html);
+
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#provincia').html(html);
+			Fn.selectOrderOption('provincia');
+		});
+
+		$(document).on('change', '#provincia', function (e) {
+			e.preventDefault();
+			var idDepartamento = $("#region").val();
+			var idProvincia = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			if (typeof (distrito_ubigeo[idDepartamento]) == 'object' &&
+				typeof (distrito_ubigeo[idDepartamento][idProvincia]) == 'object'
+			) {
+				$.each(distrito_ubigeo[idDepartamento][idProvincia], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#distrito').html(html);
+			Fn.selectOrderOption('distrito');
+		});
+
+		$(document).on('change', '#regionCobertura', function (e) {
+			e.preventDefault();
+			let idDepartamento = $(this).val();
+			let html = '<option value="">Seleccionar</option>';
+
+			$('#distritoCobertura').html(html);
+
+			$.each(idDepartamento, function (i_departamento, v_departamento) {
+				if (typeof (provincia[v_departamento]) == 'object') {
+					$.each(provincia[v_departamento], function (i_provincia, v_provincia) {
+						html += '<option value="' + v_departamento + '-' + i_provincia + '" data-departamento="' + v_departamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+					});
+				}
+			});
+
+			$('#provinciaCobertura').html(html);
+			Fn.selectOrderOption('provinciaCobertura');
+		});
+
+		$(document).on('change', '#provinciaCobertura', function (e) {
+			e.preventDefault();
+
+			let htmlSelectedProvincia = $(this).find(":selected");
+			let html = '<option value="">Seleccionar</option>';
+
+			$.each(htmlSelectedProvincia, function (i_provincia, v_provincia) {
+				let departamento = $(v_provincia).data('departamento');
+				let provincia = $(v_provincia).data('provincia');
+				if (typeof (distrito[departamento]) == 'object' &&
+					typeof (distrito[departamento][provincia]) == 'object'
+				) {
+					$.each(distrito[departamento][provincia], function (i_distrito, v_distrito) {
+						html += '<option value="' + departamento + '-' + provincia + '-' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
+					});
+				}
+			});
+
+			$('#distritoCobertura').html(html);
+			Fn.selectOrderOption('distritoCobertura');
+		});
+
+		$(document).on('click', '#btnEnviar', function (e) {
+			e.preventDefault();
+
+			$.when(Fn.validateForm({ id: 'formRegistroProveedores' })).then(function (a) {
+				if (a === true) {
+					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedores')) };
+					let url = "FormularioProveedor/registrarProveedor";
+					let config = { url: url, data: jsonString };
+
+					$.when(Fn.ajax(config)).then(function (b) {
+						++modalId;
+						var btn = [];
+						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+						if (b.result == 1) {
+							fn = 'Fn.showModal({ id:' + modalId + ',show:false });Fn.goToUrl("https://ww7.visualimpact.com.pe/public/site/");';
+						}
+
+						btn[0] = { title: 'Continuar', fn: fn };
+						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
+					});
+				}
+			});
+		});
+	}
+
+}
+FormularioProveedores.load();

@@ -1,0 +1,9 @@
+<IfModule mod_rewrite.c>
+  Options +FollowSymLinks
+  RewriteEngine On
+  #Modificar la base en caso que este en un subdirectorio
+  RewriteBase /
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ impactBussiness/index.php?/$1 [L]
+</IfModule>
