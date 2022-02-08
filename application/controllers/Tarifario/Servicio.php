@@ -26,14 +26,14 @@ class Servicio extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/servicio'
+            'assets/custom/js/Tarifario/servicio'
         );
 
         $config['data']['icon'] = 'fas fa-handshake';
         $config['data']['title'] = 'Servicios';
         $config['data']['message'] = 'Lista de Servicios';
         $config['data']['tipoServicio'] = $this->model->obtenerTipoServicio()['query']->result_array();
-        $config['view'] = 'modulos/servicio/index';
+        $config['view'] = 'modulos/Tarifario/Servicio/index';
 
         $this->view($config);
     }
@@ -45,10 +45,10 @@ class Servicio extends MY_Controller
 
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionServicios($post)['query']->result_array();
-
+   
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
-            $html = $this->load->view("modulos/Servicio/reporte", ['datos' => $dataParaVista], true);
+            $html = $this->load->view("modulos/Tarifario/Servicio/reporte", ['datos' => $dataParaVista], true);
         }
 
         $result['result'] = 1;

@@ -2,7 +2,7 @@ var Servicio = {
 
 	frm: 'frm-servicio',
 	contentDetalle: 'idContentServicio',
-	url: 'Servicio/',
+	url: 'Tarifario/Servicio/',
 	serviciosLogistica: [],
 
 	load: function () {
