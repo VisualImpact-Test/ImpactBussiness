@@ -122,7 +122,7 @@ function createMessage($config = array())
 	// $html .= '<p class="text-left">';
 	// $html .= '<i class="'.$icon.' mr-2"></i>'.$message.'.';
 	// $html .= '</p>';
-	$html .= '<i class="' . $icon . ' mr-2 float-left"></i>';
+	$html .= '<div><i class="' . $icon . ' mr-2 float-left"></i></div>';
 	$html .= '<p class="text-left ' . $marginTop . '">' . $message . '</p>';
 
 	return $html;

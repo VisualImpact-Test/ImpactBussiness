@@ -66,7 +66,7 @@ var Fn = {
 							modal+="<h4 class='modal-title'>"+site_name+" - "+config.title+"</h4>";
 						modal+="</div>";
 						modal+="<div class='modal-body'>";
-							if( !$.isNull(config.content) ) modal+="<p>"+config.content+"</p>";
+							if( !$.isNull(config.content) ) modal+=config.content;
 							else if( !$.isNull(config.frm) ) modal+=config.frm;
 						modal+="</div>";
 						modal+="<div class='modal-footer'>";

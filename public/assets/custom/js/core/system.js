@@ -80,7 +80,7 @@ $.ajaxSetup({
 	timeout: 1 * 800 * 1000,/*1 minuto*/
 });
 
-var site_name = 'impactTrade';
+var site_name = 'ImpactBussiness';
 var site_url = $('base').attr('site_url');
 //var fotos_url='http://movil.visualimpact.com.pe/fotos/impactTrade_Android/';
 var fotos_url = `${site_url}ControlFoto/obtener_carpeta_foto/`;
@@ -1312,7 +1312,7 @@ var View = {
 		var defaults = {
 			'type': 0,
 			'message': '',
-			'title': 'ImpactTrade',
+			'title': 'ImpactBussiness',
 			'mins': 0,
 			'time': 2000,
 			'titleClass': 'bg-primary',

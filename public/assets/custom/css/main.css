@@ -1,7 +1,7 @@
 :root {
-  --color-vi: #e2001a;
-  --color-vi-hover: #ca0000;
-  --color-vi-focus: rgb(255 0 0 / 25%);
+  --color-vi: #5AB7AC;
+  --color-vi-hover: #5AB7AC;
+  --color-vi-focus: rgba(159, 228, 224, 0.411);
 
   --color-vi-2: #545152;
 }
@@ -50,10 +50,11 @@ body {
   background-repeat: no-repeat;
   background-position: top;
   background-size: 100% 100%;
+  max-width: 100%;
 }
 
 .bg-impactTrade-2 {
-  /* background: url(../../images/fondos/visual-2.jpg); */
+  background: url(../../images/fondos/visual-2.jpg);
   background-color: #b3b3b3;
   background-repeat: no-repeat;
   background-position: top;
@@ -89,17 +90,13 @@ body {
 }
 
 .d-cover-opacity {
-  background-color: #929191 !important;
+  /* background-color: #929191 !important; */
   height: 100vh;
   width: 100%;
   opacity: 60%;
   border: 1px #ffffff solid;
   position: fixed;
   z-index: 0;
-  /*
-    
-    border-radius: 5px;
-    */
 }
 
 .text-small {
@@ -126,7 +123,7 @@ small, .small {
 
 .logo-white {
   height: 43px;
-  width: 194px;
+  width: 225px;
   background: url(../../images/logos/visual.png);
 }
 
@@ -235,7 +232,7 @@ small, .small {
 
 .nav.nav-tabs .active {
   border: 0;
-  border-bottom: 2px solid #e2001a;
+  border-bottom: 2px solid var(--color-vi);
 }
 
 #sidebarMenu {
@@ -335,7 +332,7 @@ small, .small {
 
 .logo-src {
   height: 33px;
-  width: 143px;
+  width: 180px;
   background: url(../../images/logos/visual-color.png);
 }
 
@@ -348,7 +345,6 @@ small, .small {
   width: 50px;
   height: 50px;
   border-radius: 10%;
-  border: #FFF solid 2px;
   margin-right: 5px;
 }
 
@@ -790,13 +786,13 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .icon-load {
   font-size: 50px;
-  color: #c21226;
+  color: var(--color-vi);
 }
 
 .dropdown-item.active, .dropdown-item:active {
   color: #fff;
   text-decoration: none;
-  background-color: #c21226;
+  background-color: var(--color-vi);
 }
 
 .footer-footer {

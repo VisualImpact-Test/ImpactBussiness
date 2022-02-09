@@ -1,7 +1,7 @@
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <div class="h-100 no-gutters row">
 	<div class="w-100 bg-impactTrade-1 d-flex col-lg-3 col-md-12">
-		<div class="d-cover-opacity"></div>
+		<div class="d-cover-opacity bg-impactTrade-2"></div>
 		<div class="container-login">
 			<div class="login-box">
 				<div class="logo-white"></div>
@@ -42,5 +42,5 @@
 			</div>
 		</div>
 	</div>
-	<div class="bg-impactTrade-2 d-none d-lg-block col-lg-9"></div>
+	<!-- <div class="bg-impactTrade-2 d-none d-lg-block col-lg-9"></div> -->
 </div>

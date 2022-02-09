@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta http-equiv="Content-Language" content="es">
-	<title>:.:.: Visual Impact - ImpactTrade :.:.:</title>
+	<title>:.:.: Visual Impact - ImpactBussiness :.:.:</title>
 	<meta name="description" content="coming soom.">
 	<meta name="msapplication-tap-highlight" content="no">
 	<base href="<?= base_url() . 'public/'; ?>" site_url="<?= site_url(); ?>">

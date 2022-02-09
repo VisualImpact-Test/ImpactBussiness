@@ -37,8 +37,8 @@ class Login extends MY_Controller
 		$result = $this->result;
 		$result['status'] = 0;
 
-		$rs = $this->model->find_usuario($input);
-		$result['data']['filtros'] = $this->filtros($rs);
+		$rs = $this->model->encontrarUsuario($input);
+
 		$this->aSessTrack[] = ['idAccion' => 1];
 
 		$config_ = array('type' => 2, 'message' => "Ocurrió un error al validar sus datos, vuelva a intentarlo");
@@ -78,9 +78,8 @@ class Login extends MY_Controller
 			} else {
 				$result['status'] = 1;
 
-				$aPermisos = $this->crearPermisos($rs->result_array());
 				$usuario = $rs->row_array();
-				$menu = $this->model->find_menu($usuario)->result_array();
+				$menu = $this->model->encontrarMenu($usuario)->result_array();
 				$config_ = array('type' => 2, 'message' => 'Usted no tiene permisos asignados, comuniquese con el administrador');
 				if (count($menu) < 1) {
 					$result['msg']['content'] = createMessage($config_);
@@ -115,22 +114,8 @@ class Login extends MY_Controller
 					} else {
 						$result['data']['flag_anuncio_visto'] = $usuario['flag_anuncio_visto'];
 						$usuario['menu'] = $menu;
-						$usuario['permisos'] = $aPermisos;
-
-
-						if (count($aPermisos['cuenta']) > 1) {
-							$usuario['idCuenta'] = '';
-							$usuario['idProyecto'] = '';
-						} elseif (count($aPermisos['proyecto']) > 1) {
-							$usuario['idProyecto'] = '';
-						}
 
 						$this->session->set_userdata($usuario);
-
-						$proyectosDeusuario = $this->model->get_cuenta([])[0]['proyectos'];
-						if ($proyectosDeusuario > 1) {
-							$result['status'] = 2;
-						}
 					}
 
 					$qp = $this->model->navbar_permiso($usuario['idUsuario'])->result_array();
@@ -148,162 +133,6 @@ class Login extends MY_Controller
 		$this->db->trans_complete();
 		responder:
 		echo json_encode($result);
-	}
-
-	public function crearPermisos($acceso)
-	{
-		$aCuenta = array();
-		$aCuentaProyecto = array();
-		$aProyecto = array();
-		$aGrupoCanal = array();
-		$aCanal = array();
-		$aSubCanal = array();
-		$aZona = array();
-		$aPlaza = array();
-		$aDistribuidora = array();
-		$aDistribuidoraSucursal = array();
-		$aCadena = array();
-		$aBanner = array();
-
-		foreach ($acceso as $row) {
-			// CUENTA
-			if (!empty($row['idCuenta'])) {
-				if (!in_array($row['idCuenta'], $aCuenta)) {
-					array_push($aCuenta, $row['idCuenta']);
-				}
-			}
-
-			// PROYECTO
-			if (!empty($row['idProyecto'])) {
-				if (!in_array($row['idProyecto'], $aProyecto)) {
-					array_push($aProyecto, $row['idProyecto']);
-				}
-
-				if (empty($aCuentaProyecto[$row['idCuenta']])) $aCuentaProyecto[$row['idCuenta']] = [];
-
-				if (!in_array($row['idProyecto'], $aCuentaProyecto[$row['idCuenta']])) {
-					array_push($aCuentaProyecto[$row['idCuenta']], $row['idProyecto']);
-				}
-			}
-
-			// GRUPO CANAL
-			if (!empty($row['idGrupoCanal'])) {
-				if (!isset($aGrupoCanal[$row['idProyecto']])) {
-					$aGrupoCanal[$row['idProyecto']] = array();
-				}
-
-				if (!in_array($row['idGrupoCanal'], $aGrupoCanal[$row['idProyecto']])) {
-					array_push($aGrupoCanal[$row['idProyecto']], $row['idGrupoCanal']);
-				}
-
-				// CANAL
-				if (!empty($row['idCanal'])) {
-					if (!isset($aCanal[$row['idProyecto']][$row['idGrupoCanal']])) {
-						$aCanal[$row['idProyecto']][$row['idGrupoCanal']] = array();
-					}
-
-					if (!in_array($row['idCanal'], $aCanal[$row['idProyecto']][$row['idGrupoCanal']])) {
-						array_push($aCanal[$row['idProyecto']][$row['idGrupoCanal']], $row['idCanal']);
-					}
-
-					// SUB CANAL
-					if (!empty($row['idSubCanal'])) {
-						if (!isset($aSubCanal[$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']])) {
-							$aSubCanal[$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']] = array();
-						}
-
-						if (!in_array($row['idSubCanal'], $aSubCanal[$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']])) {
-							array_push($aSubCanal[$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']], $row['idSubCanal']);
-						}
-					}
-				}
-			}
-
-			// ZONA
-			if (!empty($row['idZona'])) {
-				if (!isset($aZona[$row['idProyecto']])) {
-					$aZona[$row['idProyecto']] = array();
-				}
-
-				if (!in_array($row['idZona'], $aZona[$row['idProyecto']])) {
-					array_push($aZona[$row['idProyecto']], $row['idZona']);
-				}
-			}
-
-			// PLAZA
-			if (!empty($row['idPlaza'])) {
-				if (!isset($aPlaza[$row['idProyecto']])) {
-					$aPlaza[$row['idProyecto']] = array();
-				}
-
-				if (!in_array($row['idPlaza'], $aPlaza[$row['idProyecto']])) {
-					array_push($aPlaza[$row['idProyecto']], $row['idPlaza']);
-				}
-			}
-
-			// DISTRIBUIDORA
-			if (!empty($row['idDistribuidora'])) {
-				if (!isset($aDistribuidora[$row['idProyecto']])) {
-					$aDistribuidora[$row['idProyecto']] = array();
-				}
-
-				if (!in_array($row['idDistribuidora'], $aDistribuidora[$row['idProyecto']])) {
-					array_push($aDistribuidora[$row['idProyecto']], $row['idDistribuidora']);
-				}
-
-				// DISTRIBUIDORA SUCURSAL
-				if (!empty($row['idDistribuidoraSucursal'])) {
-					if (!isset($aDistribuidoraSucursal[$row['idProyecto']][$row['idDistribuidora']])) {
-						$aDistribuidoraSucursal[$row['idProyecto']][$row['idDistribuidora']] = array();
-					}
-
-					if (!in_array($row['idDistribuidoraSucursal'], $aDistribuidoraSucursal[$row['idProyecto']][$row['idDistribuidora']])) {
-						array_push($aDistribuidoraSucursal[$row['idProyecto']][$row['idDistribuidora']], $row['idDistribuidoraSucursal']);
-					}
-				}
-			}
-
-			// CADENA
-			if (!empty($row['idCadena'])) {
-				if (!isset($aCadena[$row['idProyecto']])) {
-					$aCadena[$row['idProyecto']] = array();
-				}
-
-				if (!in_array($row['idCadena'], $aCadena[$row['idProyecto']])) {
-					array_push($aCadena[$row['idProyecto']], $row['idCadena']);
-				}
-
-				// BANNER
-				if (!empty($row['idBanner'])) {
-					if (!isset($aBanner[$row['idProyecto']][$row['idCadena']])) {
-						$aBanner[$row['idProyecto']][$row['idCadena']] = array();
-					}
-
-					if (!in_array($row['idBanner'], $aBanner[$row['idProyecto']][$row['idCadena']])) {
-						array_push($aBanner[$row['idProyecto']][$row['idCadena']], $row['idBanner']);
-					}
-				}
-			}
-
-			// array_push($aPermisos, $permisos);
-		}
-
-		$aPermisos = array(
-			'cuenta' => $aCuenta,
-			'cuentaProyecto' => $aCuentaProyecto,
-			'proyecto' => $aProyecto,
-			'grupoCanal' => $aGrupoCanal,
-			'canal' => $aCanal,
-			'subCanal' => $aSubCanal,
-			'zona' => $aZona,
-			'plaza' => $aPlaza,
-			'distribuidora' => $aDistribuidora,
-			'distribuidoraSucursal' => $aDistribuidoraSucursal,
-			'cadena' => $aCadena,
-			'banner' => $aBanner
-		);
-
-		return $aPermisos;
 	}
 
 	public function validar_captcha_v3($post)
@@ -352,80 +181,5 @@ class Login extends MY_Controller
 		} else {
 			return (object)['success' => 0];
 		}
-	}
-
-	public function filtros($input)
-	{
-		$array = array();
-		//
-		$arr_cuentas = array();
-		$arr_proyecto = array();
-		$arr_grupoCanal = array();
-		$arr_canal = array();
-		$arr_cadena = array();
-		$arr_banner = array();
-		$arr_ciudad = array();
-		$arr_plaza = array();
-		$arr_zona = array();
-		$arr_distribuidora = array();
-		$arr_distribuidoraSucursal = array();
-		foreach ($input as $row) {
-			if (!empty($row['idCuenta'])) $arr_cuentas[$row['idCuenta']] = $row['idCuenta'];
-			if (!empty($row['idProyecto'])) $arr_proyecto[$row['idProyecto']] = $row['idProyecto'];
-			if (!empty($row['idGrupoCanal'])) $arr_grupoCanal[$row['idGrupoCanal']] = $row['idGrupoCanal'];
-			if (!empty($row['idCanal'])) $arr_canal[$row['idCanal']] = $row['idCanal'];
-			if (!empty($row['idCadena'])) $arr_cadena[$row['idCadena']] = $row['idCadena'];
-			if (!empty($row['idBanner'])) $arr_banner[$row['idBanner']] = $row['idBanner'];
-			if (!empty($row['codCiudad'])) $arr_ciudad[$row['codCiudad']] = $row['codCiudad'];
-			if (!empty($row['idPlaza'])) $arr_plaza[$row['idPlaza']] = $row['idPlaza'];
-			if (!empty($row['idZona'])) $arr_zona[$row['idZona']] = $row['idZona'];
-			if (!empty($row['idDistribuidora'])) $arr_distribuidora[$row['idDistribuidora']] = $row['idDistribuidora'];
-			if (!empty($row['idDistribuidoraSucursal'])) $arr_distribuidoraSucursal[$row['idDistribuidoraSucursal']] = $row['idDistribuidoraSucursal'];
-		}
-		//
-		$rs_clientes = $this->model->filtro_clientes()->result_array();
-		$rs_usuarios = $this->model->filtro_usuarios()->result_array();
-		$rs_productos = $this->model->filtro_producto()->result_array();
-		//
-		foreach ($rs_clientes as $row) {
-			if (empty($arr_zona) || isset($arr_zona[$row['idZona']])) $array['departamentos'][trim($row['cod_departamento'])] = trim($row['departamento']);
-			if (empty($arr_zona) || isset($arr_zona[$row['idZona']])) $array['provincias'][trim($row['cod_departamento'])][trim($row['cod_provincia'])]  = trim($row['provincia']);
-			if (empty($arr_zona) || isset($arr_zona[$row['idZona']])) $array['distritos'][trim($row['cod_departamento'])][trim($row['cod_provincia'])][trim($row['cod_distrito'])] = trim($row['distrito']);
-			//
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['cuentas'][$row['idCuenta']] = $row['cuenta'];
-			if (empty($arr_proyecto) || isset($arr_proyecto[$row['idProyecto']])) $array['proyectos'][$row['idCuenta']][$row['idProyecto']] = $row['proyecto'];
-			if (empty($arr_grupoCanal) || isset($arr_grupoCanal[$row['idGrupoCanal']])) $array['grupoCanal'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']] = $row['grupoCanal'];
-			if (empty($arr_canal) || isset($arr_canal[$row['idCanal']])) $array['canal'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']] = $row['canal'];
-			//
-			if (empty($arr_cadena) || isset($arr_cadena[$row['idCadena']])) $array['cadenas'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['idCadena']] = $row['cadena'];
-			if (empty($arr_banner) || isset($arr_banner[$row['idBanner']])) $array['banner'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['idCadena']][$row['idBanner']] = $row['banner'];
-			//
-			if (empty($arr_ciudad) || isset($arr_ciudad[$row['codCiudad']])) $array['ciudad'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['codCiudad']] = $row['ciudad'];
-			if (empty($arr_plaza) || isset($arr_plaza[$row['idPlaza']])) $array['plaza'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['codCiudad']][$row['idPlaza']] = $row['plaza'];
-			//
-			if (empty($arr_zona) || isset($arr_zona[$row['idZona']])) $array['zonas'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['idZona']] = $row['zona'];
-			if (empty($arr_distribuidora) || isset($arr_distribuidora[$row['idDistribuidora']])) $array['distribuidora'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['idZona']][$row['idDistribuidora']] = $row['distribuidora'];
-			if (empty($arr_distribuidoraSucursal) || isset($arr_distribuidora[$row['idDistribuidoraSucursal']])) $array['distribuidoraSucursal'][$row['idCuenta']][$row['idProyecto']][$row['idGrupoCanal']][$row['idCanal']][$row['idZona']][$row['idDistribuidora']][$row['idDistribuidoraSucursal']] = $row['distribuidoraSucursal'];
-			//
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['cuentas'][$row['idCuenta']] = $row['cuenta'];
-		}
-		//
-		foreach ($rs_usuarios as $row) {
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['tipoUsuarios'][$row['idCuenta']][$row['idProyecto']][$row['idTipoUsuario']] = $row;
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['usuarios'][$row['idCuenta']][$row['idProyecto']][$row['idTipoUsuario']][$row['idUsuario']] = $row;
-		}
-		//
-		$rs_encargados = $this->model->filtro_encargado()->result_array();
-		foreach ($rs_encargados as $row) {
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['encargados'][$row['idCuenta']][$row['idProyecto']][$row['idUsuarioEnc']] = $row['encargado'];
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['colaboradores'][$row['idCuenta']][$row['idProyecto']][$row['idUsuarioEnc']][$row['idUsuarioSub']] = $row['colaborador'];
-		}
-		//
-		foreach ($rs_productos as $row) {
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['categorias'][$row['idCategoria']] = $row['categoria'];
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['marcas'][$row['idCategoria']][$row['idMarca']] = $row['marca'];
-			if (empty($arr_cuentas) || isset($arr_cuentas[$row['idCuenta']])) $array['productos'][$row['idCategoria']][$row['idMarca']][$row['idProducto']] = $row['producto'];
-		}
-		return json_encode($array);
 	}
 }
