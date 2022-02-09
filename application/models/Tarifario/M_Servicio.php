@@ -37,27 +37,36 @@ class M_Servicio extends MY_Model
 
 	public function obtenerInformacionServicios($params = [])
 	{
-		$filtros = "";
-		$filtros .= !empty($params['tipoServicio']) ? ' AND a.idTipoServicio = ' . $params['tipoServicio'] : '';
-		$filtros .= !empty($params['servicio']) ? " AND a.nombre LIKE '%" . $params['servicio'] . "%'" : "";
-		$filtros .= !empty($params['idServicio']) ? ' AND a.idServicio = ' . $params['idServicio'] : '';
+		$this->db->select([
+			'ROW_NUMBER() OVER(ORDER BY tarif_s.idTarifarioServicio ASC) as num_fila',
+			'tarif_s.idTarifarioServicio',
+			'tarif_s.idServicio',
+			'tipo_s.nombre as tipo_servicio_nombre',
+			's.nombre as servico_nombre',
+			'p.razonSocial as proveedor_nombre',
+			'tarif_s.costo as tarifa_servicio_costo',
+			"case tarif_s.estado when 1 then 'Activo' else 'Inactivo' end as tarifa_servicio_estado",
+		]);
+		$this->db->from('compras.tarifarioServicio tarif_s');
+		$this->db->join('compras.servicio s', 'tarif_s.idServicio = s.idServicio');
+		$this->db->join('compras.tipoServicio tipo_s', 's.idTipoServicio = tipo_s.idTipoServicio');
+		$this->db->join('compras.proveedor p', 'tarif_s.idProveedor = p.idProveedor');
 
-		$sql = "
-			SELECT
-				a.idServicio
-				, ta.idTipoServicio
-				, ta.nombre AS tipoServicio
-				, a.nombre AS servicio
-				, a.estado
-			FROM compras.servicio a
-			JOIN compras.tipoServicio ta ON a.idTipoServicio = ta.idTipoServicio
-			WHERE 1 = 1
-			{$filtros}
-		";
+		if (!empty($params['tipoServicio'])) {
+			$this->db->where('tipo_s.idTipoServicio', $params['tipoServicio']);
+		}
+		
+		if (!empty($params['servicio'])) {
+			$this->db->where('tipo_s.nombre', $params['servicio']);
+		}
 
-		$query = $this->db->query($sql);
+		if (!empty($params['idServicio'])) {
+			$this->db->where('s.idServicio', $params['idServicio']);
+		}
 
-		if ($query) {
+		$query = $this->db->get();
+
+		if ($query->num_rows() > 0) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
