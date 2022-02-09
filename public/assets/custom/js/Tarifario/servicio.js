@@ -26,6 +26,28 @@ var Servicio = {
 			Fn.loadReporte_new(config);
 		});
 
+		$(document).on('click', '.btn-historialTarifarioServicio', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idTarifarioServicio': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Servicio.url + 'formularioHistorialTarifarioServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+				Fn.actualizarAutocomplete();
+			});
+		});
+
 		$(document).on('click', '#btn-registrarServicio', function () {
 			++modalId;
 
