@@ -51,8 +51,39 @@
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Proveedor</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="razonSocProveedor" id="razonSocProveedor">
+								<?= htmlSelectOptionArray2(['query' => $razonSocProveedor, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Servicio</span>
 							<input class="form-control form-control-sm" name="servicio" id="servicio">
+						</div>
+						<div class="">
+							<fieldset class="scheduler-border" style="text-align-last: center;">
+								<legend class="scheduler-border" style="font-size: 15px;margin-bottom: 0;">Precio</legend>
+								<div class="control-group" style="width:45%; display: inline-block;">
+									<label class="form-control" for="precioMinimo" style="border:0px;">Menor que</label>
+									<input class="form-control soloNumeros" id="precioMinimo" name="precioMinimo">
+								</div>
+								<div class="control-group" style="width:45%; display: inline-block;">
+									<label class="form-control" for="precioMaximo" style="border:0px;">Mayor que</label>
+									<input class="form-control soloNumeros" id="precioMaximo" name="precioMaximo">
+								</div>
+							</fieldset>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group chk_quiebres">
+							<div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+								<label class="btn btn-outline-secondary custom_tooltip">
+									<span class="tooltiptextButton">Mostrar solo los de uso actual</span>
+									<input type="radio" name="chMostrar" class="chMostrar" value="1"> Actual </i>
+								</label>
+								<label class="btn btn-outline-secondary  custom_tooltip">
+									<span class="tooltiptextButton">Mostrar todos</span>
+									<input type="radio" name="chMostrar" class="chMostrar" checked="checked" value="0"> Todos </i>
+								</label>
+							</div>
 						</div>
 					</div>
 				</div>

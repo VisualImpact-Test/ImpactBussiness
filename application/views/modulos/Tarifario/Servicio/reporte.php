@@ -20,8 +20,9 @@
                 <tr data-id="<?= $row['idServicio'] ?>">
                     <td class="td-center"><?= $row['num_fila'] ?></td>
                     <td class="td-center style-icons">
-                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarServicio"><i class="fa fa-lg fa-edit" title="Actualizar Servicio"></i></a>
-                        <a id="hrefEstado-<?= $row['idServicio']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoServicio" data-id="<?= $row['idServicio']; ?>" data-estado="<?= $row['tarifa_servicio_estado']; ?>">
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-historialTarifarioServicio"><i class="fa fa-lg fa-history" title="Historial de Tarifario"></i></a>
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarTarifarioServicio"><i class="fa fa-lg fa-edit" title="Actualizar Tarifario de Articulo"></i></a>
+                        <a id="hrefEstado-<?= $row['idTarifarioServicio']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoServicio" data-id="<?= $row['idServicio']; ?>" data-estado="<?= $row['tarifa_servicio_estado_id']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>
                     </td>

@@ -26,14 +26,15 @@ class Servicio extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/servicio'
+            'assets/custom/js/Tarifario/servicio'
         );
 
         $config['data']['icon'] = 'fas fa-handshake';
         $config['data']['title'] = 'Servicios';
         $config['data']['message'] = 'Lista de Servicios';
         $config['data']['tipoServicio'] = $this->model->obtenerTipoServicio()['query']->result_array();
-        $config['view'] = 'modulos/servicio/index';
+        $config['data']['razonSocProveedor'] = $this->model->obtenerRazonSocProveedor()['query'];
+        $config['view'] = 'modulos/Tarifario/Servicio/index';
 
         $this->view($config);
     }
@@ -44,11 +45,11 @@ class Servicio extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        $dataParaVista = $this->model->obtenerInformacionServicios($post)['query']->result_array();
-
+        $dataParaVista = $this->model->obtenerInformacionServicios($post)['query'];
+   
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
-            $html = $this->load->view("modulos/Servicio/reporte", ['datos' => $dataParaVista], true);
+            $html = $this->load->view("modulos/Tarifario/Servicio/reporte", ['datos' => $dataParaVista], true);
         }
 
         $result['result'] = 1;
@@ -64,6 +65,21 @@ class Servicio extends MY_Controller
                 ]
             ]
         ];
+
+        echo json_encode($result);
+    }
+
+    public function formularioHistorialTarifarioServicio()
+    {
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+
+        $dataParaVista['datos'] = $this->model->obtenerHistorialTarifarioServicio($post)['query'];
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Historial Tarifario de Servicio';
+        $result['data']['html'] = $this->load->view("modulos/Tarifario/Servicio/formularioHistorial", $dataParaVista, true);
 
         echo json_encode($result);
     }
