@@ -3,7 +3,7 @@ var Servicio = {
 	frm: 'frm-servicio',
 	contentDetalle: 'idContentServicio',
 	url: 'Tarifario/Servicio/',
-	serviciosLogistica: [],
+	servicios: [],
 
 	load: function () {
 
@@ -52,9 +52,13 @@ var Servicio = {
 			++modalId;
 
 			let jsonString = { 'data': '' };
-			let config = { 'url': Servicio.url + 'formularioRegistroServicio', 'data': jsonString };
+			let config = { 'url': Servicio.url + 'formularioRegistroTarifarioServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					Servicio.servicios = a.data.servicios;
+				}
+
 				let btn = [];
 				let fn = [];
 
@@ -64,6 +68,8 @@ var Servicio = {
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+				Servicio.actualizarAutocomplete();
 			});
 		});
 
@@ -107,7 +113,7 @@ var Servicio = {
 
 	registrarServicio: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroServicios')) };
-		let url = Servicio.url + "registrarServicio";
+		let url = Servicio.url + "registrarTarifarioServicio";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -141,6 +147,26 @@ var Servicio = {
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	actualizarAutocomplete: function () {
+		console.log(Servicio.servicios[1])
+		$("#nombre").autocomplete({
+			source: Servicio.servicios[1],
+			minLength: 0,
+			select: function (event, ui) {
+				event.preventDefault();
+				
+				//Llenamos los articulos con el nombre 
+				$(this).val(ui.item.label);
+
+				//Llenamos una caja de texto invisible que contiene el ID del Artículo
+				$(this).parents(".control-group").find("#idServicio").val(ui.item.value);
+			},
+			appendTo: "#modal-page-" + modalId,
+			max: 5,
+			minLength: 5,
 		});
 	},
 }
