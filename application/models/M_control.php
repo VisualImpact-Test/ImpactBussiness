@@ -20,10 +20,10 @@ class M_control extends MY_Model{
 			SELECT DISTINCT c.idCuenta AS id
 			,c.nombre {$column}
 			,COUNT(p.idProyecto) OVER (PARTITION BY uh.idUsuario) proyectos
-			FROM trade.usuario_historico uh 
+			FROM trade.usuario_historico uh
 			JOIN trade.proyecto p ON p.idProyecto = uh.idProyecto
 			JOIN trade.cuenta c ON c.idCuenta = p.idCuenta
-			WHERE uh.estado = 1 
+			WHERE uh.estado = 1
 			AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha)
 			AND uh.idUsuario = ".$this->session->userdata('idUsuario');
 

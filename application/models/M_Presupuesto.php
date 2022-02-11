@@ -15,13 +15,13 @@ class M_Presupuesto extends MY_Model
 		parent::__construct();
 	}
 
-	public function obtenerTipoArticulo($params = [])
+	public function obtenerTipoPresupuesto($params = [])
 	{
 		$sql = "
 			SELECT
-				idTipoArticulo AS id
+				idTipoPresupuesto AS id
 				, nombre AS value
-			FROM compras.tipoArticulo
+			FROM compras.tipoPresupuesto
 			WHERE estado = 1
 		";
 
@@ -35,13 +35,13 @@ class M_Presupuesto extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerMarcaArticulo($params = [])
+	public function obtenerCuenta($params = [])
 	{
 		$sql = "
 			SELECT
-				idMarcaArticulo AS id
+				idCuenta AS id
 				, nombre AS value
-			FROM compras.marcaArticulo
+			FROM visualImpact.logistica.cuenta
 			WHERE estado = 1
 		";
 
@@ -55,13 +55,14 @@ class M_Presupuesto extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerCategoriaArticulo($params = [])
+	public function obtenerCuentaCentroCosto($params = [])
 	{
 		$sql = "
 			SELECT
-				idCategoriaArticulo AS id
+				idCuentaCentroCosto AS id
+				, idCuenta AS idDependiente
 				, nombre AS value
-			FROM compras.categoriaArticulo
+			FROM visualImpact.logistica.cuentaCentroCosto
 			WHERE estado = 1
 		";
 
@@ -78,11 +79,10 @@ class M_Presupuesto extends MY_Model
 	public function obtenerInformacionPresupuesto($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['tipoArticulo']) ? ' AND a.idTipoArticulo = ' . $params['tipoArticulo'] : '';
-		$filtros .= !empty($params['marcaArticulo']) ? ' AND a.idMarcaArticulo = ' . $params['marcaArticulo'] : '';
-		$filtros .= !empty($params['categoriaArticulo']) ? ' AND a.idCategoriaArticulo = ' . $params['categoriaArticulo'] : '';
-		$filtros .= !empty($params['articulo']) ? " AND a.nombre LIKE '%" . $params['articulo'] . "%'" : "";
-		$filtros .= !empty($params['idArticulo']) ? ' AND a.idArticulo = ' . $params['idArticulo'] : '';
+		$filtros .= !empty($params['tipoPresupuesto']) ? ' AND p.idTipoPresupuesto = ' . $params['tipoPresupuesto'] : '';
+		$filtros .= !empty($params['cuenta']) ? ' AND p.idCuenta = ' . $params['cuenta'] : '';
+		$filtros .= !empty($params['cuentaCentroCosto']) ? ' AND p.idCentroCosto = ' . $params['cuentaCentroCosto'] : '';
+		$filtros .= !empty($params['presupuesto']) ? " AND p.nombre LIKE '%" . $params['presupuesto'] . "%'" : "";
 
 		$sql = "
 			SELECT
@@ -95,7 +95,7 @@ class M_Presupuesto extends MY_Model
 				, c.idCuenta
 				, c.nombre AS cuenta
 				, cc.idCuentaCentroCosto
-				, cc.idCuentaCentroCosto AS cuentaCentroCosto
+				, cc.nombre AS cuentaCentroCosto
 				, p.estado
 			FROM compras.presupuesto p
 			JOIN compras.tipoPresupuesto tp ON p.idTipoPresupuesto = tp.idTipoPresupuesto
@@ -116,41 +116,31 @@ class M_Presupuesto extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerArticulosLogistica()
-	{
-		$sql = "
-			SELECT
-				a.idArticulo AS value
-				, ISNULL(a.codigo + ' - ','') + a.nombre AS label
-				, um.idUnidadMedida AS idum
-				, um.nombre AS um
-				--, c.idCuenta
-				--, c.nombre
-			FROM visualimpact.logistica.articulo a
-			LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
-			LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
-			--LEFT JOIN visualimpact.logistica.articulo_marca am on a.idMarca = am.idMarca
-			--LEFT JOIN visualimpact.logistica.articulo_marca_cuenta amc ON am.idMarca = amc.idMarca
-			--LEFT JOIN visualimpact.logistica.cuenta c ON amc.idCuenta = c.idCuenta
-		";
-
-		$result = $this->db->query($sql)->result_array();
-
-		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.articulo', 'id' => null];
-		return $result;
-	}
-
-	public function validarExistenciaArticulo($params = [])
+	public function obtenerInformacionPresupuestoDetalle($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idArticulo']) ? ' AND a.idArticulo != ' . $params['idArticulo'] : '';
+		$filtros .= !empty($params['idPresupuesto']) ? ' AND p.idPresupuesto = ' . $params['idPresupuesto'] : '';
 
 		$sql = "
 			SELECT
-				idArticulo
-			FROM compras.articulo a
-			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
+				p.idPresupuesto
+				, p.nombre AS presupuesto
+				, c.nombre AS cuenta
+				, cc.nombre AS cuentaCentroCosto
+				, tp.nombre AS tipoPresupuesto
+				, CONVERT(VARCHAR, p.fecha, 103) AS fecha
+			
+				, pd.nombre AS item
+				, pd.cantidad
+				, pd.costo
+				, ei.nombre AS estadoItem
+			FROM compras.presupuesto p
+			JOIN compras.presupuestoDetalle pd ON p.idPresupuesto = pd.idPresupuesto
+			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
+			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			JOIN compras.tipoPresupuesto tp ON p.idTipoPresupuesto = tp.idTipoPresupuesto
+			JOIN compras.estadoItem ei ON pd.idEstadoItem = ei.idEstadoItem
+			WHERE 1 = 1
 			{$filtros}
 		";
 
@@ -165,7 +155,60 @@ class M_Presupuesto extends MY_Model
 		return $this->resultado;
 	}
 
-	public function insertarArticulo($params = [])
+	public function obtenerArticuloServicio()
+	{
+		$sql = "
+			SELECT
+				a.idArticulo AS value
+				, a.nombre AS label
+				, ta.costo
+				, 1 AS tipo
+			FROM compras.articulo a
+			LEFT JOIN compras.tarifarioArticulo ta ON a.idArticulo = ta.idArticulo
+			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+			UNION
+			SELECT
+				s.idServicio AS value
+				, s.nombre AS label
+				, ts.costo
+				, 2 AS tipo
+			FROM compras.servicio s
+			LEFT JOIN compras.tarifarioServicio ts ON s.idServicio = s.idServicio
+			WHERE (ts.flag_actual = 1 OR ts.flag_actual IS NULL)
+		";
+
+		$result = $this->db->query($sql)->result_array();
+
+		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.articulo', 'id' => null];
+		return $result;
+	}
+
+	public function validarExistenciaPresupuesto($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idPresupuesto']) ? ' AND p.idPresupuesto != ' . $params['idPresupuesto'] : '';
+
+		$sql = "
+			SELECT
+				idPresupuesto
+			FROM compras.presupuesto p
+			WHERE
+			(p.nombre LIKE '%{$params['nombre']}%')
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function insertarPresupuesto($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
 
@@ -179,7 +222,21 @@ class M_Presupuesto extends MY_Model
 		return $this->resultado;
 	}
 
-	public function actualizarArticulo($params = [])
+	public function insertarPresupuestoDetalle($params = [])
+	{
+		$query = $this->db->insert_batch($params['tabla'], $params['insert']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function actualizarPresupuesto($params = [])
 	{
 		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
 
