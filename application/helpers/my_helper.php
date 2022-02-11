@@ -122,7 +122,7 @@ function createMessage($config = array())
 	// $html .= '<p class="text-left">';
 	// $html .= '<i class="'.$icon.' mr-2"></i>'.$message.'.';
 	// $html .= '</p>';
-	$html .= '<div><i class="' . $icon . ' mr-2 float-left"></i></div>';
+	$html .= '<i class="' . $icon . ' mr-2 float-left"></i>';
 	$html .= '<p class="text-left ' . $marginTop . '">' . $message . '</p>';
 
 	return $html;
@@ -1207,7 +1207,12 @@ function htmlSelectOptionArray2($params = [])
 		} else {
 			$fix = '';
 		}
-		$html .= "<option class='" . $class . "' $fix value='" . $f[$id] . "'>" . strtoupper($f[$v]) . "</option>";
+
+		$idDependiente = "";
+		if (!empty($f['idDependiente'])) {
+			$idDependiente = " data-parentDependiente='" . $f['idDependiente'] . "' style='display: none;'";
+		}
+		$html .= "<option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" . strtoupper($f[$v]) . "</option>";
 	}
 
 	return $html;

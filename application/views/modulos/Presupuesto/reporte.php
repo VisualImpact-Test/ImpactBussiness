@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-articulo" class="mb-0 table table-bordered text-nowrap" width="100%">
+    <table id="tb-presupuesto" class="mb-0 table table-bordered text-nowrap" width="100%">
         <thead>
             <tr>
                 <th class="td-center">#</th>
@@ -24,8 +24,9 @@
                 <tr data-id="<?= $row['idPresupuesto'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
-                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarArticulo"><i class="fa fa-lg fa-edit" title="Actualizar Articulo"></i></a>
-                        <a id="hrefEstado-<?= $row['idPresupuesto']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoArticulo" data-id="<?= $row['idPresupuesto']; ?>" data-estado="<?= $row['estado']; ?>">
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-presupuesto-pdf"><i class="fa fa-lg fa-file-pdf" title="Generar PDF"></i></a>
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detallePresupuesto"><i class="fa fa-lg fa-bars" title="Ver Detalle de Presupuesto"></i></a>
+                        <a id="hrefEstado-<?= $row['idPresupuesto']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoPresupuesto" data-id="<?= $row['idPresupuesto']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>
                     </td>

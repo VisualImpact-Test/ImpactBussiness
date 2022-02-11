@@ -1108,6 +1108,10 @@ legend.scheduler-border {
   justify-content: center;
 }
 
-.has-error input, .has-error select {
+.has-error input, .has-error select, .has-error span span span.select2-selection{
   border-color: #eb211d;
+}
+
+li.select2-results__option:empty {
+  display: none;
 }

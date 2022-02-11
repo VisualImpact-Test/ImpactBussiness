@@ -1307,6 +1307,32 @@ var View = {
 			let idTabla = $(this).attr('aria-controls');
 			Fn.exportarExcelDataTable(idTabla);
 		});
+
+		$(document).on("change", '.parentDependiente', function (e) {
+			e.preventDefault();
+			let childDependiente = $(this).data('childdependiente');
+			let idParent = $(this).val();
+
+			if (idParent.length > 0) {
+				$("#" + childDependiente).children('option').hide();
+				$("#" + childDependiente).children("option[data-parentdependiente^=" + idParent + "]").show()
+
+				$('#' + childDependiente).select2({
+					templateResult: function (option) {
+						var myOption = $('#' + childDependiente).find('option[value="' + option.id + '"');
+						if (myOption.data('parentdependiente') == idParent) {
+							return option.text;
+						}
+						return false;
+					}
+				});
+			} else {
+				$("#" + childDependiente).children('option').hide();
+				$('#' + childDependiente).find('option[value=""').show();
+				$("#" + childDependiente).select2('destroy');
+				$("#" + childDependiente).val('');
+			}
+		});
 	},
 	toast: (config = {}) => {
 		var defaults = {

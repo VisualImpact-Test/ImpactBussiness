@@ -10,7 +10,7 @@
 			<div class="card-body p-0">
 				<ul class="nav nav-tabs nav-justified">
 					<li class="nav-item btnReporte" id="tipoReporte" name="tipoReporte" url="visibilidad">
-						<a data-toggle="tab" href="#idContentArticulo" class="active nav-link" data-value="1">Detalle</a>
+						<a data-toggle="tab" href="#idContentPresupuesto" class="active nav-link" data-value="1">Detalle</a>
 					</li>
 				</ul>
 			</div>
@@ -24,7 +24,7 @@
 		<i class="fal fa-cog fa-lg fa-spin"></i>
 	</a>
 	<div class="customizer-content p-2 ps-container ps-theme-dark" data-ps-id="aca1f25c-4ed9-a04b-d154-95a5d6494748">
-		<form id="frm-articulo">
+		<form id="frm-presupuesto">
 			<div class="card-header" style="margin-bottom: 14px;justify-content: center;">
 				<h4>CONFIGURACIÓN</h4>
 			</div>
@@ -32,10 +32,10 @@
 				<input type="hidden" id="idTipoFormato" name="tipoFormato" value="1">
 			</div>
 			<div class="customizer-content-button center-items">
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarArticulo" title="Consultar">
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarPresupuesto" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
 				</button>
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarArticulo" title="Nuevo">
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarPresupuesto" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
 			</div>
@@ -45,26 +45,26 @@
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Tipo Articulo</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="tipoArticulo" id="tipoArticulo">
-								<?= htmlSelectOptionArray2(['query' => $tipoArticulo, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							<span class="tooltiptext">Tipo Presupuesto</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="tipoPresupuesto" id="tipoPresupuesto">
+								<?= htmlSelectOptionArray2(['query' => $tipoPresupuesto, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Marca Articulo</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="marcaArticulo" id="marcaArticulo">
-								<?= htmlSelectOptionArray2(['query' => $marcaArticulo, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							<span class="tooltiptext">Cuenta</span>
+							<select class="form-control form-control-sm ui my_select2Full parentDependiente" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuenta, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Categoria Articulo</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="categoriaArticulo" id="categoriaArticulo">
-								<?= htmlSelectOptionArray2(['query' => $categoriaArticulo, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							<span class="tooltiptext">Centro Costo</span>
+							<select class="form-control form-control-sm ui childDependiente" name="cuentaCentroCosto" id="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Articulo</span>
-							<input class="form-control form-control-sm" name="articulo" id="articulo">
+							<span class="tooltiptext">Presupuesto</span>
+							<input class="form-control form-control-sm" name="presupuesto" id="presupuesto">
 						</div>
 					</div>
 				</div>
@@ -82,7 +82,7 @@
 <div class="main-card mb-3 card">
 	<div class="card-body p-0">
 		<div class="tab-content" id="content-auditoria">
-			<div class="tab-pane fade show active" id="idContentArticulo" role="tabpanel">
+			<div class="tab-pane fade show active" id="idContentPresupuesto" role="tabpanel">
 				<?= getMensajeGestion('noResultados') ?>
 			</div>
 		</div>
