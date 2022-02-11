@@ -17,17 +17,11 @@ class M_Servicio extends MY_Model
 
 	public function obtenerTipoServicio($params = [])
 	{
-		$sql = "
-			SELECT
-				idTipoServicio AS id
-				, nombre AS value
-			FROM compras.tipoServicio
-			WHERE estado = 1
-		";
+		$query = $this->db->select('idTipoServicio AS id, nombre AS value')
+			->where('estado', 1)
+			->get('compras.tipoServicio');
 
-		$query = $this->db->query($sql);
-
-		if ($query) {
+		if ($query->num_rows() > 0) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 		}
@@ -45,7 +39,7 @@ class M_Servicio extends MY_Model
 
 		$query = $this->db->select('p.idProveedor as id, p.razonSocial as value')
 			->join('compras.estadoProveedor ep', 'p.idEstado = ep.idEstado')
-			->where_in('ep.idEstado', [$proveedor_estados->pendiente, $proveedor_estados->activo])
+			->where('ep.idEstado', $proveedor_estados->activo)
 			->get('compras.proveedor p');
 
 		if ($query->num_rows() > 0) {
@@ -159,58 +153,36 @@ class M_Servicio extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerServiciosLogistica()
+	public function obtenerServicios()
 	{
-		$sql = "
-			SELECT
-				a.idServicio AS value
-				, ISNULL(a.codigo + ' - ','') + a.nombre AS label
-				, um.idUnidadMedida AS idum
-				, um.nombre AS um
-				--, c.idCuenta
-				--, c.nombre
-			FROM visualimpact.logistica.servicio a
-			LEFT JOIN visualimpact.logistica.servicio_det ad ON a.idServicio = ad.idServicio
-			LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
-			--LEFT JOIN visualimpact.logistica.servicio_marca am on a.idMarca = am.idMarca
-			--LEFT JOIN visualimpact.logistica.servicio_marca_cuenta amc ON am.idMarca = amc.idMarca
-			--LEFT JOIN visualimpact.logistica.cuenta c ON amc.idCuenta = c.idCuenta
-		";
-
-		$result = $this->db->query($sql)->result_array();
-
-		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.servicio', 'id' => null];
-		return $result;
+		return $this->db->select('idServicio as value, nombre as label')
+			->get('compras.servicio')
+			->result_array();
 	}
 
-	public function validarExistenciaServicio($params = [])
+	public function validarTarifarioServicio($params = [], $validar = null)
 	{
-		$filtros = "";
-		$filtros .= !empty($params['idServicio']) ? ' AND a.idServicio != ' . $params['idServicio'] : '';
+		$this->db->select('tarif_s.idTarifarioServicio');
+		$this->db->from('compras.tarifarioServicio tarif_s');
+		$this->db->group_start();
+			$this->db->where('tarif_s.idServicio', $params['idServicio']);
+			if ($validar === 'actual') $this->db->where('tarif_s.flag_actual', 1);
+			if ($validar === 'existe') $this->db->where('tarif_s.idProveedor', $params['idProveedor']);
+		$this->db->group_end();
 
-		$sql = "
-			SELECT
-				idServicio
-			FROM compras.servicio a
-			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
-			{$filtros}
-		";
+		$query = $this->db->get();
 
-		$query = $this->db->query($sql);
-
-		if ($query) {
-			$this->resultado['query'] = $query;
+		if ($query->num_rows() > 0) {
+			$this->resultado['query'] = $query->result_array();
 			$this->resultado['estado'] = true;
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
 		return $this->resultado;
 	}
 
-	public function insertarServicio($params = [])
+	public function insertarTarifarioServicio($params = [], $tabla)
 	{
-		$query = $this->db->insert($params['tabla'], $params['insert']);
+		$query = $this->db->insert($tabla, $params['insert']);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
