@@ -84,6 +84,27 @@ class Servicio extends MY_Controller
         echo json_encode($result);
     }
 
+    public function actualizarEstadoServicio()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $update = $this->model->actualizarServicio($post);
+
+        if (!$update['estado']) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+        }
+
+        respuesta:
+        echo json_encode($result);
+    }
+
     public function formularioRegistroServicio()
     {
         $result = $this->result;
@@ -191,39 +212,6 @@ class Servicio extends MY_Controller
         $data = [];
 
         if (!$insert['estado']) {
-            $result['result'] = 0;
-            $result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroErroneo');
-        } else {
-            $result['result'] = 1;
-            $result['msg']['title'] = 'Hecho!';
-            $result['msg']['content'] = getMensajeGestion('registroExitoso');
-        }
-
-        respuesta:
-        echo json_encode($result);
-    }
-
-    public function actualizarEstadoServicio()
-    {
-        $result = $this->result;
-        $post = json_decode($this->input->post('data'), true);
-
-        $data = [];
-
-        $data['update'] = [
-            'estado' => ($post['estado'] == 1) ? 0 : 1
-        ];
-
-        $data['tabla'] = 'compras.servicio';
-        $data['where'] = [
-            'idServicio' => $post['idServicio']
-        ];
-
-        $update = $this->model->actualizarServicio($data);
-        $data = [];
-
-        if (!$update['estado']) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');

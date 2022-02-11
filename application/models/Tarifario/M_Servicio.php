@@ -141,6 +141,24 @@ class M_Servicio extends MY_Model
 		return $this->resultado;
 	}
 
+	public function actualizarServicio($params = [])
+	{
+		$query = $this->db->where('idServicio', $params['idServicio'])
+			->update(
+				'compras.tarifarioServicio',
+				['estado' => ($params['estado'] == 1) ? 0 : 1]
+			);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerServiciosLogistica()
 	{
 		$sql = "
@@ -193,20 +211,6 @@ class M_Servicio extends MY_Model
 	public function insertarServicio($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
-
-		if ($query) {
-			$this->resultado['query'] = $query;
-			$this->resultado['estado'] = true;
-			$this->resultado['id'] = $this->db->insert_id();
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
-		}
-
-		return $this->resultado;
-	}
-
-	public function actualizarServicio($params = [])
-	{
-		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
