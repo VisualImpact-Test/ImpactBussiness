@@ -17,12 +17,12 @@
                 $badge = $row['tarifa_servicio_estado'] == 'Activo' ? 'badge-success' : 'badge-danger';
                 $toggle = $row['tarifa_servicio_estado'] == 'Activo' ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
-                <tr data-id="<?= $row['idServicio'] ?>">
+                <tr data-id="<?= $row['idTarifarioServicio'] ?>">
                     <td class="td-center"><?= $row['num_fila'] ?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-historialTarifarioServicio"><i class="fa fa-lg fa-history" title="Historial de Tarifario"></i></a>
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarTarifarioServicio"><i class="fa fa-lg fa-edit" title="Actualizar Tarifario de Articulo"></i></a>
-                        <a id="hrefEstado-<?= $row['idTarifarioServicio']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoServicio" data-id="<?= $row['idServicio']; ?>" data-estado="<?= $row['tarifa_servicio_estado_id']; ?>">
+                        <a id="hrefEstado-<?= $row['idTarifarioServicio']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoServicio" data-id="<?= $row['idTarifarioServicio']; ?>" data-estado="<?= $row['tarifa_servicio_estado_id']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>
                     </td>
@@ -31,7 +31,7 @@
                     <td class="td-left"><?= verificarEmpty($row['proveedor_nombre'], 3); ?></td>
                     <td class="td-left"><?= empty($row['tarifa_servicio_costo']) ? "-" : moneda($row['tarifa_servicio_costo']); ?></td>
                     <td class="text-center style-icons">
-                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idServicio']; ?>">
+                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idTarifarioServicio']; ?>">
                             <?= $row['tarifa_servicio_estado']; ?>
                         </span>
                     </td>

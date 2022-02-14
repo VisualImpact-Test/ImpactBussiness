@@ -50,7 +50,7 @@ class M_Servicio extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerInformacionServicios($params = [])
+	public function obtenerInformacionTarifarioServicios($params = [])
 	{
 		$this->db->select([
 			'ROW_NUMBER() OVER(ORDER BY tarif_s.idTarifarioServicio ASC) as num_fila',
@@ -59,6 +59,8 @@ class M_Servicio extends MY_Model
 			'tipo_s.nombre as tipo_servicio_nombre',
 			's.nombre as servico_nombre',
 			'p.razonSocial as proveedor_nombre',
+			'p.idProveedor',
+			'tarif_s.flag_actual',
 			'tarif_s.costo as tarifa_servicio_costo',
 			'tarif_s.estado as tarifa_servicio_estado_id',
 			"case tarif_s.estado when 1 then 'Activo' else 'Inactivo' end as tarifa_servicio_estado",
@@ -67,6 +69,10 @@ class M_Servicio extends MY_Model
 		$this->db->join('compras.servicio s', 'tarif_s.idServicio = s.idServicio');
 		$this->db->join('compras.tipoServicio tipo_s', 's.idTipoServicio = tipo_s.idTipoServicio');
 		$this->db->join('compras.proveedor p', 'tarif_s.idProveedor = p.idProveedor');
+
+		if (!empty($params['idTarifarioServicio'])) {
+			$this->db->where('tarif_s.idTarifarioServicio', $params['idTarifarioServicio']);
+		}
 
 		if (!empty($params['chMostrar'])) {
 			$this->db->where('tarif_s.flag_actual', $params['chMostrar']);
@@ -103,9 +109,9 @@ class M_Servicio extends MY_Model
 		$query = $this->db->get();
 
 		if ($query->num_rows() > 0) {
-			$this->resultado['query'] = $query->result_array();
+			if (isset($params['row_array'])) $this->resultado['query'] = $query->row_array();
+			else $this->resultado['query'] = $query->result_array();
 			$this->resultado['estado'] = true;
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
 		return $this->resultado;
@@ -137,7 +143,7 @@ class M_Servicio extends MY_Model
 
 	public function actualizarServicio($params = [])
 	{
-		$query = $this->db->where('idServicio', $params['idServicio'])
+		$query = $this->db->where('idTarifarioServicio', $params['idTarifarioServicio'])
 			->update(
 				'compras.tarifarioServicio',
 				['estado' => ($params['estado'] == 1) ? 0 : 1]
@@ -148,6 +154,19 @@ class M_Servicio extends MY_Model
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function actualizarTarifarioServicio($params = [], $table)
+	{
+		$query = $this->db->update($table, $params['update'], $params['where']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
 		}
 
 		return $this->resultado;
@@ -169,11 +188,14 @@ class M_Servicio extends MY_Model
 			if ($validar === 'actual') $this->db->where('tarif_s.flag_actual', 1);
 			if ($validar === 'existe') $this->db->where('tarif_s.idProveedor', $params['idProveedor']);
 		$this->db->group_end();
+		if (isset($params['idTarifarioServicio'])) {
+			$this->db->where('tarif_s.idTarifarioServicio !=', $params['idTarifarioServicio']);	
+		}
 
 		$query = $this->db->get();
 
 		if ($query->num_rows() > 0) {
-			$this->resultado['query'] = $query->result_array();
+			$this->resultado['query'] = $query->row_array();
 			$this->resultado['estado'] = true;
 		}
 

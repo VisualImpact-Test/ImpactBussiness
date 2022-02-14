@@ -45,7 +45,7 @@ class Servicio extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        $dataParaVista = $this->model->obtenerInformacionServicios($post)['query'];
+        $dataParaVista = $this->model->obtenerInformacionTarifarioServicios($post)['query'];
    
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
@@ -134,22 +134,41 @@ class Servicio extends MY_Controller
         echo json_encode($result);
     }
 
-    public function formularioActualizacionServicio()
+    public function formularioActualizacionTarifarioServicio()
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
 
-        $dataParaVista['tipoServicio'] = $this->model->obtenerTipoServicio()['query']->result_array();
+        $dataParaVista['proveedor'] = $this->model->obtenerRazonSocProveedor()['query'];
 
-        $dataParaVista['informacionServicio'] = $this->model->obtenerInformacionServicios($post)['query']->row_array();
+        $servicios = $this->model->obtenerServicios();
+
+        foreach ($servicios as $key => $row) {
+            $data['servicios'][1][$row['value']]['value'] = $row['value'];
+            $data['servicios'][1][$row['value']]['label'] = $row['label'];
+        }
+        foreach ($data['servicios'] as $k => $r) {
+            $data['servicios'][$k] = array_values($data['servicios'][$k]);
+        }
+        $data['servicios'][0] = array();
+        $result['data']['existe'] = 0;
+
+        $post['row_array'] = true;
+        $dataParaVista['informacionTarifarioServicio'] = $this->model->obtenerInformacionTarifarioServicios($post)['query'];
 
         $result['result'] = 1;
-        $result['msg']['title'] = 'Registrar Servicio';
-        $result['data']['html'] = $this->load->view("modulos/Servicio/formularioActualizacion", $dataParaVista, true);
+        $result['msg']['title'] = 'Actualizar Tarifario de Servicio';
+        $result['data']['html'] = $this->load->view("modulos/Tarifario/Servicio/formularioActualizacion", $dataParaVista, true);
+        $result['data']['servicios'] = $data['servicios'];
 
-        echo json_encode($result);
+        $this->output
+            ->set_status_header(200)
+            ->set_content_type('application/json', 'utf-8')
+            ->set_output(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))
+            ->_display();
+        exit;
     }
 
     public function registrarTarifarioServicio()
@@ -222,39 +241,81 @@ class Servicio extends MY_Controller
         echo json_encode($result);
     }
 
-    public function actualizarServicio()
+    public function actualizarTarifarioServicio()
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-        $data = [];
+        $data=[];
+        $existeServicioActual = 0;
 
         $data['update'] = [
+            'idTarifarioServicio' => $post['idTarifarioServicio'],
             'idServicio' => $post['idServicio'],
-
-            'nombre' => $post['nombre'],
-            'idTipoServicio' => $post['tipo']
+            'idProveedor' => $post['proveedor'],
+            'costo' => $post['costo'],
+            'flag_actual' => isset($post['actual']) && $post['actual'] === 'on' ? 0 : 1
         ];
 
-        $validacionExistencia = $this->model->validarExistenciaServicio($data['update']);
-        unset($data['update']['idServicio']);
+        if (!isset($post['actual'])) {
+            $validacionActual = $this->model->validarTarifarioServicio($data['update'], $validar = 'actual');
 
-        if (!empty($validacionExistencia['query']->row_array())) {
+            if (!empty($validacionActual['query'])) {
+                $data['update']['flag_actual'] = 0;
+                $existeServicioActual = 1;
+            }
+        }
+
+        $validacionExistencia = $this->model->validarTarifarioServicio($data['update'], $validar = 'existe');
+        unset($data['update']['idTarifarioServicio']);
+
+        if (!empty($validacionExistencia['query'])) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroRepetido');
-            goto respuesta;
+
+            echo json_encode($result);
+            exit();
         }
 
-        $data['tabla'] = 'compras.servicio';
         $data['where'] = [
-            'idServicio' => $post['idServicio']
+            'idTarifarioServicio' => $post['idTarifarioServicio']
         ];
 
-        $insert = $this->model->actualizarServicio($data);
-        $data = [];
+        $update = $this->model->actualizarTarifarioServicio($data, $table = 'compras.tarifarioServicio');
 
-        if (!$insert['estado']) {
+        $data = [];
+        $actualizacionHistoricos = true;
+
+        if ($post['costoAnterior'] != $post['costo']) {
+            $data['update'] = [
+                'fecFin' => getFechaActual(),
+            ];
+
+            $data['where'] = [
+                'idTarifarioServicio' => $post['idTarifarioServicio'],
+                'fecFin' => NULL
+            ];
+
+            $subUpdate = $this->model->actualizarTarifarioServicio($data, $table = 'compras.tarifarioServicioHistorico');
+            $data = [];
+
+            $data['insert'] = [
+                'idTarifarioServicio' => $post['idTarifarioServicio'],
+                'fecIni' => getFechaActual(),
+                'fecFin' => NULL,
+                'costo' => $post['costo'],
+            ];
+
+            $subInsert = $this->model->insertarTarifarioServicio($data, 'compras.tarifarioServicioHistorico');
+            $data = [];
+
+            if (!$subUpdate['estado'] && !$subInsert['estado']) {
+                $actualizacionHistoricos = false;
+            }
+        }
+
+        if (!$update['estado'] or !$actualizacionHistoricos) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -264,7 +325,19 @@ class Servicio extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
 
-        respuesta:
-        echo json_encode($result);
+        if ($existeServicioActual == true && $result['result'] == 1) {
+            $result['result'] = 2;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Ya existe un servicio que se encuentra como actual, ¿Deseas reemplazarlo?']);
+            $result['data']['idTarifarioServicio'] = $post['idTarifarioServicio'];
+            $result['data']['idServicio'] = $post['idServicio'];
+        }
+
+        $this->output
+            ->set_status_header(200)
+            ->set_content_type('application/json', 'utf-8')
+            ->set_output(json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES))
+            ->_display();
+        exit;
     }
 }

@@ -73,14 +73,14 @@ var Servicio = {
 			});
 		});
 
-		$(document).on('click', '.btn-actualizarServicio', function () {
+		$(document).on('click', '.btn-actualizarTarifarioServicio', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idServicio': id, 'formularioValidar': false };
+			let data = { 'idTarifarioServicio': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': Servicio.url + 'formularioActualizacionServicio', 'data': jsonString };
+			let config = { 'url': Servicio.url + 'formularioActualizacionTarifarioServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -88,7 +88,7 @@ var Servicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionServicios", fn: "Servicio.actualizarServicio()", content: "¿Esta seguro de actualizar el servicio?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionTarifarioServicios", fn: "Servicio.actualizarTarifarioServicio()", content: "¿Esta seguro de actualizar el servicio?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -100,7 +100,7 @@ var Servicio = {
 
 			let idServicio = $(this).parents('tr:first').data('id');
 			let estado = $(this).data('estado');
-			let data = { 'idServicio': idServicio, 'estado': estado };
+			let data = { 'idTarifarioServicio': idServicio, 'estado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Servicio.url + 'actualizarEstadoServicio', 'data': jsonString };
@@ -130,11 +130,11 @@ var Servicio = {
 		});
 	},
 
-	actualizarServicio: function () {
+	actualizarTarifarioServicio: function () {
 		++modalId;
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionServicios')) };
-		let config = { 'url': Servicio.url + 'actualizarServicio', 'data': jsonString };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionTarifarioServicios')) };
+		let config = { 'url': Servicio.url + 'actualizarTarifarioServicio', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
