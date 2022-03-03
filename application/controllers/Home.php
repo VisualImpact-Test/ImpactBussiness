@@ -29,7 +29,8 @@ class Home extends MY_Controller
 			'assets/libs/datatables/dataTables.bootstrap4.min',
 			'assets/libs/datatables/buttons.bootstrap4.min',
 			'assets/libs/MagnificPopup/magnific-popup',
-			'assets/custom/css/rutas'
+			'assets/custom/css/rutas',
+			'assets/custom/css/home'
 		];
 
 		$config['js']['script'] = [

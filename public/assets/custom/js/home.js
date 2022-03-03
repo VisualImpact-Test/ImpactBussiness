@@ -67,9 +67,33 @@ var Home = {
 				// Home.generarGraficosEfectividadGtm();
 			});
 		})
+		$(document).on('click', '.ver-lista', function (e) {
+			let table = $("#dv-indicador-req > table");
+			let estado = $(this).data("estado");
+
+			table.find("tbody tr").addClass("d-none");
+			$.each(table.find("tbody tr"),function(i,x){
+
+				if($(this).data("estado") == estado){
+					$(this).removeClass("d-none");
+				}
+			});
+		})
+		$(document).on('click', '.ver-coti', function (e) {
+			let req = $(this).data("cod-req");
+			let div = $(".dvDetalleReq");
+			div.addClass("d-none");
+			$.each(div, (i,x) => {
+
+				$(this).data("cod-req") == req ? $(this).removeClass('d-none') : '';
+			});	
+
+			
+		})
 
 		if (localStorage.getItem('modalCuentaProyecto') == 0) {
-			$('#a-cambiarcuenta').click();
+			$('#a-cambiarcuenta').click();	
+
 		}
 	},
 
