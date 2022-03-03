@@ -166,7 +166,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['provinciasCobertura'] = implode(', ', $provinciasCobertura);
 		$dataParaVista['distritosCobertura'] = implode(', ', $distritosCobertura);
 
-		$dataParaVista['link'] = base_url() . index_page() . '/proveedores';
+		$dataParaVista['link'] = base_url() . index_page() . 'proveedor';
 
 		// $bcc = array(
 		//     'team.sistemas@visualimpact.com.pe',

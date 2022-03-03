@@ -41,7 +41,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 						<input type="hidden" id="txtcuenta" value="<?= $this->sessIdCuenta ?>">
 						<a data-toggle="tab" href="javascript:;" class="active nav-link aFechaHome" data-value="1">
 							<i class="fad fa-calendar-alt fa-lg" style="margin-right:5px;"></i>
-							<input class="form-control input-sm txt-fecha fechaHome" type="text" name="fechaHome" patron="requerido" value="<?= date('d/m/Y') ?>">
+							<!-- <input class="form-control input-sm txt-fecha fechaHome" type="text" name="fechaHome" patron="requerido" value="<?= date('d/m/Y') ?>"> -->
 							<i class="fad fa-road fa-lg pl-3" style="margin-right:5px;"></i>
 						</a>
 					</li>
@@ -51,7 +51,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 	</div>
 </div>
 
-<div class="row">
+<!-- <div class="row">
 	<div class="col-lg-<?= $col_1 ?> col-md-12 d-flex">
 		<div class="main-card mb-3 card main-cobertura col-md-12 px-0" style="height: 250px;">
 			<div class="card-header bg-trade-visual-grad-right text-white" style="width: 100%;">
@@ -76,7 +76,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcH2xfbm8z-5iSE4knkRJiNKRhKQrhH6E&callback=initMap"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
