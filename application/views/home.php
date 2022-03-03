@@ -4,6 +4,7 @@ $col_1 = 4;
 $col_2 = 8;
 $col_3 = 0;
 
+
 // if( in_array($this->idUsuario, $aUsuario) ){
 // 	$col_1 = 3;
 // 	$col_2 = 6;
@@ -52,8 +53,8 @@ if (empty($idCuenta) || $idCuenta != 2) {
 </div>
 
 <div class="row">
-	<div class="col-lg-3 col-md-12">
-		<div class="main-card mb-3 card main-cobertura col-md-12 px-0">
+	<div class="col-lg-3 col-md-12 ">
+		<div class="main-card mb-3 card main-cobertura col-md-12 px-0 ">
 			<div class="card-header bg-trade-visual-grad-right text-white" style="width: 100%;">
 				<h5 class="card-title">
 					<i class="fas fa-store-alt fa-lg"></i> TimeLine
@@ -69,7 +70,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 						<div class="linetime-timeline__box">
 							<div class="linetime-timeline__date ">
 								<span class="linetime-timeline__day">
-									<sup>#</sup> 
+									<sup>#</sup>
 									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="1">1</a>
 								</span>
 								<span class="linetime-timeline__month">Etapa 1</span>
@@ -93,7 +94,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 						<div class="linetime-timeline__box">
 							<div class="linetime-timeline__date ">
 								<span class="linetime-timeline__day">
-									<sup>#</sup> 
+									<sup>#</sup>
 									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="3">2</a>
 								</span>
 								<span class="linetime-timeline__month">Etapa 3</span>
@@ -131,8 +132,8 @@ if (empty($idCuenta) || $idCuenta != 2) {
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-9 col-md-12">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
+	<div class="col-lg-9 col-md-12 ">
+		<div class="main-card mb-3 card main-efectividad col-md-12 px-0 heightCard">
 			<div class="card-header bg-trade-visual-grad-left text-white" style="width: 100%;">
 				<h5 class="card-title">
 					<i class="fas fa-tasks fa-lg"></i> Análisis Mensual de Cotizaciones
@@ -162,16 +163,15 @@ if (empty($idCuenta) || $idCuenta != 2) {
 								<td>
 									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2762">COTI-0000023</a>
 								</td>
-								<td class="text-center">02/03/2022</td><td class="text-center">02/03/2022</td>
-								<td class="text-center">
-									<strong>02/03/2022</strong>
-								</td>
-								<td>NESTLE</td>
-								<td>TRADE</td>
+								<td class="text-center">02/03/2022</td>
+								<td class="text-center">-</td>
+								<td class="text-center">-</td>
+								<td>P&G</td>
+								<td>HSM MODERNO</td>
 								<td>BAILON PEREZ MARGARITA</td>
-								
-								<td>1 MAQUILADOR</td>
-								
+
+								<td>COTIZACION IMPULSADOR</td>
+
 								<td class="text-center bg-ok">
 									<strong>-</strong>
 								</td>
@@ -184,16 +184,16 @@ if (empty($idCuenta) || $idCuenta != 2) {
 								<td>
 									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2763">COTI-0000024</a>
 								</td>
-								<td class="text-center">02/03/2022</td><td class="text-center">02/03/2022</td>
-								<td class="text-center">
-									<strong>02/03/2022</strong>
-								</td>
-								<td>NESTLE</td>
-								<td>TRADE</td>
+								<td class="text-center">02/03/2022</td>
+								<td class="text-center">-</td>
+								<td class="text-center">-</td>
+
+								<td>P&G</td>
+								<td>HSM MODERNO</td>
 								<td>BAILON PEREZ MARGARITA</td>
-								
-								<td>1 MAQUILADOR</td>
-								
+
+								<td>COTIZACION MARZO 2022</td>
+
 								<td class="text-center bg-ok">
 									<strong>-</strong>
 								</td>
@@ -206,16 +206,15 @@ if (empty($idCuenta) || $idCuenta != 2) {
 								<td>
 									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2766">COTI-0000025</a>
 								</td>
-								<td class="text-center">02/03/2022</td><td class="text-center">02/03/2022</td>
-								<td class="text-center">
-									<strong>02/03/2022</strong>
-								</td>
-								<td>NESTLE</td>
-								<td>TRADE</td>
+								<td class="text-center">02/03/2022</td>
+								<td class="text-center">-</td>
+								<td class="text-center">-</td>
+								<td>P&G</td>
+								<td>HSM MODERNO</td>
 								<td>BAILON PEREZ MARGARITA</td>
-								
-								<td>1 PROMOTOR</td>
-								
+
+								<td>COTIZACION EQUIPOS DICIEMBRE 2021</td>
+
 								<td class="text-center bg-ok">
 									<strong>-</strong>
 								</td>
@@ -223,7 +222,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 									<i class="fas fa-square td-enproceso"></i> Confirmado
 								</td>
 							</tr>
-							
+
 						</tbody>
 					</table>
 				</div>
@@ -242,18 +241,18 @@ if (empty($idCuenta) || $idCuenta != 2) {
 					<div class="col-md-12">
 						<div id="dv-requerimiento">
 							<div class="row">
-								
+
 								<div class="col-md-4">
 									<div class="req-content">
 										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
 										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HFS</strong>
+										<br> Área: <strong>HSM MODERNO</strong>
 										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>1 GESTOR DE TRADE MARKETING</strong>
+										<br> Cotizacion: <strong>COTIZACION IMPULSADOR</strong>
 									</div>
 								</div>
 								<div class="col-md-4">
-									<div class="req-content"> 
+									<div class="req-content">
 										<br> Fecha Término: <strong>02/03/2022</strong>
 										<br> Hora Término: <strong>12:22:47</strong>
 										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
@@ -272,70 +271,17 @@ if (empty($idCuenta) || $idCuenta != 2) {
 										Cantidad de Items: <strong>10</strong> <br>
 									</div>
 								</div>
-								
+
 							</div>
 							<hr>
 							<div class="row">
 								<div class="col-md-12">
-									<ul class="line-timeline" id="timeline">
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Registrado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Enviado a RRHH - Usuario: GARGUREVICH FERNANDEZ MILENKA - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">7-GARGUREVICH FERNANDEZ MILENKA</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>12:22:47</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Enviado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Confirmado - Usuario: BALDOCEDA LANZA EVER - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">8-BALDOCEDA LANZA EVER</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>15:10:44</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Confirmado</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>OC Pendiente</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Finalizado</h4>
-											</div>
-										</li>
+									<ul class="timeline new-ul">
+										<li class="active">Registrado</li>
+										<li class="active">Enviado</li>
+										<li class="active">Confirmado / 25%</li>
+										<li>OC Pendiente</li>
+										<li>Finalizado</li>
 									</ul>
 								</div>
 							</div>
@@ -358,18 +304,18 @@ if (empty($idCuenta) || $idCuenta != 2) {
 					<div class="col-md-12">
 						<div id="dv-requerimiento">
 							<div class="row">
-								
+
 								<div class="col-md-4">
 									<div class="req-content">
 										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
 										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HFS</strong>
+										<br> Área: <strong>HSM MODERNO</strong>
 										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>1 GESTOR DE TRADE MARKETING</strong>
+										<br> Cotizacion: <strong>COTIZACION MARZO 2022</strong>
 									</div>
 								</div>
 								<div class="col-md-4">
-									<div class="req-content"> 
+									<div class="req-content">
 										<br> Fecha Término: <strong>02/03/2022</strong>
 										<br> Hora Término: <strong>12:22:47</strong>
 										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
@@ -388,74 +334,23 @@ if (empty($idCuenta) || $idCuenta != 2) {
 										Cantidad de Items: <strong>10</strong> <br>
 									</div>
 								</div>
-								
+
 							</div>
 							<hr>
 							<div class="row">
 								<div class="col-md-12">
-									<ul class="line-timeline" id="timeline">
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Registrado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Enviado a RRHH - Usuario: GARGUREVICH FERNANDEZ MILENKA - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">7-GARGUREVICH FERNANDEZ MILENKA</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>12:22:47</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Enviado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Confirmado - Usuario: BALDOCEDA LANZA EVER - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">8-BALDOCEDA LANZA EVER</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>15:10:44</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Confirmado</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>OC Pendiente</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Finalizado</h4>
-											</div>
-										</li>
-									</ul>
+									<div class="container">
+										<ul class="timeline new-ul">
+											<li class="active">Registrado</li>
+											<li>Enviado</li>
+											<li>Confirmado</li>
+											<li>OC Pendiente</li>
+											<li>Finalizado</li>
+										</ul>
+									</div>
 								</div>
+								<hr>
 							</div>
-							<hr>
 						</div>
 					</div>
 				</div>
@@ -474,18 +369,18 @@ if (empty($idCuenta) || $idCuenta != 2) {
 					<div class="col-md-12">
 						<div id="dv-requerimiento">
 							<div class="row">
-								
+
 								<div class="col-md-4">
 									<div class="req-content">
 										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
 										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HFS</strong>
+										<br> Área: <strong>HSM MODERNO</strong>
 										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>1 GESTOR DE TRADE MARKETING</strong>
+										<br> Cotizacion: <strong>COTIZACION EQUIPOS DICIEMBRE 2021</strong>
 									</div>
 								</div>
 								<div class="col-md-4">
-									<div class="req-content"> 
+									<div class="req-content">
 										<br> Fecha Término: <strong>02/03/2022</strong>
 										<br> Hora Término: <strong>12:22:47</strong>
 										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
@@ -504,70 +399,18 @@ if (empty($idCuenta) || $idCuenta != 2) {
 										Cantidad de Items: <strong>10</strong> <br>
 									</div>
 								</div>
-								
+
 							</div>
 							<hr>
 							<div class="row">
 								<div class="col-md-12">
-									<ul class="line-timeline" id="timeline">
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Registrado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Enviado a RRHH - Usuario: GARGUREVICH FERNANDEZ MILENKA - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">7-GARGUREVICH FERNANDEZ MILENKA</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>12:22:47</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Enviado</h4>
-											</div>
-										</li>
-										<li class="line-li line-complete" title="Confirmado - Usuario: BALDOCEDA LANZA EVER - Fecha: 01/03/2022">
-											<div class="line-timestamp">
-												<span class="author">8-BALDOCEDA LANZA EVER</span>
-												<span class="date">
-													<center>01/03/2022</center>
-												</span>
-												<span class="date">
-													<center>15:10:44</center>
-												</span>
-											</div>
-											<div class="line-status">
-												<h4>Confirmado</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>OC Pendiente</h4>
-											</div>
-										</li>
-										<li class="line-li ">
-											<div class="line-timestamp">
-												<span class="author">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-												<span class="date">&nbsp;</span>
-											</div>
-											<div class="line-status">
-												<h4>Finalizado</h4>
-											</div>
-										</li>
+
+									<ul class="timeline new-ul">
+										<li class="active">Registrado</li>
+										<li class="active">Enviado</li>
+										<li class="active">Confirmado / 50%</li>
+										<li>OC Pendiente</li>
+										<li>Finalizado</li>
 									</ul>
 								</div>
 							</div>

@@ -80,12 +80,17 @@ var Home = {
 			});
 		})
 		$(document).on('click', '.ver-coti', function (e) {
-			let req = $(this).data("cod-req");
+			let req = $(this).closest("tr").data("cod-req");
 			let div = $(".dvDetalleReq");
 			div.addClass("d-none");
-			$.each(div, (i,x) => {
+			let req_actual = 0;
+			$.each(div, function(i,x){
+				req_actual = $(this).data("cod-req");
+				if( req_actual == req){
 
-				$(this).data("cod-req") == req ? $(this).removeClass('d-none') : '';
+					$(this).removeClass('d-none');
+					$('html, body').animate({ scrollTop: $(this).offset().top }, 500);
+				}
 			});	
 
 			
