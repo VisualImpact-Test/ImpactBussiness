@@ -105,4 +105,57 @@ class EquiposMoviles extends MY_Controller
 
         echo json_encode($result);
     }
+
+    public function enviarCorreo()
+    {
+        $config = array(
+            'protocol' => 'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_port' => 465,
+            'smtp_user' => 'teamsystem@visualimpact.com.pe',
+            'smtp_pass' => '#nVi=0sN0ti$',
+            'mailtype' => 'html'
+        );
+
+        $this->load->library('email', $config);
+        $this->email->clear(true);
+        $this->email->set_newline("\r\n");
+
+        $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+        $this->email->to('harry.pineda@visualimpact.com.pe');
+
+        $data = [];
+        $dataParaVista = [];
+        // $data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
+
+        // foreach ($data as $key => $row) {
+        //     $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
+        //     $dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
+        //     $dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
+        //     $dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+        //     $dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
+        //     $dataParaVista['detalle'][$key]['item'] = $row['item'];
+        //     $dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
+        //     $dataParaVista['detalle'][$key]['costo'] = $row['costo'];
+        //     $dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
+        // }
+
+        $dataParaVista['link'] = base_url() . index_page() . 'Cotizacion';
+
+        // $bcc = array(
+        //     'team.sistemas@visualimpact.com.pe',
+        // );
+        // $this->email->bcc($bcc);
+
+        $this->email->subject('IMPACTBUSSINESS - CONFIRMACION DE ITEMS DE COTIZACION');
+        $html = $this->load->view("modulos/CotizacionEfectiva/correo/informacionProveedor", $dataParaVista, true);
+        $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
+        $this->email->message($correo);
+
+        $estadoEmail = $this->email->send();
+
+        $result = $this->result;
+
+        echo json_encode($result);
+    }
 }

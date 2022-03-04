@@ -1,44 +1,44 @@
-var EquiposMoviles = {
+var CotizacionEfectiva = {
 
-	frm: 'frm-equiposMoviles',
-	contentDetalle: 'idContentEquiposMoviles',
-	url: 'Confirmacion/EquiposMoviles/',
+	frm: 'frm-cotizacionEfectiva',
+	contentDetalle: 'idContentCotizacionEfectiva',
+	url: 'CotizacionEfectiva/',
 	itemServicio: [],
 	modalIdForm: 0,
 	itemsLogistica: [],
 	htmlG: '',
-	htmlEquiposMoviles: '',
+	htmlCotizacionEfectiva: '',
 
 	load: function () {
 
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
-			$('#btn-filtrarEquiposMoviles').click();
+			$('#btn-filtrarCotizacionEfectiva').click();
 		});
 
 		$(document).ready(function () {
-			$('#btn-filtrarEquiposMoviles').click();
+			$('#btn-filtrarCotizacionEfectiva').click();
 		});
 
-		$(document).on('click', '#btn-filtrarEquiposMoviles', function () {
+		$(document).on('click', '#btn-filtrarCotizacionEfectiva', function () {
 			var ruta = 'reporte';
 			var config = {
-				'idFrm': EquiposMoviles.frm
-				, 'url': EquiposMoviles.url + ruta
-				, 'contentDetalle': EquiposMoviles.contentDetalle
+				'idFrm': CotizacionEfectiva.frm
+				, 'url': CotizacionEfectiva.url + ruta
+				, 'contentDetalle': CotizacionEfectiva.contentDetalle
 			};
 
 			Fn.loadReporte_new(config);
 		});
 
-		$(document).on('click', '#btn-registrarEquiposMoviles', function () {
+		$(document).on('click', '#btn-registrarCotizacionEfectiva', function () {
 			++modalId;
 
 			let jsonString = { 'data': '' };
-			let config = { 'url': EquiposMoviles.url + 'formularioRegistroEquiposMoviles', 'data': jsonString };
+			let config = { 'url': CotizacionEfectiva.url + 'formularioRegistroCotizacionEfectiva', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
-					EquiposMoviles.itemServicio = a.data.itemServicio;
+					CotizacionEfectiva.itemServicio = a.data.itemServicio;
 				}
 
 				let btn = [];
@@ -46,40 +46,38 @@ var EquiposMoviles = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroEquiposMoviles", fn: "EquiposMoviles.registrarEquiposMoviles()", content: "¿Esta seguro de registrar este equiposMoviles?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacionEfectiva", fn: "CotizacionEfectiva.registrarCotizacionEfectiva()", content: "¿Esta seguro de registrar este cotizacionEfectiva?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
-				EquiposMoviles.modalIdForm = modalId;
+				CotizacionEfectiva.modalIdForm = modalId;
 
-				EquiposMoviles.htmlG = $('#listaItemsEquiposMoviles tbody tr').html();
-				$('#listaItemsEquiposMoviles tbody').html('');
+				CotizacionEfectiva.htmlG = $('#listaItemsCotizacionEfectiva tbody tr').html();
+				$('#listaItemsCotizacionEfectiva tbody').html('');
 				$(".btn-add-row").click();
 			});
 		});
 
-		$(document).on('click', '.btn-detalleEquiposMoviles', function () {
+		$(document).on('click', '.btn-detalleCotizacionEfectiva', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idEquiposMoviles': id };
+			let data = { 'idCotizacionEfectiva': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': EquiposMoviles.url + 'formularioVisualizacionEquiposMoviles', 'data': jsonString };
+			let config = { 'url': CotizacionEfectiva.url + 'formularioVisualizacionCotizacionEfectiva', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });EquiposMoviles.enviarCorreo();';
-				btn[0] = { title: 'Guardar', fn: fn[0] };
-				btn[1] = { title: 'Enviar', fn: fn[1] };
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
-				EquiposMoviles.actualizarAutocomplete();
+				CotizacionEfectiva.actualizarAutocomplete();
 			});
 		});
 
@@ -87,14 +85,14 @@ var EquiposMoviles = {
 			++modalId;
 
 			let nombre = $(this).data('nombreitem');
-			let idPesupuesto = $(this).data('idequiposMoviles');
+			let idPesupuesto = $(this).data('idcotizacionEfectiva');
 			let data = { 'nombre': nombre };
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': EquiposMoviles.url + 'formularioRegistroItem', 'data': jsonString };
+			let config = { 'url': CotizacionEfectiva.url + 'formularioRegistroItem', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
-					EquiposMoviles.itemsLogistica = a.data.itemsLogistica;
+					CotizacionEfectiva.itemsLogistica = a.data.itemsLogistica;
 				}
 
 				let btn = [];
@@ -102,56 +100,56 @@ var EquiposMoviles = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "EquiposMoviles.registrarItem(' + idPesupuesto + ')", content: "¿Esta seguro de registrar el item ? " });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "CotizacionEfectiva.registrarItem(' + idPesupuesto + ')", content: "¿Esta seguro de registrar el item ? " });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 
-				EquiposMoviles.actualizarAutocompleteItemsLogistica();
+				CotizacionEfectiva.actualizarAutocompleteItemsLogistica();
 			});
 		});
 
-		$(document).on('click', '.btn-estadoEquiposMoviles', function () {
+		$(document).on('click', '.btn-estadoCotizacionEfectiva', function () {
 			++modalId;
 
-			let idEquiposMoviles = $(this).parents('tr:first').data('id');
+			let idCotizacionEfectiva = $(this).parents('tr:first').data('id');
 			let estado = $(this).data('estado');
-			let data = { 'idEquiposMoviles': idEquiposMoviles, 'estado': estado };
+			let data = { 'idCotizacionEfectiva': idCotizacionEfectiva, 'estado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': EquiposMoviles.url + 'actualizarEstadoEquiposMoviles', 'data': jsonString };
+			let config = { 'url': CotizacionEfectiva.url + 'actualizarEstadoCotizacionEfectiva', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				$("#btn-filtrarEquiposMoviles").click();
+				$("#btn-filtrarCotizacionEfectiva").click();
 			});
 		});
 
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
 
-			let $filas = $('#listaItemsEquiposMoviles tbody tr').length;
+			let $filas = $('#listaItemsCotizacionEfectiva tbody tr').length;
 			$filas = $filas + 1;
 			let $html = "<tr class='nuevo'><td class='n_fila' >" + $filas + "</td>";
-			$html += EquiposMoviles.htmlG;
+			$html += CotizacionEfectiva.htmlG;
 			$html += "</tr>";
 
-			$('#listaItemsEquiposMoviles tbody').append($html);
+			$('#listaItemsCotizacionEfectiva tbody').append($html);
 
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
-			EquiposMoviles.actualizarAutocomplete();
+			CotizacionEfectiva.actualizarAutocomplete();
 		});
 
-		$(document).on('click', '.btn-add-row-equiposMoviles', function (e) {
+		$(document).on('click', '.btn-add-row-cotizacionEfectiva', function (e) {
 			e.preventDefault();
 
-			let $filas = $('#listaItemsEquiposMoviles tbody tr').length;
+			let $filas = $('#listaItemsCotizacionEfectiva tbody tr').length;
 			$filas = $filas + 1;
 			let $html = "<tr class='nuevo'><td class='n_fila' >" + $filas + "</td>";
-			$html += EquiposMoviles.htmlEquiposMoviles;
+			$html += CotizacionEfectiva.htmlCotizacionEfectiva;
 			$html += "</tr>";
 
-			$('#listaItemsEquiposMoviles tbody').append($html);
+			$('#listaItemsCotizacionEfectiva tbody').append($html);
 
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
@@ -162,34 +160,34 @@ var EquiposMoviles = {
 			$(this).parents('.nuevo').remove();
 			$(this).parents('.fila-existente').remove();
 
-			$.each($('#listaItemsEquiposMoviles tbody tr .n_fila'), function (index, value) {
+			$.each($('#listaItemsCotizacionEfectiva tbody tr .n_fila'), function (index, value) {
 				$(this).text(Number(index) + 1);
 			});
 		});
 
-		$(document).on('click', '.btneliminarfilaEquiposMoviles', function (e) {
+		$(document).on('click', '.btneliminarfilaCotizacionEfectiva', function (e) {
 			e.preventDefault();
 			$(this).parents('.nuevo').remove();
 			$(this).parents('.fila-existente').remove();
 
-			$.each($('#listaItemsEquiposMoviles tbody tr .n_fila'), function (index, value) {
+			$.each($('#listaItemsCotizacionEfectiva tbody tr .n_fila'), function (index, value) {
 				$(this).text(Number(index) + 1);
 			});
 		});
 
 		$(document).on('change', '#tipo', function (e) {
-			EquiposMoviles.actualizarAutocomplete();
+			CotizacionEfectiva.actualizarAutocomplete();
 		});
 
-		$(document).on('click', '.btn-equiposMoviles-pdf', function (e) {
+		$(document).on('click', '.btn-cotizacionEfectiva-pdf', function (e) {
 			e.preventDefault();
 
-			let $idEquiposMoviles = $(this).parents('tr').data('id');
+			let $idCotizacionEfectiva = $(this).parents('tr').data('id');
 
-			EquiposMoviles.generarRequerimientoPDF($idEquiposMoviles);
+			CotizacionEfectiva.generarRequerimientoPDF($idCotizacionEfectiva);
 		});
 
-		$(document).on('click', '.btn-generarEquiposMoviles', function () {
+		$(document).on('click', '.btn-generarCotizacionEfectiva', function () {
 			++modalId;
 
 			let items = [];
@@ -198,7 +196,7 @@ var EquiposMoviles = {
 			});
 			let data = { 'items': items };
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': EquiposMoviles.url + 'formularioGenerarEquiposMoviles', 'data': jsonString };
+			let config = { 'url': CotizacionEfectiva.url + 'formularioGenerarCotizacionEfectiva', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -206,22 +204,22 @@ var EquiposMoviles = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "EquiposMoviles.registrarEquiposMoviles()", content: "¿Esta seguro de registrar la equiposMoviles? " });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "CotizacionEfectiva.registrarCotizacionEfectiva()", content: "¿Esta seguro de registrar la cotizacionEfectiva? " });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 
-				EquiposMoviles.actualizarAutocompleteItemsLogistica();
-				EquiposMoviles.htmlEquiposMoviles = $('#listaItemsEquiposMoviles tbody tr').html();
-				$('#listaItemsEquiposMoviles tbody').html('');
-				$(".btn-add-row-equiposMoviles").click();
+				CotizacionEfectiva.actualizarAutocompleteItemsLogistica();
+				CotizacionEfectiva.htmlCotizacionEfectiva = $('#listaItemsCotizacionEfectiva tbody tr').html();
+				$('#listaItemsCotizacionEfectiva tbody').html('');
+				$(".btn-add-row-cotizacionEfectiva").click();
 			});
 		});
 	},
 
-	registrarEquiposMoviles: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroEquiposMoviles')) };
-		let url = EquiposMoviles.url + "registrarEquiposMoviles";
+	registrarCotizacionEfectiva: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacionEfectiva')) };
+		let url = CotizacionEfectiva.url + "registrarCotizacionEfectiva";
 		let config = { url: url, data: jsonString };
 		let diferencias = 0;
 
@@ -240,7 +238,7 @@ var EquiposMoviles = {
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de equiposMoviles. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
+			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de cotizacionEfectiva. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
 
 			return false;
 		}
@@ -251,7 +249,7 @@ var EquiposMoviles = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarEquiposMoviles").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacionEfectiva").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -259,11 +257,11 @@ var EquiposMoviles = {
 		});
 	},
 
-	actualizarEquiposMoviles: function () {
+	actualizarCotizacionEfectiva: function () {
 		++modalId;
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionEquiposMoviless')) };
-		let config = { 'url': EquiposMoviles.url + 'actualizarEquiposMoviles', 'data': jsonString };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacionEfectivas')) };
+		let config = { 'url': CotizacionEfectiva.url + 'actualizarCotizacionEfectiva', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
@@ -271,7 +269,7 @@ var EquiposMoviles = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarEquiposMoviles").click();';
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacionEfectiva").click();';
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
@@ -283,7 +281,7 @@ var EquiposMoviles = {
 		let tipo = 1;
 		let items = [];
 		let nro = 0;
-		$.each(EquiposMoviles.itemServicio[1], function (index, value) {
+		$.each(CotizacionEfectiva.itemServicio[1], function (index, value) {
 			if (tipo == value.tipo || tipo == 3) {
 				items[nro] = value;
 				nro++;
@@ -324,7 +322,7 @@ var EquiposMoviles = {
 					$(this).parents('.nuevo').find('.costoForm').attr('readonly', 'readonly');
 				}
 			},
-			appendTo: "#modal-page-" + EquiposMoviles.modalIdForm,
+			appendTo: "#modal-page-" + CotizacionEfectiva.modalIdForm,
 			max: 5,
 			minLength: 5,
 		});
@@ -332,7 +330,7 @@ var EquiposMoviles = {
 
 	actualizarAutocompleteItemsLogistica: function () {
 		$("#equivalente").autocomplete({
-			source: EquiposMoviles.itemsLogistica[1],
+			source: CotizacionEfectiva.itemsLogistica[1],
 			minLength: 0,
 			select: function (event, ui) {
 				event.preventDefault();
@@ -350,15 +348,15 @@ var EquiposMoviles = {
 	},
 
 	generarRequerimientoPDF: function (id) {
-		var url = site_url + '/EquiposMoviles/generarEquiposMovilesPDF/' + id;
+		var url = site_url + '/CotizacionEfectiva/generarCotizacionEfectivaPDF/' + id;
 		window.open(url, '_blank');
 	},
 
-	registrarItem: function (idEquiposMoviles) {
+	registrarItem: function (idCotizacionEfectiva) {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
-		formValues.idEquiposMoviles = idEquiposMoviles;
+		formValues.idCotizacionEfectiva = idCotizacionEfectiva;
 		let jsonString = { 'data': JSON.stringify(formValues) };
-		let url = EquiposMoviles.url + "registrarItem";
+		let url = CotizacionEfectiva.url + "registrarItem";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -367,7 +365,7 @@ var EquiposMoviles = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idEquiposMoviles + '").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacionEfectiva + '").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -375,10 +373,10 @@ var EquiposMoviles = {
 		});
 	},
 
-	registrarEquiposMoviles: function () {
-		let formValues = Fn.formSerializeObject('formRegistroEquiposMoviles');
+	registrarCotizacionEfectiva: function () {
+		let formValues = Fn.formSerializeObject('formRegistroCotizacionEfectiva');
 		let jsonString = { 'data': JSON.stringify(formValues) };
-		let url = EquiposMoviles.url + "registrarEquiposMoviles";
+		let url = CotizacionEfectiva.url + "registrarCotizacionEfectiva";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -392,27 +390,8 @@ var EquiposMoviles = {
 
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-		});
-	},
-
-	enviarCorreo: function () {
-		let jsonString = { 'data': '' };
-		let url = EquiposMoviles.url + "enviarCorreo";
-		let config = { url: url, data: jsonString };
-
-		$.when(Fn.ajax(config)).then(function (b) {
-			++modalId;
-			var btn = [];
-			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-			if (b.result == 1) {
-				fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			}
-
-			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: 'Hecho', content: 'Se ha enviado correctamente', btn: btn, width: '40%' });
 		});
 	},
 }
 
-EquiposMoviles.load();
+CotizacionEfectiva.load();
