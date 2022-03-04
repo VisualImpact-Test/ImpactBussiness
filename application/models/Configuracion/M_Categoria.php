@@ -21,7 +21,7 @@ class M_Categoria extends MY_Model
 			SELECT
 				idTipoCategoria AS id
 				, nombre AS value
-			FROM compras.tipoCategoria
+			FROM compras.itemCategoria
 			WHERE estado = 1
 		";
 
@@ -39,14 +39,14 @@ class M_Categoria extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['categoria']) ? " AND a.nombre LIKE '%" . $params['categoria'] . "%'" : "";
-		$filtros .= !empty($params['idCategoriaArticulo']) ? ' AND a.idCategoriaArticulo = ' . $params['idCategoriaArticulo'] : '';
+		$filtros .= !empty($params['categoria']) ? ' AND a.idItemCategoria = ' . $params['idItemCategoria'] : '';
 
 		$sql = "
 			SELECT
-				a.idCategoriaArticulo
+				a.idItemCategoria
 				, a.nombre AS categoria
 				, a.estado
-			FROM compras.categoriaArticulo a
+			FROM compras.itemCategoria a
 			WHERE 1 = 1
 			{$filtros}
 		";
@@ -70,7 +70,7 @@ class M_Categoria extends MY_Model
 		$sql = "
 			SELECT
 				idCategoriaArticulo
-			FROM compras.categoriaArticulo a
+			FROM compras.itemArticulo a
 			WHERE
 			(a.nombre LIKE '%{$params['nombre']}%')
 			{$filtros}
