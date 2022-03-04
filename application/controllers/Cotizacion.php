@@ -30,7 +30,7 @@ class Cotizacion extends MY_Controller
             'assets/custom/js/cotizacion'
         );
 
-        $config['data']['icon'] = 'fas fa-money-bill';
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
         $config['data']['title'] = 'Cotizacion';
         $config['data']['message'] = 'Lista de Cotizacions';
         $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
@@ -283,7 +283,7 @@ class Cotizacion extends MY_Controller
         // );
         // $this->email->bcc($bcc);
 
-        $this->email->subject('IMPACTBUSSINESS - NUEVO PRESUPUESTO GENERADO');
+        $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
         $html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
         $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
         $this->email->message($correo);

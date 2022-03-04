@@ -359,3 +359,4 @@ ERROR - 2022-03-03 15:53:40 --> Query error: [Microsoft][ODBC Driver 17 for SQL 
 			WHERE 1 = 1
 			
 		
+ERROR - 2022-03-03 17:09:35 --> Unable to connect to the database
