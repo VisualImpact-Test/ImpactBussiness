@@ -118,7 +118,8 @@ if (empty($idCuenta) || $idCuenta != 2) {
 						<div class="linetime-timeline__box">
 							<div class="linetime-timeline__date linetime-timeline__date_disabled">
 								<span class="linetime-timeline__day">
-									<sup>#</sup> 0 </span>
+									<sup>#</sup> 
+									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="5">1</a>
 								<span class="linetime-timeline__month">Etapa 5</span>
 							</div>
 							<div class="linetime-timeline__post">
@@ -201,7 +202,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 									<i class="fas fa-square td-enproceso"></i> Registrado
 								</td>
 							</tr>
-							<tr data-estado="3" data-cod-req='25'>
+							<tr data-estado="5" data-cod-req='25'>
 								<td class="text-center">3</td>
 								<td>
 									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2766">COTI-0000025</a>
@@ -220,6 +221,27 @@ if (empty($idCuenta) || $idCuenta != 2) {
 								</td>
 								<td>
 									<i class="fas fa-square td-enproceso"></i> Confirmado
+								</td>
+							</tr>
+							<tr data-estado="3" data-cod-req='26'>
+								<td class="text-center">3</td>
+								<td>
+									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2766">COTI-0000026</a>
+								</td>
+								<td class="text-center">02/03/2022</td>
+								<td class="text-center">-</td>
+								<td class="text-center">-</td>
+								<td>P&G</td>
+								<td>HSM MODERNO</td>
+								<td>BAILON PEREZ MARGARITA</td>
+
+								<td>COTIZACION EQUIPOS DICIEMBRE 2021</td>
+
+								<td class="text-center bg-ok">
+									<strong>-</strong>
+								</td>
+								<td>
+									<i class="fas fa-square td-enproceso"></i> Finalizado
 								</td>
 							</tr>
 
@@ -411,6 +433,69 @@ if (empty($idCuenta) || $idCuenta != 2) {
 										<li class="active">Confirmado / 50%</li>
 										<li>OC Pendiente</li>
 										<li>Finalizado</li>
+									</ul>
+								</div>
+							</div>
+							<hr>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-12 d-none dvDetalleReq" data-cod-req="26">
+		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
+			<div class="card-header " style="width: 100%;">
+				<h5 class="card-title">
+					COD COTIZACION: COTI-0000026
+				</h5>
+			</div>
+			<div class="card-body  vista-efectividad" style="width: 100%;">
+				<div class="row">
+					<div class="col-md-12">
+						<div id="dv-requerimiento">
+							<div class="row">
+
+								<div class="col-md-4">
+									<div class="req-content">
+										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
+										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
+										<br> Área: <strong>HSM MODERNO</strong>
+										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
+										<br> Cotizacion: <strong>COTIZACION EQUIPOS DICIEMBRE 2021</strong>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="req-content">
+										<br> Fecha Término: <strong>02/03/2022</strong>
+										<br> Hora Término: <strong>12:22:47</strong>
+										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
+											<strong>
+												<i class="far fa-calendar-check"></i> 1 </strong>
+										</span>
+										<br> Etapa Actual: <strong>
+											<i class="fas fa-square td-enproceso"></i> Confirmado </strong>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="req-content">
+										<strong style="text-decoration: underline;">Datos Complementarios</strong>
+										<br>
+										Progreso de Costo: <strong>S/. 3000</strong> <br>
+										Cantidad de Items: <strong>10</strong> <br>
+									</div>
+								</div>
+
+							</div>
+							<hr>
+							<div class="row">
+								<div class="col-md-12">
+									<ul class="timeline new-ul">
+										<li class="active">Registrado</li>
+										<li class="active">Enviado</li>
+										<li class="active">Confirmado / 100%</li>
+										<li class="active">OC Pendiente</li>
+										<li class="active">Finalizado</li>
 									</ul>
 								</div>
 							</div>
