@@ -66,7 +66,7 @@ class Proveedor extends MY_Controller
                 'correoContacto' => $row['correoContacto'],
                 'numeroContacto' => $row['numeroContacto'],
                 'informacionAdicional' => $row['informacionAdicional'],
-                'idEstado' => $row['idEstado'],
+                'idEstado' => $row['idProveedorEstado'],
                 'estado' => $row['estado'],
                 'estadoIcono' => $row['estadoIcono'],
                 'estadoToggle' => $row['estadotoggle'],
@@ -223,7 +223,7 @@ class Proveedor extends MY_Controller
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
             'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
-            'idEstado' => 1,
+            'idProveedorEstado' => 1,
             'nombreContacto' => $post['nombreContacto'],
             'correoContacto' => $post['correoContacto'],
             'numeroContacto' => $post['numeroContacto']
@@ -398,7 +398,7 @@ class Proveedor extends MY_Controller
         $data = [];
 
         $data['update'] = [
-            'idEstado' => 2
+            'idProveedorEstado' => 2
         ];
 
         $data['tabla'] = 'compras.proveedor';
@@ -431,7 +431,7 @@ class Proveedor extends MY_Controller
         $data = [];
 
         $data['update'] = [
-            'idEstado' => ($post['estado'] == 2) ? 3 : 2
+            'idProveedorEstado' => ($post['estado'] == 2) ? 3 : 2
         ];
 
         $data['tabla'] = 'compras.proveedor';

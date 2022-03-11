@@ -52,7 +52,7 @@
                             <th style="width: 7%;">Proveedor</th>
                             <th style="width: 7%;">Fecha de Proceso</th>
                             <th style="width: 8%;">Estado</th>
-                            <!-- <th style="width: 8%;">Opciones</th> -->
+                            <th style="width: 8%;">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,7 +65,7 @@
                             <td>Nueva Cuenta SAC</td>
                             <td>03/03/2022 17:42:38</td>
                             <td>Pendiente de Ingreso</td>
-                            <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="CAMISA AZUL MANGA LARGA M"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
+                            <td><a href="javascript:;" class="btn btn-outline-success border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="CAMISA AZUL MANGA LARGA M"><i class="fa fa-lg fa-check" title="Confirmar ingreso"></i></a></td>
                         </tr>
                         <tr class="default">
                             <td>2</td>
@@ -76,7 +76,7 @@
                             <td>-</td>
                             <td>03/03/2022 17:41:45</td>
                             <td>Pendiente de Ingreso</td>
-                            <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="GESTOR DE TRADE MARKETING"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
+                            <td><a href="javascript:;" class="btn btn-outline-success border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="CAMISA AZUL MANGA LARGA M"><i class="fa fa-lg fa-check" title="Confirmar ingreso"></i></a></td>
                         </tr>
                         <tr class="default">
                             <td>3</td>
@@ -87,6 +87,7 @@
                             <td>-</td>
                             <td>03/03/2022 17:42:05</td>
                             <td>Confirmado</td>
+                            <td></td>
                             <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="EQUIPO MOVIL SAMSUNG A10S"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                         </tr>
                         <tr class="default">
@@ -98,6 +99,7 @@
                             <td>Proveedores San Marcos S.A.C</td>
                             <td>03/03/2022 17:42:56</td>
                             <td>Confirmado</td>
+                            <td></td>
                             <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="26" data-nombrearticulo="TRANSPORTE DE PERSONAL"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                         </tr>
                     </tbody>

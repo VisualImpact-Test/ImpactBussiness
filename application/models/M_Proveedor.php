@@ -59,9 +59,9 @@ class M_Proveedor extends MY_Model
 	{
 		$sql = "
 			SELECT
-				idEstado AS id
+				idProveedorEstado AS id
 				, nombre AS value
-			FROM compras.estadoProveedor
+			FROM compras.proveedorEstado
 			WHERE estado = 1
 		";
 
@@ -106,7 +106,7 @@ class M_Proveedor extends MY_Model
 	public function obtenerInformacionProveedores($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['estadoProveedor']) ? ' AND p.idEstado = ' . $params['estadoProveedor'] : '';
+		$filtros .= !empty($params['proveedorEstado']) ? ' AND p.idProveedorEstado = ' . $params['proveedorEstado'] : '';
 		$filtros .= !empty($params['rubroProveedor']) ? ' AND p.idRubro = ' . $params['rubroProveedor'] : '';
 		$filtros .= !empty($params['metodoPagoProveedor']) ? ' AND p.idMetodoPago = ' . $params['metodoPagoProveedor'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
@@ -134,7 +134,7 @@ class M_Proveedor extends MY_Model
 				, p.correoContacto
 				, p.numeroContacto
 				, p.informacionAdicional
-				, ep.idEstado
+				, ep.idProveedorEstado
 				, ep.nombre AS estado
 				, ep.icono AS estadoIcono
 				, ep.toggle AS estadotoggle
@@ -146,7 +146,7 @@ class M_Proveedor extends MY_Model
 			JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento
 			AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 			AND ISNULL(zc.cod_distrito, 1) = (CASE WHEN zc.cod_distrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
-			JOIN compras.estadoProveedor ep ON p.idEstado = ep.idEstado
+			JOIN compras.proveedorEstado ep ON p.idProveedorEstado = ep.idProveedorEstado
 			AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}

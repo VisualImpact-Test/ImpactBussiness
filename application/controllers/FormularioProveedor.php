@@ -53,7 +53,7 @@ class FormularioProveedor extends MY_Controller
 			'cod_ubigeo' => $post['distrito'],
 			'direccion' => $post['direccion'],
 			'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
-			'idEstado' => 1,
+			'idProveedorEstado' => 1,
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto']
@@ -124,7 +124,7 @@ class FormularioProveedor extends MY_Controller
 			'smtp_host' => 'ssl://smtp.googlemail.com',
 			'smtp_port' => 465,
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
-			'smtp_pass' => 'v1su4l2010',
+			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'
 		);
 
