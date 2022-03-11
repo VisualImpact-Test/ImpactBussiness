@@ -9,6 +9,7 @@ class Cotizacion extends MY_Controller
         parent::__construct();
         $this->load->model('M_Cotizacion', 'model');
         $this->load->model('M_Item', 'model_item');
+        $this->load->model('M_control', 'model_control');
     }
 
     public function index()
@@ -112,7 +113,6 @@ class Cotizacion extends MY_Controller
         $dataParaVista = [];
 
         $data = $this->model->obtenerInformacionCotizacionDetalle($post)['query']->result_array();
-
         foreach ($data as $key => $row) {
             $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
             $dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
@@ -131,6 +131,8 @@ class Cotizacion extends MY_Controller
             $dataParaVista['detalle'][$key]['fecha'] = !empty($row['fechaModificacion']) ? $row['fechaModificacion'] : $row['fechaCreacion'];
             $dataParaVista['detalle'][$key]['cotizacionDetalleEstado'] = $row['cotizacionDetalleEstado'];
         }
+
+        $dataParaVista['estados'] = $this->model_control->get_estados_cotizacion()->result_array();
 
         $result['result'] = 1;
         $result['msg']['title'] = 'Visualizar Cotizacion';
