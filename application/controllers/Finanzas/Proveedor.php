@@ -26,16 +26,16 @@ class Proveedor extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/proveedor'
+            'assets/custom/js/Finanzas/proveedor'
         );
 
         $config['data']['icon'] = 'fas fa-cart-plus';
-        $config['data']['title'] = 'Proveedores';
+        $config['data']['title'] = 'Seleccion de Proveedores';
         $config['data']['message'] = 'Lista de Proveedores';
         $config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
         $config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
         $config['data']['estado'] = $this->model->obtenerEstado()['query']->result_array();
-        $config['view'] = 'modulos/proveedor/index';
+        $config['view'] = 'modulos/Finanzas/proveedor/index';
 
         $this->view($config);
     }
@@ -50,6 +50,8 @@ class Proveedor extends MY_Controller
         $departamentosCobertura = [];
         $provinciasCobertura = [];
         $distritosCobertura = [];
+
+        $post['proveedorEstado'] = 1;
         $data = $this->model->obtenerInformacionProveedores($post)['query']->result_array();
 
         foreach ($data as $key => $row) {
@@ -84,7 +86,7 @@ class Proveedor extends MY_Controller
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
-            $html = $this->load->view("modulos/Proveedor/reporte", ['datos' => $dataParaVista], true);
+            $html = $this->load->view("modulos/Finanzas/Proveedor/reporte", ['datos' => $dataParaVista], true);
         }
 
         $result['result'] = 1;
@@ -202,7 +204,7 @@ class Proveedor extends MY_Controller
             $result['msg']['title'] = 'Validar Proveedor';
             $dataParaVista['disabled'] = true;
         }
-        $result['data']['html'] = $this->load->view("modulos/Proveedor/formularioActualizacion", $dataParaVista, true);
+        $result['data']['html'] = $this->load->view("modulos/Finanzas/Proveedor/formularioActualizacion", $dataParaVista, true);
 
         echo json_encode($result);
     }

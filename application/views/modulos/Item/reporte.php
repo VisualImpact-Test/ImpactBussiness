@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-item" class="mb-0 table table-bordered text-nowrap" width="100%">
+    <table id="tb-item" class="ui celled table" width="100%">
         <thead>
             <tr>
                 <th class="td-center">#</th>
@@ -8,6 +8,7 @@
                 <th>MARCA</th>
                 <th>CATEGORIA</th>
                 <th>ITEM</th>
+                <th>CARACTERISTICAS</th>
                 <th>EQUIVALENTE EN LOGISTICA</th>
                 <th class="td-center">ESTADO</th>
             </tr>
@@ -32,6 +33,7 @@
                     <td class="td-left"><?= verificarEmpty($row['itemMarca'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['item'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['caracteristicas'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['equivalenteLogistica'], 3); ?></td>
                     <td class="text-center style-icons">
                         <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idItem']; ?>"><?= $mensajeEstado; ?></span>

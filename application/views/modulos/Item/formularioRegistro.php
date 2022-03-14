@@ -6,6 +6,10 @@
                 <input class="form-control col-md-7 <?= (!empty($nombreItem)) ? "disabled" : "" ?>" id="nombre" name="nombre" patron="requerido" value="<?= (!empty($nombreItem)) ? $nombreItem : "" ?>">
             </div>
             <div class="control-group child-divcenter row w-100">
+                <label class="form-control col-md-5" for="nombre" style="border:0px;">Caracteristicas :</label>
+                <input class="form-control col-md-7 <?= (!empty($caracteristicasItem)) ? "disabled" : "" ?>" id="caracteristicas" name="caracteristicas" patron="requerido" value="">
+            </div>
+            <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
                 <input class="form-control col-md-7" id="equivalente" name="equivalente">
                 <input class="d-none" id="idItemLogistica" name="idItemLogistica">

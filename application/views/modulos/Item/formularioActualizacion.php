@@ -7,6 +7,10 @@
                 <input class="d-none" id="idItem" name="idItem" patron="requerido" value="<?= $informacionItem['idItem'] ?>">
             </div>
             <div class="control-group child-divcenter row w-100">
+                <label class="form-control col-md-5" for="nombre" style="border:0px;">Caracteristicas :</label>
+                <input class="form-control col-md-7" id="caracteristicas" name="caracteristicas" patron="requerido" value="<?= $informacionItem['caracteristicas'] ?>">
+            </div>
+            <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
                 <input class="form-control col-md-7" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>">
                 <input class="d-none" id="idItemLogistica" name="idItemLogistica" value="<?= $informacionItem['idItemLogistica'] ?>">

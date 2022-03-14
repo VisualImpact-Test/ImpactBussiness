@@ -689,9 +689,9 @@ table {
 }
 
 /* DT - Search */
-div.dataTables_wrapper div.dataTables_filter {
+/* div.dataTables_wrapper div.dataTables_filter {
   float: left !important;
-}
+} */
 
 div.dataTables_wrapper div.dataTables_filter input {
   width: 170px !important;
@@ -1116,3 +1116,25 @@ li.select2-results__option:empty {
   display: none;
 }
 
+.ui.stackable.grid {
+  margin-left: 1rem;
+}
+
+.row.dt-table {
+  overflow-x: auto
+}
+
+.ui.table>tbody>tr>.td-center, .ui.table>tr>.td-center {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+.ui.table>tbody>tr>.td-right, .ui.table>tr>.td-right {
+  text-align: right !important;
+  vertical-align: middle !important;
+}
+
+.ui.table>tbody>tr>.td-left, .ui.table>tr>.td-left {
+  text-align: center !important;
+  vertical-align: left !important;
+}

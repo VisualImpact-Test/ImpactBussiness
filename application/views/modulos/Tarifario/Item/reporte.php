@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-item" class="mb-0 table table-bordered text-nowrap" width="100%">
+    <table id="tb-item" class="ui celled table" width="100%">
         <thead>
             <tr>
                 <th class="td-center">#</th>
@@ -38,7 +38,7 @@
                         <div class="text-left" style="width:90%; display: inline-block;">
                             <?= verificarEmpty($row['proveedor'], 3); ?>
                         </div>
-                        <div class="text-right" style="width:10%; display: inline-block;">
+                        <div class="text-right" style="width:9%; display: inline-block;">
                             <?= $row['flag_actual'] == 1 ? '<i class="fas fa-lg fa-circle" style="color: royalblue;"></i>' : '' ?>
                         </div>
                     </td>

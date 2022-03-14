@@ -36,7 +36,7 @@
                         <?
                         } else {
                         ?>
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-validar" title="Solicitar Aprobacion"><i class="fa fa-lg fa-file-import"></i></a>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-validar" title="Aprobar"><i class="fa fa-lg fa-check-double"></i></a>
                         <?
                         }
                         ?>

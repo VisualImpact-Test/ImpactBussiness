@@ -94,6 +94,7 @@ class M_Item extends MY_Model
 				, ca.idItemCategoria
 				, ca.nombre AS itemCategoria
 				, a.nombre AS item
+				, a.caracteristicas
 				, a_l.idArticulo AS idItemLogistica
 				, a_l.nombre AS equivalenteLogistica
 				, a.estado
