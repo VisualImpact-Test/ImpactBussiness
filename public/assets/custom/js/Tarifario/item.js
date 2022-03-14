@@ -204,7 +204,12 @@ var Item = {
 	actualizarAutocomplete: function () {
 		$("#nombre").autocomplete({
 			source: Item.items[1],
-			minLength: 0,
+			search: function( event, ui ) {
+
+			},
+			response: function( event, ui ) {
+				
+			},
 			select: function (event, ui) {
 				event.preventDefault();
 
@@ -215,8 +220,8 @@ var Item = {
 				$(this).parents(".control-group").find("#idItem").val(ui.item.value);
 			},
 			appendTo: "#modal-page-" + modalId,
-			max: 5,
-			minLength: 5,
+			max: 10,
+			minLength: 2,
 		});
 	},
 }

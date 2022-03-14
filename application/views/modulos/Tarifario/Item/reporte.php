@@ -10,6 +10,7 @@
                 <th>ITEM</th>
                 <th>PROVEEDOR</th>
                 <th>COSTO</th>
+                <th>VIGENCIA</th>
                 <th class="td-center">ESTADO</th>
             </tr>
         </thead>
@@ -43,6 +44,7 @@
                         </div>
                     </td>
                     <td class="text-right"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
+                    <td class="text-center"><?= empty($row['fechaVigencia']) ? "-" : date_change_format($row['fechaVigencia']); ?></td>
                     <td class="text-center style-icons">
                         <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idItemTarifario']; ?>"><?= $mensajeEstado; ?></span>
                     </td>

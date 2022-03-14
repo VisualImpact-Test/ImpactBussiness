@@ -157,7 +157,8 @@ class Item extends MY_Controller
             'idItem' => $post['idItem'],
             'idProveedor' => $post['proveedor'],
             'costo' => $post['costo'],
-            'flag_actual' => empty($post['actual']) ? 0 : 1
+            'flag_actual' => empty($post['actual']) ? 0 : 1,
+            'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
         ];
 
         if (!empty($post['actual'])) {
@@ -231,7 +232,9 @@ class Item extends MY_Controller
             'idItem' => $post['idItem'],
             'idProveedor' => $post['proveedor'],
             'costo' => $post['costo'],
-            'flag_actual' => empty($post['actual']) ? 0 : 1
+            'flag_actual' => empty($post['actual']) ? 0 : 1,
+            'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
+
         ];
 
         if (!empty($post['actual'])) {
