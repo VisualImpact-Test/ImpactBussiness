@@ -137,7 +137,19 @@
                     <tfoot class="full-width">
                         <tr>
                             <th></th>
-                            <th colspan="8">
+                            <th colspan="3"></th>
+                            <th><a class="ui tag large label">Total</a></th>
+                            <th>
+                                <div class="ui right floated">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon3">S/.</span>
+                                        </div>
+                                        <input class="form-control costoForm" type="number" name="costoForm" placeholder="0" readonly="">
+                                    </div>
+                                </div>
+                            </th>
+                            <th colspan="3">
                                 <div class="ui right floated small primary labeled icon button btn-add-row" title="Añadir Fila">
                                     <i class="plus icon"></i> Añadir Fila
                                 </div>
@@ -155,11 +167,30 @@
             <!-- <div id="div-ajax-detalle" style="text-align:center">
                 <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-add-row" title="Añadir Fila" style="margin:10px;"><i class="fad fa-lg fa-plus"></i></a>
             </div> -->
+            <div class="ui form" style="margin-top:10px;">
+                <div class="fields">
+                    <div class="five wide field">
+                        <label>Prioridad:</label>
+                        <select class="ui search dropdown parentDependiente" id="prioridadForm" name="prioridadForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
+                        </select>
+                    </div>
+                    <div class="six wide field">
+                        <label>Motivo:</label>
+                        <input id="motivoForm" name="motivoForm" patron="requerido" placeholder="Motivo">
+                    </div>
+                </div>
+                <div class="fields">
+                    <div class="eleven wide field">
+                        <label>Comentario:</label>
+                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="Comentario">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </form>
 <script>
-    $('select.dropdown').dropdown();
     $('.date-semantic').calendar({
         type: 'date',
         text: {

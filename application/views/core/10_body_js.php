@@ -14,15 +14,6 @@
 		<!-- <script type="text/javascript" src="assets/libs/semanticui/semantic.min.js?v=<?=$this->version;?>"></script> -->
 		<!-- <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script> -->
 
-		<!-- -->
-		<script type="text/javascript" src="assets/custom/js/core/system.js?v=<?=$this->version;?>"></script>
-		<script type="text/javascript" src="assets/custom/js/core/functions.js?v=<?=$this->version;?>"></script>
-		<script type="text/javascript" src="assets/libs/masonry/masonry.pkgd.js?v=<?=$this->version;?>"></script>
-		<script type="text/javascript" src="assets/libs/slick/slick.js?v=<?=$this->version;?>"></script>
-		<script type="text/javascript" src="assets/libs/notify/bootstrap-notify.js?v=<?=$this->version;?>"></script>
-		<script type="text/javascript" src="assets/libs/customizer.min.js?v=<?=$this->version;?>"></script>
-		
-		<!-- <script src="assets/libs/datatables/datatables.min.js"></script> -->
 		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 		<script src="assets/libs/tableTools/TableTools.js"></script>
 
@@ -32,6 +23,15 @@
 		<script src="assets/libs/fileSaver/FileSaver.min.js"></script>
 
 		<script src="assets/libs/jquery-ui-1.12.1/js/jquery-ui-1.12.1.js"></script>
+		<!-- -->
+		<script type="text/javascript" src="assets/custom/js/core/system.js?v=<?=$this->version;?>"></script>
+		<script type="text/javascript" src="assets/custom/js/core/functions.js?v=<?=$this->version;?>"></script>
+		<script type="text/javascript" src="assets/libs/masonry/masonry.pkgd.js?v=<?=$this->version;?>"></script>
+		<script type="text/javascript" src="assets/libs/slick/slick.js?v=<?=$this->version;?>"></script>
+		<script type="text/javascript" src="assets/libs/notify/bootstrap-notify.js?v=<?=$this->version;?>"></script>
+		<script type="text/javascript" src="assets/libs/customizer.min.js?v=<?=$this->version;?>"></script>
+		
+		<!-- <script src="assets/libs/datatables/datatables.min.js"></script> -->
 	
 		<?foreach($script as $js){?>
 			<script src="<?=$js?>.js?v=<?=$this->version;?>"></script>
