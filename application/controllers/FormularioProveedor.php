@@ -133,7 +133,7 @@ class FormularioProveedor extends MY_Controller
 		$this->email->set_newline("\r\n");
 
 		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to('harry.pineda@visualimpact.com.pe');
+		$this->email->to('aaron.ccenta@visualimpact.com.pe');
 
 		$data = [];
 		$dataParaVista = [];
@@ -174,7 +174,8 @@ class FormularioProveedor extends MY_Controller
 		// $this->email->bcc($bcc);
 
 		$this->email->subject('IMPACTBUSSINESS - NUEVA ENTRADA DE PROVEEDORES');
-		$html = $this->load->view("formularioProveedores/informacionProveedor", $dataParaVista, true);
+		// $html = $this->load->view("formularioProveedores/informacionProveedor", $dataParaVista, true);
+		$html = $this->load->view("email/header", $dataParaVista, true);
 		$correo = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);
 		$this->email->message($correo);
 
