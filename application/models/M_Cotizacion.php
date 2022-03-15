@@ -76,6 +76,26 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerPrioridadCotizacion($params = [])
+	{
+		$sql = "
+			SELECT
+				idPrioridad AS id
+				, nombre AS value
+			FROM compras.cotizacionPrioridad
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerInformacionCotizacion($params = [])
 	{
 		$filtros = "";

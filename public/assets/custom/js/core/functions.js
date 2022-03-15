@@ -1397,6 +1397,7 @@ var Fn = {
 	},
 
 	loadSemanticFunctions: function () {
+		$('select.semantic-dropdown').dropdown();
 		$('select.dropdown.parentDependiente').dropdown({
 			onChange: function (noc) {
 				let childDependiente = $(this).data('childdependiente');
@@ -1430,6 +1431,32 @@ var Fn = {
 				}
 			}
 		});
+		$('.date-semantic').calendar({
+			type: 'date',
+			text: {
+				days: ['S', 'L', 'M', 'MM', 'J', 'V', 'S'],
+				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+				today: 'Hoy',
+				now: 'Ahora',
+				am: 'AM',
+				pm: 'PM'
+			},
+			onChange: function (date) {
+				var year = date.getFullYear();
+				var month = date.getMonth() + 1;
+				var day = date.getDate();
+				if (month < 10) {
+					month = '0' + month;
+				}
+				if (day < 10) {
+					day = '0' + day;
+				}
+
+				$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day);
+			}
+		});
+		$('.ui.checkbox').checkbox();
 	}
 
 }
