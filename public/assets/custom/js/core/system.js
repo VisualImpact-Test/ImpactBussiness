@@ -281,6 +281,8 @@ var View = {
 			setTimeout(function () {
 				$('.modal-backdrop').not('.modal-stack').css('z-index', zIndex - 1).addClass('modal-stack');
 			}, 0);
+
+			Fn.loadSemanticFunctions();
 		});
 
 		// $(document).on('show.bs.modal','.modal',function(e){
