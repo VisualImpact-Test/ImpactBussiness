@@ -40,18 +40,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- <div class="two wide field d-flex align-items-center">
-                        <i class="semaforoForm semaforoForm-red fad fa-lg fa-flag-alt"></i>
-                        <label class="semaforoLabel">7 dias</label>
-                    </div>
-                    <div class="two wide field d-flex align-items-center">
-                        <i class="semaforoForm semaforoForm-yellow fad fa-lg fa-flag-alt"></i>
-                        <label class="semaforoLabel">8 a 15 dias</label>
-                    </div>
-                    <div class="two wide field d-flex align-items-center">
-                        <i class="semaforoForm semaforoForm-green semaforoForm-red fad fa-lg fa-flag-alt"></i>
-                        <label class="semaforoLabel">+ 15 dias</label>
-                    </div> -->
                     <div class="six wide field">
                         <a class="ui teal image label">
                             <i class="fa fa-flag-alt"></i>
@@ -81,14 +69,14 @@
                     <thead class="thead-default ui">
                         <tr>
                             <th style="width: 3%;" class="text-center">#</th>
-                            <th style="width: 15%;">Tipo Item</th>
-                            <th style="width: 40%;">Item</th>
+                            <th style="width: 12%;">Tipo Item</th>
+                            <th style="width: 35%;">Item</th>
                             <th style="width: 20%;">Características</th>
                             <th style="width: 10%;" class="text-center">Cantidad</th>
-                            <th style="width: 10%;" class="text-center">Costo</th>
+                            <th style="width: 7%;" class="text-center">Costo</th>
                             <th style="width: 3%;" class="text-center"></th>
-                            <th style="width: 10%;" class="text-center">Subtotal</th>
-                            <th class="text-center"></th>
+                            <th style="width: 7%;" class="text-center">Subtotal</th>
+                            <th style="width: 3%;" class="text-center"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,19 +103,22 @@
                             <td>
                                 <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" max="10000">
                             </td>
-                            <td>
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text" id="basic-addon3">S/.</span>
-                                    </div>
-                                    <input class="form-control costoForm" type="number" name="costoForm" placeholder="0" readonly>
+                            <td class="text-center">
+                                <div class="ui image large label">
+                                    <img src="assets/images/iconos/sol_peruano_bn.png">
+                                    <label class="costoFormLabel" style="margin:0px;">0</label>
                                 </div>
+                                <input class="form-control costoForm" type="hidden" name="costoForm" placeholder="0" readonly>
                             </td>
                             <td>
                                 <i class="semaforoForm fad fa-lg fa-flag-alt"></i>
                             </td>
-                            <td>
-                                <input class="form-control subtotalForm" type="number" name="subtotalForm" readonly>
+                            <td class="text-center">
+                                <div class="ui image large label">
+                                    <img src="assets/images/iconos/sol_peruano_bn.png">
+                                    <label class="subtotalFormLabel" style="margin:0px;">0</label>
+                                </div>
+                                <input class="form-control subtotalForm" type="hidden" name="subtotalForm" placeholder="0" readonly>
                             </td>
                             <td class="text-center">
                                 <a href="javascript:;" class="btn btn-outline-secondary border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
@@ -139,40 +130,30 @@
                             <th></th>
                             <th colspan="3"></th>
                             <th><a class="ui tag large label">Total</a></th>
-                            <th>
+                            <th class="text-center">
                                 <div class="ui right floated">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon3">S/.</span>
-                                        </div>
-                                        <input class="form-control costoForm" type="number" name="costoForm" placeholder="0" readonly="">
+                                    <div class="ui image large label">
+                                        <img src="assets/images/iconos/sol_peruano.png">
+                                        <label class="totalFormLabel" style="margin:0px;">0</label>
                                     </div>
+                                    <input class="form-control costoForm" type="hidden" name="costoForm" placeholder="0" readonly="">
                                 </div>
                             </th>
                             <th colspan="3">
                                 <div class="ui right floated small primary labeled icon button btn-add-row" title="Añadir Fila">
                                     <i class="plus icon"></i> Añadir Fila
                                 </div>
-                                <!-- <div class="ui small button">
-                                    Approve
-                                </div>
-                                <div class="ui small disabled button">
-                                    Approve All
-                                </div> -->
                             </th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
-            <!-- <div id="div-ajax-detalle" style="text-align:center">
-                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-add-row" title="Añadir Fila" style="margin:10px;"><i class="fad fa-lg fa-plus"></i></a>
-            </div> -->
             <div class="ui form" style="margin-top:10px;">
                 <div class="fields">
                     <div class="five wide field">
                         <label>Prioridad:</label>
-                        <select class="ui search dropdown parentDependiente" id="prioridadForm" name="prioridadForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
-                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
+                        <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
+                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase']); ?>
                         </select>
                     </div>
                     <div class="six wide field">
@@ -190,31 +171,3 @@
         </div>
     </div>
 </form>
-<script>
-    $('.date-semantic').calendar({
-        type: 'date',
-        text: {
-            days: ['S', 'L', 'M', 'MM', 'J', 'V', 'S'],
-            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            today: 'Hoy',
-            now: 'Ahora',
-            am: 'AM',
-            pm: 'PM'
-        },
-        onChange: function(date) {
-            var year = date.getFullYear();
-            var month = date.getMonth() + 1;
-            var day = date.getDate();
-            if (month < 10) {
-                month = '0' + month;
-            }
-            if (day < 10) {
-                day = '0' + day;
-            }
-
-            $(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day);
-        }
-    });
-    $('.ui.checkbox').checkbox();
-</script>

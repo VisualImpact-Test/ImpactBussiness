@@ -1112,6 +1112,10 @@ legend.scheduler-border {
   border-color: #eb211d !important;
 }
 
+.has-error.dropdown {
+  border-color: #eb211d !important;
+}
+
 li.select2-results__option:empty {
   display: none;
 }
