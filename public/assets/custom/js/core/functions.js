@@ -63,7 +63,7 @@ var Fn = {
 				modal+="<div class='modal-dialog "+(!$.isNull(config.large)? 'modal-lg' :'')+"' "+(!$.isNull(config.width)?"style='max-width: unset;width:"+config.width+"'":'')+">";
 					modal+="<div class='modal-content " + (!$.isNull(config.class) ? 'modal-content-' + config.class : '') + "'>";
 						modal+="<div class='modal-header'>";
-							modal+="<h4 class='modal-title'>"+site_name+" - "+config.title+"</h4>";
+							modal+="<h4 class='modal-title' style='margin:auto;'>"+site_name+" | "+config.title+"</h4>";
 						modal+="</div>";
 						modal+="<div class='modal-body'>";
 							if( !$.isNull(config.content) ) modal+=config.content;

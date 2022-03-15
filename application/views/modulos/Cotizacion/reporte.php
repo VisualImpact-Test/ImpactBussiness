@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-cotizacion" class="mb-0 table table-bordered text-nowrap" width="100%">
+    <table id="tb-cotizacion" class="ui celled table" width="100%">
         <thead>
             <tr>
                 <th class="td-center">#</th>

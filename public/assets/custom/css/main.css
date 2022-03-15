@@ -1108,8 +1108,8 @@ legend.scheduler-border {
   justify-content: center;
 }
 
-.has-error input, .has-error select, .has-error span span span.select2-selection{
-  border-color: #eb211d;
+.has-error input, .has-error select, .has-error span span span.select2-selection {
+  border-color: #eb211d !important;
 }
 
 li.select2-results__option:empty {
@@ -1137,4 +1137,43 @@ li.select2-results__option:empty {
 .ui.table>tbody>tr>.td-left, .ui.table>tr>.td-left {
   text-align: center !important;
   vertical-align: left !important;
+}
+
+.badge {
+  font-size: large;
+}
+
+.label-header {
+  font-size: large;
+}
+
+.nuevoItem {
+  background-color: aliceblue;
+}
+
+.btn-add-row {
+  margin-bottom: 10px;
+}
+
+.semaforoForm {
+  /* color: darkred;
+  color: darkgreen;
+  color: #bbbb44; */
+}
+
+.semaforoForm.semaforoForm-red {
+  color: darkred;
+}
+
+.semaforoForm.semaforoForm-yellow {
+  color: #bbbb44;
+}
+
+.semaforoForm.semaforoForm-green {
+  color: darkgreen;
+}
+
+.semaforoLabel {
+  margin-left: 5px !important;
+  font-style: italic;
 }

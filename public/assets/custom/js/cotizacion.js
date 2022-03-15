@@ -129,7 +129,7 @@ var Cotizacion = {
 
 			let $filas = $('#listaItemsCotizacion tbody tr').length;
 			$filas = $filas + 1;
-			let $html = "<tr class='nuevo'><td class='n_fila' >" + $filas + "</td>";
+			let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
 			$html += Cotizacion.htmlG;
 			$html += "</tr>";
 
@@ -161,7 +161,7 @@ var Cotizacion = {
 			$(this).parents('.fila-existente').remove();
 
 			$.each($('#listaItemsCotizacion tbody tr .n_fila'), function (index, value) {
-				$(this).text(Number(index) + 1);
+				$(this).find('.nfila').text(Number(index) + 1);
 			});
 		});
 
@@ -306,7 +306,8 @@ var Cotizacion = {
 				$(this).parents(".nuevo").find(".costoForm").val(ui.item.costo);
 
 				//Llenamos el estado
-				$(this).parents(".nuevo").find(".estadoItemForm").text('EN SISTEMA');
+				$(this).parents(".nuevo").find(".estadoItemForm").removeClass('fa-sparkles');
+				$(this).parents(".nuevo").removeClass('nuevoItem');
 				$(this).parents(".nuevo").find(".idEstadoItemForm").val(1);
 				$(this).parents(".nuevo").find(".idTipoItem").val(ui.item.tipo);
 
