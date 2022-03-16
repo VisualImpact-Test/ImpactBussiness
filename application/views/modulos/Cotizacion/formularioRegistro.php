@@ -35,7 +35,7 @@
                     <div class="five wide field">
                         <div class="inline field">
                             <div class="ui toggle checkbox">
-                                <input type="checkbox" tabindex="0" class="hidden">
+                                <input type="checkbox" tabindex="0" class="hidden" name="igvForm">
                                 <label>Incluye IGV</label>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                         <a class="ui teal image label">
                             <i class="fa fa-flag-alt"></i>
                             Vigencia
-                            <div class="detail">7 dias</div>
+                            <div class="detail">- 7 dias</div>
                         </a>
                         <a class="ui yellow image label">
                             <i class="fa fa-flag-alt"></i>
@@ -70,12 +70,12 @@
                         <tr>
                             <th style="width: 3%;" class="text-center">#</th>
                             <th style="width: 12%;">Tipo Item</th>
-                            <th style="width: 35%;">Item</th>
-                            <th style="width: 20%;">Características</th>
+                            <th style="width: 31%;">Item</th>
+                            <th style="width: 16%;">Características</th>
                             <th style="width: 10%;" class="text-center">Cantidad</th>
-                            <th style="width: 7%;" class="text-center">Costo</th>
+                            <th style="width: 11%;" class="text-center">Costo</th>
                             <th style="width: 3%;" class="text-center"></th>
-                            <th style="width: 7%;" class="text-center">Subtotal</th>
+                            <th style="width: 11%;" class="text-center">Subtotal</th>
                             <th style="width: 3%;" class="text-center"></th>
                         </tr>
                     </thead>
@@ -89,10 +89,9 @@
                             <td>
                                 <div class="ui-widget">
                                     <input class="form-control items" type='text' name='nameItem' patron="requerido">
-                                    <input class="codArticulos" type='hidden' name='idItemForm'>
+                                    <input class="codItems" type='hidden' name='idItemForm'>
 
                                     <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
-                                    <input class="idTipoArticulo" type='hidden' name='idTipoArticulo' value="">
                                 </div>
                             </td>
                             <td>
@@ -101,7 +100,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" max="10000">
+                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </td>
                             <td class="text-center">
                                 <div class="ui image large label">
@@ -129,14 +128,14 @@
                         <tr>
                             <th></th>
                             <th colspan="3"></th>
-                            <th><a class="ui tag large label">Total</a></th>
+                            <th class="text-right"><a class="ui tag large label">Total</a></th>
                             <th class="text-center">
                                 <div class="ui right floated">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano.png">
                                         <label class="totalFormLabel" style="margin:0px;">0</label>
                                     </div>
-                                    <input class="form-control costoForm" type="hidden" name="costoForm" placeholder="0" readonly="">
+                                    <input class="form-control totalForm" type="hidden" name="totalForm" placeholder="0" readonly="">
                                 </div>
                             </th>
                             <th colspan="3">
