@@ -1191,3 +1191,15 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.ui.table thead tr:first-child > th {
+  position: sticky !important;
+  top: 0;
+  z-index: 2;
+}
+
+.ui.table tfoot tr:first-child > th {
+  position: sticky !important;
+  bottom: 0;
+  z-index: 2;
+}

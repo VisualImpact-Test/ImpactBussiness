@@ -140,6 +140,7 @@ var Cotizacion = {
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
 			Cotizacion.actualizarAutocomplete();
+			$("#div-ajax-detalle").animate({ scrollTop: $("#listaItemsCotizacion").height() }, 500);
 		});
 
 		$(document).on('click', '.btn-add-row-cotizacion', function (e) {
