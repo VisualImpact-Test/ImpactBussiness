@@ -82,6 +82,7 @@ class Cotizacion extends MY_Controller
         $dataParaVista['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
         $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
