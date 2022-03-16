@@ -150,6 +150,7 @@ class M_Item extends MY_Model
 				, tfa.costo
 				, tfa.flag_actual
 				, tfa.estado
+				, tfa.fechaVigencia
 			FROM compras.itemTarifario tfa
 			JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
 			JOIN compras.item a ON tfa.idItem = a.idItem
