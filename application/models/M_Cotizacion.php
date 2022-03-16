@@ -188,17 +188,33 @@ class M_Cotizacion extends MY_Model
 	public function obtenerItemServicio()
 	{
 		$sql = "
+			DECLARE @fechaHoy DATE = GETDATE();
+			WITH listTarifario AS (
+				SELECT
+					a.idItem AS value
+					, a.nombre AS label
+					, ta.costo
+					, pr.idProveedor
+					, pr.razonSocial AS proveedor
+					, 1 AS tipo
+					, DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy) AS diasVigencia
+				FROM compras.item a
+				JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
+				LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
+				WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+			)
 			SELECT
-				a.idItem AS value
-				, a.nombre AS label
-				, ta.costo
-				, pr.idProveedor
-				, pr.razonSocial AS proveedor
-				, 1 AS tipo
-			FROM compras.item a
-			LEFT JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
-			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
-			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+				lt.value
+				, lt.label
+				, lt.costo
+				, lt.idProveedor
+				, lt.proveedor
+				, lt.tipo
+				, CASE WHEN diasVigencia <= 7 THEN 'green'
+					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+					ELSE 'red' END
+					AS semaforoVigencia
+			FROM listTarifario lt
 		";
 
 		$result = $this->db->query($sql)->result_array();

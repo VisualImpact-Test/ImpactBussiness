@@ -91,6 +91,7 @@ class Cotizacion extends MY_Controller
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
         }
         foreach ($data['itemServicio'] as $k => $r) {
             $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
@@ -147,7 +148,6 @@ class Cotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-        print_r($post);exit();
         $data = [];
 
         $data['insert'] = [
@@ -155,7 +155,13 @@ class Cotizacion extends MY_Controller
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
-            'idCotizacionEstado' => 2
+            'fechaRequerimiento' => $post['fechaRequerimiento'],
+            'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
+            'total' => $post['totalForm'],
+            'idPrioridad' => $post['prioridadForm'],
+            'motivo' => $post['motivoForm'],
+            'comentario' => $post['comentarioForm'],
+            'idCotizacionEstado' => $post['tipoRegistro']
         ];
 
         $validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
@@ -177,6 +183,9 @@ class Cotizacion extends MY_Controller
         $post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
         $post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
         $post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
+        $post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+        $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
+        $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 
         foreach ($post['nameItem'] as $k => $r) {
             $data['insert'][] = [
@@ -197,7 +206,10 @@ class Cotizacion extends MY_Controller
         $insertDetalle = $this->model->insertarCotizacionDetalle($data);
         $data = [];
 
-        $estadoEmail = $this->enviarCorreo($insert['id']);
+        $estadoEmail = true;
+        if($post['tipoRegistro'] == 2){
+            $estadoEmail = $this->enviarCorreo($insert['id']);
+        }
 
         if (!$insert['estado'] || !$insertDetalle['estado'] || !$estadoEmail) {
             $result['result'] = 0;

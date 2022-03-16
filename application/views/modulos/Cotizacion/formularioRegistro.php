@@ -44,7 +44,7 @@
                         <a class="ui teal image label">
                             <i class="fa fa-flag-alt"></i>
                             Vigencia
-                            <div class="detail">7 dias</div>
+                            <div class="detail">- 7 dias</div>
                         </a>
                         <a class="ui yellow image label">
                             <i class="fa fa-flag-alt"></i>
@@ -89,7 +89,7 @@
                             <td>
                                 <div class="ui-widget">
                                     <input class="form-control items" type='text' name='nameItem' patron="requerido">
-                                    <input class="codArticulos" type='hidden' name='idItemForm'>
+                                    <input class="codItems" type='hidden' name='idItemForm'>
 
                                     <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
                                 </div>
@@ -100,7 +100,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" max="10000">
+                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </td>
                             <td class="text-center">
                                 <div class="ui image large label">

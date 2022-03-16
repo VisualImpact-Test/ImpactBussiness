@@ -1457,6 +1457,15 @@ var Fn = {
 			}
 		});
 		$('.ui.checkbox').checkbox();
+	},
+
+	multiply: function(a, b) {
+		var commonMultiplier = 1000000;
+	
+		a *= commonMultiplier;
+		b *= commonMultiplier;
+	
+		return (a * b) / (commonMultiplier * commonMultiplier);
 	}
 
 }

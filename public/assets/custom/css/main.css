@@ -1166,18 +1166,28 @@ li.select2-results__option:empty {
 }
 
 .semaforoForm.semaforoForm-red {
-  color: darkred;
+  color: #D01919;
 }
 
 .semaforoForm.semaforoForm-yellow {
-  color: #bbbb44;
+  color: #EAAE00;
 }
 
 .semaforoForm.semaforoForm-green {
-  color: darkgreen;
+  color: #009C95;
 }
 
 .semaforoLabel {
   margin-left: 5px !important;
   font-style: italic;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
 }
