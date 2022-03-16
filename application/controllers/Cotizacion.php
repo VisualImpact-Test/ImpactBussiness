@@ -147,6 +147,7 @@ class Cotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
+        print_r($post);exit();
         $data = [];
 
         $data['insert'] = [

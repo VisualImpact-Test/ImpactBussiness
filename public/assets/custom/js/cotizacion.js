@@ -46,8 +46,10 @@ var Cotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar este cotizacion?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar esta cotizacion?" });';
+				btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.enviarCorreoCotizacion()", content: "¿Esta seguro de enviar esta cotizacion?" });';
+				btn[2] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[2] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
@@ -215,47 +217,62 @@ var Cotizacion = {
 				$(".btn-add-row-cotizacion").click();
 			});
 		});
-	},
 
-	registrarCotizacion: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
-		let url = Cotizacion.url + "registrarCotizacion";
-		let config = { url: url, data: jsonString };
-		let diferencias = 0;
+		$(document).on('keyup', '.cantidadForm', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let costoForm = thisControlParents.find('.costoForm');
 
-		$.each($('.idTipoItem'), function (index, value) {
-			if ($(value).val() != '' && $('#tipo').val() != 3) {
-				if ($(value).val() != $('#tipo').val()) {
-					$(value).parents('.nuevo').find('.ui-widget').addClass('has-error');
+			let subTotalForm = thisControlParents.find('.subtotalForm');
+			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
 
-					diferencias++;
-				}
-			}
-		});
+			let subTotal = thisControl.val() * costoForm.val();
 
-		if (diferencias > 0) {
-			++modalId;
-			var btn = [];
-			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de cotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
-
-			return false;
-		}
-
-		$.when(Fn.ajax(config)).then(function (b) {
-			++modalId;
-			var btn = [];
-			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
-			}
-
-			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+			subTotalForm.val(subTotal);
+			subTotalFormLabel.text(subTotal);
 		});
 	},
+
+	// registrarCotizacion: function () {
+	// 	let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+	// 	let url = Cotizacion.url + "registrarCotizacion";
+	// 	let config = { url: url, data: jsonString };
+	// 	let diferencias = 0;
+
+	// 	$.each($('.idTipoItem'), function (index, value) {
+	// 		if ($(value).val() != '' && $('#tipo').val() != 3) {
+	// 			if ($(value).val() != $('#tipo').val()) {
+	// 				$(value).parents('.nuevo').find('.ui-widget').addClass('has-error');
+
+	// 				diferencias++;
+	// 			}
+	// 		}
+	// 	});
+
+	// 	if (diferencias > 0) {
+	// 		++modalId;
+	// 		var btn = [];
+	// 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+	// 		btn[0] = { title: 'Continuar', fn: fn };
+	// 		Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de cotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
+
+	// 		return false;
+	// 	}
+
+	// 	$.when(Fn.ajax(config)).then(function (b) {
+	// 		++modalId;
+	// 		var btn = [];
+	// 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+	// 		if (b.result == 1) {
+	// 			fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+	// 		}
+
+	// 		btn[0] = { title: 'Continuar', fn: fn };
+	// 		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+	// 	});
+	// },
 
 	actualizarCotizacion: function () {
 		++modalId;
@@ -304,6 +321,7 @@ var Cotizacion = {
 					ui.item.costo = 0;
 				}
 				$(this).parents(".nuevo").find(".costoForm").val(ui.item.costo);
+				$(this).parents(".nuevo").find(".costoFormLabel").text(ui.item.costo);
 
 				//Llenamos el estado
 				$(this).parents(".nuevo").find(".estadoItemForm").removeClass('fa-sparkles');
@@ -325,7 +343,7 @@ var Cotizacion = {
 			},
 			appendTo: "#modal-page-" + Cotizacion.modalIdForm,
 			max: 5,
-			minLength: 5,
+			minLength: 3,
 		});
 	},
 
@@ -344,7 +362,7 @@ var Cotizacion = {
 			},
 			appendTo: "#modal-page-" + modalId,
 			max: 5,
-			minLength: 5,
+			minLength: 3,
 		});
 	},
 
