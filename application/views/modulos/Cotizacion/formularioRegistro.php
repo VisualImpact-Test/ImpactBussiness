@@ -91,7 +91,7 @@
                             <th class="text-center"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody >
                         <tr hidden class="default">
                             <td>
                                 <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
