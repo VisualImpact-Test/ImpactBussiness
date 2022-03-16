@@ -1181,3 +1181,14 @@ li.select2-results__option:empty {
   margin-left: 5px !important;
   font-style: italic;
 }
+.ui.table thead tr:first-child > th {
+  position: sticky !important;
+  top: 0;
+  z-index: 2;
+}
+.ui.table tfoot tr:first-child > th {
+  position: sticky !important;
+  bottom: 0;
+  z-index: 2;
+  
+}

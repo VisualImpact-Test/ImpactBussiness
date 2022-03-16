@@ -14,6 +14,7 @@ class Cotizacion extends MY_Controller
 
     public function index()
     {
+
         $config = array();
         $config['nav']['menu_active'] = '131';
         $config['css']['style'] = array(
