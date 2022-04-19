@@ -145,8 +145,8 @@
     </style>
 </head>
 
-<body class="body" style="padding:0 !important; margin:0 !important; display:block !important; min-width:100% !important; width:100% !important; background:#545152; -webkit-text-size-adjust:none">
-    <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#545152">
+<body class="body" style="padding:0 !important; margin:0 !important; display:block !important; min-width:100% !important; width:100% !important; background:white; -webkit-text-size-adjust:none">
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="white">
         <tr>
             <td align="center" valign="top">
                 <table width="650" border="0" cellspacing="0" cellpadding="0" class="mobile-shell">
@@ -242,7 +242,7 @@
                                         <!-- END Section 1 -->
 
                                         <!-- Section 2 -->
-                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#5AB7AC">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#44453F">
                                             <tr>
                                                 <td class="content-spacing" style="font-size:0pt; line-height:0pt; text-align:left" width="30"></td>
                                                 <td>

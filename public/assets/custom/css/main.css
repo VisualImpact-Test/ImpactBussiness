@@ -1203,3 +1203,9 @@ input[type=number] {
   bottom: 0;
   z-index: 2;
 }
+
+.table-row-selection tr:hover {
+  background: #c3c3fa;
+  cursor: pointer;
+}
+
