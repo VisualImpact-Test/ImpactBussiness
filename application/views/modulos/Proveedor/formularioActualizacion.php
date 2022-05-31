@@ -21,8 +21,17 @@
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="metodoPago" style="border:0px;">Método de pago :</label>
-                        <select class="form-control col-md-8" id="metodoPago" name="metodoPago" patron="requerido">
-                            <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $listadoMetodosPago, 'class' => 'text-titlecase', 'selected' => $idMetodoPago]); ?>
+                        <select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" multiple data-live-search="true" patron="requerido">
+                        <?
+
+                       // print_r($proveedorMetodoPago);
+                            foreach ($listadoMetodosPago as $pagos) {
+                            ?>
+                                <option value="<?= $pagos['id']  ?>"  <?= isset($proveedorMetodoPago[$pagos['id']]) ?"selected":""  ?>> <?= $pagos['value'] ?></option>
+                            <?
+                            }
+
+                        ?>
                         </select>
                     </div>
                 </div>

@@ -21,8 +21,17 @@
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="metodoPago" style="border:0px;">Método de pago :</label>
-                        <select class="form-control col-md-8" id="metodoPago" name="metodoPago" patron="requerido">
-                            <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $listadoMetodosPago, 'class' => 'text-titlecase', 'selected' => $idMetodoPago]); ?>
+                        <select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" patron="requerido" multiple data-live-search="true">
+                        <?
+                            foreach ($listadoMetodosPago as $pagos) {
+                            ?>
+                                <option value="<?= $pagos['id']  ?>"  <?= !empty($metodoPago[$pagos['id']]) ?"selected":""  ?>> <?= $pagos['value'] ?></option>
+                            <?
+                            }
+
+                        ?>
+
+                            
                         </select>
                     </div>
                 </div>
@@ -149,11 +158,11 @@
     <div class="row">
         <div class="col-md-10 child-divcenter" style="text-align:center;">
             <div class="ui checkbox">
-                <input type="checkbox" name="datosValidos">
+                <input type="checkbox" name="datosValidos" id="datosValidos" patron="requerido">
                 <label>Datos Validos</label>
             </div>
             <div class="ui checkbox">
-                <input type="checkbox" name="contribuyenteValido">
+                <input type="checkbox" name="contribuyenteValido" id="contribuyenteValido" patron="requerido">
                 <label>Contribuyente Valido</label>
             </div>
         </div>

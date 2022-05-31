@@ -215,7 +215,7 @@ var Fn = {
 			a.resolve(true);
 		}
 		else {
-			var inputs = $('#' + id).find('input, textarea, select').not(':input[type=button], :input[type=submit], :input[type=reset]');
+			var inputs = $('#' + id).find('input, textarea, select').not(':input[type=button], :input[type=submit], :input[type=reset], input[type=checkbox]');
 			$.when(Fn.formClear(id)).then(function (v) {
 				if (v === true) {
 					setTimeout(function () {

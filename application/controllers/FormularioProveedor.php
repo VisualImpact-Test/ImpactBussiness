@@ -39,6 +39,8 @@ class FormularioProveedor extends MY_Controller
 
 	public function registrarProveedor()
 	{
+		$this->db->trans_start();
+
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
@@ -49,7 +51,6 @@ class FormularioProveedor extends MY_Controller
 			'idTipoDocumento' => 3,
 			'nroDocumento' => $post['ruc'],
 			'idRubro' => $post['rubro'],
-			'idMetodoPago' => $post['metodoPago'],
 			'cod_ubigeo' => $post['distrito'],
 			'direccion' => $post['direccion'],
 			'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
@@ -104,17 +105,36 @@ class FormularioProveedor extends MY_Controller
 
 		$estadoEmail = $this->enviarCorreo($insert['id']);
 
-		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail) {
+		$estadoEmail=true;
+
+		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'idMetodoPago' => $value,
+                
+            ];
+        }
+
+		$third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
+
+		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail || !$third_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			goto respuesta;
+
 		} else {
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
 		}
 
+		$this->db->trans_complete();
+
+		respuesta:
+
 		echo json_encode($result);
+		
 	}
 
 	public function enviarCorreo($idProveedor)
@@ -133,7 +153,7 @@ class FormularioProveedor extends MY_Controller
 		$this->email->set_newline("\r\n");
 
 		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to('aaron.ccenta@visualimpact.com.pe');
+		$this->email->to('jean.alarcon@visualimpact.com.pe');
 
 		$data = [];
 		$dataParaVista = [];

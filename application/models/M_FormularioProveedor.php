@@ -134,6 +134,7 @@ class M_FormularioProveedor extends MY_Model
 			FROM compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.rubro r ON p.idRubro = r.idRubro
+			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
 			JOIN compras.metodoPago mp ON p.idMetodoPago = mp.idMetodoPago
 			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
 			JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento

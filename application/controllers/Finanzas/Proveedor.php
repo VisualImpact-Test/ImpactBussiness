@@ -140,10 +140,12 @@ class Proveedor extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
+
         $dataParaVista = [];
         $departamentosCobertura = [];
         $provinciasCobertura = [];
         $distritosCobertura = [];
+        $metodoPago = [];
         $data = $this->model->obtenerInformacionProveedores($post)['query']->result_array();
 
         foreach ($data as $key => $row) {
@@ -153,8 +155,8 @@ class Proveedor extends MY_Controller
                 'nroDocumento' => $row['nroDocumento'],
                 'idRubro' => $row['idRubro'],
                 'rubro' => $row['rubro'],
-                'idMetodoPago' => $row['idMetodoPago'],
-                'metodoPago' => $row['metodoPago'],
+                //'idMetodoPago' => $row['idMetodoPago'],
+                //'metodoPago' => $row['metodoPago'],
                 'cod_departamento' => $row['cod_departamento'],
                 'departamento' => $row['departamento'],
                 'cod_provincia' => $row['cod_provincia'],
@@ -173,11 +175,14 @@ class Proveedor extends MY_Controller
             $departamentosCobertura[$row['zc_departamento']] = $row['zc_departamento'];
             $provinciasCobertura[$row['zc_provincia']] = $row['zc_provincia'];
             $distritosCobertura[$row['zc_distrito']] = $row['zc_distrito'];
+            $metodoPago [$row['idMetodoPago']] = $row['metodoPago'];
+            
         }
 
         $dataParaVista['departamentosCobertura'] = $departamentosCobertura;
         $dataParaVista['provinciasCobertura'] = $provinciasCobertura;
         $dataParaVista['distritosCobertura'] = $distritosCobertura;
+        $dataParaVista['metodoPago'] = $metodoPago;
 
         $dataParaVista['listadoDepartamentos'] = [];
         $dataParaVista['listadoProvincias'] = [];
@@ -211,6 +216,10 @@ class Proveedor extends MY_Controller
 
     public function registrarProveedor()
     {
+
+        $this->db->trans_start();
+        
+
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
@@ -221,7 +230,7 @@ class Proveedor extends MY_Controller
             'idTipoDocumento' => 3,
             'nroDocumento' => $post['ruc'],
             'idRubro' => $post['rubro'],
-            'idMetodoPago' => $post['metodoPago'],
+            //'idMetodoPago' => $post['metodoPago'],
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
             'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
@@ -283,18 +292,37 @@ class Proveedor extends MY_Controller
         $second_insert = $this->model->insertarProveedorCobertura($data);
         $data = [];
 
-        if (!$insert['estado'] || !$second_insert['estado']) {
+        
+
+        foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'idMetodoPago' => $value,
+                
+            ];
+        }
+
+        $third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
+
+        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
-        } else {
+
+            goto respuesta;
+        }
+        
+        else {
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
 
+        $this->db->trans_complete();
+
         respuesta:
         echo json_encode($result);
+
     }
 
     public function actualizarProveedor()
@@ -306,11 +334,10 @@ class Proveedor extends MY_Controller
 
         $data['update'] = [
             'idProveedor' => $post['idProveedor'],
-
             'razonSocial' => $post['razonSocial'],
             'nroDocumento' => $post['ruc'],
             'idRubro' => $post['rubro'],
-            'idMetodoPago' => $post['metodoPago'],
+            //'idMetodoPago' => $post['metodoPago'],
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
             'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),

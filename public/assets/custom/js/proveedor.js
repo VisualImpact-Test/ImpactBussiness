@@ -139,7 +139,9 @@ var Proveedor = {
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				//$('#regionCobertura').change();
 			});
+			
 		});
 
 		$(document).on('click', '.btn-validar', function () {

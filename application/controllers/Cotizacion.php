@@ -275,7 +275,7 @@ class Cotizacion extends MY_Controller
         $this->email->set_newline("\r\n");
 
         $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-        $this->email->to('harry.pineda@visualimpact.com.pe');
+        $this->email->to(['aaron.ccenta@visualimpact.com.pe', 'jean.alarcon@visualimpact.com.pe']);
 
         $data = [];
         $dataParaVista = [];

@@ -143,6 +143,8 @@ var Proveedor = {
 		});
 
 		$(document).on('click', '.btn-validar', function () {
+
+
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
@@ -157,7 +159,8 @@ var Proveedor = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ fn: "Proveedor.validarProveedor()", content: "¿Esta seguro de validar el proveedor?" });';
+				//fn[1] = 'Fn.showConfirm({ fn: "Proveedor.validarProveedor()", content: "¿Esta seguro de validar el proveedor?" });';
+				fn[1] = 'Proveedor.validarProveedorCheck()';
 				btn[1] = { title: 'Confirmar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -250,6 +253,7 @@ var Proveedor = {
 	},
 
 	validarProveedor: function () {
+		
 		++modalId;
 
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionProveedores')) };
@@ -268,6 +272,26 @@ var Proveedor = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
+
+	validarProveedorCheck: function () {
+
+		if (!$("#datosValidos").is(":checked") || !$("#contribuyenteValido").is(":checked")) {
+
+			++modalId;
+			let btn = [];
+			let fn = [];
+			let message1 = Fn.message({"type":2, "message":"Debe confirmar la validez de los datos"});
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			
+			Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
+			
+			return false;
+		}
+
+		Fn.showConfirm({ fn: "Proveedor.validarProveedor()", content: "¿Esta seguro de validar el proveedor?" });
+	}
 }
 
 Proveedor.load();

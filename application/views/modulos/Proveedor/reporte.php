@@ -47,7 +47,11 @@
                     <td class="td-left"><?= verificarEmpty($row['metodoPago'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['direccion'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nombreContacto'], 3); ?></td>
+
+       
+                    
                     <td class="td-left"><?= verificarEmpty($row['correoContacto'], 3); ?></td>
+
                     <td class="td-center"><?= verificarEmpty($row['numeroContacto'], 3); ?></td>
                     <td class="text-center style-icons">
                         <span class="<?= $row['estadoIcono'] ?>" id="spanEstado-<?= $key; ?>"><?= $row['estado']; ?></span>

@@ -44,4 +44,9 @@ class MY_Model extends CI_Model{
 
 	}
 
+	public function insertarMasivo($table, $input)
+	{
+		return $this->db->insert_batch($table, $input);
+	}
+
 }
