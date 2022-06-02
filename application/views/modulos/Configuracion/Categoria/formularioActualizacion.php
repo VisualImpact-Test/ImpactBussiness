@@ -4,7 +4,7 @@
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="nombre" style="border:0px;">Nombre :</label>
                 <input class="form-control col-md-7" id="nombre" name="nombre" patron="requerido" value="<?= $informacionCategoria['categoria'] ?>">
-                <input class="d-none" id="idCategoria" name="idCategoriaArticulo" patron="requerido" value="<?= $informacionCategoria['idCategoriaArticulo'] ?>">
+                <input class="d-none" id="idCategoria" name="idItemCategoria" patron="requerido" value="<?= $informacionCategoria['idItemCategoria'] ?>">
             </div>
         </div>
     </div>

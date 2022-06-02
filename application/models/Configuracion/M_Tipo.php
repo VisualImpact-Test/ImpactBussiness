@@ -21,14 +21,14 @@ class M_Tipo extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['tipo']) ? " AND a.nombre LIKE '%" . $params['tipo'] . "%'" : "";
-		$filtros .= !empty($params['idTipo']) ? ' AND a.idTipoArticulo = ' . $params['idTipo'] : '';
+		$filtros .= !empty($params['idTipo']) ? ' AND a.idItemTipo = ' . $params['idTipo'] : '';
 
 		$sql = "
 			SELECT
-				a.idTipoArticulo AS idTipo
+				a.idItemTipo 
 				, a.nombre AS tipo
 				, a.estado
-			FROM compras.tipoArticulo a
+			FROM compras.itemTipo a
 			WHERE 1 = 1
 			{$filtros}
 		";
@@ -47,14 +47,15 @@ class M_Tipo extends MY_Model
 	public function validarExistenciaTipoArticulo($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idTipo']) ? ' AND a.idTipoArticulo != ' . $params['idTipo'] : '';
+		$filtros .= !empty($params['idItemTipo']) ? ' AND a.idItemTipo != ' . $params['idItemTipo'] : '';
+		$itemTipo = trim($params['nombre']);
 
 		$sql = "
 			SELECT
-				idTipoArticulo AS idTipo
-			FROM compras.tipoArticulo a
+				idItemTipo 
+			FROM compras.itemTipo a
 			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
+			a.nombre = '{$itemTipo}'
 			{$filtros}
 		";
 
@@ -98,6 +99,8 @@ class M_Tipo extends MY_Model
 	}
 
 	//SERVICIO
+
+	/*
 
 	public function obtenerInformacionTiposServicio($params = [])
 	{
@@ -178,4 +181,5 @@ class M_Tipo extends MY_Model
 
 		return $this->resultado;
 	}
+	*/
 }
