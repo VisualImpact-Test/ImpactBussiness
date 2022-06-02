@@ -16,17 +16,17 @@
                 $badge = $row['estado'] == 1 ? 'badge-success' : 'badge-danger';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
-                <tr data-id="<?= $row['idMarcaArticulo'] ?>">
+                <tr data-id="<?= $row['idItemMarca'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarMarca"><i class="fa fa-lg fa-edit" title="Actualizar Marca"></i></a>
-                        <a id="hrefEstado-<?= $row['idMarcaArticulo']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoMarca" data-id="<?= $row['idMarcaArticulo']; ?>" data-estado="<?= $row['estado']; ?>">
+                        <a id="hrefEstado-<?= $row['idItemMarca']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoMarca" data-id="<?= $row['idItemMarca']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>
                     </td>
                     <td class="td-left"><?= verificarEmpty($row['marca'], 3); ?></td>
                     <td class="text-center style-icons">
-                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idMarcaArticulo']; ?>"><?= $mensajeEstado; ?></span>
+                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idItemMarca']; ?>"><?= $mensajeEstado; ?></span>
                     </td>
                 </tr>
             <? $ix++;
