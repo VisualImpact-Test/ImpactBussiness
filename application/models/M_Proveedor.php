@@ -154,6 +154,7 @@ class M_Proveedor extends MY_Model
 			AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}
+			ORDER BY p.idProveedor DESC
 		";
 
 		$query = $this->db->query($sql);
@@ -254,5 +255,40 @@ class M_Proveedor extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerZonaCoberturaProveedor($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idProveedor']) ? ' AND zc.idProveedor = ' . $params['idProveedor'] : '';
+
+		$sql = "
+			SELECT 
+			zc.idProveedor,
+			zc.cod_departamento,
+			zc.cod_provincia,
+			zc.cod_distrito,
+			(SELECT TOP 1 departamento FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento) departamento , 
+			(SELECT TOP 1 provincia FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento AND cod_provincia = zc.cod_provincia) provincia ,
+			(SELECT TOP 1 distrito FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento AND cod_provincia = zc.cod_provincia AND cod_distrito = zc.cod_distrito) distrito
+			FROM compras.zonaCobertura zc
+		
+			WHERE 
+			1 = 1
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+
+	
 }
 

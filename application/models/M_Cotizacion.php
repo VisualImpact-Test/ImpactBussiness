@@ -120,6 +120,8 @@ class M_Cotizacion extends MY_Model
 				, p.estado
 				, p.fechaRequerimiento
 				, p.flagIgv igv
+				, p.gap
+				, p.fee 
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta

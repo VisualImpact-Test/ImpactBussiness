@@ -12,25 +12,25 @@
             </div>
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
-                <input class="form-control col-md-7" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>">
+                <input class="form-control col-md-7" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>" placeholder="Buscar ">
                 <input class="d-none" id="idItemLogistica" name="idItemLogistica" value="<?= $informacionItem['idItemLogistica'] ?>">
             </div>
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="tipo" style="border:0px;">Tipo :</label>
                 <select class="form-control col-md-7" id="tipo" name="tipo" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idTipoItem']]); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idItemTipo']]); ?>
                 </select>
             </div>
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="marca" style="border:0px;">Marca :</label>
                 <select class="form-control col-md-7" id="marca" name="marca" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idMarcaItem']]); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idItemMarca']]); ?>
                 </select>
             </div>
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="categoria" style="border:0px;">Categoria :</label>
                 <select class="form-control col-md-7" id="categoria" name="categoria" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idCategoriaItem']]); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idItemCategoria']]); ?>
                 </select>
             </div>
         </div>

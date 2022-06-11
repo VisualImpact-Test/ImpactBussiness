@@ -1,3 +1,9 @@
+<style>
+    .detail{
+        background: none !important;
+    }
+    
+</style>
 <form class="form" role="form" id="formRegistroCotizacion" method="post">
     <div class="child-divcenter" style="width:90%">
         <h4 class="ui dividing header">Información de la Cotización</h4>
@@ -10,13 +16,13 @@
                 <div class="five wide field">
                     <label>Cuenta:</label>
                     <select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
-                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected'=> !empty($cotizacion['idCuenta']) ? $cotizacion['idCuenta'] : '' ]); ?>
+                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuenta']) ? $cotizacion['idCuenta'] : '']); ?>
                     </select>
                 </div>
                 <div class="five wide field">
                     <label>Centro de Costo:</label>
                     <select class="ui search dropdown childDependiente" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
-                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected'=> !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
+                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
                     </select>
                 </div>
             </div>
@@ -27,35 +33,37 @@
                         <div class="ui calendar date-semantic">
                             <div class="ui input left icon">
                                 <i class="calendar icon"></i>
-                                <input type="text" placeholder="Fecha de Requerimiento" value="<?=!empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?> ">
+                                <input type="text" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?> ">
                             </div>
                         </div>
-                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" value="<?=!empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?>">
+                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?>">
                     </div>
                     <div class="five wide field">
                         <div class="inline field">
                             <div class="ui toggle checkbox">
-                                <input type="checkbox" tabindex="0" class="hidden" name="igvForm">
+                                <input type="checkbox" tabindex="0" class="hidden" name="igvForm" <?= !empty($cotizacion['igv']) ? "checked" : '' ?>>
                                 <label>Incluye IGV</label>
                             </div>
                         </div>
                     </div>
-                    <div class="six wide field">
-                        <a class="ui teal image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">- 7 dias</div>
-                        </a>
-                        <a class="ui yellow image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">8 a 15 dias</div>
-                        </a>
-                        <a class="ui red image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">+ 15 dias</div>
-                        </a>
+                    <div class="inline fields">
+                        <div class="twelve wide field">
+                            <a class="ui teal image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">- 7 dias</div>
+                            </a>
+                            <a class="ui yellow image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">8 a 15 dias</div>
+                            </a>
+                            <a class="ui red image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">+ 15 dias</div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -79,7 +87,7 @@
                             <th style="width: 3%;" class="text-center"></th>
                         </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
                         <tr hidden class="default">
                             <td>
                                 <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
@@ -139,31 +147,23 @@
                                 </div>
                             </th>
                             <th colspan="3">
-                                <div class="ui right floated small primary labeled icon button btn-add-row" title="Añadir Fila">
-                                    <i class="plus icon"></i> Añadir Fila
-                                </div>
+
                             </th>
                         </tr>
                     </tfoot>
                 </table>
             </div>
             <div class="ui form" style="margin-top:10px;">
-                <div class="fields">
-                    <div class="five wide field">
-                        <label>Prioridad:</label>
-                        <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
-                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase']); ?>
-                        </select>
-                    </div>
-                    <div class="six wide field">
-                        <label>Motivo:</label>
-                        <input id="motivoForm" name="motivoForm" patron="requerido" placeholder="Motivo">
+                <div class="inline fields">
+                    <div class="three wide field">
+                        <label class="five">GAP %:</label>
+                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="0" value="<?= $cotizacion['gap'] ?>">
                     </div>
                 </div>
-                <div class="fields">
-                    <div class="eleven wide field">
-                        <label>Comentario:</label>
-                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="Comentario">
+                <div class="inline fields">
+                    <div class="three wide field">
+                        <label class="five">FEE %:</label>
+                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="0" value="<?= $cotizacion['fee'] ?>">
                     </div>
                 </div>
             </div>
