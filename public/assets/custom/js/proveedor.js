@@ -79,26 +79,27 @@ var Proveedor = {
 			Fn.selectOrderOption('distrito');
 		});
 
-		$(document).on('change', '#regionCobertura', function (e) {
+		$(document).on('change', '.regionCobertura', function (e) {
 			e.preventDefault();
 			let idDepartamento = $(this).val();
 			let html = '<option value="">Seleccionar</option>';
+			let distritoCobertura = $(this).closest("tr").find(".distritoCobertura");
+			distritoCobertura.html(html);
 
-			$('#distritoCobertura').html(html);
-
-			$.each(idDepartamento, function (i_departamento, v_departamento) {
-				if (typeof (provincia[v_departamento]) == 'object') {
-					$.each(provincia[v_departamento], function (i_provincia, v_provincia) {
-						html += '<option value="' + v_departamento + '-' + i_provincia + '" data-departamento="' + v_departamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+			// $.each(idDepartamento, function (i_departamento, v_departamento) {
+				if (typeof (provincia[idDepartamento]) == 'object') {
+					$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
+						// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+						html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
 					});
 				}
-			});
-
-			$('#provinciaCobertura').html(html);
-			Fn.selectOrderOption('provinciaCobertura');
+			// });
+			let provinciaCobertura = $(this).closest("tr").find(".provinciaCobertura");
+			provinciaCobertura.html(html);
+			// Fn.selectOrderOption('provinciaCobertura');
 		});
 
-		$(document).on('change', '#provinciaCobertura', function (e) {
+		$(document).on('change', '.provinciaCobertura', function (e) {
 			e.preventDefault();
 
 			let htmlSelectedProvincia = $(this).find(":selected");
@@ -111,13 +112,14 @@ var Proveedor = {
 					typeof (distrito[departamento][provincia]) == 'object'
 				) {
 					$.each(distrito[departamento][provincia], function (i_distrito, v_distrito) {
-						html += '<option value="' + departamento + '-' + provincia + '-' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
+						// html += '<option value="' + departamento + '-' + provincia + '-' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
+						html += '<option value="' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
 					});
 				}
 			});
-
-			$('#distritoCobertura').html(html);
-			Fn.selectOrderOption('distritoCobertura');
+			let distritoCobertura = $(this).closest("tr").find(".distritoCobertura");
+			distritoCobertura.html(html);
+			// Fn.selectOrderOption('distritoCobertura');
 		});
 
 		$(document).on('click', '.btn-editar', function () {
@@ -203,6 +205,27 @@ var Proveedor = {
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);
 			});
 		});
+
+		$(document).on('click', '.btn-agregar-zona', function (e) {
+			let tbody = $(".tb-zona-cobertura > tbody");
+			let trParent = tbody.find(".trParent");
+
+			let combosZona = trParent.find("select").prop("disabled",false);
+			tbody.append(`<tr class="trChildren">${trParent.html()}</tr>`);
+			trParent.find("select").prop("disabled",true);
+
+		});
+		$(document).on('click', '.btn-eliminar-zona', function (e) {
+			let tr = $(this).closest("tr");
+
+			if($(".trChildren").length <= 1){
+				// $(".trChildren").first().find(".regionCobertura").css("border","solid 1px red");
+				// setTimeout($(".trChildren").first().find(".regionCobertura").css("border","solid 1px black"), 5000);
+				return false
+			}
+			tr.remove();
+		});
+
 
 		$(document).on('shown.bs.modal', '.modalCargaMasivaObjetivos', function () {
 			HTCustom.crearHTObjects(HTCustom.HTObjectsFeatures);

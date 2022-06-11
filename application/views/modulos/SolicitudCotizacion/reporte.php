@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-cotizacion" class="ui celled table table-row-selection" width="100%">
+    <table id="tb-cotizacion" class="ui celled table " width="100%">
         <thead>
             <tr>
                 <th class="td-center">#</th>
@@ -23,16 +23,17 @@
                 // $badge = $row['cotizacionEstado'] == 'Finalizado' ? 'badge-success' : 'badge-success';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
-                <tr class="row-actualizarCotizacion "  data-id="<?= $row['idCotizacion'] ?>">
+                <tr  data-id="<?= $row['idCotizacion'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-frmSolicitudCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-eye" title="Generar cotizacion efectiva"></i></a>
                         <!-- <a id="hrefEstado-<?= $row['idCotizacion']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoCotizacion" data-id="<?= $row['idCotizacion']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a> -->
                         <? if ($row['cotizacionEstado'] == 'Finalizado') { ?>
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a>
                             <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-generar-cotizacionEfectiva"><i class="fa fa-lg fa-paste" title="Generar Cotizacion Efectiva"></i></a>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a>
                         <? } ?>
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
