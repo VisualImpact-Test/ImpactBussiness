@@ -77,7 +77,7 @@
     </div>
     <div class="row">
         <div class="col-md-10 child-divcenter">
-            <fieldset class="scheduler-border">
+            <fieldset class="scheduler-border" style="overflow:auto; max-height:350px; min-height: 100px">
                 <legend class="scheduler-border">Zonas de Cobertura</legend>
                 <table class="w-100 tb-zona-cobertura" >
                     <thead>
