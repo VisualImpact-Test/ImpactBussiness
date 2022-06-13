@@ -153,9 +153,12 @@ function moneda($valor, $igv = false, $dec = 2)
 	}
 }
 
-function getFechaActual()
+function getFechaActual($dias = 0)
 {
 	date_default_timezone_set('America/Lima');
+	if(!empty($dias)){
+		return date('d/m/Y',strtotime("{$dias} days"));
+	}
 	return date('d/m/Y', time());
 }
 

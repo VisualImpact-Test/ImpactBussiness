@@ -351,6 +351,8 @@ var Cotizacion = {
 				if ($cod != '') {
 					$(this).attr('readonly', 'readonly');
 					$(this).parents('.nuevo').find('.costoForm').attr('readonly', 'readonly');
+
+					$(this).closest("tr").find(".cantidadForm").attr('readonly',false);
 				}
 			},
 			appendTo: "#modal-page-" + Cotizacion.modalIdForm,

@@ -119,7 +119,7 @@ class Tipo extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.tipoArticulo';
+        $data['tabla'] = 'compras.itemTipo';
 
         $insert = $this->model->insertarTipoArticulo($data);
         $data = [];
@@ -146,13 +146,13 @@ class Tipo extends MY_Controller
         $data = [];
 
         $data['update'] = [
-            'idTipoArticulo' => $post['idTipo'],
+            'idItemTipo' => $post['idItemTipo'],
 
             'nombre' => $post['nombre']
         ];
 
         $validacionExistencia = $this->model->validarExistenciaTipoArticulo($data['update']);
-        unset($data['update']['idTipoArticulo']);
+        unset($data['update']['idItemTipo']);
 
         if (!empty($validacionExistencia['query']->row_array())) {
             $result['result'] = 0;
@@ -161,9 +161,9 @@ class Tipo extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.tipoArticulo';
+        $data['tabla'] = 'compras.itemTipo';
         $data['where'] = [
-            'idTipoArticulo' => $post['idTipo']
+            'idItemTipo' => $post['idItemTipo']
         ];
 
         $insert = $this->model->actualizarTipoArticulo($data);
@@ -194,9 +194,9 @@ class Tipo extends MY_Controller
             'estado' => ($post['estado'] == 1) ? 0 : 1
         ];
 
-        $data['tabla'] = 'compras.tipoArticulo';
+        $data['tabla'] = 'compras.itemTipo';
         $data['where'] = [
-            'idTipoArticulo' => $post['idTipo']
+            'idItemTipo' => $post['idTipo']
         ];
 
         $update = $this->model->actualizarTipoArticulo($data);
@@ -215,6 +215,8 @@ class Tipo extends MY_Controller
         respuesta:
         echo json_encode($result);
     }
+
+    /*
 
     //SERVICIO
 
@@ -394,4 +396,6 @@ class Tipo extends MY_Controller
         respuesta:
         echo json_encode($result);
     }
+    */
+
 }

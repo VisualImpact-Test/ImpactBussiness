@@ -11,7 +11,7 @@
             </div>
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
-                <input class="form-control col-md-7" id="equivalente" name="equivalente">
+                <input class="form-control col-md-7" id="equivalente" name="equivalente" placeholder="Buscar ">
                 <input class="d-none" id="idItemLogistica" name="idItemLogistica">
             </div>
             <div class="control-group child-divcenter row w-100">

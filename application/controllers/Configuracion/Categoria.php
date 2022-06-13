@@ -99,6 +99,9 @@ class Categoria extends MY_Controller
 
     public function registrarCategoria()
     {
+
+        $this->db->trans_start();
+
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
@@ -117,7 +120,7 @@ class Categoria extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.categoriaArticulo';
+        $data['tabla'] = 'compras.itemCategoria';
 
         $insert = $this->model->insertarCategoria($data);
         $data = [];
@@ -132,25 +135,30 @@ class Categoria extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
 
+        $this->db->trans_complete();
+
         respuesta:
         echo json_encode($result);
     }
 
     public function actualizarCategoria()
     {
+
+        $this->db->trans_start();
+
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
         $data = [];
 
         $data['update'] = [
-            'idCategoriaArticulo' => $post['idCategoriaArticulo'],
+            'idItemCategoria' => $post['idItemCategoria'],
 
             'nombre' => $post['nombre']
         ];
 
         $validacionExistencia = $this->model->validarExistenciaCategoria($data['update']);
-        unset($data['update']['idCategoriaArticulo']);
+        unset($data['update']['idItemCategoria']);
 
         if (!empty($validacionExistencia['query']->row_array())) {
             $result['result'] = 0;
@@ -159,9 +167,9 @@ class Categoria extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.categoriaArticulo';
+        $data['tabla'] = 'compras.itemCategoria';
         $data['where'] = [
-            'idCategoriaArticulo' => $post['idCategoriaArticulo']
+            'idItemCategoria' => $post['idItemCategoria']
         ];
 
         $insert = $this->model->actualizarCategoria($data);
@@ -177,12 +185,16 @@ class Categoria extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
 
+        $this->db->trans_complete();
+
         respuesta:
         echo json_encode($result);
     }
 
     public function actualizarEstadoCategoria()
     {
+        $this->db->trans_start();
+
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
@@ -192,9 +204,9 @@ class Categoria extends MY_Controller
             'estado' => ($post['estado'] == 1) ? 0 : 1
         ];
 
-        $data['tabla'] = 'compras.categoriaArticulo';
+        $data['tabla'] = 'compras.itemCategoria';
         $data['where'] = [
-            'idCategoriaArticulo' => $post['idCategoriaArticulo']
+            'idItemCategoria' => $post['idCategoriaArticulo']
         ];
 
         $update = $this->model->actualizarCategoria($data);
@@ -209,6 +221,8 @@ class Categoria extends MY_Controller
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
+
+        $this->db->trans_complete();
 
         respuesta:
         echo json_encode($result);

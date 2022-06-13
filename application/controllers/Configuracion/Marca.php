@@ -117,7 +117,7 @@ class Marca extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.marcaArticulo';
+        $data['tabla'] = 'compras.itemMarca';
 
         $insert = $this->model->insertarMarca($data);
         $data = [];
@@ -144,13 +144,13 @@ class Marca extends MY_Controller
         $data = [];
 
         $data['update'] = [
-            'idMarcaArticulo' => $post['idMarcaArticulo'],
+            'idItemMarca' => $post['idItemMarca'],
 
             'nombre' => $post['nombre'],
         ];
 
         $validacionExistencia = $this->model->validarExistenciaMarca($data['update']);
-        unset($data['update']['idMarcaArticulo']);
+        unset($data['update']['idItemMarca']);
 
         if (!empty($validacionExistencia['query']->row_array())) {
             $result['result'] = 0;
@@ -159,9 +159,9 @@ class Marca extends MY_Controller
             goto respuesta;
         }
 
-        $data['tabla'] = 'compras.marcaArticulo';
+        $data['tabla'] = 'compras.itemMarca';
         $data['where'] = [
-            'idMarcaArticulo' => $post['idMarcaArticulo']
+            'idItemMarca' => $post['idItemMarca']
         ];
 
         $insert = $this->model->actualizarMarca($data);
@@ -192,9 +192,9 @@ class Marca extends MY_Controller
             'estado' => ($post['estado'] == 1) ? 0 : 1
         ];
 
-        $data['tabla'] = 'compras.marcaArticulo';
+        $data['tabla'] = 'compras.itemMarca';
         $data['where'] = [
-            'idMarcaArticulo' => $post['idMarcaArticulo']
+            'idItemMarca' => $post['idMarcaArticulo']
         ];
 
         $update = $this->model->actualizarMarca($data);

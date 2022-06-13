@@ -27,10 +27,10 @@
                         <div class="ui calendar date-semantic">
                             <div class="ui input left icon">
                                 <i class="calendar icon"></i>
-                                <input type="text" placeholder="Fecha de Requerimiento">
+                                <input type="text" placeholder="Fecha de Requerimiento" value="<?=date("m/d/Y")?>">
                             </div>
                         </div>
-                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" value="">
+                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" >
                     </div>
                     <div class="five wide field">
                         <div class="inline field">
@@ -88,19 +88,19 @@
                             </td>
                             <td>
                                 <div class="ui-widget">
-                                    <input class="form-control items" type='text' name='nameItem' patron="requerido">
+                                    <input class="form-control items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
                                     <input class="codItems" type='hidden' name='idItemForm'>
 
-                                    <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
+                                    <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2" >
                                 </div>
                             </td>
                             <td>
                                 <div class="ui-widget">
-                                    <input class="form-control" type='text' name='caracteristicasItem' patron="requerido">
+                                    <input class="form-control" type='text' name='caracteristicasItem' patron="requerido" placeholder="Caracteristicas del item">
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' readonly="readonly">
                             </td>
                             <td class="text-center">
                                 <div class="ui image large label">
@@ -120,7 +120,7 @@
                                 <input class="form-control subtotalForm" type="hidden" name="subtotalForm" placeholder="0" readonly>
                             </td>
                             <td class="text-center">
-                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
+                                <a href="javascript:;" class="btn btn-outline-danger border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
                             </td>
                         </tr>
                     </tbody>

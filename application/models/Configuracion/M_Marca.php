@@ -19,14 +19,14 @@ class M_Marca extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['marca']) ? " AND a.nombre LIKE '%" . $params['marca'] . "%'" : "";
-		$filtros .= !empty($params['idMarcaArticulo']) ? ' AND a.idMarcaArticulo = ' . $params['idMarcaArticulo'] : '';
+		$filtros .= !empty($params['idMarcaArticulo']) ? ' AND a.idItemMarca = ' . $params['idMarcaArticulo'] : '';
 
 		$sql = "
 			SELECT
-				a.idMarcaArticulo
+				a.idItemMarca
 				, a.nombre AS marca
 				, a.estado
-			FROM compras.marcaArticulo a
+			FROM compras.itemMarca a
 			WHERE 1 = 1
 			{$filtros}
 		";
@@ -45,14 +45,15 @@ class M_Marca extends MY_Model
 	public function validarExistenciaMarca($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idMarcaArticulo']) ? ' AND a.idMarcaArticulo != ' . $params['idMarcaArticulo'] : '';
+		$filtros .= !empty($params['idItemMarca']) ? ' AND a.idItemMarca != ' . $params['idItemMarca'] : '';
+		$itemMarca = trim($params['nombre']);
 
 		$sql = "
 			SELECT
-				idMarcaArticulo
-			FROM compras.marcaArticulo a
+				idItemMarca
+			FROM compras.itemMarca a
 			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
+			a.nombre = '{$itemMarca}'
 			{$filtros}
 		";
 

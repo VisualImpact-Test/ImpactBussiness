@@ -30,10 +30,10 @@ var SolcitudCotizacion = {
 			Fn.loadReporte_new(config);
 		});
 
-		$(document).on('click', '.row-actualizarCotizacion', function () {
+		$(document).on('click', '.btn-frmSolicitudCotizacion', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).data("id");
+				data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolcitudCotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
@@ -49,7 +49,7 @@ var SolcitudCotizacion = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolcitudCotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar este cotizacion?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
+				btn[1] = { title: 'Guardar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 

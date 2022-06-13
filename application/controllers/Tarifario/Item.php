@@ -266,7 +266,7 @@ class Item extends MY_Controller
 
         if ($post['costoAnterior'] != $post['costo']) {
             $data['update'] = [
-                'fecFin' => getFechaActual(),
+                'fecFin' => getFechaActual(-1),
             ];
 
             $data['tabla'] = 'compras.itemTarifarioHistorico';

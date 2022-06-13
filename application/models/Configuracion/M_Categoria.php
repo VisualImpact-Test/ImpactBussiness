@@ -38,8 +38,9 @@ class M_Categoria extends MY_Model
 	public function obtenerInformacionCategorias($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['categoria']) ? " AND a.nombre LIKE '%" . $params['categoria'] . "%'" : "";
-		$filtros .= !empty($params['categoria']) ? ' AND a.idItemCategoria = ' . $params['idItemCategoria'] : '';
+		$filtros .= !empty($params['categoria']) ? " AND a.nombre LIKE '%{$params['categoria']}%' " :'';
+		//$filtros .= !empty($params['categoria']) ? ' AND a.nombre LIKE % ' . $params['categoria'] . '' : '';
+		$filtros .= !empty($params['idCategoriaArticulo']) ? ' AND a.idItemCategoria = ' . $params['idCategoriaArticulo'] : '';
 
 		$sql = "
 			SELECT
@@ -65,14 +66,15 @@ class M_Categoria extends MY_Model
 	public function validarExistenciaCategoria($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idCategoriaArticulo']) ? ' AND a.idCategoriaArticulo != ' . $params['idCategoriaArticulo'] : '';
+		$filtros .= !empty($params['idItemCategoria']) ? ' AND a.idItemCategoria != ' . $params['idItemCategoria'] : '';
+		$itemCategoria = trim($params['nombre']);
 
 		$sql = "
 			SELECT
-				idCategoriaArticulo
-			FROM compras.itemArticulo a
+				idItemCategoria
+			FROM compras.itemCategoria a
 			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
+			a.nombre = '{$itemCategoria}'
 			{$filtros}
 		";
 
