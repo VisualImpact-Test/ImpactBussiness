@@ -43,7 +43,7 @@ if (empty($idCuenta) || $idCuenta != 2) {
 						<a data-toggle="tab" href="javascript:;" class="active nav-link aFechaHome" data-value="1">
 							<i class="fad fa-calendar-alt fa-lg" style="margin-right:5px;"></i>
 							<input class="form-control input-sm txt-fecha fechaHome" type="text" name="fechaHome" patron="requerido" value="<?= date('d/m/Y') ?>">
-							<i class="fad fa-road fa-lg pl-3" style="margin-right:5px;"></i>
+							
 						</a>
 					</li>
 				</ul>
