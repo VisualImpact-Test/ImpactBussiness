@@ -16,14 +16,14 @@ class M_Recover extends CI_Model
                 $sql = "
 SELECT
 *
-FROM trade.usuario
+FROM sistema.usuario
 WHERE idUsuario = '".$id."'
 AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
                 ";
 
                 $rs = $this->db->query($sql);
 
-                $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'trade.usuario' ];
+                $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'sistema.usuario' ];
                 return $rs;
         }
 
@@ -35,6 +35,8 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
 
                 $informacionDeToken = $this->db->get();
 
+                $query_email = $this->db->last_query();
+
                 $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'master.tokenClaves' ];
                 return $informacionDeToken;
         }
@@ -42,9 +44,9 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
         public function cambiarClave($update)
         {
                 $value = array($update['nuevaClave'], $update['nuevaClave'], $update['idUsuario']);
-                $resultado = $this->db->query("UPDATE trade.usuario SET clave = ?, claveEncriptada = HASHBYTES('SHA1', ?) WHERE idUsuario = ?", $value);
+                $resultado = $this->db->query("UPDATE sistema.usuario SET clave = ?, claveEncriptada = HASHBYTES('SHA1', ?) WHERE idUsuario = ?", $value);
 
-                $this->CI->aSessTrack[] = [ 'idAccion' => 7, 'tabla' => 'trade.usuario', 'id' => $update['idUsuario'] ];
+                $this->CI->aSessTrack[] = [ 'idAccion' => 7, 'tabla' => 'sistema.usuario', 'id' => $update['idUsuario'] ];
                 return $resultado;
         }
 
@@ -54,16 +56,16 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
                 "
                 SELECT
                 u.idUsuario
-                , e.email
-                , e.email_corp
-                FROM trade.usuario u
-                LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent
-                WHERE u.estado = 1 AND (e.email_corp = ? OR e.email = ?)
+                , u.email
+                FROM sistema.usuario u
+                WHERE u.estado = 1 AND ( u.email = ?)
                 ";
 
-                $idUsuario = $this->db->query($sql, ['email_corp' => $email, 'email' => $email]);
+                $idUsuario = $this->db->query($sql, ['email' => $email]);
 
-                $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'trade.usuario', 'id' => null ];
+                $query = $this->db->last_query();
+
+                $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'sistema.usuario', 'id' => null ];
                 return $idUsuario;
         }
 
@@ -73,7 +75,8 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
                         'token' => $token,
                         'idUsuario' => $idUsuario,
                         'fecha' => date('Y-m-d'),
-                        'hora' => date('H:i:s')
+                        'hora' => date('H:i:s'), 
+                        'estado' => 1,
                 );
 
                 $this->db->insert('master.tokenClaves', $data);
@@ -100,7 +103,7 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
                 );
 
                 $this->db->where('idUsuario', $data['idUsuario']);
-                $result = $this->db->update('trade.usuario', $update);
+                $result = $this->db->update('sistema.usuario', $update);
 
                 if ($this->db->trans_status() === FALSE || !$result){
                         $this->db->trans_rollback();
@@ -108,7 +111,7 @@ AND claveEncriptada = HASHBYTES('SHA1', '".$pwd."')
                 }else{
                         $this->db->trans_commit();
 
-                        $this->CI->aSessTrack[] = [ 'idAccion' => 7, 'tabla' => 'trade.usuario', 'id' => $data['idUsuario'] ];
+                        $this->CI->aSessTrack[] = [ 'idAccion' => 7, 'tabla' => 'sistema.usuario', 'id' => $data['idUsuario'] ];
                         return 1;
                 }
 	}

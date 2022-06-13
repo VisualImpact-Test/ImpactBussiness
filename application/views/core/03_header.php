@@ -38,7 +38,7 @@
 					?></a>
 				<div class="dropdown-menu item-right" aria-labelledby="dropdown09">
 					<a class="dropdown-item btn-anuncios" href="javascript:;" data-target="#modalAvisoConfidencialidad" data-toggle="modal"><i class="fa fa-bullhorn pull-left"></i> Anuncios</a>
-					<a class="dropdown-item" href="<?= base_url() . "Perfil" ?>"><i class="nav-link-icon fa fa-cog"></i> Mi Perfil</a>
+					
 					<?
 					if (
 						isset($this->permisos['cuenta']) &&
