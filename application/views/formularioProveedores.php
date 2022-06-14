@@ -72,12 +72,24 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-8 child-divcenter">
-                        <fieldset class="scheduler-border">
-                            <legend class="scheduler-border">Zonas de Cobertura</legend>
-                            <div class="control-group child-divcenter row" style="width:85%">
-                                <label class="form-control col-md-4" for="regionCobertura" style="border:0px;">Region :</label>
-                                <select class="form-control col-md-8 my_select2" id="regionCobertura" name="regionCobertura" multiple data-live-search="true" patron="requerido">
+        <div class="col-md-8 child-divcenter">
+            <fieldset class="scheduler-border" style="overflow:auto; max-height:250px; min-height: 100px">
+                <legend class="scheduler-border">Zonas de Cobertura</legend>
+                <table class="w-100 tb-zona-cobertura" >
+                    <thead>
+                        <tr>
+                            <th>REGION</th>
+                            <th>PROVINCIA</th>
+                            <th>DISTRITO</th>
+                            <th class="text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregar-zona" title="Agregar Zona"><i class="fa fa-lg fa-plus"></i></a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="d-none trParent">
+                            <td class="w-25">                    
+                                <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
                                     ?>
@@ -86,22 +98,53 @@
                                     }
                                     ?>
                                 </select>
-                            </div>
-                            <div class="control-group child-divcenter row" style="width:85%">
-                                <label class="form-control col-md-4" for="provinciaCobertura" style="border:0px;">Provincia :</label>
-                                <select class="form-control col-md-8 my_select2" id="provinciaCobertura" name="provinciaCobertura" multiple data-live-search="true">
-                                    <option value="">Seleccione</option>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control  w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control w-100 distritoCobertura" name="distritoCobertura" data-live-search="true" disabled>
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25 text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <tr class="trChildren">
+                            <td class="w-25">                    
+                                <select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido">
+                                    <?
+                                    foreach ($departamento as $k_dp => $v_dp) {
+                                    ?>
+                                        <option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
+                                    <?
+                                    }
+                                    ?>
                                 </select>
-                            </div>
-                            <div class="control-group child-divcenter row" style="width:85%">
-                                <label class="form-control col-md-4" for="distritoCobertura" style="border:0px;">Distrito :</label>
-                                <select class="form-control col-md-8 my_select2" id="distritoCobertura" name="distritoCobertura" multiple data-live-search="true">
-                                    <option value="">Seleccione</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                    </div>
-                </div>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control  w-100 provinciaCobertura"  name="provinciaCobertura" data-live-search="true">
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control w-100 distritoCobertura"  name="distritoCobertura" data-live-search="true">
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25 text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+               
+            </fieldset>
+        </div>
+    </div>
                 <div class="row">
                     <div class="col-md-8 child-divcenter">
                         <fieldset class="scheduler-border">
