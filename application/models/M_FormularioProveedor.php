@@ -155,8 +155,8 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
-
-	public function loginProveedor($params = []){
+	public function loginProveedor($params = [])
+	{
 		$sql = "
 		SELECT 
 			idProveedor,
@@ -173,9 +173,9 @@ class M_FormularioProveedor extends MY_Model
 		return $this->db->query($sql);
 	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
-	{	
+	{
 		$filtros = "WHERE 1 = 1";
-		$filtros = !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '' ;
+		$filtros = !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '';
 
 		$sql = "
 		SELECT 
@@ -194,7 +194,7 @@ class M_FormularioProveedor extends MY_Model
 		";
 
 		return $this->db->query($sql);
-  }
+	}
 	public function validarExistenciaProveedor($params = [])
 	{
 		$filtros = "";
@@ -210,7 +210,7 @@ class M_FormularioProveedor extends MY_Model
 			{$filtros}
 		";
 
-		
+
 
 		$query = $this->db->query($sql);
 
@@ -221,6 +221,5 @@ class M_FormularioProveedor extends MY_Model
 		}
 
 		return $this->resultado;
-
 	}
 }
