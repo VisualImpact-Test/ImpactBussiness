@@ -12,9 +12,7 @@
 					<li class="nav-item btnReporte" name="tipoReporte" url="visibilidad">
 						<a data-toggle="tab" href="#idContentTipoArticulo" class="active nav-link" data-value="1" data-tipo="Articulo">Articulo</a>
 					</li>
-					<li class="nav-item btnReporte" name="tipoReporte" url="visibilidad">
-						<a data-toggle="tab" href="#idContentTipoServicio" class="nav-link" data-value="2" data-tipo="Servicio">Servicio</a>
-					</li>
+					
 				</ul>
 			</div>
 		</div>
@@ -61,6 +59,7 @@
 				<div class="ps-scrollbar-y" tabindex="0" style="top: 0px; height: 0px;"></div>
 			</div>
 		</form>
+		
 	</div>
 </div>
 

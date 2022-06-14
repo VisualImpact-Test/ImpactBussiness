@@ -6,6 +6,7 @@
                 <th class="td-center">OPCIONES</th>
                 <th>NOMBRE</th>
                 <th class="td-center">ESTADO</th>
+                
             </tr>
         </thead>
         <tbody>
