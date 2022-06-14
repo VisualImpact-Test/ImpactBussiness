@@ -1,12 +1,12 @@
 <style>
-    .detail{
+    .detail {
         background: none !important;
     }
-    
 </style>
 <form class="form" role="form" id="formRegistroCotizacion" method="post">
     <div class="child-divcenter" style="width:90%">
         <h4 class="ui dividing header">Información de la Cotización</h4>
+        <input type="hidden" name="idCotizacion" id="" value="<?=$cotizacion['idCotizacion']?>">
         <div class="ui form">
             <div class="fields">
                 <div class="ten wide field">
@@ -88,51 +88,57 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr hidden class="default">
-                            <td>
-                                <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
-                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemTipo, 'class' => 'text-titlecase']); ?>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="ui-widget">
-                                    <input class="form-control items" type='text' name='nameItem' patron="requerido">
-                                    <input class="codItems" type='hidden' name='idItemForm'>
-
-                                    <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
-                                </div>
-                            </td>
-                            <td>
-                                <div class="ui-widget">
-                                    <input class="form-control" type='text' name='caracteristicasItem' patron="requerido">
-                                </div>
-                            </td>
-                            <td>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
-                            </td>
-                            <td class="text-center">
-                                <div class="ui image large label">
-                                    <img src="assets/images/iconos/sol_peruano_bn.png">
-                                    <label class="costoFormLabel" style="margin:0px;">0</label>
-                                </div>
-                                <input class="form-control costoForm" type="hidden" name="costoForm" placeholder="0" readonly>
-                            </td>
-                            <td>
-                                <i class="semaforoForm fad fa-lg fa-flag-alt"></i>
-                            </td>
-                            <td class="text-center">
-                                <div class="ui image large label">
-                                    <img src="assets/images/iconos/sol_peruano_bn.png">
-                                    <label class="subtotalFormLabel" style="margin:0px;">0</label>
-                                </div>
-                                <input class="form-control subtotalForm" type="hidden" name="subtotalForm" placeholder="0" readonly>
-                            </td>
-                            <td class="text-center">
-                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
-                            </td>
-                        </tr>
+                        <? foreach ($cotizacionDetalle as $k => $row) { ?>
+                            <input class="idCotizacionDetalleForm" type='hidden' name='idCotizacionDetalle' value="<?=!empty($row['idCotizacionDetalle']) ? $row['idCotizacionDetalle'] : '' ?>">
+                            <tr>
+                                <td>
+                                    <?=($k+1)?>
+                                </td>
+                                <td>
+                                    <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemTipo, 'class' => 'text-titlecase','selected'=>$row['idItemTipo']]); ?>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="ui-widget">
+                                        <input class="form-control items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?=$row['item']?>">
+                                        <input class="codItems" type='hidden' name='idItemForm' value="<?=!empty($row['idItem']) ? $row['idItem'] : '' ?>">
+                                        <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="<?=!empty($row['idItem']) ? 1 : 2 ?>">
+                                        <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?=!empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="ui-widget">
+                                        <input class="form-control" type='text' name='caracteristicasItem' patron="requerido" placeholder="Caracteristicas del item" value="<?=!empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>">
+                                    </div>
+                                </td>
+                                <td>
+                                    <input class="form-control cantidadForm" type="number" name="cantidadForm" value="<?=!empty($row['cantidad']) ? $row['cantidad'] : '' ?>" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                </td>
+                                <td class="text-center">
+                                    <div class="ui image large label">
+                                        <img src="assets/images/iconos/sol_peruano_bn.png">
+                                        <label class="costoFormLabel" style="margin:0px;"><?=!empty($row['costo']) ? $row['costo'] : 0 ?></label>
+                                    </div>
+                                    <input class="form-control costoForm" type="hidden" name="costoForm" value="<?=!empty($row['costo']) ? $row['costo'] : 0 ?>" placeholder="0" readonly >
+                                </td>
+                                <td>
+                                    <i class="semaforoForm fad fa-lg fa-flag-alt"></i>
+                                </td>
+                                <td class="text-center">
+                                    <div class="ui image large label">
+                                        <img src="assets/images/iconos/sol_peruano_bn.png">
+                                        <label class="subtotalFormLabel" style="margin:0px;"><?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?></label>
+                                    </div>
+                                    <input class="form-control subtotalForm" type="hidden" name="subtotalForm" value="<?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?>" placeholder="0" readonly>
+                                </td>
+                                <td class="text-center">
+                                    <a href="javascript:;" class="btn btn-outline-danger border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        <? } ?>
                     </tbody>
-                    <tfoot class="full-width">
+                    <!-- <tfoot class="full-width">
                         <tr>
                             <th></th>
                             <th colspan="3"></th>
@@ -141,29 +147,29 @@
                                 <div class="ui right floated">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano.png">
-                                        <label class="totalFormLabel" style="margin:0px;">0</label>
+                                        <label class="totalFormLabel" style="margin:0px;"><?=!empty($row['total']) ? $row['total'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control totalForm" type="hidden" name="totalForm" placeholder="0" readonly="">
+                                    <input class="form-control totalForm" type="hidden" name="totalForm" value="<?=!empty($row['total']) ? $row['total'] : 0 ?>" placeholder="0" readonly="">
                                 </div>
                             </th>
                             <th colspan="3">
 
                             </th>
                         </tr>
-                    </tfoot>
+                    </tfoot> -->
                 </table>
             </div>
             <div class="ui form" style="margin-top:10px;">
                 <div class="inline fields">
                     <div class="three wide field">
                         <label class="five">GAP %:</label>
-                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="0" value="<?= $cotizacion['gap'] ?>">
+                        <input id="gapForm" name="gapForm" patron="requerido" placeholder="0" value="<?= $cotizacion['gap'] ?>">
                     </div>
                 </div>
                 <div class="inline fields">
                     <div class="three wide field">
                         <label class="five">FEE %:</label>
-                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="0" value="<?= $cotizacion['fee'] ?>">
+                        <input id="feeForm" name="feeForm" patron="requerido" placeholder="0" value="<?= $cotizacion['fee'] ?>">
                     </div>
                 </div>
             </div>

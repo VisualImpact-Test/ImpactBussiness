@@ -10,7 +10,7 @@
                             </button>
                         </h5>
                     </div>
-                    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                         <div class="row">
                             <div class="col-md-5 child-divcenter">
                                 <div class="control-group child-divcenter row w-100">

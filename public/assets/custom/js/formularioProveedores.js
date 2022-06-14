@@ -101,6 +101,30 @@ var FormularioProveedores = {
 				}
 			});
 		});
+
+		$(document).on("click",".btnLoginProveedor", ()=>{
+			let idForm = 'frmLoginProveedor';
+			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
+				if (a === true) {
+					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject(idForm)) };
+					let url = "FormularioProveedor/login";
+					let config = { url: url, data: jsonString };
+
+					$.when(Fn.ajax(config)).then(function (b) {
+						++modalId;
+						var btn = [];
+						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+						if (b.result == 1) {
+							fn = 'Fn.showModal({ id: ' + modalId + ',show:false});Fn.goToUrl(`' + b.data.url + '`);';
+						}
+
+						btn[0] = { title: 'Continuar', fn: fn };
+						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
+					});
+				}
+			});
+		});
 	}
 
 }

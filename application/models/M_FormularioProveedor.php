@@ -154,4 +154,44 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function loginProveedor($params = []){
+		$sql = "
+		SELECT 
+			idProveedor,
+			razonSocial,
+			nroDocumento,
+			idProveedorEstado
+		FROM 
+			compras.proveedor
+		WHERE 
+			nroDocumento like '%{$params['ruc']}%'
+			AND correoContacto like '%{$params['email']}%'
+		";
+
+		return $this->db->query($sql);
+	}
+	public function obtenerInformacionCotizacionProveedor($params = [])
+	{	
+		$filtros = "WHERE 1 = 1";
+		$filtros = !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '' ;
+
+		$sql = "
+		SELECT 
+			cdpd.idCotizacionDetalleProveedorDetalle,
+			cdpd.idItem,
+			i.nombre item,
+			it.nombre tipoItem,
+			cdpd.costo
+		FROM 
+		compras.cotizacionDetalleProveedor cdp 
+		JOIN compras.cotizacionDetalleProveedorDetalle cdpd ON cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor
+		JOIN compras.item i ON i.idItem = cdpd.idItem
+			AND i.estado = 1
+		JOIN compras.itemTipo it ON it.idItemTipo = i.idItemTipo
+		$filtros
+		";
+
+		return $this->db->query($sql);
+	}
 }

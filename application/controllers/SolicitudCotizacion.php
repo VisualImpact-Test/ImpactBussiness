@@ -81,6 +81,9 @@ class SolicitudCotizacion extends MY_Controller
         $dataParaVista = [];
         $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
 
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $post['id'],'idItemEstado' => 2])['query']->result_array();
+
         $dataParaVista['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
         $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
@@ -102,7 +105,7 @@ class SolicitudCotizacion extends MY_Controller
         $result['data']['existe'] = 0;
 
         $result['result'] = 1;
-        $result['msg']['title'] = 'Registrar Cotizacion';
+        $result['msg']['title'] = 'Verificar Solicitud de Cotizacion';
         $result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/formularioRegistro", $dataParaVista, true);
         $result['data']['itemServicio'] = $data['itemServicio'];
 
@@ -144,6 +147,98 @@ class SolicitudCotizacion extends MY_Controller
 
         echo json_encode($result);
     }
+
+    public function actualizarCotizacion()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $data = [];
+        
+        $data['update'] = [
+            'nombre' => $post['nombre'],
+            'idCuenta' => $post['cuentaForm'],
+            'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            'fechaRequerimiento' => $post['fechaRequerimiento'],
+            'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
+            'gap' => $post['gapForm'],
+            'fee' => $post['feeForm'],
+            // 'total' => $post['totalForm'],
+            // 'idPrioridad' => $post['prioridadForm'],
+            // 'motivo' => $post['motivoForm'],
+            // 'comentario' => $post['comentarioForm'],
+            // 'idCotizacionEstado' => $post['tipoRegistro']
+        ];
+        
+
+        $validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
+        if (!empty($validacionExistencia['query']->row_array())) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroRepetido');
+            goto respuesta;
+        }
+
+        $data['tabla'] = 'compras.cotizacion';
+        $data['where'] = [
+            'idCotizacion' => $post['idCotizacion']
+        ];
+        $update = $this->model->actualizarCotizacion($data);
+        $data = [];
+
+        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
+        $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
+        $post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
+        $post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
+        $post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
+        $post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+        $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
+        $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
+        $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
+
+        foreach ($post['nameItem'] as $k => $r) {
+            $data['update'][] = [
+                'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+                'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
+                'idItemTipo' => $post['tipoItemForm'][$k],
+                'nombre' => $post['nameItem'][$k],
+                'cantidad' => $post['cantidadForm'][$k],
+                'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+                'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
+                'idItemEstado' => $post['idEstadoItemForm'][$k],
+                'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+                'idCotizacionDetalleEstado' => 2, 
+                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+            ];
+        }
+
+        $data['tabla'] = 'compras.cotizacionDetalle';
+        $data['where'] = 'idCotizacionDetalle';
+        $updateDetalle = $this->model->actualizarCotizacionDetalle($data);
+        $data = [];
+
+        $estadoEmail = true;
+        // if($post['tipoRegistro'] == 2){
+        //     $estadoEmail = $this->enviarCorreo($insert['id']);
+        // }
+
+        if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+        }
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
+
 
     
 }

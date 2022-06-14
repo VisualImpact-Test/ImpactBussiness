@@ -1,4 +1,4 @@
-var SolcitudCotizacion = {
+var SolicitudCotizacion = {
 
 	frm: 'frm-cotizacion',
 	contentDetalle: 'idContentCotizacion',
@@ -22,9 +22,9 @@ var SolcitudCotizacion = {
 		$(document).on('click', '#btn-filtrarCotizacion', function () {
 			var ruta = 'reporte';
 			var config = {
-				'idFrm': SolcitudCotizacion.frm
-				, 'url': SolcitudCotizacion.url + ruta
-				, 'contentDetalle': SolcitudCotizacion.contentDetalle
+				'idFrm': SolicitudCotizacion.frm
+				, 'url': SolicitudCotizacion.url + ruta
+				, 'contentDetalle': SolicitudCotizacion.contentDetalle
 			};
 
 			Fn.loadReporte_new(config);
@@ -35,12 +35,12 @@ var SolcitudCotizacion = {
 			let data = {};
 				data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': SolcitudCotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
-					SolcitudCotizacion.itemServicio = a.data.itemServicio;
+					SolicitudCotizacion.itemServicio = a.data.itemServicio;
 				}
 
 				let btn = [];
@@ -48,16 +48,18 @@ var SolcitudCotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolcitudCotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar este cotizacion?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar este cotizacion?" });';
 				btn[1] = { title: 'Guardar', fn: fn[1] };
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(2)", content: "¿Esta seguro de guardar y enviar esta cotizacion?" });';
+				btn[2] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[2] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
-				SolcitudCotizacion.modalIdForm = modalId;
-
-				SolcitudCotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
-				$('#listaItemsCotizacion tbody').html('');
-				$(".btn-add-row").click();
+				SolicitudCotizacion.modalIdForm = modalId;
+				SolicitudCotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
+				SolicitudCotizacion.actualizarAutocomplete();
+				// $('#listaItemsCotizacion tbody').html('');
+				// $(".btn-add-row").click();
 			});
 		});
 
@@ -68,7 +70,7 @@ var SolcitudCotizacion = {
 			let data = { 'idCotizacion': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': SolcitudCotizacion.url + 'formularioVisualizacionCotizacion', 'data': jsonString };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -79,7 +81,7 @@ var SolcitudCotizacion = {
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
-				SolcitudCotizacion.actualizarAutocomplete();
+				SolicitudCotizacion.actualizarAutocomplete();
 			});
 		});
 
@@ -90,11 +92,11 @@ var SolcitudCotizacion = {
 			let idPesupuesto = $(this).data('idcotizacion');
 			let data = { 'nombre': nombre };
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': SolcitudCotizacion.url + 'formularioRegistroItem', 'data': jsonString };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioRegistroItem', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
-					SolcitudCotizacion.itemsLogistica = a.data.itemsLogistica;
+					SolicitudCotizacion.itemsLogistica = a.data.itemsLogistica;
 				}
 
 				let btn = [];
@@ -102,12 +104,12 @@ var SolcitudCotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "SolcitudCotizacion.registrarItem(' + idPesupuesto + ')", content: "¿Esta seguro de registrar el item ? " });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "SolicitudCotizacion.registrarItem(' + idPesupuesto + ')", content: "¿Esta seguro de registrar el item ? " });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 
-				SolcitudCotizacion.actualizarAutocompleteItemsLogistica();
+				SolicitudCotizacion.actualizarAutocompleteItemsLogistica();
 			});
 		});
 
@@ -119,7 +121,7 @@ var SolcitudCotizacion = {
 			let data = { 'idCotizacion': idCotizacion, 'estado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': SolcitudCotizacion.url + 'actualizarEstadoCotizacion', 'data': jsonString };
+			let config = { 'url': SolicitudCotizacion.url + 'actualizarEstadoCotizacion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				$("#btn-filtrarCotizacion").click();
@@ -132,14 +134,14 @@ var SolcitudCotizacion = {
 			let $filas = $('#listaItemsCotizacion tbody tr').length;
 			$filas = $filas + 1;
 			let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
-			$html += SolcitudCotizacion.htmlG;
+			$html += SolicitudCotizacion.htmlG;
 			$html += "</tr>";
 
 			$('#listaItemsCotizacion tbody').append($html);
 
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
-			SolcitudCotizacion.actualizarAutocomplete();
+			SolicitudCotizacion.actualizarAutocomplete();
 			$("#div-ajax-detalle").animate({ scrollTop: $("#listaItemsCotizacion").height() }, 500);
 		});
 
@@ -149,7 +151,7 @@ var SolcitudCotizacion = {
 			let $filas = $('#listaItemsCotizacion tbody tr').length;
 			$filas = $filas + 1;
 			let $html = "<tr class='nuevo'><td class='n_fila' >" + $filas + "</td>";
-			$html += SolcitudCotizacion.htmlCotizacion;
+			$html += SolicitudCotizacion.htmlCotizacion;
 			$html += "</tr>";
 
 			$('#listaItemsCotizacion tbody').append($html);
@@ -179,7 +181,7 @@ var SolcitudCotizacion = {
 		});
 
 		$(document).on('change', '#tipo', function (e) {
-			SolcitudCotizacion.actualizarAutocomplete();
+			SolicitudCotizacion.actualizarAutocomplete();
 		});
 
 		$(document).on('click', '.btn-cotizacion-pdf', function (e) {
@@ -187,7 +189,7 @@ var SolcitudCotizacion = {
 
 			let $idCotizacion = $(this).parents('tr').data('id');
 
-			SolcitudCotizacion.generarRequerimientoPDF($idCotizacion);
+			SolicitudCotizacion.generarRequerimientoPDF($idCotizacion);
 		});
 
 		$(document).on('click', '.btn-generarCotizacion', function () {
@@ -199,7 +201,7 @@ var SolcitudCotizacion = {
 			});
 			let data = { 'items': items };
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': SolcitudCotizacion.url + 'formularioGenerarCotizacion', 'data': jsonString };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioGenerarCotizacion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -207,22 +209,22 @@ var SolcitudCotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "SolcitudCotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar la cotizacion? " });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "SolicitudCotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar la cotizacion? " });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 
-				SolcitudCotizacion.actualizarAutocompleteItemsLogistica();
-				SolcitudCotizacion.htmlCotizacion = $('#listaItemsCotizacion tbody tr').html();
+				SolicitudCotizacion.actualizarAutocompleteItemsLogistica();
+				SolicitudCotizacion.htmlCotizacion = $('#listaItemsCotizacion tbody tr').html();
 				$('#listaItemsCotizacion tbody').html('');
 				$(".btn-add-row-cotizacion").click();
 			});
 		});
 	},
 
-	registrarCotizacion: function () {
+	registrarCotizacion: function (tipoRegistro = 1) {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
-		let url = SolcitudCotizacion.url + "registrarCotizacion";
+		let url = SolicitudCotizacion.url + "actualizarCotizacion";
 		let config = { url: url, data: jsonString };
 		let diferencias = 0;
 
@@ -241,7 +243,7 @@ var SolcitudCotizacion = {
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de SolcitudCotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
+			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de SolicitudCotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
 
 			return false;
 		}
@@ -264,7 +266,7 @@ var SolcitudCotizacion = {
 		++modalId;
 
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacions')) };
-		let config = { 'url': SolcitudCotizacion.url + 'actualizarCotizacion', 'data': jsonString };
+		let config = { 'url': SolicitudCotizacion.url + 'actualizarCotizacion', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
@@ -284,7 +286,7 @@ var SolcitudCotizacion = {
 		let tipo = 1;
 		let items = [];
 		let nro = 0;
-		$.each(SolcitudCotizacion.itemServicio[1], function (index, value) {
+		$.each(SolicitudCotizacion.itemServicio[1], function (index, value) {
 			if (tipo == value.tipo || tipo == 3) {
 				items[nro] = value;
 				nro++;
@@ -326,7 +328,7 @@ var SolcitudCotizacion = {
 					$(this).parents('.nuevo').find('.costoForm').attr('readonly', 'readonly');
 				}
 			},
-			appendTo: "#modal-page-" + SolcitudCotizacion.modalIdForm,
+			appendTo: "#modal-page-" + SolicitudCotizacion.modalIdForm,
 			max: 5,
 			minLength: 5,
 		});
@@ -334,7 +336,7 @@ var SolcitudCotizacion = {
 
 	actualizarAutocompleteItemsLogistica: function () {
 		$("#equivalente").autocomplete({
-			source: SolcitudCotizacion.itemsLogistica[1],
+			source: SolicitudCotizacion.itemsLogistica[1],
 			minLength: 0,
 			select: function (event, ui) {
 				event.preventDefault();
@@ -360,7 +362,7 @@ var SolcitudCotizacion = {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
 		formValues.idCotizacion = idCotizacion;
 		let jsonString = { 'data': JSON.stringify(formValues) };
-		let url = SolcitudCotizacion.url + "registrarItem";
+		let url = SolicitudCotizacion.url + "registrarItem";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -376,26 +378,6 @@ var SolcitudCotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
-	registrarCotizacion: function () {
-		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-		let jsonString = { 'data': JSON.stringify(formValues) };
-		let url = SolcitudCotizacion.url + "registrarCotizacion";
-		let config = { url: url, data: jsonString };
-
-		$.when(Fn.ajax(config)).then(function (b) {
-			++modalId;
-			var btn = [];
-			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-			if (b.result == 1) {
-				fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			}
-
-			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-		});
-	},
 }
 
-SolcitudCotizacion.load();
+SolicitudCotizacion.load();

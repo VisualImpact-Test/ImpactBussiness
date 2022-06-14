@@ -156,8 +156,8 @@ function moneda($valor, $igv = false, $dec = 2)
 function getFechaActual($dias = 0)
 {
 	date_default_timezone_set('America/Lima');
-	if(!empty($dias)){
-		return date('d/m/Y',strtotime("{$dias} days"));
+	if (!empty($dias)) {
+		return date('d/m/Y', strtotime("{$dias} days"));
 	}
 	return date('d/m/Y', time());
 }
@@ -1837,4 +1837,22 @@ function checkAndConvertToArray($variable)
 	}
 
 	return $resultado;
+}
+
+function validarTiempoLimite($tiempoInicio, $tiempoFinal)
+{
+	$tiempoInicio = new \DateTime($tiempoInicio);
+	$tiempoFinal   = new \DateTime($tiempoFinal);
+
+	$diferencia = (array) $tiempoFinal->diff($tiempoInicio);
+
+	if ($diferencia['y'] > 0 || $diferencia['m'] > 0 || $diferencia['d'] > 0 || $diferencia['h'] > 0) {
+		return false;
+	}
+
+	if ($diferencia['i'] > 5) {
+		return false;
+	} else {
+		return true;
+	}
 }

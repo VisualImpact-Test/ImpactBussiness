@@ -122,12 +122,14 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.gap
 				, p.fee 
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
 			WHERE 1 = 1
 			{$filtros}
+			ORDER BY p.idCotizacion DESC
 		";
 
 		$query = $this->db->query($sql);
@@ -295,6 +297,18 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function actualizarCotizacionDetalle($params = [])
+	{
+		$query = $this->db->update_batch($params['tabla'], $params['update'], $params['where']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
 
 	public function obtenerProveedor($params = [])
 	{
@@ -339,6 +353,44 @@ class M_Cotizacion extends MY_Model
 		idItem
 		FROM compras.item
 		WHERE nombre = '" . $nombreItem . "'
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerInformacionDetalleCotizacion($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+
+		$sql = "
+			SELECT 
+			cd.idCotizacion,
+			cd.idCotizacionDetalle,
+			ISNULL(i.nombre,cd.nombre) item,
+			cd.idItem,
+			cd.cantidad,
+			cd.costo,
+			cd.subtotal,
+			c.total,
+			cd.idItemTipo,
+			cd.caracteristicas
+			FROM 
+			compras.cotizacion c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			LEFT JOIN compras.item i ON i.idItem = cd.idItem
+			WHERE 
+			1 = 1
+			{$filtros}
 		";
 
 		$query = $this->db->query($sql);
