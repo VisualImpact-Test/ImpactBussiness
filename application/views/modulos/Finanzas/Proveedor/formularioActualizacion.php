@@ -76,10 +76,70 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-10 child-divcenter">
-            <fieldset class="scheduler-border">
+    <div class="col-md-10 child-divcenter">
+            <fieldset class="scheduler-border" style="overflow:auto; max-height:350px; min-height: 100px">
                 <legend class="scheduler-border">Zonas de Cobertura</legend>
-                <div class="<?= ($disabled) ? "disabled" : "" ?>">
+                <table class="w-100 tb-zona-cobertura" >
+                    <thead>
+                        <tr class="<?= ($disabled) ? "disabled" : "" ?>">
+                            <th>REGION</th>
+                            <th>PROVINCIA</th>
+                            <th>DISTRITO</th>
+                            <th class="text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregar-zona" title="Agregar Zona"><i class="fa fa-lg fa-plus"></i></a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="d-none trParent ">
+                            <td class="w-25">                    
+                                <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
+                                    <?
+                                    foreach ($listadoDepartamentos as $k_dp => $v_dp) {
+                                    ?>
+                                        <option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
+                                    <?
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control  w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25">
+                            <select class="form-control w-100 distritoCobertura" name="distritoCobertura" data-live-search="true" disabled>
+                                <option value="">Seleccione</option>
+                            </select>
+                            </td>
+                            <td class="w-25 text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <?foreach($zonasProveedor as $key => $row){?>
+                        <tr class="trChildren <?= ($disabled) ? "disabled" : "" ?>">
+                            <td>
+
+                                <input type="text" class="form-control w-100" value="<?=!empty($row['departamento']) ? $row['departamento'] : "" ?>" placeholder="Departamento" disabled>
+                                <input type="hidden" class="form-control w-100" name="regionCobertura" value="<?=!empty($row['cod_departamento']) ? $row['cod_departamento'] : "" ?>">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control w-100" value="<?=!empty($row['provincia']) ? $row['provincia'] : "" ?>" placeholder="Provincia" disabled>
+                                <input type="hidden" class="form-control w-100" name="provinciaCobertura" value="<?=!empty($row['cod_provincia']) ? $row['cod_provincia'] : "" ?>">
+                            </td>
+                            <td>
+                                <input type="text" class="form-control w-100" value="<?=!empty($row['distrito']) ? $row['distrito'] : "" ?>" placeholder="Distrito" disabled>
+                                <input type="hidden" class="form-control w-100" name="distritoCobertura" value="<?=!empty($row['cod_distrito']) ? $row['cod_distrito'] : "" ?>">
+                            </td>
+                            <td class="w-25 text-center">
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        <?}?>
+                    </tbody>
+                </table>
+                <!-- <div class="<?= ($disabled) ? "disabled" : "" ?>">
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="regionCobertura" style="border:0px;">Region :</label>
                         <select class="form-control col-md-8 my_select2" id="regionCobertura" name="regionCobertura" multiple data-live-search="true" patron="requerido">
@@ -118,7 +178,7 @@
                             ?>
                         </select>
                     </div>
-                </div>
+                </div> -->
             </fieldset>
         </div>
     </div>

@@ -130,52 +130,57 @@ class FormularioProveedor extends MY_Controller
 			'numeroContacto' => $post['numeroContacto']
 		];
 
+		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
+
+        if (!empty($validacionExistencia['query']->row_array())) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroRepetido');
+            goto respuesta;
+        }
+
 		$data['tabla'] = 'compras.proveedor';
 
 		$insert = $this->model->insertarProveedor($data);
 		$data = [];
 
-		$post['regionCobertura'] = checkAndConvertToArray($post['regionCobertura']);
-		$post['provinciaCobertura'] = empty($post['provinciaCobertura']) ? '' : checkAndConvertToArray($post['provinciaCobertura']);
-		$post['distritoCobertura'] = empty($post['distritoCobertura']) ? '' : checkAndConvertToArray($post['distritoCobertura']);
+		$zonasCobertura = [
+            'regionCobertura' => $post['regionCobertura'],
+            'provinciaCobertura' => $post['provinciaCobertura'],
+            'distritoCobertura' => $post['distritoCobertura'],
+        ];
 
-		if (!empty($post['distritoCobertura'])) {
-			foreach ($post['distritoCobertura'] as $key => $value) {
-				$data['insert'][] = [
-					'idProveedor' => $insert['id'],
-					'cod_departamento' => explode('-', $value)[0],
-					'cod_provincia' => explode('-', $value)[1],
-					'cod_distrito' => explode('-', $value)[2]
-				];
-			}
-		} else if (!empty($post['provinciaCobertura'])) {
-			foreach ($post['provinciaCobertura'] as $key => $value) {
-				$data['insert'][] = [
-					'idProveedor' => $insert['id'],
-					'cod_departamento' => explode('-', $value)[0],
-					'cod_provincia' => explode('-', $value)[1],
-					'cod_distrito' => NULL
-				];
-			}
-		} else if (!empty($post['regionCobertura'])) {
-			foreach ($post['regionCobertura'] as $key => $value) {
-				$data['insert'][] = [
-					'idProveedor' => $insert['id'],
-					'cod_departamento' => $value,
-					'cod_provincia' => NULL,
-					'cod_distrito' => NULL
-				];
-			}
-		}
+		$zonasCobertura = getDataRefactorizada($zonasCobertura);
+        $zonasInsertadas = [];
+
+		foreach ( $zonasCobertura as $key => $value) {
+
+            $idRegion = 0;
+            $idProvincia = 0;
+            $idDistrito = 0;
+
+            !empty($value['regionCobertura']) ? $idRegion = $value['regionCobertura'] : '';
+            !empty($value['provinciaCobertura']) ? $idProvincia = $value['provinciaCobertura'] : '';
+            !empty($value['distritoCobertura']) ? $idDistrito = $value['distritoCobertura'] : '';
+
+            if(!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
+
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
+                'cod_provincia' => !empty($value['provinciaCobertura']) ? $value['provinciaCobertura'] : NULL,
+                'cod_distrito' => !empty($value['distritoCobertura']) ? $value['distritoCobertura'] : NULL
+            ];
+
+            $zonasInsertadas[$idRegion][$idProvincia][$idDistrito] = 1;
+        }
 
 		$data['tabla'] = 'compras.zonaCobertura';
 
 		$second_insert = $this->model->insertarProveedorCobertura($data);
 		$data = [];
 
-		$estadoEmail = $this->enviarCorreo($insert['id']);
-
-		$estadoEmail=true;
+	
 
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
             $data['insert'][] = [
@@ -186,6 +191,10 @@ class FormularioProveedor extends MY_Controller
         }
 
 		$third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
+
+		$estadoEmail = $this->enviarCorreo($insert['id']);
+
+		$estadoEmail=true;
 
 		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail || !$third_insert) {
 			$result['result'] = 0;

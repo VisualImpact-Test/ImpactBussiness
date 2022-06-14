@@ -135,7 +135,7 @@ class M_FormularioProveedor extends MY_Model
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.rubro r ON p.idRubro = r.idRubro
 			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
-			JOIN compras.metodoPago mp ON p.idMetodoPago = mp.idMetodoPago
+			JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
 			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
 			JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento
 			AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
@@ -193,5 +193,32 @@ class M_FormularioProveedor extends MY_Model
 		";
 
 		return $this->db->query($sql);
+	}
+	public function validarExistenciaProveedor($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor != ' . $params['idProveedor'] : '';
+
+		$sql = "
+			SELECT
+				idProveedor
+			FROM compras.proveedor p
+			WHERE
+			(p.razonSocial LIKE '%{$params['razonSocial']}%'
+			OR p.nroDocumento LIKE '%{$params['nroDocumento']}%')
+			{$filtros}
+		";
+
+		
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
 	}
 }
