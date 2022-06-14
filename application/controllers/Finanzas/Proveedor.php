@@ -142,10 +142,10 @@ class Proveedor extends MY_Controller
 
 
         $dataParaVista = [];
+        $dataParaVisitaMetodoPago = [];
         $departamentosCobertura = [];
         $provinciasCobertura = [];
         $distritosCobertura = [];
-        $metodoPago = [];
         $data = $this->model->obtenerInformacionProveedores($post)['query']->result_array();
 
         foreach ($data as $key => $row) {
@@ -172,34 +172,38 @@ class Proveedor extends MY_Controller
                 'estadoIcono' => $row['estadoIcono'],
                 'estadoToggle' => $row['estadotoggle'],
             ];
-            $departamentosCobertura[$row['zc_departamento']] = $row['zc_departamento'];
-            $provinciasCobertura[$row['zc_provincia']] = $row['zc_provincia'];
-            $distritosCobertura[$row['zc_distrito']] = $row['zc_distrito'];
-            $metodoPago [$row['idMetodoPago']] = $row['metodoPago'];
+
+            if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
+            if (!empty($row['zc_provincia'])) $provinciasCobertura[trim($row['zc_cod_departamento']).'-'.trim($row['zc_cod_provincia'])] = $row['zc_provincia'];
+            if (!empty($row['zc_distrito'])) $distritosCobertura[trim($row['zc_cod_departamento']).'-'.trim($row['zc_cod_provincia']).'-'.trim($row['zc_cod_distrito'])] = $row['zc_distrito'];
+            if (!empty($row['idMetodoPago'])) $dataParaVisitaMetodoPago[trim($row['idMetodoPago'])] = $row['metodoPago'];
             
         }
 
         $dataParaVista['departamentosCobertura'] = $departamentosCobertura;
         $dataParaVista['provinciasCobertura'] = $provinciasCobertura;
         $dataParaVista['distritosCobertura'] = $distritosCobertura;
-        $dataParaVista['metodoPago'] = $metodoPago;
 
         $dataParaVista['listadoDepartamentos'] = [];
         $dataParaVista['listadoProvincias'] = [];
         $dataParaVista['listadoDistritos'] = [];
         $dataParaVista['listadoDistritosUbigeo'] = [];
+        $dataParaVista['proveedorMetodoPago'] =  $dataParaVisitaMetodoPago;
 
         $ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
         foreach ($ciudad as $ciu) {
+
             $dataParaVista['listadoDepartamentos'][trim($ciu->cod_departamento)]['nombre'] = textopropio($ciu->departamento);
             $dataParaVista['listadoProvincias'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)]['nombre'] = textopropio($ciu->provincia);
             $dataParaVista['listadoDistritos'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
             $dataParaVista['listadoDistritosUbigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
+
         }
 
         $dataParaVista['listadoRubros'] = $this->model->obtenerRubro()['query']->result_array();
         $dataParaVista['listadoMetodosPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+        $dataParaVista['zonasProveedor'] = $this->model->obtenerZonaCoberturaProveedor(['idProveedor' => $post['idProveedor']])['query']->result_array();
 
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Proveedor';
@@ -254,45 +258,41 @@ class Proveedor extends MY_Controller
         $insert = $this->model->insertarProveedor($data);
         $data = [];
 
-        $post['regionCobertura'] = checkAndConvertToArray($post['regionCobertura']);
-        $post['provinciaCobertura'] = empty($post['provinciaCobertura']) ? '' : checkAndConvertToArray($post['provinciaCobertura']);
-        $post['distritoCobertura'] = empty($post['distritoCobertura']) ? '' : checkAndConvertToArray($post['distritoCobertura']);
+        $zonasCobertura = [
+            'regionCobertura' => $post['regionCobertura'],
+            'provinciaCobertura' => $post['provinciaCobertura'],
+            'distritoCobertura' => $post['distritoCobertura'],
+        ];
 
-        if (!empty($post['distritoCobertura'])) {
-            foreach ($post['distritoCobertura'] as $key => $value) {
-                $data['insert'][] = [
-                    'idProveedor' => $insert['id'],
-                    'cod_departamento' => explode('-', $value)[0],
-                    'cod_provincia' => explode('-', $value)[1],
-                    'cod_distrito' => explode('-', $value)[2]
-                ];
-            }
-        } else if (!empty($post['provinciaCobertura'])) {
-            foreach ($post['provinciaCobertura'] as $key => $value) {
-                $data['insert'][] = [
-                    'idProveedor' => $insert['id'],
-                    'cod_departamento' => explode('-', $value)[0],
-                    'cod_provincia' => explode('-', $value)[1],
-                    'cod_distrito' => NULL
-                ];
-            }
-        } else if (!empty($post['regionCobertura'])) {
-            foreach ($post['regionCobertura'] as $key => $value) {
-                $data['insert'][] = [
-                    'idProveedor' => $insert['id'],
-                    'cod_departamento' => $value,
-                    'cod_provincia' => NULL,
-                    'cod_distrito' => NULL
-                ];
-            }
+        $zonasCobertura = getDataRefactorizada($zonasCobertura);
+        $zonasInsertadas = [];
+
+        foreach ( $zonasCobertura as $key => $value) {
+
+            $idRegion = 0;
+            $idProvincia = 0;
+            $idDistrito = 0;
+
+            !empty($value['regionCobertura']) ? $idRegion = $value['regionCobertura'] : '';
+            !empty($value['provinciaCobertura']) ? $idProvincia = $value['provinciaCobertura'] : '';
+            !empty($value['distritoCobertura']) ? $idDistrito = $value['distritoCobertura'] : '';
+
+            if(!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
+
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
+                'cod_provincia' => !empty($value['provinciaCobertura']) ? $value['provinciaCobertura'] : NULL,
+                'cod_distrito' => !empty($value['distritoCobertura']) ? $value['distritoCobertura'] : NULL
+            ];
+
+            $zonasInsertadas[$idRegion][$idProvincia][$idDistrito] = 1;
         }
 
         $data['tabla'] = 'compras.zonaCobertura';
 
         $second_insert = $this->model->insertarProveedorCobertura($data);
         $data = [];
-
-        
 
         foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
             $data['insert'][] = [
@@ -319,7 +319,6 @@ class Proveedor extends MY_Controller
         }
 
         $this->db->trans_complete();
-
         respuesta:
         echo json_encode($result);
 

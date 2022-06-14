@@ -7,6 +7,7 @@ class Recover extends MY_Login
     {
         parent::__construct();
         $this->load->model('M_Recover', 'm_recover');
+        date_default_timezone_set("America/Lima");
     }
 
     public function index()
@@ -218,7 +219,7 @@ class Recover extends MY_Login
 
         $excedioTiempoLimite = $this->validarTiempoLimite($horaTokenSolicitado, $tiempoActual);
 
-        if (!$excedioTiempoLimite or $informacionDeToken['estado'] == 0) {
+        if (!$excedioTiempoLimite || $informacionDeToken['estado'] == 0) {
             //Cambiar el redirect por algo mas rapido
             redirect('login', 'refresh');
             exit();
@@ -309,20 +310,21 @@ class Recover extends MY_Login
 
     public function enviarCorreo($email, $token)
     {
+        //correo saliente
         $config = array(
             'protocol' => 'smtp',
             'smtp_host' => 'ssl://smtp.googlemail.com',
             'smtp_port' => 465,
             'smtp_user' => 'teamsystem@visualimpact.com.pe',
-            'smtp_pass' => 'v1su4l2010',
+            'smtp_pass' => '#nVi=0sN0ti$',
             'mailtype' => 'html'
         );
 
         $this->load->library('email', $config);
         $this->email->clear(true);
         $this->email->set_newline("\r\n");
-
-        $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTTRADE');
+//destinatario
+        $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
         $this->email->to($email);
 
         // $bcc = array(

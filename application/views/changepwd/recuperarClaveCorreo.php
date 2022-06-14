@@ -1,6 +1,6 @@
 <h4 style="margin:0px"><strong>REESTABLECIMIENTO DE ACCESO</strong></h4>
 <br>
-<p>Por favor, haga click en el siguiente botón para reestablecer su clave de acceso al sistema NewPurina.</p>
+<p>Por favor, haga click en el siguiente botón para reestablecer su clave de acceso al sistema IMPACTBUSSINESS.</p>
 <br>
 <div class="text-box">
     <a href="<?= $link ?>" class="btn btn-white btn-animate" style="background-color: #d85151;
