@@ -146,6 +146,7 @@ class Cotizacion extends MY_Controller
 
     public function registrarCotizacion()
     {
+        $this->db->trans_start();
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
@@ -162,7 +163,8 @@ class Cotizacion extends MY_Controller
             'idPrioridad' => $post['prioridadForm'],
             'motivo' => $post['motivoForm'],
             'comentario' => $post['comentarioForm'],
-            'idCotizacionEstado' => $post['tipoRegistro']
+            'idCotizacionEstado' => $post['tipoRegistro'],
+            'idUsuarioReg' => $this->idUsuario
         ];
 
         $validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
@@ -187,17 +189,45 @@ class Cotizacion extends MY_Controller
         $post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
         $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
         $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
+        $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
 
         foreach ($post['nameItem'] as $k => $r) {
+            $dataItem = [];
+            $idItem = (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL;
+            $nameItem = $post['nameItem'][$k];
+            if(empty($idItem)) { // si es nuevo verificamos y lo registramos 
+                $validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem , 'nombre' =>  $nameItem]);
+
+                if (!empty($validacionExistencia['query']->row_array())) {
+                    $result['result'] = 0;
+                    $result['msg']['title'] = 'Alerta!';
+                    $result['msg']['content'] = createMessage(['type'=> 2 , 'message' => "El item {$nameItem} ya existe en el sistema"]);
+                    goto respuesta;
+                }
+
+                $dataItem['insert'] = [
+                    'nombre' => trim($nameItem),
+                    'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
+                    'idItemTipo' => $post['tipoItemForm'][$k],
+                ];
+
+                $dataItem['tabla'] = 'compras.item';
+                $idItem = $this->model_item->insertarItem($dataItem)['id'];
+                
+            }
+
             $data['insert'][] = [
                 'idCotizacion' => $insert['id'],
-                'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
+                'idItem' => $idItem,
                 'idItemTipo' => $post['tipoItemForm'][$k],
-                'nombre' => $post['nameItem'][$k],
+                'nombre' => trim($nameItem),
                 'cantidad' => $post['cantidadForm'][$k],
+                'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+                'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
                 'idItemEstado' => $post['idEstadoItemForm'][$k],
-                'idProveedor' => empty($post['idProveedor'][$k]) ? NULL : $post['idProveedor'][$k],
+                'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 1,
+                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
                 'fechaCreacion' => getActualDateTime()
             ];
         }
@@ -222,6 +252,7 @@ class Cotizacion extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
 
+        $this->db->trans_complete();
         respuesta:
         echo json_encode($result);
     }

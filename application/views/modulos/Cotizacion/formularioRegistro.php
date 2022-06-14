@@ -1,3 +1,9 @@
+<style>
+    .detail{
+        background: none !important;
+    }
+    
+</style>
 <form class="form" role="form" id="formRegistroCotizacion" method="post">
     <div class="child-divcenter" style="width:90%">
         <h4 class="ui dividing header">Información de la Cotización</h4>
@@ -30,7 +36,7 @@
                                 <input type="text" placeholder="Fecha de Requerimiento" value="<?=date("m/d/Y")?>">
                             </div>
                         </div>
-                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" >
+                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" value="<?=date("Y-m-d")?>">
                     </div>
                     <div class="five wide field">
                         <div class="inline field">
@@ -40,22 +46,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="six wide field">
-                        <a class="ui teal image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">- 7 dias</div>
-                        </a>
-                        <a class="ui yellow image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">8 a 15 dias</div>
-                        </a>
-                        <a class="ui red image label">
-                            <i class="fa fa-flag-alt"></i>
-                            Vigencia
-                            <div class="detail">+ 15 dias</div>
-                        </a>
+                    <div class="inline fields">
+                        <div class="twelve wide field">
+                            <a class="ui teal image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">- 7 dias</div>
+                            </a>
+                            <a class="ui yellow image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">8 a 15 dias</div>
+                            </a>
+                            <a class="ui red image label">
+                                <i class="fa fa-flag-alt"></i>
+                                Vigencia
+                                <div class="detail">+ 15 dias</div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,6 +100,7 @@
                                     <input class="codItems" type='hidden' name='idItemForm'>
 
                                     <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2" >
+                                    <input class="idProveedor" type='hidden' name='idProveedorForm' value="">
                                 </div>
                             </td>
                             <td>
@@ -100,7 +109,7 @@
                                 </div>
                             </td>
                             <td>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' readonly="readonly">
+                                <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57' >
                             </td>
                             <td class="text-center">
                                 <div class="ui image large label">
@@ -157,7 +166,7 @@
                     </div>
                     <div class="six wide field">
                         <label>Motivo:</label>
-                        <input id="motivoForm" name="motivoForm" patron="requerido" placeholder="Motivo">
+                        <input id="motivoForm" name="motivoForm" placeholder="Motivo">
                     </div>
                 </div>
                 <div class="fields">

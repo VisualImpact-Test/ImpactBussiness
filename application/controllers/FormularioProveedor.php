@@ -8,10 +8,80 @@ class FormularioProveedor extends MY_Controller
 	{
 		parent::__construct();
 		$this->load->model('M_FormularioProveedor', 'model');
-	}
+		$this->load->model('M_cotizacion', 'm_cotizacion');
+		$proveedor = $this->session->userdata('proveedor');
 
+	}
+	
 	public function index()
 	{
+		$proveedor = $this->session->userdata('proveedor');
+		if(!empty($proveedor)){
+			redirect('FormularioProveedor/Cotizaciones','refresh');
+			exit();
+		}
+		$config['css']['style'] = array();
+		$config['js']['script'] = array('assets/custom/js/FormularioProveedores');
+		$config['view'] = 'formularioProveedores/login';
+		$config['data']['title'] = 'Formulario Proveedores';
+		$config['data']['icon'] = 'fa fa-home';
+		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
+		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
+
+		$config['data']['departamento'] = [];
+		$config['data']['provincia'] = [];
+		$config['data']['distrito'] = [];
+
+		foreach ($ciudad as $ciu) {
+			$config['data']['departamento'][trim($ciu->cod_departamento)]['nombre'] = textopropio($ciu->departamento);
+			$config['data']['provincia'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)]['nombre'] = textopropio($ciu->provincia);
+			$config['data']['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
+			$config['data']['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
+		}
+
+		$config['single'] = true;
+
+		$this->view($config);
+	}
+
+	public function login(){
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$proveedor = $this->model->loginProveedor($post)->row_array();
+
+		if(empty($proveedor)){
+			$result['result'] = 0;
+			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Datos inválidos']);
+			goto respuesta;
+		}
+
+		if($proveedor['idProveedorEstado'] == 1){
+			$result['result'] = 0;
+			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Usuario por aprobar']);
+			goto respuesta;
+		}
+
+		if($proveedor['idProveedorEstado'] != 2){
+			$result['result'] = 0;
+			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Datos inválidos']);
+			goto respuesta;
+		}
+
+
+		$result['result'] = 1;
+		$result['msg']['content'] = createMessage(['type'=> 1 , 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
+		$result['data']['url'] = base_url()."FormularioProveedor/cotizaciones"; 
+
+		$this->session->set_userdata('proveedor',$proveedor);
+		respuesta:
+		echo json_encode($result);
+	}
+
+	public function signup()
+	{
+		
 		$config['css']['style'] = array();
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedores');
 		$config['view'] = 'formularioProveedores';
@@ -250,4 +320,117 @@ class FormularioProveedor extends MY_Controller
 			return (object)['success' => 0];
 		}
 	}
+
+	public function cotizaciones()
+	{
+		$proveedor = $this->session->userdata('proveedor');
+		if(empty($proveedor)){
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+		$config['css']['style'] = array();
+		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizaciones');
+		$config['view'] = 'formularioProveedores/cotizaciones';
+		$config['data']['title'] = 'Formulario Proveedores';
+		$config['data']['icon'] = 'fa fa-home';
+		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
+		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
+
+		$config['data']['departamento'] = [];
+		$config['data']['provincia'] = [];
+		$config['data']['distrito'] = [];
+
+		foreach ($ciudad as $ciu) {
+			$config['data']['departamento'][trim($ciu->cod_departamento)]['nombre'] = textopropio($ciu->departamento);
+			$config['data']['provincia'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)]['nombre'] = textopropio($ciu->provincia);
+			$config['data']['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
+			$config['data']['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
+		}
+
+		$config['single'] = true;
+
+		$this->view($config);
+	}
+
+	public function cotizacionesRefresh()
+    {	
+	
+		$proveedor = $this->session->userdata('proveedor');
+		if(empty($proveedor)){
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+		$post['idProveedor'] = $proveedor['idProveedor'];
+        $dataParaVista = [];
+        $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
+
+		$html = $this->load->view("formularioProveedores/cotizaciones-table", ['datos' => $dataParaVista], true);
+
+        $result['result'] = 1;
+        $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
+        $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
+        $result['data']['configTable'] =  [
+            'columnDefs' =>
+            [
+                0 =>
+                [
+                    "visible" => false,
+                    "targets" => []
+                ]
+            ]
+        ];
+
+        echo json_encode($result);
+    }
+
+	public function actualizarCotizacionProveedor()
+	{	
+		
+		$this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
+        $post['costo'] = checkAndConvertToArray($post['costo']);
+  
+        foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
+            $data['update'][] = [
+				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
+                'costo' => (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0,
+            ];
+        }
+
+        $data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
+        $data['where'] = 'idCotizacionDetalleProveedorDetalle';
+        $updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+
+        if (!$updateDetalle['estado']) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+        }
+
+		$this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+	}
+	
+	public function logout(){
+		$result = $this->result;
+		$this->session->unset_userdata('proveedor');
+
+		$result['msg']['title'] = 'Cerrar Sesion';
+		$result['msg']['content'] = createMessage(['type'=>1,'message'=>'La sesion ha sido finalizada']);
+		$result['data']['url'] = base_url()."FormularioProveedor"; 
+		echo json_encode($result);
+	}
+	
 }

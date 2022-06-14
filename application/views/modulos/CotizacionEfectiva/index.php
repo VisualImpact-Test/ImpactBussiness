@@ -35,9 +35,6 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarCotizacionEfectiva" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
 				</button>
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarCotizacionEfectiva" title="Nuevo">
-					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
-				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
