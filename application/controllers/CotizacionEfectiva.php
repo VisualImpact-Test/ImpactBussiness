@@ -84,4 +84,36 @@ class CotizacionEfectiva extends MY_Controller
 
         echo json_encode($result);
     }
+
+    public function finalizarCotizacion()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+        $data['tabla'] = 'compras.cotizacion';
+        $data['update'] = [
+            'idCotizacionEstado' => 7
+        ];
+
+        $data['where'] = [
+            'idCotizacion' => $post['idCotizacion']
+        ];
+
+        $update = $this->model->actualizarCotizacion($data);
+
+
+        if(!$update['estado']){
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Finalizar CotizacionEfectiva';
+            $result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se pudo finalizar la cotización']);
+        }else{
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Finalizar CotizacionEfectiva';
+            $result['msg']['content'] = createMessage(['type' => 1, 'message' => 'La cotización se finalizó correctamente']);
+
+        }
+
+        echo json_encode($result);
+    }
 }
