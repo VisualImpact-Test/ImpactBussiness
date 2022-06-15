@@ -11,6 +11,8 @@ class SolicitudCotizacion extends MY_Controller
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
         $this->load->model('M_proveedor','model_proveedor');
+        $this->load->model('M_formularioProveedor','model_formulario_proveedor');
+
     }
 
     public function index()
@@ -48,7 +50,7 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-        $post['estadoCotizacion'] = 2;
+        $post['estadoCotizacion'] = '2,5,6';
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 
@@ -199,7 +201,24 @@ class SolicitudCotizacion extends MY_Controller
         $this->db->trans_start();
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
+        $data['tabla'] = 'compras.cotizacion';
+        if($post['tipoRegistro'] == 3){
+            $data['update'] = [
+                'idCotizacionEstado' => $post['tipoRegistro'],
+            ];
+            $data['where'] = [
+                'idCotizacion' => $post['idCotizacion'],
+            ];
 
+            $this->model->actualizarCotizacion($data);
+
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = createMessage(['type'=>1,'message' => 'Se confirmó el detalle de la cotización correctamente']);
+
+            $this->db->trans_complete();
+            goto respuesta;
+        }
         $data = [];
         
         $data['update'] = [
@@ -300,6 +319,8 @@ class SolicitudCotizacion extends MY_Controller
         }
         $dataParaVista = [];
 
+        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
         $post['checkItem'] = checkAndConvertToArray($post['checkItem']);
         foreach ($post['nameItem'] as $k => $r) {
 
@@ -309,12 +330,37 @@ class SolicitudCotizacion extends MY_Controller
         $items = implode(",",$data['select']);
         $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'idItemEstado' => 2, 'idCotizacionDetalle' => $items])['query']->result_array();
 
+       
+        $data = [];
+        $data['insert'] = [
+            'idProveedor' => $post['proveedorForm'],
+            'idCotizacion' => $post['idCotizacion'],
+            'estado' => true,
+        ];
+        $data['tabla'] = 'compras.cotizacionDetalleProveedor';
+        $rs = $this->model->insertar($data);
+        $data = [];
         foreach($dataParaVista['detalle'] as $k => $row){
-            $data['insertProveedor'] = [
-                'idProveedor' => $post['proveedorForm']
+            $data['insert'][] = [
+                'idCotizacionDetalleProveedor' => $rs['id'],
+                'idItem' => $row['idItem'],
+                'costo'=> $row['costo'],
+                'flag_activo' => 1,
+                'fechaCreacion' => getActualDateTime(),
+                'idCotizacionDetalle' => $row['idCotizacionDetalle'],
+                'estado' => 1,
             ];
         }
 
+        $rsDet = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalle',$data['insert']);
+
+        if(!$rs['estado'] || !$rsDet){
+            $result['result'] = 1;
+            $result['data']['html'] = createMessage(['type'=>2,'message'=>'No se pudo enviar la solicitud']);
+            $result['msg']['title'] = 'Alerta';
+
+            goto respuesta;
+        }
         $html = $this->load->view("modulos/SolicitudCotizacion/correoProveedor", $dataParaVista, true);
         $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'FormularioProveedor/Cotizaciones'], true);
         $config = [
@@ -331,6 +377,30 @@ class SolicitudCotizacion extends MY_Controller
 
         $this->db->trans_complete();
         respuesta:
+        echo json_encode($result);
+    }
+
+    public function verCotizacionesProveedor()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+        
+        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
+        foreach ($post['nameItem'] as $k => $r) {
+            $data['select'][] = $post['idCotizacionDetalle'][$k];
+        }
+        $detalles = implode(",",$data['select']);
+        $dataParaVista['detalle'] = $this->model_formulario_proveedor->obtenerInformacionCotizacionProveedor(['idCotizacionDetalle' => $detalles])->result_array();
+
+        $html = $this->load->view("modulos/SolicitudCotizacion/viewCotizacionesProveedor", $dataParaVista, true);
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Solicitudes';
+        $result['data']['html'] = $html;
+
         echo json_encode($result);
     }
 

@@ -13,20 +13,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr data-id="26" role="row" class="even">
-                <td class="td-center sorting_1">1</td>
-                <td class="td-center style-icons">
-                    <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacionEfectiva btn-dp-26"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion Efectiva"></i></a>
-                </td>
-                <td class="td-center">03/03/2022</td>
-                <td class="td-left">COTIZACION ENERO 2022</td>
-                <td class="td-left">PROCTER &amp; GAMBLE</td>
-                <td class="td-left">P&amp;G HSM MODERNO</td>
-                <td class="td-left">COTI-0000026</td>
-                <td class="text-center style-icons">
-                    <span class="badge badge-warning" id="spanEstado-26">En proceso de compra</span>
-                </td>
-            </tr>
+            <? foreach ($datos as $k => $row) { ?>
+                <tr data-id="<?=$row['idCotizacion']?>" role="row" class="even">
+                    <td class="td-center sorting_1"><?=($k + 1)?></td>
+                    <td class="td-center style-icons">
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacionEfectiva btn-dp-26"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion Efectiva"></i></a>
+                    </td>
+                    <td class="td-center"><?= verificarEmpty($row['fechaEmision'],2)?></td>
+                    <td class="td-left"><?= verificarEmpty($row['cotizacion'],2)?> COTIZACION ENERO 2022</td>
+                    <td class="td-left"><?= verificarEmpty($row['cuenta'],2)?></td>
+                    <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'],2)?></td>
+                    <td class="td-left"><?= verificarEmpty($row['codCotizacion'],2)?></td>
+                    <td class="text-center style-icons">
+                        <span class="badge badge-warning" id="spanEstado-26"><?= verificarEmpty($row['cotizacionEstado'],2)?></span>
+                    </td>
+                </tr>
+            <? } ?>
         </tbody>
     </table>
 </div>

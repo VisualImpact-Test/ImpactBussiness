@@ -7,7 +7,7 @@ class CotizacionEfectiva extends MY_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('M_CotizacionEfectiva', 'model');
+        $this->load->model('M_cotizacion', 'model');
     }
 
     public function index()
@@ -44,8 +44,9 @@ class CotizacionEfectiva extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
+        $post['estadoCotizacion'] = '5,6,7';
         $dataParaVista = [];
-        // $dataParaVista = $this->model->obtenerInformacionCotizacionEfectiva($post)['query']->result_array();
+        $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {

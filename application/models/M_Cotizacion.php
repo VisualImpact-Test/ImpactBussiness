@@ -421,4 +421,6 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+	
 }
