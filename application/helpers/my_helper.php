@@ -1313,8 +1313,8 @@ function email($email = array())
 			$ci->email->cc($email['cc']);
 		}
 
-		//$bcc = array('jefry.mallma@visualimpact.com.pe');
-		//$ci->email->bcc($bcc);
+		$bcc = array('luis.durand@visualimpact.com.pe');
+		$ci->email->bcc($bcc);
 
 		$ci->email->subject($email['asunto']);
 		$ci->email->message($email['contenido']);
