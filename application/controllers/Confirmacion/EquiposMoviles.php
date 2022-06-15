@@ -147,6 +147,9 @@ class EquiposMoviles extends MY_Controller
         // );
         // $this->email->bcc($bcc);
 
+        $bcc = array('luis.durand@visualimpact.com.pe');
+		$this->email->bcc($bcc);
+        
         $this->email->subject('IMPACTBUSSINESS - CONFIRMACION DE ITEMS DE COTIZACION');
         $html = $this->load->view("modulos/CotizacionEfectiva/correo/informacionProveedor", $dataParaVista, true);
         $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);

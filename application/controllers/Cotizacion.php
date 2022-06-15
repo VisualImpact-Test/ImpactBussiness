@@ -372,6 +372,9 @@ class Cotizacion extends MY_Controller
         // );
         // $this->email->bcc($bcc);
 
+        $bcc = array('luis.durand@visualimpact.com.pe');
+		$this->email->bcc($bcc);
+
         $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
         $html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
         $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
