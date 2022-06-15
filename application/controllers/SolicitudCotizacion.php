@@ -10,6 +10,7 @@ class SolicitudCotizacion extends MY_Controller
         $this->load->model('M_cotizacion', 'model');
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
+        $this->load->model('M_proveedor','model_proveedor');
     }
 
     public function index()
@@ -88,6 +89,10 @@ class SolicitudCotizacion extends MY_Controller
         $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
         $dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+        $proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado'=>2])['query']->result_array();
+        foreach($proveedores as $k => $p){
+            $dataParaVista['proveedores'][$p['idProveedor']] = $p;
+        }
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
@@ -188,6 +193,7 @@ class SolicitudCotizacion extends MY_Controller
         echo json_encode($result);
     }
 
+
     public function actualizarCotizacion()
     {
         $this->db->trans_start();
@@ -279,6 +285,54 @@ class SolicitudCotizacion extends MY_Controller
         echo json_encode($result);
     }
 
+
+    public function enviarSolicitudProveedor()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        if(empty($post['checkItem'])){
+            $result['result'] = 1;
+            $result['data']['html'] = createMessage(['type'=>2,'message'=>'Debe seleccionar al menos un item']);
+            $result['msg']['title'] = 'Alerta';
+            goto respuesta;
+        }
+        $dataParaVista = [];
+
+        $post['checkItem'] = checkAndConvertToArray($post['checkItem']);
+        foreach ($post['nameItem'] as $k => $r) {
+
+            if(empty($post['checkItem'][$k])) continue;
+            $data['select'][] = $post['idCotizacionDetalle'][$k];
+        }
+        $items = implode(",",$data['select']);
+        $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'idItemEstado' => 2, 'idCotizacionDetalle' => $items])['query']->result_array();
+
+        foreach($dataParaVista['detalle'] as $k => $row){
+            $data['insertProveedor'] = [
+                'idProveedor' => $post['proveedorForm']
+            ];
+        }
+
+        $html = $this->load->view("modulos/SolicitudCotizacion/correoProveedor", $dataParaVista, true);
+        $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'FormularioProveedor/Cotizaciones'], true);
+        $config = [
+            'to' => 'aaron.ccenta@visualimpact.com.pe',
+            'asunto' => 'Solicitud de Cotizacion',
+            'contenido' => $correo,
+        ];
+        email($config);
+
+
+        $result['result'] = 1;
+        $result['data']['html'] = createMessage(['type'=>1,'message'=>'Solicitud enviada al proveedor']);
+        $result['msg']['title'] = 'Solicitud Enviada';
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
 
     
 }

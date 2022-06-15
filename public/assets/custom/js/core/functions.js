@@ -1398,6 +1398,8 @@ var Fn = {
 
 	loadSemanticFunctions: function () {
 		$('select.semantic-dropdown').dropdown();
+
+		
 		$('select.dropdown.parentDependiente').dropdown({
 			onChange: function (noc) {
 				let childDependiente = $(this).data('childdependiente');

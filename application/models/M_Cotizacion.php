@@ -123,6 +123,9 @@ class M_Cotizacion extends MY_Model
 				, p.gap
 				, p.fee 
 				, p.idCotizacionEstado
+                , p.idPrioridad
+				, p.motivo
+                , p.comentario
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
@@ -372,6 +375,7 @@ class M_Cotizacion extends MY_Model
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 
 		$sql = "
 			SELECT 

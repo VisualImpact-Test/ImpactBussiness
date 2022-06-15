@@ -253,6 +253,23 @@ var SolicitudCotizacion = {
 				$(".btn-add-row-cotizacion").click();
 			});
 		});
+		
+		$(document).on('click', '.btnSolicitarCotizacion', function () {
+			++modalId;
+
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+			let config = { 'url': SolicitudCotizacion.url + 'enviarSolicitudProveedor', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+			});
+		});
 	},
 
 	registrarCotizacion: function (tipoRegistro = 1) {

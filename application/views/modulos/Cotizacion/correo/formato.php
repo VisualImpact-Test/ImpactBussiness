@@ -73,6 +73,8 @@
   font-family: 'Lato', sans-serif;">
     <div style="background-color: #fbfbfb; padding: 20px; border: 3px #2586DA solid;box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);transition: 0.3s;border-radius:10px;">
         <?= (!empty($html) ? $html : ''); ?>
+        <p>En caso de que el enlace no funcione, copie y pegue el siguiente link en su navegador: <?= $link ?></p>
+		<p style="margin-top:10px;width: 270px;"><strong>Correo Contacto: teamsystem@visualimpact.com.pe</strong></p>
         <?= getMensajeGestion('email_envio') ?>
     </div>
 </body>

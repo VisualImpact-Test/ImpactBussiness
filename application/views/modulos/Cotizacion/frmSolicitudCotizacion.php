@@ -7,21 +7,21 @@
     <div class="child-divcenter" style="width:90%">
         <h4 class="ui dividing header">Información de la Cotización</h4>
         <input type="hidden" name="idCotizacion" id="" value="<?=$cotizacion['idCotizacion']?>">
-        <div class="ui form">
+        <div class="ui form disabled">
             <div class="fields">
                 <div class="ten wide field">
                     <label>Titulo de la Cotización:</label>
-                    <input id="nombre" name="nombre" patron="requerido" placeholder="Nombre" value="<?= !empty($cotizacion['cotizacion']) ? $cotizacion['cotizacion'] : '' ?>">
+                    <input id="nombre" name="nombre" patron="requerido_reemplazar" placeholder="Nombre" value="<?= !empty($cotizacion['cotizacion']) ? $cotizacion['cotizacion'] : '' ?>">
                 </div>
                 <div class="five wide field">
                     <label>Cuenta:</label>
-                    <select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+                    <select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido_reemplazar" data-childDependiente="cuentaCentroCostoForm">
                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuenta']) ? $cotizacion['idCuenta'] : '']); ?>
                     </select>
                 </div>
                 <div class="five wide field">
                     <label>Centro de Costo:</label>
-                    <select class="ui search dropdown childDependiente" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+                    <select class="ui search dropdown childDependiente" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido_reemplazar">
                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
                     </select>
                 </div>
@@ -87,7 +87,7 @@
                             <th style="width: 3%;" class="text-center"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="disabled">
                         <? foreach ($cotizacionDetalle as $k => $row) { ?>
                             <input class="idCotizacionDetalleForm" type='hidden' name='idCotizacionDetalle' value="<?=!empty($row['idCotizacionDetalle']) ? $row['idCotizacionDetalle'] : '' ?>">
                             <tr>
@@ -95,13 +95,13 @@
                                     <?=($k+1)?>
                                 </td>
                                 <td>
-                                    <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
+                                    <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido_reemplazar">
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemTipo, 'class' => 'text-titlecase','selected'=>$row['idItemTipo']]); ?>
                                     </select>
                                 </td>
                                 <td>
                                     <div class="ui-widget">
-                                        <input class="form-control items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?=$row['item']?>">
+                                        <input class="form-control items" type='text' name='nameItem' patron="requerido_reemplazar" placeholder="Buscar item" value="<?=$row['item']?>">
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?=!empty($row['idItem']) ? $row['idItem'] : '' ?>">
                                         <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="<?=!empty($row['idItem']) ? 1 : 2 ?>">
                                         <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?=!empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
@@ -109,7 +109,7 @@
                                 </td>
                                 <td>
                                     <div class="ui-widget">
-                                        <input class="form-control" type='text' name='caracteristicasItem' patron="requerido" placeholder="Caracteristicas del item" value="<?=!empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>">
+                                        <input class="form-control" type='text' name='caracteristicasItem' patron="requerido_reemplazar" placeholder="Caracteristicas del item" value="<?=!empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>">
                                     </div>
                                 </td>
                                 <td>
@@ -118,9 +118,9 @@
                                 <td class="text-center">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano_bn.png">
-                                        <label class="costoFormLabel" style="margin:0px;"><?=!empty($row['costo']) ? $row['costo'] : 0 ?></label>
+                                        <label class="costoFormLabel" style="margin:0px;" ><?=!empty($row['costo']) ? $row['costo'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control costoForm" type="hidden" name="costoForm" value="<?=!empty($row['costo']) ? $row['costo'] : 0 ?>" placeholder="0" readonly >
+                                    <input class="form-control costoForm" type="hidden" name="costoForm" value="<?=!empty($row['costo']) ? $row['costo'] : '' ?>" placeholder="0" patron="requerido_reemplazar" readonly >
                                 </td>
                                 <td>
                                     <i class="semaforoForm fad fa-lg fa-flag-alt"></i>
@@ -130,7 +130,7 @@
                                         <img src="assets/images/iconos/sol_peruano_bn.png">
                                         <label class="subtotalFormLabel" style="margin:0px;"><?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control subtotalForm" type="hidden" name="subtotalForm" value="<?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?>" placeholder="0" readonly>
+                                    <input class="form-control subtotalForm" type="hidden" name="subtotalForm" value="<?=!empty($row['subtotal']) ? $row['subtotal'] : '' ?>" placeholder="0" patron="requerido_reemplazar" readonly>
                                 </td>
                                 <td class="text-center">
                                     <a href="javascript:;" class="btn btn-outline-danger border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
@@ -138,7 +138,7 @@
                             </tr>
                         <? } ?>
                     </tbody>
-                    <!-- <tfoot class="full-width">
+                    <tfoot class="full-width">
                         <tr>
                             <th></th>
                             <th colspan="3"></th>
@@ -156,20 +156,34 @@
 
                             </th>
                         </tr>
-                    </tfoot> -->
+                    </tfoot>
                 </table>
             </div>
-            <div class="ui form" style="margin-top:10px;">
-                <div class="inline fields">
-                    <div class="three wide field">
-                        <label class="five">GAP %:</label>
-                        <input id="gapForm" name="gapForm" patron="requerido" placeholder="0" value="<?= $cotizacion['gap'] ?>">
+            <div class="ui form disabled" style="margin-top:10px;">
+                <div class="fields">
+                    <div class="five wide field">
+                        <label>Prioridad:</label>
+                        <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido_reemplazar">
+                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase', 'selected' => $cotizacion['idPrioridad']]); ?>
+                        </select>
+                    </div>
+                    <div class="six wide field">
+                        <label>Motivo:</label>
+                        <input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?=!empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
+                    </div>
+                    <div class="five wide field">
+                        <label>GAP%:</label>
+                        <input id="gapForm" name="gapForm" placeholder="Gap" value="<?=!empty($cotizacion['gap']) ? $cotizacion['gap'] : '' ?>">
                     </div>
                 </div>
-                <div class="inline fields">
-                    <div class="three wide field">
-                        <label class="five">FEE %:</label>
-                        <input id="feeForm" name="feeForm" patron="requerido" placeholder="0" value="<?= $cotizacion['fee'] ?>">
+                <div class="fields">
+                    <div class="eleven wide field">
+                        <label>Comentario:</label>
+                        <input id="comentarioForm" name="comentarioForm" patron="requerido_reemplazar" placeholder="Comentario" value="<?=!empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?>">
+                    </div>
+                    <div class="five wide field">
+                        <label>FEE%:</label>
+                        <input id="feeForm" name="feeForm" placeholder="Fee" value="<?=!empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>">
                     </div>
                 </div>
             </div>
