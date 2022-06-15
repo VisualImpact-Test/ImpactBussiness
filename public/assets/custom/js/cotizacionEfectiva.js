@@ -215,8 +215,31 @@ var CotizacionEfectiva = {
 				$(".btn-add-row-cotizacionEfectiva").click();
 			});
 		});
+		$(document).on('click', '.btn-finalizarCotizacion', function () {
+			let idCotizacion = $(this).closest('tr').data('id');
+			Fn.showConfirm({ idForm: "formRegistroItems", fn: "CotizacionEfectiva.finalizarCotizacion("+idCotizacion+")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
+		});
 	},
 
+	finalizarCotizacion: function (idCotizacion) {
+		let data = {idCotizacion};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let url = CotizacionEfectiva.url + "finalizarCotizacion";
+		let config = { url: url, data: jsonString };
+		
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacionEfectiva").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 	registrarCotizacionEfectiva: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacionEfectiva')) };
 		let url = CotizacionEfectiva.url + "registrarCotizacionEfectiva";

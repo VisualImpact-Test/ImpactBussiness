@@ -18,9 +18,12 @@
                     <td class="td-center sorting_1"><?=($k + 1)?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacionEfectiva btn-dp-26"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion Efectiva"></i></a>
+                        <?if($row['idCotizacionEstado'] != 7){?>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
+                        <?}?>
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'],2)?></td>
-                    <td class="td-left"><?= verificarEmpty($row['cotizacion'],2)?> COTIZACION ENERO 2022</td>
+                    <td class="td-left"><?= verificarEmpty($row['cotizacion'],2)?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuenta'],2)?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'],2)?></td>
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'],2)?></td>
