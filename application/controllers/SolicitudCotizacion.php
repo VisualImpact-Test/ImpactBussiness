@@ -111,6 +111,46 @@ class SolicitudCotizacion extends MY_Controller
 
         echo json_encode($result);
     }
+	
+	public function formularioSolicitudCotizacionfecha()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        
+        $dataParaVista = [];
+        $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
+
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $post['id'],'idItemEstado' => 2])['query']->result_array();
+
+        $dataParaVista['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $result['data']['existe'] = 0;
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Verificar Solicitud de Cotizacion';
+        $result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/formularioRegistrofecha", $dataParaVista, true);
+        $result['data']['itemServicio'] = $data['itemServicio'];
+
+        echo json_encode($result);
+    }
+
 
     public function formularioVisualizacionCotizacion()
     {
