@@ -388,250 +388,111 @@ class Cotizacion extends MY_Controller
         $this->aSessTrack[] = ['idAccion' => 9];
     }
 
-    // public function formularioRegistroItem()
-    // {
-    //     $result = $this->result;
-    //     $post = json_decode($this->input->post('data'), true);
+    public function guardarArchivo(){
+        $ruta = '../documentosAdjuntos/ImpactBusiness/'; //Decalaramos una variable con la ruta en donde almacenaremos los archivos
+		$mensage = 'Bien hecho';//Declaramos una variable mensaje quue almacenara el resultado de las operaciones.
+		foreach ($_FILES as $key) //Iteramos el arreglo de archivos
+		{
+			if($key['error'] == UPLOAD_ERR_OK )//Si el archivo se paso correctamente Ccontinuamos 
+				{
+					$NombreOriginal = $key['name'];//Obtenemos el nombre original del archivo
+					$ext = pathinfo($NombreOriginal, PATHINFO_EXTENSION);
+					$nombreUnico = uniqid().'.'.$ext;
+					$temporal = $key['tmp_name']; //Obtenemos la ruta Original del archivo
+					$Destino = $ruta.$nombreUnico;	//Creamos una ruta de destino con la variable ruta y el nombre original del archivo	
+					
+					move_uploaded_file($temporal, $Destino); //Movemos el archivo temporal a la ruta especificada	
+					
+					$data = [
+						'nombreOriginal' => $NombreOriginal,
+						'nombreUnico' => $nombreUnico,
+						'ext'=>$ext
+					];
+				}
+		
+			if ($key['error']=='') //Si no existio ningun error, retornamos un mensaje por cada archivo subido
+				{
+					$mensage .= '-> Archivo <b>'.$NombreOriginal.'</b> Subido correctamente. <br>';
+				}
+			if ($key['error']!='')//Si existio algún error retornamos un el error por cada archivo.
+				{
+					$mensage .= '-> No se pudo subir el archivo <b>'.$NombreOriginal.'</b> debido al siguiente Error: n'.$key['error']; 
+				}
+			
+		}
+		if(!empty($data)){
+			echo json_encode($data);
+		}else{
+			echo $mensage;// Regresamos los mensajes generados al cliente
+		}
+    }
 
-    //     $dataParaVista = [];
+    public function guardarArchivoBD()
+    {
+        $this->db->trans_start();
+		$result = $this->result;
 
-    //     $dataParaVista['tipoItem'] = $this->model_item->obtenerTipoItem()['query']->result_array();
-    //     $dataParaVista['marcaItem'] = $this->model_item->obtenerMarcaItem()['query']->result_array();
-    //     $dataParaVista['categoriaItem'] = $this->model_item->obtenerCategoriaItem()['query']->result_array();
-    //     $dataParaVista['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
+		$post = json_decode($this->input->post('data'), true);
 
-    //     $dataParaVista['nombreItem'] = verificarEmpty($post['nombre'], 3);
+		$data['insert'] = [
+			'idCotizacion' => $post['idCotizacion'],
+            'idTipoArchivo' => 1, // Orden de COmpra
+			'nombre_unico' => $post['nombreUnico'],
+			'nombre_archivo' => $post['nombreOriginal'],
+			'extension' => $post['ext'],
+            'estado' => true,
+            'idUsuarioReg' => $this->idUsuario,
+		];
+        $data['tabla'] = 'compras.cotizacionArchivos';
+		$rs = $this->model->insertar($data);
+		if(!$rs['estado']){
+			$result['result'] = 0;
+			$result['data']['width'] = '40%';
+			$result['data']['html'] = createMessage(['type'=>2,'No se pudo guardar el archivo']);
+		}else{
+			$result['result'] = 1;
+			$result['data']['html'] = getMensajeGestion('registroExitoso');
+		}
 
-    //     $itemsLogistica =  $this->model_item->obtenerItemsLogistica();
-    //     foreach ($itemsLogistica as $key => $row) {
-    //         $data['items'][1][$row['value']]['value'] = $row['value'];
-    //         $data['items'][1][$row['value']]['label'] = $row['label'];
-    //         $data['items'][1][$row['value']]['idum'][$row['idum']] = $row['idum'];
-    //         $data['items'][1][$row['value']]['um'][$row['idum']] = $row['um'];
-    //     }
-    //     foreach ($data['items'] as $k => $r) {
-    //         $data['items'][$k] = array_values($data['items'][$k]);
-    //     }
-    //     $data['items'][0] = array();
-    //     $result['data']['existe'] = 0;
+		$this->db->trans_complete();
+		echo json_encode($result);
+    }
 
-    //     $result['result'] = 1;
-    //     $result['msg']['title'] = 'Registrar Item';
-    //     $result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioRegistroItem", $dataParaVista, true);
-    //     $result['data']['itemsLogistica'] = $data['items'];
+    public function formularioSolicitudCotizacion()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        
+        $dataParaVista = [];
+        $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
 
-    //     echo json_encode($result);
-    // }
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $post['id'],'idItemEstado' => 2])['query']->result_array();
 
-    // public function registrarItem()
-    // {
-    //     $result = $this->result;
-    //     $post = json_decode($this->input->post('data'), true);
+        $dataParaVista['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
-    //     $data = [];
-    //     $params = [];
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $result['data']['existe'] = 0;
 
-    //     $data['insert'] = [
-    //         'nombre' => $post['nombre'],
-    //         'idTipoItem' => $post['tipo'],
-    //         'idMarcaItem' => $post['marca'],
-    //         'idCategoriaItem' => $post['categoria'],
-    //         'idItemLogistica' => $post['idItemLogistica']
-    //     ];
+        $result['result'] = 1;
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/frmSolicitudCotizacion", $dataParaVista, true);
+        $result['data']['itemServicio'] = $data['itemServicio'];
 
-    //     $validacionExistencia = $this->model_item->validarExistenciaItem($data['insert']);
-
-    //     if (!empty($validacionExistencia['query']->row_array())) {
-    //         $result['result'] = 0;
-    //         $result['msg']['title'] = 'Alerta!';
-    //         $result['msg']['content'] = getMensajeGestion('registroRepetido');
-    //         goto respuesta;
-    //     }
-
-    //     $data['tabla'] = 'compras.item';
-
-    //     $insert = $this->model_item->insertarItem($data);
-    //     $data = [];
-
-    //     if (!$insert['estado']) {
-    //         $result['result'] = 0;
-    //         $result['msg']['title'] = 'Alerta!';
-    //         $result['msg']['content'] = getMensajeGestion('registroErroneo');
-    //     } else {
-    //         $result['result'] = 1;
-    //         $result['msg']['title'] = 'Hecho!';
-    //         $result['msg']['content'] = getMensajeGestion('registroExitoso');
-    //     }
-
-    //     //INSERTAR TARIFARIO
-    //     $params = [
-    //         'idProveedor' => $post['proveedor'],
-    //         'costo' => $post['costo'],
-    //         'idItem' => $insert['id']
-    //     ];
-
-    //     $insertTarifarioItem = $this->registrarTarifarioItem($params);
-
-    //     //ACTUALIZAR PRESUPUESTO
-    //     $params = [
-    //         'idCotizacion' => $post['idCotizacion'],
-    //         'nombre' => $post['nombre'],
-    //         'idItem' => $insert['id'],
-    //         'idProveedor' => $post['proveedor'],
-    //         'costo' => $post['costo']
-    //     ];
-
-    //     $updateCotizacion = $this->actualizarItemsCotizacion($params);
-
-    //     respuesta:
-    //     echo json_encode($result);
-    // }
-
-    // public function actualizarItemsCotizacion($params = [])
-    // {
-    //     $result = $this->result;
-
-    //     $data = [];
-
-    //     $data['update'] = [
-    //         'idItem' => $params['idItem'],
-    //         'idProveedor' => $params['idProveedor'],
-    //         'costo' => $params['costo'],
-    //         'idEstadoItem' => 1
-    //     ];
-
-    //     $data['tabla'] = 'compras.cotizacionDetalle';
-    //     $data['where'] = [
-    //         'idCotizacion' => $params['idCotizacion'],
-    //         'nombre' => $params['nombre']
-    //     ];
-
-    //     $update = $this->model->actualizarCotizacion($data);
-    //     $data = [];
-
-    //     if (!$update['estado']) {
-    //         $result['result'] = 0;
-    //         $result['msg']['title'] = 'Alerta!';
-    //         $result['msg']['content'] = getMensajeGestion('registroErroneo');
-    //     } else {
-    //         $result['result'] = 1;
-    //         $result['msg']['title'] = 'Hecho!';
-    //         $result['msg']['content'] = getMensajeGestion('registroExitoso');
-    //     }
-
-    //     return $result;
-    // }
-
-    // public function registrarTarifarioItem($params = [])
-    // {
-    //     $result = $this->result;
-
-    //     $data = [];
-
-    //     $data['insert'] = [
-    //         'idItem' => $params['idItem'],
-    //         'idProveedor' => $params['idProveedor'],
-    //         'costo' => $params['costo'],
-    //         'flag_actual' => 1
-    //     ];
-
-    //     $data['tabla'] = 'compras.tarifarioItem';
-
-    //     $insert = $this->model->insertarTarifarioItem($data);
-    //     $data = [];
-
-    //     $data['insert'] = [
-    //         'idTarifarioItem' => $insert['id'],
-    //         'fecIni' => getFechaActual(),
-    //         'fecFin' => NULL,
-    //         'costo' => $params['costo'],
-    //     ];
-
-    //     $data['tabla'] = 'compras.tarifarioItemHistorico';
-
-    //     $subInsert = $this->model->insertarTarifarioItem($data);
-
-    //     $data = [];
-
-    //     if (!$insert['estado'] or !$subInsert['estado']) {
-    //         $result['result'] = 0;
-    //         $result['msg']['title'] = 'Alerta!';
-    //         $result['msg']['content'] = getMensajeGestion('registroErroneo');
-    //     } else {
-    //         $result['result'] = 1;
-    //         $result['msg']['title'] = 'Hecho!';
-    //         $result['msg']['content'] = getMensajeGestion('registroExitoso');
-    //     }
-
-    //     return $result;
-    // }
-
-    // public function formularioGenerarCotizacion()
-    // {
-    //     $result = $this->result;
-    //     $post = json_decode($this->input->post('data'), true);
-
-    //     $dataParaVista = [];
-
-    //     $dataParaVista['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
-
-    //     $dataParaVista['items'] = $post['items'];
-
-    //     $result['result'] = 1;
-    //     $result['msg']['title'] = 'Generar Cotizacion';
-    //     $result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioGenerarCotizacion", $dataParaVista, true);
-
-    //     echo json_encode($result);
-    // }
-
-    // public function registrarCotizacion()
-    // {
-    //     $result = $this->result;
-    //     $post = json_decode($this->input->post('data'), true);
-
-    //     $data = [];
-    //     $params = [];
-
-    //     $data['insert'] = [
-    //         'nombre' => 'COTIZACION',
-    //         'idProveedor' => $post['proveedorCotizacion'],
-    //         'fecha' => getFechaActual(),
-    //         'estado' => 1
-    //     ];
-
-    //     $data['tabla'] = 'compras.cotizacion';
-
-    //     $insert = $this->model_item->insertarItem($data);
-    //     $data = [];
-
-    //     $post['itemCotizacion'] = checkAndConvertToArray($post['itemCotizacion']);
-    //     $post['costoCotizacion'] = checkAndConvertToArray($post['costoCotizacion']);
-
-    //     foreach ($post['itemCotizacion'] as $k => $r) {
-    //         $idItem = $this->model->obtenerItem($post['itemCotizacion'][$k])['query']->row_array();
-    //         $data['insert'][] = [
-    //             'idCotizacion' => $insert['id'],
-    //             'idItem' => $idItem['idItem'],
-    //             'costo' => $post['costoCotizacion'][$k]
-    //         ];
-    //     }
-
-    //     $data['tabla'] = 'compras.cotizacionDetalle';
-
-    //     $insertDetalle = $this->model->insertarCotizacionDetalle($data);
-    //     $data = [];
-
-    //     if (!$insert['estado']) {
-    //         $result['result'] = 0;
-    //         $result['msg']['title'] = 'Alerta!';
-    //         $result['msg']['content'] = getMensajeGestion('registroErroneo');
-    //     } else {
-    //         $result['result'] = 1;
-    //         $result['msg']['title'] = 'Hecho!';
-    //         $result['msg']['content'] = getMensajeGestion('registroExitoso');
-    //     }
-
-    //     respuesta:
-    //     echo json_encode($result);
-    // }
+        echo json_encode($result);
+    }
 }
