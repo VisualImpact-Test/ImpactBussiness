@@ -334,19 +334,11 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
-		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
-		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
+		$cotizacionProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor',['idProveedor' => $proveedor['idProveedor'],'estado' => 1])->row_array();
+		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionCotizacion(['id' => $cotizacionProveedor['idCotizacion']])['query']->row_array();
 
-		$config['data']['departamento'] = [];
-		$config['data']['provincia'] = [];
-		$config['data']['distrito'] = [];
+		
 
-		foreach ($ciudad as $ciu) {
-			$config['data']['departamento'][trim($ciu->cod_departamento)]['nombre'] = textopropio($ciu->departamento);
-			$config['data']['provincia'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)]['nombre'] = textopropio($ciu->provincia);
-			$config['data']['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
-			$config['data']['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
-		}
 
 		$config['single'] = true;
 
@@ -401,6 +393,7 @@ class FormularioProveedor extends MY_Controller
             $data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
                 'costo' => (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0,
+				'flag_activo' => 0,
             ];
         }
 

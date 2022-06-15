@@ -50,7 +50,7 @@ var SolicitudCotizacion = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar este cotizacion?" });';
 				btn[1] = { title: 'Guardar', fn: fn[1] };
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(2)", content: "¿Esta seguro de guardar y enviar esta cotizacion?" });';
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(3)", content: "¿Esta seguro de guardar y enviar esta cotizacion?" });';
 				btn[2] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[2] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
@@ -270,10 +270,35 @@ var SolicitudCotizacion = {
 
 			});
 		});
+
+		$(document).on('click', '.btnVerCotizaciones', function () {
+			++modalId;
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+			let config = { 'url': SolicitudCotizacion.url + 'verCotizacionesProveedor', 'data': jsonString };
+
+
+			$.when(Fn.ajax(config)).then((a) => {
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.modalIdForm = modalId;
+				
+			});
+		});
 	},
 
 	registrarCotizacion: function (tipoRegistro = 1) {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
+			formValues.tipoRegistro = tipoRegistro;
+		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "actualizarCotizacion";
 		let config = { url: url, data: jsonString };
 		let diferencias = 0;

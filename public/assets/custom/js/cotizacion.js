@@ -325,6 +325,7 @@ var Cotizacion = {
 				
 			});
 		});
+
 		$(document).on('click', '.btn-generar-cotizacionEfectivaSinOc', function () {
 			++modalId;
 			let data = {};
@@ -352,6 +353,7 @@ var Cotizacion = {
 				
 			});
 		});
+		
 	},
 
 	actualizarCotizacion: function () {

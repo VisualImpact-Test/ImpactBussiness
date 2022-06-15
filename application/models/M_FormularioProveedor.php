@@ -175,7 +175,9 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerInformacionCotizacionProveedor($params = [])
 	{
 		$filtros = "WHERE 1 = 1";
-		$filtros = !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '';
+		$filtros .= !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '';
+		$filtros .= !empty($params['flag_activo']) ? "AND cdpd.flag_activo = 1" : '';
+		$filtros .= !empty($params['idCotizacionDetalle']) ? "AND cdpd.idCotizacionDetalle IN( {$params['idCotizacionDetalle']} )" : '';
 
 		$sql = "
 		SELECT 
@@ -183,10 +185,14 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.idItem,
 			i.nombre item,
 			it.nombre tipoItem,
-			cdpd.costo
+			cdpd.costo,
+			cd.cantidad,
+			p.razonSocial proveedor
 		FROM 
 		compras.cotizacionDetalleProveedor cdp 
+		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
 		JOIN compras.cotizacionDetalleProveedorDetalle cdpd ON cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor
+		JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdpd.idCotizacionDetalle
 		JOIN compras.item i ON i.idItem = cdpd.idItem
 			AND i.estado = 1
 		JOIN compras.itemTipo it ON it.idItemTipo = i.idItemTipo
