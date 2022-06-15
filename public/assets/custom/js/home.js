@@ -68,7 +68,7 @@ var Home = {
 			});
 		})
 		$(document).on('click', '.ver-lista', function (e) {
-			let table = $("#dv-indicador-req > table");
+			let table = $("#dv-lista-solicitudes > table");
 			let estado = $(this).data("estado");
 
 			table.find("tbody tr").addClass("d-none");
@@ -79,27 +79,59 @@ var Home = {
 				}
 			});
 		})
-		$(document).on('click', '.ver-coti', function (e) {
-			let req = $(this).closest("tr").data("cod-req");
-			let div = $(".dvDetalleReq");
-			div.addClass("d-none");
-			let req_actual = 0;
-			$.each(div, function(i,x){
-				req_actual = $(this).data("cod-req");
-				if( req_actual == req){
+		
+		$(document).on('click', '.ver-lista-pasados', function (e) {
+			let table = $("#dv-lista-solicitudes > table");
+			let estado = $(this).data("estado");
 
-					$(this).removeClass('d-none');
-					$('html, body').animate({ scrollTop: $(this).offset().top }, 500);
+			table.find("tbody tr").addClass("d-none");
+			$.each(table.find("tbody tr"),function(i,x){
+
+				if($(this).data("actual") == 1){
+					$(this).removeClass("d-none");
 				}
-			});	
-
-			
+			});
 		})
+		
+		$(document).on('click', '.ver-lista-actuales', function (e) {
+			let table = $("#dv-lista-solicitudes > table");
+			let estado = $(this).data("estado");
 
-		if (localStorage.getItem('modalCuentaProyecto') == 0) {
-			$('#a-cambiarcuenta').click();	
+			table.find("tbody tr").addClass("d-none");
+			$.each(table.find("tbody tr"),function(i,x){
 
-		}
+				if($(this).data("actual") == 0){
+					$(this).removeClass("d-none");
+				}
+			});
+		})
+		
+		$(document).on('click', '.ver-lista-todo', function (e) {
+			let table = $("#dv-lista-solicitudes > table");
+			let estado = $(this).data("estado");
+
+			table.find("tbody tr").removeClass("d-none");
+		})
+		
+		$(document).on('click', '.ver-segmentos', function (e) {
+			$("#dv-segmentos").removeClass("d-none");
+		})
+		
+		
+		$(document).on('click', '.ver-coti', function (e) {
+			let id = $(this).data("id");
+			let div = $("#dv-cotizacion-detalle");
+			//
+			var data = {idCotizacion:id};
+			var jsonString = { 'data': JSON.stringify(data) };
+			var config = { 'url': Home.url + 'get_cotizacion', 'data': jsonString };
+
+			$.when(Fn.ajaxNoLoad(config)).then(function (a) {
+				div.removeClass('d-none');
+				div.html(a.data.html);
+				$('html, body').animate({ scrollTop: div.offset().top }, 500);
+			});
+		})
 	},
 
 	mostrar_cartera: function () {
