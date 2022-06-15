@@ -62,6 +62,39 @@ var SolicitudCotizacion = {
 				// $(".btn-add-row").click();
 			});
 		});
+		
+		$(document).on('click', '.btn-demofechacierre', function () {
+			++modalId;
+			let data = {};
+				data.id = $(this).closest("tr").data("id");
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacionfecha', 'data': jsonString };
+
+
+			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					SolicitudCotizacion.itemServicio = a.data.itemServicio;
+				}
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+				/*fn[2] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[2] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[2] };*/
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.modalIdForm = modalId;
+				SolicitudCotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
+				SolicitudCotizacion.actualizarAutocomplete();
+				// $('#listaItemsCotizacion tbody').html('');
+				// $(".btn-add-row").click();
+			});
+		});
 
 		$(document).on('click', '.btn-detalleCotizacion', function () {
 			++modalId;
