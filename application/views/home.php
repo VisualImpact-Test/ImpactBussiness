@@ -1,32 +1,3 @@
-<?
-// $aUsuario = [1,4,5,6,171,148,466,482,483,485,394];
-$col_1 = 4;
-$col_2 = 8;
-$col_3 = 0;
-
-
-// if( in_array($this->idUsuario, $aUsuario) ){
-// 	$col_1 = 3;
-// 	$col_2 = 6;
-// 	$col_3 = 3;
-// }
-
-if (empty($idCuenta) || $idCuenta != 2) {
-	$col_1 = 4;
-	$col_2 = 8;
-} else {
-	$col_1 = 3;
-	$col_2 = 6;
-	$col_3 = 3;
-}
-
-?>
-<style>
-	.control-w-sm {
-		height: calc(1.5em + 0.75rem + 2px) !important;
-		font-size: 1rem !important;
-	}
-</style>
 <div class="row mt-4">
 	<div class="col-lg-2 d-flex justify-content-center align-items-center">
 		<h3 class="card-title mb-3">
@@ -37,480 +8,146 @@ if (empty($idCuenta) || $idCuenta != 2) {
 	<div class="col-lg-10 d-flex">
 		<div class="card w-100 mb-3 p-0">
 			<div class="card-body p-0">
-				<ul class="nav nav-tabs nav-justified">
-					<li class="nav-item btnReporte" id="tipoReporte" name="tipoReporte" url="visibilidad">
-						<input type="hidden" id="txtcuenta" value="<?= $this->sessIdCuenta ?>">
-						<a data-toggle="tab" href="javascript:;" class="active nav-link aFechaHome" data-value="1">
-							<i class="fad fa-calendar-alt fa-lg" style="margin-right:5px;"></i>
-							<input class="form-control input-sm txt-fecha fechaHome" type="text" name="fechaHome" patron="requerido" value="<?= date('d/m/Y') ?>">
-							
-						</a>
-					</li>
-				</ul>
+				<div class="m-2">
+					<span class="ui gris image label" >
+					Importante: <i class="far fa-clock fa-lg"></i> TimeLine, aqui se mostraran las cotizaciones en proceso actualmente, ademas de agrupadas por la etapa en la que se encuentran. <i class="fas fa-tasks fa-lg"></i> Resumen de <?=strtoupper(strftime("%B del %Y"));?>, se toma en cuenta todas la solicitudes realizadas en el mes.
+					</span>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
 <div class="row">
-	<div class="col-lg-3 col-md-12 ">
-		<div class="main-card mb-3 card main-cobertura col-md-12 px-0 ">
+	<div class="col-lg-3">
+		<div class="main-card mb-3 card col-md-12 px-0 " style="width: 100%;">
 			<div class="card-header bg-trade-visual-grad-right text-white" style="width: 100%;">
 				<h5 class="card-title">
-					<i class="fas fa-store-alt fa-lg"></i> TimeLine
+					<i class="far fa-clock fa-lg"></i> TimeLine
 				</h5>
 			</div>
-			<div class="card-body vista-cobertura" style="width: 100%;height:auto;">
+			<div class="card-body"  style="width: 100%;">
 				<div class="linetime-timeline">
 					<div class="linetime-timeline__group">
-						<span class="linetime-timeline__year" style="text-align: center;">TOTAL COTIZACIONES EN CURSO: <strong>3</strong>
+						<span class="linetime-timeline__year" style="text-align: center;">EN CURSO: <strong><?=$arr_total_estados?></strong>
 						</span>
 						<br>
-						<br>
-						<div class="linetime-timeline__box">
-							<div class="linetime-timeline__date ">
-								<span class="linetime-timeline__day">
-									<sup>#</sup>
-									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="1">1</a>
-								</span>
-								<span class="linetime-timeline__month">Etapa 1</span>
+						<?$ix = 1;foreach($arr_estados as $row){?>
+							<div class="linetime-timeline__box">
+								<div class="linetime-timeline__date <?=isset($row['cantidad'])? '' : 'linetime-timeline__date_disabled';?>"><!---->
+									<span class="linetime-timeline__day">
+										<sup>#</sup>
+										<?if(isset($row['cantidad'])){?>
+										<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="<?=$row['id']?>"><?=$row['cantidad'];?></a>
+										<?} else {?>
+										0
+										<?}?>
+									</span>
+									<span class="linetime-timeline__month">Etapa <?=$ix++?></span>
+								</div>
+								<div class="linetime-timeline__post">
+									<div class="linetime-timeline__content"> <?=$row['nombre']?> </div>
+								</div>
 							</div>
-							<div class="linetime-timeline__post">
-								<div class="linetime-timeline__content"> Registrado </div>
-							</div>
-						</div>
-						<br>
-						<div class="linetime-timeline__box">
-							<div class="linetime-timeline__date linetime-timeline__date_disabled">
-								<span class="linetime-timeline__day">
-									<sup>#</sup> 0 </span>
-								<span class="linetime-timeline__month">Etapa 2</span>
-							</div>
-							<div class="linetime-timeline__post">
-								<div class="linetime-timeline__content"> Enviado </div>
-							</div>
-						</div>
-						<br>
-						<div class="linetime-timeline__box">
-							<div class="linetime-timeline__date ">
-								<span class="linetime-timeline__day">
-									<sup>#</sup>
-									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="3">2</a>
-								</span>
-								<span class="linetime-timeline__month">Etapa 3</span>
-							</div>
-							<div class="linetime-timeline__post">
-								<div class="linetime-timeline__content"> Confirmado </div>
-							</div>
-						</div>
-						<br>
-						<div class="linetime-timeline__box">
-							<div class="linetime-timeline__date linetime-timeline__date_disabled">
-								<span class="linetime-timeline__day">
-									<sup>#</sup> 0 </span>
-								<span class="linetime-timeline__month">Etapa 4</span>
-							</div>
-							<div class="linetime-timeline__post">
-								<div class="linetime-timeline__content"> OC Pendiente </div>
-							</div>
-						</div>
-						<br>
-						<div class="linetime-timeline__box">
-							<div class="linetime-timeline__date linetime-timeline__date_disabled">
-								<span class="linetime-timeline__day">
-									<sup>#</sup> 
-									<a href="javascript:;" class="ver-lista" data-tipo="global" data-estado="5">1</a>
-								<span class="linetime-timeline__month">Etapa 5</span>
-							</div>
-							<div class="linetime-timeline__post">
-								<div class="linetime-timeline__content"> Finalizado </div>
-							</div>
-						</div>
-						<br>
-						<!-- -->
+						<?}?>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-lg-9 col-md-12 ">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0 heightCard">
+	<div class="col-lg-9">
+		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
 			<div class="card-header bg-trade-visual-grad-left text-white" style="width: 100%;">
 				<h5 class="card-title">
-					<i class="fas fa-tasks fa-lg"></i> Análisis Mensual de Cotizaciones
+					<i class="fas fa-tasks fa-lg"></i> Resumen de <?=strtoupper(strftime("%B del %Y"));?>
 				</h5>
 			</div>
 			<div class="card-body  vista-efectividad" style="width: 100%;">
-				<div id="dv-indicador-req">
+				<div class="row">
+					<div class="col-lg-3">
+						<center><span>
+								<h1><?=$arr_cotizaciones_total_pasado?></h1>
+								<span>Solicitudes Resagadas</span>
+								<span class="ui red image label"><a href="javascript:;" class="ver-lista-pasados" ><i class="fa fa-filter"></i></a></span>
+						</span></center>
+					</div>
+					<div class="col-lg-3">
+						<center><span>
+								<h1><?=$arr_cotizaciones_total_actual?></h1>
+								<span>Solicitudes</span>
+								<span class="ui green image label"><a href="javascript:;" class="ver-lista-actuales" ><i class="fa fa-filter"></i></a></span>
+						</span></center>
+					</div>
+					<div class="col-lg-3">
+						<center>
+							<span class="ui yellow image label">
+								<h1><?=($arr_cotizaciones_total_actual > 0)? round($arr_cotizaciones_total_actual_efec/$arr_cotizaciones_total_actual,2): 0?>%</h1>
+								<span>Porcentaje Efectivas</span>
+							</span>
+						</center>
+					</div>
+					<div class="col-lg-3">
+						<center><span>
+								<h1>S/. <?=number_format($arr_cotizaciones_total_monto_actual_efec, 2)?></h1>
+								<span>Valorización Efectiva</span>
+						</span></center>
+					</div>
+				</div>
+				<br/><span class="ui gris image label float-right"><a href="javascript:;" class="ver-lista-todo" >Ver Todo</a></span><br/>
+				<div id="dv-lista-solicitudes">
+					
 					<table class="table resposive tb-reporte ">
 						<thead>
 							<tr>
 								<th>#</th>
-								<th>ver-cotiZACION</th>
-								<th>FECHA <br>EMISION </th>
-								<th>FECHA <br>ENVIO </th>
+								<th>COD COTIZACIÓN</th>
+								<th>FECHA <br>REGISTRO </th>
 								<th>FECHA <br>TERMINO </th>
-								<th>CUENTA</th>
-								<th>ÁREA</th>
-								<th>SOLICITANTE</th>
-								<th>COTIZACION</th>
+								<th>CENTRO COSTO</th>
+								<th>USUARIO</th>
+								<th>DESCRIPCIÓN</th>
+								<th>MONTO TOTAL</th>
 								<th>DÍAS <br>TRANS. </th>
 								<th>ETAPA <br>ACTUAL </th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr data-estado="3" data-cod-req='23'>
-								<td class="text-center">1</td>
-								<td>
-									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2762">COTI-0000023</a>
-								</td>
-								<td class="text-center">02/03/2022</td>
-								<td class="text-center">-</td>
-								<td class="text-center">-</td>
-								<td>P&G</td>
-								<td>HSM MODERNO</td>
-								<td>BAILON PEREZ MARGARITA</td>
-
-								<td>COTIZACION IMPULSADOR</td>
-
-								<td class="text-center bg-ok">
-									<strong>-</strong>
-								</td>
-								<td>
-									<i class="fas fa-square td-enproceso"></i> Confirmado
-								</td>
-							</tr>
-							<tr data-estado="1" data-cod-req='24'>
-								<td class="text-center">2</td>
-								<td>
-									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2763">COTI-0000024</a>
-								</td>
-								<td class="text-center">02/03/2022</td>
-								<td class="text-center">-</td>
-								<td class="text-center">-</td>
-
-								<td>P&G</td>
-								<td>HSM MODERNO</td>
-								<td>BAILON PEREZ MARGARITA</td>
-
-								<td>COTIZACION MARZO 2022</td>
-
-								<td class="text-center bg-ok">
-									<strong>-</strong>
-								</td>
-								<td>
-									<i class="fas fa-square td-enproceso"></i> Registrado
-								</td>
-							</tr>
-							<tr data-estado="5" data-cod-req='25'>
-								<td class="text-center">3</td>
-								<td>
-									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2766">COTI-0000025</a>
-								</td>
-								<td class="text-center">02/03/2022</td>
-								<td class="text-center">-</td>
-								<td class="text-center">-</td>
-								<td>P&G</td>
-								<td>HSM MODERNO</td>
-								<td>BAILON PEREZ MARGARITA</td>
-
-								<td>COTIZACION EQUIPOS DICIEMBRE 2021</td>
-
-								<td class="text-center bg-ok">
-									<strong>-</strong>
-								</td>
-								<td>
-									<i class="fas fa-square td-enproceso"></i> Confirmado
-								</td>
-							</tr>
-							<tr data-estado="3" data-cod-req='26'>
-								<td class="text-center">3</td>
-								<td>
-									<a href="javascript:;" class="ver-coti" title="Ver Requerimiento" data-id="2766">COTI-0000026</a>
-								</td>
-								<td class="text-center">02/03/2022</td>
-								<td class="text-center">-</td>
-								<td class="text-center">-</td>
-								<td>P&G</td>
-								<td>HSM MODERNO</td>
-								<td>BAILON PEREZ MARGARITA</td>
-
-								<td>COTIZACION EQUIPOS DICIEMBRE 2021</td>
-
-								<td class="text-center bg-ok">
-									<strong>-</strong>
-								</td>
-								<td>
-									<i class="fas fa-square td-enproceso"></i> Finalizado
-								</td>
-							</tr>
-
+							<?$ix = 1; foreach($arr_cotizaciones as $row){?>
+								<tr data-estado="<?=$row['idEstado']?>" data-actual="<?=$row['pasado']?>" data-cod-req="<?=$row['idCotizacion']?>">
+									<td class="text-center"><?=$ix++?></td>
+									<td class="text-center">
+										<a href="javascript:;" class="ver-coti" title="Ver Cotización" data-id="<?=$row['idCotizacion']?>"><?=$row['codCotizacion']?></a>
+									</td>
+									<td class="text-center"><?=date_format(new DateTime($row['fechaEmision']),"d/m/Y")?></td>
+									<td class="text-center">
+										<?=!empty($row['fechaTermino'])? date_format(new DateTime($row['fechaTermino']),"d/m/Y") : '-'?>
+									</td>
+									<td><?=$row['centro_costo']?></td>
+									<td>Usuario, Demo TI</td>
+									<td><?=$row['titulo']?></td>
+									<td class="text-right"><?=number_format($row['total'], 2)?></td>
+									<td class="text-center"><strong><?=$row['dias']?></strong></td>
+									<td class="text-right">
+										<?=$row['icono']?>
+									</td>
+								</tr>
+							<?}?>
 						</tbody>
 					</table>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="col-md-12 d-none dvDetalleReq" data-cod-req="23">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
-			<div class="card-header " style="width: 100%;">
-				<h5 class="card-title">
-					COD COTIZACION: COTI-0000023
-				</h5>
-			</div>
-			<div class="card-body  vista-efectividad" style="width: 100%;">
-				<div class="row">
-					<div class="col-md-12">
-						<div id="dv-requerimiento">
-							<div class="row">
-
-								<div class="col-md-4">
-									<div class="req-content">
-										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
-										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HSM MODERNO</strong>
-										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>COTIZACION IMPULSADOR</strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<br> Fecha Término: <strong>02/03/2022</strong>
-										<br> Hora Término: <strong>12:22:47</strong>
-										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
-											<strong>
-												<i class="far fa-calendar-check"></i> 1 </strong>
-										</span>
-										<br> Etapa Actual: <strong>
-											<i class="fas fa-square td-enproceso"></i> Confirmado </strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<strong style="text-decoration: underline;">Datos Complementarios</strong>
-										<br>
-										Progreso de Costo: <strong>S/. 3000</strong> <br>
-										Cantidad de Items: <strong>10</strong> <br>
-									</div>
-								</div>
-
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-md-12">
-									<ul class="timeline new-ul">
-										<li class="active">Registrado</li>
-										<li class="active">Enviado</li>
-										<li class="active">Confirmado / 25%</li>
-										<li>OC Pendiente</li>
-										<li>Finalizado</li>
-									</ul>
-								</div>
-							</div>
-							<hr>
-						</div>
-					</div>
-				</div>
-			</div>
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<div id="dv-cotizacion-detalle" class="d-none" >
 		</div>
 	</div>
-	<div class="col-md-12 d-none dvDetalleReq" data-cod-req="24">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
-			<div class="card-header " style="width: 100%;">
-				<h5 class="card-title">
-					COD COTIZACION: COTI-0000024
-				</h5>
-			</div>
-			<div class="card-body  vista-efectividad" style="width: 100%;">
-				<div class="row">
-					<div class="col-md-12">
-						<div id="dv-requerimiento">
-							<div class="row">
-
-								<div class="col-md-4">
-									<div class="req-content">
-										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
-										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HSM MODERNO</strong>
-										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>COTIZACION MARZO 2022</strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<br> Fecha Término: <strong>02/03/2022</strong>
-										<br> Hora Término: <strong>12:22:47</strong>
-										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
-											<strong>
-												<i class="far fa-calendar-check"></i> 1 </strong>
-										</span>
-										<br> Etapa Actual: <strong>
-											<i class="fas fa-square td-enproceso"></i> Confirmado </strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<strong style="text-decoration: underline;">Datos Complementarios</strong>
-										<br>
-										Progreso de Costo: <strong>S/. 3000</strong> <br>
-										Cantidad de Items: <strong>10</strong> <br>
-									</div>
-								</div>
-
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-md-12">
-									<div class="container">
-										<ul class="timeline new-ul">
-											<li class="active">Registrado</li>
-											<li>Enviado</li>
-											<li>Confirmado</li>
-											<li>OC Pendiente</li>
-											<li>Finalizado</li>
-										</ul>
-									</div>
-								</div>
-								<hr>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12 d-none dvDetalleReq" data-cod-req="25">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
-			<div class="card-header " style="width: 100%;">
-				<h5 class="card-title">
-					COD COTIZACION: COTI-0000025
-				</h5>
-			</div>
-			<div class="card-body  vista-efectividad" style="width: 100%;">
-				<div class="row">
-					<div class="col-md-12">
-						<div id="dv-requerimiento">
-							<div class="row">
-
-								<div class="col-md-4">
-									<div class="req-content">
-										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
-										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HSM MODERNO</strong>
-										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>COTIZACION EQUIPOS DICIEMBRE 2021</strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<br> Fecha Término: <strong>02/03/2022</strong>
-										<br> Hora Término: <strong>12:22:47</strong>
-										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
-											<strong>
-												<i class="far fa-calendar-check"></i> 1 </strong>
-										</span>
-										<br> Etapa Actual: <strong>
-											<i class="fas fa-square td-enproceso"></i> Confirmado </strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<strong style="text-decoration: underline;">Datos Complementarios</strong>
-										<br>
-										Progreso de Costo: <strong>S/. 3000</strong> <br>
-										Cantidad de Items: <strong>10</strong> <br>
-									</div>
-								</div>
-
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-md-12">
-
-									<ul class="timeline new-ul">
-										<li class="active">Registrado</li>
-										<li class="active">Enviado</li>
-										<li class="active">Confirmado / 50%</li>
-										<li>OC Pendiente</li>
-										<li>Finalizado</li>
-									</ul>
-								</div>
-							</div>
-							<hr>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-md-12 d-none dvDetalleReq" data-cod-req="26">
-		<div class="main-card mb-3 card main-efectividad col-md-12 px-0">
-			<div class="card-header " style="width: 100%;">
-				<h5 class="card-title">
-					COD COTIZACION: COTI-0000026
-				</h5>
-			</div>
-			<div class="card-body  vista-efectividad" style="width: 100%;">
-				<div class="row">
-					<div class="col-md-12">
-						<div id="dv-requerimiento">
-							<div class="row">
-
-								<div class="col-md-4">
-									<div class="req-content">
-										<!--<span class="title-req" >COD REQ: <strong>I-P&G-001273</strong></span>--> Fecha Generado: <strong>02/03/2022</strong>
-										<br> Cuenta: <strong>PROCTER &amp; GAMBLE</strong>
-										<br> Área: <strong>HSM MODERNO</strong>
-										<br> Solicitante: <strong>BAILON PEREZ MARGARITA</strong>
-										<br> Cotizacion: <strong>COTIZACION EQUIPOS DICIEMBRE 2021</strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<br> Fecha Término: <strong>02/03/2022</strong>
-										<br> Hora Término: <strong>12:22:47</strong>
-										<br> Días Transcurridos: <span class="badge bg-ok" style="font-size: 12px;">
-											<strong>
-												<i class="far fa-calendar-check"></i> 1 </strong>
-										</span>
-										<br> Etapa Actual: <strong>
-											<i class="fas fa-square td-enproceso"></i> Confirmado </strong>
-									</div>
-								</div>
-								<div class="col-md-4">
-									<div class="req-content">
-										<strong style="text-decoration: underline;">Datos Complementarios</strong>
-										<br>
-										Progreso de Costo: <strong>S/. 3000</strong> <br>
-										Cantidad de Items: <strong>10</strong> <br>
-									</div>
-								</div>
-
-							</div>
-							<hr>
-							<div class="row">
-								<div class="col-md-12">
-									<ul class="timeline new-ul">
-										<li class="active">Registrado</li>
-										<li class="active">Enviado</li>
-										<li class="active">Confirmado / 100%</li>
-										<li class="active">OC Pendiente</li>
-										<li class="active">Finalizado</li>
-									</ul>
-								</div>
-							</div>
-							<hr>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcH2xfbm8z-5iSE4knkRJiNKRhKQrhH6E&callback=initMap"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-	<script type="text/javascript" src="assets/custom/js/core/anyChartCustom"></script>
-	<script type="text/javascript">
-		var $usuario = <?= json_encode($usuario) ?>;
-	</script>
+</div>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcH2xfbm8z-5iSE4knkRJiNKRhKQrhH6E&callback=initMap"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+<script type="text/javascript" src="assets/custom/js/core/anyChartCustom"></script>
+<script type="text/javascript">
+	var $usuario = <?= json_encode($usuario) ?>;
+</script>

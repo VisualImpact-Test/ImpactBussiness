@@ -331,12 +331,22 @@
   font-size: 12px;
 }
 
+/*
 #dv-indicador-req, #dv-requerimiento {
   overflow: auto;
 }
-
+*/
 a {
-  color: #cbffcb;
+  color: #FFFFFF;
+  text-decoration: none;
+}
+a:hover {
+  color: #6cb7ae;
+  text-decoration: none;
+}
+
+tr > td > a {
+  color: #577c78;
   text-decoration: none;
 }
 
