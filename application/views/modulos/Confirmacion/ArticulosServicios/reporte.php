@@ -13,30 +13,42 @@
             </tr>
         </thead>
         <tbody>
-            <tr data-id="23" role="row" class="even">
-                <td class="td-center sorting_1">1</td>
-                <td class="td-center style-icons">
-                    <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleArticulosServicios btn-dp-23"><i class="fa fa-lg fa-sync-alt" title="Ver Detalle de ArticulosServicios"></i></a>
-                </td>
-                <td class="td-center">03/03/2022</td>
-                <td class="td-left">COTIZACION IMPULSADOR</td>
-                <td class="td-left">PROCTER &amp; GAMBLE</td>
-                <td class="td-left">P&amp;G HSM MODERNO</td>
-                <td class="td-left">COTI-0000023</td>
-                <td class="td-left">3</td>
-            </tr>
-            <tr data-id="24" role="row" class="odd">
-                <td class="td-center sorting_1">2</td>
-                <td class="td-center style-icons">
-                    <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleArticulosServicios btn-dp-24"><i class="fa fa-lg fa-sync-alt" title="Ver Detalle de ArticulosServicios"></i></a>
-                </td>
-                <td class="td-center">03/03/2022</td>
-                <td class="td-left">COTIZACION MARZO 2022</td>
-                <td class="td-left">PROCTER &amp; GAMBLE</td>
-                <td class="td-left">P&amp;G HSM MODERNO</td>
-                <td class="td-left">COTI-0000024</td>
-                <td class="td-left">2</td>
-            </tr>
+        <? $ix = 1; ?>
+            <?
+            foreach ($datos as $key => $row) {
+            ?>
+                <tr data-id="<?= $key ?>">
+                    <td class="td-center"><?= $ix; ?></td>
+                    <td class="td-center style-icons">
+                        <?
+                        if (!empty($row['estadoToggle'])) {
+                        ?>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Actualizar Proveedor"><i class="fa fa-lg fa-edit"></i></a>
+                            <a id="hrefEstado-<?= $key; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizar-estado" data-id="<?= $key; ?>" data-estado="<?= $row['idEstado']; ?>">
+                                <i class="<?= $row['estadoToggle'] ?>"></i>
+                            </a>
+                        <?
+                        } else {
+                        ?>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-validar" title="Aprobar"><i class="fa fa-lg fa-check-double"></i></a>
+                        <?
+                        }
+                        ?>
+                    </td>
+                    <td class="td-left"><?= verificarEmpty($row['razonSocial'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['nroDocumento'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['rubro'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['metodoPago'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['direccion'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['nombreContacto'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['correoContacto'], 3); ?></td>
+                    <td class="td-center"><?= verificarEmpty($row['numeroContacto'], 3); ?></td>
+                    <td class="text-center style-icons">
+                        <span class="<?= $row['estadoIcono'] ?>" id="spanEstado-<?= $key; ?>"><?= $row['estado']; ?></span>
+                    </td>
+                </tr>
+            <? $ix++;
+            } ?>
         </tbody>
     </table>
 </div>

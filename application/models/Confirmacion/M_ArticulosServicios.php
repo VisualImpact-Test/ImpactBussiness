@@ -84,23 +84,25 @@ class M_ArticulosServicios extends MY_Model
 		$filtros .= !empty($params['cotizacion']) ? " AND p.nombre LIKE '%" . $params['cotizacion'] . "%'" : "";
 
 		$sql = "
-			SELECT
-				p.idArticulosServicios
-				, p.nombre AS cotizacion
-				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
-				, 'COTIZACION' AS tipoArticulosServicios
-				, p.codArticulosServicios
-				, c.idCuenta
-				, c.nombre AS cuenta
-				, cc.idCuentaCentroCosto
-				, cc.nombre AS cuentaCentroCosto
-				, ce.nombre AS cotizacionEstado
-				, p.estado
-			FROM compras.cotizacion p
-			LEFT JOIN compras.cotizacionEstado ce ON p.idArticulosServiciosEstado = ce.idArticulosServiciosEstado
-			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
-			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
-			WHERE 1 = 1
+		SELECT DISTINCT
+		p.idCotizacion
+		, p.nombre AS cotizacion
+		, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
+		, 'COTIZACION' AS tipoArticulosServicios
+		, p.codCotizacion
+		, c.idCuenta
+		, c.nombre AS cuenta
+		, cc.idCuentaCentroCosto
+		, cc.nombre AS idCentroCosto
+		, ce.nombre AS idCotizacionEstado
+		, p.estado
+	FROM compras.cotizacion p
+	JOIN compras.cotizacionDetalle cd ON p.idCotizacion = cd.idCotizacion AND cd.idItemTipo IN (1,2)
+	LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
+	LEFT JOIN visualImpact.logistica.cuenta_ c ON p.idCuenta = c.idCuenta
+	LEFT JOIN visualImpact.logistica.cuentaCentroCosto_ cc ON p.idCuenta = cc.idCuentaCentroCosto
+	WHERE 1 = 1
+	
 			{$filtros}
 		";
 
@@ -121,36 +123,36 @@ class M_ArticulosServicios extends MY_Model
 		$filtros .= !empty($params['idArticulosServicios']) ? ' AND p.idArticulosServicios = ' . $params['idArticulosServicios'] : '';
 
 		$sql = "
-			SELECT
-				p.idArticulosServicios
-				, p.nombre AS cotizacion
-				, c.nombre AS cuenta
-				, cc.nombre AS cuentaCentroCosto
-				, p.codArticulosServicios
-				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
-				, ce.nombre AS cotizacionEstado
-			
-				, it.idItemTipo
-				, it.nombre AS itemTipo
-				, pd.nombre AS item
-				, pd.cantidad
-				, pd.costo
-				, ei.idItemEstado
-				, ei.nombre AS estadoItem
-				, pr.razonSocial AS proveedor
-				, cde.nombre AS cotizacionDetalleEstado
-				, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
-				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
-			FROM compras.cotizacion p
-			JOIN compras.cotizacionDetalle pd ON p.idArticulosServicios = pd.idArticulosServicios
-			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
-			JOIN compras.cotizacionEstado ce ON p.idArticulosServiciosEstado = ce.idArticulosServiciosEstado
-			JOIN compras.cotizacionDetalleEstado cde ON pd.idArticulosServiciosDetalleEstado = cde.idArticulosServiciosDetalleEstado
-			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
-			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
-			JOIN compras.itemEstado ei ON pd.idItemEstado = ei.idItemEstado
-			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
-			WHERE 1 = 1
+		SELECT 
+		p.idCotizacion
+	  , p.nombre AS cotizacion
+	  , c.nombre AS cuenta
+	  , cc.nombre AS cuentaCentroCosto
+	  , p.codCotizacion
+	  , CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
+	  , ce.nombre AS cotizacionEstado
+  
+	  , it.idItemTipo
+	  , it.nombre AS itemTipo
+	  , pd.nombre AS item
+	  , pd.cantidad
+	  , pd.costo
+	  , ei.idItemEstado
+	  , ei.nombre AS estadoItem
+	  , pr.razonSocial AS proveedor
+	  , cde.nombre AS cotizacionDetalleEstado
+	  , CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
+	  , CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
+  FROM compras.cotizacion p
+  JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion AND pd.idItemTipo IN (1,2)
+  JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
+  JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
+  JOIN compras.cotizacionDetalleEstado cde ON pd.idCotizacionDetalleEstado = cde.idCotizacionDetalleEstado
+  LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
+  LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+  JOIN compras.itemEstado ei ON pd.idItemEstado = ei.idItemEstado
+  LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
+  WHERE 1 = 1
 			{$filtros}
 		";
 
@@ -168,11 +170,11 @@ class M_ArticulosServicios extends MY_Model
 	public function validarExistenciaArticulosServicios($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idArticulosServicios']) ? ' AND p.idArticulosServicios != ' . $params['idArticulosServicios'] : '';
+		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion != ' . $params['idCotizacion'] : '';
 
 		$sql = "
 			SELECT
-				idArticulosServicios
+				idCotizacion
 			FROM compras.cotizacion p
 			WHERE
 			(p.nombre LIKE '%{$params['nombre']}%')

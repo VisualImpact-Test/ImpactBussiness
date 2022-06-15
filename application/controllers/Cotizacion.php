@@ -10,6 +10,8 @@ class Cotizacion extends MY_Controller
         $this->load->model('M_Cotizacion', 'model');
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
+        header('Access-Control-Allow-Origin: *');
+        
     }
 
     public function index()

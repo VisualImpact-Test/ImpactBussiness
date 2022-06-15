@@ -45,7 +45,9 @@ class ArticulosServicios extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        // $dataParaVista = $this->model->obtenerInformacionArticulosServicios($post)['query']->result_array();
+        $dataParaVista = $this->model->obtenerInformacionArticulosServicios($post)['query']->result_array();
+
+
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
@@ -78,26 +80,26 @@ class ArticulosServicios extends MY_Controller
         $dataParaVista = [];
         $dataParaVista = $post;
 
-        // $data = $this->model->obtenerInformacionArticulosServiciosDetalle($post)['query']->result_array();
+        $data = $this->model->obtenerInformacionArticulosServiciosDetalle($post)['query']->result_array();
 
-        // foreach ($data as $key => $row) {
-        //     $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
-        //     $dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
-        //     $dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
-        //     $dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
-        //     $dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
-        //     $dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
-        //     $dataParaVista['cabecera']['fechaEmision'] = $row['fechaEmision'];
-        //     $dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
-        //     $dataParaVista['detalle'][$key]['item'] = $row['item'];
-        //     $dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
-        //     $dataParaVista['detalle'][$key]['costo'] = $row['costo'];
-        //     $dataParaVista['detalle'][$key]['idItemEstado'] = $row['idItemEstado'];
-        //     $dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
-        //     $dataParaVista['detalle'][$key]['proveedor'] = $row['proveedor'];
-        //     $dataParaVista['detalle'][$key]['fechaCreacion'] = $row['fechaCreacion'];
-        //     $dataParaVista['detalle'][$key]['cotizacionDetalleEstado'] = $row['cotizacionDetalleEstado'];
-        // }
+         foreach ($data as $key => $row) {
+            $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
+            $dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
+            $dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
+            $dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+            $dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
+            $dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
+            $dataParaVista['cabecera']['fechaEmision'] = $row['fechaEmision'];
+            $dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
+            $dataParaVista['detalle'][$key]['item'] = $row['item'];
+            $dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
+            $dataParaVista['detalle'][$key]['costo'] = $row['costo'];
+            $dataParaVista['detalle'][$key]['idItemEstado'] = $row['idItemEstado'];
+            $dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
+            $dataParaVista['detalle'][$key]['proveedor'] = $row['proveedor'];
+            $dataParaVista['detalle'][$key]['fechaCreacion'] = $row['fechaCreacion'];
+            $dataParaVista['detalle'][$key]['cotizacionDetalleEstado'] = $row['cotizacionDetalleEstado'];
+        }
 
         $result['result'] = 1;
         $result['msg']['title'] = 'Visualizar Articulos y Servicios de la Cotizacion';

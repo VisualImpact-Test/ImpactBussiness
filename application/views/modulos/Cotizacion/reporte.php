@@ -26,6 +26,7 @@
                 <tr data-id="<?= $row['idCotizacion'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
+                        
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
                         <!-- <a id="hrefEstado-<?= $row['idCotizacion']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoCotizacion" data-id="<?= $row['idCotizacion']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
@@ -35,8 +36,16 @@
                             <label for="upload_orden_compra[<?= $row['idCotizacion'] ?>]" class="btn btn-outline-secondary border-0 mt-1 btn-subir-oc" data-toggle="tooltip" data-placement="top" title="Adjuntar OC "><i class="fa fa-lg fa-paperclip"></i></label>
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a> -->
                             <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-generar-cotizacionEfectiva"><i class="fa fa-lg fa-paste" title="Generar Cotizacion Efectiva"></i></a>
+                           
                         <? } ?>
+                        <? if ($ix == 1) {?>
+                             <a href="/ImpactBussiness/formato_cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
+                            <? } else {?>  
+                             <a href="/ImpactBussiness/Cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
+                            <? } ?>
+
                         <? if ($row['idCotizacionEstado'] == 3) { ?>
+                            
                             <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-frmCotizacionConfirmada btn-dp-<?= $row['idCotizacion']; ?> "><i class="send icon" title="Enviar Cotizacion"></i></a>
                         <? } ?>
                     </td>
