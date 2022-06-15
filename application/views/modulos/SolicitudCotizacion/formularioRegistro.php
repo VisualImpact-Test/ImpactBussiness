@@ -6,7 +6,7 @@
 <form class="form" role="form" id="formRegistroCotizacion" method="post">
     <div class="child-divcenter" style="width:90%">
         <h4 class="ui dividing header">Información de la Cotización</h4>
-        <input type="hidden" name="idCotizacion" id="" value="<?=$cotizacion['idCotizacion']?>">
+        <input type="hidden" name="idCotizacion" id="idCotizacion" value="<?= $cotizacion['idCotizacion'] ?>">
         <div class="ui form">
             <div class="fields">
                 <div class="ten wide field">
@@ -72,55 +72,69 @@
     <div class="row" style="margin-top: 15px;">
         <div class="col-md-11 child-divcenter">
             <h4 class="ui dividing header">Detalle de la Cotización</h4>
+            <div class="sixteen wide field">
+                <div class="ui sub header">Proveedor</div>
+                <div class="ui action input w-100">
+                    <select class="ui search dropdown w-100 parentDependiente" id="proveedorForm" name="proveedorForm" patron="requerido">
+                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedores, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
+                    </select>
+                    <div class="ui button btnSolicitarCotizacion"><i class="send icon"></i> Solicitar Cotizacion</div>
+                </div>
+            </div>
             <div id="div-ajax-detalle" class="table-responsive" style="text-align:center;max-height:400px;overflow:auto;">
                 <table class="ui celled padded table" id="listaItemsCotizacion">
                     <thead class="thead-default ui">
                         <tr>
+                            <th></th>
                             <th style="width: 3%;" class="text-center">#</th>
                             <th style="width: 12%;">Tipo Item</th>
                             <th style="width: 31%;">Item</th>
-                            <th style="width: 16%;">Características</th>
+                            <th style="width: 19%;">Características</th>
                             <th style="width: 10%;" class="text-center">Cantidad</th>
                             <th style="width: 11%;" class="text-center">Costo</th>
                             <th style="width: 3%;" class="text-center"></th>
-                            <th style="width: 11%;" class="text-center">Subtotal</th>
-                            <th style="width: 3%;" class="text-center"></th>
+                            <th style="width: 14%;" class="text-center">Subtotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         <? foreach ($cotizacionDetalle as $k => $row) { ?>
-                            <input class="idCotizacionDetalleForm" type='hidden' name='idCotizacionDetalle' value="<?=!empty($row['idCotizacionDetalle']) ? $row['idCotizacionDetalle'] : '' ?>">
+                            <input class="idCotizacionDetalleForm" type='hidden' name='idCotizacionDetalle' value="<?= !empty($row['idCotizacionDetalle']) ? $row['idCotizacionDetalle'] : '' ?>">
                             <tr>
+                                <td class="collapsing">
+                                    <div class="ui fitted slider checkbox">
+                                        <input type="checkbox" name="checkItem"> <label></label>
+                                    </div>
+                                </td>
                                 <td>
-                                    <?=($k+1)?>
+                                    <?= ($k + 1) ?>
                                 </td>
                                 <td>
                                     <select class="form-control" id="tipoItemForm" name="tipoItemForm" patron="requerido">
-                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemTipo, 'class' => 'text-titlecase','selected'=>$row['idItemTipo']]); ?>
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemTipo, 'class' => 'text-titlecase', 'selected' => $row['idItemTipo']]); ?>
                                     </select>
                                 </td>
                                 <td>
                                     <div class="ui-widget">
-                                        <input class="form-control items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?=$row['item']?>">
-                                        <input class="codItems" type='hidden' name='idItemForm' value="<?=!empty($row['idItem']) ? $row['idItem'] : '' ?>">
-                                        <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="<?=!empty($row['idItem']) ? 1 : 2 ?>">
-                                        <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?=!empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
+                                        <input class="form-control items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+                                        <input class="codItems" type='hidden' name='idItemForm' value="<?= !empty($row['idItem']) ? $row['idItem'] : '' ?>">
+                                        <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="<?= !empty($row['idItem']) ? 1 : 2 ?>">
+                                        <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
                                     </div>
                                 </td>
                                 <td>
                                     <div class="ui-widget">
-                                        <input class="form-control" type='text' name='caracteristicasItem' patron="requerido" placeholder="Caracteristicas del item" value="<?=!empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>">
+                                        <input class="form-control" type='text' name='caracteristicasItem' patron="requerido" placeholder="Caracteristicas del item" value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>">
                                     </div>
                                 </td>
                                 <td>
-                                    <input class="form-control cantidadForm" type="number" name="cantidadForm" value="<?=!empty($row['cantidad']) ? $row['cantidad'] : '' ?>" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                    <input class="form-control cantidadForm" type="number" name="cantidadForm" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                 </td>
                                 <td class="text-center">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano_bn.png">
-                                        <label class="costoFormLabel" style="margin:0px;"><?=!empty($row['costo']) ? $row['costo'] : 0 ?></label>
+                                        <label class="costoFormLabel" style="margin:0px;"><?= !empty($row['costo']) ? $row['costo'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control costoForm" type="hidden" name="costoForm" value="<?=!empty($row['costo']) ? $row['costo'] : 0 ?>" placeholder="0" readonly >
+                                    <input class="form-control costoForm" type="hidden" name="costoForm" value="<?= !empty($row['costo']) ? $row['costo'] : 0 ?>" placeholder="0" readonly>
                                 </td>
                                 <td>
                                     <i class="semaforoForm fad fa-lg fa-flag-alt"></i>
@@ -128,48 +142,57 @@
                                 <td class="text-center">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano_bn.png">
-                                        <label class="subtotalFormLabel" style="margin:0px;"><?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?></label>
+                                        <label class="subtotalFormLabel" style="margin:0px;"><?= !empty($row['subtotal']) ? $row['subtotal'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control subtotalForm" type="hidden" name="subtotalForm" value="<?=!empty($row['subtotal']) ? $row['subtotal'] : 0 ?>" placeholder="0" readonly>
+                                    <input class="form-control subtotalForm" type="hidden" name="subtotalForm" value="<?= !empty($row['subtotal']) ? $row['subtotal'] : 0 ?>" placeholder="0" readonly>
                                 </td>
-                                <td class="text-center">
-                                    <a href="javascript:;" class="btn btn-outline-danger border-0 btneliminarfila" title="Eliminar Fila"><i class="fad fa-lg fa-trash"></i></a>
-                                </td>
+                              
                             </tr>
                         <? } ?>
                     </tbody>
-                    <!-- <tfoot class="full-width">
+                    <tfoot class="full-width">
                         <tr>
                             <th></th>
-                            <th colspan="3"></th>
+                            <th colspan="6">
+                                <div class="ui small button">
+                                    Ver cotizaciones
+                                </div>
+                                <div class="ui small  disabled button">
+                                    Eliminar Solicitudes
+                                </div>
+                            </th>
                             <th class="text-right"><a class="ui tag large label">Total</a></th>
                             <th class="text-center">
                                 <div class="ui right floated">
                                     <div class="ui image large label">
                                         <img src="assets/images/iconos/sol_peruano.png">
-                                        <label class="totalFormLabel" style="margin:0px;"><?=!empty($row['total']) ? $row['total'] : 0 ?></label>
+                                        <label class="totalFormLabel" style="margin:0px;"><?= !empty($row['total']) ? $row['total'] : 0 ?></label>
                                     </div>
-                                    <input class="form-control totalForm" type="hidden" name="totalForm" value="<?=!empty($row['total']) ? $row['total'] : 0 ?>" placeholder="0" readonly="">
+                                    <input class="form-control totalForm" type="hidden" name="totalForm" value="<?= !empty($row['total']) ? $row['total'] : 0 ?>" placeholder="0" readonly="">
                                 </div>
                             </th>
-                            <th colspan="3">
-
-                            </th>
                         </tr>
-                    </tfoot> -->
+                    </tfoot>
                 </table>
             </div>
-            <div class="ui form" style="margin-top:10px;">
-                <div class="inline fields">
-                    <div class="three wide field">
-                        <label class="five">GAP %:</label>
-                        <input id="gapForm" name="gapForm" patron="requerido" placeholder="0" value="<?= $cotizacion['gap'] ?>">
+      
+            <div class="ui form disabled" style="margin-top:10px;">
+                <div class="fields">
+                    <div class="five wide field">
+                        <label>Prioridad:</label>
+                        <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
+                            <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase', 'selected' => $cotizacion['idPrioridad']]); ?>
+                        </select>
+                    </div>
+                    <div class="six wide field">
+                        <label>Motivo:</label>
+                        <input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?=!empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
                     </div>
                 </div>
-                <div class="inline fields">
-                    <div class="three wide field">
-                        <label class="five">FEE %:</label>
-                        <input id="feeForm" name="feeForm" patron="requerido" placeholder="0" value="<?= $cotizacion['fee'] ?>">
+                <div class="fields">
+                    <div class="eleven wide field">
+                        <label>Comentario:</label>
+                        <input id="comentarioForm" name="comentarioForm" patron="requerido" placeholder="Comentario" value="<?=!empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?>">
                     </div>
                 </div>
             </div>

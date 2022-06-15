@@ -1297,7 +1297,7 @@ function email($email = array())
 			'smtp_host' => 'ssl://smtp.googlemail.com',
 			'smtp_port' => 465,
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
-			'smtp_pass' => 'v1su4l2010',
+			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html',
 			'charset' => 'utf-8',
 			'newline' => "\r\n"
@@ -1306,15 +1306,15 @@ function email($email = array())
 		$ci->email->initialize($config);
 		$ci->email->clear(true);
 
-		$ci->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - P&G');
+		$ci->email->from('team.sistemas@visualimpact.com.pe', 'VISUAL IMPACT - IMPACTBUSSINESS');
 		$ci->email->to($email['to']);
 
 		if (!empty($email['cc'])) {
 			$ci->email->cc($email['cc']);
 		}
 
-		$bcc = array('jefry.mallma@visualimpact.com.pe');
-		$ci->email->bcc($bcc);
+		//$bcc = array('jefry.mallma@visualimpact.com.pe');
+		//$ci->email->bcc($bcc);
 
 		$ci->email->subject($email['asunto']);
 		$ci->email->message($email['contenido']);
