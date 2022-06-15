@@ -122,6 +122,7 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.gap
 				, p.fee 
+				, p.idCotizacionEstado
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
@@ -398,6 +399,19 @@ class M_Cotizacion extends MY_Model
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function insertar($params = [])
+	{
+		$query = $this->db->insert($params['tabla'], $params['insert']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 

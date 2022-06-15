@@ -240,47 +240,92 @@ var Cotizacion = {
 
 			Cotizacion.actualizarTotal();
 		});
+
+		$(document).on('change','input[name=upload_orden_compra]', function(e){
+			let idCotizacion =  $(this).closest('tr').data('id');
+			var archivos = document.getElementById("upload_orden_compra["+idCotizacion+"]");
+			
+			//Creamos un objeto con el elemento que contiene los archivos: el campo input file, que tiene el id = 'archivos'
+			var archivo = archivos.files; //Obtenemos los archivos seleccionados en el imput
+			//Creamos una instancia del Objeto FormDara.
+			var archivos = new FormData();
+			/* Como son multiples archivos creamos un ciclo for que recorra la el arreglo de los archivos seleccionados en el input
+			Este y añadimos cada elemento al formulario FormData en forma de arreglo, utilizando la variable i (autoincremental) como 
+			indice para cada archivo, si no hacemos esto, los valores del arreglo se sobre escriben*/
+			for(i=0; i<archivo.length; i++){
+			archivos.append('archivo'+i,archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
+			}
+			$.ajax({
+				url:site_url+Cotizacion.url + 'guardarArchivo/', //Url a donde la enviaremos
+				type:'POST', //Metodo que usaremos
+				contentType:false, //Debe estar en false para que pase el objeto sin procesar
+				data:archivos, //Le pasamos el objeto que creamos con los archivos
+				processData:false, //Debe estar en false para que JQuery no procese los datos a enviar
+				cache:false, //Para que el formulario no guarde cache
+				beforeSend: function(){ Fn.showLoading(true) },
+			}).done(function(a){//Escuchamos la respuesta y continuamos
+				Fn.showLoading( false );
+
+				a = $.parseJSON(a);
+				var data= {};
+					data= a ;
+					data.idCotizacion = idCotizacion;
+
+				var jsonString={ 'data':JSON.stringify(data) };
+				var url=Cotizacion.url+'guardarArchivoBD';
+				var config={ url:url,data:jsonString };
+	
+				$.when( Fn.ajax(config) ).then(function(a){
+					if( a.result!=2 ){
+						++modalId;
+						var btn=[];
+						var fn=[];
+	
+						if(a.result==0){
+							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');';
+							btn[0]={title:'Aceptar',fn:fn[0]};
+						}
+						else{
+							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');$("#btn-filtrarCotizacion").click();';
+							btn[0]={title:'Aceptar',fn:fn[0]};
+						}
+	
+						Fn.showModal({ id:modalId,show:true,title:a.msg.title,content:a.data.html,btn:btn,width:a.data.width });
+					}
+				});
+			});
+	
+		});
+
+		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
+			++modalId;
+			let data = {};
+				data.id = $(this).closest("tr").data("id");
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
+
+
+			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					Cotizacion.itemServicio = a.data.itemServicio;
+				}
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de enviar esta cotizacion?" });';
+				btn[1] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				Cotizacion.modalIdForm = modalId;
+			
+				
+			});
+		});
 	},
-
-	// registrarCotizacion: function () {
-	// 	let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
-	// 	let url = Cotizacion.url + "registrarCotizacion";
-	// 	let config = { url: url, data: jsonString };
-	// 	let diferencias = 0;
-
-	// 	$.each($('.idTipoItem'), function (index, value) {
-	// 		if ($(value).val() != '' && $('#tipo').val() != 3) {
-	// 			if ($(value).val() != $('#tipo').val()) {
-	// 				$(value).parents('.nuevo').find('.ui-widget').addClass('has-error');
-
-	// 				diferencias++;
-	// 			}
-	// 		}
-	// 	});
-
-	// 	if (diferencias > 0) {
-	// 		++modalId;
-	// 		var btn = [];
-	// 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-	// 		btn[0] = { title: 'Continuar', fn: fn };
-	// 		Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de cotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
-
-	// 		return false;
-	// 	}
-
-	// 	$.when(Fn.ajax(config)).then(function (b) {
-	// 		++modalId;
-	// 		var btn = [];
-	// 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-	// 		if (b.result == 1) {
-	// 			fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
-	// 		}
-
-	// 		btn[0] = { title: 'Continuar', fn: fn };
-	// 		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-	// 	});
-	// },
 
 	actualizarCotizacion: function () {
 		++modalId;
