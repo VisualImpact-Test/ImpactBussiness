@@ -13,7 +13,7 @@
 	<meta name="msapplication-tap-highlight" content="no">
 	<base href="<?= base_url() . 'public/'; ?>" site_url="<?= site_url(); ?>">
 	<link href="assets/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="icon" href="assets/images/icono.png">
+	<link rel="icon" href="assets/images/icono_2.jpg">
 	<link href="assets/custom/css/sidebar-right.css?v=<?= $this->version; ?>" rel="stylesheet">
 	<link href="assets/custom/css/main.css?v=<?= $this->version; ?>" rel="stylesheet">
 	<script>

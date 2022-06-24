@@ -1,7 +1,7 @@
 var Login={
 
 	load: function(){
-
+		
 		$("#btn-login").on("click",function(e){
 			e.preventDefault();
 
@@ -16,53 +16,59 @@ var Login={
 					}else{
 						$recordar = 0;
 					}
+					
+					grecaptcha.ready(function() {
+						grecaptcha.execute('6LduG8UZAAAAAOO7tX4nzdbENf-DFjmkjt0PFgAf', {action: 'validate_captcha'}).then(function(token) {
+							var data={};
+							data=Fn.formSerializeObject("frm-login");
+							data.token = token;
+							var jsonString={ 'data':JSON.stringify(data) };
+							var url="login/acceder";
+							var config={ url:url,data:jsonString };
+								// pass the token to the backend script for verification
+							
+							$.when( Fn.ajax(config) ).then(function(b){
+								if( b.result!=2 ){
+									++modalId;
 
-					var data={};
-					data=Fn.formSerializeObject("frm-login");
-					var jsonString={ 'data':JSON.stringify(data) };
-					var url="login/acceder";
-					var config={ url:url,data:jsonString };
+									var btn = [];
+									var fn = [];
 
-					$.when( Fn.ajax(config) ).then(function(b){
-						if( b.result!=2 ){
-							++modalId;
+									if(b.status==1){
+										
+										if($recordar == 1){
+											document.cookie = "uid=" + encodeURIComponent( $usuario );
+											document.cookie = "pwd=" + encodeURIComponent( $pwd );
+										}else{
+											document.cookie = "uid=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+											document.cookie = "uid=; max-age=0";
+											document.cookie = "pwd=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
+											document.cookie = "pwd=; max-age=0";
+										}
 
-							var btn = [];
-							var fn = [];
+										fn[0] = 'Fn.showModal({ id:'+modalId+',show:false });Fn.loadPage("'+b.url+'");';
+										localStorage.setItem('flag_anuncio_visto',b.data.flag_anuncio_visto);
+										localStorage.setItem('modalCuentaProyecto', 0);
+										localStorage.setItem('vi_tv_filtros_ww7',b.data.filtros);
+										
+									}else{
+										fn[0] = 'Fn.showModal({ id:'+modalId+',show:false });grecaptcha.reset();';
 
-							if(b.status==1){
-								
-								if($recordar == 1){
-									document.cookie = "uid=" + encodeURIComponent( $usuario );
-									document.cookie = "pwd=" + encodeURIComponent( $pwd );
-								}else{
-									document.cookie = "uid=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-									document.cookie = "uid=; max-age=0";
-									document.cookie = "pwd=; expires=Thu, 01 Jan 1970 00:00:00 UTC";
-									document.cookie = "pwd=; max-age=0";
+										if(b.status == 3){
+											fn[1] = 'Login.enviarCorreo("'+b.correo+'");';
+											btn[1] = { title:'Enviar Correo', fn:fn[1] };
+										}
+									}
+
+									if(b.status == 2){
+										Login.modalCuentaProyecto();
+									}else{
+										btn[0] = { title:'Continuar', fn:fn[0] };
+										Fn.showModal({ id:modalId,show:true,title:b.msg.title,content:b.msg.content,btn:btn });
+									}
 								}
-
-								fn[0] = 'Fn.showModal({ id:'+modalId+',show:false });Fn.loadPage("'+b.url+'");';
-								localStorage.setItem('flag_anuncio_visto',b.data.flag_anuncio_visto);
-								localStorage.setItem('modalCuentaProyecto', 0);
-								localStorage.setItem('vi_tv_filtros_ww7',b.data.filtros);
-								
-							}else{
-								fn[0] = 'Fn.showModal({ id:'+modalId+',show:false });grecaptcha.reset();';
-
-								if(b.status == 3){
-									fn[1] = 'Login.enviarCorreo("'+b.correo+'");';
-									btn[1] = { title:'Enviar Correo', fn:fn[1] };
-								}
-							}
-
-							if(b.status == 2){
-								Login.modalCuentaProyecto();
-							}else{
-								btn[0] = { title:'Continuar', fn:fn[0] };
-								Fn.showModal({ id:modalId,show:true,title:b.msg.title,content:b.msg.content,btn:btn });
-							}
-						}
+							});
+						});
 					});
 				}
 			});

@@ -54,7 +54,7 @@ body {
 }
 
 .bg-impactTrade-2 {
-  background: url(../../images/fondos/visual-2.jpg);
+  background: url(../../images/fondos/visual-3.jpg);
   background-color: #b3b3b3;
   background-repeat: no-repeat;
   background-position: top;
@@ -93,10 +93,10 @@ body {
   /* background-color: #929191 !important; */
   height: 100vh;
   width: 100%;
-  opacity: 60%;
+  opacity: 100%;
   border: 1px #ffffff solid;
   position: fixed;
-  z-index: 0;
+  z-index: 1;
 }
 
 .text-small {
@@ -1209,3 +1209,7 @@ input[type=number] {
   cursor: pointer;
 }
 
+body .grecaptcha-badge {
+  visibility: visible !important;
+  z-index: 9999999999;
+}
