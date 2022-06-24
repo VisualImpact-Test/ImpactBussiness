@@ -135,7 +135,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['idItemTarifario']) ? ' AND tfa.idItemTarifario = ' . $params['idItemTarifario'] : '';
 
 		$sql = "
-			SELECT
+			SELECT 
 				tfa.idItemTarifario
 				, ma.idItemMarca
 				, ma.nombre AS itemMarca
@@ -146,7 +146,7 @@ class M_Item extends MY_Model
 				, a.idItem
 				, a.nombre AS item
 				, p.idProveedor
-				, p.razonSocial AS proveedor
+				, UPPER(p.razonSocial) AS proveedor
 				, tfa.costo
 				, tfa.flag_actual
 				, tfa.estado
@@ -171,6 +171,83 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+//Obtener proveedor no repetido - agregado
+
+	public function obtenerProveedorNoRepetido($paramas = [])
+	{
+
+		$filtros = "";
+		
+		$filtros .= !empty($paramas['proveedor']) ? ' AND p.idProveedor = ' . $paramas['proveedor'] : '';
+		
+
+		$sql = "
+		SELECT DISTINCT
+				
+		p.idProveedor
+	   , p.razonSocial AS proveedor
+	   
+	   
+   FROM compras.itemTarifario tfa
+   JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
+   JOIN compras.item a ON tfa.idItem = a.idItem
+   LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
+   LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
+   LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
+   WHERE 1 = 1
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+
+
+	}
+
+//Obtener flag no repetido - agregado
+
+public function obteneFlagNoRepetido()
+	{
+
+
+		$sql = "
+		SELECT DISTINCT
+
+				 tfa.flag_actual	
+				
+			FROM compras.itemTarifario tfa
+			JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
+			JOIN compras.item a ON tfa.idItem = a.idItem
+			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
+			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
+			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
+			WHERE 1 = 1
+			
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+
+
+	}
+
+
 
 	public function obtenerItems()
 	{

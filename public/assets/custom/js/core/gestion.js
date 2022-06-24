@@ -55,6 +55,40 @@ var Gestion = {
 			});
 		});
 
+		$(document).on("click", ".btn-CustomCargaMasiva", function (e) {
+			e.preventDefault();
+
+			let url = $(this).data("form");
+			let urlSave = $(this).data("save");
+
+			var config = { 'url': Gestion.urlActivo + url };
+			$.when(Fn.ajax(config)).then(function (a) {
+
+				if (a.result === 2) return false;
+
+				++modalId;
+				Gestion.idModalPrincipal = modalId;
+
+				let configSaveHT = {
+					'url' : urlSave
+				};
+
+				let configHT = {
+					'fn': `Gestion.guardarHT(${JSON.stringify(configSaveHT)})`,
+					'content' : '¿Desea continuar con la carga masiva?',
+				};
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				var fn1 = `Gestion.confirmarHT(${JSON.stringify(configHT)});`;
+
+				var btn = [];
+				btn[0] = { title: 'Cerrar', fn: fn };
+				btn[1] = { title: 'Guardar', fn: fn1 };
+
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			});
+		});
+
 		//Evento general para obtener formulario de nuevo registro.
 		$(document).on("click", ".btn-New", function (e) {
 			e.preventDefault();

@@ -44,6 +44,26 @@ class MY_Model extends CI_Model{
 
 	}
 
+	public function getWhereJoinMultiple($tabla, $where, $select = '*', $join = [], $orden = ''){
+		// Las abreviaturas de las tablas deben estar definidas en las variables.
+		// Ejemplo $tabla = $join['tabla'] = 'ImpactTrade_bd.trade.tablaDeEjemplo tb';
+		$this->db->select($select,false);
+		$this->db->from($tabla);
+		foreach ($join as $key => $value) {
+			$this->db->join($value['tabla'],$value['on'],$value['tipo']);
+		}
+		foreach ($where as $key => $value) {
+			if ($key==0){ $this->db->where($value); }
+			else {
+				$this->db->or_group_start()->where($value)->group_end();
+			}
+		}
+		if($orden != ''){
+			$this->db->order_by($orden);
+		}
+		return $this->db->get();
+	}
+
 	public function insertarMasivo($table, $input)
 	{
 		return $this->db->insert_batch($table, $input);

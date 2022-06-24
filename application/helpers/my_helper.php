@@ -6,6 +6,17 @@ function numRandom($digits = 4)
 	return str_pad(rand(0, pow(10, $digits) - 1), $digits, '0', STR_PAD_LEFT);
 }
 
+//handsotable
+function refactorizarDataHT($data = []){
+	$dataRefactorizada = [];
+	foreach ($data["data"] as $row) {
+		if (!in_array($row[$data["value"]], $dataRefactorizada)) $dataRefactorizada[] = $row[$data["value"]];
+	}
+	return !empty($dataRefactorizada) ? $dataRefactorizada : [];
+}
+
+
+
 function fn_404()
 {
 	$config['css']['style'] = array();

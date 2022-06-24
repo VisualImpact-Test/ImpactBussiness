@@ -45,7 +45,7 @@ class EquiposComputo extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        // $dataParaVista = $this->model->obtenerInformacionEquiposComputo($post)['query']->result_array();
+        $dataParaVista = $this->model->obtenerInformacionEquiposComputo($post)['query']->result_array();
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {

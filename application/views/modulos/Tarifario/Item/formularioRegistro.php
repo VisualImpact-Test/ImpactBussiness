@@ -30,7 +30,10 @@
                     <input type="date" lang="es" name="fechaVigencia" class="form-control input-sm" id="fechaVigencia" value="" patron="">
                 </div>
             </div>
+            
+            
             <div class="control-group child-divcenter row w-100">
+          
                 <label class="form-control col-md-5" for="costo" style="border:0px;"></label>
                 <div class="form-group form-check">
                     <input type="checkbox" class="form-check-input" name="actual" id="actual">

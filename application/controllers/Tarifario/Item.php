@@ -26,7 +26,10 @@ class Item extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/Tarifario/item'
+            'assets/custom/js/core/gestion',
+            'assets/custom/js/Tarifario/item',
+            
+            
         );
 
         $config['data']['icon'] = 'fas fa-shopping-cart';
@@ -47,11 +50,111 @@ class Item extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        $dataParaVista = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+        $dataParaVista ['dataTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+        $Rproveedor = [];
+
+        foreach ($dataParaVista['dataTarifario'] as $key => $value) {
+            $Rproveedor[$value['idProveedor']] = [
+                'idProveedor' => $value['idProveedor'],
+                'nproveedor' => $value['proveedor']
+
+            ];
+        }
+
+        $dataParaVista ['dataProveedor'] = $Rproveedor;
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
-            $html = $this->load->view("modulos/Tarifario/Item/reporte", ['datos' => $dataParaVista], true);
+            $html = $this->load->view("modulos/Tarifario/Item/reporte",  $dataParaVista, true);
+        }
+
+        $result['result'] = 1;
+        $result['data']['views']['idContentItem']['datatable'] = 'tb-item';
+        $result['data']['views']['idContentItem']['html'] = $html;
+        $result['data']['configTable'] =  [
+            'columnDefs' =>
+            [
+                0 =>
+                [
+                    "visible" => false,
+                    "targets" => []
+                ]
+            ]
+        ];
+
+        echo json_encode($result);
+    }
+
+    public function getFormCargaMasiva()
+	{
+		$result = $this->result;
+		$result['msg']['title'] = "Carga masiva de tarifario";
+
+		$params=array();
+		$params['idUsuario']=$this->session->userdata('idUsuario');
+
+        $proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]] )->result_array();
+        $proveedores = refactorizarDataHT(["data" => $proveedores, "value" => "razonSocial" ]);
+		
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Tarifario',
+			'data' => [
+                [
+				'Item' => null,
+				'Proveedor' => null,
+				'Costo' => null,
+				'Fecha' => null,
+				'Este item es el actual' => null,
+                ]
+			],
+            'headers' => [
+				'ITEM (*)',
+				'PROVEEDOR (*)',
+				'COSTO (*)',
+				'FECHA (*)',
+				'ESTE ITEM ES EL ACTUAL (*)',
+				
+
+            ],
+			'columns' => [
+				['data' => 'Item', 'type' => 'text', 'placeholder' => 'Item', 'width' => 200],
+				['data' => 'Proveedor', 'type' => 'myDropdown', 'placeholder' => 'Proveedor', 'width' => 200, 'source' => $proveedores],
+				['data' => 'Costo', 'type' => 'numeric', 'placeholder' => 'Costo', 'width' => 200],
+				['data' => 'Fecha', 'type' => 'myDate', 'placeholder' => 'Fecha', 'width' => 200],
+				['data' => 'Este item es el actual', 'type' => 'checkbox', 'placeholder' => 'Este item es el actual', 'width' => 200],
+
+			],
+			'colWidths' => 200,
+        ];
+        
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+	
+		echo json_encode($result);
+
+    }
+
+
+
+    //proveedor no repetido
+    public function proveedorNoRepetido()
+    {
+        $result = $this->result;
+        $post_1 = json_decode($this->input->post('data'), true);
+
+        $dataParaVista1 = [];
+        $dataParaVista1 = $this->model->obtenerProveedorNoRepetido($post_1)['query']->result_array();
+
+        $html = getMensajeGestion('noRegistros');
+        if (!empty($dataParaVista)) {
+            $html = $this->load->view("modulos/Tarifario/Item/reporte", ['NoRproveedor' => $dataParaVista1], true);
         }
 
         $result['result'] = 1;

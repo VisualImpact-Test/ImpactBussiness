@@ -13,6 +13,7 @@ var Item = {
 
 		$(document).ready(function () {
 			$('#btn-filtrarItemTarifario').click();
+			Gestion.urlActivo = Item.url
 		});
 
 		$(document).on('click', '#btn-filtrarItemTarifario', function () {

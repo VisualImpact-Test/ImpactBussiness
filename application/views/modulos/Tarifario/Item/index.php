@@ -38,6 +38,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarItemTarifario" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
+				<button data-form="getFormCargaMasiva" data-save="guardarListaComentariosHT" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="btn-CargaMasivaEncuesta1" title="Carga Masiva Comentarios">
+                    <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
+                </button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
@@ -100,11 +103,14 @@
 					</div>
 				</div>
 				<hr>
-				<h5 class="text-bold-500" style="margin: 0;margin-bottom: 15px;"><i class="far fa-map-signs"></i></i> <u>Leyenda</u></h5>
+				<h3 class="text-bold-500" style="margin: 0;margin-bottom: 15px;"><i class="far fa-map-signs"></i></i> <b>Leyenda</b></h3>
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<i class="fas fa-lg fa-circle" style="color: royalblue;"> <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> De uso actual</span></i>
+							<h4><i class="fas fa-lg fa-question" style="color: red;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vencido</span></i></h4>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<h4><i class="fa fa-lg fa-check" style="color: green;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vigente</span></i></h4>
 						</div>
 					</div>
 				</div>
