@@ -1,12 +1,16 @@
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LduG8UZAAAAAOO7tX4nzdbENf-DFjmkjt0PFgAf"></script>
+
 <div class="h-100 no-gutters row">
+	<div class="d-cover-opacity bg-impactTrade-2"></div>
+	<div class="col-lg-9 d-none d-sm-none d-md-none d-lg-none d-xl-block"></div>
 	<div class="w-100 bg-impactTrade-1 d-flex col-lg-3 col-md-12">
-		<div class="d-cover-opacity bg-impactTrade-2"></div>
 		<div class="container-login">
 			<div class="login-box">
 				<div class="logo-white"></div>
 				<div class="divider"></div>
 				<form id="frm-login" class="" onsubmit="return false;">
+					<input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response">
+					<input type="hidden" name="action" value="validate_captcha">
 					<div class="form-row">
 						<div class="col-md-6">
 							<div class="position-relative form-group"><label for="user" class="text-white">Usuario</label><input name="user" id="user" placeholder="Ingrese aquí" type="text" class="form-control" patron="requerido"></div>
@@ -15,11 +19,11 @@
 							<div class="position-relative form-group"><label for="password" class="text-white">Contraseña</label><input name="password" id="password" placeholder="Ingrese aquí" type="password" class="form-control" patron="requerido"></div>
 						</div>
 					</div>
-					<div class="form-row">
+					<!-- <div class="form-row">
 						<div class="col-md-12 text-center">
 							<div class="g-recaptcha" data-sitekey="6LdAotoaAAAAAEynxHe-NS_mErDdqSSw8AlERnTh" data-size="normal"></div>
 						</div>
-					</div>
+					</div> -->
 					<div class="divider"></div>
 					<div class="form-row">
 						<div class="col-md-12">
@@ -28,7 +32,10 @@
 					</div>
 					<div class="d-flex">
 						<div class="ml-auto">
-							<button id="btn-login" class="btn btn-sm btn-success btn-lg"><i class="fa fa-key"></i> Login</button>
+							<button id="btn-login" class="ui green button">
+							<i class="icon key"></i> 
+							Ingresar
+							</button>
 						</div>
 
 					</div>
@@ -44,3 +51,14 @@
 	</div>
 	<!-- <div class="bg-impactTrade-2 d-none d-lg-block col-lg-9"></div> -->
 </div>
+<script>
+    grecaptcha.ready(function() {
+    // do request for recaptcha token
+    // response is promise with passed token
+        grecaptcha.execute('6LduG8UZAAAAAOO7tX4nzdbENf-DFjmkjt0PFgAf', {action:'validate_captcha'})
+                  .then(function(token) {
+            // add token value to form
+            document.getElementById('g-recaptcha-response').value = token;
+        });
+    });
+</script>

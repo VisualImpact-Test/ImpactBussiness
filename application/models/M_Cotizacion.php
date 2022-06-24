@@ -118,7 +118,7 @@ class M_Cotizacion extends MY_Model
 				, cc.nombre AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
 				, p.estado
-				, p.fechaRequerimiento
+				, p.fechaRequerida
 				, p.flagIgv igv
 				, p.gap
 				, p.fee 
@@ -222,10 +222,12 @@ class M_Cotizacion extends MY_Model
 				, lt.idProveedor
 				, lt.proveedor
 				, lt.tipo
-				, CASE WHEN diasVigencia <= 7 THEN 'green'
+				, CASE 
+					WHEN diasVigencia <= 7 THEN 'green'
 					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
 					ELSE 'red' END
 					AS semaforoVigencia
+				, diasVigencia
 			FROM listTarifario lt
 		";
 

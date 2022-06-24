@@ -93,6 +93,20 @@ var Item = {
 				$("#btn-filtrarItem").click();
 			});
 		});
+		$(document).on('change', '.tipoArticulo', function () {
+			++modalId;
+
+			let idItem = $(this).parents('tr:first').data('id');
+			let estado = $(this).data('estado');
+			let data = { 'idItem': idItem, 'estado': estado };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Item.url + 'actualizarEstadoItem', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				$("#btn-filtrarItem").click();
+			});
+		});
 	},
 
 	registrarItem: function () {

@@ -91,3 +91,15 @@ defined('ID_TIPOUSUARIO_TI')   OR define('ID_TIPOUSUARIO_TI',4);
 // defined('FOTOS_CONTROLADOR')   OR define('FOTOS_CONTROLADOR',base_url()+ 'ControlFoto/');
 // defined('RUTA_BAT')            OR define('RUTA_BAT','C:\apache24\PHP\php7\php.exe -f "C:\apache24\htdocs\impactTrade\index.php" ');
 defined('RUTA_BAT')            OR define('RUTA_BAT','C:\wamp64\bin\php\php7.1.33\php-win.exe -f "C:\wamp64\www\pruebas\w7impactTrade\index.php" ');
+
+
+//Tipos de Item
+defined('COD_ARTICULO')       OR define('COD_ARTICULO',1);
+defined('COD_SERVICIO')       OR define('COD_SERVICIO',2);
+defined('COD_COMPUTO')        OR define('COD_COMPUTO',3);
+defined('COD_MOVIL')          OR define('COD_MOVIL',4);
+defined('COD_PERSONAL')       OR define('COD_PERSONAL',5);
+defined('COD_EVENTO')         OR define('COD_EVENTO',6);
+defined('COD_DISTRIBUCION')   OR define('COD_DISTRIBUCION',7);
+defined('COD_TEXTILES')       OR define('COD_TEXTILES',9);
+defined('COD_TARJETAS_VALES') OR define('COD_TARJETAS_VALES',10);

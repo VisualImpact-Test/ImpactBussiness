@@ -225,7 +225,7 @@ class SolicitudCotizacion extends MY_Controller
             'nombre' => $post['nombre'],
             'idCuenta' => $post['cuentaForm'],
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
-            'fechaRequerimiento' => $post['fechaRequerimiento'],
+            'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'gap' => $post['gapForm'],
             'fee' => $post['feeForm'],

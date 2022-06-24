@@ -33,10 +33,10 @@
                         <div class="ui calendar date-semantic">
                             <div class="ui input left icon">
                                 <i class="calendar icon"></i>
-                                <input type="text" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?> ">
+                                <input type="text" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?> ">
                             </div>
                         </div>
-                        <input type="hidden" class="date-semantic-value" name="fechaRequerimiento" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerimiento']) ? $cotizacion['fechaRequerimiento'] : '' ?>">
+                        <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
                     </div>
                     <div class="five wide field">
                         <div class="inline field">

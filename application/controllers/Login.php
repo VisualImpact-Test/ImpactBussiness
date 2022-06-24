@@ -23,12 +23,13 @@ class Login extends MY_Controller
 		$data = json_decode($this->input->post('data'));
 
 		// $captcha = $this->validar_captcha_v2($data->{'g-recaptcha-response'});
-		// if(!$captcha->{'success'}){
-		// 	$result['result'] = 0;
-		// 	$config_ = array( 'type' => 2, 'message' => "Debe completar el captcha");
-		// 	$result['msg']['content'] = createMessage($config_);
-		// 	goto responder;
-		// }
+		$captcha = $this->validar_captcha_v3($data);
+		if(!$captcha){
+			$result['result'] = 0;
+			$config_ = array( 'type' => 2, 'message' => "Captcha inválido");
+			$result['msg']['content'] = createMessage($config_);
+			goto responder;
+		}
 
 		$input = array(
 			'usuario' => $data->user,
@@ -137,7 +138,7 @@ class Login extends MY_Controller
 
 	public function validar_captcha_v3($post)
 	{
-		define("RECAPTCHA_V3_SECRET_KEY", '6Le7INUaAAAAAEsBU33EfPneKHjz5OTSUHVRORdi');
+		define("RECAPTCHA_V3_SECRET_KEY", '6LduG8UZAAAAAHFd8zFvsdm9B0NpLnyldI2OEtZS');
 
 		$token = $post->{'token'};
 		$action = $post->{'action'};

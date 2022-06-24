@@ -51,13 +51,20 @@ var Cotizacion = {
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
 				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%',large: true });
 
 				Cotizacion.modalIdForm = modalId;
 
 				Cotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
 				$('#listaItemsCotizacion tbody').html('');
 				$(".btn-add-row").click();
+
+				$('.dropdownSingleAditions')
+				.dropdown({
+					allowAdditions: true
+				})
+				;
+
 			});
 		});
 
@@ -82,6 +89,7 @@ var Cotizacion = {
 				Cotizacion.actualizarAutocomplete();
 			});
 		});
+	
 
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
@@ -143,6 +151,25 @@ var Cotizacion = {
 			$("#div-ajax-detalle").animate({ scrollTop: $("#listaItemsCotizacion").height() }, 500);
 		});
 
+		$(document).on('click', '.editFeatures', function () {
+			++modalId;
+			let control = $(this).closest("tr");
+			let row = control.index();
+			let idTipoItem = control.find("#tipoItemForm").val();
+			let data = { row, idTipoItem };
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formFeatures', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+			});
+		});
 		$(document).on('click', '.btn-add-row-cotizacion', function (e) {
 			e.preventDefault();
 
@@ -192,6 +219,7 @@ var Cotizacion = {
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
 		});
 
+		
 		// $(document).on('click', '.btn-generarCotizacion', function () {
 		// 	++modalId;
 
@@ -234,10 +262,16 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 
 			let subTotal = Fn.multiply(cantidad, costo);
-
+			var formatter = new Intl.NumberFormat('en-US', {
+				style: 'currency',
+				currency: 'PEN',
+			  
+				// These options are needed to round to whole numbers if that's what you want.
+				//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+				//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+			});
 			subTotalForm.val(subTotal);
-			subTotalFormLabel.text(subTotal);
-
+			subTotalFormLabel.val(formatter.format(subTotal));
 			Cotizacion.actualizarTotal();
 		});
 
@@ -353,6 +387,29 @@ var Cotizacion = {
 				
 			});
 		});
+		$(document).on('click', '.verCaracteristicaArticulo', function () {
+			++modalId;
+			let control = $(this).closest("tr");
+			let codItem = control.find('.codItems').val();
+
+			if(codItem == '') return false;
+
+			let data = { codItem };
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'viewItemDetalle', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+		
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+
+			});
+		});
 		
 	},
 
@@ -391,7 +448,7 @@ var Cotizacion = {
 			minLength: 0,
 			select: function (event, ui) {
 				event.preventDefault();
-
+				let control = $(this).parents(".nuevo");
 				//Llenamos los items con el nombre 
 				$(this).val(ui.item.label);
 
@@ -399,34 +456,40 @@ var Cotizacion = {
 				$(this).parents(".ui-widget").find(".codItems").val(ui.item.value);
 
 				//Llenamos el precio actual
-				if (ui.item.costo == null) {
+				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
 					ui.item.costo = 0;
 				}
-				$(this).parents(".nuevo").find(".costoForm").val(ui.item.costo);
-				$(this).parents(".nuevo").find(".costoFormLabel").text(ui.item.costo);
+				control.find(".costoForm").val(ui.item.costo);
+				control.find(".costoFormLabel").text(ui.item.costo);
 
 				//Llenamos el estado
-				$(this).parents(".nuevo").find(".estadoItemForm").removeClass('fa-sparkles');
-				$(this).parents(".nuevo").removeClass('nuevoItem');
-				$(this).parents(".nuevo").find(".idEstadoItemForm").val(1);
-				$(this).parents(".nuevo").find(".idTipoItem").val(ui.item.tipo);
+				control.find(".estadoItemForm").removeClass('fa-sparkles');
+				control.removeClass('nuevoItem');
+				control.find(".idEstadoItemForm").val(1);
+				control.find(".idTipoItem").val(ui.item.tipo);
 
 				//Llenamos el proveedor
-				$(this).parents(".nuevo").find(".proveedorForm").text(ui.item.proveedor);
-				$(this).parents(".nuevo").find(".idProveedor").val(ui.item.idProveedor);
+				control.find(".proveedorForm").text(ui.item.proveedor);
+				control.find(".idProveedor").val(ui.item.idProveedor);
 
 				//LLenar semaforo
 
-				$(this).parents(".nuevo").find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
+				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
+				
+				control.find('.semaforoForm').popup({content : `Vigencia: ${ui.item.diasVigencia} días`});
+				
+				//Validar boton ver caracteristicas del articulo
+				
+				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
 
 				let $cod = $(this).parents(".ui-widget").find(".codItems").val();
 				if ($cod != '') {
 					$(this).attr('readonly', 'readonly');
-					$(this).parents('.nuevo').find('.costoForm').attr('readonly', 'readonly');
-
-					$(this).closest("tr").find(".cantidadForm").attr('readonly',false);
+					control.find('.costoForm').attr('readonly', 'readonly');
+					control.find(".cantidadForm").attr('readonly',false);
+					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');					
 				}
 			},
 			appendTo: "#modal-page-" + Cotizacion.modalIdForm,
@@ -507,8 +570,12 @@ var Cotizacion = {
 			total = Number(total) + Number($(value).val());
 		})
 
+		var formatter = new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: 'PEN',
+		});
 		$('.totalForm').val(total);
-		$('.totalFormLabel').text(total);
+		$('.totalFormLabel').val(formatter.format(Number(total)));
 	}
 }
 

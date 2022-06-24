@@ -95,6 +95,7 @@ class Cotizacion extends MY_Controller
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
         }
         foreach ($data['itemServicio'] as $k => $r) {
             $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
@@ -109,6 +110,7 @@ class Cotizacion extends MY_Controller
 
         echo json_encode($result);
     }
+  
 
     public function formularioVisualizacionCotizacion()
     {
@@ -196,7 +198,7 @@ class Cotizacion extends MY_Controller
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
-            'fechaRequerimiento' => $post['fechaRequerimiento'],
+            'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'total' => $post['totalForm'],
             'idPrioridad' => $post['prioridadForm'],
@@ -561,6 +563,39 @@ class Cotizacion extends MY_Controller
         $result['result'] = 1;
         $result['msg']['title'] = 'Procesar Cotizacion sin Orden de Compra';
         $result['data']['html'] = $this->load->view("modulos/Cotizacion/frmProcesarSinOc", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
+
+    public function formFeatures()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+
+        $result['data']['existe'] = 0;
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Registrar Cotizacion';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioFeatures", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
+    public function viewItemDetalle()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        
+        $dataParaVista = [];
+        $dataParaVista['data'] = $this->model_item->obtenerInformacionItems(['idItem' => $post['codItem']])['query']->row_array();
+
+        $result['data']['existe'] = 0;
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Registrar Cotizacion';
+        $result['data']['width'] = '50%';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/viewItemDetalle", $dataParaVista, true);
 
         echo json_encode($result);
     }
