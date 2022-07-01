@@ -699,7 +699,6 @@ var Fn = {
 	handleImages: function (file, callback, outputFormat) {
 		var canvas = document.createElement('CANVAS');
 		var ctx = canvas.getContext('2d');
-
 		var reader = new FileReader();
 		reader.onload = function (event) {
 			var img = new Image();
@@ -1468,6 +1467,21 @@ var Fn = {
 		b *= commonMultiplier;
 	
 		return (a * b) / (commonMultiplier * commonMultiplier);
-	}
+	},
+
+	getBase64: function (file) {
+		return new Promise((resolve, reject) => {
+		  const reader = new FileReader();
+		  reader.readAsDataURL(file);
+		  reader.onload = () => resolve(
+			{
+				'base64': reader.result,
+				'name' : file.name,
+				'type' : file.type
+			}
+			);
+		  reader.onerror = error => reject(error);
+		});
+	  }
 
 }

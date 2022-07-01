@@ -93,13 +93,29 @@ defined('ID_TIPOUSUARIO_TI')   OR define('ID_TIPOUSUARIO_TI',4);
 defined('RUTA_BAT')            OR define('RUTA_BAT','C:\wamp64\bin\php\php7.1.33\php-win.exe -f "C:\wamp64\www\pruebas\w7impactTrade\index.php" ');
 
 
+//Compras
+defined('IGV')       OR define('IGV',0.18);
+
 //Tipos de Item
-defined('COD_ARTICULO')       OR define('COD_ARTICULO',1);
-defined('COD_SERVICIO')       OR define('COD_SERVICIO',2);
-defined('COD_COMPUTO')        OR define('COD_COMPUTO',3);
-defined('COD_MOVIL')          OR define('COD_MOVIL',4);
-defined('COD_PERSONAL')       OR define('COD_PERSONAL',5);
-defined('COD_EVENTO')         OR define('COD_EVENTO',6);
-defined('COD_DISTRIBUCION')   OR define('COD_DISTRIBUCION',7);
-defined('COD_TEXTILES')       OR define('COD_TEXTILES',9);
-defined('COD_TARJETAS_VALES') OR define('COD_TARJETAS_VALES',10);
+defined('COD_ARTICULO')       OR define('COD_ARTICULO',['id' => 1, 'nombre' => 'ARTICULO']);
+defined('COD_SERVICIO')       OR define('COD_SERVICIO',['id' => 2, 'nombre' => 'SERVICIO']);
+defined('COD_COMPUTO')        OR define('COD_COMPUTO',['id' => 3, 'nombre' => 'COMPUTO']);
+defined('COD_MOVIL')          OR define('COD_MOVIL',['id' => 4, 'nombre' => 'MOVIL']);
+defined('COD_PERSONAL')       OR define('COD_PERSONAL',['id' => 5, 'nombre' => 'PERSONAL']);
+defined('COD_EVENTO')         OR define('COD_EVENTO',['id' => 6, 'nombre' => 'EVENTO']);
+defined('COD_DISTRIBUCION')   OR define('COD_DISTRIBUCION',['id' => 7, 'nombre' => 'DISTRIBUCION']);
+defined('COD_TEXTILES')       OR define('COD_TEXTILES',['id' => 9, 'nombre' => 'TEXTILES']);
+defined('COD_TARJETAS_VALES') OR define('COD_TARJETAS_VALES',['id' => 10, 'nombre' => 'TARJETAS_VALES']);
+
+//Wireframe
+
+defined('RUTA_WIREFRAME') OR define('RUTA_WIREFRAME','../public/assets/images/wireframe/');
+defined('IMG_WIREFRAME') OR define('IMG_WIREFRAME','../public/assets/images/wireframe/image.png');
+defined('IMG_WIREFRAME2') OR define('IMG_WIREFRAME2','../public/assets/images/wireframe/clip.png');
+
+//Tipo Archivo
+
+defined('TIPO_ORDEN_COMPRA') OR define('TIPO_ORDEN_COMPRA',1);
+defined('TIPO_IMAGEN') OR define('TIPO_IMAGEN',2);
+defined('TIPO_PDF') OR define('TIPO_PDF',3);
+defined('TIPO_LINK') OR define('TIPO_LINK',4);

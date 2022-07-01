@@ -38,6 +38,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarCotizacion" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
+				<a href="../Cotizacion/viewRegistroCotizacion" target="_blank" class="btn btn-outline-trade-visual border-0">
+					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
+				</a>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
