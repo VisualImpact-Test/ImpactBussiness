@@ -120,7 +120,6 @@ class M_Cotizacion extends MY_Model
 				, p.estado
 				, p.fechaRequerida
 				, p.flagIgv igv
-				, p.gap
 				, p.fee 
 				, p.idCotizacionEstado
                 , p.idPrioridad
@@ -208,7 +207,7 @@ class M_Cotizacion extends MY_Model
 					, ta.costo
 					, pr.idProveedor
 					, pr.razonSocial AS proveedor
-					, 1 AS tipo
+					, a.idItemTipo AS tipo
 					, DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy) AS diasVigencia
 				FROM compras.item a
 				JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
@@ -278,12 +277,37 @@ class M_Cotizacion extends MY_Model
 
 	public function insertarCotizacionDetalle($params = [])
 	{
-		$query = $this->db->insert_batch($params['tabla'], $params['insert']);
+		$insertArchivos = [];
+		foreach($params['insert'] as $k => $insert){
+			$queryCotizacionDetalle = $this->db->insert($params['tabla'], $insert);
+			$idCotizacionDetalle = $this->db->insert_id();
 
-		if ($query) {
-			$this->resultado['query'] = $query;
+			if(!empty($params['archivos'][$k])){
+				foreach($params['archivos'][$k] as $archivo){
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/',$archivo['type']);
+					$insertArchivos[] = [
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => $tipoArchivo[1],
+						'estado' => true,
+						'idUsuarioReg' => $this->idUsuario
+					];
+				}
+			}
+		}
+
+		if ($queryCotizacionDetalle) {
+			$this->resultado['query'] = $queryCotizacionDetalle;
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
+
+			if(!empty($insertArchivos)){
+				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+			}
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
@@ -423,6 +447,26 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerSolicitante($params = [])
+	{
+		$sql = "
+			SELECT
+				idSolicitante AS id
+				, nombre AS value
+			FROM compras.solicitante
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 
 	
 }

@@ -80,6 +80,26 @@ $.ajaxSetup({
 	timeout: 1 * 800 * 1000,/*1 minuto*/
 });
 
+const RUTA_WIREFRAME = '../public/assets/images/wireframe/';
+const COD_ARTICULO = {'id' : 1, 'nombre' : 'ARTICULO'};
+const COD_SERVICIO = {'id' : 2, 'nombre' : 'SERVICIO'};
+const COD_COMPUTO = {'id' : 3, 'nombre' : 'COMPUTO'};
+const COD_MOVIL = {'id' : 4, 'nombre' : 'MOVIL'};
+const COD_PERSONAL = {'id' : 5, 'nombre' : 'PERSONAL'};
+const COD_EVENTO = {'id' : 6, 'nombre' : 'EVENTO'};
+const COD_DISTRIBUCION = {'id' : 7, 'nombre' : 'DISTRIBUCION'};
+const COD_TEXTILES = {'id' : 9, 'nombre' : 'TEXTILES'};
+const COD_TARJETAS_VALES = {'id' : 10, 'nombre' : 'TARJETAS_VALES'};
+
+const moneyFormatter = new Intl.NumberFormat('en-US', {
+	style: 'currency',
+	currency: 'PEN',
+  
+	// These options are needed to round to whole numbers if that's what you want.
+	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+});
+
 var site_name = 'ImpactBussiness';
 var site_url = $('base').attr('site_url');
 //var fotos_url='http://movil.visualimpact.com.pe/fotos/impactTrade_Android/';
@@ -232,6 +252,35 @@ var View = {
 					e.preventDefault();
 					$(this).val('');
 				}
+			}
+		});
+
+		$(document).on('keyup paste', '.onlyNumbers', function (e) {
+			let puntos = 0;
+			let cadenaAnalizar = $(this).val();
+			let control = $(this);
+			for (var i = 0; i < cadenaAnalizar.length; i++) {
+				var caracter = cadenaAnalizar.charAt(i);
+				if (caracter == '.') {
+					puntos++;
+				}
+			}
+			let nmax = Number(control.data('max'));
+			if(nmax > 0){
+				if(control.val() > nmax){
+					$(this).val(nmax);
+				}
+			}
+
+			if(Fn.validators['numeros']['expr'].test(control.val())){
+				e.preventDefault();
+			}
+		});
+
+		$(document).on('keypress', '.onlyNumbers', function (e) {
+			let control = $(this);
+			if (!$.isNumeric(e.key) && e.key != '.') {
+				e.preventDefault();
 			}
 		});
 

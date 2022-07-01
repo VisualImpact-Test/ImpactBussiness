@@ -198,6 +198,7 @@ class Cotizacion extends MY_Controller
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'total' => $post['totalForm'],
@@ -213,10 +214,9 @@ class Cotizacion extends MY_Controller
         if (!empty($validacionExistencia['query']->row_array())) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroRepetido');
+            $result['msg']['content'] = createMessage(['type'=>2,'message'=>'El título de cotizacion ya se encuentra registrado']);
             goto respuesta;
         }
-
         
         $insert = $this->model->insertarCotizacion($data);
         $data = [];
@@ -230,6 +230,8 @@ class Cotizacion extends MY_Controller
         $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
         $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
         $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
+        $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
+        $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
 
         foreach ($post['nameItem'] as $k => $r) {
             $dataItem = [];
@@ -266,6 +268,8 @@ class Cotizacion extends MY_Controller
                 'nombre' => trim($nameItem),
                 'cantidad' => $post['cantidadForm'][$k],
                 'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+                'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+                'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
                 'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
                 'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2  : $post['idEstadoItemForm'][$k],
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
@@ -273,6 +277,23 @@ class Cotizacion extends MY_Controller
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
                 'fechaCreacion' => getActualDateTime()
             ];
+
+            $data['archivos_arreglo'][$k] = getDataRefactorizada([
+                'base64' => $post["file-item[$k]"],
+                'type' => $post["file-type[$k]"],
+                'name' => $post["file-name[$k]"],
+            ]);
+
+            foreach($data['archivos_arreglo'][$k] as $key => $archivo){
+                $data['archivos'][$k][] = [
+                'base64' => $archivo['base64'],
+                'type' => $archivo['type'],
+                'name' => $archivo['name'],
+                'carpeta'=> 'cotizacion',
+                'nombreUnico' => uniqid(),
+                ];
+            }
+            
         }
 
         $data['tabla'] = 'compras.cotizacionDetalle';
@@ -293,6 +314,7 @@ class Cotizacion extends MY_Controller
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
+
         }
 
         $this->db->trans_complete();
@@ -599,4 +621,59 @@ class Cotizacion extends MY_Controller
 
         echo json_encode($result);
     }
+
+    public function viewRegistroCotizacion()
+    {
+
+        $config = array();
+        $config['nav']['menu_active'] = '131';
+        $config['css']['style'] = array(
+            'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/css/floating-action-button'
+        );
+        $config['js']['script'] = array(
+            // 'assets/libs/datatables/responsive.bootstrap4.min',
+            // 'assets/custom/js/core/datatables-defaults',
+            'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/languages/all',
+            'assets/libs/handsontable@7.4.2/dist/moment/moment',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/core/HTCustom',
+            'assets/custom/js/viewAgregarCotizacion'
+        );
+        
+        $config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $config['data']['itemServicio'] = $data['itemServicio'];
+
+        $config['single'] = true;
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
+        $config['data']['title'] = 'Cotizacion';
+        $config['data']['message'] = 'Lista de Cotizacions';
+        $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
+
+        $this->view($config);
+    }
+
+
 }

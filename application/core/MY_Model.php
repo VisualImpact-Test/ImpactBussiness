@@ -69,4 +69,40 @@ class MY_Model extends CI_Model{
 		return $this->db->insert_batch($table, $input);
 	}
 
+	public function saveFileWasabi($config = [])
+	{
+        if (empty($config['base64'])) return "";
+
+        $carpeta = $config['carpeta'];
+        $nombreUnico = $config['nombreUnico'];
+
+        $file =         
+        [
+            'base64' => $config['base64'],
+            'name' => $config['name'],
+            'type' => $config['type'],
+            'extension' => explode('/',$config['type'])[1]
+        ];
+
+		$this->load->library('s3');
+
+		$s3Client = $this->s3;
+
+		$s3Client::setAuth('BS9EM7XW1288NCZXLL6G', 'cIe5Mfe7ovcjsm3waEcmqGDun6Xu6d0ftAepy3AS');		
+
+		$s3Client->setEndpoint('s3.us-central-1.wasabisys.com');
+
+		$s3Client->setRegion('us-central-1');
+		// $file_url = '';
+		$file_url = FCPATH . $nombreUnico."_WASABI.{$file['extension']}";
+        $base64 = str_replace("data:{$file['type']};base64,", '', $file['base64']);
+        $base64 = str_replace(' ', '+', $base64);
+        $content = base64_decode($base64);
+
+		file_put_contents($file_url, $content);
+
+		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/'.$carpeta, $nombreUnico."_WASABI.{$file['extension']}", S3::ACL_PUBLIC_READ);
+		unlink($file_url);
+		return $nombreUnico."_WASABI.jpg";
+	}
 }
