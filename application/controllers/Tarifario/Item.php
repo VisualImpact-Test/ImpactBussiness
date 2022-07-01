@@ -52,6 +52,8 @@ class Item extends MY_Controller
         $dataParaVista = [];
         $dataParaVista ['dataTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
         $Rproveedor = [];
+        $item = [];
+        $itemProveedor = [];
 
         foreach ($dataParaVista['dataTarifario'] as $key => $value) {
             $Rproveedor[$value['idProveedor']] = [
@@ -59,10 +61,16 @@ class Item extends MY_Controller
                 'nproveedor' => $value['proveedor']
 
             ];
+
+            $item[$value['idItem']] = $value;
+
+            $itemProveedor[$value['idItem']][$value['idProveedor']] = $value; 
         }
 
         $dataParaVista ['dataProveedor'] = $Rproveedor;
-
+        $dataParaVista ['dataItem'] = $item;
+        $dataParaVista ['dataItemProveedor'] = $itemProveedor;
+ 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
             $html = $this->load->view("modulos/Tarifario/Item/reporte",  $dataParaVista, true);

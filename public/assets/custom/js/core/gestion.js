@@ -223,6 +223,7 @@ var Gestion = {
 		$(".btn-CambiarEstadoMultiple").click(function (e) {
 			e.preventDefault();
 
+
 			++modalId;
 			Gestion.idModalPrincipal = modalId;
 

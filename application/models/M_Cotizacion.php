@@ -146,6 +146,61 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+
+	public function obtenerInformacionCotizacionFiltro($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['cuenta']) ? ' AND p.idCuenta = ' . $params['cuenta'] : '';
+		$filtros .= !empty($params['cuentaCentroCosto']) ? ' AND p.idCentroCosto = ' . $params['cuentaCentroCosto'] : '';
+		$filtros .= !empty($params['cotizacion']) ? " AND p.nombre LIKE '%" . $params['cotizacion'] . "%'" : "";
+		$filtros .= !empty($params['estadoCotizacion']) ? " AND p.idCotizacionEstado IN (" . $params['estadoCotizacion'] . ")" : "";
+		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
+
+		$sql = "
+			SELECT
+				p.idCotizacion
+				, p.nombre AS cotizacion
+				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
+				, 'COTIZACION' AS tipoCotizacion
+				, p.codCotizacion
+				, c.idCuenta
+				, c.nombre AS cuenta
+				, cc.idCuentaCentroCosto
+				, cc.nombre AS cuentaCentroCosto
+				, ce.nombre AS cotizacionEstado
+				, p.estado
+				, p.fechaRequerida
+				, p.flagIgv igv
+				, p.gap
+				, p.fee 
+				, p.idCotizacionEstado
+                , p.idPrioridad
+				, p.motivo
+                , p.comentario
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
+			FROM compras.cotizacion p
+			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
+			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
+			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			WHERE p.idCotizacionEstado = 2
+			{$filtros}
+			ORDER BY p.idCotizacion DESC
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+
+
+
 	public function obtenerInformacionCotizacionDetalle($params = [])
 	{
 		$filtros = "";

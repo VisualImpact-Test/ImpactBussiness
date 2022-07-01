@@ -15,6 +15,10 @@ var Cotizacion = {
 			$('#btn-filtrarCotizacion').click();
 		});
 
+		
+		//checkbox del datatable
+	
+
 		$(document).ready(function () {
 			$('#btn-filtrarCotizacion').click();
 		});
@@ -67,6 +71,90 @@ var Cotizacion = {
 
 			});
 		});
+
+		//filtroCotizacion
+		$(document).on('click', '#filtrarReporte', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Cotizacion.url + 'filtroCotizacion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de registrar esta cotizacion?" });';
+				// btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
+				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+				Cotizacion.modalIdForm = modalId;
+
+				Cotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
+				$('#listaItemsCotizacion tbody').html('');
+				$(".btn-add-row").click();
+
+				$('.dropdownSingleAditions')
+				.dropdown({
+					allowAdditions: true
+				})
+				;
+
+			});
+		});
+		//filtroCotizacion
+
+
+
+
+		$(document).on('click', '#btn-tablaCotizacion', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					Cotizacion.itemServicio = a.data.itemServicio;
+				}
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de registrar esta cotizacion?" });';
+				// btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
+				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%',large: true });
+
+				Cotizacion.modalIdForm = modalId;
+
+				Cotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
+				$('#listaItemsCotizacion tbody').html('');
+				$(".btn-add-row").click();
+
+				$('.dropdownSingleAditions')
+				.dropdown({
+					allowAdditions: true
+				})
+				;
+
+			});
+		});
+
+
+
+
+
 
 		$(document).on('click', '.btn-detalleCotizacion', function () {
 			++modalId;

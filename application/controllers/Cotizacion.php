@@ -21,7 +21,8 @@ class Cotizacion extends MY_Controller
         $config['nav']['menu_active'] = '131';
         $config['css']['style'] = array(
             'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
-            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday'
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/select.dataTables.min'
         );
         $config['js']['script'] = array(
             // 'assets/libs/datatables/responsive.bootstrap4.min',
@@ -31,7 +32,8 @@ class Cotizacion extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/cotizacion'
+            'assets/custom/js/cotizacion',
+            'assets/custom/js/dataTables.select.min'
         );
 
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
@@ -73,6 +75,36 @@ class Cotizacion extends MY_Controller
 
         echo json_encode($result);
     }
+
+
+    //filtroReporte
+
+    public function filtroCotizacion()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $post['estadoCotizacion'] = '1,2,3,4';
+        $dataParaVista = [];
+        $dataParaVista = $this->model->obtenerInformacionCotizacionFiltro($post)['query']->result_array();
+
+        $html = getMensajeGestion('noRegistros');
+        if (!empty($dataParaVista)) {
+            $html = $this->load->view("modulos/Cotizacion/reporteFiltro", ['datos' => $dataParaVista], true);
+        }
+
+        $result['result'] = 1;
+        $result ['data']['html'] = $html;
+        $result['msg']['title'] = 'Filtro Cotizacion';
+        $result['data']['width'] = '80%';
+        
+        echo json_encode($result);
+    }
+
+
+    
+    //filtroReporte
+
+
 
     public function formularioRegistroCotizacion()
     {

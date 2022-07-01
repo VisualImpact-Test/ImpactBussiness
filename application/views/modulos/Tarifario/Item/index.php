@@ -107,10 +107,10 @@
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<h4><i class="fas fa-lg fa-question" style="color: red;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vencido</span></i></h4>
+							<h4><i class="fas fa-lg fa-circle" style="color: red;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vencido</span></i></h4>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<h4><i class="fa fa-lg fa-check" style="color: green;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vigente</span></i></h4>
+							<h4><i class="fa fa-lg fa-circle" style="color: green;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Actual</span></i></h4>
 						</div>
 					</div>
 				</div>

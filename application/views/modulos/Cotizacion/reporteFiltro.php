@@ -1,8 +1,8 @@
 <div class="card-datatable">
-    <table id="tb-cotizacion checkbox" class="ui celled table" width="100%">
+    <table id="filtroCotizacion" class="ui celled table" width="100%">
         <thead>
             <tr>
-                <th class="select-checkbox"></th>
+                <th ></th>
                 <th class="td-center">#</th>
                 <th class="td-center">OPCIONES</th>
                 <th>FECHA EMISION</th>
@@ -24,8 +24,10 @@
                 // $badge = $row['cotizacionEstado'] == 'Finalizado' ? 'badge-success' : 'badge-success';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
+
+            
                 <tr data-id="<?= $row['idCotizacion'] ?>">
-                <th class="select-checkbox"></th>
+                    <td></td>
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
                         
@@ -72,7 +74,7 @@
 
 <script>
     	$(document).ready(function() {
-			$('#checkbox').DataTable( {
+			$('#filtroCotizacion').DataTable( {
 				columnDefs: [ {
 					orderable: false,
 					className: 'select-checkbox',

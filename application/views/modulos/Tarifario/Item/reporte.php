@@ -17,8 +17,8 @@
                 <? 
             } ?>
                 
-                <th class="text-center">COSTO</th>
-                <th class="text-center">VIGENCIA</th>
+                
+               
                 <th class="td-center text-center">ESTADO</th>
             </tr>
       
@@ -27,7 +27,7 @@
         <tbody>
             <? $ix = 1; ?>
             <?
-            foreach ($dataTarifario as $key => $row) {
+            foreach ($dataItem as $key => $row) {
                 $mensajeEstado = $row['estado'] == 1 ? 'Activo' : 'Inactivo';
                 $badge = $row['estado'] == 1 ? 'badge-success' : 'badge-danger';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
@@ -46,20 +46,40 @@
                     <td class="td-left"><?= verificarEmpty($row['itemCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['item']); ?></td>
                     <?
-            foreach ($dataProveedor as $key => $flag) { 
+            foreach ($dataProveedor as $key => $rProveedor) { 
                 
                 ?>
-                    <td class="td-center">
-                        <?= ($flag['idProveedor'] == $row['idProveedor'] && $row['flag_actual'] == 1 ) ? '<i class="fa fa-lg fa-check" style="color: green;"></i>' : '' ?>
-                        <?= ($flag['idProveedor'] == $row['idProveedor'] && $row['flag_actual'] == 0 ) ? '<i class="fas fa-lg fa-question" style="color: red;"></i>' : '' ?>
-                    </td>
 
+                <?if ($rProveedor['idProveedor'] == $row['idProveedor'] && $row['flag_actual'] == 1) { ?>
+                <th nowrap class="text-center" style="color: green">
+
+                     <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? print "S/ " . $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo'] : '-' ; ?>
+                    <br>
+                    <br>
+                    <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-' ; ?>
                     
+                </th>
+
+                <? } else { ?>
+
+                    <th nowrap class="text-center" style="color: red">
+
+                     <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? print "S/ " . $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo'] : '-' ; ?>
+                    <br>
+                    <br>
+                    <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-' ; ?>
                     
-                    <? 
+                </th>
+
+
+
+                    <? } ?>
+
+                <? 
             } ?>
-                    <td nowrap class="text-right"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
-                    <td class="text-center"><?= empty($row['fechaVigencia']) ? "-" : date_change_format($row['fechaVigencia']); ?></td>
+            
+                    
+                    
                     <td class="text-center style-icons">
                         <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idItemTarifario']; ?>"><?= $mensajeEstado; ?></span>
                     </td>
