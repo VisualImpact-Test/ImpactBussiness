@@ -192,20 +192,52 @@ class Cotizacion extends MY_Controller
             $this->db->trans_complete();
             goto respuesta;
         }
+        $whereSolicitante = [];
+        $whereSolicitante[] = [
+            'estado' => 1
+        ];
+        $tablaSolicitantes = 'compras.solicitante';
+
+        $solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes,$whereSolicitante)->result_array();
+        foreach($solicitantes as $solicitante){
+            $solicitantes[$solicitante['nombre']] = $solicitante['idSolicitante'];
+        }
+
+        $idSolicitante = NULL;
+        if(empty($solicitantes[$post['solicitante']])){
+            $insertSolicitante = [
+                'nombre' => $post['solicitante'],
+                'fechaRegistro' => getActualDateTime(),
+                'estado' => true,
+            ];
+            $insertSolicitante = $this->model->insertar(['tabla'=>$tablaSolicitantes,'insert'=>$insertSolicitante]);
+            $idSolicitante = $insertSolicitante['id'];
+        }
+
+        if(!empty($solicitantes[$post['solicitante']])){
+            if(!is_numeric($post['solicitante'])){
+                $idSolicitante = $solicitantes[$post['solicitante']];
+            }
+            if(is_numeric($post['solicitante'])){
+                $idSolicitante = $post['solicitante'];
+            }
+        }
 
         $data['insert'] = [
             'nombre' => $post['nombre'],
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            'idSolicitante' => $idSolicitante,
             'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
+            'fee' => $post['feeForm'],
             'total' => $post['totalForm'],
             'idPrioridad' => $post['prioridadForm'],
             'motivo' => $post['motivoForm'],
             'comentario' => $post['comentarioForm'],
-            'idCotizacionEstado' => $post['tipoRegistro'],
+            'idCotizacionEstado' => ESTADO_REGISTRADO,
             'idUsuarioReg' => $this->idUsuario
         ];
 
@@ -219,7 +251,18 @@ class Cotizacion extends MY_Controller
         }
         
         $insert = $this->model->insertarCotizacion($data);
+        $post['idCotizacion'] = $insert['id'];
         $data = [];
+
+        //Insertar historico estado cotizacion
+        $tablaCotizacionHistorico = 'compras.cotizacionEstadoHistorico';
+        $insertCotizacionHistorico = [
+            'idCotizacionEstado' => ESTADO_REGISTRADO, 
+            'idCotizacion' => $post['idCotizacion'],
+            'idUsuarioReg' => $this->idUsuario,
+            'estado' => true,
+        ];
+        $insertCotizacionHistorico = $this->model->insertar(['tabla'=>$tablaCotizacionHistorico,'insert'=>$insertCotizacionHistorico]);
 
         $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
         $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
@@ -232,6 +275,8 @@ class Cotizacion extends MY_Controller
         $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
         $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
         $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
+        $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
+        $post['cotizacionInternaForm'] = checkAndConvertToArray($post['cotizacionInternaForm']);
 
         foreach ($post['nameItem'] as $k => $r) {
             $dataItem = [];
@@ -275,6 +320,8 @@ class Cotizacion extends MY_Controller
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 1,
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
+                'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
                 'fechaCreacion' => getActualDateTime()
             ];
 
@@ -304,6 +351,35 @@ class Cotizacion extends MY_Controller
         $estadoEmail = true;
         if($post['tipoRegistro'] == 2){
             $estadoEmail = $this->enviarCorreo($insert['id']);
+            //Verificamos si es necesario enviar a compras para cotizar con el proveedor
+            
+            $necesitaCotizacionIntera = false;
+            foreach($post['cotizacionInternaForm'] as $cotizacionInterna){
+                if($cotizacionInterna == 1){
+                    $necesitaCotizacionIntera = true;
+                    break;
+                }    
+            }
+
+            $estadoCotizacion = ($necesitaCotizacionIntera) ? ESTADO_ENVIADO_COMPRAS : ESTADO_CONFIRMADO_COMPRAS;
+            $data['tabla'] = 'compras.cotizacion';
+            $data['update'] = [
+                'idCotizacionEstado' => $estadoCotizacion ,
+            ];
+            $data['where'] = [
+                'idCotizacion' => $post['idCotizacion'],
+            ];
+
+            $this->model->actualizarCotizacion($data);
+            
+            $insertCotizacionHistorico = [
+                'idCotizacionEstado' => $estadoCotizacion, 
+                'idCotizacion' => $post['idCotizacion'],
+                'idUsuarioReg' => $this->idUsuario,
+                'estado' => true,
+            ];
+            $insertCotizacionHistorico = $this->model->insertar(['tabla'=>$tablaCotizacionHistorico,'insert'=>$insertCotizacionHistorico]);
+
         }
 
         if (!$insert['estado'] || !$insertDetalle['estado'] || !$estadoEmail) {
@@ -656,6 +732,7 @@ class Cotizacion extends MY_Controller
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
         }
         foreach ($data['itemServicio'] as $k => $r) {
             $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);

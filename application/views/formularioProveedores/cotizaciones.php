@@ -7,9 +7,12 @@
             <div id="accordion">
                 <div class="">
                     <div class="card-header" id="headingOne">
+                        <form id="frmCotizacionProveedorCabecera">
+                            <input type="hidden" name="idCotizacion" id="idCotizacion" value="<?= $idCotizacion ?>">
+                        </form>
                         <h5 class="mb-0">
                             <button type="button" class="btn " data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                <i class="fas fa-solid fa-caret-right"></i> <?= verificarEmpty($cabecera['codCotizacion'], 3) ?>
+                                <i class="fas fa-solid fa-caret-right"></i> <?= !empty($cabecera['codCotizacion']) ? $cabecera['codCotizacion'] : $cabecera['cotizacion'] ?>
                             </button>
                         </h5>
                     </div>

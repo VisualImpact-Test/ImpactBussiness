@@ -461,12 +461,12 @@ var Cotizacion = {
 				}
 				control.find(".costoForm").val(ui.item.costo);
 				control.find(".costoFormLabel").text(ui.item.costo);
-
 				//Llenamos el estado
 				control.find(".estadoItemForm").removeClass('fa-sparkles');
 				control.removeClass('nuevoItem');
 				control.find(".idEstadoItemForm").val(1);
 				control.find(".idTipoItem").val(ui.item.tipo);
+				control.find(".cotizacionInternaForm").val(ui.item.cotizacionInterna)
 
 				//Llenamos el proveedor
 				control.find(".proveedorForm").text(ui.item.proveedor);

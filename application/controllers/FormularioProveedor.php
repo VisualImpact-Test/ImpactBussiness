@@ -323,27 +323,31 @@ class FormularioProveedor extends MY_Controller
 		}
 	}
 
-	public function cotizaciones()
+	public function cotizaciones($idCotizacion = '0')
 	{
 		$proveedor = $this->session->userdata('proveedor');
 		if(empty($proveedor)){
 			redirect('FormularioProveedor','refresh');
 			exit();
 		}
+		       
 		$config['css']['style'] = array();
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizaciones');
+		
 		$config['view'] = 'formularioProveedores/cotizaciones';
+		$config['data']['idCotizacion'] = $idCotizacion;
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
-		$cotizacionProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor',['idProveedor' => $proveedor['idProveedor'],'estado' => 1])->row_array();
+		// $cotizacionProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor',['idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $idCotizacion,'estado' => 1])->row_array();
+		$cotizacionProveedor = $this->model->obtenerCotizacionDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $idCotizacion,'estado' => 1])['query']->row_array();
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionCotizacion(['id' => $cotizacionProveedor['idCotizacion']])['query']->row_array();
-
-		
 
 
 		$config['single'] = true;
-
+		if(empty($idCotizacion) || empty($cotizacionProveedor)){
+			$config['view'] = 'formularioProveedores/validacionEmail';
+		}
 		$this->view($config);
 	}
 
@@ -361,9 +365,10 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
+		
 
-		$html = $this->load->view("formularioProveedores/cotizaciones-table", ['datos' => $dataParaVista], true);
-
+		$html = $this->load->view("formularioProveedores/cotizaciones-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $post['idCotizacion']], true);
+		
         $result['result'] = 1;
         $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
         $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
@@ -392,9 +397,12 @@ class FormularioProveedor extends MY_Controller
         $post['costo'] = checkAndConvertToArray($post['costo']);
   
         foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
+			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
+			$cantidad = (!empty($post['cantidad'][$k])) ? $post['cantidad'][$k] : 0;
             $data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
-                'costo' => (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0,
+                // 'costo' => costoUnitario($cantidad,$subTotal),
+                'costo' => $subTotal,
 				'flag_activo' => 0,
             ];
         }
@@ -402,6 +410,7 @@ class FormularioProveedor extends MY_Controller
         $data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
         $data['where'] = 'idCotizacionDetalleProveedorDetalle';
         $updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+		
 
         if (!$updateDetalle['estado']) {
             $result['result'] = 0;
@@ -411,6 +420,28 @@ class FormularioProveedor extends MY_Controller
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+			// $proveedor = $this->session->userdata('proveedor');
+			// $dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor',['idProveedor' => $proveedor['idProveedor']])->row_array();
+			// $dataParaVista['cotizacion'] = $this->db->get_where('compras.cotizacion',['idCotizacion' => $post['idCotizacion']])->row_array();
+
+			// $html = $this->load->view("formularioProveedores/correoProveedorPrecios", $dataParaVista, true);
+            // $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
+            // $config = [
+            //     'to' => 'aaron.ccenta@visualimpact.com.pe',
+            //     'asunto' => 'Solicitud de Cotizacion',
+            //     'contenido' => $correo,
+            // ];
+            // email($config);
+			
+			$insertCotizacionHistorico = [
+                'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS, 
+				'idCotizacionInternaEstado' => INTERNA_PRECIO_RECIBIDO,
+                'idCotizacion' => $post['idCotizacion'],
+                'idUsuarioReg' => $this->idUsuario,
+                'estado' => true,
+            ];
+            $insertCotizacionHistorico = $this->model->insertarProveedor(['tabla'=>'compras.cotizacionEstadoHistorico','insert'=>$insertCotizacionHistorico]);
         }
 
 		$this->db->trans_complete();
@@ -426,6 +457,8 @@ class FormularioProveedor extends MY_Controller
 		$result['msg']['content'] = createMessage(['type'=>1,'message'=>'La sesion ha sido finalizada']);
 		$result['data']['url'] = base_url()."FormularioProveedor"; 
 		echo json_encode($result);
+
+		redirect('FormularioProveedor','refresh');
 	}
 	
 }

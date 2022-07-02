@@ -92,6 +92,8 @@ defined('ID_TIPOUSUARIO_TI')   OR define('ID_TIPOUSUARIO_TI',4);
 // defined('RUTA_BAT')            OR define('RUTA_BAT','C:\apache24\PHP\php7\php.exe -f "C:\apache24\htdocs\impactTrade\index.php" ');
 defined('RUTA_BAT')            OR define('RUTA_BAT','C:\wamp64\bin\php\php7.1.33\php-win.exe -f "C:\wamp64\www\pruebas\w7impactTrade\index.php" ');
 
+//WASABI
+defined('RUTA_WASABI')         OR define('RUTA_WASABI','https://s3.us-central-1.wasabisys.com/impact.business/');
 
 //Compras
 defined('IGV')       OR define('IGV',0.18);
@@ -119,3 +121,24 @@ defined('TIPO_ORDEN_COMPRA') OR define('TIPO_ORDEN_COMPRA',1);
 defined('TIPO_IMAGEN') OR define('TIPO_IMAGEN',2);
 defined('TIPO_PDF') OR define('TIPO_PDF',3);
 defined('TIPO_LINK') OR define('TIPO_LINK',4);
+
+//ESTADO COTIZACION
+
+defined("ESTADO_REGISTRADO") OR define("ESTADO_REGISTRADO",1);
+defined("ESTADO_ENVIADO_COMPRAS") OR define("ESTADO_ENVIADO_COMPRAS",2);
+defined("ESTADO_CONFIRMADO_COMPRAS") OR define("ESTADO_CONFIRMADO_COMPRAS",3);
+defined("ESTADO_ENVIADO_CLIENTE") OR define("ESTADO_ENVIADO_CLIENTE",4);
+defined("ESTADO_COTIZACION_APROBADA") OR define("ESTADO_COTIZACION_APROBADA",5);
+defined("ESTADO_OPER_GENERADO") OR define("ESTADO_OPER_GENERADO",6);
+defined("ESTADO_OPER_ENVIADO") OR define("ESTADO_OPER_ENVIADO",7);
+defined("ESTADO_OC_GENERADA") OR define("ESTADO_OC_GENERADA",8);
+defined("ESTADO_OC_ENVIADA") OR define("ESTADO_OC_ENVIADA",9);
+defined("ESTADO_OC_CONFIRMADA") OR define("ESTADO_OC_CONFIRMADA",10);
+defined("ESTADO_FINALIZADA") OR define("ESTADO_FINALIZADA",11);
+
+//ESTADO COTIZACION INTERNA
+defined("INTERNA_ENVIADA") OR define("INTERNA_ENVIADO",1);
+defined("INTERNA_PRECIO_RECIBIDO") OR define("INTERNA_PRECIO_RECIBIDO",2);
+defined("INTERNA_CONFIRMADA") OR define("INTERNA_CONFIRMADA",3);
+defined("INTERNA_FINALIZADA") OR define("INTERNA_FINALIZADA",4);
+
