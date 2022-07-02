@@ -202,7 +202,7 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
         $data['tabla'] = 'compras.cotizacion';
-        if($post['tipoRegistro'] == 3){
+        if($post['tipoRegistro'] == ESTADO_CONFIRMADO_COMPRAS){
             $data['update'] = [
                 'idCotizacionEstado' => $post['tipoRegistro'],
             ];
@@ -227,7 +227,7 @@ class SolicitudCotizacion extends MY_Controller
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
-            'gap' => $post['gapForm'],
+            // 'gap' => $post['gapForm'],
             'fee' => $post['feeForm'],
             // 'total' => $post['totalForm'],
             // 'idPrioridad' => $post['prioridadForm'],
@@ -262,7 +262,10 @@ class SolicitudCotizacion extends MY_Controller
         $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
         $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
         $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
-
+        $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
+        $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
+        $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
+        
         foreach ($post['nameItem'] as $k => $r) {
             $data['update'][] = [
                 'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
@@ -271,6 +274,9 @@ class SolicitudCotizacion extends MY_Controller
                 'nombre' => $post['nameItem'][$k],
                 'cantidad' => $post['cantidadForm'][$k],
                 'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+                'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+                'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+                'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
                 'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
                 'idItemEstado' => $post['idEstadoItemForm'][$k],
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
@@ -328,47 +334,77 @@ class SolicitudCotizacion extends MY_Controller
             $data['select'][] = $post['idCotizacionDetalle'][$k];
         }
         $items = implode(",",$data['select']);
-        $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'idItemEstado' => 2, 'idCotizacionDetalle' => $items])['query']->result_array();
+        $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'cotizacionInterna' => true, 'idCotizacionDetalle' => $items])['query']->result_array();
 
        
         $data = [];
-        $data['insert'] = [
-            'idProveedor' => $post['proveedorForm'],
-            'idCotizacion' => $post['idCotizacion'],
-            'estado' => true,
-        ];
-        $data['tabla'] = 'compras.cotizacionDetalleProveedor';
-        $rs = $this->model->insertar($data);
-        $data = [];
-        foreach($dataParaVista['detalle'] as $k => $row){
-            $data['insert'][] = [
-                'idCotizacionDetalleProveedor' => $rs['id'],
-                'idItem' => $row['idItem'],
-                'costo'=> $row['costo'],
-                'flag_activo' => 1,
-                'fechaCreacion' => getActualDateTime(),
-                'idCotizacionDetalle' => $row['idCotizacionDetalle'],
-                'estado' => 1,
+        $post['proveedorSolicitudForm'] = checkAndConvertToArray($post['proveedorSolicitudForm']);
+
+        $cotizacionProveedores = $this->model_formulario_proveedor->obtenerInformacionCotizacionProveedor(['idCotizacion' => $post['idCotizacion']])->result_array();
+        $cotizacionProveedor = [];
+        $cotizacionProveedorDetalle = [];
+        foreach($cotizacionProveedores as $p_cotizacion){
+            $cotizacionProveedor[$p_cotizacion['idProveedor']] = $p_cotizacion;
+            $cotizacionProveedorDetalle[$p_cotizacion['idProveedor']][$p_cotizacion['idCotizacion']][$p_cotizacion['idItem']] = $p_cotizacion;
+        }
+        $rs['estado'] = true;
+        foreach($post['proveedorSolicitudForm'] as $idProveedor){
+            if(empty($cotizacionProveedor[$idProveedor])){
+
+                $data['tabla'] = 'compras.cotizacionDetalleProveedor';
+                $data['insert'] = [
+                    'idProveedor' => $idProveedor,
+                    'idCotizacion' => $post['idCotizacion'],
+                    'estado' => true,
+                ];
+                $rs = $this->model->insertar($data);
+                $idCotizacionDetalleProveedor = $rs['id'];
+            }
+
+            if(!empty($cotizacionProveedor[$idProveedor])){
+                $idCotizacionDetalleProveedor = $cotizacionProveedor[$idProveedor]['idCotizacionDetalleProveedor'];
+            }
+
+            $data = [];
+            foreach($dataParaVista['detalle'] as $k => $row){
+                $row_cotizacion = isset($cotizacionProveedorDetalle[$idProveedor][$post['idCotizacion']]) ? $cotizacionProveedorDetalle[$idProveedor][$post['idCotizacion']] : [] ;
+                if(empty($row_cotizacion[$row['idItem']])){
+                    $data['insert'][] = [
+                        'idCotizacionDetalleProveedor' => $idCotizacionDetalleProveedor,
+                        'idItem' => $row['idItem'],
+                        'costo'=> $row['costo'],
+                        'flag_activo' => 1,
+                        'fechaCreacion' => getActualDateTime(),
+                        'idCotizacionDetalle' => $row['idCotizacionDetalle'],
+                        'estado' => 1,
+                    ];
+                }
+            }
+            $rsDet = true;
+            if(!empty($data['insert'])){       
+                $rsDet = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalle',$data['insert']);
+            }
+
+            
+
+            if(!$rs['estado'] || !$rsDet){
+                $result['result'] = 1;
+                $result['data']['html'] = createMessage(['type'=>2,'message'=>'No se pudo enviar la solicitud']);
+                $result['msg']['title'] = 'Alerta';
+    
+                goto respuesta;
+            }
+            $html = $this->load->view("modulos/SolicitudCotizacion/correoProveedor", $dataParaVista, true);
+            $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
+            $config = [
+                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'asunto' => 'Solicitud de Cotizacion',
+                'contenido' => $correo,
             ];
+            email($config);
         }
+        
 
-        $rsDet = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalle',$data['insert']);
-
-        if(!$rs['estado'] || !$rsDet){
-            $result['result'] = 1;
-            $result['data']['html'] = createMessage(['type'=>2,'message'=>'No se pudo enviar la solicitud']);
-            $result['msg']['title'] = 'Alerta';
-
-            goto respuesta;
-        }
-        $html = $this->load->view("modulos/SolicitudCotizacion/correoProveedor", $dataParaVista, true);
-        $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'FormularioProveedor/Cotizaciones'], true);
-        $config = [
-            'to' => 'aaron.ccenta@visualimpact.com.pe',
-            'asunto' => 'Solicitud de Cotizacion',
-            'contenido' => $correo,
-        ];
-        email($config);
 
 
         $result['result'] = 1;
@@ -404,5 +440,95 @@ class SolicitudCotizacion extends MY_Controller
         echo json_encode($result);
     }
 
-    
+    public function viewSolicitudCotizacionInterna($idCotizacion = '')
+    {
+        
+        if(empty($idCotizacion)){
+            redirect('SolicitudCotizacion','refresh');
+        }
+        
+        $config = array();
+
+        $this->load->library('Mobile_Detect');
+
+		$detect = $this->mobile_detect;
+        
+        $config['data']['col_dropdown'] = 'four column';
+        $detect->isMobile() ? $config['data']['col_dropdown'] = '' : '';
+        $detect->isTablet() ? $config['data']['col_dropdown'] = 'three column' : '';
+         
+        $config['nav']['menu_active'] = '131';
+        $config['css']['style'] = array(
+            'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/css/floating-action-button'
+        );
+        $config['js']['script'] = array(
+            // 'assets/libs/datatables/responsive.bootstrap4.min',
+            // 'assets/custom/js/core/datatables-defaults',
+            'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/languages/all',
+            'assets/libs/handsontable@7.4.2/dist/moment/moment',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/core/HTCustom',
+            'assets/custom/js/viewAgregarCotizacion'
+        );
+        
+        $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+
+        foreach($archivos as $archivo){
+            $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
+        }
+        foreach($cotizacionProveedores as $cotizacionProveedor){
+            $config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
+        }
+        foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
+            $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
+        }
+
+        $config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+        $proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado'=>2])['query']->result_array();
+
+        foreach($proveedores as $proveedor){
+            $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
+        } 
+
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $config['data']['itemServicio'] = $data['itemServicio'];
+
+        $config['single'] = true;
+        
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
+        $config['data']['title'] = 'Cotizacion';
+        $config['data']['message'] = 'Lista de Cotizacions';
+        $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacion';
+
+        $this->view($config);
+    }
+
+
 }

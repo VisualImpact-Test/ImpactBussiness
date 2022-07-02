@@ -110,6 +110,7 @@
 
                                     <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
                                     <input class="idProveedor" type='hidden' name='idProveedorForm' value="">
+                                    <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                 </div>
                             </div>
                             <div class="five wide field">
@@ -169,7 +170,7 @@
                                     <div class="ui left corner label">
                                         <i class="linkify icon"></i>
                                     </div>
-                                    <textarea placeholder="Ingrese los enlaces aquí " rows="6" class="w-100"></textarea>
+                                    <textarea name="linkForm" placeholder="Ingrese los enlaces aquí " rows="6" class="w-100"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -276,10 +277,10 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <span class="float-element tooltip-left btn-send" data-message="Enviar">
+            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
                 <i class="send icon"></i>
             </span>
-            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
                 <i class="save icon"></i>
             </span>
             <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">

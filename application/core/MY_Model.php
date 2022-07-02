@@ -103,6 +103,6 @@ class MY_Model extends CI_Model{
 
 		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/'.$carpeta, $nombreUnico."_WASABI.{$file['extension']}", S3::ACL_PUBLIC_READ);
 		unlink($file_url);
-		return $nombreUnico."_WASABI.jpg";
+		return $nombreUnico."_WASABI.{$file['extension']}";
 	}
 }

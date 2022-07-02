@@ -1875,3 +1875,9 @@ function validarTiempoLimite($tiempoInicio, $tiempoFinal)
 	}
 }
 
+function costoUnitario($cantidad, $importe, $decimales = 2)
+{
+    $costo = round(($importe / $cantidad), 2);
+    return $costo;
+}
+

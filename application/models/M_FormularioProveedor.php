@@ -176,17 +176,21 @@ class M_FormularioProveedor extends MY_Model
 	{
 		$filtros = "WHERE 1 = 1";
 		$filtros .= !empty($params['idProveedor']) ? "AND cdp.idProveedor = {$params['idProveedor']}" : '';
+		$filtros .= !empty($params['idCotizacion']) ? "AND cdp.idCotizacion = {$params['idCotizacion']}" : '';
 		$filtros .= !empty($params['flag_activo']) ? "AND cdpd.flag_activo = 1" : '';
 		$filtros .= !empty($params['idCotizacionDetalle']) ? "AND cdpd.idCotizacionDetalle IN( {$params['idCotizacionDetalle']} )" : '';
 
 		$sql = "
 		SELECT 
+			cdp.idCotizacionDetalleProveedor,
 			cdpd.idCotizacionDetalleProveedorDetalle,
 			cdpd.idItem,
 			i.nombre item,
 			it.nombre tipoItem,
 			cdpd.costo,
 			cd.cantidad,
+			cdp.idProveedor,
+			cdp.idCotizacion,
 			p.razonSocial proveedor
 		FROM 
 		compras.cotizacionDetalleProveedor cdp 
@@ -227,5 +231,34 @@ class M_FormularioProveedor extends MY_Model
 		}
 
 		return $this->resultado;
+	}
+	public function obtenerCotizacionDetalleProveedor($params)
+	{
+
+		$filtros = "WHERE 1 = 1";
+		$filtros .= !empty($params['idProveedor']) ? ' AND cp.idProveedor = ' . $params['idProveedor'] : '';
+		$filtros .= !empty($params['estado']) ? ' AND cp.estado = ' . $params['estado'] : '';
+		$filtros .= !empty($params['idCotizacion']) ? ' AND cp.idCotizacion = ' . $params['idCotizacion'] : '';
+
+		$sql = "
+			SELECT
+			*
+			FROM
+			compras.cotizacionDetalleProveedor cp
+			{$filtros}
+		";
+
+
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+
 	}
 }

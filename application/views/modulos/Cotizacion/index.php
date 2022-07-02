@@ -35,9 +35,6 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarCotizacion" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
 				</button>
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarCotizacion" title="Nuevo">
-					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
-				</button>
 				<a href="../Cotizacion/viewRegistroCotizacion" target="_blank" class="btn btn-outline-trade-visual border-0">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</a>

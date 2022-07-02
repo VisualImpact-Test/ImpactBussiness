@@ -1,15 +1,36 @@
 var FormularioProveedores = {
-	frm: 'noForm',
+	frm: 'frmCotizacionProveedorCabecera',
 	contentDetalle: 'content-tb-cotizaciones-proveedor',
 	url: 'FormularioProveedor/',
 
 	load: function () {
 
 		$(document).ready(function(){
-			FormularioProveedores.actualizarTable();
+			if($('#idCotizacion').val()){
+				FormularioProveedores.actualizarTable();
+			}
 		});
 
 		$(document).on("click",".btnGuardarCotizacion", ()=>{
+			let idForm = 'frmCotizacionesProveedor';
+			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
+				if (a === true) {
+					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject(idForm)) };
+					let url = "FormularioProveedor/actualizarCotizacionProveedor";
+					let config = { url: url, data: jsonString };
+
+					$.when(Fn.ajax(config)).then(function (b) {
+						++modalId;
+						var btn = [];
+						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });FormularioProveedores.actualizarTable()';
+
+						btn[0] = { title: 'Continuar', fn: fn };
+						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
+					});
+				}
+			});
+		});
+		$(document).on("click",".btnPopupCotizacionesProveedor", ()=>{
 			let idForm = 'frmCotizacionesProveedor';
 			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
 				if (a === true) {

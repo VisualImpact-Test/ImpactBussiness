@@ -1,5 +1,7 @@
 <div class="card-datatable">
     <form id="frmCotizacionesProveedor">
+        <input type="hidden" name="idProveedor" value="<?=$idProveedor?>">
+        <input type="hidden" name="idCotizacion" id="idCotizacion" value="<?= $idCotizacion ?>">
         <table id="tb-cotizaciones" class="ui compact celled definition table">
             <thead class="full-width">
                 <tr>
@@ -21,6 +23,7 @@
                         <td><?= verificarEmpty($row['item'], 3) ?></td>
                         <td>
                             <?= verificarEmpty($row['cantidad'], 2) ?>
+                            <input type="hidden" name="cantidad" value="<?=$row['cantidad']?>" id="">
                         </td>
                         <td>
                             <div class="ui right labeled input">

@@ -58,7 +58,7 @@ html, body {
   margin: 20px 15px;
 }
 .floating-container:hover {
-  height: 300px;
+  height: 275px;
 }
 .floating-container:hover .floating-button {
   box-shadow: 0 10px 25px rgba(44, 179, 240, 0.6);

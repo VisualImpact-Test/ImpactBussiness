@@ -1,3 +1,50 @@
+var SolicitudCotizacion = {
+	url: 'SolicitudCotizacion/',
+	load: function () {
+		
+	},
+	registrarCotizacion: function (tipoRegistro = 1) {
+		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
+			formValues.tipoRegistro = tipoRegistro;
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = SolicitudCotizacion.url + "actualizarCotizacion";
+		let config = { url: url, data: jsonString };
+		let diferencias = 0;
+
+		$.each($('.idTipoItem'), function (index, value) {
+			if ($(value).val() != '' && $('#tipo').val() != 3) {
+				if ($(value).val() != $('#tipo').val()) {
+					$(value).parents('.nuevo').find('.ui-widget').addClass('has-error');
+
+					diferencias++;
+				}
+			}
+		});
+
+		if (diferencias > 0) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: '<div class="alert alert-danger">Se encontraron items que no corresponden al tipo de SolicitudCotizacion. <strong>Verifique el formulario.</strong></div>', btn: btn, width: '40%' });
+
+			return false;
+		}
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+}
 var Cotizacion = {
 
 	frm: 'frm-cotizacion',
@@ -27,6 +74,14 @@ var Cotizacion = {
 
             Cotizacion.actualizarPopupsTitle();
             Cotizacion.actualizarAutocomplete();
+
+			$.each($('.btnPopupCotizacionesProveedor'), function(i,v){    var custom_popup = $(v).parents('.nuevo').find('custom.popup');
+				var id = $(v).data('id');
+				$(v).popup({
+					popup : $(`.custom-popup-${id}`),
+					on    : 'click'
+				})
+			});
         });
 
 		$(document).on('click', '#btn-filtrarCotizacion', function () {
@@ -231,7 +286,7 @@ var Cotizacion = {
 			// 	$(this).find('.nfila').text(Number(index) + 1);
 			// });
 
-			// Cotizacion.actualizarTotal();
+			Cotizacion.actualizarTotal();
 		});
 
 		$(document).on('click', '.btneliminarfilaCotizacion', function (e) {
@@ -540,6 +595,55 @@ var Cotizacion = {
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
+
+		$(document).on('click', '.btnSolicitarCotizacion', function () {
+			++modalId;
+
+			if($('.proveedorSolicitudForm').find('select').val().length <= 0){
+				$('.proveedorSolicitudForm').transition('shake')
+				return false;
+			}
+
+			if(!$('input[name=checkItem]').is(' :checked')){
+				$('.chk-item').transition('glow');
+				return false;
+
+			}
+
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+			let config = { 'url': SolicitudCotizacion.url + 'enviarSolicitudProveedor', 'data': jsonString };
+			
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+			});
+		});
+		$(document).on('click', '.btnElegirProveedor', function () {
+			++modalId;
+			let costoForm = $(this).parents('.nuevo').find('.costoForm')
+			let costoFormLabel = $(this).parents('.nuevo').find('.costoFormLabel');
+			let precio = $(this).find('.txtCostoProveedor').val();
+			let cantidadForm = $(this).parents('.nuevo').find('.cantidadForm');
+			let gapForm = $(this).parents('.nuevo').find('.gapForm');
+			let proveedorForm = $(this).parents('.nuevo').find('.idProveedor');
+			let proveedorElegido = $(this).parents('.nuevo').find('.txtProveedorElegido').val();
+
+			costoForm.val(precio);
+			costoFormLabel.val(moneyFormatter.format(precio));
+
+			proveedorForm.val(proveedorElegido);
+
+			cantidadForm.keyup();
+			gapForm.keyup();
+
+			Cotizacion.actualizarTotal();
+		});
+
 		
 	},
 
@@ -590,11 +694,11 @@ var Cotizacion = {
 				}
 				control.find(".costoForm").val(ui.item.costo);
 				control.find(".costoFormLabel").text(ui.item.costo);
-
 				//Llenamos el estado
 				control.find(".estadoItemForm").removeClass('fa-sparkles');
 				control.removeClass('nuevoItem');
 				control.find(".idEstadoItemForm").val(1);
+				control.find(".cotizacionInternaForm").val(`${ui.item.cotizacionInterna}`)
 
 				//Tipo de Item 
 				control.find(".idTipoItem").val(ui.item.tipo);
@@ -764,3 +868,4 @@ var Cotizacion = {
 }
 
 Cotizacion.load();
+SolicitudCotizacion.load();

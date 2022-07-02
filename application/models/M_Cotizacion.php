@@ -119,13 +119,15 @@ class M_Cotizacion extends MY_Model
 				, ce.nombre AS cotizacionEstado
 				, p.estado
 				, p.fechaRequerida
+				, p.idSolicitante
+				, p.fechaDeadline
 				, p.flagIgv igv
 				, p.fee 
 				, p.idCotizacionEstado
                 , p.idPrioridad
 				, p.motivo
                 , p.comentario
-				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
@@ -254,21 +256,21 @@ class M_Cotizacion extends MY_Model
 	public function obtenerItemServicio()
 	{
 		$sql = "
-			DECLARE @fechaHoy DATE = GETDATE();
-			WITH listTarifario AS (
-				SELECT
-					a.idItem AS value
-					, a.nombre AS label
-					, ta.costo
-					, pr.idProveedor
-					, pr.razonSocial AS proveedor
-					, a.idItemTipo AS tipo
-					, DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy) AS diasVigencia
-				FROM compras.item a
-				JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
-				LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
-				WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
-			)
+		DECLARE @fechaHoy DATE = GETDATE();
+		WITH listTarifario AS (
+			SELECT
+				a.idItem AS value
+				, a.nombre AS label
+				, ta.costo
+				, pr.idProveedor
+				, pr.razonSocial AS proveedor
+				, a.idItemTipo AS tipo
+				, DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy) AS diasVigencia
+			FROM compras.item a
+			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
+			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
+			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+		), lst_tarifario_det AS(
 			SELECT
 				lt.value
 				, lt.label
@@ -283,6 +285,13 @@ class M_Cotizacion extends MY_Model
 					AS semaforoVigencia
 				, diasVigencia
 			FROM listTarifario lt
+		)
+
+		SELECT 
+		ls.*,
+		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
+		FROM 
+		lst_tarifario_det ls 
 		";
 
 		$result = $this->db->query($sql)->result_array();
@@ -457,6 +466,8 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+
 
 		$sql = "
 			SELECT 
@@ -469,7 +480,10 @@ class M_Cotizacion extends MY_Model
 			cd.subtotal,
 			c.total,
 			cd.idItemTipo,
-			cd.caracteristicas
+			cd.caracteristicas,
+			cd.gap,
+			cd.precio,
+			cd.enlaces
 			FROM 
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -479,6 +493,123 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 		";
 
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerInformacionDetalleCotizacionArchivos($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+
+
+		$sql = "
+			SELECT 
+			cd.idCotizacion,
+			cd.idCotizacionDetalle,
+			cda.idTipoArchivo,
+			cda.nombre_inicial,
+			cda.nombre_archivo,
+			cda.extension
+			FROM 
+			compras.cotizacion c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			JOIN compras.cotizacionDetalleArchivos cda ON cda.idCotizacionDetalle = cd.idCotizacionDetalle
+			WHERE 
+			1 = 1
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerInformacionDetalleCotizacionProveedores($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+
+
+		$sql = "
+		WITH lst_respuestas_proveedor AS(
+			SELECT 
+				c.idCotizacion,
+				cd.idCotizacionDetalle,
+				cd.idItem,
+				cd.nombre,
+				c.idProveedor,
+				(SELECT DISTINCT CASE WHEN costo IS NOT NULL THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
+			FROM 
+			compras.cotizacionDetalleProveedor c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			WHERE 
+			1 = 1
+			{$filtros}
+			)
+			SELECT
+			idCotizacion,
+			idCotizacionDetalle,
+			SUM(respuestasProveedor) OVER (PARTITION BY idCotizacionDetalle) cotizacionesConfirmadas
+			FROM lst_respuestas_proveedor
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerInformacionDetalleCotizacionProveedoresParaVista($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+
+
+		$sql = "
+		
+			SELECT 
+			c.idCotizacion,
+			cd.idCotizacionDetalle,
+			cd.idItem,
+			c.idProveedor,
+			cd.costo subTotal,
+			cdl.cantidad,
+			p.razonSocial,
+			(cd.costo / cdl.cantidad) costoUnitario
+
+			FROM 
+			compras.cotizacionDetalleProveedor c
+			JOIN compras.cotizacionDetalleProveedorDetalle cd ON cd.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor
+			JOIN compras.cotizacionDetalle cdl ON cdl.idCotizacionDetalle = cd.idCotizacionDetalle
+			JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
+			WHERE 
+			1 = 1
+			AND cd.costo IS NOT NULL
+			{$filtros}
+		";
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -521,7 +652,6 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-
 
 	
 }
