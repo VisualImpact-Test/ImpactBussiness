@@ -10,6 +10,7 @@ class Cotizacion extends MY_Controller
         $this->load->model('M_Cotizacion', 'model');
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
+        $this->load->model('M_proveedor','model_proveedor');
         header('Access-Control-Allow-Origin: *');
         
     }
@@ -83,7 +84,7 @@ class Cotizacion extends MY_Controller
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        $post['estadoCotizacion'] = '1,2,3,4';
+        $post['estadoCotizacion'] = ESTADO_ENVIADO_CLIENTE;
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacionFiltro($post)['query']->result_array();
 
@@ -188,9 +189,21 @@ class Cotizacion extends MY_Controller
         
         $data = [];
         $data['tabla'] = 'compras.cotizacion';
-        if($post['tipoRegistro'] == 4){
+
+        if($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE || $post['tipoRegistro'] == ESTADO_COTIZACION_APROBADA){
+            $insertCotizacionHistorico = [
+                'idCotizacionEstado' => $post['tipoRegistro'], 
+                'idCotizacion' => $post['idCotizacion'],
+                'idUsuarioReg' => $this->idUsuario,
+                'estado' => true,
+            ];
+            $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
+            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'] ]);
+        }
+
+        if($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE){
             $data['update'] = [
-                'idCotizacionEstado' => $post['tipoRegistro'],
+                'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE,
             ];
             $data['where'] = [
                 'idCotizacion' => $post['idCotizacion'],
@@ -206,10 +219,9 @@ class Cotizacion extends MY_Controller
             goto respuesta;
         }
 
-        if($post['tipoRegistro'] == 5){
+        if($post['tipoRegistro'] == ESTADO_COTIZACION_APROBADA){
             $data['update'] = [
-                'idCotizacionEstado' => $post['tipoRegistro'],
-                'motivo' => $post['motivo'],
+                'idCotizacionEstado' => ESTADO_COTIZACION_APROBADA,
             ];
             $data['where'] = [
                 'idCotizacion' => $post['idCotizacion'],
@@ -224,6 +236,9 @@ class Cotizacion extends MY_Controller
             $this->db->trans_complete();
             goto respuesta;
         }
+
+        
+
         $whereSolicitante = [];
         $whereSolicitante[] = [
             'estado' => 1
@@ -287,14 +302,13 @@ class Cotizacion extends MY_Controller
         $data = [];
 
         //Insertar historico estado cotizacion
-        $tablaCotizacionHistorico = 'compras.cotizacionEstadoHistorico';
         $insertCotizacionHistorico = [
             'idCotizacionEstado' => ESTADO_REGISTRADO, 
             'idCotizacion' => $post['idCotizacion'],
             'idUsuarioReg' => $this->idUsuario,
             'estado' => true,
         ];
-        $insertCotizacionHistorico = $this->model->insertar(['tabla'=>$tablaCotizacionHistorico,'insert'=>$insertCotizacionHistorico]);
+        $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
 
         $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
         $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
@@ -382,7 +396,7 @@ class Cotizacion extends MY_Controller
 
         $estadoEmail = true;
         if($post['tipoRegistro'] == 2){
-            $estadoEmail = $this->enviarCorreo($insert['id']);
+            $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id']]);
             //Verificamos si es necesario enviar a compras para cotizar con el proveedor
             
             $necesitaCotizacionIntera = false;
@@ -410,7 +424,7 @@ class Cotizacion extends MY_Controller
                 'idUsuarioReg' => $this->idUsuario,
                 'estado' => true,
             ];
-            $insertCotizacionHistorico = $this->model->insertar(['tabla'=>$tablaCotizacionHistorico,'insert'=>$insertCotizacionHistorico]);
+            $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
 
         }
 
@@ -463,7 +477,7 @@ class Cotizacion extends MY_Controller
         echo json_encode($result);
     }
 
-    public function enviarCorreo($idCotizacion)
+    public function enviarCorreo($params = [])
     {
         $config = array(
             'protocol' => 'smtp',
@@ -483,7 +497,10 @@ class Cotizacion extends MY_Controller
 
         $data = [];
         $dataParaVista = [];
-        $data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
+
+        $data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
+
+    
 
         foreach ($data as $key => $row) {
             $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
@@ -783,6 +800,99 @@ class Cotizacion extends MY_Controller
 
         $this->view($config);
     }
+
+    public function viewSolicitudCotizacionInterna($idCotizacion = '')
+    {
+        if(empty($idCotizacion)){
+            redirect('Cotizacion','refresh');
+        }
+        
+        $config = array();
+
+        $this->load->library('Mobile_Detect');
+
+		$detect = $this->mobile_detect;
+        
+        $config['data']['col_dropdown'] = 'four column';
+        $detect->isMobile() ? $config['data']['col_dropdown'] = '' : '';
+        $detect->isTablet() ? $config['data']['col_dropdown'] = 'three column' : '';
+         
+        $config['nav']['menu_active'] = '131';
+        $config['css']['style'] = array(
+            'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/css/floating-action-button'
+        );
+        $config['js']['script'] = array(
+            // 'assets/libs/datatables/responsive.bootstrap4.min',
+            // 'assets/custom/js/core/datatables-defaults',
+            'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/languages/all',
+            'assets/libs/handsontable@7.4.2/dist/moment/moment',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/core/HTCustom',
+            'assets/custom/js/viewAgregarCotizacion'
+        );
+        
+        $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+
+        foreach($archivos as $archivo){
+            $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
+        }
+        foreach($cotizacionProveedores as $cotizacionProveedor){
+            $config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
+        }
+        foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
+            $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
+        }
+
+        $config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+        $proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado'=>2])['query']->result_array();
+
+        foreach($proveedores as $proveedor){
+            $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
+        } 
+
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $config['data']['itemServicio'] = $data['itemServicio'];
+
+        $config['single'] = true;
+        
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
+        $config['data']['title'] = 'Cotizacion';
+        $config['data']['message'] = 'Lista de Cotizacions';
+        $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['data']['disabled'] = true;
+        $config['data']['siguienteEstado'] = ESTADO_ENVIADO_CLIENTE;
+        $config['data']['controller'] = 'Cotizacion';
+        $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacion';
+
+        $this->view($config);
+    }
+
 
 
 }

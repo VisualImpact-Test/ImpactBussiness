@@ -1,5 +1,5 @@
 <div class="card-datatable">
-    <table id="tb-cotizacion checkbox" class="ui celled table" width="100%">
+    <table id="tb-cotizacion" class="ui celled table" width="100%">
         <thead>
             <tr>
                 <th class="select-checkbox"></th>
@@ -33,7 +33,7 @@
                         <!-- <a id="hrefEstado-<?= $row['idCotizacion']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoCotizacion" data-id="<?= $row['idCotizacion']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a> -->
-                        <? if ($row['idCotizacionEstado'] == 4) { ?>
+                        <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
                             <label for="upload_orden_compra[<?= $row['idCotizacion'] ?>]" class="btn btn-outline-secondary border-0 mt-1 btn-subir-oc" data-toggle="tooltip" data-placement="top" title="Adjuntar OC "><i class="fa fa-lg fa-paperclip"></i></label>
                             <input class="form-control upload_orden_compra d-none" type="file" id="upload_orden_compra[<?= $row['idCotizacion'] ?>]" name="upload_orden_compra" accept=".pdf">
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a> -->
@@ -41,14 +41,14 @@
                            
                         <? } ?>
                         
-                        <? if ($row['idCotizacionEstado'] == 3) { ?>
+                        <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
                             <? if ($ix == 1) {?>
                              <a href="/ImpactBussiness/formato_cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
                             <? } else {?>  
                              <a href="/ImpactBussiness/Cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
                             <? } ?>
                             
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-frmCotizacionConfirmada btn-dp-<?= $row['idCotizacion']; ?> "><i class="send icon" title="Enviar Cotizacion"></i></a>
+                            <a target="_blank" href="../Cotizacion/viewSolicitudCotizacionInterna/<?=$row['idCotizacion']?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
                         <? } ?>
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
@@ -70,19 +70,3 @@
     </table>
 </div>
 
-<script>
-    	$(document).ready(function() {
-			$('#checkbox').DataTable( {
-				columnDefs: [ {
-					orderable: false,
-					className: 'select-checkbox',
-					targets:   0
-				} ],
-				select: {
-					style:    'os',
-					selector: 'td:first-child'
-				},
-				order: [[ 1, 'asc' ]]
-			} );
-		} );
-</script>

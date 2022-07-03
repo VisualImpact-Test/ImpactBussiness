@@ -1,7 +1,12 @@
 var SolicitudCotizacion = {
 	url: 'SolicitudCotizacion/',
 	load: function () {
-		
+		$(document).ready(function(){
+			$('.dimmer-file-detalle')
+			.dimmer({
+				on: 'click'
+			});
+		});
 	},
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
