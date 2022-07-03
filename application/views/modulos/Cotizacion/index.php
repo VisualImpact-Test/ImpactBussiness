@@ -38,7 +38,7 @@
 				<a href="../Cotizacion/viewRegistroCotizacion" target="_blank" class="btn btn-outline-trade-visual border-0">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</a>
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="" id="filtrarReporte" title="filtrar">
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="" id="filtrarReporte" title="Generar oper">
 					<i class="fas fa-money-check-edit-alt"></i> <span class="txt_filtro"></span>
 				</button>
 			</div>

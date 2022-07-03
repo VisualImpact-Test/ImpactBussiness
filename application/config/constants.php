@@ -95,6 +95,10 @@ defined('RUTA_BAT')            OR define('RUTA_BAT','C:\wamp64\bin\php\php7.1.33
 //WASABI
 defined('RUTA_WASABI')         OR define('RUTA_WASABI','https://s3.us-central-1.wasabisys.com/impact.business/');
 
+//Tablas
+defined('TABLA_HISTORICO_ESTADO_COTIZACION')   OR define('TABLA_HISTORICO_ESTADO_COTIZACION','compras.cotizacionEstadoHistorico');
+
+
 //Compras
 defined('IGV')       OR define('IGV',0.18);
 

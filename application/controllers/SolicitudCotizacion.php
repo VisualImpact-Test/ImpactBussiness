@@ -202,23 +202,7 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
         $data['tabla'] = 'compras.cotizacion';
-        if($post['tipoRegistro'] == ESTADO_CONFIRMADO_COMPRAS){
-            $data['update'] = [
-                'idCotizacionEstado' => $post['tipoRegistro'],
-            ];
-            $data['where'] = [
-                'idCotizacion' => $post['idCotizacion'],
-            ];
-
-            $this->model->actualizarCotizacion($data);
-
-            $result['result'] = 1;
-            $result['msg']['title'] = 'Hecho!';
-            $result['msg']['content'] = createMessage(['type'=>1,'message' => 'Se confirmó el detalle de la cotización correctamente']);
-
-            $this->db->trans_complete();
-            goto respuesta;
-        }
+        
         $data = [];
         
         $data['update'] = [
@@ -227,12 +211,11 @@ class SolicitudCotizacion extends MY_Controller
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
-            // 'gap' => $post['gapForm'],
             'fee' => $post['feeForm'],
-            // 'total' => $post['totalForm'],
+            'total' => $post['totalForm'],
             // 'idPrioridad' => $post['prioridadForm'],
             // 'motivo' => $post['motivoForm'],
-            // 'comentario' => $post['comentarioForm'],
+            'comentario' => $post['comentarioForm'],
             // 'idCotizacionEstado' => $post['tipoRegistro']
         ];
         
@@ -303,6 +286,26 @@ class SolicitudCotizacion extends MY_Controller
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+            if($post['tipoRegistro'] == ESTADO_CONFIRMADO_COMPRAS){
+                $data['tabla'] = 'compras.cotizacion';
+                $data['update'] = [
+                    'idCotizacionEstado' => $post['tipoRegistro'],
+                ];
+                $data['where'] = [
+                    'idCotizacion' => $post['idCotizacion'],
+                ];
+    
+                $this->model->actualizarCotizacion($data);
+    
+                $insertCotizacionHistorico = [
+                    'idCotizacionEstado' => ESTADO_CONFIRMADO_COMPRAS, 
+                    'idCotizacion' => $post['idCotizacion'],
+                    'idUsuarioReg' => $this->idUsuario,
+                    'estado' => true,
+                ];
+                $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
+            }
         }
 
         $this->db->trans_complete();
@@ -525,6 +528,8 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
         $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['data']['siguienteEstado'] = ESTADO_CONFIRMADO_COMPRAS;
+        $config['data']['controller'] = 'SolicitudCotizacion';
         $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacion';
 
         $this->view($config);

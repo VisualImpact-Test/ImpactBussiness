@@ -12,7 +12,7 @@
         height: 200px !important;
     }
 </style>
-<div class="ui form attached fluid segment p-4">
+<div class="ui form attached fluid segment p-4 <?=!empty($disabled) ? 'disabled' : '' ?>" >
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
@@ -292,7 +292,7 @@
                                     <div class="ui right labeled input">
                                         <label for="amount" class="ui label">S/</label>
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
-                                        <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
+                                        <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -311,7 +311,7 @@
                                     <div class="ui right labeled input">
                                         <label for="amount" class="ui label">S/</label>
                                         <input class=" precioFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['precio']) ? moneda($row['precio']) : '' ?>" readonly>
-                                        <input class=" precioForm" type="hidden" name="precioForm" placeholder="0.00" value="<?= !empty($row['precio']) ? moneda($row['precio']) : '' ?>" readonly>
+                                        <input class=" precioForm" type="hidden" name="precioForm" placeholder="0.00" value="<?= !empty($row['precio']) ? ($row['precio']) : '' ?>" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +321,7 @@
                                     <div class="ui right labeled input">
                                         <label for="amount" class="ui label teal">S/</label>
                                         <input class=" subtotalFormLabel" type="text" placeholder="0.00" patron="requerido" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>" readonly>
-                                        <input class=" subtotalForm" type="hidden" patron="requerido" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>" readonly>
+                                        <input class=" subtotalForm" type="hidden" patron="requerido" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -351,7 +351,7 @@
                 <div class="ui right labeled input">
                     <label for="totalForm" class="ui label green">Total: </label>
                     <input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>" readonly="">
-                    <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>" readonly="">
+                    <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>" readonly="">
                 </div>
             </div>
         </div>
@@ -365,10 +365,10 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(3)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?=$controller?>.registrarCotizacion(<?=$siguienteEstado?>)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
                 <i class="send icon"></i>
             </span>
-            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "SolicitudCotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?=$controller?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
                 <i class="save icon"></i>
             </span>
             <!-- <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">

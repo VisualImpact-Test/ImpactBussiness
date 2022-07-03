@@ -127,6 +127,7 @@ class M_Cotizacion extends MY_Model
                 , p.idPrioridad
 				, p.motivo
                 , p.comentario
+				, p.total
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
@@ -173,7 +174,6 @@ class M_Cotizacion extends MY_Model
 				, p.estado
 				, p.fechaRequerida
 				, p.flagIgv igv
-				, p.gap
 				, p.fee 
 				, p.idCotizacionEstado
                 , p.idPrioridad
