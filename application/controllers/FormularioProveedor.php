@@ -12,7 +12,7 @@ class FormularioProveedor extends MY_Controller
 		$proveedor = $this->session->userdata('proveedor');
 
 	}
-	
+
 	public function index()
 	{
 		$proveedor = $this->session->userdata('proveedor');
@@ -72,7 +72,7 @@ class FormularioProveedor extends MY_Controller
 
 		$result['result'] = 1;
 		$result['msg']['content'] = createMessage(['type'=> 1 , 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
-		$result['data']['url'] = base_url()."FormularioProveedor/cotizaciones"; 
+		$result['data']['url'] = base_url()."FormularioProveedor/cotizaciones";
 
 		$this->session->set_userdata('proveedor',$proveedor);
 		respuesta:
@@ -81,7 +81,7 @@ class FormularioProveedor extends MY_Controller
 
 	public function signup()
 	{
-		
+
 		$config['css']['style'] = array();
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedores');
 		$config['view'] = 'formularioProveedores';
@@ -120,7 +120,7 @@ class FormularioProveedor extends MY_Controller
 			'razonSocial' => $post['razonSocial'],
 			'idTipoDocumento' => 3,
 			'nroDocumento' => $post['ruc'],
-			'idRubro' => $post['rubro'],
+			// 'idRubro' => $post['rubro'],
 			'cod_ubigeo' => $post['distrito'],
 			'direccion' => $post['direccion'],
 			'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
@@ -180,23 +180,33 @@ class FormularioProveedor extends MY_Controller
 		$second_insert = $this->model->insertarProveedorCobertura($data);
 		$data = [];
 
-	
+
 
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
             $data['insert'][] = [
                 'idProveedor' => $insert['id'],
                 'idMetodoPago' => $value,
-                
+
             ];
         }
 
 		$third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
+		$data = [];
+
+		foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
+				$data['insert'][] = [
+						'idProveedor' => $insert['id'],
+						'idRubro' => $value,
+				];
+		}
+
+		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
 
 		$estadoEmail = $this->enviarCorreo($insert['id']);
 
 		$estadoEmail=true;
 
-		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail || !$third_insert) {
+		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail || !$third_insert || !$fourth_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -213,7 +223,7 @@ class FormularioProveedor extends MY_Controller
 		respuesta:
 
 		echo json_encode($result);
-		
+
 	}
 
 	public function enviarCorreo($idProveedor)
@@ -330,10 +340,10 @@ class FormularioProveedor extends MY_Controller
 			redirect('FormularioProveedor','refresh');
 			exit();
 		}
-		       
+
 		$config['css']['style'] = array();
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizaciones');
-		
+
 		$config['view'] = 'formularioProveedores/cotizaciones';
 		$config['data']['idCotizacion'] = $idCotizacion;
 		$config['data']['title'] = 'Formulario Proveedores';
@@ -352,8 +362,8 @@ class FormularioProveedor extends MY_Controller
 	}
 
 	public function cotizacionesRefresh()
-    {	
-	
+    {
+
 		$proveedor = $this->session->userdata('proveedor');
 		if(empty($proveedor)){
 			redirect('FormularioProveedor','refresh');
@@ -365,10 +375,10 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
-		
+
 
 		$html = $this->load->view("formularioProveedores/cotizaciones-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $post['idCotizacion']], true);
-		
+
         $result['result'] = 1;
         $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
         $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
@@ -387,15 +397,15 @@ class FormularioProveedor extends MY_Controller
     }
 
 	public function actualizarCotizacionProveedor()
-	{	
-		
+	{
+
 		$this->db->trans_start();
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
 		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
         $post['costo'] = checkAndConvertToArray($post['costo']);
-  
+
         foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
 			$cantidad = (!empty($post['cantidad'][$k])) ? $post['cantidad'][$k] : 0;
@@ -410,7 +420,7 @@ class FormularioProveedor extends MY_Controller
         $data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
         $data['where'] = 'idCotizacionDetalleProveedorDetalle';
         $updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
-		
+
 
         if (!$updateDetalle['estado']) {
             $result['result'] = 0;
@@ -433,9 +443,9 @@ class FormularioProveedor extends MY_Controller
             //     'contenido' => $correo,
             // ];
             // email($config);
-			
+
 			$insertCotizacionHistorico = [
-                'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS, 
+                'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS,
 				'idCotizacionInternaEstado' => INTERNA_PRECIO_RECIBIDO,
                 'idCotizacion' => $post['idCotizacion'],
                 'idUsuarioReg' => $this->idUsuario,
@@ -448,17 +458,17 @@ class FormularioProveedor extends MY_Controller
         respuesta:
         echo json_encode($result);
 	}
-	
+
 	public function logout(){
 		$result = $this->result;
 		$this->session->unset_userdata('proveedor');
 
 		$result['msg']['title'] = 'Cerrar Sesion';
 		$result['msg']['content'] = createMessage(['type'=>1,'message'=>'La sesion ha sido finalizada']);
-		$result['data']['url'] = base_url()."FormularioProveedor"; 
+		$result['data']['url'] = base_url()."FormularioProveedor";
 		echo json_encode($result);
 
 		redirect('FormularioProveedor','refresh');
 	}
-	
+
 }

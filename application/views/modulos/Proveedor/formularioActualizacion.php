@@ -15,8 +15,15 @@
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="rubro" style="border:0px;">Rubro :</label>
-                        <select class="form-control col-md-8" id="rubro" name="rubro" patron="requerido">
-                            <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $listadoRubros, 'class' => 'text-titlecase', 'selected' => $idRubro]); ?>
+                        <select class="form-control col-md-8 my_select2" id="rubro" name="rubro" multiple data-live-search="true" patron="requerido">
+                          <?
+                              foreach ($listadoRubros as $rubros) {
+                              ?>
+                                  <option value="<?= $rubros['id']  ?>"  <?= isset($proveedorRubro[$rubros['id']]) ?"selected":""  ?>> <?= $rubros['value'] ?></option>
+                              <?
+                              }
+
+                          ?>
                         </select>
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
@@ -92,7 +99,7 @@
                     </thead>
                     <tbody>
                         <tr class="d-none trParent ">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
                                     <?
                                     foreach ($listadoDepartamentos as $k_dp => $v_dp) {
@@ -210,6 +217,18 @@
                 <div class="<?= ($disabled) ? "disabled" : "" ?>">
                     <div class="control-group child-divcenter row" style="width:85%">
                         <textarea class="form-control col-md-12" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..." value="<?= $informacionAdicional ?>"><?= $informacionAdicional ?></textarea>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 child-divcenter">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Información Respuesta</legend>
+                <div class="<?= ($disabled) ? "disabled" : "" ?>">
+                    <div class="control-group child-divcenter row" style="width:85%">
+                        <textarea class="form-control col-md-12" id="informacionRespuesta" name="informacionRespuesta" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..." value="<?= $informacionRespuesta ?>"><?= $informacionRespuesta ?></textarea>
                     </div>
                 </div>
             </fieldset>

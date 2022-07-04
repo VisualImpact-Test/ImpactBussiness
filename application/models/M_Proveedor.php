@@ -102,7 +102,15 @@ class M_Proveedor extends MY_Model
 
 		return $this->resultado;
 	}
-
+	public function obtenerUltimaRespuestaEstado($idProveedor)
+	{
+		$this->db
+		->select('*')
+		->from('compras.proveedorEstadoHistorico')
+		->where('idProveedor',$idProveedor)
+		->order_by('fechaReg desc');
+		return $this->db->get();
+	}
 	public function obtenerInformacionProveedores($params = [])
 	{
 		$filtros = "";
@@ -143,7 +151,8 @@ class M_Proveedor extends MY_Model
 				, ep.toggle AS estadotoggle
 			FROM compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
-			JOIN compras.rubro r ON p.idRubro = r.idRubro
+			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
+			JOIN compras.rubro r ON pr.idRubro = r.idRubro
 			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
 			JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
 			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
@@ -185,7 +194,7 @@ class M_Proveedor extends MY_Model
 			{$filtros}
 		";
 
-		
+
 
 		$query = $this->db->query($sql);
 
@@ -262,17 +271,17 @@ class M_Proveedor extends MY_Model
 		$filtros .= !empty($params['idProveedor']) ? ' AND zc.idProveedor = ' . $params['idProveedor'] : '';
 
 		$sql = "
-			SELECT 
+			SELECT
 			zc.idProveedor,
 			zc.cod_departamento,
 			zc.cod_provincia,
 			zc.cod_distrito,
-			(SELECT TOP 1 departamento FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento) departamento , 
+			(SELECT TOP 1 departamento FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento) departamento ,
 			(SELECT TOP 1 provincia FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento AND cod_provincia = zc.cod_provincia) provincia ,
 			(SELECT TOP 1 distrito FROM General.dbo.ubigeo WHERE cod_departamento = zc.cod_departamento AND cod_provincia = zc.cod_provincia AND cod_distrito = zc.cod_distrito) distrito
 			FROM compras.zonaCobertura zc
-		
-			WHERE 
+
+			WHERE
 			1 = 1
 			{$filtros}
 		";
@@ -289,6 +298,5 @@ class M_Proveedor extends MY_Model
 	}
 
 
-	
-}
 
+}

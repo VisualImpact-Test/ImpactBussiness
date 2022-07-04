@@ -43,13 +43,13 @@
                     </td>
                     <td class="td-left"><?= verificarEmpty($row['razonSocial'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nroDocumento'], 3); ?></td>
-                    <td class="td-left"><?= verificarEmpty($row['rubro'], 3); ?></td>
-                    <td class="td-left"><?= verificarEmpty($row['metodoPago'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['rubros'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['metodosPago'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['direccion'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nombreContacto'], 3); ?></td>
 
-       
-                    
+
+
                     <td class="td-left"><?= verificarEmpty($row['correoContacto'], 3); ?></td>
 
                     <td class="td-center"><?= verificarEmpty($row['numeroContacto'], 3); ?></td>

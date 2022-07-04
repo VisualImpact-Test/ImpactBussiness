@@ -13,7 +13,7 @@
                 </div>
                 <div class="control-group child-divcenter row" style="width:85%">
                     <label class="form-control col-md-4" for="rubro" style="border:0px;">Rubro :</label>
-                    <select class="form-control col-md-8" id="rubro" name="rubro" patron="requerido">
+                    <select class="form-control col-md-8 my_select2" id="rubro" name="rubro" patron="requerido" multiple data-live-search="true">
                         <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $rubro, 'class' => 'text-titlecase']); ?>
                     </select>
                 </div>
@@ -78,7 +78,7 @@
                     </thead>
                     <tbody>
                         <tr class="d-none trParent">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
@@ -104,7 +104,7 @@
                             </td>
                         </tr>
                         <tr class="trChildren">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido">
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
@@ -131,7 +131,7 @@
                         </tr>
                     </tbody>
                 </table>
-               
+
             </fieldset>
         </div>
     </div>

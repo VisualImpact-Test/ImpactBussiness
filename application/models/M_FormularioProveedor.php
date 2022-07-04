@@ -133,7 +133,8 @@ class M_FormularioProveedor extends MY_Model
 				, p.informacionAdicional
 			FROM compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
-			JOIN compras.rubro r ON p.idRubro = r.idRubro
+			JOIN compras.proveedorRubro pr ON pr.idproveedor = p.idProveedor
+			JOIN compras.rubro r ON pr.idRubro = r.idRubro
 			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
 			JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
 			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
@@ -158,14 +159,14 @@ class M_FormularioProveedor extends MY_Model
 	public function loginProveedor($params = [])
 	{
 		$sql = "
-		SELECT 
+		SELECT
 			idProveedor,
 			razonSocial,
 			nroDocumento,
 			idProveedorEstado
-		FROM 
+		FROM
 			compras.proveedor
-		WHERE 
+		WHERE
 			nroDocumento like '%{$params['ruc']}%'
 			AND correoContacto like '%{$params['email']}%'
 		";
@@ -181,7 +182,7 @@ class M_FormularioProveedor extends MY_Model
 		$filtros .= !empty($params['idCotizacionDetalle']) ? "AND cdpd.idCotizacionDetalle IN( {$params['idCotizacionDetalle']} )" : '';
 
 		$sql = "
-		SELECT 
+		SELECT
 			cdp.idCotizacionDetalleProveedor,
 			cdpd.idCotizacionDetalleProveedorDetalle,
 			cdpd.idItem,
@@ -192,8 +193,8 @@ class M_FormularioProveedor extends MY_Model
 			cdp.idProveedor,
 			cdp.idCotizacion,
 			p.razonSocial proveedor
-		FROM 
-		compras.cotizacionDetalleProveedor cdp 
+		FROM
+		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
 		JOIN compras.cotizacionDetalleProveedorDetalle cdpd ON cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor
 		JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdpd.idCotizacionDetalle

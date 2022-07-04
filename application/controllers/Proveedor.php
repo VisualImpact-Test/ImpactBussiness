@@ -74,12 +74,16 @@ class Proveedor extends MY_Controller
             $departamentosCobertura[$row['idProveedor']][$row['zc_departamento']] = $row['zc_departamento'];
             $provinciasCobertura[$row['idProveedor']][$row['zc_provincia']] = $row['zc_provincia'];
             $distritosCobertura[$row['idProveedor']][$row['zc_distrito']] = $row['zc_distrito'];
+            $metodosPago[$row['idProveedor']][$row['metodoPago']] = $row['metodoPago'];
+            $rubros[$row['idProveedor']][$row['rubro']] = $row['rubro'];
         }
 
         foreach ($dataParaVista as $key => $row) {
             $dataParaVista[$key]['departamentosCobertura'] = implode(', ', $departamentosCobertura[$key]);
             $dataParaVista[$key]['provinciasCobertura'] = implode(', ', $provinciasCobertura[$key]);
             $dataParaVista[$key]['distritosCobertura'] = implode(', ', $distritosCobertura[$key]);
+            $dataParaVista[$key]['rubros'] = implode(', ', $rubros[$key]);
+            $dataParaVista[$key]['metodosPago'] = implode(', ', $metodosPago[$key]);
         }
 
         $html = getMensajeGestion('noRegistros');
@@ -174,6 +178,7 @@ class Proveedor extends MY_Controller
             if (!empty($row['zc_provincia'])) $provinciasCobertura[trim($row['zc_cod_departamento']).'-'.trim($row['zc_cod_provincia'])] = $row['zc_provincia'];
             if (!empty($row['zc_distrito'])) $distritosCobertura[trim($row['zc_cod_departamento']).'-'.trim($row['zc_cod_provincia']).'-'.trim($row['zc_cod_distrito'])] = $row['zc_distrito'];
             if (!empty($row['idMetodoPago'])) $dataParaVisitaMetodoPago[trim($row['idMetodoPago'])] = $row['metodoPago'];
+            if (!empty($row['idRubro'])) $dataParaVistaRubro[trim($row['idRubro'])] = $row['rubro'];
         }
 
         $dataParaVista['departamentosCobertura'] = $departamentosCobertura;
@@ -185,6 +190,7 @@ class Proveedor extends MY_Controller
         $dataParaVista['listadoDistritos'] = [];
         $dataParaVista['listadoDistritosUbigeo'] = [];
         $dataParaVista['proveedorMetodoPago'] =  $dataParaVisitaMetodoPago;
+        $dataParaVista['proveedorRubro'] =  $dataParaVistaRubro;
 
 
         $ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
@@ -205,7 +211,7 @@ class Proveedor extends MY_Controller
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Proveedor';
         $dataParaVista['disabled'] = false;
-
+        $dataParaVista['informacionRespuesta'] = $this->model->obtenerUltimaRespuestaEstado($post['idProveedor'])->row(0)->informacion;
         if($post['formularioValidar']){
             $result['msg']['title'] = 'Validar Proveedor';
             $dataParaVista['disabled'] = true;
@@ -227,8 +233,8 @@ class Proveedor extends MY_Controller
             'razonSocial' => $post['razonSocial'],
             'idTipoDocumento' => 3,
             'nroDocumento' => $post['ruc'],
-            'idRubro' => $post['rubro'],
-            //'idMetodoPago' => $post['metodoPago'],
+            // 'idRubro' => $post['rubro'],
+            // 'idMetodoPago' => $post['metodoPago'],
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
             'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
@@ -257,7 +263,7 @@ class Proveedor extends MY_Controller
             'provinciaCobertura' => $post['provinciaCobertura'],
             'distritoCobertura' => $post['distritoCobertura'],
         ];
-        
+
         $zonasCobertura = getDataRefactorizada($zonasCobertura);
         $zonasInsertadas = [];
         foreach ( $zonasCobertura as $key => $value) {
@@ -291,17 +297,27 @@ class Proveedor extends MY_Controller
             $data['insert'][] = [
                 'idProveedor' => $insert['id'],
                 'idMetodoPago' => $value,
-                
+
             ];
         }
 
         $third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
+        $data = [];
 
-        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert) {
+        foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'idRubro' => $value,
+            ];
+        }
+
+        $fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
+
+        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
-            
+
             goto respuesta;
         } else {
             $result['result'] = 1;
@@ -316,16 +332,18 @@ class Proveedor extends MY_Controller
 
     public function actualizarProveedor()
     {
+        $this->db->trans_start();
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
         $data = [];
-
+        $enviarCorreo = false;
+        $rptaCorreo = true;
         $data['update'] = [
             'idProveedor' => $post['idProveedor'],
             'razonSocial' => $post['razonSocial'],
             'nroDocumento' => $post['ruc'],
-            'idRubro' => $post['rubro'],
+            // 'idRubro' => $post['rubro'],
             /*'idMetodoPago' => $post['metodoPago'],*/
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
@@ -334,6 +352,11 @@ class Proveedor extends MY_Controller
             'correoContacto' => $post['correoContacto'],
             'numeroContacto' => $post['numeroContacto']
         ];
+        if (isset($post['idProveedorEstado'])) {
+          $data['update']['idProveedorEstado'] = $post['idProveedorEstado'];
+          $enviarCorreo = true;
+          $rptaCorreo = false;
+        }
 
         $validacionExistencia = $this->model->validarExistenciaProveedor($data['update']);
         unset($data['update']['idProveedor']);
@@ -368,7 +391,7 @@ class Proveedor extends MY_Controller
             'provinciaCobertura' => $post['provinciaCobertura'],
             'distritoCobertura' => $post['distritoCobertura'],
         ];
-        
+
         $zonasCobertura = getDataRefactorizada($zonasCobertura);
         $zonasInsertadas = [];
         foreach ( $zonasCobertura as $key => $value) {
@@ -382,7 +405,7 @@ class Proveedor extends MY_Controller
             !empty($value['distritoCobertura']) ? $idDistrito = $value['distritoCobertura'] : '';
 
             if(!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
-            
+
             $data['update'][] = [
                 'idProveedor' => $post['idProveedor'],
                 'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
@@ -396,12 +419,12 @@ class Proveedor extends MY_Controller
         $second_insert = $this->model->insertarProveedorCobertura($data);
         $data = [];
 
-        
+
         foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
             $data['insert'][] = [
                 'idProveedor' => $post['idProveedor'],
                 'idMetodoPago' => $value,
-                
+
             ];
         }
 
@@ -412,17 +435,55 @@ class Proveedor extends MY_Controller
 
         $third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
 
+        $data = [];
 
-        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert) {
+
+        foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
+            $data['insert'][] = [
+                'idProveedor' => $post['idProveedor'],
+                'idRubro' => $value,
+
+            ];
+        }
+
+        $data['where'] = ['idProveedor' => $post['idProveedor']];
+
+        // Seria bueno cambiar el nombre de la funcion, pero lo evite desconociendo si hay otra consulta que haga uso de esta funcion
+        $this->model->BorrarProveedorMetodoPago(['tabla' => "compras.proveedorRubro", 'where' => $data['where']]);
+
+        $fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
+
+        if($enviarCorreo){
+          $data = [];
+
+          $data['tabla'] = 'compras.proveedorEstadoHistorico';
+          $data['insert'] = [
+              'idProveedor' => $post['idProveedor'],
+              'estado' => $post['idProveedorEstado'],
+              'idUsuario' => $this->idUsuario,
+              'fechaReg' => getActualDateTime(),
+              'informacion' => 'Solicitud de validación'
+          ];
+
+          $fifth_insert = $this->model->insertarProveedor($data);
+
+          $estadoEmail = $this->enviarCorreo($post['idProveedor']);
+          if($fifth_insert && $estadoEmail){
+            $rptaCorreo = true;
+          }
+        }
+
+        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$rptaCorreo) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
+            goto respuesta;
         } else {
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
         }
-
+        $this->db->trans_complete();
         respuesta:
         echo json_encode($result);
     }
@@ -435,7 +496,8 @@ class Proveedor extends MY_Controller
         $data = [];
 
         $data['update'] = [
-            'idProveedorEstado' => 2
+            'idProveedorEstado' => 1,
+
         ];
 
         $data['tabla'] = 'compras.proveedor';
@@ -492,4 +554,73 @@ class Proveedor extends MY_Controller
         respuesta:
         echo json_encode($result);
     }
+
+    public function enviarCorreo($idProveedor)
+  	{
+  		$config = array(
+  			'protocol' => 'smtp',
+  			'smtp_host' => 'ssl://smtp.googlemail.com',
+  			'smtp_port' => 465,
+  			'smtp_user' => 'teamsystem@visualimpact.com.pe',
+  			'smtp_pass' => '#nVi=0sN0ti$',
+  			'mailtype' => 'html'
+  		);
+
+  		$this->load->library('email', $config);
+  		$this->email->clear(true);
+  		$this->email->set_newline("\r\n");
+
+  		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+  		$this->email->to('jean.alarcon@visualimpact.com.pe');
+
+  		$data = [];
+  		$dataParaVista = [];
+  		$departamentosCobertura = [];
+  		$provinciasCobertura = [];
+  		$distritosCobertura = [];
+  		$data = $this->model->obtenerInformacionProveedores(['idProveedor' => $idProveedor])['query']->result_array();
+
+  		foreach ($data as $key => $row) {
+  			$dataParaVista = [
+  				'razonSocial' => $row['razonSocial'],
+  				'nroDocumento' => $row['nroDocumento'],
+  				'rubro' => $row['rubro'],
+  				'metodoPago' => $row['metodoPago'],
+  				'departamento' => $row['departamento'],
+  				'provincia' => $row['provincia'],
+  				'distrito' => $row['distrito'],
+  				'direccion' => $row['direccion'],
+  				'nombreContacto' => $row['nombreContacto'],
+  				'correoContacto' => $row['correoContacto'],
+  				'numeroContacto' => $row['numeroContacto'],
+  				'informacionAdicional' => $row['informacionAdicional'],
+  			];
+  			$departamentosCobertura[$row['zc_departamento']] = $row['zc_departamento'];
+  			$provinciasCobertura[$row['zc_provincia']] = $row['zc_provincia'];
+  			$distritosCobertura[$row['zc_distrito']] = $row['zc_distrito'];
+  		}
+
+  		$dataParaVista['departamentosCobertura'] = implode(', ', $departamentosCobertura);
+  		$dataParaVista['provinciasCobertura'] = implode(', ', $provinciasCobertura);
+  		$dataParaVista['distritosCobertura'] = implode(', ', $distritosCobertura);
+
+  		$dataParaVista['link'] = base_url() . index_page() . 'proveedor';
+
+  		// $bcc = array(
+  		//     'team.sistemas@visualimpact.com.pe',
+  		// );
+  		// $this->email->bcc($bcc);
+  		$bcc = array('luis.durand@visualimpact.com.pe');
+  		$this->email->bcc($bcc);
+
+  		$this->email->subject('IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES');
+  		// $html = $this->load->view("formularioProveedores/informacionProveedor", $dataParaVista, true);
+  		$html = $this->load->view("email/header", $dataParaVista, true);
+  		$correo = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);
+  		$this->email->message($correo);
+
+  		$estadoEmail = $this->email->send();
+
+  		return $estadoEmail;
+  	}
 }

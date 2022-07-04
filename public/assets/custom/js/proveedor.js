@@ -143,14 +143,14 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 				//$('#regionCobertura').change();
 			});
-			
+
 		});
 
 		$(document).on('click', '.btn-validar', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idProveedor': id, 'formularioValidar': true };
+			let data = { 'idProveedor': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Proveedor.url + 'formularioActualizacionProveedor', 'data': jsonString };
@@ -276,9 +276,12 @@ var Proveedor = {
 
 	validarProveedor: function () {
 		++modalId;
+		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
+		dataFn.idProveedorEstado = '1';
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionProveedores')) };
-		let config = { 'url': Proveedor.url + 'validarProveedor', 'data': jsonString };
+		let jsonString = { 'data': JSON.stringify(dataFn) };
+		// let config = { 'url': Proveedor.url + 'validarProveedor', 'data': jsonString };
+		let config = { 'url': Proveedor.url + 'actualizarProveedor', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];

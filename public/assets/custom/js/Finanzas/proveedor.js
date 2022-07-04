@@ -274,11 +274,16 @@ var Proveedor = {
 		});
 	},
 
-	validarProveedor: function () {
-		
+	validarProveedor: function (idEstado, datosValidos, contribuyenteValido) {
+
 		++modalId;
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionProveedores')) };
+		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
+		dataFn.idProveedorEstado = idEstado;
+		dataFn.datosValidos = datosValidos;
+		dataFn.contribuyenteValido = contribuyenteValido;
+
+		let jsonString = { 'data': JSON.stringify(dataFn) };
 		let config = { 'url': Proveedor.url + 'validarProveedor', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
@@ -297,22 +302,33 @@ var Proveedor = {
 
 	validarProveedorCheck: function () {
 
+		var msgValidar = '';
+		var idEstado = 0;
+		var datosValidos = $("#datosValidos").is(":checked");
+		var contribuyenteValido = $("#contribuyenteValido").is(":checked");
+
 		if (!$("#datosValidos").is(":checked") || !$("#contribuyenteValido").is(":checked")) {
-
-			++modalId;
-			let btn = [];
-			let fn = [];
-			let message1 = Fn.message({"type":2, "message":"Debe confirmar la validez de los datos"});
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			btn[0] = { title: 'Cerrar', fn: fn[0] };
-			
-			Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
-			
-			return false;
+			msgValidar = "<label style='color: red;'>¿Esta seguro de <b>RECHAZAR</b> el proveedor?</label>"
+			idEstado = 4;
+		}else{
+			msgValidar = "¿Esta seguro de <b>VALIDAR</b> el proveedor?"
+			idEstado = 2;
 		}
 
-		Fn.showConfirm({ fn: "Proveedor.validarProveedor()", content: "¿Esta seguro de validar el proveedor?" });
+		// ++modalId;
+		// let btn = [];
+		// let fn = [];
+		// let message1 = Fn.message({"type":2, "message":"Debe confirmar la validez de los datos"});
+		//
+		// fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		// btn[0] = { title: 'Cerrar', fn: fn[0] };
+		//
+		// Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
+		//
+		// return false;
+
+
+		Fn.showConfirm({ fn: "Proveedor.validarProveedor("+idEstado+","+datosValidos+","+contribuyenteValido+")", content: msgValidar});
 	}
 }
 

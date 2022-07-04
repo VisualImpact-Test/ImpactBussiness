@@ -15,8 +15,15 @@
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="rubro" style="border:0px;">Rubro :</label>
-                        <select class="form-control col-md-8" id="rubro" name="rubro" patron="requerido">
-                            <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $listadoRubros, 'class' => 'text-titlecase', 'selected' => $idRubro]); ?>
+                        <select class="form-control col-md-8 my_select2" id="rubro" name="rubro" patron="requerido" multiple data-live-search="true">
+                            <?
+                                foreach ($listadoRubros as $rubro) {
+                                ?>
+                                    <option value="<?= $rubro['id']  ?>"  <?= !empty($proveedorRubro[$rubro['id']]) ?"selected":""  ?>> <?= $rubro['value'] ?></option>
+                                <?
+                                }
+
+                            ?>
                         </select>
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
@@ -25,13 +32,13 @@
                         <?
                             foreach ($listadoMetodosPago as $pagos) {
                             ?>
-                                <option value="<?= $pagos['id']  ?>"  <?= !empty($metodoPago[$pagos['id']]) ?"selected":""  ?>> <?= $pagos['value'] ?></option>
+                                <option value="<?= $pagos['id']  ?>"  <?= !empty($proveedorMetodoPago[$pagos['id']]) ?"selected":""  ?>> <?= $pagos['value'] ?></option>
                             <?
                             }
 
                         ?>
 
-                            
+
                         </select>
                     </div>
                 </div>
@@ -92,7 +99,7 @@
                     </thead>
                     <tbody>
                         <tr class="d-none trParent ">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
                                     <?
                                     foreach ($listadoDepartamentos as $k_dp => $v_dp) {
@@ -212,6 +219,16 @@
                         <textarea class="form-control col-md-12" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..." value="<?= $informacionAdicional ?>"><?= $informacionAdicional ?></textarea>
                     </div>
                 </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 child-divcenter">
+            <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Información respuesta</legend>
+                  <div class="control-group child-divcenter row" style="width:85%">
+                      <textarea class="form-control col-md-12" id="informacionEstado" name="informacionEstado" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..." value=""></textarea>
+                  </div>
             </fieldset>
         </div>
     </div>

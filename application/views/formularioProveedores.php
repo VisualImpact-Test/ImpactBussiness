@@ -23,7 +23,7 @@
                             </div>
                             <div class="control-group child-divcenter row" style="width:85%">
                                 <label class="form-control col-md-4" for="rubro" style="border:0px;">Rubro :</label>
-                                <select class="form-control col-md-8" id="rubro" name="rubro" patron="requerido">
+                                <select class="form-control col-md-8 my_select2" id="rubro" name="rubro" multiple data-live-search="true" patron="requerido">
                                     <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $rubro, 'class' => 'text-titlecase']); ?>
                                 </select>
                             </div>
