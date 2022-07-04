@@ -128,11 +128,16 @@ class M_Cotizacion extends MY_Model
 				, p.motivo
                 , p.comentario
 				, p.total
+				, p.codOrdenCompra
+				, p.motivoAprobacion
+				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
+				AND od.estado = 1
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
@@ -184,7 +189,8 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
-			WHERE p.idCotizacionEstado = 2
+			WHERE 
+			1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
@@ -207,10 +213,12 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion = ' . $params['idCotizacion'] : '';
+		$filtros .= !empty($params['idsCotizacion']) ? ' AND p.idCotizacion IN('. $params['idsCotizacion'].')' : '';
 
 		$sql = "
 			SELECT
 				p.idCotizacion
+				, pd.idCotizacionDetalle
 				, p.nombre AS cotizacion
 				, c.nombre AS cuenta
 				, cc.nombre AS cuentaCentroCosto
@@ -227,6 +235,7 @@ class M_Cotizacion extends MY_Model
 				, ei.nombre AS estadoItem
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
+				, pd.subTotal
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 			FROM compras.cotizacion p
@@ -351,6 +360,7 @@ class M_Cotizacion extends MY_Model
 					$archivoName = $this->saveFileWasabi($archivo);
 					$tipoArchivo = explode('/',$archivo['type']);
 					$insertArchivos[] = [
+						'idCotizacion' => $insert['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
 						'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
 						'nombre_inicial' => $archivo['name'],
@@ -483,10 +493,13 @@ class M_Cotizacion extends MY_Model
 			cd.caracteristicas,
 			cd.gap,
 			cd.precio,
-			cd.enlaces
+			cd.enlaces,
+			cd.idProveedor,
+			p.razonSocial
 			FROM 
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			WHERE 
 			1 = 1
@@ -546,8 +559,28 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
-
-
+		if(!empty($params['union'])){
+			$sqlUnion = "
+			UNION
+			SELECT 
+			cd.idCotizacion,
+			cd.idCotizacionDetalle,
+			cd.idItem,
+			cd.nombre,
+			it.idProveedor,
+			CASE WHEN ith.idItemTarifarioHistorico IS NOT NULL THEN 1 ELSE 0 END  respuestasProveedor
+			FROM 
+			compras.cotizacion c 
+			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
+			JOIN compras.itemTarifario it ON it.idItem = cd.idItem
+			JOIN compras.itemTarifarioHistorico ith ON ith.idItemTarifario = it.idItemTarifario
+				AND General.dbo.fn_fechaVigente(ith.fecIni,ith.fecFin,cd.fechaCreacion,cd.fechaCreacion) = 1
+			JOIN compras.proveedor p ON it.idProveedor = p.idProveedor
+			WHERE 
+			cd.cotizacionInterna = 0
+			{$filtros}
+			";
+		}
 		$sql = "
 		WITH lst_respuestas_proveedor AS(
 			SELECT 
@@ -556,13 +589,14 @@ class M_Cotizacion extends MY_Model
 				cd.idItem,
 				cd.nombre,
 				c.idProveedor,
-				(SELECT DISTINCT CASE WHEN costo IS NOT NULL THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
+				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
 			FROM 
 			compras.cotizacionDetalleProveedor c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			WHERE 
 			1 = 1
 			{$filtros}
+			{$sqlUnion}
 			)
 			SELECT
 			idCotizacion,
@@ -587,7 +621,32 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 
-
+		$sqlUnion = "";
+		if(!empty($params['union'])){
+			$sqlUnion = "
+			UNION
+			SELECT 
+			cd.idCotizacion,
+			cd.idCotizacionDetalle,
+			cd.idItem,
+			cd.idProveedor,
+			(ith.costo * cd.cantidad) subTotal,
+			cd.cantidad,
+			p.razonSocial,
+			ith.costo costoUnitario
+			FROM 
+			compras.cotizacion c 
+			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
+			JOIN compras.itemTarifario it ON it.idItem = cd.idItem
+			JOIN compras.itemTarifarioHistorico ith ON ith.idItemTarifario = it.idItemTarifario
+				AND General.dbo.fn_fechaVigente(ith.fecIni,ith.fecFin,cd.fechaCreacion,cd.fechaCreacion) = 1
+			JOIN compras.proveedor p ON it.idProveedor = p.idProveedor
+			WHERE 
+			cd.cotizacionInterna = 0
+			{$filtros}
+			";
+		}
+			
 		$sql = "
 		
 			SELECT 
@@ -599,7 +658,6 @@ class M_Cotizacion extends MY_Model
 			cdl.cantidad,
 			p.razonSocial,
 			(cd.costo / cdl.cantidad) costoUnitario
-
 			FROM 
 			compras.cotizacionDetalleProveedor c
 			JOIN compras.cotizacionDetalleProveedorDetalle cd ON cd.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor
@@ -607,8 +665,9 @@ class M_Cotizacion extends MY_Model
 			JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
 			WHERE 
 			1 = 1
-			AND cd.costo IS NOT NULL
+			AND (cd.costo IS NOT NULL AND cd.costo <> 0)
 			{$filtros}
+			{$sqlUnion}
 		";
 		$query = $this->db->query($sql);
 
@@ -653,5 +712,68 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	
+	public function obtenerUsuarios($input = [])
+	{
+		$filtros = "";
+		!empty($input['idUsuario']) ? $filtros .= " AND u.idUsuario = {$input['idUsuario']}" : "";
+
+		$sql = "
+			DECLARE @fecha DATE = GETDATE();
+			SELECT DISTINCT
+				u.idUsuario
+				, u.apePaterno + ' ' + ISNULL(u.apeMaterno, '') + ' ' + u.nombres apeNom
+				, u.apePaterno + ', ' + u.nombres apeNom_corto
+				, u.apePaterno
+				, u.apeMaterno
+				, u.nombres
+				, u.numDocumento
+				, u.externo
+				, u.ultimo_cambio_pwd
+				, flag_anuncio_visto
+				, DATEDIFF(day, u.ultimo_cambio_pwd, @fecha) AS dias_pasados
+				--, td.breve tipoDocumento
+				--, e.idEmpleado
+				--, ut.idTipoUsuario
+				--, ut.nombre tipoUsuario
+				--, e.archFoto foto
+			FROM
+				sistema.usuario u
+				-- JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario 
+				-- 	AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
+				-- LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
+				-- LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento
+				-- LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent AND e.flag = 'ACTIVO'
+			WHERE
+				u.estado = 1
+				AND u.demo = 0
+				$filtros
+			;
+		";
+		return $this->db->query($sql);
+	}
+
+	public function obtenerInformacionOper($params = [])
+	{
+		$filtros = '';
+		!empty($params['idOper']) ? $filtros .= " AND o.idOper IN({$params['idOper']})" : '';
+
+		$sql = "
+		SELECT
+			o.idOper,
+			od.idCotizacion
+		FROM compras.oper o 
+		JOIN compras.operDetalle od ON od.idOper = o.idOper
+		WHERE o.estado = 1
+		{$filtros}
+	";
+
+	$query = $this->db->query($sql);
+
+	if ($query) {
+		$this->resultado['query'] = $query;
+		$this->resultado['estado'] = true;
+	}
+
+	return $this->resultado;
+	}
 }

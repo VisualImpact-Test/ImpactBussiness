@@ -30,16 +30,14 @@
                     <td class="td-center style-icons">
                         
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
-                        <!-- <a id="hrefEstado-<?= $row['idCotizacion']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoCotizacion" data-id="<?= $row['idCotizacion']; ?>" data-estado="<?= $row['estado']; ?>">
-                            <i class="fal fa-lg <?= $toggle ?>"></i>
-                        </a> -->
+                       
                         <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
-                            <label for="upload_orden_compra[<?= $row['idCotizacion'] ?>]" class="btn btn-outline-secondary border-0 mt-1 btn-subir-oc" data-toggle="tooltip" data-placement="top" title="Adjuntar OC "><i class="fa fa-lg fa-paperclip"></i></label>
-                            <input class="form-control upload_orden_compra d-none" type="file" id="upload_orden_compra[<?= $row['idCotizacion'] ?>]" name="upload_orden_compra" accept=".pdf">
-                            <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a> -->
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-generar-cotizacionEfectivaSinOc"><i class="fa fa-lg fa-paste" title="Procesar Sin Orden de Compra"></i></a>
-                           
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a>
                         <? } ?>
+
+                        <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO) { ?>
+                            <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a> -->
+                        <?}?>
                         
                         <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
                             <? if ($ix == 1) {?>

@@ -74,7 +74,7 @@
 
 <script>
     	$(document).ready(function() {
-			$('#filtroCotizacion').DataTable( {
+			Cotizacion.tablaCotizacionesOper = $('#filtroCotizacion').DataTable( {
 				columnDefs: [ {
 					orderable: false,
 					className: 'select-checkbox',

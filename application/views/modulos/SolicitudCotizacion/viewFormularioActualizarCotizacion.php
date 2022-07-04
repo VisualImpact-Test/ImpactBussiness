@@ -12,7 +12,7 @@
         height: 200px !important;
     }
 </style>
-<div class="ui form attached fluid segment p-4 <?=!empty($disabled) ? 'disabled' : '' ?>" >
+<div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled' : '' ?>">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
@@ -116,33 +116,35 @@
                                 <? } ?>
                             </a>
                         </div>
-                        <div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
-                            <?
-                            if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'])) {
-                                $prov = $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'];
-                                
+                        <? if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) { ?>
+                            <div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
+                                <?
                                 $wide = 'one';
-                                if($prov >= 2){
-                                    $wide = 'two';
-                                }
-                            }
-                            ?>
-                                <div class="ui <?=$wide?> column divided center aligned grid">
-                                    <?foreach($cotizacionProveedorVista[$row['idCotizacionDetalle']] as $view){?>
-                                    <div class="column">
-                                        <h4 class="ui header"><?=$view['razonSocial']?></h4>
-                                        <p><b><?=$view['cantidad']?></b> cantidad, <?= moneda($view['subTotal'])?></p>
-                                        <p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario'])?></p>
+                                if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'])) {
+                                    $prov = $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'];
 
-                                        
-                                        <div class="ui button btnElegirProveedor">Elegir
-                                            <input type="hidden" class="txtCostoProveedor" value="<?=$view['costoUnitario']?>">
-                                            <input type="hidden" class="txtProveedorElegido" value="<?=$view['idProveedor']?>">
+                                    if ($prov >= 2) {
+                                        $wide = 'two';
+                                    }
+                                }
+                                ?>
+                                <div class="ui <?= $wide ?> column divided center aligned grid">
+                                    <? foreach ($cotizacionProveedorVista[$row['idCotizacionDetalle']] as $view) { ?>
+                                        <div class="column">
+                                            <h4 class="ui header"><?= $view['razonSocial'] ?></h4>
+                                            <p><b><?= $view['cantidad'] ?></b> cantidad, <?= moneda($view['subTotal']) ?></p>
+                                            <p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario']) ?></p>
+
+
+                                            <div class="ui button btnElegirProveedor">Elegir
+                                                <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
+                                                <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <?}?>
+                                    <? } ?>
                                 </div>
-                        </div>
+                            </div>
+                        <? } ?>
 
                     </div>
                     <div class="ui left floated header">
@@ -164,7 +166,7 @@
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 
                                         <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
-                                        <input class="idProveedor" type='hidden' name='idProveedorForm' value="">
+                                        <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?=!empty($row['idProveedor'])? $row['idProveedor'] : ""; ?>">
                                         <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                     </div>
                                 </div>
@@ -234,46 +236,50 @@
                                 <div class="fields ">
                                     <div class="sixteen wide field">
                                         <div class="ui small images content-lsck-galeria">
-                                            <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-                                                if ($archivo['idTipoArchivo'] == TIPO_IMAGEN) { ?>
-                                                    <div class="ui fluid image content-lsck-capturas">
-                                                        <div class="ui dimmer dimmer-file-detalle">
-                                                            <div class="content">
-                                                                <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
+                                            <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
+                                                <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
+                                                    if ($archivo['idTipoArchivo'] == TIPO_IMAGEN) { ?>
+                                                        <div class="ui fluid image content-lsck-capturas">
+                                                            <div class="ui dimmer dimmer-file-detalle">
+                                                                <div class="content">
+                                                                    <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
+                                                                </div>
                                                             </div>
+                                                            <a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
+                                                            <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+                                                            <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
+                                                            <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="image/<?= $archivo['extension'] ?>">
+                                                            <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
+                                                            <img height="100" src="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
-                                                        <a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
-                                                        <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                                                        <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
-                                                        <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="image/<?= $archivo['extension'] ?>">
-                                                        <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
-                                                        <img height="100" src="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-                                                    </div>
-                                            <? }
-                                            } ?>
+                                                <? }
+                                                } ?>
+                                            <? } ?>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="fields ">
                                     <div class="sixteen wide field">
                                         <div class="ui small images content-lsck-files">
-                                            <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-                                                if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
-                                                    <div class="ui fluid image content-lsck-capturas">
-                                                        <div class="ui dimmer dimmer-file-detalle">
-                                                            <div class="content">
-                                                                <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
+                                            <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
+                                                <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
+                                                    if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
+                                                        <div class="ui fluid image content-lsck-capturas">
+                                                            <div class="ui dimmer dimmer-file-detalle">
+                                                                <div class="content">
+                                                                    <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
+                                                                </div>
                                                             </div>
+                                                            <a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
+                                                            <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+                                                            <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
+                                                            <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="application/<?= $archivo['extension'] ?>">
+                                                            <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
+                                                            <img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
-                                                        <a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
-                                                        <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                                                        <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
-                                                        <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="application/<?= $archivo['extension'] ?>">
-                                                        <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
-                                                        <img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-                                                    </div>
-                                            <? }
-                                            } ?>
+                                                <? }
+                                                } ?>
+                                            <? } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -365,10 +371,10 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?=$controller?>.registrarCotizacion(<?=$siguienteEstado?>)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(<?= $siguienteEstado ?>)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
                 <i class="send icon"></i>
             </span>
-            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?=$controller?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
                 <i class="save icon"></i>
             </span>
             <!-- <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">

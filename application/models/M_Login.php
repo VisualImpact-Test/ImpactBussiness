@@ -181,4 +181,44 @@ class M_Login extends MY_Model
 
 		return $this->db->insert('web.sessionFailedAttemps', $input);
 	}
+
+	public function encontrarUsuarioLogeado($input)
+	{
+		$filtros = "";
+		$value = array($input['usuario']);
+		$sql = "
+			DECLARE @fecha DATE = GETDATE(), @usuario VARCHAR(250) = ?;
+			SELECT DISTINCT
+				u.idUsuario
+				, e.idEmpleado
+				, u.apePaterno + ' ' + ISNULL(u.apeMaterno, '') + ' ' + u.nombres apeNom
+				, u.apePaterno + ', ' + u.nombres apeNom_corto
+				, u.apePaterno
+				, u.apeMaterno
+				, u.nombres
+				, td.breve tipoDocumento
+				, u.numDocumento
+				, u.externo
+				, ut.idTipoUsuario
+				, ut.nombre tipoUsuario
+				, e.archFoto foto
+				, u.ultimo_cambio_pwd
+				, DATEDIFF(day, u.ultimo_cambio_pwd, getdate()) AS dias_pasados
+				, flag_anuncio_visto
+			FROM
+				sistema.usuario u
+				JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario 
+					AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
+				LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
+				LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento
+				LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent AND e.flag = 'ACTIVO'
+			WHERE
+				u.idUsuario = @usuario
+				AND u.estado = 1
+				AND u.demo = 0
+				$filtros
+			;
+		";
+		return $this->db->query($sql, $value);
+	}
 }

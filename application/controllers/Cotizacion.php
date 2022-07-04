@@ -11,6 +11,7 @@ class Cotizacion extends MY_Controller
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
         $this->load->model('M_proveedor','model_proveedor');
+        $this->load->model('M_login','model_login');
         header('Access-Control-Allow-Origin: *');
         
     }
@@ -51,7 +52,7 @@ class Cotizacion extends MY_Controller
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        $post['estadoCotizacion'] = '1,2,3,4';
+        // $post['estadoCotizacion'] = '1,2,3,4';
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 
@@ -84,7 +85,7 @@ class Cotizacion extends MY_Controller
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        $post['estadoCotizacion'] = ESTADO_ENVIADO_CLIENTE;
+        $post['estadoCotizacion'] = ESTADO_COTIZACION_APROBADA;
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacionFiltro($post)['query']->result_array();
 
@@ -204,6 +205,7 @@ class Cotizacion extends MY_Controller
         if($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE){
             $data['update'] = [
                 'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE,
+                'total' => $post['totalForm'],
             ];
             $data['where'] = [
                 'idCotizacion' => $post['idCotizacion'],
@@ -220,20 +222,55 @@ class Cotizacion extends MY_Controller
         }
 
         if($post['tipoRegistro'] == ESTADO_COTIZACION_APROBADA){
-            $data['update'] = [
-                'idCotizacionEstado' => ESTADO_COTIZACION_APROBADA,
-            ];
-            $data['where'] = [
-                'idCotizacion' => $post['idCotizacion'],
-            ];
 
-            $this->model->actualizarCotizacion($data);
+            if(!empty($post['codigo_oc']) || !empty($post['motivo']) || (isset($post['file-item[0]']) && !empty($post['file-item[0]']))){
+                
+                $data['update'] = [
+                    'idCotizacionEstado' => ESTADO_COTIZACION_APROBADA,
+                    'codOrdenCompra' => !empty($post['codigo_oc']) ? $post['codigo_oc'] : NULL,
+                    'motivoAprobacion' => !empty($post['motivo']) ? $post['motivo'] : NULL,
+                ];
+                $data['where'] = [
+                    'idCotizacion' => $post['idCotizacion'],
+                ];
+    
+                $this->model->actualizarCotizacion($data);
+                
+                if(isset($post['file-item[0]']) && !empty($post['file-item[0]'])){
+                    $archivo = [
+                        'base64' => $post['file-item[0]'],
+                        'name' => $post['file-name[0]'],
+                        'type' => $post['file-type[0]'],
+                        'carpeta' => 'cotizacion',
+                        'nombreUnico' => 'COTI'.$post['idCotizacion'].str_replace(':', '', $this->hora).'OC',
+                    ];
+                    $archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/',$archivo['type']);
+					$insertArchivos[] = [
+						'idCotizacion' => $post['idCotizacion'],
+						'idTipoArchivo' => TIPO_ORDEN_COMPRA,
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => $tipoArchivo[1],
+						'estado' => true,
+						'idUsuarioReg' => $this->idUsuario
+					];
+                    if(!empty($insertArchivos)){
+                        $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+                    }
+                }
+    
+                $result['result'] = 1;
+                $result['msg']['title'] = 'Hecho!';
+                $result['msg']['content'] = createMessage(['type'=>1,'message' => 'Se procesó la cotizacion correctamente']);
+                $this->db->trans_complete();
+            }else{
+                $result['result'] = 0;
+                $result['msg']['title'] = 'Alerta!';
+                $result['msg']['content'] = createMessage(['type'=>2,'message' => 'Debe completar al menos un campo para continuar']);
+            }
 
-            $result['result'] = 1;
-            $result['msg']['title'] = 'Hecho!';
-            $result['msg']['content'] = createMessage(['type'=>1,'message' => 'Se procesó la cotizacion correctamente']);
-
-            $this->db->trans_complete();
             goto respuesta;
         }
 
@@ -371,22 +408,22 @@ class Cotizacion extends MY_Controller
                 'fechaCreacion' => getActualDateTime()
             ];
 
-            $data['archivos_arreglo'][$k] = getDataRefactorizada([
-                'base64' => $post["file-item[$k]"],
-                'type' => $post["file-type[$k]"],
-                'name' => $post["file-name[$k]"],
-            ]);
-
-            foreach($data['archivos_arreglo'][$k] as $key => $archivo){
-                $data['archivos'][$k][] = [
-                'base64' => $archivo['base64'],
-                'type' => $archivo['type'],
-                'name' => $archivo['name'],
-                'carpeta'=> 'cotizacion',
-                'nombreUnico' => uniqid(),
-                ];
+            if(!empty($post["file-name[$k]"])){
+                $data['archivos_arreglo'][$k] = getDataRefactorizada([
+                    'base64' => $post["file-item[$k]"],
+                    'type' => $post["file-type[$k]"],
+                    'name' => $post["file-name[$k]"],
+                ]);
+                foreach($data['archivos_arreglo'][$k] as $key => $archivo){
+                    $data['archivos'][$k][] = [
+                    'base64' => $archivo['base64'],
+                    'type' => $archivo['type'],
+                    'name' => $archivo['name'],
+                    'carpeta'=> 'cotizacion',
+                    'nombreUnico' => uniqid(),
+                    ];
+                }
             }
-            
         }
 
         $data['tabla'] = 'compras.cotizacionDetalle';
@@ -699,7 +736,7 @@ class Cotizacion extends MY_Controller
         echo json_encode($result);
     }
 
-    public function formularioProcesarSinOc()
+    public function formularioAprobar()
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
@@ -836,10 +873,10 @@ class Cotizacion extends MY_Controller
         
         $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
-        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
-        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
-        $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
-        $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 
         foreach($archivos as $archivo){
             $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
@@ -893,6 +930,118 @@ class Cotizacion extends MY_Controller
         $this->view($config);
     }
 
+    public function frmGenerarOper()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $ids = implode(',' ,$post['ids']);
+        $cotizaciones = $this->model->obtenerInformacionCotizacion(['id' => $ids])['query']->result_array();
+        $cotizacionDetalle = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
+
+        $dataParaVista = [];
+        $dataParaVista['totalOper'] = 0;
+        foreach($cotizaciones as $row){
+            $dataParaVista['cuenta'][$row['idCuenta']] = [
+                'id' => $row['idCuenta'],
+                'value' => $row['cuenta'] 
+            ];
+            $dataParaVista['cuentaCentroCosto'][$row['idCuentaCentroCosto']] = [
+                'id' => $row['idCuentaCentroCosto'],
+                'value' => $row['cuentaCentroCosto'] 
+            ];
+
+            $dataParaVista['totalOper'] += $row['total']; 
+        }
+
+        foreach($cotizacionDetalle as $rowDetalle){
+            $dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']] = $rowDetalle;
+        }
+        $dataParaVista['cotizaciones'] = $cotizaciones;
+        $dataParaVista['usuarios'] = $this->model->obtenerUsuarios()->result_array();
+
+        $result['result'] = 1;
+        $result['data']['width'] = '95%';
+        $result['msg']['title'] = 'GENERAR OPER';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/formRegistrarOper", $dataParaVista, true);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
+
+    public function registrarOper()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+
+        $insertOper = [
+            'requerimiento' => !empty($post['requerimiento']) ? $post['requerimiento'] : NULL,
+            'total' => !empty($post['totalOper']) ? $post['totalOper'] : NULL,
+            'fechaRequerimiento' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
+            'concepto' => !empty($post['concepto']) ? $post['concepto'] : NULL,
+            'idUsuarioReceptor' => !empty($post['receptor']) ? $post['receptor'] : NULL,
+            'idUsuarioReg' => $this->idUsuario,
+        ];
+
+        $oper = $this->model->insertar(['tabla'=>'compras.oper','insert'=> $insertOper]);
+
+        $post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
+
+        $insertOperDetalle = [];
+        $updateCotizacion = [];
+        $insertHistoricoCotizacion = [];
+        foreach($post['idCotizacion'] as $idCotizacion){
+            $insertOperDetalle[] = [
+                'idOper' => $oper['id'],
+                'idCotizacion' => $idCotizacion,
+            ];
+
+            $updateCotizacion[] = [
+                'idCotizacion' => $idCotizacion,
+                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+            ];
+            
+            $insertHistoricoCotizacion[] = [
+                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+                'idCotizacion' => $idCotizacion,
+                'idUsuarioReg' => $this->idUsuario,
+            ];
+        }
+
+        $operDet = $this->model->insertarMasivo('compras.operDetalle',$insertOperDetalle);
+        $updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
+        $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
+
+        if(!$oper['estado'] || $operDet['estado']){
+			$result['result'] = 0;
+			$result['data']['width'] = '40%';
+			$result['data']['html'] = createMessage(['type'=>2,'No se pudo generar el OPER']);
+            goto respuesta;
+		}else{
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Generar Oper';
+			$result['data']['html'] = getMensajeGestion('registroExitoso');
+            $dataParaVista = []; 
+            $ids = implode(',',$post['idCotizacion']);
+            $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
+
+            $html = $this->load->view("modulos/Cotizacion/correoGeneracionOper", $dataParaVista, true);
+            $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "SolicitudCotizacion/viewUpdateOper/{$oper['id']}"], true);
+            $config = [
+                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'asunto' => 'Generación de Oper',
+                'contenido' => $correo,
+            ];
+            email($config);
+		}
+        
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
 
 
 }
