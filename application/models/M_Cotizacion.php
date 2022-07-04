@@ -555,10 +555,13 @@ class M_Cotizacion extends MY_Model
 	public function obtenerInformacionDetalleCotizacionProveedores($params = [])
 	{
 		$filtros = "";
+
 		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+
+		$sqlUnion ="";
 		if(!empty($params['union'])){
 			$sqlUnion = "
 			UNION

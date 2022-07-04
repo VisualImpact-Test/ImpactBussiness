@@ -651,11 +651,11 @@ class SolicitudCotizacion extends MY_Controller
 
             $updateCotizacion[] = [
                 'idCotizacion' => $idCotizacion,
-                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+                'idCotizacionEstado' => ESTADO_OC_ENVIADA,
             ];
             
             $insertHistoricoCotizacion[] = [
-                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+                'idCotizacionEstado' => ESTADO_OC_ENVIADA,
                 'idCotizacion' => $idCotizacion,
                 'idUsuarioReg' => $this->idUsuario,
             ];

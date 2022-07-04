@@ -34,6 +34,13 @@
                             <a target="_blank" href="../SolicitudCotizacion/viewUpdateOper/<?= $row['idOper'] ?>" class="btn btn-outline-secondary border-0 btn-update-oper"><i class="file invoice dollar icon large" title="Procesar Sin Orden de Compra"></i></a>
                         <? } ?>
 
+                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_GENERADA || $row['idCotizacionEstado'] == ESTADO_OC_ENVIADA) { ?>
+                             <a href="/ImpactBussiness/formato_orden_compra.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
+                        <? } ?>
+                        <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
+                             <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a> 
+                        <? } ?>
+
                         <!--Cambio temporal-->
 
                         <? if ($row['idCotizacionEstado'] == 5 || $row['idCotizacionEstado'] == 6) { ?>
