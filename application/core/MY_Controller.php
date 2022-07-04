@@ -17,6 +17,7 @@ class MY_Controller extends CI_Controller{
 
 	var $foto;
 	var $usuario;
+	var $usuario_completo;
 	var $demo;
 	var $navbar_permiso;
 
@@ -38,14 +39,17 @@ class MY_Controller extends CI_Controller{
 	var $flag_externo;
 	var $sessIdDistribuidoraSucursal;
 
+	var $hora;
+
 	var $flagactualizarListas;
 
 	public function __construct(){
 		parent::__construct();
-		$this->version = '1.0.2';
+		$this->version = '1.0.3';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
+		$this->hora= date('H:i:s');
 		$this->sessId = $this->session->userdata('sessionId');
 		$this->namespace = $this->router->fetch_class();
 		$this->idUsuario = $this->session->userdata('idUsuario');
@@ -61,6 +65,7 @@ class MY_Controller extends CI_Controller{
 		$this->sessNomProyecto = $this->session->userdata('proyecto');
 		$this->permisos = $this->session->userdata('permisos');
 		$this->usuario = $this->session->userdata('nombres');
+		$this->usuario_completo = $this->session->userdata('apeNom');
 		$this->demo = $this->session->userdata('demo');
 		$this->foto = $this->session->userdata('foto');
 		$this->navbar_permiso = $this->session->userdata('pages');

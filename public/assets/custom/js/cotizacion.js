@@ -8,6 +8,7 @@ var Cotizacion = {
 	itemsLogistica: [],
 	htmlG: '',
 	htmlCotizacion: '',
+	tablaCotizacionesOper : '',
 
 	load: function () {
 
@@ -87,24 +88,10 @@ var Cotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de registrar esta cotizacion?" });';
-				// btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
-				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.generarOPER()", content: "¿Esta seguro de continuar?" });';
+				btn[1] = { title: 'Continuar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
-
-				Cotizacion.modalIdForm = modalId;
-
-				Cotizacion.htmlG = $('#listaItemsCotizacion tbody tr').html();
-				$('#listaItemsCotizacion tbody').html('');
-				$(".btn-add-row").click();
-
-				$('.dropdownSingleAditions')
-				.dropdown({
-					allowAdditions: true
-				})
-				;
 
 			});
 		});
@@ -448,12 +435,12 @@ var Cotizacion = {
 			});
 		});
 
-		$(document).on('click', '.btn-generar-cotizacionEfectivaSinOc', function () {
+		$(document).on('click', '.btn-aprobar-cotizacion', function () {
 			++modalId;
 			let data = {};
 				data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': Cotizacion.url + 'formularioProcesarSinOc', 'data': jsonString };
+			let config = { 'url': Cotizacion.url + 'formularioAprobar', 'data': jsonString };
 
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -467,7 +454,7 @@ var Cotizacion = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(5)", content: "¿Esta seguro de enviar esta cotizacion?" });';
-				btn[1] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+				btn[1] = { title: 'Aprobar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
@@ -498,6 +485,118 @@ var Cotizacion = {
 
 			});
 		});
+
+		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
+			var control = $(this);
+
+			var data = control.data();
+			// var frm = frmLiveAuditoria;
+
+			var id = '';
+			var nameImg = '';
+			if( data['row'] ){
+				id = data['row'];
+				name = 'file-item';
+				nameType = 'file-type';
+				nameFile = 'file-name';
+			}else{
+				id = 0;
+				name = 'file-item';
+				nameType = 'file-type';
+				nameFile = 'file-name';
+			}
+			
+			if( control.val() ){
+				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
+				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
+				var num = control.get(0).files.length;
+
+				list: {
+					var total = $('input[name="' + name + '[' + id + ']"]').length;
+					if( (num + total) > control.data('fileMax') ){
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${control.data('fileMax')} archivo como máximo` });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+
+						break list;
+					}
+
+					for(var i = 0; i < num; ++i){
+						var size = control.get(0).files[i].size;
+							size = Math.round((size / 1024)); 
+
+						if( size > 2048 ){
+							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 1MB por archivo' });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+
+							break list;
+						}
+					}
+                    let file = '';
+                    let imgFile = '';
+                    let contenedor = '';
+					for(var i = 0; i < num; ++i){
+                        file = control.get(0).files[i];
+                            Fn.getBase64(file).then(function(fileBase){
+
+                                if(fileBase.type.split('/')[0] == 'image'){
+                                    imgFile = fileBase.base64;
+                                    contenedor = content;
+                                }else{
+                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
+                                    contenedor = content_files;
+                                }
+
+                                var fileApp = '';
+                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
+									fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
+                                        fileApp += `
+                                        <div class="ui dimmer dimmer-file-detalle">
+                                            <div class="content">
+                                                <p class="ui tiny inverted header">${fileBase.name}</p>
+                                            </div>
+                                        </div>`;
+                                        fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
+                                        fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
+                                        fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
+                                        fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
+                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+                                    fileApp += '</div>';
+                                    
+                                    contenedor.append(fileApp);
+                                    control.parents('.nuevo').find('.dimmer-file-detalle')
+                                    .dimmer({
+                                        on: 'click'
+                                    });
+                            });
+
+					}
+				}
+
+				control.val('');
+			}
+		});
+
+		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function(e){
+			e.preventDefault();
+		});
+
+		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
+			e.preventDefault();
+			var control = $(this);
+			control.parents('.content-lsck-capturas:first').remove();
+		});
 		
 	},
 
@@ -521,6 +620,60 @@ var Cotizacion = {
 		});
 	},
 
+	generarOPER: function(){
+		var ids = [];
+
+		if (typeof Cotizacion.tablaCotizacionesOper !== 'undefined') {
+			$.map(Cotizacion.tablaCotizacionesOper.rows('.selected').nodes(), function (item) {
+				ids.push($(item).data("id"));
+			});
+		}
+
+		if (ids.length === 0) {
+			btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' };
+			var content = "No ha seleccionado ningún registro.</strong>";
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: content, btn: btn });
+			return false;
+		}
+
+		let data = { ids: ids};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': Cotizacion.url + 'frmGenerarOper', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_guardar()", content: "¿Esta seguro de guardar y enviar el OPER ?" });';
+			btn[1] = { title: 'Enviar', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			$('.simpleDropdown').dropdown();
+		});
+		
+
+	},
+	generarOPER_guardar: function (){
+		
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
+		let config = { 'url': Cotizacion.url + 'registrarOper', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
+		});
+	},
 	actualizarAutocomplete: function () {
 		let tipo = 1;
 		let items = [];

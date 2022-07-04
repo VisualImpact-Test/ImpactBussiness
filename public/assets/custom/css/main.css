@@ -1214,4 +1214,9 @@ body .grecaptcha-badge {
   z-index: 9999999999;
 }
 
-
+.disabled-visible{
+  opacity: 1 !important;
+}
+.disabled-visible .field{
+  opacity: 1 !important;
+}

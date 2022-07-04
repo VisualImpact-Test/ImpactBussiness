@@ -6,6 +6,8 @@ var SolicitudCotizacion = {
 			.dimmer({
 				on: 'click'
 			});
+
+			Cotizacion.actualizarTotal();
 		});
 	},
 	registrarCotizacion: function (tipoRegistro = 1) {
@@ -49,6 +51,26 @@ var SolicitudCotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	registrarOrdenCompra: function(tipoRegistro){
+		let formValues = Fn.formSerializeObject('formRegistroOrdenCompra');
+			formValues.tipoRegistro = tipoRegistro;
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = SolicitudCotizacion.url + "registrarOrdenCompra";
+		let config = { url: url, data: jsonString };
+		
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: '40%' });
+		});
+	}
 }
 var Cotizacion = {
 
@@ -332,6 +354,34 @@ var Cotizacion = {
 			
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
+			Cotizacion.actualizarTotal();
+		});
+		$(document).on('focusout', '.costoFormLabel', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let costoForm = thisControlParents.find('.costoForm');
+			let costoFormLabel = thisControlParents.find('.costoFormLabel');
+			let precioForm = thisControlParents.find('.precioForm');
+			let precioFormLabel = thisControlParents.find('.precioFormLabel');
+			let fieldPrecioFormLabel = precioFormLabel.closest('.field');
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+
+			let costo = Number(thisControl.val());
+			let precio = Number(precioForm.val());
+			let costoAnterior = Number(costoForm.val());
+			if(costo > precio) {
+				thisControl.val(costoAnterior);
+				fieldPrecioFormLabel.transition('shake');
+				$("#nagPrecioValidacion").nag({
+					persist:true
+				});
+				return false;
+			}
+			costoForm.val(thisControl.val());
+			cantidadForm.keyup();
+			
+			
 			Cotizacion.actualizarTotal();
 		});
 
@@ -632,17 +682,21 @@ var Cotizacion = {
 			++modalId;
 			let costoForm = $(this).parents('.nuevo').find('.costoForm')
 			let costoFormLabel = $(this).parents('.nuevo').find('.costoFormLabel');
-			let precio = $(this).find('.txtCostoProveedor').val();
 			let cantidadForm = $(this).parents('.nuevo').find('.cantidadForm');
 			let gapForm = $(this).parents('.nuevo').find('.gapForm');
 			let proveedorForm = $(this).parents('.nuevo').find('.idProveedor');
-			let proveedorElegido = $(this).parents('.nuevo').find('.txtProveedorElegido').val();
+			let proveedoresForm = $(this).parents('.nuevo').find('.proveedoresForm');
+			
+			let precio = $(this).find('.txtCostoProveedor').val();
+			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
+			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
 
 			costoForm.val(precio);
 			costoFormLabel.val(moneyFormatter.format(precio));
 
 			proveedorForm.val(proveedorElegido);
-
+			proveedoresForm.val(proveedorElegidoName);
+			
 			cantidadForm.keyup();
 			gapForm.keyup();
 

@@ -50,7 +50,7 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-        $post['estadoCotizacion'] = '2,5,6';
+     
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 
@@ -401,7 +401,7 @@ class SolicitudCotizacion extends MY_Controller
             $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
             $config = [
                 'to' => 'aaron.ccenta@visualimpact.com.pe',
-                'asunto' => 'Solicitud de Cotizacion',
+                'asunto' => 'Solicitud de cotizacion',
                 'contenido' => $correo,
             ];
             email($config);
@@ -530,9 +530,161 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
         $config['data']['siguienteEstado'] = ESTADO_CONFIRMADO_COMPRAS;
         $config['data']['controller'] = 'SolicitudCotizacion';
+        $config['data']['disabled'] = false;
         $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacion';
 
         $this->view($config);
+    }
+
+    public function viewUpdateOper($idOper = '')
+    {
+
+        if(empty($idOper)){
+            redirect('SolicitudCotizacion','refresh');
+        }
+        
+        $config = array();
+
+        $this->load->library('Mobile_Detect');
+
+		$detect = $this->mobile_detect;
+        
+        $config['data']['col_dropdown'] = 'four column';
+        $detect->isMobile() ? $config['data']['col_dropdown'] = '' : '';
+        $detect->isTablet() ? $config['data']['col_dropdown'] = 'three column' : '';
+         
+        $config['nav']['menu_active'] = '131';
+        $config['css']['style'] = array(
+            'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/css/floating-action-button'
+        );
+        $config['js']['script'] = array(
+            // 'assets/libs/datatables/responsive.bootstrap4.min',
+            // 'assets/custom/js/core/datatables-defaults',
+            'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/languages/all',
+            'assets/libs/handsontable@7.4.2/dist/moment/moment',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/core/HTCustom',
+            'assets/custom/js/viewAgregarCotizacion'
+        );
+        $oper = $this->model->obtenerInformacionOper(['idOper' => $idOper])['query']->result_array();
+        $ids = [];
+        foreach($oper as $v){
+            $ids[] = $v['idCotizacion'];
+            $config['data']['oper'][$v['idOper']] = $v;
+        }
+
+        $idCotizacion = implode(",",$ids);
+
+        $config['data']['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+        //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'union'=>true])['query']->result_array();
+        $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'union' => true])['query']->result_array();
+
+        foreach($archivos as $archivo){
+            $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
+        }
+        foreach($cotizacionProveedores as $cotizacionProveedor){
+            $config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
+        }
+        foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
+            $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
+        }
+
+        $config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
+        $config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+        $proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado'=>2])['query']->result_array();
+
+        foreach($proveedores as $proveedor){
+            $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
+        } 
+
+        $itemServicio =  $this->model->obtenerItemServicio();
+        foreach ($itemServicio as $key => $row) {
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+        }
+        foreach ($data['itemServicio'] as $k => $r) {
+            $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+        }
+        $data['itemServicio'][0] = array();
+        $config['data']['itemServicio'] = $data['itemServicio'];
+
+        $config['single'] = true;
+        
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
+        $config['data']['title'] = 'Cotizacion';
+        $config['data']['message'] = 'Lista de Cotizacions';
+        $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['data']['siguienteEstado'] = ESTADO_OC_ENVIADA;
+        $config['data']['controller'] = 'SolicitudCotizacion';
+        $config['data']['disabled'] = false;
+        $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioGenerarOrdenCompra';
+
+        $this->view($config);
+    }
+
+    public function registrarOrdenCompra()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
+
+        $updateCotizacion = [];
+        $insertHistoricoCotizacion = [];
+        foreach($post['idCotizacion'] as $idCotizacion){
+
+            $updateCotizacion[] = [
+                'idCotizacion' => $idCotizacion,
+                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+            ];
+            
+            $insertHistoricoCotizacion[] = [
+                'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+                'idCotizacion' => $idCotizacion,
+                'idUsuarioReg' => $this->idUsuario,
+            ];
+        }
+
+
+        $updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
+        $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
+
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Generar OC';
+        $result['data']['html'] = getMensajeGestion('registroExitoso');
+        $dataParaVista = []; 
+        $ids = implode(',',$post['idCotizacion']);
+        $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
+
+        $html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
+        $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormulariProveedor/viewOrdenCompra/"], true);
+        $config = [
+            'to' => 'aaron.ccenta@visualimpact.com.pe',
+            'asunto' => 'Generación de OC',
+            'contenido' => $correo,
+        ];
+        email($config);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
     }
 
 

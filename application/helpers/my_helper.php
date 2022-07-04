@@ -1217,10 +1217,10 @@ function htmlSelectOptionArray2($params = [])
 	!empty($params['value']) ? $v = $params['value'] : $v = 'value';
 	!empty($params['id']) ? $id = $params['id'] : $id = 'id';
 	!empty($params['class']) ? $class = $params['class'] : $class = 'text-uppercase';
-
+	
 	foreach ($query as $f) {
-		if (!empty($idSelected)) {
-			if ($f[$id] == $idSelected) {
+		if (!empty($idSelected) || !empty($params['selectAll'])) {
+			if ($f[$id] == $idSelected || !empty($params['selectAll'])) {
 				$fix = 'selected';
 			} else {
 				$fix = '';
