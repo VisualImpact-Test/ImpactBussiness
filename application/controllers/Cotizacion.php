@@ -48,6 +48,40 @@ class Cotizacion extends MY_Controller
         $this->view($config);
     }
 
+    public function test(){
+        $config = array();
+        $config['nav']['menu_active'] = '131';
+        $config['css']['style'] = array(
+            'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/select.dataTables.min',
+            'assets/libs/photoswipe/photoswipe',
+        );
+        $config['js']['script'] = array(
+            // 'assets/libs/datatables/responsive.bootstrap4.min',
+            // 'assets/custom/js/core/datatables-defaults',
+            'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+            'assets/libs/handsontable@7.4.2/dist/languages/all',
+            'assets/libs/handsontable@7.4.2/dist/moment/moment',
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/core/HTCustom',
+            'assets/custom/js/cotizacion',
+            'assets/custom/js/dataTables.select.min',
+            'assets/libs/photoswipe/photoswipe.min',
+            'assets/libs/photoswipe/photoswipe-ui-default.min',
+        );  
+        $config['single'] = true;
+
+        $config['data']['icon'] = 'fas fa-money-check-edit-alt';
+        $config['data']['title'] = 'Cotizacion';
+        $config['data']['message'] = 'Lista de Cotizacions';
+        $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['view'] = 'modulos/Cotizacion/test';
+
+        $this->view($config);
+    }
+
     public function reporte()
     {
         $result = $this->result;
@@ -318,6 +352,8 @@ class Cotizacion extends MY_Controller
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'fee' => $post['feeForm'],
             'total' => $post['totalForm'],
+            'total_fee' => $post['totalFormFee'],
+            'total_fee_igv' => $post['totalFormFeeIgv'],
             'idPrioridad' => $post['prioridadForm'],
             'motivo' => $post['motivoForm'],
             'comentario' => $post['comentarioForm'],

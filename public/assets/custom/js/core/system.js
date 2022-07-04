@@ -80,6 +80,9 @@ $.ajaxSetup({
 	timeout: 1 * 800 * 1000,/*1 minuto*/
 });
 
+const KB_MAXIMO_ARCHIVO = 7168;
+const IGV_SYSTEM = 0.18;
+
 const RUTA_WIREFRAME = '../public/assets/images/wireframe/';
 const COD_ARTICULO = {'id' : 1, 'nombre' : 'ARTICULO'};
 const COD_SERVICIO = {'id' : 2, 'nombre' : 'SERVICIO'};

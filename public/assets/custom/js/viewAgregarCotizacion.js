@@ -343,17 +343,24 @@ var Cotizacion = {
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let costoForm = thisControlParents.find('.costoForm');
+			let precioForm = thisControlParents.find('.precioForm');
+			let gapForm = thisControlParents.find('.gapForm');
 
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
 
+			gapForm.keyup();
 			let cantidad = Number(thisControl.val());
 			let costo = Number(costoForm.val());
+			let precio = Number(precioForm.val());
 
-			let subTotal = Fn.multiply(cantidad, costo);
+			let subTotal = Fn.multiply(cantidad, precio);
+
 			
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
+
+			
 			Cotizacion.actualizarTotal();
 		});
 		$(document).on('focusout', '.costoFormLabel', function (e) {
@@ -390,17 +397,25 @@ var Cotizacion = {
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let costoForm = thisControlParents.find('.costoForm');
-
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+			let subTotalForm = thisControlParents.find('.subtotalForm');
+			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
+			
 			let precioForm = thisControlParents.find('.precioForm');
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
 
 			let gap = Number(thisControl.val());
 			let costo = Number(costoForm.val());
 
+			let cantidad = Number(cantidadForm.val());
 			let precio = (costo + (costo * (gap/100)));
-			
+			let subTotal = Fn.multiply(cantidad, precio);
+
 			precioForm.val(precio);
 			precioFormLabel.val(moneyFormatter.format(precio));
+
+			subTotalForm.val(subTotal);
+			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 			Cotizacion.actualizarTotal();
 		});
 
@@ -584,8 +599,8 @@ var Cotizacion = {
 						var size = control.get(0).files[i].size;
 							size = Math.round((size / 1024)); 
 
-						if( size > 2048 ){
-							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 1MB por captura' });
+						if( size > KB_MAXIMO_ARCHIVO ){
+							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 7MB por captura' });
 							Fn.showModal({
 								'id': ++modalId,
 								'show': true,
@@ -865,9 +880,23 @@ var Cotizacion = {
 		$.each($('.subtotalForm'), function (index, value) {
 			total = Number(total) + Number($(value).val());
 		})
-		
+
+		let fee = Number($("#feeForm").val());
+		let igvForm = $('.igvForm');
+
+		let igv = 0;
+
+		if(igvForm.is(":checked")){
+			igv = IGV_SYSTEM;
+		}
+		let totalFee = (total) + (total*(fee/100))
+		let totalFeeIgv = (totalFee) + (totalFee * igv);
+
+		$('.totalFormLabel').val(moneyFormatter.format(Number(totalFeeIgv)));
+
+		$('.totalFormFeeIgv').val(totalFeeIgv);
+		$('.totalFormFee').val(totalFee);
 		$('.totalForm').val(total);
-		$('.totalFormLabel').val(moneyFormatter.format(Number(total)));
 	},
 
     actualizarPopupsTitle: () => {

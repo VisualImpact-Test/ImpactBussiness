@@ -483,7 +483,7 @@ class M_Cotizacion extends MY_Model
 			SELECT 
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
-			ISNULL(i.nombre,cd.nombre) item,
+			ISNULL(cd.nombre,'') item,
 			cd.idItem,
 			cd.cantidad,
 			cd.costo,
@@ -499,7 +499,7 @@ class M_Cotizacion extends MY_Model
 			FROM 
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
-			JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
+			LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			WHERE 
 			1 = 1
