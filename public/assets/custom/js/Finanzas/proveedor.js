@@ -310,24 +310,20 @@ var Proveedor = {
 		if (!$("#datosValidos").is(":checked") || !$("#contribuyenteValido").is(":checked")) {
 			msgValidar = "<label style='color: red;'>¿Esta seguro de <b>RECHAZAR</b> el proveedor?</label>"
 			idEstado = 4;
+			if ($('#informacionEstado').val() == '' && (!$("#datosValidos").is(":checked") || !$("#contribuyenteValido").is(":checked"))) {
+				++modalId;
+				let btn = [];
+				let fn = [];
+				let message1 = Fn.message({"type":2, "message":"Debe llenar la respuesta."});
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
+				return false;
+			}
 		}else{
 			msgValidar = "¿Esta seguro de <b>VALIDAR</b> el proveedor?"
 			idEstado = 2;
 		}
-
-		// ++modalId;
-		// let btn = [];
-		// let fn = [];
-		// let message1 = Fn.message({"type":2, "message":"Debe confirmar la validez de los datos"});
-		//
-		// fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		// btn[0] = { title: 'Cerrar', fn: fn[0] };
-		//
-		// Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
-		//
-		// return false;
-
-
 		Fn.showConfirm({ fn: "Proveedor.validarProveedor("+idEstado+","+datosValidos+","+contribuyenteValido+")", content: msgValidar});
 	}
 }

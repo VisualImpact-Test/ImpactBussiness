@@ -213,6 +213,19 @@
     <div class="row">
         <div class="col-md-10 child-divcenter">
             <fieldset class="scheduler-border">
+                <legend class="scheduler-border">Title</legend>
+                <div class="<?= ($disabled) ? "disabled" : "" ?>">
+                    <div class="control-group child-divcenter row" style="width:85%">
+                        <label class="form-control col-md-4" for="costo" style="border:0px;">Costo (S/):</label>
+                        <input class="form-control col-md-8" id="costo" name="costo" patron="requerido,numeros" value="<?= $costo ?>">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10 child-divcenter">
+            <fieldset class="scheduler-border">
                 <legend class="scheduler-border">Información adicional</legend>
                 <div class="<?= ($disabled) ? "disabled" : "" ?>">
                     <div class="control-group child-divcenter row" style="width:85%">
@@ -222,6 +235,7 @@
             </fieldset>
         </div>
     </div>
+    <?php if(isset($informacionRespuesta)): ?>
     <div class="row">
         <div class="col-md-10 child-divcenter">
             <fieldset class="scheduler-border">
@@ -234,6 +248,7 @@
             </fieldset>
         </div>
     </div>
+  <?php endif ?>
 </form>
 <script>
     var provincia = <?= json_encode($listadoProvincias); ?>;

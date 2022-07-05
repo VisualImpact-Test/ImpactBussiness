@@ -176,6 +176,7 @@ class Proveedor extends MY_Controller
                 'estado' => $row['estado'],
                 'estadoIcono' => $row['estadoIcono'],
                 'estadoToggle' => $row['estadotoggle'],
+                'costo' => $row['costo']
             ];
 
             if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];

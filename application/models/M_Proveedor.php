@@ -149,6 +149,7 @@ class M_Proveedor extends MY_Model
 				, ep.nombre AS estado
 				, ep.icono AS estadoIcono
 				, ep.toggle AS estadotoggle
+				, p.costo
 			FROM compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor

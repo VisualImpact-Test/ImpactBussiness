@@ -141,7 +141,6 @@ class Proveedor extends MY_Controller
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-
         $dataParaVista = [];
         $dataParaVisitaMetodoPago = [];
         $departamentosCobertura = [];
@@ -172,6 +171,7 @@ class Proveedor extends MY_Controller
                 'estado' => $row['estado'],
                 'estadoIcono' => $row['estadoIcono'],
                 'estadoToggle' => $row['estadotoggle'],
+                'costo' => $row['costo'] || '0'
             ];
 
             if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
@@ -211,7 +211,10 @@ class Proveedor extends MY_Controller
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Proveedor';
         $dataParaVista['disabled'] = false;
-        $dataParaVista['informacionRespuesta'] = $this->model->obtenerUltimaRespuestaEstado($post['idProveedor'])->row(0)->informacion;
+        $info = $this->model->obtenerUltimaRespuestaEstado($post['idProveedor']);
+        if ($info->num_rows() > 0) {
+          $dataParaVista['informacionRespuesta'] = $info->row(0)->informacion;
+        }
         if($post['formularioValidar']){
             $result['msg']['title'] = 'Validar Proveedor';
             $dataParaVista['disabled'] = true;
@@ -350,7 +353,8 @@ class Proveedor extends MY_Controller
             'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
             'nombreContacto' => $post['nombreContacto'],
             'correoContacto' => $post['correoContacto'],
-            'numeroContacto' => $post['numeroContacto']
+            'numeroContacto' => $post['numeroContacto'],
+            'costo' => $post['costo']
         ];
         if (isset($post['idProveedorEstado'])) {
           $data['update']['idProveedorEstado'] = $post['idProveedorEstado'];

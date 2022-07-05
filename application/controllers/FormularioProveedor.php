@@ -124,7 +124,7 @@ class FormularioProveedor extends MY_Controller
 			'cod_ubigeo' => $post['distrito'],
 			'direccion' => $post['direccion'],
 			'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
-			'idProveedorEstado' => 1,
+			'idProveedorEstado' => 5,
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto']
