@@ -45,9 +45,9 @@
                             <i class="sync icon"></i>
                             Refresh
                         </div>
-                        <div class="ui small red button btnLogoutProveedor">
-                            <i class="power off icon"></i>
-                            <span class="">Salir</span>
+                        <div class="ui small red button btnVolverProveedor">
+                            <i class="fas fa-solid fa-caret-left icon"></i>
+                            <span class="">Volver</span>
                         </div>
 
                     </th>

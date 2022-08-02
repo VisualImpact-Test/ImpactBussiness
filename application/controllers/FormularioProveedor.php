@@ -20,7 +20,7 @@ class FormularioProveedor extends MY_Controller
 			redirect('FormularioProveedor/Cotizaciones','refresh');
 			exit();
 		}
-		$config['css']['style'] = array();
+		$config['css']['style'] = array('');
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedores');
 		$config['view'] = 'formularioProveedores/login';
 		$config['data']['title'] = 'Formulario Proveedores';
@@ -72,7 +72,7 @@ class FormularioProveedor extends MY_Controller
 
 		$result['result'] = 1;
 		$result['msg']['content'] = createMessage(['type'=> 1 , 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
-		$result['data']['url'] = base_url()."FormularioProveedor/cotizaciones";
+		$result['data']['url'] = base_url()."FormularioProveedor/cotizacionesLista";
 
 		$this->session->set_userdata('proveedor',$proveedor);
 		respuesta:
@@ -332,7 +332,56 @@ class FormularioProveedor extends MY_Controller
 			return (object)['success' => 0];
 		}
 	}
+	public function cotizacionesLista()
+	{
+		$proveedor = $this->session->userdata('proveedor');
+		if(empty($proveedor)){
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
 
+		$config['css']['style'] = array();
+		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizacionesLista');
+
+		$config['view'] = 'formularioProveedores/cotizacionesLista';
+		$config['data']['title'] = 'Formulario Proveedores';
+		$config['data']['icon'] = 'fa fa-home';
+		$config['single'] = true;
+		$this->view($config);
+	}
+	public function cotizacionesListaRefresh()
+	{
+		$proveedor = $this->session->userdata('proveedor');
+		if(empty($proveedor)){
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+		$result = $this->result;
+		// $post = json_decode($this->input->post('data'), true);
+		$post['idProveedor'] = $proveedor['idProveedor'];
+		$dataParaVista = [];
+		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
+
+		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor']], true);
+
+    $result['result'] = 1;
+    $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
+    $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
+    $result['data']['configTable'] =  [
+        'columnDefs' =>
+        [
+            0 =>
+            [
+                "visible" => false,
+                "targets" => []
+            ]
+        ]
+    ];
+
+    echo json_encode($result);
+		// echo json_encode($this->model->obtenerListaCotizaciones($post)->result_array());
+
+	}
 	public function cotizaciones($idCotizacion = '0')
 	{
 		$proveedor = $this->session->userdata('proveedor');
@@ -353,9 +402,8 @@ class FormularioProveedor extends MY_Controller
 		$cotizacionProveedor = $this->model->obtenerCotizacionDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $idCotizacion,'estado' => 1])['query']->row_array();
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionCotizacion(['id' => $cotizacionProveedor['idCotizacion']])['query']->row_array();
 
-
 		$config['single'] = true;
-		if(empty($idCotizacion) || empty($cotizacionProveedor)){
+		if( empty($idCotizacion) || empty($cotizacionProveedor)){
 			$config['view'] = 'formularioProveedores/validacionEmail';
 		}
 		$this->view($config);

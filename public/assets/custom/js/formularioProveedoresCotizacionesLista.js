@@ -6,9 +6,9 @@ var FormularioProveedores = {
 	load: function () {
 
 		$(document).ready(function(){
-			if($('#idCotizacion').val()){
+			// if($('#idCotizacion').val()){
 				FormularioProveedores.actualizarTable();
-			}
+			// }
 		});
 
 		$(document).on("click",".btnGuardarCotizacion", ()=>{
@@ -30,6 +30,11 @@ var FormularioProveedores = {
 				}
 			});
 		});
+		$(document).on('click', '.btn-detalleCotizacion', function () {
+			let id = $(this).parents('tr:first').data('id');
+			Fn.goToUrl(site_url+'FormularioProveedor/cotizaciones/' + id);
+
+		});
 		$(document).on("click",".btnPopupCotizacionesProveedor", ()=>{
 			let idForm = 'frmCotizacionesProveedor';
 			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
@@ -49,7 +54,6 @@ var FormularioProveedores = {
 				}
 			});
 		});
-		/*
 		$(document).on("click",".btnLogoutProveedor", ()=>{
 
 			let jsonString = {};
@@ -64,17 +68,13 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
 			});
 		});
-		*/
-		$(document).on("click",".btnVolverProveedor", ()=>{
-			Fn.goToUrl(site_url+'FormularioProveedor/cotizacionesLista');
-		});
 		$(document).on("click",".btnRefreshCotizaciones", ()=>{
 			FormularioProveedores.actualizarTable();
 		});
 
 	},
 	actualizarTable: function(){
-		var ruta = 'cotizacionesRefresh';
+		var ruta = 'cotizacionesListaRefresh';
 		var config = {
 			'idFrm': FormularioProveedores.frm
 			, 'url': FormularioProveedores.url + ruta

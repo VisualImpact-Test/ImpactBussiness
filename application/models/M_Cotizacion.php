@@ -122,7 +122,7 @@ class M_Cotizacion extends MY_Model
 				, p.idSolicitante
 				, p.fechaDeadline
 				, p.flagIgv igv
-				, p.fee 
+				, p.fee
 				, p.idCotizacionEstado
                 , p.idPrioridad
 				, p.motivo
@@ -142,9 +142,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
-
 		$query = $this->db->query($sql);
-
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
@@ -153,7 +151,6 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-
 
 	public function obtenerInformacionCotizacionFiltro($params = [])
 	{
@@ -179,7 +176,7 @@ class M_Cotizacion extends MY_Model
 				, p.estado
 				, p.fechaRequerida
 				, p.flagIgv igv
-				, p.fee 
+				, p.fee
 				, p.idCotizacionEstado
                 , p.idPrioridad
 				, p.motivo
@@ -189,12 +186,11 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
-			WHERE 
+			WHERE
 			1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
-
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -225,7 +221,7 @@ class M_Cotizacion extends MY_Model
 				, p.codCotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, ce.nombre AS cotizacionEstado
-			
+
 				, it.idItemTipo
 				, it.nombre AS itemTipo
 				, pd.nombre AS item
@@ -287,7 +283,7 @@ class M_Cotizacion extends MY_Model
 				, lt.idProveedor
 				, lt.proveedor
 				, lt.tipo
-				, CASE 
+				, CASE
 					WHEN diasVigencia <= 7 THEN 'green'
 					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
 					ELSE 'red' END
@@ -296,11 +292,11 @@ class M_Cotizacion extends MY_Model
 			FROM listTarifario lt
 		)
 
-		SELECT 
+		SELECT
 		ls.*,
 		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
-		FROM 
-		lst_tarifario_det ls 
+		FROM
+		lst_tarifario_det ls
 		";
 
 		$result = $this->db->query($sql)->result_array();
@@ -480,7 +476,7 @@ class M_Cotizacion extends MY_Model
 
 
 		$sql = "
-			SELECT 
+			SELECT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			ISNULL(cd.nombre,'') item,
@@ -496,12 +492,12 @@ class M_Cotizacion extends MY_Model
 			cd.enlaces,
 			cd.idProveedor,
 			p.razonSocial
-			FROM 
+			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
-			WHERE 
+			WHERE
 			1 = 1
 			{$filtros}
 		";
@@ -526,18 +522,18 @@ class M_Cotizacion extends MY_Model
 
 
 		$sql = "
-			SELECT 
+			SELECT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			cda.idTipoArchivo,
 			cda.nombre_inicial,
 			cda.nombre_archivo,
 			cda.extension
-			FROM 
+			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			JOIN compras.cotizacionDetalleArchivos cda ON cda.idCotizacionDetalle = cd.idCotizacionDetalle
-			WHERE 
+			WHERE
 			1 = 1
 			{$filtros}
 		";
@@ -565,38 +561,38 @@ class M_Cotizacion extends MY_Model
 		if(!empty($params['union'])){
 			$sqlUnion = "
 			UNION
-			SELECT 
+			SELECT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
 			cd.nombre,
 			it.idProveedor,
 			CASE WHEN ith.idItemTarifarioHistorico IS NOT NULL THEN 1 ELSE 0 END  respuestasProveedor
-			FROM 
-			compras.cotizacion c 
+			FROM
+			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
 			JOIN compras.itemTarifario it ON it.idItem = cd.idItem
 			JOIN compras.itemTarifarioHistorico ith ON ith.idItemTarifario = it.idItemTarifario
 				AND General.dbo.fn_fechaVigente(ith.fecIni,ith.fecFin,cd.fechaCreacion,cd.fechaCreacion) = 1
 			JOIN compras.proveedor p ON it.idProveedor = p.idProveedor
-			WHERE 
+			WHERE
 			cd.cotizacionInterna = 0
 			{$filtros}
 			";
 		}
 		$sql = "
 		WITH lst_respuestas_proveedor AS(
-			SELECT 
+			SELECT
 				c.idCotizacion,
 				cd.idCotizacionDetalle,
 				cd.idItem,
 				cd.nombre,
 				c.idProveedor,
 				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
-			FROM 
+			FROM
 			compras.cotizacionDetalleProveedor c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
-			WHERE 
+			WHERE
 			1 = 1
 			{$filtros}
 			{$sqlUnion}
@@ -628,7 +624,7 @@ class M_Cotizacion extends MY_Model
 		if(!empty($params['union'])){
 			$sqlUnion = "
 			UNION
-			SELECT 
+			SELECT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
@@ -637,22 +633,22 @@ class M_Cotizacion extends MY_Model
 			cd.cantidad,
 			p.razonSocial,
 			ith.costo costoUnitario
-			FROM 
-			compras.cotizacion c 
+			FROM
+			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
 			JOIN compras.itemTarifario it ON it.idItem = cd.idItem
 			JOIN compras.itemTarifarioHistorico ith ON ith.idItemTarifario = it.idItemTarifario
 				AND General.dbo.fn_fechaVigente(ith.fecIni,ith.fecFin,cd.fechaCreacion,cd.fechaCreacion) = 1
 			JOIN compras.proveedor p ON it.idProveedor = p.idProveedor
-			WHERE 
+			WHERE
 			cd.cotizacionInterna = 0
 			{$filtros}
 			";
 		}
-			
+
 		$sql = "
-		
-			SELECT 
+
+			SELECT
 			c.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
@@ -661,12 +657,12 @@ class M_Cotizacion extends MY_Model
 			cdl.cantidad,
 			p.razonSocial,
 			(cd.costo / cdl.cantidad) costoUnitario
-			FROM 
+			FROM
 			compras.cotizacionDetalleProveedor c
 			JOIN compras.cotizacionDetalleProveedorDetalle cd ON cd.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor
 			JOIN compras.cotizacionDetalle cdl ON cdl.idCotizacionDetalle = cd.idCotizacionDetalle
 			JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
-			WHERE 
+			WHERE
 			1 = 1
 			AND (cd.costo IS NOT NULL AND cd.costo <> 0)
 			{$filtros}
@@ -741,7 +737,7 @@ class M_Cotizacion extends MY_Model
 				--, e.archFoto foto
 			FROM
 				sistema.usuario u
-				-- JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario 
+				-- JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario
 				-- 	AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
 				-- LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
 				-- LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento
@@ -764,7 +760,7 @@ class M_Cotizacion extends MY_Model
 		SELECT
 			o.idOper,
 			od.idCotizacion
-		FROM compras.oper o 
+		FROM compras.oper o
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
 		WHERE o.estado = 1
 		{$filtros}

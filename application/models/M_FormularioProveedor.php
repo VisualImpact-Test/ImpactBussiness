@@ -233,6 +233,27 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerListaCotizaciones($params)
+	{
+		$this->db
+		->select('cp.idCotizacion,
+							cp.idCotizacionDetalleProveedor,
+							CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
+							c.nombre,
+							c.motivo,
+							c.total,
+							cc.nombre AS cuentaCentroCosto,
+							cu.nombre AS cuenta')
+		->from('compras.cotizacionDetalleProveedor cp')
+		->join('compras.cotizacion c','c.idCotizacion=cp.idCotizacion','left')
+		->join('visualImpact.logistica.cuentaCentroCosto cc','c.idCentroCosto = cc.idCuentaCentroCosto','left')
+		->join('visualImpact.logistica.cuenta cu','c.idCuenta = cu.idCuenta','left')
+		->where('cp.estado','1');
+		isset(	$params['idProveedor']	) ? $this->db->where('cp.idProveedor', $params['idProveedor']):'';
+		return $this->db->get();
+	}
+
 	public function obtenerCotizacionDetalleProveedor($params)
 	{
 
