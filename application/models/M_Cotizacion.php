@@ -808,9 +808,11 @@ class M_Cotizacion extends MY_Model
 				, CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg
 				, c.nombre AS cuenta
 				, cc.nombre AS cuentaCentroCosto
+				, ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuario
 			FROM compras.ordenCompra o
 			LEFT JOIN visualImpact.logistica.cuenta c ON o.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON o.idCentroCosto = cc.idCuentaCentroCosto
+			LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 			WHERE
 			o.estado = 1
 			{$filtros}
