@@ -37,12 +37,6 @@
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a> -->
                         <? } ?>
 
-                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_GENERADA || $row['idCotizacionEstado'] == ESTADO_OC_ENVIADA || $row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
-                            <!-- <a href="/ImpactBussiness/formato_orden_compra.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-pdf" title="Descargar orden de compra"></i></a> -->
-                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOrdenCompra"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
-
-                        <? } ?>
-
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
                             <!-- <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0 btnDescargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
                             <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
