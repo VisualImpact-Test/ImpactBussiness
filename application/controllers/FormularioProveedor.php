@@ -519,4 +519,85 @@ class FormularioProveedor extends MY_Controller
 		redirect('FormularioProveedor','refresh');
 	}
 
+	public function viewOrdenCompra($idOrdenCompra = '0')
+	{
+		$proveedor = $this->session->userdata('proveedor');
+		if(empty($proveedor)){
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+		
+		$config['css']['style'] = array(
+            'assets/custom/css/floating-action-button'
+        );
+		$config['js']['script'] = array(
+			'assets/custom/js/FormularioProveedoresCotizaciones',
+			'assets/custom/js/FormularioProveedoresOC',
+			
+		);
+
+		$config['view'] = 'formularioProveedores/ordenCompra';
+		$config['data']['idOrdenCompra'] = $idOrdenCompra;
+		$config['data']['title'] = 'Formulario Proveedores';
+		$config['data']['icon'] = 'fa fa-home';
+		$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idOrdenCompra' => $idOrdenCompra,'estado' => 1])['query']->result_array();
+		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
+		$config['data']['detalle'] = $ordenCompraProveedor;
+
+		$config['single'] = true;
+		if(empty($idOrdenCompra) || empty($ordenCompraProveedor)){
+			$config['view'] = 'formularioProveedores/validacionEmail';
+		}
+		$this->view($config);
+	}
+
+	public function confirmarOrdenCompra()
+	{	
+		$this->db->trans_start();
+		$result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+		$post['idCotizacion'] = array_unique(checkAndConvertToArray($post['idCotizacion']));
+
+        $updateCotizacion = [];
+        $insertHistoricoCotizacion = [];
+        foreach($post['idCotizacion'] as $idCotizacion){
+
+            $updateCotizacion[] = [
+                'idCotizacion' => $idCotizacion,
+                'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
+            ];
+            
+            $insertHistoricoCotizacion[] = [
+                'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
+                'idCotizacion' => $idCotizacion,
+                'idUsuarioReg' => $this->idUsuario,
+            ];
+        }	
+		$updateOrdenCompra = $this->db->update("compras.ordenCompra",[
+			'fechaEntrega' => $post['fechaEntrega']
+		],[
+			'idOrdenCompra' => $post['idOrdenCompra']
+		]);
+
+		$updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
+        $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
+
+
+		if($updateOrdenCompra && $updateCotizacion && $insertHistoricoCotizacion){
+			$result['result'] = 1;
+            $result['msg']['title'] = 'Confirmar OC';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+			$this->db->trans_complete();
+		}else{
+			$result['result'] = 0;
+            $result['msg']['title'] = 'Confirmar OC';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+		}
+
+        echo json_encode($result);
+	}
+	 
+
 }

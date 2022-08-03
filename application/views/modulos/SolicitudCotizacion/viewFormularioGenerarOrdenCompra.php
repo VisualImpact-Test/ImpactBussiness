@@ -97,7 +97,7 @@
                                             <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 
                                             <input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
-                                            <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?=!empty($row['idProveedor']) ? $row['idProveedor'] : ''?>">
+                                            <input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
                                             <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                         </div>
                                     </div>
@@ -129,7 +129,7 @@
                                         <div class="ui sub header">Costo</div>
                                         <div class="ui right labeled input">
                                             <label for="amount" class="ui label">S/</label>
-                                            <input class="costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>" >
+                                            <input class="costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>">
                                             <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
                                         </div>
                                     </div>
@@ -159,19 +159,36 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                             </div>
                         </div>
                     </div>
                 <? endforeach; ?>
             </div>
         <? } ?>
-        <div class="ui black one column center aligned stackable divided grid segment">
+        <div class="ui black three column center aligned stackable divided grid segment">
+            <div class="column">
+                <div class="ui test toggle checkbox ">
+                    <input class="igvForm" name="igv" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $cotizacion['igv'] ? 'checked' : '' ?>  readonly >
+                    <label>Incluir IGV</label>
+                </div>
+            </div>
+            <div class="column">
+                <div class="ui right labeled input">
+                    <label for="feeForm" class="ui label">Fee: </label>
+                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();" readonly>
+                    <div class="ui basic label">
+                        %
+                    </div>
+                </div>
+            </div>
             <div class="column">
                 <div class="ui right labeled input">
                     <label for="totalForm" class="ui label green">Total: </label>
                     <input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>" readonly="">
                     <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>" readonly="">
+                    <input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" readonly="">
+                    <input class=" totalFormFee" type="hidden" name="totalFormFee" placeholder="0.00" readonly="">
                 </div>
             </div>
         </div>
@@ -185,7 +202,7 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroOrdenCompra", fn: "<?= $controller ?>.registrarOrdenCompra(<?=$siguienteEstado?>)", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });'>
+            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroOrdenCompra", fn: "<?= $controller ?>.registrarOrdenCompra(<?= $siguienteEstado ?>)", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });'>
                 <i class="send icon"></i>
             </span>
             <!-- <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroOrdenCompra", fn: "<?= $controller ?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>

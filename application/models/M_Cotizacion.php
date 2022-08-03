@@ -138,6 +138,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
 			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 				AND od.estado = 1
+			
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
@@ -759,9 +760,20 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 		SELECT
 			o.idOper,
-			od.idCotizacion
-		FROM compras.oper o
+			od.idCotizacion,
+			o.requerimiento,
+			o.concepto,
+			'' cuentas,
+			'' centrosCosto,
+			'' ordenCompra,
+			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
+			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
+			ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor
+		FROM compras.oper o 
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
+		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
+		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		WHERE o.estado = 1
 		{$filtros}
 	";
@@ -774,5 +786,45 @@ class M_Cotizacion extends MY_Model
 	}
 
 	return $this->resultado;
+	}
+
+	public function obtenerInformacionOrdenCompra($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['cuenta']) ? ' AND p.idCuenta = ' . $params['cuenta'] : '';
+		$filtros .= !empty($params['cuentaCentroCosto']) ? ' AND p.idCentroCosto = ' . $params['cuentaCentroCosto'] : '';
+		$filtros .= !empty($params['id']) ? " AND o.idOrdenCompra IN (" . $params['id'] . ")" : "";
+
+		$sql = "
+			SELECT
+				o.idOrdenCompra
+				, o.idCuenta
+				, o.idCentroCosto
+				, o.requerimiento
+				, o.entrega
+				, o.observacion
+				, o.total
+				, CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega
+				, CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg
+				, c.nombre AS cuenta
+				, cc.nombre AS cuentaCentroCosto
+			FROM compras.ordenCompra o
+			LEFT JOIN visualImpact.logistica.cuenta c ON o.idCuenta = c.idCuenta
+			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON o.idCentroCosto = cc.idCuentaCentroCosto
+			WHERE
+			o.estado = 1
+			{$filtros}
+			ORDER BY o.idOrdenCompra DESC
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
 	}
 }

@@ -339,7 +339,7 @@
         <div class="ui black three column center aligned stackable divided grid segment">
             <div class="column">
                 <div class="ui test toggle checkbox">
-                    <input type="checkbox" <?= $cotizacion['igv'] ? 'checked' : '' ?>>
+                    <input class="igvForm" name="igv" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $cotizacion['igv'] ? 'checked' : '' ?>>
                     <label>Incluir IGV</label>
                 </div>
             </div>
@@ -347,7 +347,7 @@
                 <!-- <div class="ui sub header">Total</div> -->
                 <div class="ui right labeled input">
                     <label for="feeForm" class="ui label">Fee: </label>
-                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>">
+                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
                     <div class="ui basic label">
                         %
                     </div>
@@ -358,6 +358,8 @@
                     <label for="totalForm" class="ui label green">Total: </label>
                     <input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>" readonly="">
                     <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>" readonly="">
+                    <input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" readonly="">
+                    <input class=" totalFormFee" type="hidden" name="totalFormFee" placeholder="0.00" readonly="">
                 </div>
             </div>
         </div>

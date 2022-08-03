@@ -283,4 +283,39 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 
 	}
+	public function obtenerOrdenCompraDetalleProveedor($params)
+	{
+
+		$filtros = "WHERE o.estado = 1";
+		$filtros .= !empty($params['idProveedor']) ? ' AND o.idProveedor = ' . $params['idProveedor'] : '';
+		$filtros .= !empty($params['idOrdenCompra']) ? ' AND o.idOrdenCompra = ' . $params['idOrdenCompra'] : '';
+
+		$sql = "
+			SELECT
+			o.idOrdenCompra,
+			SUM(cp.subTotal) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
+			cp.*
+			FROM
+			compras.ordenCompra o
+			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra	
+				AND od.estado = 1
+			JOIN compras.cotizacionDetalle cp ON od.idCotizacionDetalle = cp.idCotizacionDetalle
+			JOIN compras.cotizacion c ON c.idCotizacion = cp.idCotizacion
+				
+			{$filtros}
+		";
+
+
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+
+	}
 }

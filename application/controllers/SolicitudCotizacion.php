@@ -661,26 +661,60 @@ class SolicitudCotizacion extends MY_Controller
             ];
         }
 
+        //Insert OC
+        $data = [];
+        $data['oc'] = getDataRefactorizada([
+            'idProveedor' => $post["idProveedorForm"],
+            'idCotizacionDetalle' => $post["idCotizacionDetalle"],
+        ]);
+
+        foreach ($data['oc'] as $row) {
+
+            if(empty($data['proveedor'][$row['idProveedor']])){
+                $insert_oc = [
+                    'idProveedor' => $row['idProveedor'],
+                    'estado' => true,
+                    'idUsuarioReg' => $this->idUsuario,
+                ];
+                $rs_oc = $this->model->insertar(['tabla'=>'compras.ordenCompra','insert'=>$insert_oc]);
+            }
+
+            $data['insert']['oc_detalle'][] = [
+                'idOrdenCompra' => $rs_oc['id'],
+                'idCotizacionDetalle' => $row['idCotizacionDetalle']
+            ];
+            
+            $data['proveedor'][$row['idProveedor']] = $row['idProveedor'];
+        }
+
+        if(!empty($data['insert']['oc_detalle'])){
+            $rs_det = $this->model->insertarMasivo("compras.ordenCompraDetalle",$data['insert']['oc_detalle']);
+        }
 
         $updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
         $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
 
+        if($rs_det && $updateCotizacion && $insertHistoricoCotizacion){
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Generar OC';
+            $result['data']['html'] = getMensajeGestion('registroExitoso');
+            $dataParaVista = []; 
+            $ids = implode(',',$post['idCotizacion']);
+            $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
 
-        $result['result'] = 1;
-        $result['msg']['title'] = 'Generar OC';
-        $result['data']['html'] = getMensajeGestion('registroExitoso');
-        $dataParaVista = []; 
-        $ids = implode(',',$post['idCotizacion']);
-        $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
-
-        $html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
-        $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormulariProveedor/viewOrdenCompra/"], true);
-        $config = [
-            'to' => 'aaron.ccenta@visualimpact.com.pe',
-            'asunto' => 'Generación de OC',
-            'contenido' => $correo,
-        ];
-        email($config);
+            $html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
+            $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/viewOrdenCompra/"], true);
+            $config = [
+                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'asunto' => 'Generación de OC',
+                'contenido' => $correo,
+            ];
+            email($config);
+        }else{
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Generar OC';
+            $result['data']['html'] = getMensajeGestion('registroErroneo');
+        }
 
         $this->db->trans_complete();
         respuesta:

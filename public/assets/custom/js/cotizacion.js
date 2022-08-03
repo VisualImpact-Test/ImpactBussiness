@@ -82,7 +82,6 @@ var Cotizacion = {
 
 			$.when(Fn.ajax(config)).then((a) => {
 				
-
 				let btn = [];
 				let fn = [];
 
@@ -95,7 +94,24 @@ var Cotizacion = {
 
 			});
 		});
-		//filtroCotizacion
+		$(document).on('click', '.btn-verOrdenesCompra', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Cotizacion.url + 'getOrdenesCompra', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			});
+		});
 
 
 
@@ -597,6 +613,23 @@ var Cotizacion = {
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
+
+		$(document).on('click', '.btn-finalizarCotizacion', function () {
+			let idCotizacion = $(this).closest('tr').data('id');
+			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion("+idCotizacion+")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
+		});
+		$(document).on('click', '.btn-descargarOper', function () {
+			let idOper = $(this).closest('tr').data('idoper');
+			let data = { idOper };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'descargarOper' ,jsonString);
+		});
+		$(document).on('click', '.btn-descargarOrdenCompra', function () {
+			let id = $(this).closest('tr').data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
+		});
 		
 	},
 
@@ -654,7 +687,25 @@ var Cotizacion = {
 			$('.simpleDropdown').dropdown();
 		});
 		
+	},
+	finalizarCotizacion: function (idCotizacion) {
+		let data = {idCotizacion};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let url = Cotizacion.url + "finalizarCotizacion";
+		let config = { url: url, data: jsonString };
+		
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
 	},
 	generarOPER_guardar: function (){
 		
@@ -761,6 +812,8 @@ var Cotizacion = {
 	generarRequerimientoPDF: function (id) {
 		var url = site_url + '/Cotizacion/generarCotizacionPDF/' + id;
 		window.open(url, '_blank');
+
+		//Fn.download
 	},
 
 	registrarItem: function (idCotizacion) {

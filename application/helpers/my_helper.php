@@ -1323,8 +1323,8 @@ function email($email = array())
 		if (!empty($email['cc'])) {
 			$ci->email->cc($email['cc']);
 		}
-
-		$bcc = array('luis.durand@visualimpact.com.pe');
+		$bcc = [];
+		// $bcc = array('luis.durand@visualimpact.com.pe');
 		$ci->email->bcc($bcc);
 
 		$ci->email->subject($email['asunto']);
@@ -1879,5 +1879,40 @@ function costoUnitario($cantidad, $importe, $decimales = 2)
 {
     $costo = round(($importe / $cantidad), 2);
     return $costo;
+}
+
+function moneyToText($params = []){
+	$CI = &get_instance();
+	$CI->load->library('NumeroALetras');
+	$CI->load->library('S3');
+
+	$formatter = $CI->numeroaletras;
+	$numero = $params['numero'];
+	// return $formatter->toMoney(10.10, 2, 'SOLES', 'CENTIMOS');
+	return $formatter->toInvoice($numero, 2, 'SOLES');
+
+}
+
+function completarFilasPdf($params){
+
+	$filas = count($params['data']);
+	$filasRequeridas = $params['filas'];
+	$columnas = $params['columnas'];
+
+	$table = '';
+	for($i = $filas; $i < $filasRequeridas ; $i++){
+		$table .= '<tr>';
+			for ($j=0; $j < $columnas ; $j++) { 
+				$table .= '<td class="text-center">';
+					if($j == 0 ){
+						//Solo ponemos el numero de fila si es la primera columna
+						$table .= ($i + 1);
+					}
+				$table .= '</td>';
+			}
+		$table .= '</tr>';
+	}
+
+	return $table;
 }
 

@@ -188,6 +188,7 @@ var Fn = {
 
 	download: function (url, data) {
 		Fn.showLoading(true)
+		//Importar el archivo fileDownload.js en el controlador
 		$.fileDownload(url, {
 			httpMethod: "POST",
 			data: data,
@@ -1433,6 +1434,7 @@ var Fn = {
 			}
 		});
 		$('.date-semantic').calendar({
+			// minDate: $(this).data('disablepast') ? new Date() : false, 
 			type: 'date',
 			text: {
 				days: ['S', 'L', 'M', 'MM', 'J', 'V', 'S'],

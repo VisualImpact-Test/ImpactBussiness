@@ -11,6 +11,7 @@ class Cotizacion extends MY_Controller
         $this->load->model('M_Item', 'model_item');
         $this->load->model('M_control', 'model_control');
         $this->load->model('M_proveedor','model_proveedor');
+        $this->load->model('M_FormularioProveedor','model_formulario_proveedor');
         $this->load->model('M_login','model_login');
         header('Access-Control-Allow-Origin: *');
         
@@ -33,6 +34,7 @@ class Cotizacion extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/languages/all',
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/libs/fileDownload/jquery.fileDownload',
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/cotizacion',
             'assets/custom/js/dataTables.select.min'
@@ -593,8 +595,8 @@ class Cotizacion extends MY_Controller
         //     'team.sistemas@visualimpact.com.pe',
         // );
         // $this->email->bcc($bcc);
-
-        $bcc = array('luis.durand@visualimpact.com.pe');
+        $bcc = [];
+        // $bcc = array('luis.durand@visualimpact.com.pe');
 		$this->email->bcc($bcc);
 
         $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
@@ -1079,5 +1081,145 @@ class Cotizacion extends MY_Controller
         echo json_encode($result);
     }
 
+    public function finalizarCotizacion()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+        $post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
+
+        $updateCotizacion = [];
+        $insertHistoricoCotizacion = [];
+        foreach($post['idCotizacion'] as $idCotizacion){
+
+            $updateCotizacion[] = [
+                'idCotizacion' => $idCotizacion,
+                'idCotizacionEstado' => ESTADO_FINALIZADA,
+            ];
+            
+            $insertHistoricoCotizacion[] = [
+                'idCotizacionEstado' => ESTADO_FINALIZADA,
+                'idCotizacion' => $idCotizacion,
+                'idUsuarioReg' => $this->idUsuario,
+            ];
+        }	
+
+		$updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
+        $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
+
+        $result['msg']['title'] = 'Finalizar Cotizacion';
+
+        if(!$updateCotizacion || !$insertHistoricoCotizacion){
+            $result['result'] = 0;
+            $result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se pudo finalizar la cotización']);
+        }else{
+            $result['result'] = 1;
+            $result['msg']['content'] = createMessage(['type' => 1, 'message' => 'La cotización se finalizó correctamente']);
+            $this->db->trans_complete();
+        }
+
+        echo json_encode($result);
+    }
+
+    public function descargarOper(){
+        require_once('../mpdf/mpdf.php');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        $post = json_decode($this->input->post('data'), true);
+        $oper = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])['query']->result_array();
+        $dataParaVista['dataOper'] = $oper[0];
+        $ids = [];
+        foreach($oper as $v){
+            $ids[] = $v['idCotizacion'];
+            $config['data']['oper'][$v['idOper']] = $v;
+        }
+
+        $idCotizacion = implode(",",$ids);
+        $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+
+        require APPPATH . '/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf();
+
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS'], true);
+        $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+        $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
+        $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/oper",$dataParaVista,true);
+
+        $mpdf->SetHTMLHeader($contenido['header']);
+        $mpdf->SetHTMLFooter($contenido['footer']);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($contenido['style']);
+        $mpdf->WriteHTML($contenido['body']);
+
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        // $mpdf->Output('OPER.pdf', 'D');
+        $mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+
+    }
+
+    public function getOrdenesCompra()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        // $ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idOrdenCompra' => $idOrdenCompra,'estado' => 1])['query']->result_array();
+		$dataParaVista['data'] = $this->model->obtenerInformacionOrdenCompra()['query']->result_array();
+
+        $result['result'] = 1;
+        $result['data']['width'] = '90%';
+        $result['msg']['title'] = 'Ordenes de compra';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/tableOrdenCompra", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
+
+    public function descargarOrdenCompra(){
+        require_once('../mpdf/mpdf.php');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        $post = json_decode($this->input->post('data'), true);
+
+        $ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'],'estado' => 1])['query']->result_array();
+		$config['data']['cabecera'] = $this->model->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
+
+        $dataParaVista['dataOper'] = $oper[0];
+        $ids = [];
+        foreach($oper as $v){
+            $ids[] = $v['idCotizacion'];
+            $config['data']['oper'][$v['idOper']] = $v;
+        }
+
+        $idCotizacion = implode(",",$ids);
+        $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+
+        require APPPATH . '/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf();
+
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS'], true);
+        $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+        $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
+        $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/oper",$dataParaVista,true);
+
+        $mpdf->SetHTMLHeader($contenido['header']);
+        $mpdf->SetHTMLFooter($contenido['footer']);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($contenido['style']);
+        $mpdf->WriteHTML($contenido['body']);
+
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        // $mpdf->Output('OPER.pdf', 'D');
+        $mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+
+    }
 
 }

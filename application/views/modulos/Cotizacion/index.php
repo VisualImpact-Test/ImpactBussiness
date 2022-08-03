@@ -41,6 +41,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="" id="filtrarReporte" title="Generar oper">
 					<i class="fas fa-money-check-edit-alt"></i> <span class="txt_filtro"></span>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0 btn-verOrdenesCompra" data-url="" title="Ver órdenes de compra">
+					<strong>OC</strong>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">

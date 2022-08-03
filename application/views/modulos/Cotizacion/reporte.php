@@ -23,7 +23,7 @@
                 // $badge = $row['cotizacionEstado'] == 'Finalizado' ? 'badge-success' : 'badge-success';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
-                <tr data-id="<?= $row['idCotizacion'] ?>">
+                <tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
 
@@ -35,23 +35,30 @@
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO) { ?>
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a> -->
-                        <?}?>
-
-                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_GENERADA || $row['idCotizacionEstado'] == ESTADO_OC_ENVIADA) { ?>
-                             <a href="/ImpactBussiness/formato_orden_compra.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-pdf" title="Descargar orden de compra"></i></a>
                         <? } ?>
+
+                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_GENERADA || $row['idCotizacionEstado'] == ESTADO_OC_ENVIADA || $row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
+                            <!-- <a href="/ImpactBussiness/formato_orden_compra.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-pdf" title="Descargar orden de compra"></i></a> -->
+                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOrdenCompra"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
+
+                        <? } ?>
+
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
-                             <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
+                            <!-- <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0 btnDescargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
+                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
-                            <? if ($ix == 1) {?>
-                             <a href="/ImpactBussiness/formato_cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
-                            <? } else {?>
-                             <a href="/ImpactBussiness/Cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
+                            <? if ($ix == 1) { ?>
+                                <a href="/ImpactBussiness/formato_cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
+                            <? } else { ?>
+                                <a href="/ImpactBussiness/Cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
                             <? } ?>
 
-                            <a target="_blank" href="../Cotizacion/viewSolicitudCotizacionInterna/<?=$row['idCotizacion']?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
+                            <a target="_blank" href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
+                        <? } ?>
+                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
                         <? } ?>
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
