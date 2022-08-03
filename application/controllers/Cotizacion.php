@@ -596,7 +596,7 @@ class Cotizacion extends MY_Controller
         // );
         // $this->email->bcc($bcc);
         $bcc = [];
-        // $bcc = array('luis.durand@visualimpact.com.pe');
+        $bcc = array('luis.durand@visualimpact.com.pe');
 		$this->email->bcc($bcc);
 
         $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
@@ -653,7 +653,7 @@ class Cotizacion extends MY_Controller
                 $totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
 
             }
-            
+
             if(!empty($dataParaVista['cabecera']['total_fee_igv'])){
                $dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * IGV);
                $dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
