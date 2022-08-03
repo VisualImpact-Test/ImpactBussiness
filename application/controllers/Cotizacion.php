@@ -1144,7 +1144,7 @@ class Cotizacion extends MY_Controller
         require APPPATH . '/vendor/autoload.php';
         $mpdf = new \Mpdf\Mpdf();
 
-        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS'], true);
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS','codigo'=>'SIG-LOG-FOR-001'], true);
         $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
 
         $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
@@ -1187,27 +1187,27 @@ class Cotizacion extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'],'estado' => 1])['query']->result_array();
-		$config['data']['cabecera'] = $this->model->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 
-        $dataParaVista['dataOper'] = $oper[0];
+        $dataParaVista['data'] = $ordenCompra[0];
+        $dataParaVista['detalle'] = $ordenCompra;
+
         $ids = [];
-        foreach($oper as $v){
+        foreach($ordenCompra as $v){
             $ids[] = $v['idCotizacion'];
-            $config['data']['oper'][$v['idOper']] = $v;
         }
 
         $idCotizacion = implode(",",$ids);
-        $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
-        $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        // $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+        // $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 
         require APPPATH . '/vendor/autoload.php';
         $mpdf = new \Mpdf\Mpdf();
 
-        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS'], true);
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS','codigo'=>'SIG-LOG-FOR-009'], true);
         $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
 
         $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
-        $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/oper",$dataParaVista,true);
+        $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra",$dataParaVista,true);
 
         $mpdf->SetHTMLHeader($contenido['header']);
         $mpdf->SetHTMLFooter($contenido['footer']);
@@ -1217,8 +1217,10 @@ class Cotizacion extends MY_Controller
 
         header('Set-Cookie: fileDownload=true; path=/');
         header('Cache-Control: max-age=60, must-revalidate');
+
+        $cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'],6);
         // $mpdf->Output('OPER.pdf', 'D');
-        $mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+        $mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 
     }
 
