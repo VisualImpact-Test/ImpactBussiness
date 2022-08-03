@@ -11,6 +11,9 @@
         text-align: center;
     }
 
+    .w-5 {
+        width: 5%;
+    }
     .w-10 {
         width: 10%;
     }
@@ -39,6 +42,7 @@
     table.tb-detalle td {
         border: 1px solid #484848;
         padding: 5px;
+        font-size: 12px !important;
     }
 
     .square {
@@ -50,4 +54,5 @@
     body {
         font-size: 12px;
     }
+    
 </style>

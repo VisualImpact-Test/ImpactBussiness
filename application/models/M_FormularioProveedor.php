@@ -294,6 +294,16 @@ class M_FormularioProveedor extends MY_Model
 			SELECT
 			o.idOrdenCompra,
 			SUM(cp.subTotal) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
+			p.razonSocial,
+			p.nroDocumento rucProveedor,
+			p.nombreContacto,
+			p.direccion,
+			p.correoContacto,
+			p.numeroContacto,
+			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+			CONVERT(VARCHAR, c.fechaRequerida, 103) AS fechaRequerida,
+			c.idCotizacion,
+			oper.requerimiento,
 			cp.*
 			FROM
 			compras.ordenCompra o
@@ -301,6 +311,9 @@ class M_FormularioProveedor extends MY_Model
 				AND od.estado = 1
 			JOIN compras.cotizacionDetalle cp ON od.idCotizacionDetalle = cp.idCotizacionDetalle
 			JOIN compras.cotizacion c ON c.idCotizacion = cp.idCotizacion
+			JOIN compras.operDetalle operd ON operd.idCotizacion = c.idCotizacion
+			JOIN compras.oper oper ON oper.idOper = operd.idOper
+			JOIN compras.proveedor p ON p.idProveedor = o.idProveedor 
 				
 			{$filtros}
 		";
