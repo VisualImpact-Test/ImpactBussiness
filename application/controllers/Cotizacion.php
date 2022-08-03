@@ -609,12 +609,16 @@ class Cotizacion extends MY_Controller
         return $estadoEmail;
     }
 
-    public function generarCotizacionPDF($idCotizacion = '')
+    public function generarCotizacionPDF()
     {
         require_once('../mpdf/mpdf.php');
         ini_set('memory_limit', '1024M');
         set_time_limit(0);
 
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $idCotizacion = $post['id'];
         if (!empty($idCotizacion)) {
             $data = [];
             $dataParaVista = [];
@@ -626,18 +630,47 @@ class Cotizacion extends MY_Controller
                 $dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
                 $dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
                 $dataParaVista['cabecera']['tipoCotizacion'] = $row['tipoCotizacion'];
-                $dataParaVista['cabecera']['fecha'] = $row['fecha'];
+                $dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
+                $dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
+                $dataParaVista['cabecera']['fee'] = $row['fee'];
+                $dataParaVista['cabecera']['igv'] = $row['flagIgv'];
+                $dataParaVista['cabecera']['total'] = $row['total'];
+                $dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
+                $dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
                 $dataParaVista['detalle'][$key]['item'] = $row['item'];
                 $dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
                 $dataParaVista['detalle'][$key]['costo'] = $row['costo'];
-                $dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
+                $dataParaVista['detalle'][$key]['gap'] = $row['gap'];
+                $dataParaVista['detalle'][$key]['precio'] = $row['precio'];
+                $dataParaVista['detalle'][$key]['subtotal'] = $row['subtotal'];
             }
+
+            //
+            if(!empty($dataParaVista['cabecera']['fee'])){
+                $total = $dataParaVista['cabecera']['total'];
+                $dataParaVista['cabecera']['fee_prc'] = $fee = ( $total * ($dataParaVista['cabecera']['fee'] / 100));
+
+                $totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
+
+            }
+            
+            if(!empty($dataParaVista['cabecera']['total_fee_igv'])){
+               $dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * IGV);
+               $dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
+            }
+            if(empty($dataParaVista['cabecera']['total_fee_igv'])){
+               $dataParaVista['cabecera']['total_fee_igv'] = $totalFee;
+            }
+            
+
+            //
             if (count($dataParaVista) == 0) exit();
 
-            $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", array(), true);
+            $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
             $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
             $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
-            $contenido['style'] = '<style>table { border-collapse: collapse; }table.tb-detalle th, table.tb-detalle td { border: 1px solid #484848; padding:5px; }.square { margin-right: 15px; border: 1px solid #000; text-align: center; }body {font-size: 12px;}</style>';
+            // $contenido['style'] = '<style>table { border-collapse: collapse; }table.tb-detalle th, table.tb-detalle td { border: 1px solid #484848; padding:5px; }.square { margin-right: 15px; border: 1px solid #000; text-align: center; }body {font-size: 12px;}</style>';
+            $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
 
             require APPPATH . '/vendor/autoload.php';
             $mpdf = new \Mpdf\Mpdf();

@@ -1,26 +1,26 @@
 <div style="text-align:justify"><br><br><br>
     <table>
         <tr>
-            <td style="text-align: justify;height: 20px;">Fecha:</td>
+            <td style="text-align: justify;height: 20px;">FECHA:</td>
             <td style="text-align: justify; height: 20px;"><?= $cabecera['fecha'] ?></td>
             <td style="width: 100px;"></td>
-            <td style="text-align: justify; height: 20px;">N° Presupuesto:</td>
-            <td style="text-align: justify; height: 20px;"><?= $cabecera['idPresupuesto'] ?></td>
+            <td style="text-align: justify; height: 20px;">N° COTIZACIÓN:</td>
+            <td style="text-align: justify; height: 20px;"><?= generarCorrelativo($cabecera['idCotizacion'], 4) ?></td>
             <td style="width: 100px;"></td>
         </tr>
         <tr>
-            <td style="text-align: justify;height:20px;">Nombre:</td>
-            <td style="text-align: justify;height:20px;"><?= $cabecera['presupuesto'] ?></td>
+            <td style="text-align: justify;height:20px;">NOMBRE:</td>
+            <td style="text-align: justify;height:20px;"><?= $cabecera['cotizacion'] ?></td>
             <td style="width: 100px;"></td>
-            <td style="text-align: justify;height: 20px;">Tipo de Presupuesto:</td>
-            <td style="text-align: justify; height: 20px;"><?= $cabecera['tipoPresupuesto'] ?></td>
+            <td style="text-align: justify;height: 20px;">TIPO DE COTIZACIÓN:</td>
+            <td style="text-align: justify; height: 20px;"><?= $cabecera['tipoCotizacion'] ?></td>
             <td style="width: 100px;"></td>
         </tr>
         <tr>
-            <td style="text-align: justify; height: 20px;">Cuenta:</td>
+            <td style="text-align: justify; height: 20px;">CUENTA:</td>
             <td style="text-align: justify; height: 20px;"><?= $cabecera['cuenta'] ?></td>
             <td style="width: 100px;"></td>
-            <td style="text-align: justify; height: 20px;">Centro de Costo:</td>
+            <td style="text-align: justify; height: 20px;">CENTRO DE COSTO:</td>
             <td style="text-align: justify; height: 20px;"><?= $cabecera['cuentaCentroCosto'] ?></td>
         </tr>
     </table>
@@ -28,11 +28,13 @@
 <table class="tb-detalle" style="width: 100%; margin-bottom: 100px;">
     <thead>
         <tr>
-            <th>#</th>
-            <th>Item</th>
-            <th>Cantidad</th>
-            <th>Costo Actual</th>
-            <th>Estado</th>
+            <th>ITEM</th>
+            <th>DESCRIPCION</th>
+            <th>CANTIDAD</th>
+            <th>COSTO ACTUAL</th>
+            <th>GAP</th>
+            <th>PRECIO ACTUAL</th>
+            <th>SUBTOTAL</th>
         </tr>
     </thead>
     <tbody>
@@ -42,8 +44,32 @@
                 <td style="text-align: left;"><?= verificarEmpty($row['item'], 3) ?></td>
                 <td style="text-align: right;"><?= verificarEmpty($row['cantidad'], 3) ?></td>
                 <td style="text-align: right;"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
-                <td style="text-align: left;"><?= verificarEmpty($row['estadoItem'], 3) ?></td>
+                <td style="text-align: left;"><?= verificarEmpty($row['gap'], 2) . '%' ?></td>
+                <td style="text-align: right;"><?= empty($row['precio']) ? moneda(verificarEmpty($row['costo'],2)) : moneda($row['precio']); ?></td>
+                <td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+
             </tr>
         <? } ?>
+        <?= completarFilasPdf(['data' => $detalle, 'filas' => 10, 'columnas' => 7]) ?>
     </tbody>
+    <tfoot class="full-widtd">
+        <tr class="height:100px">
+            <td colspan="6" class="text-right">
+                <p>SUB TOTAL</p>
+                <p>FEE <?=!empty($cabecera['fee']) ? $cabecera['fee'].'%' : '' ?></p>
+                <?if(!empty($cabecera['igv'])){?>
+                <p>IGV</p>
+                <?}?>
+                <p>TOTAL GENERAL <?= empty($cabecera['igv']) ? '(No incluye igv)' : '' ?></p>
+            </td>
+            <td class="text-right">
+                <p><?= moneda($cabecera['total']) ?></p>
+                <p><?= moneda(($cabecera['fee_prc']) ) ?></p>
+                <?if(!empty($cabecera['igv'])){?>
+                    <p><?=moneda($cabecera['igv_prc'] * IGV)?></p>
+                <?}?>
+                <p><?= moneda($cabecera['total_fee_igv'])  ?></p>
+            </td>
+        </tr>
+    </tfoot>
 </table>

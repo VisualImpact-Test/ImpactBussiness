@@ -28,6 +28,9 @@
                     <td class="td-center style-icons">
 
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
+                        <? if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS) { ?>
+                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="fa fa-lg fa-file-import" title="Generar PDF cotizacion"></i></a>
+                        <?}?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
                             <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a>
@@ -43,12 +46,7 @@
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
-                            <? if ($ix == 1) { ?>
-                                <a href="/ImpactBussiness/formato_cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
-                            <? } else { ?>
-                                <a href="/ImpactBussiness/Cotización.pdf" download class="btn btn-outline-secondary border-0"><i class="fa fa-lg fa-file-import" title="Generar PDF"></i></a>
-                            <? } ?>
-
+                            
                             <a target="_blank" href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
                         <? } ?>
                         <? if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>

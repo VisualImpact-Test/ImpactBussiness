@@ -630,6 +630,12 @@ var Cotizacion = {
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
 		});
+		$(document).on('click', '.btn-descargarCotizacion', function () {
+			let id = $(this).closest('tr').data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
+		});
 		
 	},
 
