@@ -217,22 +217,28 @@ class M_Cotizacion extends MY_Model
 				p.idCotizacion
 				, pd.idCotizacionDetalle
 				, p.nombre AS cotizacion
+				, p.flagIgv
+				, p.total
+				, p.total_fee
+				, p.total_fee_igv
+				, p.fee
 				, c.nombre AS cuenta
 				, cc.nombre AS cuentaCentroCosto
 				, p.codCotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, ce.nombre AS cotizacionEstado
-
 				, it.idItemTipo
 				, it.nombre AS itemTipo
 				, pd.nombre AS item
 				, pd.cantidad
 				, pd.costo
+				, pd.precio
+				, pd.gap
+				, pd.subtotal
 				, ei.idItemEstado
 				, ei.nombre AS estadoItem
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
-				, pd.subTotal
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 			FROM compras.cotizacion p
