@@ -235,6 +235,7 @@ class M_Cotizacion extends MY_Model
 				, pd.precio
 				, pd.gap
 				, pd.subtotal
+				, pd.subtotal subTotal
 				, ei.idItemEstado
 				, ei.nombre AS estadoItem
 				, pr.razonSocial AS proveedor
