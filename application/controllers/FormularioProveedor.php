@@ -281,7 +281,7 @@ class FormularioProveedor extends MY_Controller
 		//     'team.sistemas@visualimpact.com.pe',
 		// );
 		// $this->email->bcc($bcc);
-		$bcc = array('luis.durand@visualimpact.com.pe');
+		//$bcc = array('luis.durand@visualimpact.com.pe');
 		$this->email->bcc($bcc);
 
 		$this->email->subject('IMPACTBUSSINESS - NUEVA ENTRADA DE PROVEEDORES');

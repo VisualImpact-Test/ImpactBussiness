@@ -81,6 +81,7 @@ var Cotizacion = {
 	modalIdForm: 0,
 	itemsLogistica: [],
 	htmlG: '',
+	htmlBodySubItem: [],
 	htmlCotizacion: '',
     nDetalle: 1,
 
@@ -98,6 +99,14 @@ var Cotizacion = {
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
             Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
             Cotizacion.htmlG = $('.default-item').html();
+
+			$.each($('.content-body-sub-item'),(i,v) => {
+				let control = $(v);
+				let dvfeatures = control.closest('.div-features');
+				let tipo = dvfeatures.data('tipo');
+				let html = control.html();
+				Cotizacion.htmlBodySubItem[tipo] = html;
+			});
 
             Cotizacion.actualizarPopupsTitle();
             Cotizacion.actualizarAutocomplete();
@@ -248,8 +257,8 @@ var Cotizacion = {
 
             Cotizacion.actualizarAutocomplete();
 
-            $('.btn-add-file').dimmer({on: 'hover'});
-            $('.simpleDropdown').dropdown();
+			Cotizacion.actualiarOnAddRow(childInserted);
+			
     
 		});
 
@@ -328,6 +337,30 @@ var Cotizacion = {
 
 		$(document).on('change', '#tipo', function (e) {
 			Cotizacion.actualizarAutocomplete();
+		});
+
+		$(document).on('change', '#tipoItemForm', function (e) {
+
+			let control = $(this);
+			let parent = control.closest('.body-item');
+			let idTipo = control.val();
+
+			let allFeatures = parent.find(`.div-features`);
+			let divFeature = parent.find(`.div-feature-${idTipo}`);
+
+			allFeatures.addClass('d-none');
+			divFeature.removeClass('d-none');
+		});
+
+		$(document).on('change', '#prioridadForm', function (e) {
+			let prioridad = $(this).val();
+
+			if(prioridad == 1 ){ //Si es prioridad ALTA 
+				$(motivoForm).attr("patron",'requerido');
+			}
+			else{
+				$(motivoForm).removeAttr("patron");
+			}
 		});
 
 		$(document).on('click', '.btn-cotizacion-pdf', function (e) {
@@ -582,8 +615,8 @@ var Cotizacion = {
 
 				list: {
 					var total = $('input[name="' + name + '[' + id + ']"]').length;
-					if( (num + total) > 10 ){
-						var message = Fn.message({ type: 2, message: 'Solo se permiten 10 capturas como máximo' });
+					if( (num + total) > MAX_ARCHIVOS ){
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} capturas como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
 							'show': true,
@@ -600,7 +633,7 @@ var Cotizacion = {
 							size = Math.round((size / 1024)); 
 
 						if( size > KB_MAXIMO_ARCHIVO ){
-							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 7MB por captura' });
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
 							Fn.showModal({
 								'id': ++modalId,
 								'show': true,
@@ -716,6 +749,40 @@ var Cotizacion = {
 			gapForm.keyup();
 
 			Cotizacion.actualizarTotal();
+		});
+		
+		$(document).on('click', '.btn-add-sub-item', function () {
+			let control = $(this);
+			let parent = control.closest('.div-features');
+			let tipo = parent.data('tipo');
+
+            let contenedor = $('.content-body-sub-item');
+            contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
+
+            let childInserted = contenedor.children().last();
+			
+			// $("html").animate({ scrollTop: contenedor.height() }, 500);
+            childInserted.transition('glow');
+		});
+		$(document).on('click', '.btn-eliminar-sub-item', function () {
+			let control = $(this);
+			let element = control.closest('.body-sub-item');
+
+			element.remove();
+			
+		});
+		$(document).on('change', '.tipoServicioForm', function () {
+			let control = $(this);
+			let parent = control.closest('.div-features');
+			let costo = control.find('option:selected').data('costo');
+			let unidadMedida = control.find('option:selected').data('unidadmedida');
+
+			let costoForm = parent.find('.costoTipoServicio');
+			let unidadMedidaForm = parent.find('.unidadMedidaTipoServicio');
+
+			costoForm.val(costo);
+			unidadMedidaForm.val(unidadMedida);
+			
 		});
 
 		
@@ -875,6 +942,47 @@ var Cotizacion = {
 		});
 	},
 
+	frmSendToCliente: function () {
+		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "getFormSendToCliente";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			let fn1 = `Fn.showConfirm({ idForm: "formSendToCliente", fn: "Cotizacion.sendToCliente()", content: "¿Esta seguro de enviar esta cotizacion?" });`;
+
+			btn[0] = { title: 'Cerrar', fn: fn };
+			btn[1] = { title: 'Aceptar', fn: fn1 };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: b.data.width });
+
+			$('.simpleDropdown').dropdown();
+            $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
+		});
+	},
+
+	sendToCliente: function(){
+		let formValues = Fn.formSerializeObject('formSendToCliente');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "sendToCliente";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Aceptar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: b.data.width });
+		});
+	},
+
 	actualizarTotal: function () {
 		let total = 0;
 		$.each($('.subtotalForm'), function (index, value) {
@@ -945,14 +1053,54 @@ var Cotizacion = {
             on    : 'click'
         });
 
+		//Dimmer add file
         $('.btn-add-file')
         .dimmer({
             on: 'hover'
         });
+		
+		//Info archivo
+		$('.btn-info-archivo')
+		.popup(
+			{
+				title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
+				content : `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
+			}
+		);
 
+		//Info archivo
+		$('.btn-info-motivo')
+		.popup(
+			{
+				content : `Si la prioridad es ALTA el motivo será obligatorio.`
+			}
+		);
 
+		//Info dias validez
+		$('.btn-info-validez')
+		.popup(
+			{
+				title: `Días de validez`,
+				content : `Se cuentan a partir de que la cotización es enviada al cliente.`
+			}
+		);
 
-    }
+    },
+
+	actualiarOnAddRow: (childInserted) => {
+
+		$('.btn-add-file').dimmer({on: 'hover'});
+		$('.simpleDropdown').dropdown();
+
+		//Boton info archivos
+		childInserted.find('.btn-info-archivo')
+		.popup(
+			{
+				title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
+				content : `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
+			}
+			);
+   },
 }
 
 Cotizacion.load();

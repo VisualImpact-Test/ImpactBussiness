@@ -1229,11 +1229,17 @@ function htmlSelectOptionArray2($params = [])
 			$fix = '';
 		}
 
-		$idDependiente = "";
+		$idDependiente = "";$data_option =  '';
 		if (!empty($f['idDependiente'])) {
 			$idDependiente = " data-parentDependiente='" . $f['idDependiente'] . "' style='display: none;'";
 		}
-		$html .= "<option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" . strtoupper($f[$v]) . "</option>";
+		if(!empty($params['data-option'])){
+			foreach($params['data-option'] as $row){
+				!empty($f[$row]) ? $data_option .= " data-{$row} = {$f[$row]}": ''; 
+			}
+		}
+
+		$html .= "<option $data_option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" . strtoupper($f[$v]) . "</option>";
 	}
 
 	return $html;
@@ -1324,7 +1330,7 @@ function email($email = array())
 			$ci->email->cc($email['cc']);
 		}
 		$bcc = [];
-		$bcc = array('luis.durand@visualimpact.com.pe');
+		//$bcc = array('luis.durand@visualimpact.com.pe');
 		$ci->email->bcc($bcc);
 
 		$ci->email->subject($email['asunto']);

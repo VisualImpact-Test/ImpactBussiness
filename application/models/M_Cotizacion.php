@@ -18,11 +18,17 @@ class M_Cotizacion extends MY_Model
 	public function obtenerCuenta($params = [])
 	{
 		$sql = "
-			SELECT
-				idCuenta AS id
-				, nombre AS value
-			FROM visualImpact.logistica.cuenta
-			WHERE estado = 1
+		SELECT DISTINCT
+			emp.idEmpresa id,
+			emp.razonSocial value
+		FROM 
+		rrhh.dbo.Empresa emp
+		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = emp.idEmpresa
+		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
+		WHERE 
+			e.flag = 'activo'
+			AND emp.estado = 1
+		ORDER BY emp.razonSocial
 		";
 
 		$query = $this->db->query($sql);
@@ -38,12 +44,16 @@ class M_Cotizacion extends MY_Model
 	public function obtenerCuentaCentroCosto($params = [])
 	{
 		$sql = "
-			SELECT
-				idCuentaCentroCosto AS id
-				, idCuenta AS idDependiente
-				, nombre AS value
-			FROM visualImpact.logistica.cuentaCentroCosto
-			WHERE estado = 1
+		SELECT DISTINCT
+			c.idEmpresa idDependiente,
+			CONVERT(VARCHAR,c.idEmpresa) +' - ' + CONVERT(VARCHAR,c.idCanal) id,
+			c.canal value
+		FROM 
+		rrhh.dbo.empresa_Canal c
+		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idCanal
+		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
+		WHERE 
+			e.flag = 'activo'
 		";
 
 		$query = $this->db->query($sql);
@@ -242,6 +252,7 @@ class M_Cotizacion extends MY_Model
 				, cde.nombre AS cotizacionDetalleEstado
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
+				, pd.caracteristicas
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -832,6 +843,28 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function obtenertipoServicios($params = [])
+	{
+		$sql = "
+			SELECT
+				ts.idTipoServicio id,
+				ts.nombre value,
+				ts.costo,
+				um.nombre unidadMedida
+			FROM compras.tipoServicio ts
+			JOIN compras.unidadMedida um ON um.idUnidadMedida = ts.idUnidadMedida
+			WHERE ts.estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
 		}
 
 		return $this->resultado;

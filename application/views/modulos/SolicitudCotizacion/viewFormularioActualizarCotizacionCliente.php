@@ -9,7 +9,7 @@
     }
 
     .floating-container {
-        height: 200px !important;
+        height: 150px !important;
     }
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">
@@ -379,15 +379,12 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(<?= $siguienteEstado ?>)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-send" 
+            data-message="Enviar" 
+            onclick="Cotizacion.frmSendToCliente();"
+            >
                 <i class="send icon"></i>
             </span>
-            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
-                <i class="save icon"></i>
-            </span>
-            <!-- <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
-                <i class="plus icon"></i>
-            </span> -->
         </a>
     </div>
 </div>

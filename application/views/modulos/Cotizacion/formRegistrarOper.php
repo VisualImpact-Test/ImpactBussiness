@@ -2,7 +2,7 @@
     <form class="ui form" role="form" id="formRegistroOper" method="post">
         <h4 class="ui dividing header">DATOS DEL OPER</h4>
         <input type="hidden" name="totalOper" value="<?= $totalOper?>">
-        <div class="fields">
+        <div class="fields d-none">
             <div class="six wide field">
                 <div class="ui sub header">De:</div>
                 <input type="text" value="<?= $this->usuario_completo ?>" readonly>
@@ -11,22 +11,26 @@
             <div class="six wide field">
                 <div class="ui sub header">Dirigido a:</div>
                 <select name="receptor" class="ui fluid search clearable dropdown simpleDropdown" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $usuarios, 'class' => 'text-titlecase', 'id' => 'idUsuario', 'value' => 'apeNom']); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $usuarios, 'class' => 'text-titlecase', 'id' => 'idUsuario', 'selected' => $this->idUsuario]); ?>
                 </select>
             </div>
             <div class="four wide field">
                 <div class="ui sub header">N Requerimiento</div>
-                <input type="text" name="requerimiento" placeholder="Num. Requerimiento" value="" patron="">
+                <input type="text" name="requerimiento" placeholder="Num. Requerimiento" value="" patron="" readonly>
             </div>
         </div>
         <div class="fields disabled disabled-visible">
-            <div class="eight wide field">
+            <div class="four wide field">
+                <div class="ui sub header">Dirigido a:</div>
+                <input type="text" value="Coordinadora de compras" readonly>
+            </div>
+            <div class="six wide field">
                 <div class="ui sub header">Cuenta</div>
                 <select class="ui search dropdown simpleDropdown" id="cuentaForm" name="cuentaForm" patron="requerido" multiple>
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selectAll' => true]); ?>
                 </select>
             </div>
-            <div class="eight wide field">
+            <div class="six wide field">
                 <div class="ui sub header">Centro de costo</div>
                 <select class="ui search dropdown simpleDropdown  clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido" multiple>
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selectAll' => true]); ?>

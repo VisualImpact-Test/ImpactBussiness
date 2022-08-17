@@ -147,7 +147,7 @@ class EquiposMoviles extends MY_Controller
         // );
         // $this->email->bcc($bcc);
 
-        $bcc = array('luis.durand@visualimpact.com.pe');
+        //$bcc = array('luis.durand@visualimpact.com.pe');
 		$this->email->bcc($bcc);
         
         $this->email->subject('IMPACTBUSSINESS - CONFIRMACION DE ITEMS DE COTIZACION');
