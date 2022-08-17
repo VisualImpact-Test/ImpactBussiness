@@ -596,7 +596,7 @@ class Cotizacion extends MY_Controller
         // );
         // $this->email->bcc($bcc);
         $bcc = [];
-        $bcc = array('luis.durand@visualimpact.com.pe');
+        //$bcc = array('luis.durand@visualimpact.com.pe');
 		$this->email->bcc($bcc);
 
         $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
@@ -643,6 +643,7 @@ class Cotizacion extends MY_Controller
                 $dataParaVista['detalle'][$key]['gap'] = $row['gap'];
                 $dataParaVista['detalle'][$key]['precio'] = $row['precio'];
                 $dataParaVista['detalle'][$key]['subtotal'] = $row['subtotal'];
+                $dataParaVista['detalle'][$key]['caracteristicas'] = $row['caracteristicas'];
             }
 
             //
@@ -904,6 +905,7 @@ class Cotizacion extends MY_Controller
         $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
         $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+        $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
         $config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 
         $this->view($config);
@@ -996,7 +998,7 @@ class Cotizacion extends MY_Controller
         $config['data']['disabled'] = true;
         $config['data']['siguienteEstado'] = ESTADO_ENVIADO_CLIENTE;
         $config['data']['controller'] = 'Cotizacion';
-        $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacion';
+        $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioActualizarCotizacionCliente';
 
         $this->view($config);
     }
@@ -1255,6 +1257,23 @@ class Cotizacion extends MY_Controller
         // $mpdf->Output('OPER.pdf', 'D');
         $mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 
+    }
+
+    public function getFormSendToCliente()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $dataParaVista = [];
+
+        $result['result'] = 1;
+        $result['data']['width'] = '75%';
+        $result['msg']['title'] = 'Enviar Cotizacion al cliente';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/formSendToCliente", $dataParaVista, true);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
     }
 
 }

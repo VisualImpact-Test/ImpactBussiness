@@ -132,27 +132,23 @@
 <div style="border: 2px solid black; text-align:justify;height:100px">
     <table style="border:none;width: 100%;margin-top:100px">
         <tr>
+            <td class="w-10">
+            </td>
             <td class="w-30 text-center">
                 <div style="text-align:center; ">
                     <hr style="height: 3px; color:black">
                     Área de logística
                 </div>
             </td>
-            <td class="w-5">
+            <td class="w-20 text-center">
             </td>
             <td class="w-30 text-center">
                 <div style="text-align:center">
                     <hr style="height: 3px; color:black; ">
-                    Gerencia de administración
+                    Coordinador de compras
                 </div>
             </td>
-            <td class="w-5">
-            </td>
-            <td class="w-30 text-center">
-                <div style="text-align:center">
-                    <hr style="height: 3px; color:black; ">
-                    Gerencia General
-                </div>
+            <td class="w-10">
             </td>
         </tr>
     </table>

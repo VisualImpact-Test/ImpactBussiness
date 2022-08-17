@@ -81,6 +81,7 @@ $.ajaxSetup({
 });
 
 const KB_MAXIMO_ARCHIVO = 7168;
+const MAX_ARCHIVOS = 10;
 const IGV_SYSTEM = 0.18;
 
 const RUTA_WIREFRAME = '../public/assets/images/wireframe/';
