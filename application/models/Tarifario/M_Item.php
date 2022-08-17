@@ -75,6 +75,26 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerSubCategoriaItem($params = [])
+	{
+		$sql = "
+			SELECT
+				idItemSubCategoria AS id
+				, nombre AS value
+			FROM compras.itemSubCategoria
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerProveedor($params = [])
 	{
 		$sql = "
@@ -141,6 +161,8 @@ class M_Item extends MY_Model
 				, ma.nombre AS itemMarca
 				, ca.idItemCategoria
 				, ca.nombre AS itemCategoria
+				, sca.idItemSubCategoria
+				, sca.nombre AS itemSubCategoria
 				, ta.idItemTipo
 				, ta.nombre AS itemTipo
 				, a.idItem
@@ -156,6 +178,7 @@ class M_Item extends MY_Model
 			JOIN compras.item a ON tfa.idItem = a.idItem
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
 			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
+			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			WHERE 1 = 1
 			{$filtros}
@@ -248,7 +271,6 @@ public function obteneFlagNoRepetido()
 	}
 
 
-
 	public function obtenerItems()
 	{
 		$sql = "
@@ -263,6 +285,8 @@ public function obteneFlagNoRepetido()
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
 		return $result;
 	}
+
+
 
 	public function validarExistenciaItemTarifario($params = [])
 	{

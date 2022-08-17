@@ -55,6 +55,8 @@ var Gestion = {
 			});
 		});
 
+		
+
 		$(document).on("click", ".btn-CustomCargaMasiva", function (e) {
 			e.preventDefault();
 
@@ -417,6 +419,65 @@ var Gestion = {
 
 		// Cargando load de variable HTCustom
 		HTCustom.load();
+	},
+
+	confirmarHT: function(config){
+		var contColsInvalid = 0;
+			contColsInvalid = $('#divTablaCargaMasiva .htInvalid').length;
+
+		if ( contColsInvalid>0) {
+			++modalId;
+			var fn='Fn.showModal({ id:'+modalId+',show:false });';
+			var btn=new Array();
+				btn[0]={title:'Cerrar',fn:fn};
+			var message = Fn.message({ 'type': 2, 'message': 'Se encontró datos obligatorios que no fueron ingresados, verificar los datos remarcados <label style="color:red">en rojo</label>' });
+			Fn.showModal({ id:modalId,title:'Alerta',frm:message,btn:btn,show:true});
+			return false;
+		} else {
+			++modalId;
+			var fn1= config.fn + ';Fn.showModal({ id:' + modalId + ',show:false });';
+			var fn2='Fn.showModal({ id:'+modalId+',show:false });';
+			var btn=new Array();
+				btn[1]={title:'Continuar',fn:fn1};
+				btn[0]={title:'Cerrar',fn:fn2};
+			var message = Fn.message({ 'type': 3, 'message': config.content });
+			Fn.showModal({ id:modalId,title:'Alerta',frm:message,btn:btn,show:true});
+		}
+	},
+
+	guardarHT: function(config = {}){
+
+		var defaults = {
+			'url': '',
+			'form': 'formCargaMasiva'
+		};
+		var config = $.extend({}, defaults, config);
+
+		var data = Fn.formSerializeObject(config.form);
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+
+		var jsonString = { 'data': JSON.stringify(data) };
+		var config = { 'url': Gestion.urlActivo + config.url, 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+
+			if (a.result === 2) return false;
+
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (a.result == 1) fn += 'Fn.showModal({ id:' + Gestion.idModalPrincipal + ',show:false });$(".btn-Consultar").click();';
+
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+		});
+
+
 	},
 
 	cambiarEstado: function (data) {

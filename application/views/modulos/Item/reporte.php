@@ -7,6 +7,7 @@
                 <th>TIPO</th>
                 <th>MARCA</th>
                 <th>CATEGORIA</th>
+                <th>SUBCATEGORIA</th>
                 <th>ITEM</th>
                 <th>CARACTERISTICAS</th>
                 <th>EQUIVALENTE EN LOGISTICA</th>
@@ -32,6 +33,7 @@
                     <td class="td-left"><?= verificarEmpty($row['tipoItem'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemMarca'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemCategoria'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['itemSubCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['item'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['caracteristicas'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['equivalenteLogistica'], 3); ?></td>
