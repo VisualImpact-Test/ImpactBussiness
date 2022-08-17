@@ -75,12 +75,55 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerSubCategoriaItem($params = [])
+	{
+		$sql = "
+			SELECT
+				idItemSubCategoria AS id
+				, nombre AS value
+			FROM compras.itemSubCategoria
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerItemTextil($params = [])
+	{
+		$sql = "
+			SELECT
+				idItemtextil AS id
+				, talla AS itemTalla
+				, tela AS itemTela
+				, color AS itemColor
+			FROM compras.itemTextil
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerInformacionItems($params = [])
 	{
 		$filtros = "";
 		$filtros .= !empty($params['tipoItem']) ? ' AND a.idItemTipo = ' . $params['tipoItem'] : '';
-		$filtros .= !empty($params['itemMarca']) ? ' AND a.idItemMarca = ' . $params['itemMarca'] : '';
-		$filtros .= !empty($params['itemCategoria']) ? ' AND a.idItemCategoria = ' . $params['itemCategoria'] : '';
+		$filtros .= !empty($params['marcaItem']) ? ' AND a.idItemMarca = ' . $params['marcaItem'] : '';
+		$filtros .= !empty($params['categoriaItem']) ? ' AND a.idItemCategoria = ' . $params['categoriaItem'] : '';
+		$filtros .= !empty($params['subcategoriaItem']) ? ' AND a.idItemSubCategoria = ' . $params['subcategoriaItem'] : '';
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
 
@@ -93,7 +136,13 @@ class M_Item extends MY_Model
 				, ma.nombre AS itemMarca
 				, ca.idItemCategoria
 				, ca.nombre AS itemCategoria
+				, sca.idItemSubCategoria
+				, sca.nombre AS itemSubCategoria
 				, a.nombre AS item
+				, id.talla
+				, id.tela
+				, id.color
+				, id.monto
 				, a.caracteristicas
 				, a_l.idArticulo AS idItemLogistica
 				, a_l.nombre AS equivalenteLogistica
@@ -102,6 +151,8 @@ class M_Item extends MY_Model
 			JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
 			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
+			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
+			LEFT JOIN compras.itemDetalle id ON a.idItem = id.idItem
 			LEFT JOIN visualImpact.logistica.articulo a_l ON a.idItemLogistica = a_l.idArticulo
 			WHERE 1 = 1
 			{$filtros}
@@ -167,6 +218,48 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	//validar existencia itemImagen
+
+	public function insertarItemImage($params = [])
+	{
+		$insertArchivos = [];
+
+			if(!empty($params['archivos'])){
+				foreach($params['archivos'] as $Grupo_archivo){
+					foreach($Grupo_archivo as $archivo ){
+
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/',$archivo['type']);
+					$insertArchivos[] = [
+						'idItem' => $archivo['idItem'],
+               		    'idTipoArchivo' => TIPO_IMAGEN,
+                        'nombre_inicial' => $archivo['name'],
+                        'nombre_archivo' => $archivoName,
+                        'nombre_unico' => $archivo['nombreUnico'],
+                        'extension' => $tipoArchivo[1],
+                        'estado' => true
+					];
+
+					}
+				}
+			}
+		
+			
+
+			if(!empty($insertArchivos)){
+				$query = $this->db->insert_batch('compras.itemImagen', $insertArchivos);
+				$this->resultado['query'] = $query;
+				$this->resultado['estado'] = true;
+				
+			}
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		
+
+		return $this->resultado;
+	}
+
+	
+
 	public function insertarItem($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
@@ -181,6 +274,10 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+
+
+
+
 	public function actualizarItem($params = [])
 	{
 		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
@@ -194,4 +291,6 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
+
+
 }

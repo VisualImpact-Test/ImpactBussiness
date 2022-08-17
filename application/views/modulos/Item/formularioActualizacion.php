@@ -33,6 +33,12 @@
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idItemCategoria']]); ?>
                 </select>
             </div>
+            <div class="control-group child-divcenter row w-100">
+                <label class="form-control col-md-5" for="subcategoria" style="border:0px;">SubCategoria :</label>
+                <select class="form-control col-md-7" id="subcategoria" name="subcategoria" patron="requerido">
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $subcategoriaItem, 'class' => 'text-titlecase', 'selected' => $informacionItem['idItemSubCategoria']]); ?>
+                </select>
+            </div>
         </div>
     </div>
 </form>

@@ -38,6 +38,7 @@ class Item extends MY_Controller
         $config['data']['tipoItem'] = $this->model->obtenerItemTipo()['query']->result_array();
         $config['data']['itemMarca'] = $this->model->obtenerItemMarca()['query']->result_array();
         $config['data']['itemCategoria'] = $this->model->obtenerItemCategoria()['query']->result_array();
+        $config['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
         $config['data']['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
         $config['view'] = 'modulos/Tarifario/item/index';
 
@@ -93,7 +94,7 @@ class Item extends MY_Controller
         echo json_encode($result);
     }
 
-    public function getFormCargaMasiva()
+    public function getFormCargaMasivaTarifario()
 	{
 		$result = $this->result;
 		$result['msg']['title'] = "Carga masiva de tarifario";
@@ -103,18 +104,20 @@ class Item extends MY_Controller
 
         $proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]] )->result_array();
         $proveedores = refactorizarDataHT(["data" => $proveedores, "value" => "razonSocial" ]);
+        $item['item'] = $this->model->obtenerItems();
 		
+        $itemNombre = refactorizarDataHT(["data" => $item['item'], "value" => "label"]);
 
 		//ARMANDO HANDSONTABLE
 		$HT[0] = [
 			'nombre' => 'Tarifario',
 			'data' => [
                 [
-				'Item' => null,
-				'Proveedor' => null,
-				'Costo' => null,
-				'Fecha' => null,
-				'Este item es el actual' => null,
+				'item' => null,
+				'proveedor' => null,
+				'costo' => null,
+				'fecha' => null,
+				'itemActual' => null,
                 ]
 			],
             'headers' => [
@@ -127,11 +130,11 @@ class Item extends MY_Controller
 
             ],
 			'columns' => [
-				['data' => 'Item', 'type' => 'text', 'placeholder' => 'Item', 'width' => 200],
-				['data' => 'Proveedor', 'type' => 'myDropdown', 'placeholder' => 'Proveedor', 'width' => 200, 'source' => $proveedores],
-				['data' => 'Costo', 'type' => 'numeric', 'placeholder' => 'Costo', 'width' => 200],
-				['data' => 'Fecha', 'type' => 'myDate', 'placeholder' => 'Fecha', 'width' => 200],
-				['data' => 'Este item es el actual', 'type' => 'checkbox', 'placeholder' => 'Este item es el actual', 'width' => 200],
+				['data' => 'item', 'type' => 'myDropdown', 'placeholder' => 'item', 'width' => 200, 'source' => $itemNombre],
+				['data' => 'proveedor', 'type' => 'myDropdown', 'placeholder' => 'proveedor', 'width' => 200, 'source' => $proveedores],
+				['data' => 'costo', 'type' => 'numeric', 'placeholder' => 'costo', 'width' => 200],
+				['data' => 'fecha', 'type' => 'myDate', 'placeholder' => 'fecha', 'width' => 200],
+				['data' => 'itemActual', 'type' => 'checkbox', 'placeholder' => 'itemActual', 'width' => 200],
 
 			],
 			'colWidths' => 200,
@@ -146,6 +149,111 @@ class Item extends MY_Controller
 
 	
 		echo json_encode($result);
+
+    }
+
+    public function guardarCargaMasivaTarifario() {
+
+        ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		set_time_limit(0);
+
+        $this->db->trans_start();
+
+        $result = $this->result;
+        $result['msg']['title'] = "Carga masiva de tarifario";
+
+        $post = json_decode($this->input->post('data'), true);
+
+        
+        $itemProveedores = [];
+        $itemNombre = [];
+
+        $proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]] )->result_array();
+        $item['item'] = $this->model->obtenerItems();
+
+        foreach ($proveedores as $key => $row) {
+            $itemProveedores[$row['razonSocial']] = $row['idProveedor'];
+        }
+
+        foreach ($item['item'] as $key => $row) {
+            $itemNombre[$row['label']] = $row['value'];
+        }
+
+
+
+        foreach ($post['HT'][0] as $tablaHT) {
+
+            if(empty($tablaHT['item'] || $tablaHT['proveedor'] || $tablaHT['costo'] || $tablaHT['fecha'] || $tablaHT['itemActual'])) {
+                $msg = createMessage(['type' => 2,'message' => 'Complete los campos obligatorios']);
+                continue;
+            }
+
+            $proveedoresItem = !empty($itemProveedores[$tablaHT['proveedor']]) ? $itemProveedores[$tablaHT['proveedor']] : NULL;
+            $nombreItem = !empty($itemNombre[$tablaHT['item']]) ? $itemNombre[$tablaHT['item']] : NULL;
+
+            if(empty($proveedoresItem || $nombreItem )) {
+                goto respuesta;
+            }
+
+            $dataTarifario['insert'][] = [
+                'idItem' => $nombreItem,
+                'idProveedor' => $proveedoresItem,
+                'costo' => $tablaHT['costo'],
+                'flag_actual' => $tablaHT['itemActual'],
+                'fechaVigencia' => $tablaHT['fecha']
+                
+            ];
+
+        }
+
+        $insertarTarifario = $this->model->insertarMasivo('compras.itemTarifario', $dataTarifario['insert']);
+
+
+        $dataTarifario ['dataTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+
+        $tarifario = [];
+
+        foreach ($dataTarifario ['dataTarifario'] as $key => $row) {
+            $tarifario[$row['idProveedor']][$row['idItem']] = $row['idItemTarifario'];
+        }
+
+        foreach ($post['HT'][0] as $tablaHThistorico) {
+
+            if(empty($tablaHThistorico['item'] || $tablaHThistorico['proveedor'] || $tablaHThistorico['costo'] || $tablaHThistorico['fecha'] || $tablaHThistorico['itemActual'])) {
+                $msg = createMessage(['type' => 2,'message' => 'Complete los campos obligatorios']);
+                continue;
+            }
+
+            $proveedoresItem = !empty($itemProveedores[$tablaHThistorico['proveedor']]) ? $itemProveedores[$tablaHThistorico['proveedor']] : NULL;
+            $nombreItem = !empty($itemNombre[$tablaHThistorico['item']]) ? $itemNombre[$tablaHThistorico['item']] : NULL;
+            $tarifarioId = !empty($tarifario[$proveedoresItem][$nombreItem]) ? $tarifario[$proveedoresItem][$nombreItem] : NULL;
+
+            $dataTarifarioHistorico['insert'][] = [
+                'idItemTarifario' => $tarifarioId,
+                'fecIni' => getFechaActual(),
+                'fecFin' => NULL,
+                'costo' => $tablaHThistorico['costo']
+            ];
+        }
+
+        $insertarTarifarioHistorico = $this->model->insertarMasivo('compras.itemTarifarioHistorico', $dataTarifarioHistorico['insert']);
+
+        if (!$insertarTarifario || !$insertarTarifarioHistorico) {
+            respuesta:
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+            $this->db->trans_commit();
+        }
+
+        echo json_encode($result);
+
+
 
     }
 

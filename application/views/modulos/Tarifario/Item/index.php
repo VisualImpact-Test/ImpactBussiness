@@ -38,7 +38,7 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarItemTarifario" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
-				<button data-form="getFormCargaMasiva" data-save="guardarListaComentariosHT" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="btn-CargaMasivaEncuesta1" title="Carga Masiva Comentarios">
+				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
                     <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
                 </button>
 			</div>
