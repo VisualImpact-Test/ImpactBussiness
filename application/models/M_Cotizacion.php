@@ -116,16 +116,17 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 
 		$sql = "
-			SELECT
+			SELECT DISTINCT
 				p.idCotizacion
 				, p.nombre AS cotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, 'COTIZACION' AS tipoCotizacion
 				, p.codCotizacion
-				, c.idCuenta
+				, p.idCuenta
 				, c.nombre AS cuenta
-				, cc.idCuentaCentroCosto
-				, cc.nombre AS cuentaCentroCosto
+				, p.idCentroCosto idCuentaCentroCosto
+				--, cc.nombre AS cuentaCentroCosto
+				, cc.canal AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
 				, p.estado
 				, p.fechaRequerida
@@ -144,8 +145,11 @@ class M_Cotizacion extends MY_Model
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
-			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
-			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			-- LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
+			-- LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
+			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idCanal = p.idCentroCosto
+				AND cc.idEmpresa = c.idEmpresa
 			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 				AND od.estado = 1
 			
@@ -250,7 +254,8 @@ class M_Cotizacion extends MY_Model
 				, ei.nombre AS estadoItem
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
-				, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
+				--, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
+				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 				, pd.caracteristicas
 			FROM compras.cotizacion p
@@ -387,6 +392,26 @@ class M_Cotizacion extends MY_Model
 					];
 				}
 			}
+
+			//Sub Items
+			if(!empty($params['insertSubItem'][$k])){
+				foreach($params['insertSubItem'][$k] as $subItem){
+					$insertSubItem[] = [
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+						'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+						'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+					];
+				}
+
+			}
 		}
 
 		if ($queryCotizacionDetalle) {
@@ -396,6 +421,9 @@ class M_Cotizacion extends MY_Model
 
 			if(!empty($insertArchivos)){
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+			}
+			if(!empty($insertSubItem)){
+				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
 			}
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
@@ -492,6 +520,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+		$filtros .= !empty($params['noTipoItem']) ? " AND cd.idItemTipo NOT IN({$params['noTipoItem']}) " : "";
 
 
 		$sql = "
@@ -531,6 +560,57 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerInformacionDetalleCotizacionSub($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+		$filtros .= !empty($params['noTipoItem']) ? " AND cd.idItemTipo NOT IN({$params['noTipoItem']}) " : "";
+
+
+		$sql = "
+			SELECT
+				cd.idCotizacion,
+				cd.idItemTipo,
+				cds.idCotizacionDetalle,
+				cds.idTipoServicio,
+				cds.idUnidadMedida,
+				cds.nombre,
+				cds.talla,
+				cds.tela,
+				cds.color,
+				cds.cantidad,
+				cds.costo,
+				cds.subtotal,
+				cds.monto,
+				ts.nombre tipoServicio,
+				um.nombre unidadMedida
+			
+			FROM
+			compras.cotizacion c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			JOIN compras.cotizacionDetalleSub cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
+			LEFT JOIN compras.tipoServicioUbigeo ts ON ts.idTipoServicioUbigeo = cds.idTipoServicio
+			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cds.idUnidadMedida
+			WHERE
+			1 = 1
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerInformacionDetalleCotizacionArchivos($params = [])
 	{
 		$filtros = "";
@@ -854,7 +934,8 @@ class M_Cotizacion extends MY_Model
 				ts.idTipoServicio id,
 				ts.nombre value,
 				ts.costo,
-				um.nombre unidadMedida
+				um.nombre unidadMedida,
+				um.idUnidadMedida
 			FROM compras.tipoServicio ts
 			JOIN compras.unidadMedida um ON um.idUnidadMedida = ts.idUnidadMedida
 			WHERE ts.estado = 1

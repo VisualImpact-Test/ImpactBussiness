@@ -208,7 +208,8 @@ class SolicitudCotizacion extends MY_Controller
         $data['update'] = [
             'nombre' => $post['nombre'],
             'idCuenta' => $post['cuentaForm'],
-            'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            // 'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            'idCentroCosto' => trim(explode("-",$post['cuentaCentroCostoForm'])[1]),
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'fee' => $post['feeForm'],
@@ -479,7 +480,23 @@ class SolicitudCotizacion extends MY_Controller
         
         $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
-        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion([
+            'idCotizacion'=> $idCotizacion,
+            'cotizacionInterna' => true,
+            'noTipoItem' => COD_DISTRIBUCION['id']
+        ])['query']->result_array();
+        $cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSub(
+            [
+            'idCotizacion'=> $idCotizacion,
+            'cotizacionInterna' => true,
+            'noTipoItem' => COD_DISTRIBUCION['id']
+            ]
+        )['query']->result_array();
+
+        foreach($cotizacionDetalleSub as $sub){
+            $config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
+        }
+
         $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
         $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
         $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => true])['query']->result_array();
@@ -581,7 +598,11 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
         $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
-        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos([
+            'idCotizacion'=> $idCotizacion,
+            'cotizacionInterna' => false,
+            'noTipoItem' => COD_DISTRIBUCION
+            ])['query']->result_array();
         $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'union'=>true])['query']->result_array();
         $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'union' => true])['query']->result_array();
 
@@ -703,7 +724,7 @@ class SolicitudCotizacion extends MY_Controller
             $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
 
             $html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
-            $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/viewOrdenCompra/"], true);
+            $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/viewOrdenCompra/{$rs_oc['id']}"], true);
             $config = [
                 'to' => 'aaron.ccenta@visualimpact.com.pe',
                 'asunto' => 'Generación de OC',

@@ -69,13 +69,13 @@
                     <div class="ui left floated header">
                         <span class="ui medium text "><?= $row['cotizacion'] ?> <span class="title-n-detalle"><?= !empty($row['codCotizacion']) ? $row['codCotizacion'] : '' ?></span></span>
                     </div>
-                    <div class="ui right floated header">
+                    <!-- <div class="ui right floated header">
                         <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($row['total']) ? $row['total'] : '' ?>" readonly>
                         <a class="item">
                             <div class="ui green horizontal label">Total </div>
                             <?= !empty($row['total']) ? moneda($row['total']) : '0.00' ?>
                         </a>
-                    </div>
+                    </div> -->
                     <div class="ui clearing divider"></div>
                     <? foreach ($detalle[$row['idCotizacion']] as $rowDetalle) { ?>
                         <div class="ui grid">

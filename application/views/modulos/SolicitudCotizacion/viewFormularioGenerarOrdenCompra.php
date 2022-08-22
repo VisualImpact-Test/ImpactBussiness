@@ -114,7 +114,7 @@
                                     <div class="five wide field">
                                         <div class="ui sub header">Características</div>
                                         <div class="ui right labeled input w-100">
-                                            <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' patron="requerido" value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
+                                            <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
                                         </div>
                                     </div>
                                 </div>

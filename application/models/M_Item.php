@@ -203,7 +203,7 @@ class M_Item extends MY_Model
 				idItem
 			FROM compras.item a
 			WHERE
-			(a.nombre LIKE '%{$params['nombre']}%')
+			a.nombre = '{$params['nombre']}'
 			{$filtros}
 		";
 
