@@ -39,7 +39,7 @@
                             <label for="upload_orden_compra[<?= $row['idCotizacion'] ?>]" class="btn btn-outline-secondary border-0 mt-1 btn-subir-oc" data-toggle="tooltip" data-placement="top" title="Adjuntar OC "><i class="fa fa-lg fa-paperclip"></i></label>
                             <input class="form-control upload_orden_compra d-none" type="file" id="upload_orden_compra[<?= $row['idCotizacion'] ?>]" name="upload_orden_compra" accept=".pdf">
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-subir-oc"><i class="fa fa-lg fa-paperclip" title="Adjuntar OC"></i></a> -->
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-generar-cotizacionEfectivaSinOc"><i class="fa fa-lg fa-paste" title="Procesar Sin Orden de Compra"></i></a>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-generar-cotizacionEfectivaSinOc"><i class="fa fa-lg fa-paste" title="Procesar"></i></a>
                            
                         <? } ?>
                         

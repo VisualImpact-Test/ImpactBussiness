@@ -31,7 +31,7 @@
                             <a target="_blank" href="../SolicitudCotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 btn-dp-<?= $row['idCotizacion']; ?> <?= $row['nuevos'] <= 0 ? "disabled" : "" ?>"><i class="fa fa-lg fa-badge-dollar" title="Cotizar items sin precio"></i></a>
                         <? } ?>
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO) { ?>
-                            <a target="_blank" href="../SolicitudCotizacion/viewUpdateOper/<?= $row['idOper'] ?>" class="btn btn-outline-secondary border-0 btn-update-oper"><i class="file invoice dollar icon large" title="Procesar Sin Orden de Compra"></i></a>
+                            <a target="_blank" href="../SolicitudCotizacion/viewUpdateOper/<?= $row['idOper'] ?>" class="btn btn-outline-secondary border-0 btn-update-oper"><i class="file invoice dollar icon large" title="Procesar OC"></i></a>
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_OC_GENERADA || $row['idCotizacionEstado'] == ESTADO_OC_ENVIADA) { ?>

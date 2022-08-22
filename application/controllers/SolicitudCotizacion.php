@@ -681,7 +681,6 @@ class SolicitudCotizacion extends MY_Controller
                 'idUsuarioReg' => $this->idUsuario,
             ];
         }
-
         //Insert OC
         $data = [];
         $data['oc'] = getDataRefactorizada([
@@ -690,6 +689,8 @@ class SolicitudCotizacion extends MY_Controller
         ]);
 
         foreach ($data['oc'] as $row) {
+
+            if(empty($row['idProveedor'])) continue;
 
             if(empty($data['proveedor'][$row['idProveedor']])){
                 $insert_oc = [
