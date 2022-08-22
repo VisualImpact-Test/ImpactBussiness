@@ -169,23 +169,22 @@
                         <div class="fields d-none div-features div-feature-<?= COD_TEXTILES['id'] ?>">
                             <div class="five wide field">
                                 <div class="ui sub header">Talla</div>
-                                <input name="<?= COD_TEXTILES['nombre'] ?>[talla]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
+                                <input class="tallaSubItem" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
                             </div>
                             <div class="five wide field">
                                 <div class="ui sub header">Tela</div>
-                                <input name="<?= COD_TEXTILES['nombre'] ?>[tela]" placeholder="Tela" value="<?= !empty($data['tela']) ? $data['tela'] : '' ?>">
+                                <input class="telaSubItem" name="telaSubItem[0]" placeholder="Tela" value="<?= !empty($data['tela']) ? $data['tela'] : '' ?>">
                             </div>
                             <div class="five wide field">
                                 <div class="ui sub header">Color</div>
-                                <input name="<?= COD_TEXTILES['nombre'] ?>[color]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>">
+                                <input class="colorSubItem" name="colorSubItem[0]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>">
                             </div>
                         </div>
-
                         <!-- Monto S/ -->
                         <div class="fields d-none div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
                             <div class="sixteen wide field">
                                 <div class="ui sub header">Monto S/</div>
-                                <input name="<?= COD_TARJETAS_VALES['nombre'] ?>[monto]" placeholder="Monto" value="<?= !empty($data['monto']) ? $data['monto'] : '' ?>">
+                                <input class="montoSubItem" name="montoSubItem[0]" placeholder="Monto" value="<?= !empty($data['montoSubItem']) ? $data['montoSubItem'] : '' ?>">
                             </div>
                         </div>
 
@@ -196,15 +195,15 @@
                                 <div class="fields body-sub-item body-sub-item-servicio">
                                     <div class="ten wide field">
                                         <div class="ui sub header">Sub item </div>
-                                        <input name="<?= COD_SERVICIO['nombre'] ?>[nombre]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
+                                        <input class="nombreSubItem" name="nombreSubItemServicio[0]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
                                     </div>
                                     <div class="five wide field">
                                         <div class="ui sub header">Cantidad</div>
-                                        <input class="onlyNumbers" name="<?= COD_SERVICIO['nombre'] ?>[cantidad]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                        <input  class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                                     </div>
                                     <div class="one wide field">
                                         <div class="ui sub header">Eliminar</div>
-                                        <button type="button" class="ui basic button btn-eliminar-sub-item">
+                                        <button type="button" class="ui basic button btn-eliminar-sub-item" >
                                             <i class="trash icon"></i>
                                         </button>
                                     </div>
@@ -219,21 +218,22 @@
                         <div class="fields d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
                             <div class="seven wide field">
                                 <div class="ui sub header">Tipo Servicio</div>
-                                <select class="ui search dropdown simpleDropdown tipoServicioForm" name="<?=COD_DISTRIBUCION['nombre']?>[tipoServicio]">
-                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase','data-option'=>['costo','unidadMedida']]); ?>
+                                <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase','data-option'=>['costo','unidadMedida','idUnidadMedida']]); ?>
                                 </select>
                             </div>
                             <div class="three wide field">
                                 <div class="ui sub header">Unidad de medida</div>
                                 <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($data['unidadMedidaTipoServicio']) ? $data['unidadMedidaTipoServicio'] : '' ?>" readonly>
+                                <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($data['idUnidadMedidaTipoServicio']) ? $data['idUnidadMedidaTipoServicio'] : '' ?>" readonly>
                             </div>
                             <div class="three wide field">
                                 <div class="ui sub header">Costo S/</div>
-                                <input class="costoTipoServicio" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
+                                <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
                             </div>
                             <div class="three wide field">
                                 <div class="ui sub header">Cantidad</div>
-                                <input class="onlyNumbers" name="<?=COD_DISTRIBUCION['nombre']?>[cantidadTipoServicio]" placeholder="Cantidad" value="<?= !empty($data['cantidadTipoServicio']) ? $data['cantidadTipoServicio'] : '' ?>">
+                                <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                             </div>
                         </div>
 

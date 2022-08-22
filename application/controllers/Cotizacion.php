@@ -347,7 +347,8 @@ class Cotizacion extends MY_Controller
             'nombre' => $post['nombre'],
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
-            'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            // 'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            'idCentroCosto' => trim(explode('-',$post['cuentaCentroCostoForm'])[1]),
             'idSolicitante' => $idSolicitante,
             'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
@@ -359,6 +360,7 @@ class Cotizacion extends MY_Controller
             'idPrioridad' => $post['prioridadForm'],
             'motivo' => $post['motivoForm'],
             'comentario' => $post['comentarioForm'],
+            'diasValidez' => $post['diasValidez'],
             'idCotizacionEstado' => ESTADO_REGISTRADO,
             'idUsuarioReg' => $this->idUsuario
         ];
@@ -446,6 +448,59 @@ class Cotizacion extends MY_Controller
                 'fechaCreacion' => getActualDateTime()
             ];
 
+// 
+            switch ($post['tipoItemForm'][$k]) {
+                case COD_SERVICIO['id']:
+                    $data['subDetalle'][$k] = getDataRefactorizada([
+                        'nombre' => $post["nombreSubItemServicio[$k]"],
+                        'cantidad' => $post["cantidadSubItemServicio[$k]"],
+                    ]);
+                    break;
+                
+                case COD_DISTRIBUCION['id']:
+                    $data['subDetalle'][$k] = getDataRefactorizada([
+                        'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
+                        'tipoServicio' => $post["tipoServicioSubItem[$k]"],
+                        'costo' => $post["costoSubItem[$k]"],
+                        'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
+                    ]);
+                    break;
+                
+                case COD_TEXTILES['id']:
+                    $data['subDetalle'][$k] = getDataRefactorizada([
+                        'talla' => $post["tallaSubItem[$k]"],
+                        'tela' => $post["telaSubItem[$k]"],
+                        'color' => $post["colorSubItem[$k]"],
+                    ]);
+                    break;
+
+                case COD_TARJETAS_VALES['id']:
+                    $data['subDetalle'][$k] = getDataRefactorizada([
+                        'monto' => $post["montoSubItem[$k]"],
+                    ]);
+                    break;
+
+                default:
+                    $data['subDetalle'][$k] = [];
+                    break;
+            }
+
+            foreach($data['subDetalle'][$k] as $subItem){
+                $data['insertSubItem'][$k][] = [
+                    'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+                    'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+                    'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+                    'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+                    'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+                    'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+                    'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+                    'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+                    'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+                    'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : 0 , 
+                ];
+            }
+// 
+
             if(!empty($post["file-name[$k]"])){
                 $data['archivos_arreglo'][$k] = getDataRefactorizada([
                     'base64' => $post["file-item[$k]"],
@@ -507,16 +562,33 @@ class Cotizacion extends MY_Controller
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
+           
         } else {
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
-
+            $this->db->trans_complete();
         }
 
-        $this->db->trans_complete();
+        
         respuesta:
         echo json_encode($result);
+    }
+
+    public function insertarCotizacionDetalleSub($params){
+        $dataDetalle = $params['data'];
+        $post = $params['post'];
+        $idCotizacion = $dataDetalle['insert'][0]['idCotizacion'];
+
+        $this->db->select('idCotizacion, idCotizacionDetalle, idItem');
+        $this->db->where([
+            'idCotizacion' => $idCotizacion
+        ]);
+        $detalle = $this->db->get('compras.cotizacionDetalle')->result_array();
+
+
+        return true;
+
     }
 
     public function actualizarEstadoCotizacion()
@@ -567,11 +639,13 @@ class Cotizacion extends MY_Controller
         $this->email->clear(true);
         $this->email->set_newline("\r\n");
 
-        $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-        $this->email->to(['aaron.ccenta@visualimpact.com.pe', 'jean.alarcon@visualimpact.com.pe']);
-
         $data = [];
         $dataParaVista = [];
+        $cc = !empty($params['cc']) ? $params['cc'] : [];
+
+        $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+        $this->email->to(['aaron.ccenta@visualimpact.com.pe', 'jean.alarcon@visualimpact.com.pe']);
+        $this->email->cc($cc);
 
         $data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
 
@@ -1264,12 +1338,53 @@ class Cotizacion extends MY_Controller
         $this->db->trans_start();
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        $dataParaVista = [];
+        $dataParaVista['data'] = $post;
 
         $result['result'] = 1;
         $result['data']['width'] = '75%';
         $result['msg']['title'] = 'Enviar Cotizacion al cliente';
         $result['data']['html'] = $this->load->view("modulos/Cotizacion/formSendToCliente", $dataParaVista, true);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }   
+
+    public function sendToCliente()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $dataParaVista = [];
+
+        $data['tabla'] = 'compras.cotizacion';
+        $data['update'] = [
+            'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE,
+        ];
+        $data['where'] = [
+            'idCotizacion' => $post['idCotizacion'],
+        ];
+
+        $this->model->actualizarCotizacion($data);
+
+        $insertCotizacionHistorico = [
+            'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE, 
+            'idCotizacion' => $post['idCotizacion'],
+            'idUsuarioReg' => $this->idUsuario,
+            'estado' => true,
+        ];
+        $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
+
+        $message = 'Se actualizó la cotización';
+        if($post['flagEnviarCorreo'] == 1){
+            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'],'cc' => !empty($post['correos']) ? $post['correos'] : [] ]);
+            $message = 'La cotización se envió al cliente';
+        }
+
+        $result['result'] = 1;
+        $result['data']['width'] = '45%';
+        $result['msg']['title'] = 'Enviar Cotizacion al cliente';
+        $result['msg']['content'] = createMessage(['type'=>1,'message'=>$message]);
 
         $this->db->trans_complete();
         respuesta:

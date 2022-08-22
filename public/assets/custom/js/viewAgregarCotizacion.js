@@ -256,9 +256,8 @@ var Cotizacion = {
             childInserted.transition('glow');
 
             Cotizacion.actualizarAutocomplete();
-
-			Cotizacion.actualiarOnAddRow(childInserted);
-			
+			Cotizacion.actualizarOnAddRow(childInserted);
+			Cotizacion.actualizarOnAddRowCampos(childInserted);
     
 		});
 
@@ -310,11 +309,12 @@ var Cotizacion = {
                 duration   : '0.4s',
                 onComplete : function() {
                     body.remove();
+
+					$.each($('.body-item'),function(i,v){
+						Cotizacion.actualizarOnAddRowCampos($(v));
+					});
                 }
-              })
-            
-          
-           
+            });
 		
             // $(this).parents('.fila-existente').remove();
 
@@ -350,6 +350,8 @@ var Cotizacion = {
 
 			allFeatures.addClass('d-none');
 			divFeature.removeClass('d-none');
+
+			Cotizacion.cleanDetalle(parent);
 		});
 
 		$(document).on('change', '#prioridadForm', function (e) {
@@ -396,6 +398,25 @@ var Cotizacion = {
 			
 			Cotizacion.actualizarTotal();
 		});
+		$(document).on('keyup', '.cantidadSubItemDistribucion', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let costoForm = thisControlParents.find('.costoForm');
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
+			
+			let cantidadTipoServicio = Number(thisControl.val());
+			let costoTipoServicio = Number(costoTipoServicioForm.val());
+
+			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio,costoTipoServicio);
+
+			costoForm.val(subTotalTipoServicio);
+
+			cantidadForm.keyup();
+			
+		});
+
 		$(document).on('focusout', '.costoFormLabel', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
@@ -756,17 +777,29 @@ var Cotizacion = {
 			let parent = control.closest('.div-features');
 			let tipo = parent.data('tipo');
 
-            let contenedor = $('.content-body-sub-item');
-            contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
+            let contenedor = parent.find('.content-body-sub-item');
+			
+			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
+
+            // contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
+            contenedor.append(bodyHtmlSubItem.html());
 
             let childInserted = contenedor.children().last();
-			
+
 			// $("html").animate({ scrollTop: contenedor.height() }, 500);
             childInserted.transition('glow');
+			childInserted.find(':input').val('');
 		});
 		$(document).on('click', '.btn-eliminar-sub-item', function () {
 			let control = $(this);
+			let parent = control.closest('.content-body-sub-item');
 			let element = control.closest('.body-sub-item');
+			
+			if(parent.find('.body-sub-item').length <= 1){
+				element.find(':input').val('');
+				// element.transition('glow')
+				return false;
+			}
 
 			element.remove();
 			
@@ -776,12 +809,19 @@ var Cotizacion = {
 			let parent = control.closest('.div-features');
 			let costo = control.find('option:selected').data('costo');
 			let unidadMedida = control.find('option:selected').data('unidadmedida');
+			let idUnidadMedida = control.find('option:selected').data('idunidadmedida');
 
 			let costoForm = parent.find('.costoTipoServicio');
 			let unidadMedidaForm = parent.find('.unidadMedidaTipoServicio');
+			let idUnidadMedidaForm = parent.find('.unidadMedidaSubItem');
+			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
 
 			costoForm.val(costo);
 			unidadMedidaForm.val(unidadMedida);
+			idUnidadMedidaForm.val(idUnidadMedida);
+
+			cantidadFormSubItem.keyup();
+				
 			
 		});
 
@@ -1087,7 +1127,7 @@ var Cotizacion = {
 
     },
 
-	actualiarOnAddRow: (childInserted) => {
+	actualizarOnAddRow: (childInserted) => {
 
 		$('.btn-add-file').dimmer({on: 'hover'});
 		$('.simpleDropdown').dropdown();
@@ -1099,7 +1139,61 @@ var Cotizacion = {
 				title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
 				content : `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
 			}
-			);
+		);
+   },
+
+   actualizarOnAddRowCampos:(parent) =>{
+
+		let number = parent.index();
+		//Textiles 
+		let tallaSubItem = parent.find('.tallaSubItem');
+		let telaSubItem = parent.find('.telaSubItem');
+		let colorSubItem = parent.find('.colorSubItem');
+
+		//Tarjetas o vales 
+		let montoSubItem = parent.find('.montoSubItem');
+
+		//Servicios y distribucion 
+
+		let nombreSubItem = parent.find('.nombreSubItem');
+		let cantidadSubItem = parent.find('.cantidadSubItem');
+		let cantidadSubItemDistribucion = parent.find('.cantidadSubItemDistribucion');
+
+		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
+		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
+		let costoSubItem = parent.find('.costoSubItem');
+
+
+		// 
+		tallaSubItem.attr('name',`tallaSubItem[${number}]`);
+		telaSubItem.attr('name',`telaSubItem[${number}]`);
+		colorSubItem.attr('name',`colorSubItem[${number}]`);
+
+		montoSubItem.attr('name',`montoSubItem[${number}]`);
+
+		nombreSubItem.attr('name',`nombreSubItemServicio[${number}]`);
+		cantidadSubItem.attr('name',`cantidadSubItemServicio[${number}]`);
+		cantidadSubItemDistribucion.attr('name',`cantidadSubItemDistribucion[${number}]`);
+
+		tipoServicioSubItem.attr('name',`tipoServicioSubItem[${number}]`);
+		unidadMedidaSubItem.attr('name',`unidadMedidaSubItem[${number}]`);
+		costoSubItem.attr('name',`costoSubItem[${number}]`);
+
+   },
+
+  
+
+   cleanDetalle:(parent)=>{
+	let costoForm = parent.find('.costoForm');
+	let gapForm = parent.find('.gapForm');
+	let cantidadForm = parent.find('.cantidadForm');
+
+	costoForm.val('');
+	gapForm.val('');
+
+	cantidadForm.val();
+	
+	cantidadForm.keyup();
    },
 }
 

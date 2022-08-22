@@ -2,7 +2,7 @@
     <table>
         <tr>
             <td style="text-align: justify;height: 20px;">FECHA:</td>
-            <td style="text-align: justify; height: 20px;"><?= date_change_format($cabecera['fecha']) ?></td>
+            <td style="text-align: justify; height: 20px;"><?= ($cabecera['fecha']) ?></td>
             <td style="width: 100px;"></td>
             <td style="text-align: justify; height: 20px;">N° COTIZACIÓN:</td>
             <td style="text-align: justify; height: 20px;"><?= generarCorrelativo($cabecera['idCotizacion'], 4) ?></td>
