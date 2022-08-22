@@ -33,11 +33,10 @@
                         <?}?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO) { ?>
-                            <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar Sin Orden de Compra"></i></a> -->
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
