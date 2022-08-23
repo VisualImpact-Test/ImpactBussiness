@@ -872,20 +872,23 @@ var Cotizacion = {
 				//Llenamos el precio actual
 				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
 					ui.item.costo = 0;
+					debugger;
 				}
+				//Tipo de Item 
+				control.find(".idTipoItem").val(ui.item.tipo);
+				control.find(".idTipoItem").addClass('read-only');
+				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
+				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
+				
 				control.find(".costoForm").val(ui.item.costo);
 				control.find(".costoFormLabel").text(ui.item.costo);
+				debugger;
 				//Llenamos el estado
 				control.find(".estadoItemForm").removeClass('fa-sparkles');
 				control.removeClass('nuevoItem');
 				control.find(".idEstadoItemForm").val(1);
 				control.find(".cotizacionInternaForm").val(`${ui.item.cotizacionInterna}`)
 
-				//Tipo de Item 
-				control.find(".idTipoItem").val(ui.item.tipo);
-				control.find(".idTipoItem").addClass('read-only');
-				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
-				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
 				//Llenamos el proveedor
 				control.find(".proveedorForm").text(ui.item.proveedor);
 				control.find(".idProveedor").val(ui.item.idProveedor);
