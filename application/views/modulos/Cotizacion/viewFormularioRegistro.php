@@ -13,6 +13,9 @@
         display: inline-block;
         line-height: 1;
     }
+    input[type="color"] {
+  padding:initial !important;
+}
 </style>
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
@@ -116,7 +119,7 @@
                 <div class="ui right floated header">
                     <div class="ui icon menu">
                         <a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
-                            <i class="lock icon"></i>
+                            <i class="unlock icon"></i>
                         </a>
                         <a class="item btn-eliminar-detalle btneliminarfila">
                             <i class="trash icon"></i>
@@ -166,19 +169,38 @@
                             </div>
                         </div>
                         <!-- Textiles -->
-                        <div class="fields d-none div-features div-feature-<?= COD_TEXTILES['id'] ?>">
-                            <div class="five wide field">
-                                <div class="ui sub header">Talla</div>
-                                <input class="tallaSubItem" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
+                        <div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TEXTILES['id'] ?>">
+                            <h4 class="ui dividing header">SUB ITEMS</h4>
+                            <div class="content-body-sub-item">
+                                <div class="fields body-sub-item body-sub-item-servicio">
+                                    <div class="six wide field">
+                                        <div class="ui sub header">Talla</div>
+                                        <input class="tallaSubItem camposTextil" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
+                                    </div>
+                                    <div class="three wide field">
+                                        <div class="ui sub header">Tela</div>
+                                        <input class="telaSubItem camposTextil" name="telaSubItem[0]" placeholder="Tela" value="<?= !empty($data['tela']) ? $data['tela'] : '' ?>">
+                                    </div>
+                                    <div class="three wide field">
+                                        <div class="ui sub header">Color</div>
+                                        <input  class="colorSubItem " name="colorSubItem[0]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>" >
+                                    </div>
+                                    <div class="three wide field">
+                                        <div class="ui sub header">Cantidad</div>
+                                        <input class="onlyNumbers cantidadSubItem " name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                    </div>
+                                    <div class="one wide field">
+                                        <div class="ui sub header">Eliminar</div>
+                                        <button type="button" class="ui basic button btn-eliminar-sub-item">
+                                            <i class="trash icon"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="five wide field">
-                                <div class="ui sub header">Tela</div>
-                                <input class="telaSubItem" name="telaSubItem[0]" placeholder="Tela" value="<?= !empty($data['tela']) ? $data['tela'] : '' ?>">
-                            </div>
-                            <div class="five wide field">
-                                <div class="ui sub header">Color</div>
-                                <input class="colorSubItem" name="colorSubItem[0]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>">
-                            </div>
+                            <button type="button" class="ui basic button btn-add-sub-item">
+                                <i class="plus icon"></i>
+                                Agregar
+                            </button>
                         </div>
                         <!-- Monto S/ -->
                         <div class="fields d-none div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
@@ -199,11 +221,11 @@
                                     </div>
                                     <div class="five wide field">
                                         <div class="ui sub header">Cantidad</div>
-                                        <input  class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                        <input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                                     </div>
                                     <div class="one wide field">
                                         <div class="ui sub header">Eliminar</div>
-                                        <button type="button" class="ui basic button btn-eliminar-sub-item" >
+                                        <button type="button" class="ui basic button btn-eliminar-sub-item">
                                             <i class="trash icon"></i>
                                         </button>
                                     </div>
@@ -219,7 +241,7 @@
                             <div class="seven wide field">
                                 <div class="ui sub header">Tipo Servicio</div>
                                 <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
-                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase','data-option'=>['costo','unidadMedida','idUnidadMedida']]); ?>
+                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                 </select>
                             </div>
                             <div class="three wide field">
@@ -300,7 +322,7 @@
                             <div class="eight wide field">
                                 <div class="ui sub header">GAP</div>
                                 <div class="ui right labeled input">
-                                    <input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
+                                    <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') "   data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
                                     <div class="ui basic label">
                                         %
                                     </div>
