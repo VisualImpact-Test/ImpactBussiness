@@ -471,6 +471,7 @@ class Cotizacion extends MY_Controller
                         'talla' => $post["tallaSubItem[$k]"],
                         'tela' => $post["telaSubItem[$k]"],
                         'color' => $post["colorSubItem[$k]"],
+                        'cantidad' => $post["cantidadTextil[$k]"],
                     ]);
                     break;
 
@@ -487,16 +488,16 @@ class Cotizacion extends MY_Controller
 
             foreach($data['subDetalle'][$k] as $subItem){
                 $data['insertSubItem'][$k][] = [
-                    'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
-                    'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
-                    'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
-                    'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
-                    'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
-                    'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
-                    'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
-                    'color' => !empty($subItem['color']) ? $subItem['color'] : '',
-                    'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
-                    'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : 0 , 
+                    'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
+                    'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
+                    'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
+                    'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
+                    'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
+                    'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
+                    'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
+                    'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
+                    'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
+                    'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL , 
                 ];
             }
 // 

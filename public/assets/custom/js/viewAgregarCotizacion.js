@@ -825,6 +825,15 @@ var Cotizacion = {
 			
 		});
 
+		$(document).on('keyup', '.items', function () {
+			let control = $(this);
+			let val = control.val();
+			let parent = control.closest('.nuevo');
+			if(val.length == 0){
+				Cotizacion.cleanDetalle(parent);
+			}
+		});
+
 		
 	},
 
@@ -872,17 +881,15 @@ var Cotizacion = {
 				//Llenamos el precio actual
 				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
 					ui.item.costo = 0;
-					debugger;
 				}
 				//Tipo de Item 
 				control.find(".idTipoItem").val(ui.item.tipo);
-				control.find(".idTipoItem").addClass('read-only');
+				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
 				
 				control.find(".costoForm").val(ui.item.costo);
 				control.find(".costoFormLabel").text(ui.item.costo);
-				debugger;
 				//Llenamos el estado
 				control.find(".estadoItemForm").removeClass('fa-sparkles');
 				control.removeClass('nuevoItem');
@@ -907,7 +914,7 @@ var Cotizacion = {
 
 				let $cod = $(this).parents(".ui-widget").find(".codItems").val();
 				if ($cod != '') {
-					$(this).attr('readonly', 'readonly');
+					// $(this).attr('readonly', 'readonly');
 					control.find('.costoForm').attr('readonly', 'readonly');
 					control.find(".cantidadForm").attr('readonly',false);
 					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');					
@@ -1184,17 +1191,29 @@ var Cotizacion = {
 
    },
 
-  
 
    cleanDetalle:(parent)=>{
 	let costoForm = parent.find('.costoForm');
 	let gapForm = parent.find('.gapForm');
 	let cantidadForm = parent.find('.cantidadForm');
+	let codItems = parent.find('.codItems');
+	let idProveedor = parent.find('.idProveedor');
+	let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
+	let semaforoForm = parent.find('.semaforoForm');
+
+	codItems.val('');
+	idProveedor.val('');
+	cotizacionInternaForm.val('1');
+
+	semaforoForm.removeClass('semaforoForm-green');
+	semaforoForm.removeClass('semaforoForm-yellow');
+	semaforoForm.removeClass('semaforoForm-red');
+	semaforoForm.popup('destroy');
 
 	costoForm.val('');
 	gapForm.val('');
 
-	cantidadForm.val();
+	cantidadForm.val('');
 	
 	cantidadForm.keyup();
    },
