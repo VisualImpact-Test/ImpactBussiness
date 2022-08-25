@@ -576,6 +576,7 @@ class M_Cotizacion extends MY_Model
 			SELECT
 				cd.idCotizacion,
 				cd.idItemTipo,
+				cds.idCotizacionDetalleSub,
 				cds.idCotizacionDetalle,
 				cds.idTipoServicio,
 				cds.idUnidadMedida,

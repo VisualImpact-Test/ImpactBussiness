@@ -206,6 +206,7 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->db->query($sql);
 	}
+
 	public function validarExistenciaProveedor($params = [])
 	{
 		$filtros = "";
@@ -330,5 +331,40 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->resultado;
 
+	}
+
+	public function insertarMasivoDetalleProveedor($params){
+		
+		$post = !empty($params['post']) ? $params['post'] : [];
+		foreach($params['insert'] as $row){
+			$query = $this->db->insert($params['tabla'], $row);
+			$idCotizacionDetalleProveedorDetalle = $this->db->insert_id();
+
+			if(!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])){
+				$cotizacionesSub = checkAndConvertToArray($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"]);
+
+				foreach($cotizacionesSub as $idSub){
+					$params['insertSub'][] = [
+						'idCotizacionDetalleProveedorDetalle' => $idCotizacionDetalleProveedorDetalle,
+						'idCotizacionDetalleSub' => $idSub,
+						'costo' => NULL,
+						'subTotal' => NULL,
+						'fechaCreacion' => getActualDateTime(),
+						'estado' => true,
+					];
+				}
+			}
+		}
+		
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+			if(!empty($params['insertSub'])){
+				$this->db->insert_batch("compras.cotizacionDetalleProveedorDetalleSub",$params['insertSub']);
+			}
+		}
+
+		return $this->resultado;
 	}
 }
