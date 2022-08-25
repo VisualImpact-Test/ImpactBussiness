@@ -62,7 +62,7 @@ var SolicitudCotizacion = {
 				// $(".btn-add-row").click();
 			});
 		});
-		
+
 		$(document).on('click', '.btn-demofechacierre', function () {
 			++modalId;
 			let data = {};
@@ -104,6 +104,28 @@ var SolicitudCotizacion = {
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.actualizarAutocomplete();
+			});
+		});
+
+		$(document).on('click', '.btn-detalleCotizacionProveedor', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idCotizacion': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacionProveedor', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -253,7 +275,7 @@ var SolicitudCotizacion = {
 				$(".btn-add-row-cotizacion").click();
 			});
 		});
-		
+
 		$(document).on('click', '.btnSolicitarCotizacion', function () {
 			++modalId;
 
@@ -290,7 +312,7 @@ var SolicitudCotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				SolicitudCotizacion.modalIdForm = modalId;
-				
+
 			});
 		});
 	},
@@ -373,7 +395,7 @@ var SolicitudCotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 
-				//Llenamos los items con el nombre 
+				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
@@ -416,7 +438,7 @@ var SolicitudCotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 
-				//Llenamos los items con el nombre 
+				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo

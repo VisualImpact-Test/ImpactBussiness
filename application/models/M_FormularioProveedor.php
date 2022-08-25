@@ -173,6 +173,26 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->db->query($sql);
 	}
+	public function obtenerCotizacionDetalleProveedorDetalleArchivos($params = [])
+	{
+		$this->db->select('cdpda.*')
+		->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
+		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'left')
+		->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor', 'left');
+		$this->db->where('cdp.idProveedor',$params['idProveedor']);
+		$this->db->where('cdp.idCotizacion',$params['idCotizacion']);
+		return $this->db->get();
+	}
+	public function obtenerInformacionCotizacionDetalleSub($params=[])
+	{
+		$this->db
+		->select('cds.*')
+		->from('compras.cotizacionDetalleSub cds');
+		// ->join('compras.cotizacionDetalle cd', 'cds.idCotizacionDetalle = cd.idCotizacionDetalle', 'left');
+		isset($params['idCotizacionDetalle']) ? $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']) : '';
+		return $this->db->get();
+
+	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
 	{
 		$filtros = "WHERE 1 = 1";
@@ -188,22 +208,36 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.idItem,
 			i.nombre item,
 			it.nombre tipoItem,
+			ei.idItemEstado,
+			ei.nombre AS estadoItem,
 			cdpd.costo,
 			cd.cantidad,
 			cdp.idProveedor,
 			cdp.idCotizacion,
-			p.razonSocial proveedor
+			cd.idCotizacionDetalle,
+			p.razonSocial proveedor,
+			um.nombre unidadMedida,
+			cdpd.costo/cd.cantidad as costoUnitario,
+			cdpd.comentario,
+			cdpd.diasValidez,
+			CONVERT(VARCHAR, cdpd.fechaValidez, 103) AS fechaValidez,
+			cdpd.fechaEntrega,
+			cde.nombre AS cotizacionDetalleEstado,
+			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion
 		FROM
 		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
 		JOIN compras.cotizacionDetalleProveedorDetalle cdpd ON cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor
 		JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdpd.idCotizacionDetalle
+		JOIN compras.cotizacionDetalleEstado cde ON cd.idCotizacionDetalleEstado = cde.idCotizacionDetalleEstado
+		LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cd.idUnidadMedida
 		JOIN compras.item i ON i.idItem = cdpd.idItem
 			AND i.estado = 1
 		JOIN compras.itemTipo it ON it.idItemTipo = i.idItemTipo
+		JOIN compras.itemEstado ei ON cd.idItemEstado = ei.idItemEstado
 		$filtros
 		";
-
+		log_message('error', $sql);
 		return $this->db->query($sql);
 	}
 
@@ -308,14 +342,14 @@ class M_FormularioProveedor extends MY_Model
 			cp.*
 			FROM
 			compras.ordenCompra o
-			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra	
+			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
 				AND od.estado = 1
 			JOIN compras.cotizacionDetalle cp ON od.idCotizacionDetalle = cp.idCotizacionDetalle
 			JOIN compras.cotizacion c ON c.idCotizacion = cp.idCotizacion
 			JOIN compras.operDetalle operd ON operd.idCotizacion = c.idCotizacion
 			JOIN compras.oper oper ON oper.idOper = operd.idOper
-			JOIN compras.proveedor p ON p.idProveedor = o.idProveedor 
-				
+			JOIN compras.proveedor p ON p.idProveedor = o.idProveedor
+
 			{$filtros}
 		";
 
@@ -334,7 +368,7 @@ class M_FormularioProveedor extends MY_Model
 	}
 
 	public function insertarMasivoDetalleProveedor($params){
-		
+
 		$post = !empty($params['post']) ? $params['post'] : [];
 		foreach($params['insert'] as $row){
 			$query = $this->db->insert($params['tabla'], $row);
@@ -355,7 +389,7 @@ class M_FormularioProveedor extends MY_Model
 				}
 			}
 		}
-		
+
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
