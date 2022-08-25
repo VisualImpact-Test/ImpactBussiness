@@ -382,14 +382,15 @@ class SolicitudCotizacion extends MY_Controller
                         'idCotizacionDetalle' => $row['idCotizacionDetalle'],
                         'estado' => 1,
                     ];
+
+
                 }
             }
+
             $rsDet = true;
             if(!empty($data['insert'])){       
-                $rsDet = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalle',$data['insert']);
+                $rsDet = $this->model_formulario_proveedor->insertarMasivoDetalleProveedor(['tabla' => 'compras.cotizacionDetalleProveedorDetalle','insert' => $data['insert'],'post' => $post]);
             }
-
-            
 
             if(!$rs['estado'] || !$rsDet){
                 $result['result'] = 1;

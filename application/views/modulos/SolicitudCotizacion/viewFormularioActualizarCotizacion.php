@@ -183,6 +183,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="fields">
+                                <div class="sixteen wide field">
+                                    <div class="ui sub header">Características para el proveedor</div>
+                                    <input name="caracteristicasProveedor" placeholder="Características" value="">
+                                </div>
+                            </div>
                             <!-- Textiles -->
                             <div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
                                 <h4 class="ui dividing header">SUB ITEMS</h4>
@@ -190,22 +196,23 @@
                                     <?
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
+                                            <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                             <div class="fields body-sub-item ">
                                                 <div class="four wide field">
                                                     <div class="ui sub header">Talla</div>
-                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
+                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
                                                 </div>
                                                 <div class="four wide field">
                                                     <div class="ui sub header">Tela</div>
-                                                    <input class="telaSubItem camposTextil" name="telaSubItem[0]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+                                                    <input class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
                                                 </div>
                                                 <div class="four wide field">
                                                     <div class="ui sub header">Color</div>
-                                                    <input class="colorSubItem " name="colorSubItem[0]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+                                                    <input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
                                                 </div>
                                                 <div class="four wide field">
                                                     <div class="ui sub header">Cantidad</div>
-                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
                                                 </div>
                                             </div>
                                     <?
@@ -216,13 +223,12 @@
 
                             </div>
 
-
-
                             <!-- Monto S/ -->
                             <div class="fields <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
+                                        <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                         <div class="sixteen wide field">
                                             <div class="ui sub header">Monto S/</div>
                                             <input class="montoSubItem" name="montoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= !empty($dataSubItem['monto']) ? $dataSubItem['monto'] : '' ?>">
@@ -240,6 +246,7 @@
                                     <?
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+                                            <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                             <div class="fields body-sub-item body-sub-item-servicio">
                                                 <div class="eleven wide field">
                                                     <div class="ui sub header">Sub item </div>
@@ -266,6 +273,7 @@
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
+                                        <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                         <div class="seven wide field">
                                             <div class="ui sub header">Tipo Servicio</div>
                                             <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
@@ -323,7 +331,7 @@
                                             <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
                                                 <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
                                                     if ($archivo['idTipoArchivo'] == TIPO_IMAGEN) { ?>
-                                                        <div class="ui fluid image content-lsck-capturas">
+                                                        <div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo'] ?>">
                                                             <div class="ui dimmer dimmer-file-detalle">
                                                                 <div class="content">
                                                                     <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
@@ -348,7 +356,7 @@
                                             <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
                                                 <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
                                                     if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
-                                                        <div class="ui fluid image content-lsck-capturas">
+                                                        <div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo'] ?>">
                                                             <div class="ui dimmer dimmer-file-detalle">
                                                                 <div class="content">
                                                                     <p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
