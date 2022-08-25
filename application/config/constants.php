@@ -101,6 +101,7 @@ defined('TABLA_HISTORICO_ESTADO_COTIZACION')   OR define('TABLA_HISTORICO_ESTADO
 
 //Compras
 defined('IGV')       OR define('IGV',0.18);
+defined('LIMITE_COMPRAS') OR define('LIMITE_COMPRAS',1000);
 
 //Tipos de Item
 defined('COD_ARTICULO')       OR define('COD_ARTICULO',['id' => 1, 'nombre' => 'ARTICULO']);
@@ -150,3 +151,5 @@ defined("INTERNA_FINALIZADA") OR define("INTERNA_FINALIZADA",4);
 defined("ARCHIVOS_PERMITIDOS") OR define("ARCHIVOS_PERMITIDOS","image/*,.pdf,.xls,.xlsx,.ppt,.pptx");
 defined("KB_MAXIMO_ARCHIVO") OR define("KB_MAXIMO_ARCHIVO",7168); //7MB
 defined("MAX_ARCHIVOS") OR define("MAX_ARCHIVOS",10); 
+
+//Configuracion Gene

@@ -84,6 +84,8 @@ var Cotizacion = {
 	htmlBodySubItem: [],
 	htmlCotizacion: '',
     nDetalle: 1,
+	anexoEliminado: [],
+	archivoEliminado: [],
 
 	load: function () {
 
@@ -300,6 +302,13 @@ var Cotizacion = {
             let body = $(this).parents('.body-item');
             let div_locked = body.find('.btn-bloquear-detalle');
 
+			let cantItems = $('.body-item').length;
+
+			if(cantItems <= 1 ){
+				
+				
+			}
+
             if(div_locked.find('i').hasClass('lock')){
                 $(this).parents('.body-item').find('.btn-bloquear-detalle').transition('shake');
                 return false;
@@ -315,6 +324,9 @@ var Cotizacion = {
 					});
                 }
             });
+			if(cantItems <= 1 ){
+				$(".btn-add-row").click();
+			}
 		
             // $(this).parents('.fila-existente').remove();
 
@@ -413,6 +425,23 @@ var Cotizacion = {
 
 			costoForm.val(subTotalTipoServicio);
 
+			cantidadForm.keyup();
+			
+		});
+		$(document).on('keyup', '.cantidadSubItemAcumulativo', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let thisControlParentsSub = thisControl.parents('.content-body-sub-item');
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+
+			let cantAcumulada = 0;
+			$.each(thisControlParentsSub.find('.body-sub-item'),(i,v) => {
+				cantAcumulada += Number($(v).find('.cantidadSubItemAcumulativo').val());
+
+			});
+			
+			cantidadForm.val(cantAcumulada);
 			cantidadForm.keyup();
 			
 		});
@@ -690,9 +719,97 @@ var Cotizacion = {
                                             </div>
                                         </div>`;
                                         fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-                                        fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
-                                        fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
-                                        fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
+                                        fileApp += '<input class="'+ name +'" type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
+                                        fileApp += '<input class="'+ nameType +'" type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
+                                        fileApp += '<input class="'+ nameFile +'" type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
+                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+                                    fileApp += '</div>';
+                                    
+                                    contenedor.append(fileApp);
+                                    control.parents('.nuevo').find('.dimmer-file-detalle')
+                                    .dimmer({
+                                        on: 'click'
+                                    });
+                            });
+
+					}
+				}
+
+				control.val('');
+			}
+		});
+        $(document).off('change', '.file-lsck-capturas-anexos').on('change', '.file-lsck-capturas-anexos', function(e){
+			var control = $(this);
+
+			let name = 'anexo-file';
+			let	nameType = 'anexo-type';
+			let	nameFile = 'anexo-name';
+			
+			
+			if( control.val() ){
+				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
+				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
+				var num = control.get(0).files.length;
+
+				list: {
+					var total = $(`input[name=${name}]`).length;
+					if( (num + total) > MAX_ARCHIVOS ){
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} capturas como máximo` });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+
+						break list;
+					}
+
+					for(var i = 0; i < num; ++i){
+						var size = control.get(0).files[i].size;
+							size = Math.round((size / 1024)); 
+
+						if( size > KB_MAXIMO_ARCHIVO ){
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+
+							break list;
+						}
+					}
+                    let file = '';
+                    let imgFile = '';
+                    let contenedor = '';
+					for(var i = 0; i < num; ++i){
+                        file = control.get(0).files[i];
+                            Fn.getBase64(file).then(function(fileBase){
+
+                                if(fileBase.type.split('/')[0] == 'image'){
+                                    imgFile = fileBase.base64;
+                                    contenedor = content;
+                                }else{
+                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
+                                    contenedor = content_files;
+                                }
+
+                                var fileApp = '';
+                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
+                                        fileApp += `
+                                        <div class="ui dimmer dimmer-file-detalle">
+                                            <div class="content">
+                                                <p class="ui tiny inverted header">${fileBase.name}</p>
+                                            </div>
+                                        </div>`;
+                                        fileApp += '<a class="ui red right corner label img-lsck-anexos-delete"><i class="trash icon"></i></a>';
+                                        fileApp += '<input type="hidden" name="' + name +'"  value="' + fileBase.base64 + '">';
+                                        fileApp += '<input type="hidden" name="' + nameType +'"  value="' + fileBase.type + '">';
+                                        fileApp += '<input type="hidden" name="' + nameFile +'"  value="' + fileBase.name + '">';
                                         fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
                                     fileApp += '</div>';
                                     
@@ -717,6 +834,25 @@ var Cotizacion = {
 		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
 			e.preventDefault();
 			var control = $(this);
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idEliminado = parent.data('id');
+
+			if(idEliminado){
+				Cotizacion.archivoEliminado.push(idEliminado);
+			}
+
+			control.parents('.content-lsck-capturas:first').remove();
+		});
+		$(document).off('click', '.img-lsck-anexos-delete').on('click', '.img-lsck-anexos-delete', function(e){
+			e.preventDefault();
+			var control = $(this);
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idEliminado = parent.data('id');
+
+			if(idEliminado){
+				Cotizacion.anexoEliminado.push(idEliminado);
+			}
+
 			control.parents('.content-lsck-capturas:first').remove();
 		});
 
@@ -1015,6 +1151,8 @@ var Cotizacion = {
 
 	sendToCliente: function(){
 		let formValues = Fn.formSerializeObject('formSendToCliente');
+			formValues.archivosEliminados = Cotizacion.archivoEliminado;
+			formValues.anexosEliminados = Cotizacion.anexoEliminado;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "sendToCliente";
 		let config = { url: url, data: jsonString };
@@ -1135,6 +1273,21 @@ var Cotizacion = {
 			}
 		);
 
+		$('.btn-info-cantidad')
+		.popup(
+			{
+				title: `Si requiere más de ${LIMITE_COMPRAS}`,
+				content : `Será necesario cotizar nuevamente con el proveedor`
+			}
+		);
+		$('.btn-info-gap')
+		.popup(
+			{
+				title: `GAP`,
+				content : `Solo podrá completar el GAP cuando se haya confirmado un costo`
+			}
+		);
+
     },
 
 	actualizarOnAddRow: (childInserted) => {
@@ -1155,11 +1308,16 @@ var Cotizacion = {
    actualizarOnAddRowCampos:(parent) =>{
 
 		let number = parent.index();
+		//Archivos
+		let fileItem = parent.find('.file-item');
+		let fileType = parent.find('.file-type');
+		let fileName = parent.find('.file-name');
+
 		//Textiles 
 		let tallaSubItem = parent.find('.tallaSubItem');
 		let telaSubItem = parent.find('.telaSubItem');
 		let colorSubItem = parent.find('.colorSubItem');
-
+		let cantidadSubItemTextil = parent.find('.cantidadSubItemTextil');
 		//Tarjetas o vales 
 		let montoSubItem = parent.find('.montoSubItem');
 
@@ -1174,10 +1332,15 @@ var Cotizacion = {
 		let costoSubItem = parent.find('.costoSubItem');
 
 
+		fileItem.attr('name',`file-item[${number}]`);
+		fileType.attr('name',`file-type[${number}]`);
+		fileName.attr('name',`file-name[${number}]`);
+
 		// 
 		tallaSubItem.attr('name',`tallaSubItem[${number}]`);
 		telaSubItem.attr('name',`telaSubItem[${number}]`);
 		colorSubItem.attr('name',`colorSubItem[${number}]`);
+		cantidadSubItemTextil.attr('name',`cantidadTextil[${number}]`);
 
 		montoSubItem.attr('name',`montoSubItem[${number}]`);
 

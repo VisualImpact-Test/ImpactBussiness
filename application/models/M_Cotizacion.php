@@ -362,6 +362,7 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
+
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
@@ -614,16 +615,18 @@ class M_Cotizacion extends MY_Model
 	public function obtenerInformacionDetalleCotizacionArchivos($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+		$filtros .= !empty($params['anexo']) ? " AND cda.flag_anexo = 1 " : "";
 
 
 		$sql = "
 			SELECT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
+			cda.idCotizacionDetalleArchivo,
 			cda.idTipoArchivo,
 			cda.nombre_inicial,
 			cda.nombre_archivo,
@@ -647,6 +650,40 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerInformacionCotizacionArchivos($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['anexo']) ? " AND cda.flag_anexo = 1 " : "";
+
+
+		$sql = "
+			SELECT
+				c.idCotizacion,
+				cda.idCotizacionDetalleArchivo,
+				cda.idTipoArchivo,
+				cda.nombre_inicial,
+				cda.nombre_archivo,
+				cda.extension
+			FROM
+			compras.cotizacion c
+			LEFT JOIN compras.cotizacionDetalleArchivos cda ON cda.idCotizacion = c.idCotizacion
+			WHERE
+			1 = 1
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerInformacionDetalleCotizacionProveedores($params = [])
 	{
 		$filtros = "";
@@ -949,5 +986,31 @@ class M_Cotizacion extends MY_Model
 		}
 
 		return $this->resultado;
+	}
+
+	public function insertarCotizacionAnexos($data = []){
+		$insert = true;
+
+		foreach($data['anexos'] as $archivo){
+			$archivoName = $this->saveFileWasabi($archivo);
+			$tipoArchivo = explode('/',$archivo['type']);
+			$insertArchivos[] = [
+				'idCotizacion' => $data['idCotizacion'],
+				'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+				'nombre_inicial' => $archivo['name'],
+				'nombre_archivo' => $archivoName,
+				'nombre_unico' => $archivo['nombreUnico'],
+				'extension' => $tipoArchivo[1],
+				'estado' => true,
+				'idUsuarioReg' => $this->idUsuario,
+				'flag_anexo' => true,
+			];
+		}
+
+		if(!empty($insertArchivos)){
+			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+		}
+
+		return $insert;
 	}
 }

@@ -14,8 +14,8 @@
         line-height: 1;
     }
     input[type="color"] {
-  padding:initial !important;
-}
+        padding:initial !important;
+    }
 </style>
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
@@ -100,14 +100,14 @@
                         <div class="ui small image text-center btn-add-file">
                             <div class="ui dimmer">
                                 <div class="content">
-                                    <div class="ui small primary button" onclick="$(this).parents('.anexos').find('.file-lsck-capturas').click();">
+                                    <div class="ui small primary button" onclick="$(this).parents('.anexos').find('.file-lsck-capturas-anexos').click();">
                                         Agregar
                                     </div>
                                 </div>
                             </div>
                             <img class="ui image" src="<?= IMG_WIREFRAME ?>">
                         </div>
-                        <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
+                        <input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
                     </div>
                 </div>
             </div>
@@ -172,7 +172,7 @@
                         <div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TEXTILES['id'] ?>">
                             <h4 class="ui dividing header">SUB ITEMS</h4>
                             <div class="content-body-sub-item">
-                                <div class="fields body-sub-item body-sub-item-servicio">
+                                <div class="fields body-sub-item ">
                                     <div class="six wide field">
                                         <div class="ui sub header">Talla</div>
                                         <input class="tallaSubItem camposTextil" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
@@ -187,7 +187,7 @@
                                     </div>
                                     <div class="three wide field">
                                         <div class="ui sub header">Cantidad</div>
-                                        <input class="onlyNumbers cantidadSubItem " name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                        <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                                     </div>
                                     <div class="one wide field">
                                         <div class="ui sub header">Eliminar</div>
@@ -221,7 +221,7 @@
                                     </div>
                                     <div class="five wide field">
                                         <div class="ui sub header">Cantidad</div>
-                                        <input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                        <input class="onlyNumbers cantidadSubItem cantidadSubItemAcumulativo" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                                     </div>
                                     <div class="one wide field">
                                         <div class="ui sub header">Eliminar</div>
@@ -305,7 +305,9 @@
                     <div class="sixteen wide tablet four wide computer column">
                         <div class="fields">
                             <div class="sixteen wide field">
-                                <div class="ui sub header">Cantidad</div>
+                                <div class="ui sub header">
+                                    Cantidad <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>
+                                </div>
                                 <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                             </div>
                         </div>
@@ -320,7 +322,9 @@
                         </div>
                         <div class="fields">
                             <div class="eight wide field">
-                                <div class="ui sub header">GAP</div>
+                                <div class="ui sub header">
+                                    GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
+                                </div>
                                 <div class="ui right labeled input">
                                     <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') "   data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
                                     <div class="ui basic label">
