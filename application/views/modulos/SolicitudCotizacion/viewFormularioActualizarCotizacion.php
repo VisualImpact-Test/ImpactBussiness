@@ -159,7 +159,7 @@
                                     <div class="ui sub header">Item</div>
                                     <div class="ui-widget">
                                         <div class="ui icon input w-100">
-                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
                                             <i class="semaforoForm flag link icon"></i>
                                         </div>
 
@@ -184,27 +184,36 @@
                                 </div>
                             </div>
                             <!-- Textiles -->
-                            <div class="fields <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
+                            <div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
+                                <h4 class="ui dividing header">SUB ITEMS</h4>
+                                <div class="content-body-sub-item">
+                                    <?
+                                    if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
+                                        foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
+                                            <div class="fields body-sub-item ">
+                                                <div class="four wide field">
+                                                    <div class="ui sub header">Talla</div>
+                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
+                                                </div>
+                                                <div class="four wide field">
+                                                    <div class="ui sub header">Tela</div>
+                                                    <input class="telaSubItem camposTextil" name="telaSubItem[0]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+                                                </div>
+                                                <div class="four wide field">
+                                                    <div class="ui sub header">Color</div>
+                                                    <input class="colorSubItem " name="colorSubItem[0]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+                                                </div>
+                                                <div class="four wide field">
+                                                    <div class="ui sub header">Cantidad</div>
+                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                </div>
+                                            </div>
+                                    <?
+                                        endforeach;
+                                    endif;
+                                    ?>
+                                </div>
 
-                                <?
-                                if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
-                                    foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
-                                        <div class="five wide field">
-                                            <div class="ui sub header">Talla</div>
-                                            <input class="tallaSubItem" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
-                                        </div>
-                                        <div class="five wide field">
-                                            <div class="ui sub header">Tela</div>
-                                            <input class="telaSubItem" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
-                                        </div>
-                                        <div class="five wide field">
-                                            <div class="ui sub header">Color</div>
-                                            <input class="colorSubItem" name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
-                                        </div>
-                                <?
-                                    endforeach;
-                                endif;
-                                ?>
                             </div>
 
 
@@ -232,19 +241,13 @@
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
                                             <div class="fields body-sub-item body-sub-item-servicio">
-                                                <div class="ten wide field">
+                                                <div class="eleven wide field">
                                                     <div class="ui sub header">Sub item </div>
                                                     <input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
                                                 </div>
                                                 <div class="five wide field">
                                                     <div class="ui sub header">Cantidad</div>
                                                     <input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
-                                                </div>
-                                                <div class="one wide field">
-                                                    <div class="ui sub header">Eliminar</div>
-                                                    <button type="button" class="ui basic button btn-eliminar-sub-item">
-                                                        <i class="trash icon"></i>
-                                                    </button>
                                                 </div>
                                             </div>
                                     <?

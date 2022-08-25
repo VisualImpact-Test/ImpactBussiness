@@ -115,8 +115,6 @@ class Cotizacion extends MY_Controller
     }
 
 
-    //filtroReporte
-
     public function filtroCotizacion()
     {
         $result = $this->result;
@@ -137,12 +135,6 @@ class Cotizacion extends MY_Controller
         
         echo json_encode($result);
     }
-
-
-    
-    //filtroReporte
-
-
 
     public function formularioRegistroCotizacion()
     {
@@ -364,17 +356,45 @@ class Cotizacion extends MY_Controller
             'idCotizacionEstado' => ESTADO_REGISTRADO,
             'idUsuarioReg' => $this->idUsuario
         ];
-
         $validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
-
+        
         if (!empty($validacionExistencia['query']->row_array())) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = createMessage(['type'=>2,'message'=>'El título de cotizacion ya se encuentra registrado']);
             goto respuesta;
         }
+
+        $data['anexos_arreglo'] = [];
+        $data['anexos'] = [];
+
+        $data['anexos_arreglo'] = getDataRefactorizada([
+            'base64' => $post['anexo-file'],
+            'type' => $post['anexo-type'],
+            'name' => $post['anexo-name'],
+            
+        ]);
+
+        foreach($data['anexos_arreglo'] as $anexo){
+            $data['anexos'][] = [
+                'base64' => $anexo['base64'],
+                'type' => $anexo['type'],
+                'name' => $anexo['name'],
+                'carpeta'=> 'cotizacion',
+                'nombreUnico' => "ANX".uniqid(),
+            ];
+        }
         
         $insert = $this->model->insertarCotizacion($data);
+        $data['idCotizacion'] = $insert['id'];
+        $insertAnexos = $this->model->insertarCotizacionAnexos($data);
+        $data['update'] = [
+            'codCotizacion' => generarCorrelativo($insert['id'],6),
+        ];
+        $data['where'] = [
+            'idCotizacion' => $insert['id'],
+        ];
+        $updateCotizacion = $this->model->actualizarCotizacion($data);
         $post['idCotizacion'] = $insert['id'];
         $data = [];
 
@@ -429,6 +449,10 @@ class Cotizacion extends MY_Controller
 
             }
 
+            if($post['cantidadForm'][$k] > LIMITE_COMPRAS){
+                $post['cotizacionInternaForm'][$k] = 1;
+            }
+
             $data['insert'][] = [
                 'idCotizacion' => $insert['id'],
                 'idItem' => $idItem,
@@ -443,12 +467,12 @@ class Cotizacion extends MY_Controller
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 1,
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL, 
                 'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
                 'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
                 'fechaCreacion' => getActualDateTime()
             ];
 
-// 
             switch ($post['tipoItemForm'][$k]) {
                 case COD_SERVICIO['id']:
                     $data['subDetalle'][$k] = getDataRefactorizada([
@@ -490,8 +514,8 @@ class Cotizacion extends MY_Controller
                 $data['insertSubItem'][$k][] = [
                     'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
                     'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
-                    'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
-                    'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
+                    'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
+                    'tipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
                     'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
                     'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
                     'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
@@ -500,7 +524,6 @@ class Cotizacion extends MY_Controller
                     'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL , 
                 ];
             }
-// 
 
             if(!empty($post["file-name[$k]"])){
                 $data['archivos_arreglo'][$k] = getDataRefactorizada([
@@ -1022,9 +1045,20 @@ class Cotizacion extends MY_Controller
         $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
         $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion'=> $idCotizacion,'anexo' => true])['query']->result_array();
         $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
         $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
         $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+
+        $cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSub(
+            [
+            'idCotizacion'=> $idCotizacion
+            ]
+        )['query']->result_array();
+
+        foreach($cotizacionDetalleSub as $sub){
+            $config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
+        }
 
         foreach($archivos as $archivo){
             $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
@@ -1386,6 +1420,152 @@ class Cotizacion extends MY_Controller
         $result['data']['width'] = '45%';
         $result['msg']['title'] = 'Enviar Cotizacion al cliente';
         $result['msg']['content'] = createMessage(['type'=>1,'message'=>$message]);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
+
+    public function actualizarCotizacion()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $data['tabla'] = 'compras.cotizacion';
+        
+        $data = [];
+        
+        $data['update'] = [
+            'nombre' => $post['nombre'],
+            'idCuenta' => $post['cuentaForm'],
+            'idCentroCosto' => trim(explode("-",$post['cuentaCentroCostoForm'])[1]),
+            'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
+            'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
+            'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
+            'fee' => $post['feeForm'],
+            'total' => $post['totalForm'],
+            'total_fee' => $post['totalFormFee'],
+            'total_fee_igv' => $post['totalFormFeeIgv'],
+            'idPrioridad' => $post['prioridadForm'],
+            'motivo' => $post['motivoForm'],
+            'comentario' => $post['comentarioForm'],
+            'diasValidez' => $post['diasValidez'],
+        ];
+
+
+        $validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
+        if (!empty($validacionExistencia['query']->row_array())) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroRepetido');
+            goto respuesta;
+        }
+        $data['anexos_arreglo'] = [];
+        $data['anexos'] = [];
+
+        $data['anexos_arreglo'] = getDataRefactorizada([
+            'base64' => $post['anexo-file'],
+            'type' => $post['anexo-type'],
+            'name' => $post['anexo-name'],
+            
+        ]);
+
+        foreach($data['anexos_arreglo'] as $anexo){
+            $data['anexos'][] = [
+                'base64' => $anexo['base64'],
+                'type' => $anexo['type'],
+                'name' => $anexo['name'],
+                'carpeta'=> 'cotizacion',
+                'nombreUnico' => "ANX".uniqid(),
+            ];
+        }
+
+
+        $data['tabla'] = 'compras.cotizacion';
+        $data['where'] = [
+            'idCotizacion' => $post['idCotizacion']
+        ];
+        $update = $this->model->actualizarCotizacion($data);
+
+        $data['idCotizacion'] = $post['idCotizacion'];
+        $insertAnexos = $this->model->insertarCotizacionAnexos($data);
+
+        $data = [];
+
+        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
+        $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
+        $post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
+        $post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
+        $post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
+        $post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+        $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
+        $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
+        $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
+        $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
+        $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
+        $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
+        
+        foreach ($post['nameItem'] as $k => $r) {
+            $data['update'][] = [
+                'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+                'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
+                'idItemTipo' => $post['tipoItemForm'][$k],
+                'nombre' => $post['nameItem'][$k],
+                'cantidad' => $post['cantidadForm'][$k],
+                'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+                'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+                'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+                'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
+                'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
+                'idItemEstado' => $post['idEstadoItemForm'][$k],
+                'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+                'idCotizacionDetalleEstado' => 2, 
+                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL, 
+                'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
+            ];
+        }
+
+        $data['tabla'] = 'compras.cotizacionDetalle';
+        $data['where'] = 'idCotizacionDetalle';
+        $updateDetalle = $this->model->actualizarCotizacionDetalle($data);
+        $data = [];
+
+        $estadoEmail = true;
+        // if($post['tipoRegistro'] == 2){
+        //     $estadoEmail = $this->enviarCorreo($insert['id']);
+        // }
+
+        if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+            if($post['tipoRegistro'] == ESTADO_CONFIRMADO_COMPRAS){
+                $data['tabla'] = 'compras.cotizacion';
+                $data['update'] = [
+                    'idCotizacionEstado' => $post['tipoRegistro'],
+                ];
+                $data['where'] = [
+                    'idCotizacion' => $post['idCotizacion'],
+                ];
+    
+                $this->model->actualizarCotizacion($data);
+    
+                $insertCotizacionHistorico = [
+                    'idCotizacionEstado' => ESTADO_CONFIRMADO_COMPRAS, 
+                    'idCotizacion' => $post['idCotizacion'],
+                    'idUsuarioReg' => $this->idUsuario,
+                    'estado' => true,
+                ];
+                $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
+            }
+        }
 
         $this->db->trans_complete();
         respuesta:
