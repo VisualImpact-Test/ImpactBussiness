@@ -8,6 +8,7 @@ var CotizacionEfectiva = {
 	itemsLogistica: [],
 	htmlG: '',
 	htmlCotizacionEfectiva: '',
+	tablaCotizacionesOper : '',
 
 	load: function () {
 
@@ -58,6 +59,8 @@ var CotizacionEfectiva = {
 				$(".btn-add-row").click();
 			});
 		});
+
+	
 
 		$(document).on('click', '.btn-detalleCotizacionEfectiva', function () {
 			++modalId;

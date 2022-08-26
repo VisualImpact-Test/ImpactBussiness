@@ -16,7 +16,8 @@ class CotizacionEfectiva extends MY_Controller
         $config['nav']['menu_active'] = '131';
         $config['css']['style'] = array(
             'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
-            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday'
+            'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/custom/js/select.dataTables.min',
         );
         $config['js']['script'] = array(
             'assets/libs/datatables/responsive.bootstrap4.min',
@@ -26,7 +27,11 @@ class CotizacionEfectiva extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/js/core/HTCustom',
-            'assets/custom/js/cotizacionEfectiva'
+            'assets/custom/js/cotizacionEfectiva',
+            'assets/custom/js/dataTables.select.min',
+            
+            
+            
         );
 
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
@@ -116,4 +121,88 @@ class CotizacionEfectiva extends MY_Controller
 
         echo json_encode($result);
     }
+
+    public function getOrdenesCompra()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        // $ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idOrdenCompra' => $idOrdenCompra,'estado' => 1])['query']->result_array();
+		$dataParaVista['data'] = $this->model->obtenerInformacionOrdenCompra()['query']->result_array();
+
+        $result['result'] = 1;
+        $result['data']['width'] = '90%';
+        $result['msg']['title'] = 'Ordenes de compra';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/tableOrdenCompra", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
+
+    public function frmGenerarOper()
+    {
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $ids = implode(',' ,$post['ids']);
+        $cotizaciones = $this->model->obtenerInformacionCotizacion(['id' => $ids])['query']->result_array();
+        $cotizacionDetalle = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
+
+        $dataParaVista = [];
+        $dataParaVista['totalOper'] = 0;
+        foreach($cotizaciones as $row){
+            $dataParaVista['cuenta'][$row['idCuenta']] = [
+                'id' => $row['idCuenta'],
+                'value' => $row['cuenta'] 
+            ];
+            $dataParaVista['cuentaCentroCosto'][$row['idCuentaCentroCosto']] = [
+                'id' => $row['idCuentaCentroCosto'],
+                'value' => $row['cuentaCentroCosto'] 
+            ];
+
+            $dataParaVista['totalOper'] += $row['total']; 
+        }
+
+        foreach($cotizacionDetalle as $rowDetalle){
+            $dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']] = $rowDetalle;
+        }
+        $dataParaVista['cotizaciones'] = $cotizaciones;
+        $dataParaVista['usuarios'] = $this->model->obtenerUsuarios()->result_array();
+
+        $result['result'] = 1;
+        $result['data']['width'] = '95%';
+        $result['msg']['title'] = 'GENERAR OPER';
+        $result['data']['html'] = $this->load->view("modulos/Cotizacion/formRegistrarOper", $dataParaVista, true);
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
+
+     //filtroReporte
+
+     public function filtroCotizacion()
+     {
+         $result = $this->result;
+         $post = json_decode($this->input->post('data'), true);
+         $post['estadoCotizacion'] = ESTADO_COTIZACION_APROBADA;
+         $dataParaVista = [];
+         $dataParaVista = $this->model->obtenerInformacionCotizacionFiltro($post)['query']->result_array();
+ 
+         $html = getMensajeGestion('noRegistros');
+         if (!empty($dataParaVista)) {
+             $html = $this->load->view("modulos/Cotizacion/reporteFiltro", ['datos' => $dataParaVista], true);
+         }
+ 
+         $result['result'] = 1;
+         $result ['data']['html'] = $html;
+         $result['msg']['title'] = 'Filtro Cotizacion';
+         $result['data']['width'] = '80%';
+         
+         echo json_encode($result);
+     }
+ 
+ 
+     
+     //filtroReporte
+
 }

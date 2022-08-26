@@ -309,4 +309,7 @@ class M_CotizacionEfectiva extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+	
 }

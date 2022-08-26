@@ -1,3 +1,267 @@
+var Cotizacion = {
+
+	frm: 'frm-cotizacion',
+	contentDetalle: 'idContentCotizacion',
+	url: 'Cotizacion/',
+	itemServicio: [],
+	modalIdForm: 0,
+	itemsLogistica: [],
+	htmlG: '',
+	htmlCotizacion: '',
+	tablaCotizacionesOper : '',
+
+	load: function () {
+
+		
+
+		//filtroCotizacion
+		
+
+		$(document).on('click', '.btn-verOrdenesCompra', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Cotizacion.url + 'getOrdenesCompra', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			});
+		});
+
+		$(document).on('click', '.btn-cotizacion-pdf', function (e) {
+			e.preventDefault();
+
+			let $idCotizacion = $(this).parents('tr').data('id');
+
+			Cotizacion.generarRequerimientoPDF($idCotizacion);
+		});
+	
+
+		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
+			++modalId;
+			let data = {};
+				data.id = $(this).closest("tr").data("id");
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
+
+
+			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					Cotizacion.itemServicio = a.data.itemServicio;
+				}
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(4)", content: "¿Esta seguro de enviar esta cotizacion?" });';
+				btn[1] = { title: 'Enviar Respuesta <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				Cotizacion.modalIdForm = modalId;
+			
+				
+			});
+		});
+
+
+
+		$(document).on('click', '.btn-finalizarCotizacion', function () {
+			let idCotizacion = $(this).closest('tr').data('id');
+			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion("+idCotizacion+")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
+		});
+		$(document).on('click', '.btn-descargarOper', function () {
+			let idOper = $(this).closest('tr').data('idoper');
+			let data = { idOper };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'descargarOper' ,jsonString);
+		});
+		$(document).on('click', '.btn-descargarOrdenCompra', function () {
+			let id = $(this).closest('tr').data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
+		});
+		$(document).on('click', '.btn-descargarCotizacion', function () {
+			let id = $(this).closest('tr').data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
+		});
+		
+	},
+
+	actualizarCotizacion: function () {
+		++modalId;
+
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacions')) };
+		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	generarOPER: function(){
+		var ids = [];
+
+		if (typeof Cotizacion.tablaCotizacionesOper !== 'undefined') {
+			$.map(Cotizacion.tablaCotizacionesOper.rows('.selected').nodes(), function (item) {
+				ids.push($(item).data("id"));
+			});
+		}
+
+		if (ids.length === 0) {
+			btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' };
+			var content = "No ha seleccionado ningún registro.</strong>";
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: content, btn: btn });
+			return false;
+		}
+
+		let data = { ids: ids};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': Cotizacion.url + 'frmGenerarOper', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_guardar()", content: "¿Esta seguro de guardar y enviar el OPER ?" });';
+			btn[1] = { title: 'Enviar', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			$('.simpleDropdown').dropdown();
+		});
+		
+	},
+	finalizarCotizacion: function (idCotizacion) {
+		let data = {idCotizacion};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let url = Cotizacion.url + "finalizarCotizacion";
+		let config = { url: url, data: jsonString };
+		
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	generarOPER_guardar: function (){
+		
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
+		let config = { 'url': Cotizacion.url + 'registrarOper', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
+		});
+	},
+	
+	generarRequerimientoPDF: function (id) {
+		var url = site_url + '/Cotizacion/generarCotizacionPDF/' + id;
+		window.open(url, '_blank');
+
+		//Fn.download
+	},
+
+	registrarItem: function (idCotizacion) {
+		let formValues = Fn.formSerializeObject('formRegistroItems');
+			formValues.idCotizacion = idCotizacion;
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "registrarItem";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	registrarCotizacion: function (tipoRegistro = 1) {
+		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
+			formValues.tipoRegistro = tipoRegistro;
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "registrarCotizacion";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	actualizarTotal: function () {
+		let total = 0;
+		$.each($('.subtotalForm'), function (index, value) {
+			total = Number(total) + Number($(value).val());
+		})
+
+		var formatter = new Intl.NumberFormat('en-US', {
+			style: 'currency',
+			currency: 'PEN',
+		});
+		$('.totalForm').val(total);
+		$('.totalFormLabel').val(formatter.format(Number(total)));
+	}
+}
+
+Cotizacion.load();
+
+
+
 var SolicitudCotizacion = {
 
 	frm: 'frm-cotizacion',
@@ -63,6 +327,31 @@ var SolicitudCotizacion = {
 			});
 		});
 
+		//reportefiltro
+
+		$(document).on('click', '#filtrarReporteOper', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': SolicitudCotizacion.url + 'filtroOper', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				
+				
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			});
+		});
+
+		//reportefiltro
+		
 		$(document).on('click', '.btn-demofechacierre', function () {
 			++modalId;
 			let data = {};

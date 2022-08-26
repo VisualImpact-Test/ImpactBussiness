@@ -1,3 +1,129 @@
+
+var SolicitudCotizacion = {
+
+	frm: 'frm-cotizacion',
+	contentDetalle: 'idContentCotizacion',
+	url: 'SolicitudCotizacion/',
+	itemServicio: [],
+	modalIdForm: 0,
+	itemsLogistica: [],
+	htmlG: '',
+	htmlCotizacion: '',
+
+	load: function () {
+
+	
+
+	
+
+		//reportefiltro
+
+		$(document).on('click', '#filtrarReporteOper', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': SolicitudCotizacion.url + 'filtroOper', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				
+				
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+			});
+		});
+
+		//reportefiltro
+	
+
+		$(document).on('click', '.btn-generarCotizacion', function () {
+			++modalId;
+
+			let items = [];
+			$.each($(this).parents('.row').find('.item'), function(index, value){
+				items.push($(value).val());
+			});
+			let data = { 'items': items };
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioGenerarCotizacion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItems", fn: "SolicitudCotizacion.registrarCotizacion()", content: "¿Esta seguro de registrar la cotizacion? " });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+				SolicitudCotizacion.actualizarAutocompleteItemsLogistica();
+				SolicitudCotizacion.htmlCotizacion = $('#listaItemsCotizacion tbody tr').html();
+				$('#listaItemsCotizacion tbody').html('');
+				$(".btn-add-row-cotizacion").click();
+			});
+		});
+		
+		$(document).on('click', '.btnSolicitarCotizacion', function () {
+			++modalId;
+
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+			let config = { 'url': SolicitudCotizacion.url + 'enviarSolicitudProveedor', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+			});
+		});
+
+		$(document).on('click', '.btnVerCotizaciones', function () {
+			++modalId;
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
+			let config = { 'url': SolicitudCotizacion.url + 'verCotizacionesProveedor', 'data': jsonString };
+
+
+			$.when(Fn.ajax(config)).then((a) => {
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.modalIdForm = modalId;
+				
+			});
+		});
+	},
+
+	
+
+	
+
+
+}
+
+SolicitudCotizacion.load();
+
+
+
+
 var Cotizacion = {
 
 	frm: 'frm-cotizacion',
@@ -15,10 +141,8 @@ var Cotizacion = {
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarCotizacion').click();
 		});
-
 		
 		//checkbox del datatable
-	
 
 		$(document).ready(function () {
 			$('#btn-filtrarCotizacion').click();
@@ -94,6 +218,35 @@ var Cotizacion = {
 
 			});
 		});
+
+
+		
+		//reportefiltro
+
+/* 	//	$(document).on('click', '#filtrarReporteOper', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Cotizacion.url + 'filtroOper', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				
+				let btn = [];
+				let fn = [];
+//
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+	//			btn[0] = { title: 'Cerrar', fn: fn[0] };
+				
+				
+///
+//				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+//
+///			});
+	//	}); */
+
+		//reportefiltro
+
+
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
 			++modalId;
 

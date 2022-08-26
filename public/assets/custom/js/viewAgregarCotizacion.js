@@ -1384,6 +1384,49 @@ var Cotizacion = {
 	
 	cantidadForm.keyup();
    },
+
+   actualizarCotizacionView: function (idCotizacion) {
+	let formValues = Fn.formSerializeObject('formActualizarCotizacion');
+		
+	let jsonString = { 'data': JSON.stringify(formValues) };
+	let url = Cotizacion.url + "actualizarCotizacion";
+	let config = { url: url, data: jsonString };
+
+	$.when(Fn.ajax(config)).then(function (b) {
+		++modalId;
+		var btn = [];
+		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+		if (b.result == 1) {
+			fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+		}
+
+		btn[0] = { title: 'Continuar', fn: fn };
+		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+	});
+},
+
+duplicarCotizacionView: function (idCotizacion) {
+	let formValues = Fn.formSerializeObject('formDuplicarCotizacion');
+		
+	let jsonString = { 'data': JSON.stringify(formValues) };
+	let url = Cotizacion.url + "duplicarCotizacion";
+	let config = { url: url, data: jsonString };
+
+	$.when(Fn.ajax(config)).then(function (b) {
+		++modalId;
+		var btn = [];
+		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+		if (b.result == 1) {
+			fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+		}
+
+		btn[0] = { title: 'Continuar', fn: fn };
+		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+	});
+},
+
 }
 
 Cotizacion.load();

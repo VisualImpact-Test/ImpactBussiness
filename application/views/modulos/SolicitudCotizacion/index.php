@@ -23,6 +23,7 @@
 	<a href="javascript:;" class="customizer-toggle box-shadow-3 bg-trade-visual-grad-left text-white">
 		<i class="fal fa-cog fa-lg fa-spin"></i>
 	</a>
+	
 	<div class="customizer-content p-2 ps-container ps-theme-dark" data-ps-id="aca1f25c-4ed9-a04b-d154-95a5d6494748">
 		<form id="frm-cotizacion">
 			<div class="card-header" style="margin-bottom: 14px;justify-content: center;">
@@ -34,6 +35,12 @@
 			<div class="customizer-content-button center-items">
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarCotizacion" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
+				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="" id="filtrarReporteOper" title="Oper">
+					<strong>OPER</strong><span class="txt_filtro"></span>
+				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0 btn-verOrdenesCompra" data-url="" title="Ver órdenes de compra">
+					<strong>OC</strong>
 				</button>
 			</div>
 			<hr>
