@@ -65,7 +65,7 @@ var SolicitudCotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -447,7 +447,7 @@ var Cotizacion = {
 			
 		});
 
-		$(document).on('focusout', '.costoFormLabel', function (e) {
+		$(document).on('focusout', '.costoFormLabelEditable', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
@@ -1123,7 +1123,9 @@ var Cotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
+				
+				if(tipoRegistro == 3 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
+				if(tipoRegistro == 2 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -1167,7 +1169,7 @@ var Cotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`);$("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Aceptar', fn: fn };
@@ -1297,7 +1299,22 @@ var Cotizacion = {
 	actualizarOnAddRow: (childInserted) => {
 
 		$('.btn-add-file').dimmer({on: 'hover'});
+		$('.btn-info-cantidad')
+		.popup(
+			{
+				title: `Si requiere más de ${LIMITE_COMPRAS}`,
+				content : `Será necesario cotizar nuevamente con el proveedor`
+			}
+		);
+		$('.btn-info-gap')
+		.popup(
+			{
+				title: `GAP`,
+				content : `Solo podrá completar el GAP cuando se haya confirmado un costo`
+			}
+		);
 		$('.simpleDropdown').dropdown();
+
 
 		//Boton info archivos
 		childInserted.find('.btn-info-archivo')

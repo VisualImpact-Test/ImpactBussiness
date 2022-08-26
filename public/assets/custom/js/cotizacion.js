@@ -699,8 +699,8 @@ var Cotizacion = {
 						var size = control.get(0).files[i].size;
 							size = Math.round((size / 1024)); 
 
-						if( size > 2048 ){
-							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 1MB por archivo' });
+						if( size > KB_MAXIMO_ARCHIVO ){
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} por archivo` });
 							Fn.showModal({
 								'id': ++modalId,
 								'show': true,

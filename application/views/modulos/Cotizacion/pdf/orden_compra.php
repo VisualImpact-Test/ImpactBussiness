@@ -2,10 +2,10 @@
 <div style="text-align:justify">
     <table border="1" style="width: 100%; float: left;">
         <tr>
-            <td class="text-left w-40">RUC: 0000000000 </td>
+            <td class="text-left w-40">RUC: <?= RUC_VISUAL ?> </td>
             <td class="text-left w-20">N° DE RQ: </td>
             <td class="text-left w-20"><?= verificarEmpty($data['requerimiento'], 3) ?></td>
-            <td class="text-left w-40">N° DE ORDEN: <span style="margin-left: 50px"> <?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
+            <td class="text-left w-40">N° DE ORDEN: <span style="margin-left: 50px"> OC<?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
         </tr>
         <tr>
             <td class="text-left w-20">Unidad de Negocio</td>

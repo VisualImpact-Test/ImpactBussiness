@@ -462,13 +462,18 @@ class FormularioProveedor extends MY_Controller
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$insertArchivos = [];
 
+		$post['diasValidez'] = checkAndConvertToArray($post['diasValidez']);
+		$post['fechaValidez'] = checkAndConvertToArray($post['fechaValidez']);
+		$post['comentario'] = checkAndConvertToArray($post['comentario']);
+		$post['fechaEntrega'] = checkAndConvertToArray($post['fechaEntrega']);
+
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
 			$cantidad = (!empty($post['cantidad'][$k])) ? $post['cantidad'][$k] : 0;
-      $data['update'][] = [
+      		$data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
-        // 'costo' => costoUnitario($cantidad,$subTotal),
-        'costo' => $subTotal,
+				// 'costo' => costoUnitario($cantidad,$subTotal),
+				'costo' => $subTotal,
 				'flag_activo' => 0,
 				'diasValidez' => $post['diasValidez'][$k],
 				'fechaValidez' => $post['fechaValidez'][$k],

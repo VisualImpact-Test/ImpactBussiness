@@ -84,19 +84,19 @@ var Cotizacion = {
 			let idOper = $(this).closest('tr').data('idoper');
 			let data = { idOper };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(Cotizacion.url + 'descargarOper' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOper' ,jsonString);
 		});
 		$(document).on('click', '.btn-descargarOrdenCompra', function () {
 			let id = $(this).closest('tr').data('id');
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
 			let id = $(this).closest('tr').data('id');
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
 		});
 		
 	},

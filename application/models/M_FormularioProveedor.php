@@ -338,7 +338,7 @@ class M_FormularioProveedor extends MY_Model
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
 			CONVERT(VARCHAR, c.fechaRequerida, 103) AS fechaRequerida,
 			c.idCotizacion,
-			oper.requerimiento,
+			o.requerimiento,
 			cp.*
 			FROM
 			compras.ordenCompra o

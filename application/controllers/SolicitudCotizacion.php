@@ -676,6 +676,7 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['siguienteEstado'] = ESTADO_OC_ENVIADA;
         $config['data']['controller'] = 'SolicitudCotizacion';
         $config['data']['disabled'] = false;
+        $config['data']['idOper'] = $idOper;
         $config['view'] = 'modulos/SolicitudCotizacion/viewFormularioGenerarOrdenCompra';
 
         $this->view($config);
@@ -711,6 +712,8 @@ class SolicitudCotizacion extends MY_Controller
             'idCotizacionDetalle' => $post["idCotizacionDetalle"],
         ]);
 
+        $oper = $this->db->get_where("compras.oper",['idOper' => $post['idOper']])->row_array();
+
         foreach ($data['oc'] as $row) {
 
             if(empty($row['idProveedor'])) continue;
@@ -720,6 +723,7 @@ class SolicitudCotizacion extends MY_Controller
                     'idProveedor' => $row['idProveedor'],
                     'estado' => true,
                     'idUsuarioReg' => $this->idUsuario,
+                    'requerimiento' => $oper['requerimiento']
                 ];
                 $rs_oc = $this->model->insertar(['tabla'=>'compras.ordenCompra','insert'=>$insert_oc]);
             }

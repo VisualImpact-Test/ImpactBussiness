@@ -14,7 +14,8 @@
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled' : '' ?>">
     <form class="ui form" role="form" id="formRegistroOrdenCompra" method="post">
-        <!-- <h4 class="ui dividing header">DETALLE DEL OPER
+        <input type="hidden" name="idOper" value="<?= $idOper ?>"> 
+    <!-- <h4 class="ui dividing header">DETALLE DEL OPER
         </h4>
         <div class="fields">
             <div class="three wide field">
@@ -129,7 +130,7 @@
                                         <div class="ui sub header">Costo</div>
                                         <div class="ui right labeled input">
                                             <label for="amount" class="ui label">S/</label>
-                                            <input class="costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>">
+                                            <input class="costoFormLabelEditable costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>">
                                             <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
                                         </div>
                                     </div>
