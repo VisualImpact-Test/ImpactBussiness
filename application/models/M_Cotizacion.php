@@ -123,9 +123,9 @@ class M_Cotizacion extends MY_Model
 				, 'COTIZACION' AS tipoCotizacion
 				, p.codCotizacion
 				, p.idCuenta
-				, c.nombre AS cuenta
 				, p.idCentroCosto idCuentaCentroCosto
 				--, cc.nombre AS cuentaCentroCosto
+				, c.nombre AS cuenta
 				, cc.canal AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
 				, p.estado
@@ -178,16 +178,16 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 
 		$sql = "
-			SELECT
+			SELECT DISTINCT
 				p.idCotizacion
 				, p.nombre AS cotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, 'COTIZACION' AS tipoCotizacion
 				, p.codCotizacion
-				, c.idCuenta
+				, p.idCuenta
+				, p.idCentroCosto idCuentaCentroCosto
 				, c.nombre AS cuenta
-				, cc.idCuentaCentroCosto
-				, cc.nombre AS cuentaCentroCosto
+				, cc.canal AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
 				, p.estado
 				, p.fechaRequerida
@@ -200,8 +200,10 @@ class M_Cotizacion extends MY_Model
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
-			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
-			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			-- LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
+			-- LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
+			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
+			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idCanal = p.idCentroCosto AND cc.idEmpresa = c.idEmpresa
 			WHERE
 			1 = 1
 			{$filtros}
@@ -907,7 +909,8 @@ class M_Cotizacion extends MY_Model
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
 			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
-			ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor
+			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
+			'Coordinadora de compras' usuarioReceptor
 		FROM compras.oper o 
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
@@ -1113,13 +1116,15 @@ class M_Cotizacion extends MY_Model
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
 			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
-			ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor
+			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
+			'Coordinadora de compras' usuarioReceptor
 		FROM compras.oper o 
 		
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		WHERE o.estado = 1
-		{$filtros}
+		{$filtros} 
+		ORDER BY o.idOper DESC
 	";
 
 	$query = $this->db->query($sql);

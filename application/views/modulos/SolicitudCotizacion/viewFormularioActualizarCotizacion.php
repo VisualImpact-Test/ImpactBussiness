@@ -9,7 +9,7 @@
     }
 
     .floating-container {
-        height: 200px !important;
+        height: 150px !important;
     }
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">

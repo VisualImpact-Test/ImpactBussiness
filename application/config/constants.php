@@ -102,6 +102,8 @@ defined('TABLA_HISTORICO_ESTADO_COTIZACION')   OR define('TABLA_HISTORICO_ESTADO
 //Compras
 defined('IGV')       OR define('IGV',0.18);
 defined('LIMITE_COMPRAS') OR define('LIMITE_COMPRAS',1000);
+defined('RUC_VISUAL') OR define('RUC_VISUAL','20467225155');
+
 
 //Tipos de Item
 defined('COD_ARTICULO')       OR define('COD_ARTICULO',['id' => 1, 'nombre' => 'ARTICULO']);

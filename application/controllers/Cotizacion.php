@@ -1170,6 +1170,7 @@ class Cotizacion extends MY_Controller
         ];
 
         $oper = $this->model->insertar(['tabla'=>'compras.oper','insert'=> $insertOper]);
+        $operUpdate = $this->model->actualizarCotizacion(['tabla'=>'compras.oper','update' => ['requerimiento' => "OP".generarCorrelativo($oper['id'],6) ],'where' => ['idOper' => $oper['id']] ]);
 
         $post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
 

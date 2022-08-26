@@ -52,7 +52,7 @@
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
 
-                            <a target="_blank" href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
+                            <a  href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
                         <? } ?>
                         <? if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
                             <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
