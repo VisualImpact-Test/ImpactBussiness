@@ -921,6 +921,8 @@ class M_Cotizacion extends MY_Model
 		$this->resultado['estado'] = true;
 	}
 
+
+
 	return $this->resultado;
 	}
 
@@ -1092,4 +1094,45 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerInformacionOperSolicitud($params = [])
+	{
+		$filtros = '';
+		!empty($params['idOper']) ? $filtros .= " AND o.idOper IN({$params['idOper']})" : '';
+
+		$sql = "
+		SELECT
+			o.idOper,
+			
+			o.requerimiento,
+			o.concepto,
+			'' cuentas,
+			'' centrosCosto,
+			'' ordenCompra,
+			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
+			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
+			ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor
+		FROM compras.oper o 
+		
+		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
+		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
+		WHERE o.estado = 1
+		{$filtros}
+	";
+
+	$query = $this->db->query($sql);
+
+	if ($query) {
+		$this->resultado['query'] = $query;
+		$this->resultado['estado'] = true;
+	}
+
+
+
+	return $this->resultado;
+	}
+
+	
+
+
 }
