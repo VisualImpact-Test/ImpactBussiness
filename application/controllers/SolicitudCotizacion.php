@@ -253,6 +253,7 @@ class SolicitudCotizacion extends MY_Controller
         foreach ($post['nameItem'] as $k => $r) {
             $data['update'][] = [
                 'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+                'idCotizacion' => $post['idCotizacion'],
                 'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
                 'idItemTipo' => $post['tipoItemForm'][$k],
                 'nombre' => $post['nameItem'][$k],
@@ -267,11 +268,30 @@ class SolicitudCotizacion extends MY_Controller
                 'idCotizacionDetalleEstado' => 2, 
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
             ];
+
+            if(!empty($post["file-name[$k]"])){
+                $data['archivos_arreglo'][$k] = getDataRefactorizada([
+                    'base64' => $post["file-item[$k]"],
+                    'type' => $post["file-type[$k]"],
+                    'name' => $post["file-name[$k]"],
+                ]);
+                foreach($data['archivos_arreglo'][$k] as $key => $archivo){
+                    $data['archivos'][$k][] = [
+                    'base64' => $archivo['base64'],
+                    'type' => $archivo['type'],
+                    'name' => $archivo['name'],
+                    'carpeta'=> 'cotizacion',
+                    'nombreUnico' => uniqid(),
+                    ];
+                }
+            }
+
         }
+        $data['archivoEliminado'] = $post['archivoEliminado'];
 
         $data['tabla'] = 'compras.cotizacionDetalle';
         $data['where'] = 'idCotizacionDetalle';
-        $updateDetalle = $this->model->actualizarCotizacionDetalle($data);
+        $updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
         $data = [];
 
         $estadoEmail = true;
