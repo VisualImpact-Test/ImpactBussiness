@@ -1399,8 +1399,20 @@ class Cotizacion extends MY_Controller
         $data['where'] = [
             'idCotizacion' => $post['idCotizacion'],
         ];
+        $post['formRegistro']['anexosEliminados'] = !empty($post['anexosEliminados']) ? $post['anexosEliminados'] : [];
+        $post['formRegistro']['archivoEliminado'] = !empty($post['archivosEliminados']) ? $post['archivosEliminados'] : [];
+        
+        $updateEstado = $this->model->actualizarCotizacion($data); //Update estado
 
-        $this->model->actualizarCotizacion($data);
+        $update = $this->actualizarCotizacion($post['formRegistro']); //Update campos
+
+        if($update['result'] == 0 ){
+            $result['result'] = 0;
+            $result['data']['width'] = '45%';
+            $result['msg']['title'] = 'Enviar Cotizacion al cliente';
+            $result['msg']['content'] = createMessage(['type'=>2,'message'=>"No se pudo enviar la cotización"]);
+            goto respuesta;
+        }
 
         $insertCotizacionHistorico = [
             'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE, 
@@ -1426,11 +1438,11 @@ class Cotizacion extends MY_Controller
         echo json_encode($result);
     }
 
-    public function actualizarCotizacion()
+    public function actualizarCotizacion($post)
     {
         $this->db->trans_start();
         $result = $this->result;
-        $post = json_decode($this->input->post('data'), true);
+        
         $data['tabla'] = 'compras.cotizacion';
         
         $data = [];
@@ -1460,17 +1472,26 @@ class Cotizacion extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroRepetido');
             goto respuesta;
         }
+
+        $data['tabla'] = 'compras.cotizacion';
+        $data['where'] = [
+            'idCotizacion' => $post['idCotizacion']
+        ];
+        $update = $this->model->actualizarCotizacion($data);
+
         $data['anexos_arreglo'] = [];
         $data['anexos'] = [];
 
-        $data['anexos_arreglo'] = getDataRefactorizada([
+        
+        $data['anexos_arreglo'] = !empty($post['anexo-file']) ?  getDataRefactorizada([
             'base64' => $post['anexo-file'],
             'type' => $post['anexo-type'],
             'name' => $post['anexo-name'],
             
-        ]);
+        ]) : [];
 
         foreach($data['anexos_arreglo'] as $anexo){
+            if(empty($anexo['base64'])) continue;
             $data['anexos'][] = [
                 'base64' => $anexo['base64'],
                 'type' => $anexo['type'],
@@ -1479,15 +1500,8 @@ class Cotizacion extends MY_Controller
                 'nombreUnico' => "ANX".uniqid(),
             ];
         }
-
-
-        $data['tabla'] = 'compras.cotizacion';
-        $data['where'] = [
-            'idCotizacion' => $post['idCotizacion']
-        ];
-        $update = $this->model->actualizarCotizacion($data);
-
         $data['idCotizacion'] = $post['idCotizacion'];
+        $data['anexosEliminados'] = $post['anexosEliminados'];
         $insertAnexos = $this->model->insertarCotizacionAnexos($data);
 
         $data = [];
@@ -1509,6 +1523,7 @@ class Cotizacion extends MY_Controller
         foreach ($post['nameItem'] as $k => $r) {
             $data['update'][] = [
                 'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+                'idCotizacion' => $post['idCotizacion'],
                 'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
                 'idItemTipo' => $post['tipoItemForm'][$k],
                 'nombre' => $post['nameItem'][$k],
@@ -1522,20 +1537,35 @@ class Cotizacion extends MY_Controller
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 2, 
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
-                'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL, 
-                'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
             ];
+
+            if(!empty($post["file-name[$k]"])){
+                $data['archivos_arreglo'][$k] = getDataRefactorizada([
+                    'base64' => $post["file-item[$k]"],
+                    'type' => $post["file-type[$k]"],
+                    'name' => $post["file-name[$k]"],
+                ]);
+                foreach($data['archivos_arreglo'][$k] as $key => $archivo){
+                    if(empty($archivo['base64'])) continue;
+                    $data['archivos'][$k][] = [
+                    'base64' => $archivo['base64'],
+                    'type' => $archivo['type'],
+                    'name' => $archivo['name'],
+                    'carpeta'=> 'cotizacion',
+                    'nombreUnico' => uniqid(),
+                    ];
+                }
+            }
+
         }
+        $data['archivoEliminado'] = $post['archivoEliminado'];
 
         $data['tabla'] = 'compras.cotizacionDetalle';
         $data['where'] = 'idCotizacionDetalle';
-        $updateDetalle = $this->model->actualizarCotizacionDetalle($data);
+        $updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
         $data = [];
 
         $estadoEmail = true;
-        // if($post['tipoRegistro'] == 2){
-        //     $estadoEmail = $this->enviarCorreo($insert['id']);
-        // }
 
         if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
             $result['result'] = 0;
@@ -1545,31 +1575,11 @@ class Cotizacion extends MY_Controller
             $result['result'] = 1;
             $result['msg']['title'] = 'Hecho!';
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
-
-            if($post['tipoRegistro'] == ESTADO_CONFIRMADO_COMPRAS){
-                $data['tabla'] = 'compras.cotizacion';
-                $data['update'] = [
-                    'idCotizacionEstado' => $post['tipoRegistro'],
-                ];
-                $data['where'] = [
-                    'idCotizacion' => $post['idCotizacion'],
-                ];
-    
-                $this->model->actualizarCotizacion($data);
-    
-                $insertCotizacionHistorico = [
-                    'idCotizacionEstado' => ESTADO_CONFIRMADO_COMPRAS, 
-                    'idCotizacion' => $post['idCotizacion'],
-                    'idUsuarioReg' => $this->idUsuario,
-                    'estado' => true,
-                ];
-                $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
-            }
         }
 
         $this->db->trans_complete();
         respuesta:
-        echo json_encode($result);
+        return $result;
     }
 
 }

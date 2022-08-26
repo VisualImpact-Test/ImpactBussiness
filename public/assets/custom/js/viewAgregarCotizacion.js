@@ -13,6 +13,7 @@ var SolicitudCotizacion = {
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
 			formValues.tipoRegistro = tipoRegistro;
+			formValues.archivoEliminado = Cotizacion.archivoEliminado;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "actualizarCotizacion";
 		let config = { url: url, data: jsonString };
@@ -446,34 +447,34 @@ var Cotizacion = {
 			
 		});
 
-		$(document).on('focusout', '.costoFormLabel', function (e) {
-			e.preventDefault();
-			let thisControl = $(this);
-			let thisControlParents = thisControl.parents('.nuevo');
-			let costoForm = thisControlParents.find('.costoForm');
-			let costoFormLabel = thisControlParents.find('.costoFormLabel');
-			let precioForm = thisControlParents.find('.precioForm');
-			let precioFormLabel = thisControlParents.find('.precioFormLabel');
-			let fieldPrecioFormLabel = precioFormLabel.closest('.field');
-			let cantidadForm = thisControlParents.find('.cantidadForm');
+		// $(document).on('focusout', '.costoFormLabel', function (e) {
+		// 	e.preventDefault();
+		// 	let thisControl = $(this);
+		// 	let thisControlParents = thisControl.parents('.nuevo');
+		// 	let costoForm = thisControlParents.find('.costoForm');
+		// 	let costoFormLabel = thisControlParents.find('.costoFormLabel');
+		// 	let precioForm = thisControlParents.find('.precioForm');
+		// 	let precioFormLabel = thisControlParents.find('.precioFormLabel');
+		// 	let fieldPrecioFormLabel = precioFormLabel.closest('.field');
+		// 	let cantidadForm = thisControlParents.find('.cantidadForm');
 
-			let costo = Number(thisControl.val());
-			let precio = Number(precioForm.val());
-			let costoAnterior = Number(costoForm.val());
-			if(costo > precio) {
-				thisControl.val(costoAnterior);
-				fieldPrecioFormLabel.transition('shake');
-				$("#nagPrecioValidacion").nag({
-					persist:true
-				});
-				return false;
-			}
-			costoForm.val(thisControl.val());
-			cantidadForm.keyup();
+		// 	let costo = Number(thisControl.val());
+		// 	let precio = Number(precioForm.val());
+		// 	let costoAnterior = Number(costoForm.val());
+		// 	if(costo > precio) {
+		// 		thisControl.val(costoAnterior);
+		// 		fieldPrecioFormLabel.transition('shake');
+		// 		$("#nagPrecioValidacion").nag({
+		// 			persist:true
+		// 		});
+		// 		return false;
+		// 	}
+		// 	costoForm.val(thisControl.val());
+		// 	cantidadForm.keyup();
 			
 			
-			Cotizacion.actualizarTotal();
-		});
+		// 	Cotizacion.actualizarTotal();
+		// });
 
 		$(document).on('keyup', '.gapForm', function (e) {
 			e.preventDefault();
@@ -975,9 +976,11 @@ var Cotizacion = {
 
 	actualizarCotizacion: function () {
 		++modalId;
-
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacions')) };
+		let data = Fn.formSerializeObject('formActualizacionCotizacions'); 
+			data.archivoEliminado = Cotizacion.archivoEliminado;
+		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
+			
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
@@ -1151,6 +1154,7 @@ var Cotizacion = {
 
 	sendToCliente: function(){
 		let formValues = Fn.formSerializeObject('formSendToCliente');
+			formValues.formRegistro = Fn.formSerializeObject('formRegistroCotizacion');
 			formValues.archivosEliminados = Cotizacion.archivoEliminado;
 			formValues.anexosEliminados = Cotizacion.anexoEliminado;
 		let jsonString = { 'data': JSON.stringify(formValues) };

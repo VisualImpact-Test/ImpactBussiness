@@ -1012,6 +1012,84 @@ class M_Cotizacion extends MY_Model
 			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
 		}
 
+		if(!empty($data['anexosEliminados'])){
+			$data['anexosEliminados'] = checkAndConvertToArray($data['anexosEliminados']);
+
+			foreach($data['anexosEliminados'] as $anexoEliminado){
+				$this->db->delete('compras.cotizacionDetalleArchivos',['idCotizacionDetalleArchivo' => $anexoEliminado]);
+			}
+		}
+
 		return $insert;
+	}
+
+	public function actualizarCotizacionDetalleArchivos($params = [])
+	{
+		$insertArchivos = [];
+		foreach($params['update'] as $k => $update){
+			$idCotizacionDetalle = $update['idCotizacionDetalle'];
+			unset($update['idCotizacionDetalle']);
+			$queryCotizacionDetalle = $this->db->update($params['tabla'], $update, ['idCotizacionDetalle' => $idCotizacionDetalle ]);
+
+			if(!empty($params['archivos'][$k])){
+				foreach($params['archivos'][$k] as $archivo){
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/',$archivo['type']);
+					$insertArchivos[] = [
+						'idCotizacion' => $update['idCotizacion'],
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => $tipoArchivo[1],
+						'estado' => true,
+						'idUsuarioReg' => $this->idUsuario
+					];
+				}
+			}
+
+			//Sub Items
+			if(!empty($params['insertSubItem'][$k])){
+				foreach($params['insertSubItem'][$k] as $subItem){
+					$insertSubItem[] = [
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+						'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+						'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+					];
+				}
+			}
+		}
+
+		if ($queryCotizacionDetalle) {
+			$this->resultado['query'] = $queryCotizacionDetalle;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+
+			if(!empty($insertArchivos)){
+				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+			}
+			if(!empty($insertSubItem)){
+				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
+			}
+
+			if(!empty($params['archivoEliminado'])){
+				$params['archivoEliminado'] = checkAndConvertToArray($params['archivoEliminado']);
+				foreach($params['archivoEliminado'] as $archivoEliminado){
+					$this->db->delete('compras.cotizacionDetalleArchivos',['idCotizacionDetalleArchivo' => $archivoEliminado]);
+				}
+			}
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
 	}
 }
