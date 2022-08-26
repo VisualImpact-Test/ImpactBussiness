@@ -709,6 +709,7 @@ class Cotizacion extends MY_Controller
 
     public function generarCotizacionPDF()
     {
+        $data = [];
         require_once('../mpdf/mpdf.php');
         ini_set('memory_limit', '1024M');
         set_time_limit(0);

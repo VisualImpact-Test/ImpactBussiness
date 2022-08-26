@@ -130,6 +130,7 @@ class M_Cotizacion extends MY_Model
 				, ce.nombre AS cotizacionEstado
 				, p.estado
 				, p.fechaRequerida
+				, p.diasValidez
 				, p.idSolicitante
 				, p.fechaDeadline
 				, p.flagIgv igv
@@ -258,6 +259,7 @@ class M_Cotizacion extends MY_Model
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 				, pd.caracteristicas
+				, pd.caracteristicasCompras
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
