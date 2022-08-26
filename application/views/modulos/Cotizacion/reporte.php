@@ -47,7 +47,7 @@
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
                             <!-- <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0 btnDescargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
-                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a>
+                            <!-- <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
                         <? } ?>
 
                         <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>

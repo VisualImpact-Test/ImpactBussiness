@@ -45,7 +45,7 @@ var SolicitudCotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -447,34 +447,34 @@ var Cotizacion = {
 			
 		});
 
-		// $(document).on('focusout', '.costoFormLabel', function (e) {
-		// 	e.preventDefault();
-		// 	let thisControl = $(this);
-		// 	let thisControlParents = thisControl.parents('.nuevo');
-		// 	let costoForm = thisControlParents.find('.costoForm');
-		// 	let costoFormLabel = thisControlParents.find('.costoFormLabel');
-		// 	let precioForm = thisControlParents.find('.precioForm');
-		// 	let precioFormLabel = thisControlParents.find('.precioFormLabel');
-		// 	let fieldPrecioFormLabel = precioFormLabel.closest('.field');
-		// 	let cantidadForm = thisControlParents.find('.cantidadForm');
+		$(document).on('focusout', '.costoFormLabel', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let costoForm = thisControlParents.find('.costoForm');
+			let costoFormLabel = thisControlParents.find('.costoFormLabel');
+			let precioForm = thisControlParents.find('.precioForm');
+			let precioFormLabel = thisControlParents.find('.precioFormLabel');
+			let fieldPrecioFormLabel = precioFormLabel.closest('.field');
+			let cantidadForm = thisControlParents.find('.cantidadForm');
 
-		// 	let costo = Number(thisControl.val());
-		// 	let precio = Number(precioForm.val());
-		// 	let costoAnterior = Number(costoForm.val());
-		// 	if(costo > precio) {
-		// 		thisControl.val(costoAnterior);
-		// 		fieldPrecioFormLabel.transition('shake');
-		// 		$("#nagPrecioValidacion").nag({
-		// 			persist:true
-		// 		});
-		// 		return false;
-		// 	}
-		// 	costoForm.val(thisControl.val());
-		// 	cantidadForm.keyup();
+			let costo = Number(thisControl.val());
+			let precio = Number(precioForm.val());
+			let costoAnterior = Number(costoForm.val());
+			if(costo > precio) {
+				thisControl.val(costoAnterior);
+				fieldPrecioFormLabel.transition('shake');
+				$("#nagPrecioValidacion").nag({
+					persist:true
+				});
+				return false;
+			}
+			costoForm.val(thisControl.val());
+			cantidadForm.keyup();
 			
 			
-		// 	Cotizacion.actualizarTotal();
-		// });
+			Cotizacion.actualizarTotal();
+		});
 
 		$(document).on('keyup', '.gapForm', function (e) {
 			e.preventDefault();
@@ -1123,7 +1123,7 @@ var Cotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };

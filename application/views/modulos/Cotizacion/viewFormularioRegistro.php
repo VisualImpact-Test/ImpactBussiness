@@ -16,6 +16,9 @@
     input[type="color"] {
         padding:initial !important;
     }
+    .floating-container {
+        height: 200px !important;
+    }
 </style>
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">

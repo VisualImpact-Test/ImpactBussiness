@@ -186,19 +186,22 @@ var Fn = {
 		}
 	},
 
-	download: function (url, data) {
-		Fn.showLoading(true)
-		//Importar el archivo fileDownload.js en el controlador
-		$.fileDownload(url, {
+	download: function (url,data){
+		Fn.showLoading(true);
+		$.fileDownload(url,{
 			httpMethod: "POST",
 			data: data,
-			successCallback: function (url) { Fn.showLoading(false); },
-			failCallback: function (responseHtml, url) {
-				$.when(Fn.showLoading(false)).then(function () {
-					var id = ++modalId;
-					var btn = new Array();
-					btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:' + id + ',show:false });' };
-					Fn.showModal({ id: id, show: true, title: 'ERROR', content: 'Ocurrio un error inesperado en el sistema.', btn: btn });
+			successCallback:function(url){
+				setTimeout(function(){
+					Fn.showLoading( false );
+				}, 500);
+			},
+			failCallback:function(responseHtml,url){
+			$.when( Fn.showLoading(false) ).then(function(){
+				var id=++modalId;
+				var btn=new Array();
+				btn[0]={title:'Aceptar',fn:'Fn.showModal({ id:'+id+',show:false });'};
+				Fn.showModal({ id:id,show:true,title:'ERROR',content:'Ocurrio un error inesperado en el sistema.',btn:btn });
 				})
 			}
 		});

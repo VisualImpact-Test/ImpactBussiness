@@ -42,16 +42,16 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Fecha Requerida" value="">
+                        <input type="text" placeholder="Fecha Requerida" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="">
+                <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>" >
             </div>
             <div class="two wide field">
                 <div class="ui sub header">
                     Validez <div class="ui btn-info-validez btn-info-custom text-primary"><i class="info circle icon"></i></div>
                 </div>
-                <input class="onlyNumbers" id="diasValidez" name="diasValidez" patron="requerido" placeholder="Días de validez">
+                <input class="onlyNumbers" id="diasValidez" name="diasValidez" patron="requerido" placeholder="Días de validez" value="<?= !empty($cotizacion['diasValidez']) ? $cotizacion['diasValidez'] : '' ?>">
             </div>
         </div>
         <div class="fields">
