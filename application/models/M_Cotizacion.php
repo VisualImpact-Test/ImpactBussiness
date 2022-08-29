@@ -1125,21 +1125,48 @@ class M_Cotizacion extends MY_Model
 		WHERE o.estado = 1
 		{$filtros} 
 		ORDER BY o.idOper DESC
-	";
+		";
 
-	$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
-	if ($query) {
-		$this->resultado['query'] = $query;
-		$this->resultado['estado'] = true;
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+
+
+		return $this->resultado;
 	}
 
+	public function obtenerGapEmpresas($params = [])
+	{
+		$filtros = '';
+
+		$sql = "
+		DECLARE @fecha DATE = GETDATE();
+		SELECT
+		g.idEmpresa,
+		gd.gap
+		FROM
+		compras.gap g
+		JOIN compras.gapDetalle gd ON g.idGap = gd.idGap
+			AND g.estado = 1
+			AND General.dbo.fn_fechaVigente(gd.fechaInicio,gd.fechaFin,@fecha,@fecha) = 1
+			AND gd.estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
 
 
-	return $this->resultado;
-	}
 
-	
+		return $this->resultado;
+	}	
 
 
 }

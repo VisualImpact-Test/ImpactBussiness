@@ -87,6 +87,8 @@ var Cotizacion = {
     nDetalle: 1,
 	anexoEliminado: [],
 	archivoEliminado: [],
+	gapEmpresas:[],
+	controlesOC: [],
 
 	load: function () {
 
@@ -102,6 +104,9 @@ var Cotizacion = {
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
             Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
             Cotizacion.htmlG = $('.default-item').html();
+			if($('#gapEmpresas').val()){
+				Cotizacion.gapEmpresas = JSON.parse($('#gapEmpresas').val());
+			}
 
 			$.each($('.content-body-sub-item'),(i,v) => {
 				let control = $(v);
@@ -449,6 +454,7 @@ var Cotizacion = {
 
 		$(document).on('focusout', '.costoFormLabelEditable', function (e) {
 			e.preventDefault();
+			
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let costoForm = thisControlParents.find('.costoForm');
@@ -457,11 +463,17 @@ var Cotizacion = {
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
 			let fieldPrecioFormLabel = precioFormLabel.closest('.field');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
+			let gapForm = thisControlParents.find('.gapForm');
 
+			Cotizacion.controlesOC.gapForm = gapForm;
+			Cotizacion.controlesOC.costoForm = costoForm;
+			Cotizacion.controlesOC.costoFormLabel = thisControl;
+			
 			let costo = Number(thisControl.val());
 			let precio = Number(precioForm.val());
 			let costoAnterior = Number(costoForm.val());
-			if(costo > precio) {
+		
+			if(costo >= precio) {
 				thisControl.val(costoAnterior);
 				fieldPrecioFormLabel.transition('shake');
 				$("#nagPrecioValidacion").nag({
@@ -469,9 +481,39 @@ var Cotizacion = {
 				});
 				return false;
 			}
-			costoForm.val(thisControl.val());
-			cantidadForm.keyup();
+			let gapActual = (((precio - costo) * 100) / 15).toFixed(2);
+
+			if(costo <= costoAnterior){
+				console.log('No hay problema');
+				gapForm.val(gapActual);
+				// costoForm.val(costo);
+				return false;
+			}
+
 			
+			let idCotizacionDetalle = thisControlParents.data('id');
+			let config = {
+				costo,
+				gapActual,
+				idCotizacionDetalle,
+			}
+
+			++modalId;
+			let btn = [];
+			let fn = [];
+			let message = Fn.message(
+				{
+					type: 3,
+					message: 'Este cambio de costo, requiere autorizacion. ¿Desea enviar la solicitud?'
+				});
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.restaurarCosto('+costoAnterior+');';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+			fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.solicitarAutorizacion('+JSON.stringify(config)+')';
+			btn[1] = { title: 'Aceptar', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
+			// cantidadForm.keyup();
 			
 			Cotizacion.actualizarTotal();
 		});
@@ -971,9 +1013,61 @@ var Cotizacion = {
 			}
 		});
 
+		$(document).on('change', '#cuentaForm', function () {
+			let control = $(this);
+			let cod = control.val();
+			let gap = 0;
+			console.log(cod);
+			$.each(Cotizacion.gapEmpresas,(k,v) => {
+				if(v.idEmpresa == cod){
+					gap = v.gap;
+					return;
+				}
+			});
+			if(gap){
+				$('.gapForm').val(gap);
+				$('.cantidadForm').keyup();
+			}else{
+				$('.gapForm').val('');
+			}
+			
+		});
+
 		
 	},
 
+	restaurarCosto: function(costoAnterior){
+		Cotizacion.controlesOC.costoForm.val(costoAnterior);
+		Cotizacion.controlesOC.costoFormLabel.val(costoAnterior);
+	},
+
+	solicitarAutorizacion: function (configOC) {
+
+		Cotizacion.controlesOC.gapForm.val(configOC.gapActual);
+		Cotizacion.controlesOC.costoForm.val(configOC.costo);
+		let idCotizacionDetalle = configOC.idCotizacionDetalle;
+
+		++modalId;
+		let data = Fn.formSerializeObject('formRegistroOrdenCompra'); 
+			data.idCotizacionDetalle = idCotizacionDetalle;
+			data.nuevoCosto = configOC.costo;
+			data.nuevoGap = configOC.gapActual;
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': Cotizacion.url + 'registrarSolicitudAutorizacion', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();$("#btn-filtrarCotizacion").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
 	actualizarCotizacion: function () {
 		++modalId;
 		let data = Fn.formSerializeObject('formActualizacionCotizacions'); 
