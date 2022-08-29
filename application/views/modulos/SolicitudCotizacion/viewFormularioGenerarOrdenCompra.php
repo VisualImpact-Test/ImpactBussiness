@@ -127,8 +127,15 @@
                                         <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" readonly patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                     </div>
                                     <div class="three wide field">
-                                        <div class="ui sub header">Costo</div>
-                                        <div class="ui right labeled input">
+                                        <div class="ui sub header">
+                                            Costo
+                                            <?if(!empty($autorizaciones[$row['idCotizacionDetalle']])){?>
+                                                <?=$autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_PENDIENTE ?'<small class="text-info">(Solicitud enviada)</small>' : '' ?>
+                                                <?=$autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_ACEPTADO ?'<small class="text-sucess">(Solicitud aceptada)</small>' : '' ?>
+                                                <?=$autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_RECHAZADO ?'<small class="text-danger">(Solicitud rechazada)</small>' : '' ?>
+                                            <?}?>
+                                        </div>
+                                        <div class="ui right labeled input <?=!empty($autorizaciones[$row['idCotizacionDetalle']]) ? 'disabled disabled-visible' : ''?>">
                                             <label for="amount" class="ui label">S/</label>
                                             <input class="costoFormLabelEditable costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>">
                                             <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
@@ -266,7 +273,7 @@
 </div>
 
 <div class="ui red fixed nag" id="nagPrecioValidacion">
-    <div class="title">EL COSTO NO PUEDE SER MAYOR AL PRECIO</div>
+    <div class="title">EL COSTO NO PUEDE SER IGUAL O MAYOR AL PRECIO</div>
     <i class="close icon"></i>
 </div>
 

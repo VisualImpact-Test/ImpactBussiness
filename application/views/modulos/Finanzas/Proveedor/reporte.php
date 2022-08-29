@@ -1,6 +1,3 @@
-<style>
-
-</style>
 <div class="card-datatable">
     <table id="tb-proveedor" class="ui celled table" width="100%">
         <thead>

@@ -37,6 +37,7 @@ class M_Login extends MY_Model
 				sistema.usuario u
 				JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario
 					AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
+				
 				LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
 				LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento
 				LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent AND e.flag = 'ACTIVO'
@@ -55,6 +56,7 @@ class M_Login extends MY_Model
 	{
 		$value = array($input['idUsuario']);
 		$sql = "
+			DECLARE @fecha DATE = GETDATE();
 			SELECT 
 				mo.*
 				, gm.idGrupoMenu
@@ -71,11 +73,32 @@ class M_Login extends MY_Model
 				JOIN sistema.grupoMenu gm ON gm.idGrupoMenu = mo.idGrupoMenu AND gm.estado = 1
 				LEFT JOIN sistema.subGrupoMenu sgm ON sgm.idSubGrupoMenu = mo.idsubGrupoMenu AND sgm.estado = 1	
 			WHERE
-				amo.idUsuario = ?
+				amo.idUsuario = {$input['idUsuario']}
 				AND amo.estado = 1
-			ORDER BY gm.orden,mo.nombre
+			--ORDER BY gm.orden,mo.nombre
+			UNION
+			SELECT 
+				mo.*
+				, gm.idGrupoMenu
+				, gm.nombre grupoMenu
+				, gm.cssIcono grupoIcono
+				, gm.page grupoPage
+				, sgm.idSubGrupoMenu
+				, sgm.nombre subGrupoMenu
+				, sgm.cssIcono subGrupoIcono
+				, sgm.page subGrupoPage
+			FROM 
+			sistema.usuarioTipoMenu amo
+			JOIN sistema.usuarioHistorico uh ON amo.idTipoUsuario = uh.idTipoUsuario 
+				AND uh.idUsuario = {$input['idUsuario']}
+				AND General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@fecha,@fecha) = 1
+				AND uh.estado = 1
+			JOIN sistema.menu mo ON amo.idMenuOpcion = mo.idMenuOpcion AND mo.estado = 1
+			JOIN sistema.grupoMenu gm ON gm.idGrupoMenu = mo.idGrupoMenu AND gm.estado = 1
+			LEFT JOIN sistema.subGrupoMenu sgm ON sgm.idSubGrupoMenu = mo.idsubGrupoMenu AND sgm.estado = 1
+			--ORDER BY gm.orden,mo.nombre	
 			";
-		return $this->db->query($sql, $value);
+		return $this->db->query($sql);
 	}
 
 	public function navbar_permiso($idUsuario)

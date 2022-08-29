@@ -12,6 +12,7 @@ class SolicitudCotizacion extends MY_Controller
         $this->load->model('M_control', 'model_control');
         $this->load->model('M_proveedor','model_proveedor');
         $this->load->model('M_formularioProveedor','model_formulario_proveedor');
+        $this->load->model('M_Autorizacion','model_autorizacion');
 
     }
 
@@ -621,6 +622,13 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
         $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $autorizaciones = $this->model_autorizacion->getAutorizaciones(['idCotizacion'=> $idCotizacion])['query']->result_array();
+
+        foreach($autorizaciones as $autorizacion){
+            $config['data']['autorizaciones'][$autorizacion['idCotizacionDetalle']] = $autorizacion;
+        }
+
+        
         $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos([
             'idCotizacion'=> $idCotizacion,
             'cotizacionInterna' => false,

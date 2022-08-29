@@ -39,6 +39,10 @@
         </div>
         <div class="fields">
             <div class="eight wide field">
+                <div class="ui sub header">Concepto PO / CR Cliente</div>
+                <input type="text"  name="concepto" placeholder="Concepto PO / CR Cliente" value="">
+            </div>
+            <div class="four wide field">
                 <div class="ui sub header">Fecha requerimiento</div>
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
@@ -48,7 +52,7 @@
                 </div>
                 <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de requerimiento" value="<?= date('Y-m-d') ?>">
             </div>
-            <div class="eight wide field">
+            <div class="four wide field">
                 <div class="ui sub header">Probable fecha de entrega</div>
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">

@@ -23,6 +23,7 @@
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
+        <input type="hidden" id="gapEmpresas" value='<?=!empty($gapEmpresas) ? json_encode($gapEmpresas) : ''?>'>
         <div class="fields">
             <div class="six wide field">
                 <div class="ui sub header">Título</div>

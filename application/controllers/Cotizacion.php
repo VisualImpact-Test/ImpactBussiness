@@ -147,6 +147,7 @@ class Cotizacion extends MY_Controller
         $dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
         $dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
+        
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
@@ -916,7 +917,7 @@ class Cotizacion extends MY_Controller
         $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
         
         $result['result'] = 1;
-        $result['msg']['title'] = 'Procesar Cotizacion sin Orden de Compra';
+        $result['msg']['title'] = 'Procesar Cotizacion';
         $result['data']['html'] = $this->load->view("modulos/Cotizacion/frmProcesarSinOc", $dataParaVista, true);
 
         echo json_encode($result);
@@ -1005,6 +1006,7 @@ class Cotizacion extends MY_Controller
         $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
         $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
+        $config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
         $config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 
         $this->view($config);
@@ -1583,5 +1585,45 @@ class Cotizacion extends MY_Controller
         respuesta:
         return $result;
     }
+    
+    public function registrarSolicitudAutorizacion(){
+        $this->db->trans_start();
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $dataParaVista = [];
 
+        $insert = [
+            'idTipoAutorizacion' => AUTH_CAMBIO_COSTO,
+            'idCotizacion' => $post['idCotizacion'],
+            'idCotizacionDetalle' => $post['idCotizacionDetalle'],
+            'idAutorizacionEstado' => AUTH_ESTADO_PENDIENTE,
+            'comentario' => !empty($post['comentario']) ? $post['comentario'] : NULL,
+            'idUsuarioReg' => $this->idUsuario,
+            'nuevoValor' => $post['nuevoCosto'],
+            'nuevoGap' => $post['nuevoGap'],
+            'estado' => true,
+        ];
+
+        $rs = $this->model->insertar([
+            'tabla' => 'compras.autorizacion',
+            'insert' => $insert,
+        ]);
+
+        if($rs['estado']){
+            $result['result'] = 1;
+            $result['data']['width'] = '45%';
+            $result['msg']['title'] = 'Enviar solicitud de autorización';
+            $result['msg']['content'] = createMessage(['type'=>1,'message'=>'Se registró la solicitud satisfactoriamente']);
+        }
+        if(!$rs['estado']){
+            $result['result'] = 0;
+            $result['data']['width'] = '45%';
+            $result['msg']['title'] = 'Enviar solicitud de autorización';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+        }
+
+        $this->db->trans_complete();
+        respuesta:
+        echo json_encode($result);
+    }
 }
