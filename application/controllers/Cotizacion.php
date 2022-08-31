@@ -369,21 +369,24 @@ class Cotizacion extends MY_Controller
         $data['anexos_arreglo'] = [];
         $data['anexos'] = [];
 
-        $data['anexos_arreglo'] = getDataRefactorizada([
-            'base64' => $post['anexo-file'],
-            'type' => $post['anexo-type'],
-            'name' => $post['anexo-name'],
-            
-        ]);
+        if(!empty($post['anexo-file'])){
 
-        foreach($data['anexos_arreglo'] as $anexo){
-            $data['anexos'][] = [
-                'base64' => $anexo['base64'],
-                'type' => $anexo['type'],
+            $data['anexos_arreglo'] = getDataRefactorizada([
+                'base64' => $post['anexo-file'],
+                'type' => $post['anexo-type'],
+                'name' => $post['anexo-name'],
+                
+            ]);
+            
+            foreach($data['anexos_arreglo'] as $anexo){
+                $data['anexos'][] = [
+                    'base64' => $anexo['base64'],
+                    'type' => $anexo['type'],
                 'name' => $anexo['name'],
                 'carpeta'=> 'cotizacion',
                 'nombreUnico' => "ANX".uniqid(),
-            ];
+                ];
+            }
         }
         
         $insert = $this->model->insertarCotizacion($data);
