@@ -303,7 +303,6 @@ class Cotizacion extends MY_Controller
             goto respuesta;
         }
 
-        
 
         $whereSolicitante = [];
         $whereSolicitante[] = [
@@ -725,6 +724,7 @@ class Cotizacion extends MY_Controller
         if (!empty($idCotizacion)) {
             $data = [];
             $dataParaVista = [];
+            $dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion'=> $idCotizacion,'anexo' => true])['query']->result_array();
             $data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 
             foreach ($data as $key => $row) {
