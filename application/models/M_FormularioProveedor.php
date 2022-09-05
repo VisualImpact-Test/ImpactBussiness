@@ -186,12 +186,11 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerInformacionCotizacionDetalleSub($params=[])
 	{
 		$this->db
-		->select('cds.*')
-		->from('compras.cotizacionDetalleSub cds');
-		// ->join('compras.cotizacionDetalle cd', 'cds.idCotizacionDetalle = cd.idCotizacionDetalle', 'left');
-		isset($params['idCotizacionDetalle']) ? $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']) : '';
+		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad')
+		->from('compras.cotizacionDetalleProveedorDetalleSub cdpds')
+		->join('compras.cotizacionDetalleSub cds', 'cds.idCotizacionDetalleSub = cdpds.idCotizacionDetalleSub', 'left');
+		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';
 		return $this->db->get();
-
 	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
 	{
@@ -233,11 +232,10 @@ class M_FormularioProveedor extends MY_Model
 		LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cd.idUnidadMedida
 		JOIN compras.item i ON i.idItem = cdpd.idItem
 			AND i.estado = 1
-		JOIN compras.itemTipo it ON it.idItemTipo = i.idItemTipo
+		JOIN compras.itemTipo it ON it.idItemTipo = cd.idItemTipo
 		JOIN compras.itemEstado ei ON cd.idItemEstado = ei.idItemEstado
 		$filtros
 		";
-		log_message('error', $sql);
 		return $this->db->query($sql);
 	}
 
@@ -272,7 +270,9 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerListaCotizaciones($params)
 	{
 		$this->db
-		->select('cp.idCotizacion,
+		->select('DISTINCT
+							min(cdpd.fechaEntrega) AS fechaEntrega,
+							cp.idCotizacion,
 							cp.idCotizacionDetalleProveedor,
 							CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
 							c.nombre,
@@ -284,7 +284,10 @@ class M_FormularioProveedor extends MY_Model
 		->join('compras.cotizacion c','c.idCotizacion=cp.idCotizacion','left')
 		->join('visualImpact.logistica.cuentaCentroCosto cc','c.idCentroCosto = cc.idCuentaCentroCosto','left')
 		->join('visualImpact.logistica.cuenta cu','c.idCuenta = cu.idCuenta','left')
-		->where('cp.estado','1');
+		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
+		->where('cp.estado','1')
+		->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre')
+		->order_by('cp.idCotizacionDetalleProveedor desc');
 		isset(	$params['idProveedor']	) ? $this->db->where('cp.idProveedor', $params['idProveedor']):'';
 		return $this->db->get();
 	}

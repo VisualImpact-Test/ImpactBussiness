@@ -120,7 +120,7 @@ var FormularioProveedores = {
               }
 
               var fileApp = '';
-              fileApp += '<div class="ui fluid image content-lsck-capturas" style="width: 120px;">';
+							fileApp += '<div class="col-md-2 text-center">';
               fileApp += `
                       		<div class="ui dimmer dimmer-file-detalle">
 	                          <div class="content">
@@ -131,8 +131,9 @@ var FormularioProveedores = {
               fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
               fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
               fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
-              fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+							fileApp += `<img src="${imgFile}" class="rounded img-lsck-capturas img-responsive img-thumbnail">`;
               fileApp += '</div>';
+							console.log(fileApp);
               contenedor.append(fileApp);
               control.parents('.nuevo').find('.dimmer-file-detalle').dimmer({	on: 'click' });
             });
@@ -181,17 +182,39 @@ var FormularioProveedores = {
 
 		Fn.loadReporte_new(config);
 	},
+	calcularTotalSub: function(id){
+		costo = $("[findCosto="+id+"]");
+		cantidad = $("[findCantidad="+id+"]");
+		suma = 0; canTot = 0;
+		for (var i = 0; i < costo.length; i++) {
+			suma += parseFloat((costo[i].value||0)) * parseFloat(cantidad[i].value);
+			canTot += parseFloat(cantidad[i].value);
+		}
+		var promedio = suma / canTot;
+		$('#costo_'+id).val(promedio);
+		$('#costoredondo_'+id).val(promedio.toFixed(2));
+		$('#costo_'+id).keyup();
+		$('#msgCosto_'+id).removeClass('d-none');
+		$('#costo_'+id).attr('readonly', true);
+		$('#costoredondo_'+id).attr('readonly', true);
+	},
 	calcularTotal: function(i, cantidad, val){
 		var tot = cantidad * val;
-		$('#valorTotal'+i).val(tot);
-		$('#lb_valorTotal'+i).html('S/. '+tot);
+		var tot_ = tot.toFixed(2);
+		$('#valorTotal'+i).val(tot_);
+		$('#lb_valorTotal'+i).html('S/. '+tot_);
 	},
 	calcularFecha: function(i, val){
-		console.log(site_url+'FormularioProveedor/obtenerFecha');
-		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val}, function(data){
+		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 1}, function(data){
 			data = jQuery.parseJSON(data);
-			$('#lb_fechaValidez'+i).html(data.fecha);
 			$('#fechaValidez'+i).val(data.fecha);
+		});
+	},
+	calcularFechaEntrega: function(i, val){
+		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 2}, function(data){
+			data = jQuery.parseJSON(data);
+			$('#fechaEntrega'+i).attr('readonly', true);
+			$('#fechaEntrega'+i).val(data.fecha);
 		});
 	},
 	mostrarComentario: function(i){

@@ -19,7 +19,12 @@
                             <?= ($k + 1) ?>
                             <input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $row['idCotizacionDetalleProveedor'] ?>">
                         </td>
-                        <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a></td>
+                        <td>
+                          <?php //if (empty($row['fechaEntrega'])): ?>
+                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
+                            </a>
+                          <?php //endif; ?>
+                        </td>
                         <td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
                         <td><?= verificarEmpty($row['nombre'], 3) ?></td>
                         <td><?= verificarEmpty($row['cuenta'], 3) ?></td>

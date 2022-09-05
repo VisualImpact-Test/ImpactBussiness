@@ -24,7 +24,7 @@
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
             ?>
                 <tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
-                    <td class="td-center"><?= $ix; ?> - <?= $row['idCotizacion']; ?></td>
+                    <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
                         <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_COMPRAS) { ?>

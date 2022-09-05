@@ -361,6 +361,7 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
 		$dataParaVista = [];
 		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
+		log_message('error', $this->db->last_query());
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor']], true);
 
     $result['result'] = 1;
@@ -422,10 +423,9 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
     $dataParaVista = [];
     $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
-		log_message('error', json_encode($dataParaVista));
 		$dataParaVistaSub = [];
 		foreach ($dataParaVista as $key => $value) {
-			$dataParaVistaSub[$value['idCotizacionDetalle']] = $this->model->obtenerInformacionCotizacionDetalleSub(['idCotizacionDetalle' => $value['idCotizacionDetalle']])->result_array();
+			$dataParaVistaSub[$value['idCotizacionDetalleProveedorDetalle']] = $this->model->obtenerInformacionCotizacionDetalleSub(['idCotizacionDetalleProveedorDetalle' => $value['idCotizacionDetalleProveedorDetalle']])->result_array();
 		}
 
 		$archivos = $this->model->obtenerCotizacionDetalleProveedorDetalleArchivos($post)->result_array();
@@ -450,7 +450,11 @@ class FormularioProveedor extends MY_Controller
 	public function obtenerFecha()
 	{
 		$post = $this->input->post();
-		$post['fecha'] = getFechaActual($post['fecha']);
+		if ($post['format'] == 1) {
+			$post['fecha'] = getFechaActual($post['fecha']);
+		}else{
+			$post['fecha'] = date_change_format_bd(getFechaActual($post['fecha']));
+		}
 		echo json_encode($post);
 	}
 	public function actualizarCotizacionProveedor()
@@ -458,6 +462,7 @@ class FormularioProveedor extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+
 		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$insertArchivos = [];
@@ -466,6 +471,7 @@ class FormularioProveedor extends MY_Controller
 		$post['fechaValidez'] = checkAndConvertToArray($post['fechaValidez']);
 		$post['comentario'] = checkAndConvertToArray($post['comentario']);
 		$post['fechaEntrega'] = checkAndConvertToArray($post['fechaEntrega']);
+		$post['idItem'] = checkAndConvertToArray($post['idItem']);
 
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
@@ -532,7 +538,22 @@ class FormularioProveedor extends MY_Controller
     $data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
     $data['where'] = 'idCotizacionDetalleProveedorDetalle';
     $updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+		$data = [];
+		if (isset($post['idCDPDS'])) {
+			$post['idCDPDS'] = checkAndConvertToArray($post['idCDPDS']);
+			$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
 
+			foreach ($post['idCDPDS'] as $key => $value) {
+				$data['update'][] = [
+					'idCotizacionDetalleProveedorDetalleSub' => $post['idCDPDS'][$key],
+					'costo' => $post['costoSubItem'][$key],
+					'subTotal' => number_format(floatval($post['cantidadSubItem'][$key]) * floatval($post['costoSubItem'][$key]), 2)
+				];
+			}
+			$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
+	    $data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
+	    $updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+		}
 
     if (!$updateDetalle['estado']) {
 	    $result['result'] = 0;
@@ -564,11 +585,50 @@ class FormularioProveedor extends MY_Controller
         'estado' => true,
       ];
       $insertCotizacionHistorico = $this->model->insertarProveedor(['tabla'=>'compras.cotizacionEstadoHistorico','insert'=>$insertCotizacionHistorico]);
+
+			$insertItemTarifario =[];
+			foreach ($post['idItem'] as $key => $value) {
+				$datos = [
+					'idItem' => $post['idItem'][$key],
+					'idProveedor' => $post['idProveedor']
+				];
+				$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario',$datos)->row_array();
+
+				if (!empty($consulta)) {
+					$update[0] = [
+						'idItemTarifario' => $consulta['idItemTarifario'],
+						'costo' => $post['costo'][$key],
+						'fechaVigencia' => $post['fechaValidez'][$key]
+					];
+					$rpta = $this->model->actualizarMasivo('compras.itemTarifario', $update, 'idItemTarifario');
+					$idItemTarifario = $consulta['idItemTarifario'];
+				}else{
+					$insertar = [
+						'idItem' => $post['idItem'][$key],
+						'idProveedor' => $post['idProveedor'],
+						'costo' => $post['costo'][$key],
+						'flag_actual' => 0,
+						'estado' => 1,
+						'fechaVigencia' => $post['fechaValidez'][$key]
+					];
+					$rpta = $this->db->insert('compras.itemTarifario', $insertar);
+					$idItemTarifario = $this->db->insert_id();
+				}
+
+				$historicoInsert = [
+					'idItemTarifario' => $idItemTarifario,
+					'fecIni' => getFechaActual(),
+					'fecFin' => $post['fechaValidez'][$key],
+					'costo' => $post['costo'][$key]
+				];
+				$rpta = $this->db->insert('compras.itemTarifarioHistorico', $historicoInsert);
+			}
     }
 
 		$this->db->trans_complete();
     respuesta:
     echo json_encode($result);
+
 	}
 
 	public function logout(){

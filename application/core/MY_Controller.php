@@ -45,7 +45,7 @@ class MY_Controller extends CI_Controller{
 
 	public function __construct(){
 		parent::__construct();
-		$this->version = '1.0.6';
+		$this->version = '1.0.7';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
@@ -79,7 +79,7 @@ class MY_Controller extends CI_Controller{
 
 		if( !empty($this->idUsuario) && $this->namespace == 'login') redirect('home','refresh');
 		else {
-			if( empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') {// && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador 
+			if( empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') {// && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
 				if( $is_ajax ){
 					$result=array();
 					$result['result']=0;
@@ -185,13 +185,13 @@ class MY_Controller extends CI_Controller{
 		if( !isset($config['js']['script']) ) $config['js']['script']=array();
 		if( !isset($config['css']['style']) ) $config['css']['style']=array();
 		$this->load->view('core/01_head',$config['css']);
-		
+
 		$single = isset($config['single'])? $config['single'] : false;
 		$noTitle = isset($config['noTitle'])? $config['noTitle'] : false;
 		$data = isset($config['data'])? $config['data'] : false;
-		
+
 		$this->load->view('core/02_body', array('single'=> $single));
-		
+
 		if(!$single){
 			$this->load->view('core/03_header', $config['header']);
 			$this->load->view('core/04_container', array());
@@ -199,7 +199,7 @@ class MY_Controller extends CI_Controller{
 			$this->load->view('core/06_content', array());
 			if(!$noTitle) $this->load->view('core/07_content_title', $data);
 		}
-		
+
 		$view = isset($config['view'])? $config['view'] : $this->namespace;
 		$this->load->view($view,$data);
 		if(!$single){
@@ -209,7 +209,7 @@ class MY_Controller extends CI_Controller{
 		//
 		$this->load->view('core/11_container_end');
 		$this->load->view('core/10_body_js',$config['js']);
-		
+
 		$this->load->view('core/12_body_end');
 		$this->load->view('core/13_html_end');
 	}
@@ -373,7 +373,7 @@ class MY_Controller extends CI_Controller{
 
 		$data = $this->db->get($tabla)->result_array();
 
-		
+
 		$matched = [];
 		$unmatched = [];
 
@@ -421,7 +421,7 @@ class MY_Controller extends CI_Controller{
 			foreach ($tablasConColumnasIds as $key => $value) {
 				$tablaConColumnasReales = array_replace_recursive($tablaConColumnasReales, $value);
 			}
-			
+
 			$tablasConIds = $this->getIdsTablaHT($grupo['tabla'], $tablaConColumnasReales, $grupo['idTabla'],$validacionesExtra)['matched'];
 			$str = $this->db->last_query();
 			$tablaConIdsRefactorizada = [];
@@ -435,12 +435,12 @@ class MY_Controller extends CI_Controller{
 		foreach ($tablasGrupos as $key => $value) {
 			$tablaFinalDeIds = array_replace_recursive($tablaFinalDeIds, $value);
 		}
-		
+
 		$tablaFinal = [];
 		foreach ($tablaHT as $key => $value) {
 			$tablaFinal[$key] = !empty($tablaFinalDeIds[$key]) ? array_replace($value, $tablaFinalDeIds[$key]) : $value;
 		}
-		
+
 		return $tablaFinal;
 	}
 
@@ -453,7 +453,7 @@ class MY_Controller extends CI_Controller{
 			'contenido' => '',
 			'adjunto' => ''
 		);
-		
+
 		$email += $defaults;
 
 		if( !empty($email['to']) && !empty($email['asunto']) ){
@@ -503,7 +503,7 @@ class MY_Controller extends CI_Controller{
         $carpeta = $config['carpeta'];
         $nombreUnico = $config['nombreUnico'];
 
-        $file =         
+        $file =
         [
             'base64' => $config['base64'],
             'name' => $config['name'],
@@ -515,7 +515,7 @@ class MY_Controller extends CI_Controller{
 
 		$s3Client = $this->s3;
 
-		$s3Client::setAuth('BS9EM7XW1288NCZXLL6G', 'cIe5Mfe7ovcjsm3waEcmqGDun6Xu6d0ftAepy3AS');		
+		$s3Client::setAuth('BS9EM7XW1288NCZXLL6G', 'cIe5Mfe7ovcjsm3waEcmqGDun6Xu6d0ftAepy3AS');
 
 		$s3Client->setEndpoint('s3.us-central-1.wasabisys.com');
 
@@ -575,20 +575,20 @@ class MY_Login extends CI_Controller{
 
 		if( !isset($config['header']['header_foto']) ) $config['header']['header_foto']=$this->foto;
 		if( !isset($config['header']['header_usuario']) ) $config['header']['header_usuario']=$this->usuario;
-	
+
 		if( !isset($config['js']['script']) ) $config['js']['script']=array();
 		if( !isset($config['css']['style']) ) $config['css']['style']=array();
 		$this->load->view('core/01_head',$config['css']);
-		
+
 		$single = isset($config['single'])? $config['single'] : false;
 		$data = isset($config['data'])? $config['data'] : false;
-		
+
 		$data['title'] = "Restablecer Clave";
 		$data['message'] = "Inserte su nueva clave";
 		$data['icon'] = "fas fa-key";
 
 		$this->load->view('core/02_body', array('single'=> $single));
-		
+
 		if(!$single){
 			$this->load->view('core/03_header', $config['header']);
 			$this->load->view('core/04_container', array());
@@ -606,7 +606,7 @@ class MY_Login extends CI_Controller{
 
 		$this->load->view('core/11_container_end');
 		$this->load->view('core/10_body_js',$config['js']);
-		
+
 		$this->load->view('core/12_body_end');
 		$this->load->view('core/13_html_end');
 	}
@@ -616,7 +616,7 @@ class MY_Login extends CI_Controller{
 		parse_str($inputbox,$array);
 		return $array;
 	}
-	
+
 	public function resetIntentosFallidos($idUsuario)
 	{
 		$this->db->set('intentosFallidos', 0);
