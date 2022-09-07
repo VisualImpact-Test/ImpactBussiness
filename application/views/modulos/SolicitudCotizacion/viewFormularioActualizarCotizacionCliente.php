@@ -427,7 +427,7 @@
                             <div class="fields">
                                 <div class="sixteen wide field">
                                     <div class="ui sub header">Cantidad</div>
-                                    <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                    <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" patron="requerido,numerico" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                 </div>
                             </div>
                             <div class="fields">

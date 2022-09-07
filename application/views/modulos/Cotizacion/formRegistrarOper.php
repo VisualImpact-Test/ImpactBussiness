@@ -1,7 +1,7 @@
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroOper" method="post">
         <h4 class="ui dividing header">DATOS DEL OPER</h4>
-        <input type="hidden" name="totalOper" value="<?= $totalOper?>">
+        <input type="hidden" name="totalOper" value="<?= $totalOper ?>">
         <div class="fields d-none">
             <div class="six wide field">
                 <div class="ui sub header">De:</div>
@@ -40,7 +40,7 @@
         <div class="fields">
             <div class="eight wide field">
                 <div class="ui sub header">Concepto PO / CR Cliente</div>
-                <input type="text"  name="concepto" placeholder="Concepto PO / CR Cliente" value="">
+                <input type="text" name="concepto" placeholder="Concepto PO / CR Cliente" value="">
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerimiento</div>
@@ -63,11 +63,17 @@
                 <input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="">
             </div>
         </div>
+        <div class="fields">
+            <div class="sixteen wide field">
+                <div class="ui sub header">Observaciones</div>
+                <input type="text" name="observaciones" placeholder="observaciones" value="">
+            </div>
+        </div>
         <h4 class="ui dividing header">
-            DETALLE COTIZACIONES 
+            DETALLE COTIZACIONES
         </h4>
         <? foreach ($cotizaciones as $row) { ?>
-            <input type="hidden" name="idCotizacion" value="<?=$row['idCotizacion']?>">
+            <input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
             <div class="default-item">
                 <div class="ui segment body-item nuevo">
                     <div class="ui left floated header">
@@ -91,13 +97,13 @@
                                     </div>
                                     <div class="three wide field">
                                         <div class="ui sub header">Cantidad</div>
-                                        <input class="form-control " type="number" name="cantidadForm" placeholder="0" value="<?= $rowDetalle['cantidad'] ?>" patron="requerido,numerico" min="1" step="1"  readonly onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                        <input class="form-control " type="number" name="cantidadForm" placeholder="0" value="<?= $rowDetalle['cantidad'] ?>" patron="requerido,numerico" min="1" step="1" readonly onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                     </div>
                                     <div class="four wide field">
                                         <div class="ui sub header">Costo</div>
                                         <div class="ui right labeled input">
                                             <label for="amount" class="ui label">S/</label>
-                                            <input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= moneda($rowDetalle['costo']) ?>" readonly >
+                                            <input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= moneda($rowDetalle['costo']) ?>" readonly>
                                         </div>
                                     </div>
                                     <div class="four wide field">

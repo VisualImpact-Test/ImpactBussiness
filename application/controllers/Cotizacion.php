@@ -1172,6 +1172,7 @@ class Cotizacion extends MY_Controller
             'concepto' => !empty($post['concepto']) ? $post['concepto'] : NULL,
             'idUsuarioReceptor' => !empty($post['receptor']) ? $post['receptor'] : NULL,
             'idUsuarioReg' => $this->idUsuario,
+            'observacion' => !empty($post['observaciones']) ? $post['observaciones'] : NULL,
         ];
 
         $oper = $this->model->insertar(['tabla'=>'compras.oper','insert'=> $insertOper]);
