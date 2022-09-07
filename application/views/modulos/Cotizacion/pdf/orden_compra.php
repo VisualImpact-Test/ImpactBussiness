@@ -130,19 +130,22 @@
 </div>
 
 <div style="border: 2px solid black; text-align:justify;height:100px">
-    <table style="border:none;width: 100%;margin-top:100px">
+    <table style="border:none;width: 100%; margin-top:30px">
         <tr>
             <td class="w-10">
             </td>
-            <td class="w-30 text-center">
-                <div style="text-align:center; ">
+            <td class="w-30 text-center" style="padding-top:120px;">
+                <div style="text-align:center;">
                     <hr style="height: 3px; color:black">
                     Área de logística
                 </div>
             </td>
-            <td class="w-20 text-center">
+            <td class="w-20 text-center" style="padding-top:120px;">
             </td>
-            <td class="w-30 text-center">
+            <td class="w-30 text-center" style="padding-top:120px">
+              <?php if (!empty($data['nombre_archivo'])): ?>
+                <img id="imagenFirma" src="<?= empty($data['nombre_archivo'])?'':(RUTA_WASABI.'usuarioFirma/'.$data['nombre_archivo']) ?>" style="padding-top: -120px; width: 200px; height: 120px;">
+              <?php endif; ?>
                 <div style="text-align:center">
                     <hr style="height: 3px; color:black; ">
                     Coordinador de compras

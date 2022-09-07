@@ -33,11 +33,12 @@ class M_Login extends MY_Model
 				, u.ultimo_cambio_pwd
 				, DATEDIFF(day, u.ultimo_cambio_pwd, getdate()) AS dias_pasados
 				, flag_anuncio_visto
+				, u.demo
 			FROM
 				sistema.usuario u
 				JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario
 					AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
-				
+
 				LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
 				LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento
 				LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent AND e.flag = 'ACTIVO'
@@ -57,7 +58,7 @@ class M_Login extends MY_Model
 		$value = array($input['idUsuario']);
 		$sql = "
 			DECLARE @fecha DATE = GETDATE();
-			SELECT 
+			SELECT
 				mo.*
 				, gm.idGrupoMenu
 				, gm.nombre grupoMenu
@@ -67,17 +68,17 @@ class M_Login extends MY_Model
 				, sgm.nombre subGrupoMenu
 				, sgm.cssIcono subGrupoIcono
 				, sgm.page subGrupoPage
-			FROM 
+			FROM
 				sistema.usuarioMenu amo
 				JOIN sistema.menu mo ON amo.idMenuOpcion = mo.idMenuOpcion AND mo.estado = 1
 				JOIN sistema.grupoMenu gm ON gm.idGrupoMenu = mo.idGrupoMenu AND gm.estado = 1
-				LEFT JOIN sistema.subGrupoMenu sgm ON sgm.idSubGrupoMenu = mo.idsubGrupoMenu AND sgm.estado = 1	
+				LEFT JOIN sistema.subGrupoMenu sgm ON sgm.idSubGrupoMenu = mo.idsubGrupoMenu AND sgm.estado = 1
 			WHERE
 				amo.idUsuario = {$input['idUsuario']}
 				AND amo.estado = 1
 			--ORDER BY gm.orden,mo.nombre
 			UNION
-			SELECT 
+			SELECT
 				mo.*
 				, gm.idGrupoMenu
 				, gm.nombre grupoMenu
@@ -87,16 +88,16 @@ class M_Login extends MY_Model
 				, sgm.nombre subGrupoMenu
 				, sgm.cssIcono subGrupoIcono
 				, sgm.page subGrupoPage
-			FROM 
+			FROM
 			sistema.usuarioTipoMenu amo
-			JOIN sistema.usuarioHistorico uh ON amo.idTipoUsuario = uh.idTipoUsuario 
+			JOIN sistema.usuarioHistorico uh ON amo.idTipoUsuario = uh.idTipoUsuario
 				AND uh.idUsuario = {$input['idUsuario']}
 				AND General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@fecha,@fecha) = 1
 				AND uh.estado = 1
 			JOIN sistema.menu mo ON amo.idMenuOpcion = mo.idMenuOpcion AND mo.estado = 1
 			JOIN sistema.grupoMenu gm ON gm.idGrupoMenu = mo.idGrupoMenu AND gm.estado = 1
 			LEFT JOIN sistema.subGrupoMenu sgm ON sgm.idSubGrupoMenu = mo.idsubGrupoMenu AND sgm.estado = 1
-			--ORDER BY gm.orden,mo.nombre	
+			--ORDER BY gm.orden,mo.nombre
 			";
 		return $this->db->query($sql);
 	}
@@ -230,7 +231,7 @@ class M_Login extends MY_Model
 				, flag_anuncio_visto
 			FROM
 				sistema.usuario u
-				JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario 
+				JOIN sistema.usuarioHistorico uh ON uh.idUsuario = u.idUsuario
 					AND @fecha BETWEEN uh.fecIni AND ISNULL(uh.fecFin, @fecha) AND uh.estado = 1
 				LEFT JOIN sistema.usuarioTipo ut ON ut.idTipoUsuario = uh.idTipoUsuario AND ut.estado = 1
 				LEFT JOIN sistema.usuarioTipoDocumento td ON td.idTipoDocumento = u.idTipoDocumento

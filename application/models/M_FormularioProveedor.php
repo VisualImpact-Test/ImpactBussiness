@@ -342,7 +342,8 @@ class M_FormularioProveedor extends MY_Model
 			CONVERT(VARCHAR, c.fechaRequerida, 103) AS fechaRequerida,
 			c.idCotizacion,
 			o.requerimiento,
-			cp.*
+			cp.*,
+			uf.nombre_archivo
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
@@ -352,6 +353,8 @@ class M_FormularioProveedor extends MY_Model
 			JOIN compras.operDetalle operd ON operd.idCotizacion = c.idCotizacion
 			JOIN compras.oper oper ON oper.idOper = operd.idOper
 			JOIN compras.proveedor p ON p.idProveedor = o.idProveedor
+			LEFT JOIN sistema.usuario us ON us.idUsuario=o.idUsuarioReg
+			LEFT JOIN sistema.usuarioFirma uf ON uf.idUsuarioFirma=us.idUsuarioFirma
 
 			{$filtros}
 		";
