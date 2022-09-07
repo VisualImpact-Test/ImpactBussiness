@@ -1208,8 +1208,8 @@ class M_Cotizacion extends MY_Model
 		SELECT
 		u.usuario,
 		u.nombres + ' ' + u.apePaterno + ' ' + ISNULL(u.apeMaterno,'') nombreUsuario,
-		--u.email,
-		'aaron.ccenta@gmail.com' email, --borrar
+		u.email,
+		--'aaron.ccenta@gmail.com' email, --borrar
 		ut.nombre tipoUsuario
 		FROM 
 		sistema.usuario u 
