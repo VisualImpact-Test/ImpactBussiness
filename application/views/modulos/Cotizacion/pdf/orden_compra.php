@@ -17,7 +17,7 @@
             <td class="text-left w-20">Centro de Costo:</td>
             <td class="text-center w-20"><?= verificarEmpty($data['centrosCosto'], 3) ?></td>
             <td class="text-left w-20">Fecha:</td>
-            <td class="text-center w-20"><?= verificarEmpty($data['fechaRequerida'], 3) ?></td>
+            <td class="text-center w-20"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
         </tr>
         <tr>
             <td class="text-left" colspan="4">Datos del proveedor:</td>
@@ -70,7 +70,7 @@
                     <td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
                     <td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'], 3) ?></td>
                     <td class="text-right">
-                        <?= !empty($row['precio']) ? moneda($row['precio']) : 0 ?>
+                        <?= !empty($row['costo']) ? moneda($row['costo']) : 0 ?>
                     </td>
                     <td class="text-right">
                         <?= !empty($row['subtotal']) ? moneda($row['subtotal']) : 0 ?>

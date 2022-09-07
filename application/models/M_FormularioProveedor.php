@@ -339,6 +339,7 @@ class M_FormularioProveedor extends MY_Model
 			p.correoContacto,
 			p.numeroContacto,
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaRegistro,
 			CONVERT(VARCHAR, c.fechaRequerida, 103) AS fechaRequerida,
 			c.idCotizacion,
 			o.requerimiento,

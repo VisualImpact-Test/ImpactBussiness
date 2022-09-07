@@ -298,7 +298,7 @@ class M_Cotizacion extends MY_Model
 				, pr.idProveedor
 				, pr.razonSocial AS proveedor
 				, a.idItemTipo AS tipo
-				, DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy) AS diasVigencia
+				, ISNULL(DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy),0) AS diasVigencia
 			FROM compras.item a
 			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
 			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
@@ -729,18 +729,22 @@ class M_Cotizacion extends MY_Model
 				cd.idItem,
 				cd.nombre,
 				c.idProveedor,
+				p.razonSocial,
 				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
 			FROM
-			compras.cotizacionDetalleProveedor c
-			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+				compras.cotizacionDetalleProveedor c
+				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+				JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
 			WHERE
-			1 = 1
-			{$filtros}
-			{$sqlUnion}
+				1 = 1
+				{$filtros}
+				{$sqlUnion}
 			)
 			SELECT
 			idCotizacion,
 			idCotizacionDetalle,
+			idProveedor,
+			razonSocial,
 			SUM(respuestasProveedor) OVER (PARTITION BY idCotizacionDetalle) cotizacionesConfirmadas
 			FROM lst_respuestas_proveedor
 		";
@@ -1074,7 +1078,28 @@ class M_Cotizacion extends MY_Model
 					];
 				}
 			}
+			//Sub Items Actualizar
+			if(!empty($params['subDetalle'][$k])){
+				foreach($params['subDetalle'][$k] as $subItem){
+					$updateSubItem[] = [
+						'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+						'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+						'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+					];
+				}
+			}
 		}
+
+		
 
 		if ($queryCotizacionDetalle) {
 			$this->resultado['query'] = $queryCotizacionDetalle;
@@ -1086,6 +1111,9 @@ class M_Cotizacion extends MY_Model
 			}
 			if(!empty($insertSubItem)){
 				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
+			}
+			if(!empty($updateSubItem)){
+				$this->db->update_batch('compras.cotizacionDetalleSub', $updateSubItem,'idCotizacionDetalleSub');
 			}
 
 			if(!empty($params['archivoEliminado'])){
@@ -1168,5 +1196,40 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}	
 
+	public function getUsuarios($params){
+
+		$filtros = '';
+		$filtros .= !empty($params['idUsuario']) ? " AND u.idUsuario IN({$params['idUsuario']})" : ""; 
+		$filtros .= !empty($params['tipoUsuario']) ? " AND uh.idTipoUsuario IN({$params['tipoUsuario']})" : ""; 
+
+
+		$sql = "
+		DECLARE @hoy DATE = GETDATE();
+		SELECT
+		u.usuario,
+		u.nombres + ' ' + u.apePaterno + ' ' + ISNULL(u.apeMaterno,'') nombreUsuario,
+		--u.email,
+		'aaron.ccenta@gmail.com' email, --borrar
+		ut.nombre tipoUsuario
+		FROM 
+		sistema.usuario u 
+		JOIN sistema.usuarioHistorico uh ON u.idUsuario = uh.idUsuario
+		JOIN sistema.usuarioTipo ut ON uh.idTipoUsuario = ut.idTipoUsuario
+		WHERE 
+		General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@hoy,@hoy) = 1
+		{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+
+
+		return $this->resultado;
+	}
 
 }

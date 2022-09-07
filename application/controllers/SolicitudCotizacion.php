@@ -246,6 +246,7 @@ class SolicitudCotizacion extends MY_Controller
         $post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
         $post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
         $post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+        $post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
         $post['costoForm'] = checkAndConvertToArray($post['costoForm']);
         $post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
         $post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
@@ -270,6 +271,7 @@ class SolicitudCotizacion extends MY_Controller
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 2, 
                 'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'caracteristicasCompras'=> !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL, 
             ];
 
             if(!empty($post["file-name[$k]"])){
@@ -286,6 +288,49 @@ class SolicitudCotizacion extends MY_Controller
                     'carpeta'=> 'cotizacion',
                     'nombreUnico' => uniqid(),
                     ];
+                }
+            }
+
+            if(!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])){
+                switch ($post['tipoItemForm'][$k]) {
+                    case COD_SERVICIO['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'nombre' => $post["nombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+                    
+                    case COD_DISTRIBUCION['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+                    
+                    case COD_TEXTILES['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'talla' => $post["tallaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'tela' => $post["telaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+    
+                    case COD_TARJETAS_VALES['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+    
+                    default:
+                        $data['subDetalle'][$k] = [];
+                        break;
                 }
             }
 
@@ -375,6 +420,12 @@ class SolicitudCotizacion extends MY_Controller
             $cotizacionProveedorDetalle[$p_cotizacion['idProveedor']][$p_cotizacion['idCotizacion']][$p_cotizacion['idItem']] = $p_cotizacion;
         }
         $rs['estado'] = true;
+        $usuariosCompras = $this->model->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+        $ccCompras = [];
+        foreach($usuariosCompras as $usuario){
+            $ccCompras[] = $usuario['email'];
+        }
+        
         foreach($post['proveedorSolicitudForm'] as $idProveedor){
             if(empty($cotizacionProveedor[$idProveedor])){
 
@@ -422,10 +473,14 @@ class SolicitudCotizacion extends MY_Controller
     
                 goto respuesta;
             }
+
+
+            $proveedor = $this->model_proveedor->obtenerInformacionProveedores(['idProveedor' => $idProveedor])['query']->row_array();
             $html = $this->load->view("modulos/SolicitudCotizacion/correoProveedor", $dataParaVista, true);
             $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
             $config = [
-                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'to' => $proveedor['correoContacto'],
+                'cc' => $ccCompras,
                 'asunto' => 'Solicitud de cotizacion',
                 'contenido' => $correo,
             ];
@@ -530,6 +585,7 @@ class SolicitudCotizacion extends MY_Controller
         }
         foreach($cotizacionProveedores as $cotizacionProveedor){
             $config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
+            $config['data']['cotizacionProveedorRegistrados'][$cotizacionProveedor['idCotizacionDetalle']][] = $cotizacionProveedor['razonSocial'];
         }
         foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
             $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
@@ -645,6 +701,7 @@ class SolicitudCotizacion extends MY_Controller
         }
         foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
             $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
+            
         }
 
         $config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();

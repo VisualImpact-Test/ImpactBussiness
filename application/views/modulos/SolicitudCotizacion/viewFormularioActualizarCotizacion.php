@@ -1,22 +1,17 @@
-<!-- <div class="ui attached  message">
-  <div class="header">
-    Registrar Cotización
-  </div>
-</div> -->
 <style>
     .img-lsck-capturas {
         height: 150px !important;
     }
 
     .floating-container {
-        height: 150px !important;
+        height: 200px !important;
     }
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
-        <div class="fields">
+        <div class="fields disabled disabled-visible ">
             <div class="eleven wide field">
                 <div class="ui sub header">Título</div>
                 <input id="nombre" name="nombre" patron="requerido" placeholder="Título de la cotizacion" value="<?= !empty($cotizacion['cotizacion']) ? $cotizacion['cotizacion'] : '' ?>">
@@ -32,7 +27,7 @@
                 <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" patron="requerido">
             </div>
         </div>
-        <div class="fields">
+        <div class="fields disabled disabled-visible">
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerida</div>
                 <div class="ui calendar date-semantic">
@@ -62,7 +57,7 @@
                 </select>
             </div>
         </div>
-        <div class="fields">
+        <div class="fields disabled disabled-visible">
             <div class="five wide field">
                 <div class="ui sub header">Prioridad</div>
                 <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
@@ -75,7 +70,7 @@
             </div>
 
         </div>
-        <div class="fields">
+        <div class="fields disabled disabled-visible">
             <div class="sixteen wide field">
                 <div class="ui sub header">Comentario</div>
                 <input id="comentarioForm" name="comentarioForm" placeholder="Comentario" value="<?= !empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?>">
@@ -148,7 +143,11 @@
 
                     </div>
                     <div class="ui left floated header">
-                        <span class="ui medium text "><?= $row['item'] ?></span></span>
+                        <span class="ui medium text ">
+                            <?= $row['item'] ?>
+                        </span>
+                        <br>
+                        <small class="text-primary"> Proveedores: <?= !empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) ? implode(', ',$cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) : 'No se han enviado solicitudes' ?></small>
                     </div>
                     <div class="ui clearing divider"></div>
                     <div class="ui grid">
@@ -158,10 +157,10 @@
                                 <div class="six wide field">
                                     <div class="ui sub header">Item</div>
                                     <div class="ui-widget">
-                                        <div class="ui icon input w-100">
-                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
+                                        <input class="" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" >
+                                        <!-- <div class="ui icon input w-100">
                                             <i class="semaforoForm flag link icon"></i>
-                                        </div>
+                                        </div> -->
 
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 
@@ -170,7 +169,7 @@
                                         <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                     </div>
                                 </div>
-                                <div class="five wide field">
+                                <div class="five wide field disabled disabled-visible">
                                     <div class="ui sub header">Tipo Item</div>
                                     <select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
                                         <?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
@@ -178,7 +177,7 @@
                                 </div>
                                 <div class="five wide field">
                                     <div class="ui sub header">Características</div>
-                                    <div class="ui right labeled input w-100">
+                                    <div class="ui input w-100">
                                         <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
                                     </div>
                                 </div>
@@ -468,9 +467,9 @@
             <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(<?= $siguienteEstado ?>)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
                 <i class="send icon"></i>
             </span>
-            <!-- <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "<?= $controller ?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+            <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "noValidar", fn: "<?= $controller ?>.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
                 <i class="save icon"></i>
-            </span> -->
+            </span>
             <!-- <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
                 <i class="plus icon"></i>
             </span> -->

@@ -84,9 +84,7 @@
                 </select>
             </div>
             <div class="eleven wide field">
-                <div class="ui sub header">
-                    Motivo <div class="ui btn-info-motivo btn-info-custom text-primary"><i class="info circle icon"></i></div>
-                </div>
+                <div class="ui sub header">Motivo</div>
                 <input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?= !empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
             </div>
 

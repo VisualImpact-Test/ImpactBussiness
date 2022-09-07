@@ -45,7 +45,11 @@ var SolicitudCotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
+				if(tipoRegistro == 1){
+					fn = 'Fn.closeModals(' + modalId + ');location.reload();';
+				}else{
+					fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
+				}
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -372,16 +376,6 @@ var Cotizacion = {
 			Cotizacion.cleanDetalle(parent);
 		});
 
-		$(document).on('change', '#prioridadForm', function (e) {
-			let prioridad = $(this).val();
-
-			if(prioridad == 1 ){ //Si es prioridad ALTA 
-				$(motivoForm).attr("patron",'requerido');
-			}
-			else{
-				$(motivoForm).removeAttr("patron");
-			}
-		});
 
 		$(document).on('click', '.btn-cotizacion-pdf', function (e) {
 			e.preventDefault();
@@ -1273,8 +1267,18 @@ var Cotizacion = {
 
 	actualizarTotal: function () {
 		let total = 0;
+		let totalDistribucion = 0;
+		
 		$.each($('.subtotalForm'), function (index, value) {
-			total = Number(total) + Number($(value).val());
+			// Distribucion no se le agrega al FEE
+			if($(value).closest('.nuevo').find('.idTipoItem').find('select').val() != COD_DISTRIBUCION.id){
+				total = Number(total) + Number($(value).val());
+				// totalSinDistribucion = Number(totalSinDistribucion) + Number($(value).val());
+			}
+			if($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_DISTRIBUCION.id){
+				totalDistribucion = Number(totalDistribucion) + Number($(value).val());
+			}
+
 		})
 
 		let fee = Number($("#feeForm").val());
@@ -1285,7 +1289,7 @@ var Cotizacion = {
 		if(igvForm.is(":checked")){
 			igv = IGV_SYSTEM;
 		}
-		let totalFee = (total) + (total*(fee/100))
+		let totalFee = ((total) + (total*(fee/100))) + totalDistribucion;
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
 		$('.totalFormLabel').val(moneyFormatter.format(Number(totalFeeIgv)));
