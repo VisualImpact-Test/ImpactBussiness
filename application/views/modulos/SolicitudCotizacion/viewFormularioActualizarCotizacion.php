@@ -6,6 +6,13 @@
     .floating-container {
         height: 200px !important;
     }
+    .stickyProveedores.fixed{
+        margin-top: 8px !important;
+        margin-left: 0px !important;
+    }
+    .stickyDetalleCotizacion.fixed{
+        margin-top: 55px !important;
+    }
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
@@ -53,7 +60,7 @@
             <div class="four wide field">
                 <div class="ui sub header">Centro de costo</div>
                 <select class="ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuenta'] . ' - ' . $cotizacion['idCuentaCentroCosto'] : '']); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
                 </select>
             </div>
         </div>
@@ -78,7 +85,7 @@
         </div>
         <h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
         </h4>
-        <div class="fields">
+        <div class="fields ui sticky stickyProveedores">
             <div class="thirteen wide field">
                 <div class="ui sub header">Proveedor</div>
                 <select class="ui fluid search <?= $col_dropdown ?> dropdown simpleDropdown proveedorSolicitudForm" multiple="" name="proveedorSolicitudForm">
@@ -98,11 +105,11 @@
             <? foreach ($cotizacionDetalle as $kd => $row) : ?>
                 <input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
-                    <div class="ui right floated header">
+                    <div class="ui right floated header sticky stickyDetalleCotizacion">
                         <div class="ui icon menu">
                             <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
                                 <i class="square outline icon"></i>
-                                <input type="checkbox" name="checkItem" class="d-none">
+                                <input type="checkbox" name="checkItem[<?=$row['idCotizacionDetalle']?>]" class="d-none checkItem">
                             </a>
                             <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
                                 <i class="hand holding usd icon"></i>
@@ -142,7 +149,7 @@
                         <? } ?>
 
                     </div>
-                    <div class="ui left floated header">
+                    <div class="ui left floated header sticky stickyDetalleCotizacion">
                         <span class="ui medium text ">
                             <?= $row['item'] ?>
                         </span>
@@ -185,7 +192,7 @@
                             <div class="fields">
                                 <div class="sixteen wide field">
                                     <div class="ui sub header">Características para el proveedor</div>
-                                    <input name="caracteristicasProveedor" placeholder="Características" value="">
+                                    <input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
                                 </div>
                             </div>
                             <!-- Textiles -->
@@ -323,7 +330,7 @@
                                 </div>
                             </div>
                             <div class="content-lsck-capturas">
-                                <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*,.pdf" multiple="">
+                                <input data-row="<?=$kd?>" type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*,.pdf" multiple="">
                                 <div class="fields ">
                                     <div class="sixteen wide field">
                                         <div class="ui small images content-lsck-galeria">
@@ -338,9 +345,9 @@
                                                             </div>
                                                             <a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
                                                             <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                                                            <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
-                                                            <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="image/<?= $archivo['extension'] ?>">
-                                                            <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
+                                                            <input type="hidden" value="">
+                                                            <input type="hidden" value="image/<?= $archivo['extension'] ?>">
+                                                            <input type="hidden" value="<?= $archivo['nombre_inicial'] ?>">
                                                             <img height="100" src="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
                                                 <? }

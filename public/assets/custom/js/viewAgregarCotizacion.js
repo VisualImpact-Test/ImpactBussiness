@@ -6,6 +6,8 @@ var SolicitudCotizacion = {
 			.dimmer({
 				on: 'click'
 			});
+			$('.ui.stickyProveedores').sticky();
+
 
 			Cotizacion.actualizarTotal();
 		});
@@ -901,7 +903,7 @@ var Cotizacion = {
 				return false;
 			}
 
-			if(!$('input[name=checkItem]').is(' :checked')){
+			if(!$('.checkItem').is(' :checked')){
 				$('.chk-item').transition('glow');
 				return false;
 

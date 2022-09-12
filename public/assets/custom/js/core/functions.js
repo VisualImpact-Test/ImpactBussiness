@@ -1414,11 +1414,13 @@ var Fn = {
 					$('#' + childDependiente).dropdown({
 						forceSelection: false
 					});
+					
 					$("#" + childDependiente).val('');
 					$("#" + childDependiente).siblings('div.text').text('Seleccione');
 					$.each($('#' + childDependiente + ' option'), function (index, value) {
 						let myoption = $('#' + childDependiente).dropdown('get item', $(value).val());
 						if (myoption != false) {
+							console.log(myoption);
 							if ($(value).data('parentdependiente') == idParent) {
 								myoption.removeClass('d-none');
 								myoption.removeClass('active selected');
@@ -1429,6 +1431,7 @@ var Fn = {
 						}
 					});
 				} else {
+					debugger;
 					$("#" + childDependiente).children('option').hide();
 					$('#' + childDependiente).find('option[value=""').show();
 					$("#" + childDependiente).destroyDropdown();

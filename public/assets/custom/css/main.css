@@ -1220,3 +1220,8 @@ body .grecaptcha-badge {
 .disabled-visible .field{
   opacity: 1 !important;
 }
+
+.ui.sticky.fixed {
+  margin-top: 8px ;
+  background-color: white;
+}
