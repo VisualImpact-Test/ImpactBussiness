@@ -211,8 +211,8 @@ class SolicitudCotizacion extends MY_Controller
         $data['update'] = [
             'nombre' => $post['nombre'],
             'idCuenta' => $post['cuentaForm'],
-            // 'idCentroCosto' => $post['cuentaCentroCostoForm'],
-            'idCentroCosto' => trim(explode("-",$post['cuentaCentroCostoForm'])[1]),
+            'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            //'idCentroCosto' => trim(explode("-",$post['cuentaCentroCostoForm'])[1]),
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
             'fee' => $post['feeForm'],
@@ -389,22 +389,25 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-        if(empty($post['checkItem'])){
+      
+        $dataParaVista = [];
+
+        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
+        foreach ($post['nameItem'] as $k => $r) {
+            $idCotizacionDetalle_ = $post['idCotizacionDetalle'][$k];
+
+            if(empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;
+            $data['select'][] = $idCotizacionDetalle_;
+        }
+
+        if(empty($data['select'])){
             $result['result'] = 1;
             $result['data']['html'] = createMessage(['type'=>2,'message'=>'Debe seleccionar al menos un item']);
             $result['msg']['title'] = 'Alerta';
             goto respuesta;
         }
-        $dataParaVista = [];
 
-        $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
-        $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
-        $post['checkItem'] = checkAndConvertToArray($post['checkItem']);
-        foreach ($post['nameItem'] as $k => $r) {
-
-            if(empty($post['checkItem'][$k])) continue;
-            $data['select'][] = $post['idCotizacionDetalle'][$k];
-        }
         $items = implode(",",$data['select']);
         $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'cotizacionInterna' => true, 'idCotizacionDetalle' => $items])['query']->result_array();
 
@@ -420,7 +423,7 @@ class SolicitudCotizacion extends MY_Controller
             $cotizacionProveedorDetalle[$p_cotizacion['idProveedor']][$p_cotizacion['idCotizacion']][$p_cotizacion['idItem']] = $p_cotizacion;
         }
         $rs['estado'] = true;
-        $usuariosCompras = $this->model->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+        $usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
         $ccCompras = [];
         foreach($usuariosCompras as $usuario){
             $ccCompras[] = $usuario['email'];

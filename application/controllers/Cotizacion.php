@@ -228,7 +228,14 @@ class Cotizacion extends MY_Controller
                 'estado' => true,
             ];
             $insertCotizacionHistorico = $this->model->insertar(['tabla'=>TABLA_HISTORICO_ESTADO_COTIZACION,'insert'=>$insertCotizacionHistorico]);
-            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'] ]);
+
+            $usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_OPERACIONES])['query']->result_array();
+            $toOperaciones = [];
+            foreach($usuariosOperaciones as $usuario){
+                $toOperaciones[] = $usuario['email'];
+            }
+  
+            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'] , 'to' => $toOperaciones ]);
         }
 
         if($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE){
@@ -339,8 +346,8 @@ class Cotizacion extends MY_Controller
             'nombre' => $post['nombre'],
             'fechaEmision' => getActualDateTime(),
             'idCuenta' => $post['cuentaForm'],
-            // 'idCentroCosto' => $post['cuentaCentroCostoForm'],
-            'idCentroCosto' => trim(explode('-',$post['cuentaCentroCostoForm'])[1]),
+            'idCentroCosto' => $post['cuentaCentroCostoForm'],
+            //'idCentroCosto' => trim(explode('-',$post['cuentaCentroCostoForm'])[1]),
             'idSolicitante' => $idSolicitante,
             'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
@@ -553,7 +560,12 @@ class Cotizacion extends MY_Controller
 
         $estadoEmail = true;
         if($post['tipoRegistro'] == 2){
-            $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id']]);
+            $usuariosCompras= $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+            $toCompras = [];
+            foreach($usuariosCompras as $usuario){
+                $toCompras[] = $usuario['email'];
+            }
+            $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'],'to' => $toCompras]);
             //Verificamos si es necesario enviar a compras para cotizar con el proveedor
             
             $necesitaCotizacionIntera = false;
@@ -671,7 +683,7 @@ class Cotizacion extends MY_Controller
         $cc = !empty($params['cc']) ? $params['cc'] : [];
 
         $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-        $this->email->to(['aaron.ccenta@visualimpact.com.pe', 'jean.alarcon@visualimpact.com.pe']);
+        $this->email->to($params['to']);
         $this->email->cc($cc);
 
         $data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
@@ -692,12 +704,10 @@ class Cotizacion extends MY_Controller
 
         $dataParaVista['link'] = base_url() . index_page() . 'Cotizacion';
 
-        // $bcc = array(
-        //     'team.sistemas@visualimpact.com.pe',
-        // );
-        // $this->email->bcc($bcc);
-        $bcc = [];
-        //$bcc = array('luis.durand@visualimpact.com.pe');
+        $bcc = array(
+            'aaron.ccenta@visualimpact.com.pe',
+            'luis.durand@visualimpact.com.pe'
+        );
 		$this->email->bcc($bcc);
 
         $this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
@@ -1006,7 +1016,7 @@ class Cotizacion extends MY_Controller
         $config['data']['title'] = 'Cotizacion';
         $config['data']['message'] = 'Lista de Cotizacions';
         $config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
-        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+        $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
         $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
         $config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
@@ -1432,7 +1442,8 @@ class Cotizacion extends MY_Controller
 
         $message = 'Se actualizó la cotización';
         if($post['flagEnviarCorreo'] == 1){
-            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'],'cc' => !empty($post['correos']) ? $post['correos'] : [] ]);
+          
+            $this->enviarCorreo(['idCotizacion' =>$post['idCotizacion'],'to' => !empty($post['correos']) ? $post['correos'] : [] ]);
             $message = 'La cotización se envió al cliente';
         }
 
@@ -1458,7 +1469,7 @@ class Cotizacion extends MY_Controller
         $data['update'] = [
             'nombre' => $post['nombre'],
             'idCuenta' => $post['cuentaForm'],
-            'idCentroCosto' => trim(explode("-",$post['cuentaCentroCostoForm'])[1]),
+            'idCentroCosto' => $post['cuentaCentroCostoForm'],
             'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
             'flagIgv' => !empty($post['igvForm']) ? 1 : 0,

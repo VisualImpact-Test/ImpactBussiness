@@ -18,12 +18,14 @@ class M_Cotizacion extends MY_Model
 	public function obtenerCuenta($params = [])
 	{
 		$sql = "
+		DECLARE @hoy DATE = GETDATE();
 		SELECT DISTINCT
 			emp.idEmpresa id,
 			emp.razonSocial value
 		FROM 
 		rrhh.dbo.Empresa emp
 		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = emp.idEmpresa
+			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 		WHERE 
 			e.flag = 'activo'
@@ -42,18 +44,27 @@ class M_Cotizacion extends MY_Model
 	}
 
 	public function obtenerCuentaCentroCosto($params = [])
-	{
+	{	
+		$filtros = '';
+		!empty($params['estadoCentroCosto']) ? $filtros .= " AND c.estado_centro = 1" : "";
+
 		$sql = "
+		DECLARE @hoy DATE = GETDATE();
 		SELECT DISTINCT
 			c.idEmpresa idDependiente,
-			CONVERT(VARCHAR,c.idEmpresa) +' - ' + CONVERT(VARCHAR,c.idCanal) id,
-			c.canal value
+			c.idEmpresaCanal id,
+			c.subcanal value
 		FROM 
 		rrhh.dbo.empresa_Canal c
 		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idCanal
+			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
+		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 		WHERE 
 			e.flag = 'activo'
+			AND c.subcanal IS NOT NULL
+			{$filtros}
+		ORDER BY id
 		";
 
 		$query = $this->db->query($sql);
@@ -125,8 +136,8 @@ class M_Cotizacion extends MY_Model
 				, p.idCuenta
 				, p.idCentroCosto idCuentaCentroCosto
 				--, cc.nombre AS cuentaCentroCosto
-				, c.nombre AS cuenta
-				, cc.canal AS cuentaCentroCosto
+				, c.razonSocial AS cuenta
+				, cc.subcanal AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
 				, p.estado
 				, p.fechaRequerida
@@ -146,11 +157,8 @@ class M_Cotizacion extends MY_Model
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
-			-- LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
-			-- LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
-			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idCanal = p.idCentroCosto
-				AND cc.idEmpresa = c.idEmpresa
+			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = p.idCentroCosto
 			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 				AND od.estado = 1
 			
@@ -544,7 +552,8 @@ class M_Cotizacion extends MY_Model
 			cd.precio,
 			cd.enlaces,
 			cd.idProveedor,
-			p.razonSocial
+			p.razonSocial,
+			cd.caracteristicasCompras
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -733,7 +742,8 @@ class M_Cotizacion extends MY_Model
 				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
 			FROM
 				compras.cotizacionDetalleProveedor c
-				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+				JOIN compras.cotizacionDetalleProveedorDetalle cdp ON cdp.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor
+				JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdp.idCotizacionDetalle
 				JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
 			WHERE
 				1 = 1
@@ -1196,40 +1206,6 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}	
 
-	public function getUsuarios($params){
-
-		$filtros = '';
-		$filtros .= !empty($params['idUsuario']) ? " AND u.idUsuario IN({$params['idUsuario']})" : ""; 
-		$filtros .= !empty($params['tipoUsuario']) ? " AND uh.idTipoUsuario IN({$params['tipoUsuario']})" : ""; 
-
-
-		$sql = "
-		DECLARE @hoy DATE = GETDATE();
-		SELECT
-		u.usuario,
-		u.nombres + ' ' + u.apePaterno + ' ' + ISNULL(u.apeMaterno,'') nombreUsuario,
-		u.email,
-		--'aaron.ccenta@gmail.com' email, --borrar
-		ut.nombre tipoUsuario
-		FROM 
-		sistema.usuario u 
-		JOIN sistema.usuarioHistorico uh ON u.idUsuario = uh.idUsuario
-		JOIN sistema.usuarioTipo ut ON uh.idTipoUsuario = ut.idTipoUsuario
-		WHERE 
-		General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@hoy,@hoy) = 1
-		{$filtros}
-		";
-
-		$query = $this->db->query($sql);
-
-		if ($query) {
-			$this->resultado['query'] = $query;
-			$this->resultado['estado'] = true;
-		}
-
-
-
-		return $this->resultado;
-	}
+	
 
 }
