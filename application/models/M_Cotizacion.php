@@ -396,6 +396,53 @@ class M_Cotizacion extends MY_Model
 						'idUsuarioReg' => $this->idUsuario
 					];
 				}
+			} 
+
+			if(!empty($params['archivoExistente'][$k])){
+
+				$id = implode(',', $params['archivoExistente'][$k]);
+	
+				$sql = "
+				SELECT
+					da.idCotizacionDetalleArchivo,
+					da.idCotizacion,
+					da.idCotizacionDetalle,
+					da.idTipoArchivo,
+					da.nombre_inicial,
+					da.nombre_archivo,
+					da.nombre_unico,
+					da.extension,
+					da.idUsuarioReg
+				FROM compras.cotizacionDetalleArchivos da
+				WHERE idCotizacionDetalleArchivo in ($id);
+			";
+	
+			$query = $this->db->query($sql)->result_array();
+	
+			$archivosExistentes = [];
+	
+			foreach ($query as $row) {
+	
+				$archivosExistentes [] = [
+						'idCotizacion' => $params['idCotizacion'],
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idTipoArchivo'=> $row['idTipoArchivo'],
+						'nombre_inicial' => $row['nombre_inicial'],
+						'nombre_archivo' => $row['nombre_archivo'],
+						'nombre_unico' => $row['nombre_unico'],
+						'extension' => $row['extension'],
+						'idUsuarioReg' => $row['idUsuarioReg'],
+						'estado' => true,
+						
+				
+				];
+	
+			}
+	
+			if(!empty($archivosExistentes)){
+				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
+			}
+	
 			}
 
 			//Sub Items
@@ -536,6 +583,7 @@ class M_Cotizacion extends MY_Model
 			cd.idItem,
 			cd.cantidad,
 			cd.costo,
+			cd.caracteristicasCompras,
 			cd.subtotal,
 			c.total,
 			cd.idItemTipo,
@@ -1000,6 +1048,7 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	
 	public function insertarCotizacionAnexos($data = []){
 		$insert = true;
 
@@ -1019,8 +1068,57 @@ class M_Cotizacion extends MY_Model
 			];
 		}
 
+		
+
 		if(!empty($insertArchivos)){
 			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
+		}
+
+		if(!empty($data['anexoExistente'])){
+
+			$id = implode(',', $data['anexoExistente']);
+
+			$sql = "
+			SELECT
+				da.idCotizacionDetalleArchivo,
+				da.idCotizacion,
+				da.idTipoArchivo,
+				da.nombre_inicial,
+				da.nombre_archivo,
+				da.nombre_unico,
+				da.extension,
+				da.idUsuarioReg,
+				da.flag_anexo
+			FROM compras.cotizacionDetalleArchivos da
+			WHERE idCotizacionDetalleArchivo in ($id);
+		";
+
+		$query = $this->db->query($sql)->result_array();
+
+		$imagenesExistentes = [];
+
+		foreach ($query as $row) {
+
+			$imagenesExistentes [] = [
+					'idCotizacion' => $data['idCotizacion'],
+					'idTipoArchivo'=> $row['idTipoArchivo'],
+					'nombre_inicial' => $row['nombre_inicial'],
+					'nombre_archivo' => $row['nombre_archivo'],
+					'nombre_unico' => $row['nombre_unico'],
+					'extension' => $row['extension'],
+					'idUsuarioReg' => $row['idUsuarioReg'],
+					'flag_anexo' => $row['flag_anexo'],
+					'estado' => true,
+					
+			
+			];
+
+		}
+
+		if(!empty($imagenesExistentes)){
+			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $imagenesExistentes);
+		}
+
 		}
 
 		if(!empty($data['anexosEliminados'])){
@@ -1230,6 +1328,214 @@ class M_Cotizacion extends MY_Model
 
 
 		return $this->resultado;
+	}
+
+	public function obtenerCosto($params = []) {
+
+		$filtros = "";
+		
+		
+		$filtros .= !empty($params['id']) ? " (" . $params['id'] . ")" : "";
+
+		
+
+		$sql = "
+			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
+			WITH listTarifario AS (	
+		select
+		ci. costo as CostoActual,
+		ci. fechaVigencia as Vigencia,
+		ci. flag_actual as Flag,
+		ci. idItem as idItem,
+		ci. idProveedor as idProveedor,
+		cd.idCotizacion,
+		DATEDIFF(DAY,@fechaHoy,ci.fechaVigencia) AS diasVigencia
+		from compras.itemTarifario ci
+		JOIN compras.cotizacionDetalle cd ON ci. idItem = cd. idItem
+			WHERE 1 = 1
+			
+			 AND cd.idCotizacion IN {$filtros} 
+	       AND General.dbo.fn_fechaVigente(@fechaHoy,
+	        ci.fechaVigencia,@fechaInicio,@fechaFin) = 1
+	        AND flag_actual = 1 
+	        
+	     	), lst_tarifario_det AS(
+			SELECT
+			lt.CostoActual,
+			lt.Vigencia,
+			lt.Flag,
+			lt.idItem,
+			lt.idProveedor,
+				CASE
+					WHEN diasVigencia <= 7 THEN 'green'
+					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+					ELSE 'red' END
+					AS semaforoVigencia
+				, diasVigencia
+			FROM listTarifario lt
+		)
+	     SELECT   
+	     ls.*,
+		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
+		FROM
+		lst_tarifario_det ls
+		";
+
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerCotizacionDetalleTarifario($params = []) {
+
+		$filtros = "";
+
+		$filtros .= !empty($params['idCotizacion']) ? " (" . $params['idCotizacion'] . ")" : "";
+
+		$sql = "
+		
+			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
+			WITH listItem AS (	
+			SELECT
+			cd.idCotizacion AS idCotizacion,
+			cd.idCotizacionDetalle AS idCotizacionDetalle,
+			ci.fechaVigencia as Vigencia,
+			ISNULL(cd.nombre,'') item,
+			ABS(DATEDIFF(DAY,@fechaHoy,ISNULL(ci.fechaVigencia,@fechaHoy))) AS diasVigencia,
+			cd.idItem AS idItem,
+			cd.cantidad AS cantidad,
+			ci.costo AS costo,
+			cd.caracteristicasCompras AS caracteristicasCompras,
+			cd.subtotal AS subtotal,
+			c.total AS total,
+			cd.idItemTipo AS idItemTipo,
+			cd.caracteristicas AS caracteristicas,
+			cd.gap AS gap,
+			cd.precio AS precio,
+			cd.enlaces AS enlaces,
+			ci.idProveedor AS idProveedor,
+			p.razonSocial AS razonSocial,
+			ci.flag_actual AS flag_actual
+			FROM
+			compras.cotizacion c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
+			LEFT JOIN compras.item i ON i.idItem = cd.idItem
+			LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem
+			AND flag_actual = 1
+			WHERE
+			1 = 1
+			and cd.idCotizacion in {$filtros} 
+			 
+			 ), lst_tarifario_det AS(
+			 SELECT
+			lt.idCotizacion ,
+			lt.idCotizacionDetalle ,
+			lt.Vigencia ,
+			lt.item ,
+			lt.diasVigencia,
+			lt.idItem ,
+			lt.cantidad ,
+			lt.costo ,
+			lt.caracteristicasCompras ,
+			lt.subtotal ,
+			lt.total ,
+			lt.idItemTipo ,
+			lt.caracteristicas ,
+			lt.gap ,
+			lt.precio ,
+			lt.enlaces ,
+			lt.idProveedor ,
+			lt.razonSocial ,
+			lt.flag_actual ,
+			CASE
+				WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
+				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+				ELSE 'red' END
+				AS semaforoVigencia
+			
+		FROM listItem lt
+	)
+	 SELECT   
+	 ls.*,
+	CASE
+	 WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
+	 ELSE 0
+	END cotizacionInterna
+	FROM
+	lst_tarifario_det ls
+		
+		";
+
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerInformacionDetalleCotizacionSubdis($params = [])
+	{
+
+
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
+		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
+
+		$sql = "
+
+		SELECT
+				cd.idCotizacion,
+				cd.idItemTipo,
+				cds.idCotizacionDetalleSub,
+				cds.idCotizacionDetalle,
+				cds.idTipoServicio,
+				cds.idUnidadMedida,
+				cds.nombre,
+				cds.talla,
+				cds.tela,
+				cds.color,
+				cds.cantidad,
+				ts.costo,
+				cds.subtotal,
+				cds.monto,
+				UPPER(ts.nombre) tipoServicio,
+				um.nombre unidadMedida
+			
+			FROM
+			compras.cotizacion c
+			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+			JOIN compras.cotizacionDetalleSub cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
+			LEFT JOIN compras.tipoServicio ts ON ts.idTipoServicio = cds.idTipoServicio
+			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cds.idUnidadMedida
+			WHERE
+			1 = 1
+			{$filtros} 
+			";
+
+
+			$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+
+
+
 	}
 
 }

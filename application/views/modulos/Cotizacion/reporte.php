@@ -26,12 +26,12 @@
                 <tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
-                    <!--    <a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
+                      <a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
 					        <i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
-				        </a>-->
-                    <!--    <a href="../Cotizacion/viewFormularioDuplicar" target="_blank" class="btn btn-outline-secondary border-0">
+				        </a>
+                        <a href="../Cotizacion/viewFormularioDuplicar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
                           <i class="fa-lg copy icon"></i> <span class="txt_filtro"></span>
-				        </a>-->
+				        </a>
 
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
                         <? if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS) { ?>
