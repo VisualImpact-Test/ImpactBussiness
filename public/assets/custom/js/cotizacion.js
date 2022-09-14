@@ -796,7 +796,7 @@ var Cotizacion = {
 		++modalId;
 
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacions')) };
-		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
+		let config = { 'url': Cotizacion.url + 'actualizarCotizacion2', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];

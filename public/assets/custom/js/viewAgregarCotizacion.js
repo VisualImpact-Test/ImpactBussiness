@@ -110,9 +110,19 @@ var Cotizacion = {
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
             Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
             Cotizacion.htmlG = $('.default-item').html();
+			   
 			if($('#gapEmpresas').val()){
 				Cotizacion.gapEmpresas = JSON.parse($('#gapEmpresas').val());
 			}
+			
+			if($('.body-item-vacio').length > 0 ){
+				Cotizacion.htmlG = $('.body-item-vacio').wrap('<p/>').parent().html();
+				$('.body-item-vacio').unwrap();
+				$('.body-item-vacio').remove();
+			}else{
+				Cotizacion.htmlG = $('.default-item').html();
+			}
+
 
 			$.each($('.content-body-sub-item'),(i,v) => {
 				let control = $(v);
