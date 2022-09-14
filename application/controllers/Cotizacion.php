@@ -761,7 +761,7 @@ class Cotizacion extends MY_Controller
 
             //
             if(!empty($dataParaVista['cabecera']['fee'])){
-                $total = $dataParaVista['cabecera']['total'];
+               
                 $dataParaVista['cabecera']['fee_prc'] = $fee = ( $total * ($dataParaVista['cabecera']['fee'] / 100));
 
                 $totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
@@ -769,9 +769,17 @@ class Cotizacion extends MY_Controller
             }
 
             if(!empty($dataParaVista['cabecera']['total_fee_igv'])){
-               $dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * IGV);
-               $dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
+                $total = $dataParaVista['cabecera']['total'];
+                if(!empty($totalFee)){
+                    $dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * IGV);
+                    $dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
+                }else if(empty($totalFee) && $dataParaVista['cabecera']['igv']){
+                    $dataParaVista['cabecera']['igv_prc'] =  $igv =  ($total * IGV);
+                    $dataParaVista['cabecera']['total_fee_igv'] = $total + $igv;
+                }
+            
             }
+
             if(empty($dataParaVista['cabecera']['total_fee_igv'])){
                $dataParaVista['cabecera']['total_fee_igv'] = $totalFee;
             }
@@ -1473,13 +1481,13 @@ class Cotizacion extends MY_Controller
             'idCentroCosto' => $post['cuentaCentroCostoForm'],
             'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
             'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
-            'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
+            'flagIgv' => !empty($post['igv']) ? 1 : 0,
             'fee' => $post['feeForm'],
             'total' => $post['totalForm'],
             'total_fee' => $post['totalFormFee'],
             'total_fee_igv' => $post['totalFormFeeIgv'],
             'idPrioridad' => $post['prioridadForm'],
-            'motivo' => $post['motivoForm'],
+            'motivo' => !empty($post['motivoForm']) ? trim($post['motivoForm']) : '',
             'comentario' => $post['comentarioForm'],
             'diasValidez' => $post['diasValidez'],
         ];
