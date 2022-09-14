@@ -1267,6 +1267,7 @@ class M_Cotizacion extends MY_Model
 
 	public function obtenerGapEmpresas($params = [])
 	{
+		
 		$filtros = '';
 
 		$sql = "
