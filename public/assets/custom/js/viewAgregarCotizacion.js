@@ -1308,7 +1308,7 @@ var Cotizacion = {
 
 		$('.totalFormFeeIgv').val(totalFeeIgv);
 		$('.totalFormFee').val(totalFee);
-		$('.totalForm').val(total);
+		$('.totalForm').val((total == 0 ? totalDistribucion : total));
 	},
 
     actualizarPopupsTitle: () => {

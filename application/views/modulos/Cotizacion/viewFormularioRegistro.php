@@ -34,10 +34,10 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Deadline compras" value="" patron="requerido">
+                        <input type="text" placeholder="Deadline compras" value="" >
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="" patron="requerido">
+                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="" >
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerida</div>
@@ -256,7 +256,7 @@
                                 <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
                             </div>
                             <div class="three wide field">
-                                <div class="ui sub header">Cantidad</div>
+                                <div class="ui sub header">Peso / Cantidad</div>
                                 <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
                             </div>
                         </div>

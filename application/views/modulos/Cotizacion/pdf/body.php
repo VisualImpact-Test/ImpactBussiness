@@ -70,7 +70,7 @@
                 <p><?= moneda($cabecera['total']) ?></p>
                 <p><?= moneda(($cabecera['fee_prc'])) ?></p>
                 <? if (!empty($cabecera['igv'])) { ?>
-                    <p><?= moneda($cabecera['igv_prc'] * IGV) ?></p>
+                    <p><?= moneda($cabecera['igv_prc']) ?></p>
                 <? } ?>
                 <p><?= moneda($cabecera['total_fee_igv'])  ?></p>
             </td>
