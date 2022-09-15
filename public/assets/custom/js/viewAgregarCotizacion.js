@@ -64,7 +64,7 @@ var SolicitudCotizacion = {
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "registrarOrdenCompra";
 		let config = { url: url, data: jsonString };
-		
+
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
 			var btn = [];
@@ -105,7 +105,7 @@ var Cotizacion = {
 		$(document).ready(function () {
 			// $('#btn-filtrarCotizacion').click();
             Fn.loadSemanticFunctions();
-            
+
             $('.simpleDropdown').dropdown();
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
             Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
@@ -214,7 +214,7 @@ var Cotizacion = {
 				Cotizacion.actualizarAutocomplete();
 			});
 		});
-	
+
 
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
@@ -273,8 +273,8 @@ var Cotizacion = {
 			// let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
 			// $html += Cotizacion.htmlG;
 			// $html += "</tr>";
-            
-			
+
+
 			//Para ordenar los select2 que se descuadran
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
             childInserted.transition('glow');
@@ -282,7 +282,7 @@ var Cotizacion = {
             Cotizacion.actualizarAutocomplete();
 			Cotizacion.actualizarOnAddRow(childInserted);
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
-    
+
 		});
 
 		$(document).on('click', '.editFeatures', function () {
@@ -297,7 +297,7 @@ var Cotizacion = {
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-				
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Aceptar', fn: fn[0] };
 
@@ -327,8 +327,8 @@ var Cotizacion = {
 			let cantItems = $('.body-item').length;
 
 			if(cantItems <= 1 ){
-				
-				
+
+
 			}
 
             if(div_locked.find('i').hasClass('lock')){
@@ -349,7 +349,7 @@ var Cotizacion = {
 			if(cantItems <= 1 ){
 				$(".btn-add-row").click();
 			}
-		
+
             // $(this).parents('.fila-existente').remove();
 
 			// $.each($('#listaItemsCotizacion tbody tr .n_fila'), function (index, value) {
@@ -388,6 +388,16 @@ var Cotizacion = {
 			Cotizacion.cleanDetalle(parent);
 		});
 
+		$(document).on('change', '#prioridadForm', function (e) {
+			let prioridad = $(this).val();
+
+			if(prioridad == 1 ){ //Si es prioridad ALTA
+				$(motivoForm).attr("patron",'requerido');
+			}
+			else{
+				$(motivoForm).removeAttr("patron");
+			}
+		});
 
 		$(document).on('click', '.btn-cotizacion-pdf', function (e) {
 			e.preventDefault();
@@ -415,11 +425,11 @@ var Cotizacion = {
 
 			let subTotal = Fn.multiply(cantidad, precio);
 
-			
+
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 
-			
+
 			Cotizacion.actualizarTotal();
 		});
 		$(document).on('keyup', '.cantidadSubItemDistribucion', function (e) {
@@ -429,7 +439,7 @@ var Cotizacion = {
 			let costoForm = thisControlParents.find('.costoForm');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
-			
+
 			let cantidadTipoServicio = Number(thisControl.val());
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
 
@@ -438,7 +448,7 @@ var Cotizacion = {
 			costoForm.val(subTotalTipoServicio);
 
 			cantidadForm.keyup();
-			
+
 		});
 		$(document).on('keyup', '.cantidadSubItemAcumulativo', function (e) {
 			e.preventDefault();
@@ -452,15 +462,15 @@ var Cotizacion = {
 				cantAcumulada += Number($(v).find('.cantidadSubItemAcumulativo').val());
 
 			});
-			
+
 			cantidadForm.val(cantAcumulada);
 			cantidadForm.keyup();
-			
+
 		});
 
 		$(document).on('focusout', '.costoFormLabelEditable', function (e) {
 			e.preventDefault();
-			
+
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let costoForm = thisControlParents.find('.costoForm');
@@ -474,11 +484,11 @@ var Cotizacion = {
 			Cotizacion.controlesOC.gapForm = gapForm;
 			Cotizacion.controlesOC.costoForm = costoForm;
 			Cotizacion.controlesOC.costoFormLabel = thisControl;
-			
+
 			let costo = Number(thisControl.val());
 			let precio = Number(precioForm.val());
 			let costoAnterior = Number(costoForm.val());
-		
+
 			if(costo >= precio) {
 				thisControl.val(costoAnterior);
 				fieldPrecioFormLabel.transition('shake');
@@ -496,7 +506,7 @@ var Cotizacion = {
 				return false;
 			}
 
-			
+
 			let idCotizacionDetalle = thisControlParents.data('id');
 			let config = {
 				costo,
@@ -520,7 +530,7 @@ var Cotizacion = {
 
 			Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
 			// cantidadForm.keyup();
-			
+
 			Cotizacion.actualizarTotal();
 		});
 
@@ -532,7 +542,7 @@ var Cotizacion = {
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
-			
+
 			let precioForm = thisControlParents.find('.precioForm');
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
 
@@ -554,13 +564,13 @@ var Cotizacion = {
 		$(document).on('change','input[name=upload_orden_compra]', function(e){
 			let idCotizacion =  $(this).closest('tr').data('id');
 			var archivos = document.getElementById("upload_orden_compra["+idCotizacion+"]");
-			
+
 			//Creamos un objeto con el elemento que contiene los archivos: el campo input file, que tiene el id = 'archivos'
 			var archivo = archivos.files; //Obtenemos los archivos seleccionados en el imput
 			//Creamos una instancia del Objeto FormDara.
 			var archivos = new FormData();
 			/* Como son multiples archivos creamos un ciclo for que recorra la el arreglo de los archivos seleccionados en el input
-			Este y añadimos cada elemento al formulario FormData en forma de arreglo, utilizando la variable i (autoincremental) como 
+			Este y añadimos cada elemento al formulario FormData en forma de arreglo, utilizando la variable i (autoincremental) como
 			indice para cada archivo, si no hacemos esto, los valores del arreglo se sobre escriben*/
 			for(i=0; i<archivo.length; i++){
 			archivos.append('archivo'+i,archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
@@ -584,13 +594,13 @@ var Cotizacion = {
 				var jsonString={ 'data':JSON.stringify(data) };
 				var url=Cotizacion.url+'guardarArchivoBD';
 				var config={ url:url,data:jsonString };
-	
+
 				$.when( Fn.ajax(config) ).then(function(a){
 					if( a.result!=2 ){
 						++modalId;
 						var btn=[];
 						var fn=[];
-	
+
 						if(a.result==0){
 							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');';
 							btn[0]={title:'Aceptar',fn:fn[0]};
@@ -599,12 +609,12 @@ var Cotizacion = {
 							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');$("#btn-filtrarCotizacion").click();';
 							btn[0]={title:'Aceptar',fn:fn[0]};
 						}
-	
+
 						Fn.showModal({ id:modalId,show:true,title:a.msg.title,content:a.data.html,btn:btn,width:a.data.width });
 					}
 				});
 			});
-	
+
 		});
 
 		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
@@ -631,8 +641,8 @@ var Cotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				Cotizacion.modalIdForm = modalId;
-			
-				
+
+
 			});
 		});
 
@@ -660,7 +670,7 @@ var Cotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				Cotizacion.modalIdForm = modalId;
-				
+
 			});
 		});
 		$(document).on('click', '.verCaracteristicaArticulo', function () {
@@ -681,7 +691,7 @@ var Cotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-		
+
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
@@ -706,7 +716,7 @@ var Cotizacion = {
 				nameType = 'file-type';
 				nameFile = 'file-name';
 			}
-			
+
 			if( control.val() ){
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
@@ -729,7 +739,7 @@ var Cotizacion = {
 
 					for(var i = 0; i < num; ++i){
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024)); 
+							size = Math.round((size / 1024));
 
 						if( size > KB_MAXIMO_ARCHIVO ){
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
@@ -773,7 +783,7 @@ var Cotizacion = {
                                         fileApp += '<input class="'+ nameFile +'" type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
                                         fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
                                     fileApp += '</div>';
-                                    
+
                                     contenedor.append(fileApp);
                                     control.parents('.nuevo').find('.dimmer-file-detalle')
                                     .dimmer({
@@ -793,8 +803,8 @@ var Cotizacion = {
 			let name = 'anexo-file';
 			let	nameType = 'anexo-type';
 			let	nameFile = 'anexo-name';
-			
-			
+
+
 			if( control.val() ){
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
@@ -817,7 +827,7 @@ var Cotizacion = {
 
 					for(var i = 0; i < num; ++i){
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024)); 
+							size = Math.round((size / 1024));
 
 						if( size > KB_MAXIMO_ARCHIVO ){
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
@@ -861,7 +871,7 @@ var Cotizacion = {
                                         fileApp += '<input type="hidden" name="' + nameFile +'"  value="' + fileBase.name + '">';
                                         fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
                                     fileApp += '</div>';
-                                    
+
                                     contenedor.append(fileApp);
                                     control.parents('.nuevo').find('.dimmer-file-detalle')
                                     .dimmer({
@@ -921,7 +931,7 @@ var Cotizacion = {
 
 			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
 			let config = { 'url': SolicitudCotizacion.url + 'enviarSolicitudProveedor', 'data': jsonString };
-			
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
@@ -940,7 +950,7 @@ var Cotizacion = {
 			let gapForm = $(this).parents('.nuevo').find('.gapForm');
 			let proveedorForm = $(this).parents('.nuevo').find('.idProveedor');
 			let proveedoresForm = $(this).parents('.nuevo').find('.proveedoresForm');
-			
+
 			let precio = $(this).find('.txtCostoProveedor').val();
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
@@ -950,20 +960,60 @@ var Cotizacion = {
 
 			proveedorForm.val(proveedorElegido);
 			proveedoresForm.val(proveedorElegidoName);
-			
+
 			cantidadForm.keyup();
 			gapForm.keyup();
 
 			Cotizacion.actualizarTotal();
 		});
-		
+
+		$(document).on('click','.btnConsultarItemProveedor',function(){
+			++modalId;
+			let data = {
+				'idCotizacionDetalle': $(this).data('cot'),
+			 	'idProveedor': $(this).data('pro')
+			};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacionProveedorItems', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.actualizarAutocomplete();
+			});
+		});
+		$(document).on('click','.btnCotizacionesProveedores',function(){
+			++modalId;
+			let data = {
+				'idCotizacionDetalle': $(this).data('id')
+			};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacionProveedorItems', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				SolicitudCotizacion.actualizarAutocomplete();
+			});
+		});
+
 		$(document).on('click', '.btn-add-sub-item', function () {
 			let control = $(this);
 			let parent = control.closest('.div-features');
 			let tipo = parent.data('tipo');
 
             let contenedor = parent.find('.content-body-sub-item');
-			
+
 			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
 
             // contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
@@ -979,7 +1029,7 @@ var Cotizacion = {
 			let control = $(this);
 			let parent = control.closest('.content-body-sub-item');
 			let element = control.closest('.body-sub-item');
-			
+
 			if(parent.find('.body-sub-item').length <= 1){
 				element.find(':input').val('');
 				// element.transition('glow')
@@ -987,7 +1037,7 @@ var Cotizacion = {
 			}
 
 			element.remove();
-			
+
 		});
 		$(document).on('change', '.tipoServicioForm', function () {
 			let control = $(this);
@@ -1006,8 +1056,8 @@ var Cotizacion = {
 			idUnidadMedidaForm.val(idUnidadMedida);
 
 			cantidadFormSubItem.keyup();
-				
-			
+
+
 		});
 
 		$(document).on('keyup', '.items', function () {
@@ -1036,10 +1086,10 @@ var Cotizacion = {
 			}else{
 				$('.gapForm').val('');
 			}
-			
+
 		});
 
-		
+
 	},
 
 	restaurarCosto: function(costoAnterior){
@@ -1054,7 +1104,7 @@ var Cotizacion = {
 		let idCotizacionDetalle = configOC.idCotizacionDetalle;
 
 		++modalId;
-		let data = Fn.formSerializeObject('formRegistroOrdenCompra'); 
+		let data = Fn.formSerializeObject('formRegistroOrdenCompra');
 			data.idCotizacionDetalle = idCotizacionDetalle;
 			data.nuevoCosto = configOC.costo;
 			data.nuevoGap = configOC.gapActual;
@@ -1076,11 +1126,11 @@ var Cotizacion = {
 	},
 	actualizarCotizacion: function () {
 		++modalId;
-		let data = Fn.formSerializeObject('formActualizacionCotizacions'); 
+		let data = Fn.formSerializeObject('formActualizacionCotizacions');
 			data.archivoEliminado = Cotizacion.archivoEliminado;
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
-			
+
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
@@ -1112,7 +1162,7 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
-				//Llenamos los items con el nombre 
+				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
 				$(this).parents(".ui-widget").find(".codItems").val(ui.item.value);
@@ -1121,12 +1171,12 @@ var Cotizacion = {
 				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
 					ui.item.costo = 0;
 				}
-				//Tipo de Item 
+				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
-				
+
 				control.find(".costoForm").val(ui.item.costo);
 				control.find(".costoFormLabel").text(ui.item.costo);
 				//Llenamos el estado
@@ -1142,11 +1192,11 @@ var Cotizacion = {
 				//LLenar semaforo
 
 				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
-				
+
 				control.find('.semaforoForm').popup({content : `Vigencia: ${ui.item.diasVigencia} días`});
-				
+
 				//Validar boton ver caracteristicas del articulo
-				
+
 				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
@@ -1156,7 +1206,7 @@ var Cotizacion = {
 					// $(this).attr('readonly', 'readonly');
 					control.find('.costoForm').attr('readonly', 'readonly');
 					control.find(".cantidadForm").attr('readonly',false);
-					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');					
+					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');
 				}
 			},
 			appendTo: "#modal-page-" + Cotizacion.modalIdForm,
@@ -1172,7 +1222,7 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 
-				//Llenamos los items con el nombre 
+				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
@@ -1223,7 +1273,7 @@ var Cotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				
+
 				if(tipoRegistro == 3 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
 				if(tipoRegistro == 2 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
@@ -1349,7 +1399,7 @@ var Cotizacion = {
           target   : $('.btn-bloquear-detalle'),
           content  : 'Bloquear Detalle',
         });
-        
+
         //Boton Ver leyenda
         $('.btn-leyenda')
         .popup({
@@ -1362,7 +1412,7 @@ var Cotizacion = {
         .dimmer({
             on: 'hover'
         });
-		
+
 		//Info archivo
 		$('.btn-info-archivo')
 		.popup(
@@ -1444,15 +1494,15 @@ var Cotizacion = {
 		let fileType = parent.find('.file-type');
 		let fileName = parent.find('.file-name');
 
-		//Textiles 
+		//Textiles
 		let tallaSubItem = parent.find('.tallaSubItem');
 		let telaSubItem = parent.find('.telaSubItem');
 		let colorSubItem = parent.find('.colorSubItem');
 		let cantidadSubItemTextil = parent.find('.cantidadSubItemTextil');
-		//Tarjetas o vales 
+		//Tarjetas o vales
 		let montoSubItem = parent.find('.montoSubItem');
 
-		//Servicios y distribucion 
+		//Servicios y distribucion
 
 		let nombreSubItem = parent.find('.nombreSubItem');
 		let cantidadSubItem = parent.find('.cantidadSubItem');
@@ -1467,7 +1517,7 @@ var Cotizacion = {
 		fileType.attr('name',`file-type[${number}]`);
 		fileName.attr('name',`file-name[${number}]`);
 
-		// 
+		//
 		tallaSubItem.attr('name',`tallaSubItem[${number}]`);
 		telaSubItem.attr('name',`telaSubItem[${number}]`);
 		colorSubItem.attr('name',`colorSubItem[${number}]`);
@@ -1508,13 +1558,13 @@ var Cotizacion = {
 	gapForm.val('');
 
 	cantidadForm.val('');
-	
+
 	cantidadForm.keyup();
    },
 
    actualizarCotizacionView: function (idCotizacion) {
 	let formValues = Fn.formSerializeObject('formActualizarCotizacion');
-		
+
 	let jsonString = { 'data': JSON.stringify(formValues) };
 	let url = Cotizacion.url + "actualizarCotizacion";
 	let config = { url: url, data: jsonString };
@@ -1535,7 +1585,7 @@ var Cotizacion = {
 
 duplicarCotizacionView: function (idCotizacion) {
 	let formValues = Fn.formSerializeObject('formDuplicarCotizacion');
-		
+
 	let jsonString = { 'data': JSON.stringify(formValues) };
 	let url = Cotizacion.url + "duplicarCotizacion";
 	let config = { url: url, data: jsonString };

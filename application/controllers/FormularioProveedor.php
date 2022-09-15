@@ -361,7 +361,6 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
 		$dataParaVista = [];
 		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
-		log_message('error', $this->db->last_query());
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor']], true);
 
     $result['result'] = 1;
@@ -423,14 +422,21 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
     $dataParaVista = [];
     $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
+		$dataParaVistaImg = [];
 		$dataParaVistaSub = [];
 		foreach ($dataParaVista as $key => $value) {
+			$dataParaVistaImg[$value['idCotizacionDetalle']] = $this->model->obtenerNombreArchivo(['idCotizacionDetalle' => $value['idCotizacionDetalle']])->result_array();
 			$dataParaVistaSub[$value['idCotizacionDetalleProveedorDetalle']] = $this->model->obtenerInformacionCotizacionDetalleSub(['idCotizacionDetalleProveedorDetalle' => $value['idCotizacionDetalleProveedorDetalle']])->result_array();
 		}
-
 		$archivos = $this->model->obtenerCotizacionDetalleProveedorDetalleArchivos($post)->result_array();
-
-		$html = $this->load->view("formularioProveedores/cotizaciones-table", ['datos' => $dataParaVista, 'subdatos' => $dataParaVistaSub, 'idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $post['idCotizacion'], 'archivos' => $archivos], true);
+		$html = $this->load->view("formularioProveedores/cotizaciones-table", [
+			'datos' => $dataParaVista,
+			'subdatos' => $dataParaVistaSub,
+			'idProveedor' => $proveedor['idProveedor'],
+			'idCotizacion' => $post['idCotizacion'],
+			'archivos' => $archivos,
+			'cotizacionIMG' => $dataParaVistaImg
+		], true);
     $result['result'] = 1;
     // $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
     $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
@@ -470,6 +476,7 @@ class FormularioProveedor extends MY_Controller
 		$post['diasValidez'] = checkAndConvertToArray($post['diasValidez']);
 		$post['fechaValidez'] = checkAndConvertToArray($post['fechaValidez']);
 		$post['comentario'] = checkAndConvertToArray($post['comentario']);
+		$post['diasEntrega'] = checkAndConvertToArray($post['diasEntrega']);
 		$post['fechaEntrega'] = checkAndConvertToArray($post['fechaEntrega']);
 		$post['idItem'] = checkAndConvertToArray($post['idItem']);
 
@@ -484,6 +491,7 @@ class FormularioProveedor extends MY_Controller
 				'diasValidez' => $post['diasValidez'][$k],
 				'fechaValidez' => $post['fechaValidez'][$k],
 				'comentario' => $post['comentario'][$k],
+				'diasEntrega' => $post['diasEntrega'][$k],
 				'fechaEntrega' => $post['fechaEntrega'][$k]
       ];
 			if(isset($post['file-type['.$r.']'])){

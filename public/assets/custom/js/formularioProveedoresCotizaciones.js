@@ -204,18 +204,30 @@ var FormularioProveedores = {
 		$('#valorTotal'+i).val(tot_);
 		$('#lb_valorTotal'+i).html('S/. '+tot_);
 	},
-	calcularFecha: function(i, val){
-		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 1}, function(data){
-			data = jQuery.parseJSON(data);
-			$('#fechaValidez'+i).val(data.fecha);
-		});
+	calcularDiasEntrega: function(i, t, fechaHoy){
+		val = new Date(t.value);
+		fechaHoy = new Date(fechaHoy);
+		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
+		$('#de_input'+i).val(dias);
 	},
-	calcularFechaEntrega: function(i, val){
-		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 2}, function(data){
-			data = jQuery.parseJSON(data);
-			$('#fechaEntrega'+i).attr('readonly', true);
-			$('#fechaEntrega'+i).val(data.fecha);
-		});
+	calcularDiasValidez: function(i, t, fechaHoy){
+		val = new Date(t.value);
+		fechaHoy = new Date(fechaHoy);
+		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
+		$('#dv_input'+i).val(dias);
+	},
+	calcularFecha: function(i, val, fechaHoy){
+		fechaHoy = new Date(fechaHoy);
+		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
+		fecha = fechaHoy.toISOString().slice(0, 10);
+		$('#fechaValidez'+i).val(fecha);
+
+	},
+	calcularFechaEntrega: function(i, val, fechaHoy){
+		fechaHoy = new Date(fechaHoy);
+		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
+		fecha = fechaHoy.toISOString().slice(0, 10);
+		$('#fechaEntrega'+i).val(fecha);
 	},
 	mostrarComentario: function(i){
 		++modalId;

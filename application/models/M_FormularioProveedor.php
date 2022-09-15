@@ -192,6 +192,14 @@ class M_FormularioProveedor extends MY_Model
 		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';
 		return $this->db->get();
 	}
+	public function obtenerNombreArchivo(array $param = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.cotizacionDetalleArchivos')
+		->where('idCotizacionDetalle',$param['idCotizacionDetalle']);
+		return $this->db->get();
+	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
 	{
 		$filtros = "WHERE 1 = 1";
@@ -220,6 +228,7 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.comentario,
 			cdpd.diasValidez,
 			CONVERT(VARCHAR, cdpd.fechaValidez, 103) AS fechaValidez,
+			cdpd.diasEntrega,
 			cdpd.fechaEntrega,
 			cde.nombre AS cotizacionDetalleEstado,
 			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion
