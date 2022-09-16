@@ -309,8 +309,12 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerItemServicio()
-	{
+	public function obtenerItemServicio($params = [])
+	{	
+		$filtros = "";
+		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica,0) <> 0" : "";
+
+
 		$sql = "
 		DECLARE @fechaHoy DATE = GETDATE();
 		WITH listTarifario AS (
@@ -322,10 +326,15 @@ class M_Cotizacion extends MY_Model
 				, pr.razonSocial AS proveedor
 				, a.idItemTipo AS tipo
 				, ISNULL(DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy),0) AS diasVigencia
+				, a.idItemLogistica
+				, ROW_NUMBER() OVER(PARTITION BY a.idItem ORDER BY a.idItem,ta.idItemTarifario) ntarifario
+				, art.peso pesoLogistica
 			FROM compras.item a
 			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
 			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
+			LEFT JOIN visualimpact.logistica.articulo art ON art.idArticulo = a.idItemLogistica
 			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+			{$filtros}
 		), lst_tarifario_det AS(
 			SELECT
 				lt.value
@@ -340,7 +349,10 @@ class M_Cotizacion extends MY_Model
 					ELSE 'red' END
 					AS semaforoVigencia
 				, diasVigencia
+				, lt.idItemLogistica
+				, lt.pesoLogistica
 			FROM listTarifario lt
+			WHERE lt.ntarifario = 1
 		)
 
 		SELECT
@@ -424,48 +436,48 @@ class M_Cotizacion extends MY_Model
 			if(!empty($params['archivoExistente'][$k])){
 
 				$id = implode(',', $params['archivoExistente'][$k]);
-	
-				$sql = "
-				SELECT
-					da.idCotizacionDetalleArchivo,
-					da.idCotizacion,
-					da.idCotizacionDetalle,
-					da.idTipoArchivo,
-					da.nombre_inicial,
-					da.nombre_archivo,
-					da.nombre_unico,
-					da.extension,
-					da.idUsuarioReg
-				FROM compras.cotizacionDetalleArchivos da
-				WHERE idCotizacionDetalleArchivo in ($id);
-			";
-	
-			$query = $this->db->query($sql)->result_array();
-	
-			$archivosExistentes = [];
-	
-			foreach ($query as $row) {
-	
-				$archivosExistentes [] = [
-						'idCotizacion' => $params['idCotizacion'],
-						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo'=> $row['idTipoArchivo'],
-						'nombre_inicial' => $row['nombre_inicial'],
-						'nombre_archivo' => $row['nombre_archivo'],
-						'nombre_unico' => $row['nombre_unico'],
-						'extension' => $row['extension'],
-						'idUsuarioReg' => $row['idUsuarioReg'],
-						'estado' => true,
-						
-				
-				];
-	
-			}
-	
-			if(!empty($archivosExistentes)){
-				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
-			}
-	
+		
+					$sql = "
+					SELECT
+						da.idCotizacionDetalleArchivo,
+						da.idCotizacion,
+						da.idCotizacionDetalle,
+						da.idTipoArchivo,
+						da.nombre_inicial,
+						da.nombre_archivo,
+						da.nombre_unico,
+						da.extension,
+						da.idUsuarioReg
+					FROM compras.cotizacionDetalleArchivos da
+					WHERE idCotizacionDetalleArchivo in ($id);
+				";
+		
+				$query = $this->db->query($sql)->result_array();
+		
+				$archivosExistentes = [];
+		
+				foreach ($query as $row) {
+		
+					$archivosExistentes [] = [
+							'idCotizacion' => $params['idCotizacion'],
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'idTipoArchivo'=> $row['idTipoArchivo'],
+							'nombre_inicial' => $row['nombre_inicial'],
+							'nombre_archivo' => $row['nombre_archivo'],
+							'nombre_unico' => $row['nombre_unico'],
+							'extension' => $row['extension'],
+							'idUsuarioReg' => $row['idUsuarioReg'],
+							'estado' => true,
+							
+					
+					];
+		
+				}
+		
+				if(!empty($archivosExistentes)){
+					$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
+				}
+		
 			}
 
 			//Sub Items
@@ -483,6 +495,9 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 					];
 				}
 
@@ -664,9 +679,10 @@ class M_Cotizacion extends MY_Model
 				cds.costo,
 				cds.subtotal,
 				cds.monto,
+				cds.cantidadPdv,
+				cds.idItem,
 				ts.nombre tipoServicio,
 				um.nombre unidadMedida
-			
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -780,6 +796,7 @@ class M_Cotizacion extends MY_Model
 			cd.idItem,
 			cd.nombre,
 			it.idProveedor,
+			p.razonSocial,
 			CASE WHEN ith.idItemTarifarioHistorico IS NOT NULL THEN 1 ELSE 0 END  respuestasProveedor
 			FROM
 			compras.cotizacion c
@@ -1477,8 +1494,6 @@ class M_Cotizacion extends MY_Model
 
 	public function obtenerInformacionDetalleCotizacionSubdis($params = [])
 	{
-
-
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
@@ -1502,9 +1517,10 @@ class M_Cotizacion extends MY_Model
 				ts.costo,
 				cds.subtotal,
 				cds.monto,
+				cds.cantidadPdv,
+				cds.idItem,
 				UPPER(ts.nombre) tipoServicio,
 				um.nombre unidadMedida
-			
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1526,9 +1542,29 @@ class M_Cotizacion extends MY_Model
 		}
 
 		return $this->resultado;
+	}
 
+	public function obtenerCostoDistribucion($params = [])
+	{
+		$filtros = "";
+		$sql = "
+			DECLARE @hoy DATE = GETDATE();
+			SELECT 
+				* 
+			FROM compras.distribucionCosto
+			WHERE 
+			General.dbo.fn_fechaVigente(fecIni,fecFin,@hoy,@hoy) = 1
+			{$filtros} 
+			";
 
+			$query = $this->db->query($sql);
 
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
 	}
 
 }

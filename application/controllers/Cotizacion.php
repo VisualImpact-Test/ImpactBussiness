@@ -497,6 +497,8 @@ class Cotizacion extends MY_Controller
                         'tipoServicio' => $post["tipoServicioSubItem[$k]"],
                         'costo' => $post["costoSubItem[$k]"],
                         'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
+                        'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
+                        'idItemLogistica' => $post["itemLogisticaForm[$k]"],
                     ]);
                     break;
                 
@@ -532,6 +534,10 @@ class Cotizacion extends MY_Controller
                     'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
                     'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
                     'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL , 
+                    'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
+                    'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+                    'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
+
                 ];
             }
 
@@ -1018,7 +1024,6 @@ class Cotizacion extends MY_Controller
         }
         $data['itemServicio'][0] = array();
         $config['data']['itemServicio'] = $data['itemServicio'];
-
         $config['single'] = true;
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
         $config['data']['title'] = 'Cotizacion';
@@ -1028,6 +1033,8 @@ class Cotizacion extends MY_Controller
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
         $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
         $config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
+        $config['data']['itemLogistica'] = $this->model->obtenerItemServicio(['logistica' => true]);
+        $config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
         $config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 
         $this->view($config);
@@ -1129,6 +1136,8 @@ class Cotizacion extends MY_Controller
         $config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
         $config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
         $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
+        $config['data']['itemLogistica'] = $this->model->obtenerItemServicio(['logistica' => true]);
+        $config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
         $config['data']['disabled'] = true;
         $config['data']['siguienteEstado'] = ESTADO_ENVIADO_CLIENTE;
         $config['data']['controller'] = 'Cotizacion';

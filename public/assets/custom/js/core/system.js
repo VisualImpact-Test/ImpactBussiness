@@ -276,6 +276,14 @@ var View = {
 					$(this).val(nmax);
 				}
 			}
+			
+			let nmin = Number(control.data('min'));
+			if(nmin !== typeof undefined){
+				if(control.val() < nmin){
+					$(this).val(nmin);
+				}
+			}
+
 
 			if(Fn.validators['numeros']['expr'].test(control.val())){
 				e.preventDefault();
