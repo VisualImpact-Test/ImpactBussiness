@@ -16,16 +16,22 @@
         <input type="hidden" name="idCotizacionDetalleProveedorDetalle" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
         <div class="row">
           <div class="col-md-10 row justify-content-start">
-            <div class="col-md-11">
+            <div class="col-md-10">
               <div class="form-group">
                 <h4 class="mb-1">ITEM</h4>
                 <input class="form-control" readonly value="<?= verificarEmpty($row['item'], 3).empty($row['unidadMedida']?'':(' ( '.$row['unidadMedida'].' )')) ?>">
               </div>
             </div>
-            <div class="col-md-1">
+            <div class="col-md-2">
               <h4 class="mb-1" style="color:white;">IMG</h4>
-              <button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')"><i class="folder open outline icon"></i></button>
-              <button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');"><i class="folder closed outline icon"></i></button>
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <button class="form-control imgShow btnContraoferta" type="button" name="button" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>"><i class="handshake outline icon"></i></button>
+                <button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')"><i class="folder open outline icon"></i></button>
+                <button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');"><i class="folder closed outline icon"></i></button>
+                <!-- <button type="button" class="btn btn-secondary">Left</button>
+                <button type="button" class="btn btn-secondary">Middle</button>
+                <button type="button" class="btn btn-secondary">Right</button> -->
+              </div>
             </div>
             <div class="col-md-12 imgCotizacion d-none">
                 <?php if (empty($cotizacionIMG[$row['idCotizacionDetalle']])): ?>
@@ -192,13 +198,6 @@
         <?php endforeach; ?>
         <div class="col-md-12">
           <div class="form-group nuevo">
-            <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0" onclick="FormularioProveedores.mostrarComentario(
-        			<?=($k + 1) ?>);" title="Agregar Comentario">
-              <i class="fa fa-lg fa-comment"></i>
-            </a>
-            <input type="hidden" name="comentario" value="
-        			<?= $row['comentario'] ?>" id="comentario
-        			<?=($k + 1) ?>"> -->
             <a href="javascript:;" class="btn btn-lg btn-outline-secondary col-md-2" title="Agregar Captura" onclick="$(this).parents('.nuevo').find('.file-lsck-capturas').click();">
               Agregar Imágen <i class="fa fa-lg fa-camera-retro"></i>
             </a>

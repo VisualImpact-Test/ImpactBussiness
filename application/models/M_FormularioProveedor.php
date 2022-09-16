@@ -55,6 +55,43 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function validarPropuestaExistencia($params = [])
+	{
+		$this->db
+		->select('pi.*')
+		->from('compras.propuestaItem pi')
+		->where('pi.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle'])
+		->where('pi.estado','1');
+		return $this->db->get();
+	}
+
+	public function obtenerCategorias($params = [])
+	{
+		$this->db
+		->select('ic.*')
+		->from('compras.itemCategoria ic')
+		->where('ic.estado', '1');
+		return $this->db->get();
+	}
+
+	public function obtenerMarcas($params = [])
+	{
+		$this->db
+		->select('im.*')
+		->from('compras.itemMarca im')
+		->where('im.estado', '1');
+		return $this->db->get();
+	}
+
+	public function obtenerMotivos($params = [])
+	{
+		$this->db
+		->select('pm.*')
+		->from('compras.propuestaMotivo pm')
+		->where('pm.estado', '1');
+		return $this->db->get();
+	}
+
 	public function obtenerCiudadUbigeo()
 	{
 

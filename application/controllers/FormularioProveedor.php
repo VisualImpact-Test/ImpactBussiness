@@ -201,12 +201,23 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
+		$data = [];
 
-		$estadoEmail = $this->enviarCorreo($insert['id']);
+		if (isset($post['correoAdicional'])) {
+			foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
+				$data['insert'][] = [
+					'idProveedor' => $insert['id'],
+					'correo' => $value,
+				];
+			}
+		}
+		$fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
 
-		$estadoEmail=true;
+		// $estadoEmail = $this->enviarCorreo($insert['id']);
 
-		if (!$insert['estado'] || !$second_insert['estado'] || !$estadoEmail || !$third_insert || !$fourth_insert) {
+		// $estadoEmail=true;
+
+		if (!$insert['estado'] || !$second_insert['estado'] /*|| !$estadoEmail*/ || !$third_insert || !$fourth_insert || !$fifth_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -294,6 +305,73 @@ class FormularioProveedor extends MY_Controller
 
 		return $estadoEmail;
 	}
+
+	public function validarPropuestaExistencia()
+	{
+		$post = json_decode($this->input->post('data'), true);
+		$data = $this->model->validarPropuestaExistencia(['idCotizacionDetalleProveedorDetalle' => $post['id']])->result_array();
+		if (empty($data)) {
+			$rpta['continuar'] = true;
+		}else{
+			$rpta['continuar'] = false;
+		}
+		echo json_encode($rpta);
+	}
+	public function viewRegistroContraoferta()
+	{
+			$result = $this->result;
+			$post = json_decode($this->input->post('data'), true);
+			$dataParaVista = [
+				'categoria' => $this->model->obtenerCategorias()->result_array(),
+				'marca' => $this->model->obtenerMarcas()->result_array(),
+				'motivo' => $this->model->obtenerMotivos()->result_array(),
+				'id' => $post['id']
+			];
+
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Registrar Tipos Servicio';
+			$result['data']['html'] = $this->load->view("formularioProveedores/viewRegistroContraoferta", $dataParaVista, true);
+
+			echo json_encode($result);
+	}
+	public function registrarPropuesta()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
+		$post['nombre'] = checkAndConvertToArray($post['nombre']);
+		$post['idItemMarca'] = checkAndConvertToArray($post['marca']);
+		$post['idItemCategoria'] = checkAndConvertToArray($post['categoria']);
+		$post['idPropuestaMotivo'] = checkAndConvertToArray($post['motivo']);
+		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
+		$post['costo'] = checkAndConvertToArray($post['costo']);
+
+		foreach ($post['nombre'] as $key => $value) {
+			$insertData[] = [
+				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$key],
+				'nombre' => $post['nombre'][$key],
+				'idItemMarca' => $post['idItemMarca'][$key],
+				'idItemCategoria' => $post['idItemCategoria'][$key],
+				'idPropuestaMotivo' => $post['idPropuestaMotivo'][$key],
+				'cantidad' => $post['cantidad'][$key],
+				'costo' => $post['costo'][$key]
+			];
+		}
+		$insert = $this->model->insertarMasivo('compras.propuestaItem', $insertData);
+
+		if ($insert) {
+			$result['result'] = 1;
+				$result['msg']['title'] = 'Hecho!';
+				$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		}
+
+		echo json_encode($result);
+	}
+
 
 	public function validar_captcha_v3($post)
 	{
