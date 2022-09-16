@@ -702,10 +702,6 @@ class M_Cotizacion extends MY_Model
 				cds.idItem,
 				ts.nombre tipoServicio,
 				um.nombre unidadMedida
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1552,10 +1548,6 @@ class M_Cotizacion extends MY_Model
 				cds.idItem,
 				UPPER(ts.nombre) tipoServicio,
 				um.nombre unidadMedida
-<<<<<<< HEAD
-=======
-
->>>>>>> main
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
