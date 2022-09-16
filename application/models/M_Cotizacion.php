@@ -455,7 +455,6 @@ class M_Cotizacion extends MY_Model
 			if(!empty($params['archivoExistente'][$k])){
 
 				$id = implode(',', $params['archivoExistente'][$k]);
-<<<<<<< HEAD
 		
 					$sql = "
 					SELECT
@@ -498,50 +497,6 @@ class M_Cotizacion extends MY_Model
 					$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
 				}
 		
-=======
-
-				$sql = "
-				SELECT
-					da.idCotizacionDetalleArchivo,
-					da.idCotizacion,
-					da.idCotizacionDetalle,
-					da.idTipoArchivo,
-					da.nombre_inicial,
-					da.nombre_archivo,
-					da.nombre_unico,
-					da.extension,
-					da.idUsuarioReg
-				FROM compras.cotizacionDetalleArchivos da
-				WHERE idCotizacionDetalleArchivo in ($id);
-			";
-
-			$query = $this->db->query($sql)->result_array();
-
-			$archivosExistentes = [];
-
-			foreach ($query as $row) {
-
-				$archivosExistentes [] = [
-						'idCotizacion' => $params['idCotizacion'],
-						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo'=> $row['idTipoArchivo'],
-						'nombre_inicial' => $row['nombre_inicial'],
-						'nombre_archivo' => $row['nombre_archivo'],
-						'nombre_unico' => $row['nombre_unico'],
-						'extension' => $row['extension'],
-						'idUsuarioReg' => $row['idUsuarioReg'],
-						'estado' => true,
-
-
-				];
-
-			}
-
-			if(!empty($archivosExistentes)){
-				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
-			}
-
->>>>>>> main
 			}
 
 			//Sub Items
