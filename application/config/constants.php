@@ -128,6 +128,7 @@ defined('TIPO_ORDEN_COMPRA') OR define('TIPO_ORDEN_COMPRA',1);
 defined('TIPO_IMAGEN') OR define('TIPO_IMAGEN',2);
 defined('TIPO_PDF') OR define('TIPO_PDF',3);
 defined('TIPO_LINK') OR define('TIPO_LINK',4);
+defined('TIPO_OTROS') OR define('TIPO_OTROS',5);
 
 //ESTADO COTIZACION
 

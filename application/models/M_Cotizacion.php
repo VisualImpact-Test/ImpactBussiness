@@ -417,16 +417,35 @@ class M_Cotizacion extends MY_Model
 
 			if(!empty($params['archivos'][$k])){
 				foreach($params['archivos'][$k] as $archivo){
-					$archivoName = $this->saveFileWasabi($archivo);
 					$tipoArchivo = explode('/',$archivo['type']);
+
+					$extension = '';
+
+					if($tipoArchivo[0] == 'image'){
+						$extension = $tipoArchivo[1];
+					}else if($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+						$extension = 'xlsx';
+					}else if($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation'){
+						$extension = 'pptx';
+					}else if($tipoArchivo[1] == 'vnd.ms-excel'){
+						$extension = 'xls';
+					}else if($tipoArchivo[1] == 'vnd.ms-powerpoint'){
+						$extension = 'ppt';
+					}else if($tipoArchivo[1] == 'pdf'){
+						$extension = 'pdf';
+					}
+
+					$archivo['extensionVisible'] = $extension;
+					$archivoName = $this->saveFileWasabi($archivo);
+					
 					$insertArchivos[] = [
 						'idCotizacion' => $insert['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+						'idTipoArchivo' => ($tipoArchivo[0] == 'image' ? TIPO_IMAGEN : ($extension == 'pdf' ? TIPO_PDF : TIPO_OTROS)),
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => $tipoArchivo[1],
+						'extension' => $extension,
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];

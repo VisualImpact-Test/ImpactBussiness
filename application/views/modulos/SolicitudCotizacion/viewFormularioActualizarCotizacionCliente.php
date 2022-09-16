@@ -371,7 +371,7 @@
                                         <div class="ui small images content-lsck-files">
                                             <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
                                                 <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-                                                    if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
+                                                    if ($archivo['idTipoArchivo'] == TIPO_PDF || $archivo['idTipoArchivo'] == TIPO_OTROS) { ?>
                                                         <div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo'] ?>">
                                                             <div class="ui dimmer dimmer-file-detalle">
                                                                 <div class="content">
@@ -383,7 +383,7 @@
                                                             <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
                                                             <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="application/<?= $archivo['extension'] ?>">
                                                             <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
-                                                            <img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+                                                            <img height="100" src="<?= RUTA_WIREFRAME . ($archivo['idTipoArchivo'] == TIPO_PDF ? 'pdf.png' : 'file.png') ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
                                                 <? }
                                                 } ?>

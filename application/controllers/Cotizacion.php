@@ -386,8 +386,8 @@ class Cotizacion extends MY_Controller
             
             foreach($data['anexos_arreglo'] as $anexo){
                 $data['anexos'][] = [
-                    'base64' => $anexo['base64'],
-                    'type' => $anexo['type'],
+                'base64' => $anexo['base64'],
+                'type' => $anexo['type'],
                 'name' => $anexo['name'],
                 'carpeta'=> 'cotizacion',
                 'nombreUnico' => "ANX".uniqid(),
