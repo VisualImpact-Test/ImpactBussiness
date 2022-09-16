@@ -804,10 +804,13 @@ var Cotizacion = {
                                 if(fileBase.type.split('/')[0] == 'image'){
                                     imgFile = fileBase.base64;
                                     contenedor = content;
-                                }else{
+                                }else if(fileBase.type.split('/')[1] == 'pdf'){
                                     imgFile = `${RUTA_WIREFRAME}pdf.png`;
                                     contenedor = content_files;
-                                }
+                                }else{
+									imgFile = `${RUTA_WIREFRAME}file.png`;
+                                    contenedor = content_files;
+								}
 
                                 var fileApp = '';
                                     fileApp += '<div class="ui fluid image content-lsck-capturas">';
@@ -892,10 +895,13 @@ var Cotizacion = {
                                 if(fileBase.type.split('/')[0] == 'image'){
                                     imgFile = fileBase.base64;
                                     contenedor = content;
-                                }else{
+                                }else if(fileBase.type.split('/')[1] == 'pdf'){
                                     imgFile = `${RUTA_WIREFRAME}pdf.png`;
                                     contenedor = content_files;
-                                }
+                                }else{
+									imgFile = `${RUTA_WIREFRAME}file.png`;
+                                    contenedor = content_files;
+								}
 
                                 var fileApp = '';
                                     fileApp += '<div class="ui fluid image content-lsck-capturas">';
