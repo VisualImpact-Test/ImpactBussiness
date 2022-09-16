@@ -346,8 +346,10 @@ class FormularioProveedor extends MY_Controller
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 
+		$orden = 0;
+		$insertArchivos = [];
 		foreach ($post['nombre'] as $key => $value) {
-			$insertData[] = [
+			$insertData = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$key],
 				'nombre' => $post['nombre'][$key],
 				'idItemMarca' => $post['idItemMarca'][$key],
@@ -356,18 +358,43 @@ class FormularioProveedor extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costo' => $post['costo'][$key]
 			];
-		}
-		$insert = $this->model->insertarMasivo('compras.propuestaItem', $insertData);
+			$insert = $this->db->insert('compras.propuestaItem', $insertData);
+			$id = $this->db->insert_id();
+			/////////////////////
+			for ($i=0; $i < intval($post['cantidadImagenes'][$key]); $i++) {
+				$archivo = [
+					'base64' => $post['f_base64'][$orden],
+					'name' => $post['f_name'][$orden],
+					'type' => $post['f_type'][$orden],
+					'carpeta' => 'itemPropuesta',
+					'nombreUnico' => 'PROITM_'.$id.str_replace(':', '', $this->hora).'_'.$i,
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/',$archivo['type']);
 
-		if ($insert) {
-			$result['result'] = 1;
-				$result['msg']['title'] = 'Hecho!';
-				$result['msg']['content'] = getMensajeGestion('registroExitoso');
-		} else {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+				$insertArchivos[] = [
+					'idPropuestaItem' => $id,
+					'idTipoArchivo' => '5',
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => $tipoArchivo[1],
+					'fechaReg' => getFechaActual(),
+          'horaReg' => time_change_format(getActualDateTime()),
+					// 'idUsuarioReg' => $this->idUsuario
+				];
+				$orden++;
+			}
 		}
+		if (!empty($insertArchivos)) {
+			$insert = $this->model->insertarMasivo('compras.propuestaItemArchivo', $insertArchivos);
+		}
+
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
 
 		echo json_encode($result);
 	}

@@ -169,27 +169,71 @@ var FormularioProveedores = {
 			}
 
 		});
+		$(document).off('change', '.files-upload').on('change', '.files-upload', function(e){
+			var control = $(this);
+			var data = control.data();
+
+			if( control.val() ){
+				var num = control.get(0).files.length;
+
+				list: {
+					let div = control.parents('.divUploaded:first').find('.content_files');
+					var total = div.find('.file_uploaded').length;
+					if( (num + total) > MAX_ARCHIVOS ){
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} archivos como máximo` });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+
+						break list;
+					}
+					//
+					for(var i = 0; i < num; ++i){
+						var size = control.get(0).files[i].size;
+							size = Math.round((size / 1024));
+
+						if( size > KB_MAXIMO_ARCHIVO ){
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+
+							break list;
+						}
+					}
+					div.html(`<input type="hidden" class="form-control" name="cantidadImagenes" value="${num}">`);
+          let file = '';
+
+					for(var i = 0; i < num; ++i){
+            file = control.get(0).files[i];
+            Fn.getBase64(file).then(function(fileBase){
+
+							let fileApp = '<div class="file_uploaded">'+
+								              `<input type="hidden" class="form-control" name="f_base64" value="${fileBase.base64}">`+
+								              `<input type="hidden" class="form-control" name="f_type" value="${fileBase.type}">`+
+								              `<input type="text" class="form-control" name="f_name" value="${fileBase.name}">`+
+								            '</div>';
+              div.append(fileApp);
+            });
+					}
+				}
+				control.val('');
+			}
+
+		});
 		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
 			e.preventDefault();
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		/*
-		$(document).on("click",".btnLogoutProveedor", ()=>{
-
-			let jsonString = {};
-			let url = "FormularioProveedor/logout";
-			let config = { url: url, data: jsonString };
-
-			$.when(Fn.ajax(config)).then(function (b) {
-				++modalId;
-				var btn = [];
-				let fn = 'Fn.showModal({ id: ' + modalId + ',show:false});Fn.goToUrl(`' + b.data.url + '`);';
-				btn[0] = { title: 'Aceptar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-			});
-		});
-		*/
 		$(document).on("click",".btnVolverProveedor", ()=>{
 			Fn.goToUrl(site_url+'FormularioProveedor/cotizacionesLista');
 		});

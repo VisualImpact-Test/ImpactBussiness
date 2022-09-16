@@ -67,10 +67,22 @@
         </select>
       </div>
     </div>
-    <div class="form-row border-bottom">
+    <div class="form-row">
       <div class="col-md-12 mb-3">
         <label>Observacion</label>
         <input class="form-control" name="observacion">
+      </div>
+    </div>
+    <div class="form-row border-bottom">
+      <div class="col-md-12 mb-3">
+        <label>Adjunto</label>
+        <div class="custom-file divUploaded">
+          <input type="file" class="custom-file-input files-upload" multiple lang="es">
+          <label class="custom-file-label" lang="es">Agregar Archivo(s)</label>
+          <div class="content_files">
+            <input type="hidden" class="form-control" name="cantidadImagenes" value="0">
+          </div>
+        </div>
       </div>
     </div>
   </div>
