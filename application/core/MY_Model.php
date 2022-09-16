@@ -81,7 +81,8 @@ class MY_Model extends CI_Model{
             'base64' => $config['base64'],
             'name' => $config['name'],
             'type' => $config['type'],
-            'extension' => explode('/',$config['type'])[1]
+            'extension' => explode('/',$config['type'])[1],
+			'extensionVisible' => !empty($config['extensionVisible']) ? $config['extensionVisible'] : '',
         ];
 
 		$this->load->library('s3');
@@ -101,8 +102,13 @@ class MY_Model extends CI_Model{
 
 		file_put_contents($file_url, $content);
 
-		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/'.$carpeta, $nombreUnico."_WASABI.{$file['extension']}", S3::ACL_PUBLIC_READ);
+		$extensionForName = '';
+
+		if(!empty($file['extensionVisible'])) $extensionForName = $file['extensionVisible'];
+		else $extensionForName = $file['extension'];
+
+		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/'.$carpeta, $nombreUnico."_WASABI.{$extensionForName}", S3::ACL_PUBLIC_READ);
 		unlink($file_url);
-		return $nombreUnico."_WASABI.{$file['extension']}";
+		return $nombreUnico."_WASABI.{$extensionForName}";
 	}
 }

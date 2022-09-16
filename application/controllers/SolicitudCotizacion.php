@@ -990,11 +990,25 @@ class SolicitudCotizacion extends MY_Controller
 
          echo json_encode($result);
      }
+     
+     public function formPreviewOrdenCompra()
+     {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+        $dataParaVista = [];
+        
+        $dataParaVista = $this->model->obtenerInformacionOperSolicitud($post)['query']->result_array();
 
+        $html = getMensajeGestion('noRegistros');
+        if (!empty($dataParaVista)) {
+            $html = $this->load->view("modulos/SolicitudCotizacion/reporteFiltroSolicitud", ['datos' => $dataParaVista], true);
+        }
 
-
-     //filtroReporte
-
-
-
+        $result['result'] = 1;
+        $result ['data']['html'] = $html;
+        $result['msg']['title'] = 'Oper Registrados';
+        $result['data']['width'] = '80%';
+        
+        echo json_encode($result);
+    }
 }

@@ -21,6 +21,7 @@
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'read-only' : '' ?>">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
+        <input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
         <div class="fields">
             <div class="six wide field">
@@ -32,10 +33,10 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" >
+                        <input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" >
+                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerida</div>
@@ -45,7 +46,7 @@
                         <input type="text" placeholder="Fecha Requerida" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>" >
+                <input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
             </div>
             <div class="two wide field">
                 <div class="ui sub header">
@@ -134,18 +135,6 @@
                 <input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
                     <div class="ui right floated header">
-                        <!-- <div class="ui icon menu">
-                            <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
-                                <i class="square outline icon"></i>
-                                <input type="checkbox" name="checkItem" class="d-none">
-                            </a>
-                            <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
-                                <i class="hand holding usd icon"></i>
-                                <? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
-                                    <div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
-                                <? } ?>
-                            </a>
-                        </div> -->
 
                         <div class="ui icon menu">
                             <a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
@@ -155,36 +144,6 @@
                                 <i class="trash icon"></i>
                             </a>
                         </div>
-
-                        <? if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) { ?>
-                            <div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
-                                <?
-                                $wide = 'one';
-                                if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'])) {
-                                    $prov = $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'];
-
-                                    if ($prov >= 2) {
-                                        $wide = 'two';
-                                    }
-                                }
-                                ?>
-                                <div class="ui <?= $wide ?> column divided center aligned grid">
-                                    <? foreach ($cotizacionProveedorVista[$row['idCotizacionDetalle']] as $view) { ?>
-                                        <div class="column">
-                                            <h4 class="ui header"><?= $view['razonSocial'] ?></h4>
-                                            <p><b><?= $view['cantidad'] ?></b> cantidad, <?= moneda($view['subTotal']) ?></p>
-                                            <p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario']) ?></p>
-
-
-                                            <div class="ui button btnElegirProveedor">Elegir
-                                                <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
-                                                <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
-                                            </div>
-                                        </div>
-                                    <? } ?>
-                                </div>
-                            </div>
-                        <? } ?>
 
                     </div>
                     <div class="ui left floated header">
@@ -309,41 +268,52 @@
                                     endif;
                                     ?>
                                 </div>
-                                <!-- <button type="button" class="ui basic button btn-add-sub-item">
-                                    <i class="plus icon"></i>
-                                    Agregar
-                                </button> -->
                             </div>
 
                             <!-- Distribucion -->
-                            <div class="fields <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
+                            <div class="<?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
-                                        <div class="seven wide field">
-                                            <div class="ui sub header">Tipo Servicio</div>
-                                            <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-                                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
-                                            </select>
+                                        <div class="fields">
+                                            <div class="eight wide field">
+                                                <div class="ui sub header">Item Logística</div>
+                                                <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[<?= $row['idCotizacionDetalle'] ?>]">
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $dataSubItem['idItem'] , 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+                                                </select>
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Peso / Cantidad</div>
+                                                <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Cantidad PDV</div>
+                                                <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                            </div>
                                         </div>
-                                        <div class="three wide field">
-                                            <div class="ui sub header">Unidad de medida</div>
-                                            <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($dataSubItem['unidadMedida']) ? $dataSubItem['unidadMedida'] : '' ?>" readonly>
-                                            <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Unidad Medida" value="<?= !empty($dataSubItem['idUnidadMedida']) ? $dataSubItem['idUnidadMedida'] : '' ?>" readonly>
-                                        </div>
-                                        <div class="three wide field">
-                                            <div class="ui sub header">Costo S/</div>
-                                            <input class="costoTipoServicio costoSubItem" name="costoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>" readonly>
-                                        </div>
-                                        <div class="three wide field">
-                                            <div class="ui sub header">Peso / Cantidad</div>
-                                            <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                        <div class="fields ">
+                                            <div class="eight wide field">
+                                                <div class="ui sub header">Tipo Servicio</div>
+                                                <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                                </select>
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Unidad de medida</div>
+                                                <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($dataSubItem['unidadMedida']) ? $dataSubItem['unidadMedida'] : '' ?>" readonly>
+                                                <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Unidad Medida" value="<?= !empty($dataSubItem['idUnidadMedida']) ? $dataSubItem['idUnidadMedida'] : '' ?>" readonly>
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Costo S/</div>
+                                                <input class="costoTipoServicio costoSubItem" name="costoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>" readonly>
+                                            </div>
                                         </div>
                                 <?
                                     endforeach;
                                 endif;
                                 ?>
                             </div>
+
 
                             <div class="fields">
                                 <div class="four wide field">
@@ -401,7 +371,7 @@
                                         <div class="ui small images content-lsck-files">
                                             <? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
                                                 <? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-                                                    if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
+                                                    if ($archivo['idTipoArchivo'] == TIPO_PDF || $archivo['idTipoArchivo'] == TIPO_OTROS) { ?>
                                                         <div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo'] ?>">
                                                             <div class="ui dimmer dimmer-file-detalle">
                                                                 <div class="content">
@@ -413,7 +383,7 @@
                                                             <input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
                                                             <input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="application/<?= $archivo['extension'] ?>">
                                                             <input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
-                                                            <img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+                                                            <img height="100" src="<?= RUTA_WIREFRAME . ($archivo['idTipoArchivo'] == TIPO_PDF ? 'pdf.png' : 'file.png') ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
                                                 <? }
                                                 } ?>

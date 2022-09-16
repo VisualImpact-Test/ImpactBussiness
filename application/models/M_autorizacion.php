@@ -20,7 +20,7 @@ class M_Autorizacion extends MY_Model
 
 		$filtros = "";
 		$filtros = !empty($params['id']) ? " AND a.idAutorizacion = {$params['id']}" : '';
-		$filtros = !empty($params['idCotizacion']) ? " AND a.idCotizacion = {$params['idCotizacion']}" : '';
+		$filtros = !empty($params['idCotizacion']) ? " AND a.idCotizacion IN({$params['idCotizacion']})" : '';
         $sql = "
 			SELECT
 				a.idAutorizacion,

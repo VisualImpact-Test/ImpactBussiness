@@ -13,9 +13,11 @@
         display: inline-block;
         line-height: 1;
     }
+
     input[type="color"] {
-        padding:initial !important;
+        padding: initial !important;
     }
+
     .floating-container {
         height: 200px !important;
     }
@@ -23,7 +25,8 @@
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
-        <input type="hidden" id="gapEmpresas" value='<?=!empty($gapEmpresas) ? json_encode($gapEmpresas) : ''?>'>
+        <input type="hidden" id="gapEmpresas" value='<?= !empty($gapEmpresas) ? json_encode($gapEmpresas) : '' ?>'>
+        <input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
         <div class="fields">
             <div class="six wide field">
                 <div class="ui sub header">Título</div>
@@ -34,10 +37,10 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Deadline compras" value="" >
+                        <input type="text" placeholder="Deadline compras" value="">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="" >
+                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="">
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerida</div>
@@ -185,7 +188,7 @@
                                     </div>
                                     <div class="three wide field">
                                         <div class="ui sub header">Color</div>
-                                        <input  class="colorSubItem " name="colorSubItem[0]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>" >
+                                        <input class="colorSubItem " name="colorSubItem[0]" placeholder="Color" value="<?= !empty($data['color']) ? $data['color'] : '' ?>">
                                     </div>
                                     <div class="three wide field">
                                         <div class="ui sub header">Cantidad</div>
@@ -239,27 +242,42 @@
                             </button>
                         </div>
                         <!-- Distribucion -->
-                        <div class="fields d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
-                            <div class="seven wide field">
-                                <div class="ui sub header">Tipo Servicio</div>
-                                <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
-                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
-                                </select>
+                        <div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <div class="ui sub header">Item Logística</div>
+                                    <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione','query' => $itemLogistica, 'id'=>'value','value' => 'label','class' => 'text-titlecase','data-option'=>['pesoLogistica']]); ?>
+                                    </select>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Peso / Cantidad</div>
+                                    <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Cantidad PDV</div>
+                                    <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                </div>
                             </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Unidad de medida</div>
-                                <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($data['unidadMedidaTipoServicio']) ? $data['unidadMedidaTipoServicio'] : '' ?>" readonly>
-                                <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($data['idUnidadMedidaTipoServicio']) ? $data['idUnidadMedidaTipoServicio'] : '' ?>" readonly>
-                            </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Costo S/</div>
-                                <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
-                            </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Peso / Cantidad</div>
-                                <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <div class="ui sub header">Tipo Servicio</div>
+                                    <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                    </select>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Unidad de medida</div>
+                                    <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($data['unidadMedidaTipoServicio']) ? $data['unidadMedidaTipoServicio'] : '' ?>" readonly>
+                                    <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($data['idUnidadMedidaTipoServicio']) ? $data['idUnidadMedidaTipoServicio'] : '' ?>" readonly>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Costo S/</div>
+                                    <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
+                                </div>
                             </div>
                         </div>
+
 
                         <div class="fields">
                             <div class="four wide field">
@@ -328,7 +346,7 @@
                                     GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
                                 </div>
                                 <div class="ui right labeled input">
-                                    <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') "   data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
+                                    <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
                                     <div class="ui basic label">
                                         %
                                     </div>

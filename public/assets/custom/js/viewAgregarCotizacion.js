@@ -11,6 +11,23 @@ var SolicitudCotizacion = {
 
 			Cotizacion.actualizarTotal();
 		});
+
+		$(document).on('click', '.btn-preview-orden-compra', function () {
+			++modalId;
+
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenCompra')) };
+			let config = { 'url': SolicitudCotizacion.url + 'formPreviewOrdenCompra', 'data': jsonString };
+			
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+			});
+		});
 	},
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
@@ -382,6 +399,17 @@ var Cotizacion = {
 			let allFeatures = parent.find(`.div-features`);
 			let divFeature = parent.find(`.div-feature-${idTipo}`);
 
+			if(idTipo == COD_DISTRIBUCION.id){
+				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
+				cotizacionInternaForm.val(0); //Sin cotizacion Interna
+			}else{
+				let codItem = parent.find('.codItems');
+
+				if(codItem !== typeof undefined && codItem > 0){
+					parent.find('.cotizacionInternaForm').val(1);
+				}
+			}
+
 			allFeatures.addClass('d-none');
 			divFeature.removeClass('d-none');
 
@@ -411,6 +439,8 @@ var Cotizacion = {
 			e.preventDefault();
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
+			let tipoItem = thisControlParents.find('#tipoItemForm');
+			let cantPdvDist = thisControlParents.find('.cantidadPdvSubItemDistribucion');
 			let costoForm = thisControlParents.find('.costoForm');
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
@@ -425,6 +455,16 @@ var Cotizacion = {
 
 			let subTotal = Fn.multiply(cantidad, precio);
 
+			let costoDistribucion = 0;
+			let costoTotalDistribucionPDV = 0;
+			if(tipoItem.val() == COD_DISTRIBUCION.id){
+				costoDistribucion = Number($("#costoDistribucion").val());
+				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val()) ;
+
+				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion,cantPdv);
+
+				subTotal = Number(subTotal + costoTotalDistribucionPDV);
+			}
 
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
@@ -764,10 +804,13 @@ var Cotizacion = {
                                 if(fileBase.type.split('/')[0] == 'image'){
                                     imgFile = fileBase.base64;
                                     contenedor = content;
-                                }else{
+                                }else if(fileBase.type.split('/')[1] == 'pdf'){
                                     imgFile = `${RUTA_WIREFRAME}pdf.png`;
                                     contenedor = content_files;
-                                }
+                                }else{
+									imgFile = `${RUTA_WIREFRAME}file.png`;
+                                    contenedor = content_files;
+								}
 
                                 var fileApp = '';
                                     fileApp += '<div class="ui fluid image content-lsck-capturas">';
@@ -852,10 +895,13 @@ var Cotizacion = {
                                 if(fileBase.type.split('/')[0] == 'image'){
                                     imgFile = fileBase.base64;
                                     contenedor = content;
-                                }else{
+                                }else if(fileBase.type.split('/')[1] == 'pdf'){
                                     imgFile = `${RUTA_WIREFRAME}pdf.png`;
                                     contenedor = content_files;
-                                }
+                                }else{
+									imgFile = `${RUTA_WIREFRAME}file.png`;
+                                    contenedor = content_files;
+								}
 
                                 var fileApp = '';
                                     fileApp += '<div class="ui fluid image content-lsck-capturas">';
@@ -1059,6 +1105,17 @@ var Cotizacion = {
 
 
 		});
+		$(document).on('change', '.itemLogisticaForm', function () {
+			let control = $(this);
+			let parent = control.closest('.div-features');
+			let peso = control.find('option:selected').data('pesologistica');
+
+			let pesoCantidadForm = parent.find('.cantidadSubItemDistribucion');
+			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
+			
+			pesoCantidadForm.val(peso);
+			cantidadFormSubItem.keyup();
+		});
 
 		$(document).on('keyup', '.items', function () {
 			let control = $(this);
@@ -1089,7 +1146,9 @@ var Cotizacion = {
 
 		});
 
+	
 
+		
 	},
 
 	restaurarCosto: function(costoAnterior){
@@ -1328,6 +1387,7 @@ var Cotizacion = {
 	},
 
 	actualizarTotal: function () {
+		
 		let total = 0;
 		let totalDistribucion = 0;
 		
@@ -1376,6 +1436,13 @@ var Cotizacion = {
           position : 'left center',
           target   : $('.btn-save'),
           content    : 'Guardar',
+        });
+        //Boton Guardar
+        $('.btn-preview-orden-compra')
+        .popup({
+          position : 'left center',
+          target   : $('.btn-preview-orden-compra'),
+          content    : 'Visualizar OC',
         });
 
         //Boton Agregar Detalle
@@ -1506,7 +1573,10 @@ var Cotizacion = {
 
 		let nombreSubItem = parent.find('.nombreSubItem');
 		let cantidadSubItem = parent.find('.cantidadSubItem');
+	
 		let cantidadSubItemDistribucion = parent.find('.cantidadSubItemDistribucion');
+		let cantidadPdvSubItemDistribucion = parent.find('.cantidadPdvSubItemDistribucion');
+		let itemLogisticaForm = parent.find('.itemLogisticaForm').find('select');
 
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
@@ -1527,7 +1597,10 @@ var Cotizacion = {
 
 		nombreSubItem.attr('name',`nombreSubItemServicio[${number}]`);
 		cantidadSubItem.attr('name',`cantidadSubItemServicio[${number}]`);
+
 		cantidadSubItemDistribucion.attr('name',`cantidadSubItemDistribucion[${number}]`);
+		cantidadPdvSubItemDistribucion.attr('name',`cantidadPdvSubItemDistribucion[${number}]`);
+		itemLogisticaForm.attr('name',`itemLogisticaForm[${number}]`);
 
 		tipoServicioSubItem.attr('name',`tipoServicioSubItem[${number}]`);
 		unidadMedidaSubItem.attr('name',`unidadMedidaSubItem[${number}]`);
@@ -1537,6 +1610,7 @@ var Cotizacion = {
 
 
    cleanDetalle:(parent)=>{
+	let tipoForm = parent.find('#tipoItemForm');
 	let costoForm = parent.find('.costoForm');
 	let gapForm = parent.find('.gapForm');
 	let cantidadForm = parent.find('.cantidadForm');
@@ -1547,7 +1621,11 @@ var Cotizacion = {
 
 	codItems.val('');
 	idProveedor.val('');
-	cotizacionInternaForm.val('1');
+	if(tipoForm.val() == COD_DISTRIBUCION.id){
+		cotizacionInternaForm.val('0');
+	}else{
+		cotizacionInternaForm.val('1');
+	}
 
 	semaforoForm.removeClass('semaforoForm-green');
 	semaforoForm.removeClass('semaforoForm-yellow');
