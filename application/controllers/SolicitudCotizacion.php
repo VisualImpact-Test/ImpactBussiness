@@ -35,7 +35,7 @@ class SolicitudCotizacion extends MY_Controller
             'assets/libs/fileDownload/jquery.fileDownload',
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/solicitudCotizacion',
-           
+
         );
 
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
@@ -53,7 +53,7 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
 
-     
+
         $dataParaVista = [];
         $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 
@@ -83,7 +83,7 @@ class SolicitudCotizacion extends MY_Controller
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        
+
         $dataParaVista = [];
         $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
 
@@ -121,12 +121,12 @@ class SolicitudCotizacion extends MY_Controller
 
         echo json_encode($result);
     }
-	
+
 	public function formularioSolicitudCotizacionfecha()
     {
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-        
+
         $dataParaVista = [];
         $dataParaVista['cotizacion'] = $this->model->obtenerInformacionCotizacion($post)['query']->row_array();
 
@@ -198,6 +198,80 @@ class SolicitudCotizacion extends MY_Controller
         echo json_encode($result);
     }
 
+    public function formularioVisualizacionCotizacionProveedor()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+
+        $data = $this->model_formulario_proveedor->obtenerInformacionCotizacionProveedor($post)->result_array();
+        $dataParaVista['cabecera'] = $this->model->obtenerInformacionCotizacion(['id' => $data[0]['idCotizacion']])['query']->row_array();
+        // $dataimg = [];
+
+        foreach ($data as $key => $row) {
+          $dataParaVista['item'][$row['idItem']]['idItem'] = $row['idItem'];
+          $dataParaVista['item'][$row['idItem']]['item'] = $row['item'];
+          $dataParaVista['item'][$row['idItem']]['tipoItem'] = $row['tipoItem'];
+          $dataParaVista['item'][$row['idItem']]['cantidad'] = $row['cantidad'];
+          $dataParaVista['item'][$row['idItem']]['unidadMedida'] = $row['unidadMedida'];
+
+          $dataParaVista['proveedor'][$row['idProveedor']]['proveedor'] = $row['proveedor'];
+
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['costoUnitario'] = $row['costoUnitario'];
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['fechaValidez'] = $row['fechaValidez'];
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['fechaEntrega'] = $row['fechaEntrega'];
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['comentario'] = $row['comentario'];
+
+          $dataParaVista['images'][$row['idItem']][$row['idProveedor']] = $this->model->obtenerArchivoCotizacionDetalleProveedors(['idCotizacionDetalleProveedorDetalle' => $row['idCotizacionDetalleProveedorDetalle']])->result_array();
+        }
+
+        $dataParaVista['estados'] = $this->model_control->get_estados_cotizacion()->result_array();
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Cotización Item - Proveedor';
+        $result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/formularioCotizacionProveedor", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
+    public function formularioVisualizacionCotizacionProveedorItems()
+    {
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        $dataParaVista = [];
+
+        $data = $this->model_formulario_proveedor->obtenerInformacionCotizacionProveedor($post)->result_array();
+        $dataParaVista['cabecera'] = $this->model->obtenerInformacionCotizacion(['id' => $data[0]['idCotizacion']])['query']->row_array();
+        // $dataimg = [];
+
+        foreach ($data as $key => $row) {
+          $dataParaVista['item'][$row['idItem']]['idItem'] = $row['idItem'];
+          $dataParaVista['item'][$row['idItem']]['item'] = $row['item'];
+          $dataParaVista['item'][$row['idItem']]['tipoItem'] = $row['tipoItem'];
+          $dataParaVista['item'][$row['idItem']]['cantidad'] = $row['cantidad'];
+          $dataParaVista['item'][$row['idItem']]['unidadMedida'] = $row['unidadMedida'];
+
+          $dataParaVista['proveedor'][$row['idProveedor']]['proveedor'] = $row['proveedor'];
+
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['costoUnitario'] = number_format($row['costoUnitario'],2,'.','');
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['costo'] = number_format($row['costo'],2,'.','');
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['fechaValidez'] = $row['fechaValidez'];
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['fechaEntrega'] = $row['fechaEntrega'];
+          $dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['comentario'] = $row['comentario'];
+
+          $dataParaVista['images'][$row['idItem']][$row['idProveedor']] = $this->model->obtenerArchivoCotizacionDetalleProveedors(['idCotizacionDetalleProveedorDetalle' => $row['idCotizacionDetalleProveedorDetalle']])->result_array();
+          $dataParaVista['subItems'][$row['idItem']][$row['idProveedor']] = $this->model_formulario_proveedor->obtenerInformacionCotizacionDetalleSub(['idCotizacionDetalleProveedorDetalle' => $row['idCotizacionDetalleProveedorDetalle']])->result_array();
+        }
+
+        $dataParaVista['estados'] = $this->model_control->get_estados_cotizacion()->result_array();
+
+        $result['result'] = 1;
+        $result['msg']['title'] = 'Cotización Item - Proveedor';
+        $result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/formularioCotizacionProveedorItems", $dataParaVista, true);
+
+        echo json_encode($result);
+    }
 
     public function actualizarCotizacion()
     {
@@ -205,9 +279,9 @@ class SolicitudCotizacion extends MY_Controller
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
         $data['tabla'] = 'compras.cotizacion';
-        
+
         $data = [];
-        
+
         $data['update'] = [
             'nombre' => $post['nombre'],
             'idCuenta' => $post['cuentaForm'],
@@ -222,7 +296,7 @@ class SolicitudCotizacion extends MY_Controller
             'comentario' => $post['comentarioForm'],
             // 'idCotizacionEstado' => $post['tipoRegistro']
         ];
-        
+
 
         $validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
         if (!empty($validacionExistencia['query']->row_array())) {
@@ -253,7 +327,7 @@ class SolicitudCotizacion extends MY_Controller
         $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
         $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
         $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
-        
+
         foreach ($post['nameItem'] as $k => $r) {
             $data['update'][] = [
                 'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
@@ -364,11 +438,11 @@ class SolicitudCotizacion extends MY_Controller
                 $data['where'] = [
                     'idCotizacion' => $post['idCotizacion'],
                 ];
-    
+
                 $this->model->actualizarCotizacion($data);
-    
+
                 $insertCotizacionHistorico = [
-                    'idCotizacionEstado' => ESTADO_CONFIRMADO_COMPRAS, 
+                    'idCotizacionEstado' => ESTADO_CONFIRMADO_COMPRAS,
                     'idCotizacion' => $post['idCotizacion'],
                     'idUsuarioReg' => $this->idUsuario,
                     'estado' => true,
@@ -411,7 +485,7 @@ class SolicitudCotizacion extends MY_Controller
         $items = implode(",",$data['select']);
         $dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=>$post['idCotizacion'],'cotizacionInterna' => true, 'idCotizacionDetalle' => $items])['query']->result_array();
 
-       
+
         $data = [];
         $post['proveedorSolicitudForm'] = checkAndConvertToArray($post['proveedorSolicitudForm']);
 
@@ -465,7 +539,7 @@ class SolicitudCotizacion extends MY_Controller
             }
 
             $rsDet = true;
-            if(!empty($data['insert'])){       
+            if(!empty($data['insert'])){
                 $rsDet = $this->model_formulario_proveedor->insertarMasivoDetalleProveedor(['tabla' => 'compras.cotizacionDetalleProveedorDetalle','insert' => $data['insert'],'post' => $post]);
             }
 
@@ -473,7 +547,7 @@ class SolicitudCotizacion extends MY_Controller
                 $result['result'] = 1;
                 $result['data']['html'] = createMessage(['type'=>2,'message'=>'No se pudo enviar la solicitud']);
                 $result['msg']['title'] = 'Alerta';
-    
+
                 goto respuesta;
             }
 
@@ -489,7 +563,7 @@ class SolicitudCotizacion extends MY_Controller
             ];
             email($config);
         }
-        
+
 
 
 
@@ -508,7 +582,7 @@ class SolicitudCotizacion extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
 
         $dataParaVista = [];
-        
+
         $post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
         $post['nameItem'] = checkAndConvertToArray($post['nameItem']);
         foreach ($post['nameItem'] as $k => $r) {
@@ -528,21 +602,21 @@ class SolicitudCotizacion extends MY_Controller
 
     public function viewSolicitudCotizacionInterna($idCotizacion = '')
     {
-        
+
         if(empty($idCotizacion)){
             redirect('SolicitudCotizacion','refresh');
         }
-        
+
         $config = array();
 
         $this->load->library('Mobile_Detect');
 
 		$detect = $this->mobile_detect;
-        
+
         $config['data']['col_dropdown'] = 'four column';
         $detect->isMobile() ? $config['data']['col_dropdown'] = '' : '';
         $detect->isTablet() ? $config['data']['col_dropdown'] = 'three column' : '';
-         
+
         $config['nav']['menu_active'] = '131';
         $config['css']['style'] = array(
             'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
@@ -559,7 +633,7 @@ class SolicitudCotizacion extends MY_Controller
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/viewAgregarCotizacion'
         );
-        
+
         $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
         $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion([
@@ -600,7 +674,7 @@ class SolicitudCotizacion extends MY_Controller
 
         foreach($proveedores as $proveedor){
             $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
-        } 
+        }
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
@@ -621,7 +695,7 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['itemServicio'] = $data['itemServicio'];
 
         $config['single'] = true;
-        
+
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
         $config['data']['title'] = 'Cotizacion';
         $config['data']['message'] = 'Lista de Cotizacions';
@@ -642,17 +716,17 @@ class SolicitudCotizacion extends MY_Controller
         if(empty($idOper)){
             redirect('SolicitudCotizacion','refresh');
         }
-        
+
         $config = array();
 
         $this->load->library('Mobile_Detect');
 
 		$detect = $this->mobile_detect;
-        
+
         $config['data']['col_dropdown'] = 'four column';
         $detect->isMobile() ? $config['data']['col_dropdown'] = '' : '';
         $detect->isTablet() ? $config['data']['col_dropdown'] = 'three column' : '';
-         
+
         $config['nav']['menu_active'] = '131';
         $config['css']['style'] = array(
             'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
@@ -687,7 +761,7 @@ class SolicitudCotizacion extends MY_Controller
             $config['data']['autorizaciones'][$autorizacion['idCotizacionDetalle']] = $autorizacion;
         }
 
-        
+
         $archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos([
             'idCotizacion'=> $idCotizacion,
             'cotizacionInterna' => false,
@@ -713,7 +787,7 @@ class SolicitudCotizacion extends MY_Controller
 
         foreach($proveedores as $proveedor){
             $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
-        } 
+        }
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
@@ -734,7 +808,7 @@ class SolicitudCotizacion extends MY_Controller
         $config['data']['itemServicio'] = $data['itemServicio'];
 
         $config['single'] = true;
-        
+
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
         $config['data']['title'] = 'Cotizacion';
         $config['data']['message'] = 'Lista de Cotizacions';
@@ -766,7 +840,7 @@ class SolicitudCotizacion extends MY_Controller
                 'idCotizacion' => $idCotizacion,
                 'idCotizacionEstado' => ESTADO_OC_ENVIADA,
             ];
-            
+
             $insertHistoricoCotizacion[] = [
                 'idCotizacionEstado' => ESTADO_OC_ENVIADA,
                 'idCotizacion' => $idCotizacion,
@@ -800,7 +874,7 @@ class SolicitudCotizacion extends MY_Controller
                 'idOrdenCompra' => $rs_oc['id'],
                 'idCotizacionDetalle' => $row['idCotizacionDetalle']
             ];
-            
+
             $data['proveedor'][$row['idProveedor']] = $row['idProveedor'];
         }
 
@@ -815,7 +889,7 @@ class SolicitudCotizacion extends MY_Controller
             $result['result'] = 1;
             $result['msg']['title'] = 'Generar OC';
             $result['data']['html'] = getMensajeGestion('registroExitoso');
-            $dataParaVista = []; 
+            $dataParaVista = [];
             $ids = implode(',',$post['idCotizacion']);
             $dataParaVista['detalle'] = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
 
@@ -868,14 +942,14 @@ class SolicitudCotizacion extends MY_Controller
         foreach($cotizaciones as $row){
             $dataParaVista['cuenta'][$row['idCuenta']] = [
                 'id' => $row['idCuenta'],
-                'value' => $row['cuenta'] 
+                'value' => $row['cuenta']
             ];
             $dataParaVista['cuentaCentroCosto'][$row['idCuentaCentroCosto']] = [
                 'id' => $row['idCuentaCentroCosto'],
-                'value' => $row['cuentaCentroCosto'] 
+                'value' => $row['cuentaCentroCosto']
             ];
 
-            $dataParaVista['totalOper'] += $row['total']; 
+            $dataParaVista['totalOper'] += $row['total'];
         }
 
         foreach($cotizacionDetalle as $rowDetalle){
@@ -901,19 +975,19 @@ class SolicitudCotizacion extends MY_Controller
          $result = $this->result;
          $post = json_decode($this->input->post('data'), true);
          $dataParaVista = [];
-         
+
          $dataParaVista = $this->model->obtenerInformacionOperSolicitud($post)['query']->result_array();
- 
+
          $html = getMensajeGestion('noRegistros');
          if (!empty($dataParaVista)) {
              $html = $this->load->view("modulos/SolicitudCotizacion/reporteFiltroSolicitud", ['datos' => $dataParaVista], true);
          }
- 
+
          $result['result'] = 1;
          $result ['data']['html'] = $html;
          $result['msg']['title'] = 'Oper Registrados';
          $result['data']['width'] = '80%';
-         
+
          echo json_encode($result);
      }
      

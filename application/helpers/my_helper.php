@@ -164,6 +164,16 @@ function moneda($valor, $igv = false, $dec = 2)
 	}
 }
 
+function getFechaDias($fecha, $dias = 0)
+{
+	$pos = strpos($fecha, '/');
+	if ($pos !== false) {
+    $fecha = date_change_format_bd($fecha);
+	}
+	$fecha = date($fecha);
+	return date('d/m/Y', strtotime($fecha." {$dias} days"));
+}
+
 function getFechaActual($dias = 0)
 {
 	date_default_timezone_set('America/Lima');
@@ -948,7 +958,7 @@ function filterByKeys($array = [], $keys)
 
 function replaceKey($subject, $newKey, $oldKey)
 {
-	// if the value is not an array, then you have reached the deepest 
+	// if the value is not an array, then you have reached the deepest
 	// point of the branch, so return the value
 	if (!is_array($subject)) return $subject;
 
@@ -1012,7 +1022,7 @@ function formatBytes($bytes, $precision = 2)
 	$pow = min($pow, count($units) - 1);
 
 	$bytes /= pow(1024, $pow);
-	// $bytes /= (1 << (10 * $pow)); 
+	// $bytes /= (1 << (10 * $pow));
 
 	return round($bytes, $precision) . ' ' . $units[$pow];
 }
@@ -1217,7 +1227,7 @@ function htmlSelectOptionArray2($params = [])
 	!empty($params['value']) ? $v = $params['value'] : $v = 'value';
 	!empty($params['id']) ? $id = $params['id'] : $id = 'id';
 	!empty($params['class']) ? $class = $params['class'] : $class = 'text-uppercase';
-	
+
 	foreach ($query as $f) {
 		if (!empty($idSelected) || !empty($params['selectAll'])) {
 			if ($f[$id] == $idSelected || !empty($params['selectAll'])) {
@@ -1235,7 +1245,7 @@ function htmlSelectOptionArray2($params = [])
 		}
 		if(!empty($params['data-option'])){
 			foreach($params['data-option'] as $row){
-				!empty($f[$row]) ? $data_option .= " data-{$row} = {$f[$row]}": ''; 
+				!empty($f[$row]) ? $data_option .= " data-{$row} = {$f[$row]}": '';
 			}
 		}
 
@@ -1543,7 +1553,7 @@ function getSegmentacion($input = [])
 					['header' => 'Plaza', 'columna' => 'plaza', 'align' => 'left']
 				);
 				$columnas_bd .= '
-						, pl.nombre AS plaza 
+						, pl.nombre AS plaza
 						, pl.idPlaza
 						, z.nombre AS zona
 						, ds.idDistribuidoraSucursal
@@ -1908,7 +1918,7 @@ function completarFilasPdf($params){
 	$table = '';
 	for($i = $filas; $i < $filasRequeridas ; $i++){
 		$table .= '<tr>';
-			for ($j=0; $j < $columnas ; $j++) { 
+			for ($j=0; $j < $columnas ; $j++) {
 				$table .= '<td class="text-center">';
 					if($j == 0 ){
 						//Solo ponemos el numero de fila si es la primera columna
@@ -1921,4 +1931,3 @@ function completarFilasPdf($params){
 
 	return $table;
 }
-

@@ -55,6 +55,43 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function validarPropuestaExistencia($params = [])
+	{
+		$this->db
+		->select('pi.*')
+		->from('compras.propuestaItem pi')
+		->where('pi.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle'])
+		->where('pi.estado','1');
+		return $this->db->get();
+	}
+
+	public function obtenerCategorias($params = [])
+	{
+		$this->db
+		->select('ic.*')
+		->from('compras.itemCategoria ic')
+		->where('ic.estado', '1');
+		return $this->db->get();
+	}
+
+	public function obtenerMarcas($params = [])
+	{
+		$this->db
+		->select('im.*')
+		->from('compras.itemMarca im')
+		->where('im.estado', '1');
+		return $this->db->get();
+	}
+
+	public function obtenerMotivos($params = [])
+	{
+		$this->db
+		->select('pm.*')
+		->from('compras.propuestaMotivo pm')
+		->where('pm.estado', '1');
+		return $this->db->get();
+	}
+
 	public function obtenerCiudadUbigeo()
 	{
 
@@ -192,6 +229,14 @@ class M_FormularioProveedor extends MY_Model
 		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';
 		return $this->db->get();
 	}
+	public function obtenerNombreArchivo(array $param = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.cotizacionDetalleArchivos')
+		->where('idCotizacionDetalle',$param['idCotizacionDetalle']);
+		return $this->db->get();
+	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
 	{
 		$filtros = "WHERE 1 = 1";
@@ -220,6 +265,7 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.comentario,
 			cdpd.diasValidez,
 			CONVERT(VARCHAR, cdpd.fechaValidez, 103) AS fechaValidez,
+			cdpd.diasEntrega,
 			cdpd.fechaEntrega,
 			cde.nombre AS cotizacionDetalleEstado,
 			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion

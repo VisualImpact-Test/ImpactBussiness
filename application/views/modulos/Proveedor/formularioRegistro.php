@@ -144,13 +144,17 @@
                     <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto" patron="requerido">
                 </div>
                 <div class="control-group child-divcenter row" style="width:85%">
-                    <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
-                    <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email">
-                </div>
-                <div class="control-group child-divcenter row" style="width:85%">
                     <label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
                     <input class="form-control col-md-8" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
                 </div>
+                <div class="input-group control-group child-divcenter row" style="width:85%">
+                  <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
+                  <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email">
+                  <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-outline-success btnAddCorreo" type="button"><i class="fa fa-plus"></i></button>
+                  </div>
+                </div>
+                <div id="extraCorreo"></div>
             </fieldset>
         </div>
     </div>

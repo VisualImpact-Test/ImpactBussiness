@@ -107,16 +107,19 @@
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
                     <div class="ui right floated header sticky stickyDetalleCotizacion">
                         <div class="ui icon menu">
-                            <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
-                                <i class="square outline icon"></i>
-                                <input type="checkbox" name="checkItem[<?=$row['idCotizacionDetalle']?>]" class="d-none checkItem">
-                            </a>
-                            <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
-                                <i class="hand holding usd icon"></i>
-                                <? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
-                                    <div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
-                                <? } ?>
-                            </a>
+                          <a class="item btnCotizacionesProveedores" data-id="<?= $row['idCotizacionDetalle'] ?>">
+                              <i class="users icon"></i>
+                          </a>
+                          <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
+                              <i class="square outline icon"></i>
+                              <input type="checkbox" name="checkItem" class="d-none">
+                          </a>
+                          <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
+                              <i class="hand holding usd icon"></i>
+                              <? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
+                                  <div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
+                              <? } ?>
+                          </a>
                         </div>
                         <? if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) { ?>
                             <div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
@@ -137,10 +140,16 @@
                                             <p><b><?= $view['cantidad'] ?></b> cantidad, <?= moneda($view['subTotal']) ?></p>
                                             <p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario']) ?></p>
 
-
-                                            <div class="ui button btnElegirProveedor">Elegir
-                                                <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
-                                                <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
+                                            <div class="ui button btnElegirProveedor primary">Elegir
+                                              <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
+                                              <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
+                                            </div>
+                                            <div  class="ui button btnConsultarItemProveedor"
+                                                  data-cot="<?= $row['idCotizacionDetalle'] ?>"
+                                                  data-pro="<?= $view['idProveedor'] ?>">
+                                              Consultar
+                                                <!-- <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
+                                                <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>"> -->
                                             </div>
                                         </div>
                                     <? } ?>

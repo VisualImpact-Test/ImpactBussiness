@@ -76,7 +76,7 @@ class MY_Model extends CI_Model{
         $carpeta = $config['carpeta'];
         $nombreUnico = $config['nombreUnico'];
 
-        $file =         
+        $file =
         [
             'base64' => $config['base64'],
             'name' => $config['name'],
@@ -88,7 +88,7 @@ class MY_Model extends CI_Model{
 
 		$s3Client = $this->s3;
 
-		$s3Client::setAuth('BS9EM7XW1288NCZXLL6G', 'cIe5Mfe7ovcjsm3waEcmqGDun6Xu6d0ftAepy3AS');		
+		$s3Client::setAuth('BS9EM7XW1288NCZXLL6G', 'cIe5Mfe7ovcjsm3waEcmqGDun6Xu6d0ftAepy3AS');
 
 		$s3Client->setEndpoint('s3.us-central-1.wasabisys.com');
 
