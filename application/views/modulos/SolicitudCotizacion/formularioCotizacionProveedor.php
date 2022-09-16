@@ -108,6 +108,28 @@
                                                       <td><?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['fechaValidez'], 3) ?></td>
                                                       <td><?= verificarEmpty(date_change_format($itemProveedor[$keyItem][$keyProveedor]['fechaEntrega']),3) ?></td>
                                                   </tr>
+
+                                                  <?php if (!empty($images[$keyItem][$keyProveedor])): ?>
+                                                  <tr>
+                                                    <td colspan="8">
+                                                      <div class="col-md-12 imgCotizacion">
+                                                        <div class="ui small images">
+                                                          <?php foreach ($images[$keyItem][$keyProveedor] as $key => $img): ?>
+                                                            <div class="ui fluid image dimmable" data-id="<?= $key?>">
+                                                              <div class="ui dimmer dimmer-file-detalle">
+                                                                <div class="content">
+                                                                  <p class="ui tiny inverted header">322.png</p>
+                                                                </div>
+                                                              </div>
+                                                              <a target="_blank" href="<?= RUTA_WASABI.'cotizacionProveedor/'.$img['nombre_archivo']?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+                                                              <img height="100" src="<?= $img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI.'cotizacionProveedor/'.$img['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+                                                            </div>
+                                                          <?php endforeach; ?>
+                                                        </div>
+                                                      </div>
+                                                    </td>
+                                                  </tr>
+                                                <?php endif; ?>
                                               <?
                                               }
                                               ?>

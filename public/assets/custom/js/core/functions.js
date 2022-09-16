@@ -23,7 +23,16 @@ var Fn = {
 			$('.' + config.div).append(msg);
 		}
 	},
-
+	mostrarNotificacion: function(cabecera, cuerpo, img = site_url+'/public/assets/images/logos/visual.png', direccion = 'https://google.com.pe', timeout = 0){
+		Push.create(cabecera, {
+				body: cuerpo,
+				icon: img,
+				timeout: timeout,
+				onClick: function () {
+					location.href = direccion
+				}
+		});
+	},
 	showLoading: function (show, msg) {
 		var modal = '';
 		if (show) {
@@ -125,6 +134,12 @@ var Fn = {
 		}
 
 		$(".navbar").removeAttr("style");
+	},
+	diasDesdeFecha: function(fecha1, fecha2 = new Date()){
+		let fecha1utc = Date.UTC(fecha1.getFullYear(), fecha1.getMonth(), fecha1.getDate());
+	  let fecha2utc = Date.UTC(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate());
+    let day = 1000*60*60*24;
+	  return(fecha2utc - fecha1utc)/day;
 	},
 
 	showConfirm: function (config) {
@@ -1402,7 +1417,7 @@ var Fn = {
 	loadSemanticFunctions: function () {
 		$('select.semantic-dropdown').dropdown();
 
-		
+
 		$('select.dropdown.parentDependiente').dropdown({
 			onChange: function (noc) {
 				let childDependiente = $(this).data('childdependiente');
@@ -1414,7 +1429,7 @@ var Fn = {
 					$('#' + childDependiente).dropdown({
 						forceSelection: false
 					});
-					
+
 					$("#" + childDependiente).val('');
 					$("#" + childDependiente).siblings('div.text').text('Seleccione');
 					$.each($('#' + childDependiente + ' option'), function (index, value) {
@@ -1440,7 +1455,7 @@ var Fn = {
 			}
 		});
 		$('.date-semantic').calendar({
-			// minDate: $(this).data('disablepast') ? new Date() : false, 
+			// minDate: $(this).data('disablepast') ? new Date() : false,
 			type: 'date',
 			text: {
 				days: ['S', 'L', 'M', 'MM', 'J', 'V', 'S'],
@@ -1470,10 +1485,10 @@ var Fn = {
 
 	multiply: function(a, b) {
 		var commonMultiplier = 1000000;
-	
+
 		a *= commonMultiplier;
 		b *= commonMultiplier;
-	
+
 		return (a * b) / (commonMultiplier * commonMultiplier);
 	},
 

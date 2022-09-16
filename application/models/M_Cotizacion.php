@@ -22,12 +22,12 @@ class M_Cotizacion extends MY_Model
 		SELECT DISTINCT
 			emp.idEmpresa id,
 			emp.razonSocial value
-		FROM 
+		FROM
 		rrhh.dbo.Empresa emp
 		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = emp.idEmpresa
 			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
-		WHERE 
+		WHERE
 			e.flag = 'activo'
 			AND emp.estado = 1
 		ORDER BY emp.razonSocial
@@ -44,7 +44,7 @@ class M_Cotizacion extends MY_Model
 	}
 
 	public function obtenerCuentaCentroCosto($params = [])
-	{	
+	{
 		$filtros = '';
 		!empty($params['estadoCentroCosto']) ? $filtros .= " AND c.estado_centro = 1" : "";
 
@@ -54,13 +54,13 @@ class M_Cotizacion extends MY_Model
 			c.idEmpresa idDependiente,
 			c.idEmpresaCanal id,
 			c.subcanal value
-		FROM 
+		FROM
 		rrhh.dbo.empresa_Canal c
 		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idCanal
 			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
 		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
-		WHERE 
+		WHERE
 			e.flag = 'activo'
 			AND c.subcanal IS NOT NULL
 			{$filtros}
@@ -161,9 +161,9 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.fee
 				, p.idCotizacionEstado
-                , p.idPrioridad
+        , p.idPrioridad
 				, p.motivo
-                , p.comentario
+        , p.comentario
 				, p.total
 				, p.codOrdenCompra
 				, p.motivoAprobacion
@@ -176,7 +176,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = p.idCentroCosto
 			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 				AND od.estado = 1
-			
+
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
@@ -419,12 +419,12 @@ class M_Cotizacion extends MY_Model
 						'idUsuarioReg' => $this->idUsuario
 					];
 				}
-			} 
+			}
 
 			if(!empty($params['archivoExistente'][$k])){
 
 				$id = implode(',', $params['archivoExistente'][$k]);
-	
+
 				$sql = "
 				SELECT
 					da.idCotizacionDetalleArchivo,
@@ -439,13 +439,13 @@ class M_Cotizacion extends MY_Model
 				FROM compras.cotizacionDetalleArchivos da
 				WHERE idCotizacionDetalleArchivo in ($id);
 			";
-	
+
 			$query = $this->db->query($sql)->result_array();
-	
+
 			$archivosExistentes = [];
-	
+
 			foreach ($query as $row) {
-	
+
 				$archivosExistentes [] = [
 						'idCotizacion' => $params['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -456,16 +456,16 @@ class M_Cotizacion extends MY_Model
 						'extension' => $row['extension'],
 						'idUsuarioReg' => $row['idUsuarioReg'],
 						'estado' => true,
-						
-				
+
+
 				];
-	
+
 			}
-	
+
 			if(!empty($archivosExistentes)){
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
 			}
-	
+
 			}
 
 			//Sub Items
@@ -666,7 +666,7 @@ class M_Cotizacion extends MY_Model
 				cds.monto,
 				ts.nombre tipoServicio,
 				um.nombre unidadMedida
-			
+
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -832,6 +832,15 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerArchivoCotizacionDetalleProveedors(array $param=[])
+	{
+		$this->db
+		->select('*')
+		->from('compras.cotizacionDetalleProveedorDetalleArchivos')
+		->where('idCotizacionDetalleProveedorDetalle', $param['idCotizacionDetalleProveedorDetalle']);
+
+		return $this->db->get();
+	}
 	public function obtenerInformacionDetalleCotizacionProveedoresParaVista($params = [])
 	{
 		$filtros = "";
@@ -988,7 +997,7 @@ class M_Cotizacion extends MY_Model
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
 			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
 			'Coordinadora de compras' usuarioReceptor
-		FROM compras.oper o 
+		FROM compras.oper o
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
@@ -1073,7 +1082,7 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	
+
 	public function insertarCotizacionAnexos($data = []){
 		$insert = true;
 
@@ -1093,7 +1102,7 @@ class M_Cotizacion extends MY_Model
 			];
 		}
 
-		
+
 
 		if(!empty($insertArchivos)){
 			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
@@ -1134,8 +1143,8 @@ class M_Cotizacion extends MY_Model
 					'idUsuarioReg' => $row['idUsuarioReg'],
 					'flag_anexo' => $row['flag_anexo'],
 					'estado' => true,
-					
-			
+
+
 			];
 
 		}
@@ -1222,7 +1231,7 @@ class M_Cotizacion extends MY_Model
 			}
 		}
 
-		
+
 
 		if ($queryCotizacionDetalle) {
 			$this->resultado['query'] = $queryCotizacionDetalle;
@@ -1258,7 +1267,7 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 		SELECT
 			o.idOper,
-			
+
 			o.requerimiento,
 			o.concepto,
 			'' cuentas,
@@ -1270,12 +1279,11 @@ class M_Cotizacion extends MY_Model
 			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
 			'Coordinadora de compras' usuarioReceptor,
 			o.observacion
-		FROM compras.oper o 
-		
+		FROM compras.oper o
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		WHERE o.estado = 1
-		{$filtros} 
+		{$filtros}
 		ORDER BY o.idOper DESC
 		";
 
@@ -1293,7 +1301,7 @@ class M_Cotizacion extends MY_Model
 
 	public function obtenerGapEmpresas($params = [])
 	{
-		
+
 		$filtros = '';
 
 		$sql = "
@@ -1319,22 +1327,22 @@ class M_Cotizacion extends MY_Model
 
 
 		return $this->resultado;
-	}	
+	}
 
-	
+
 
 	public function obtenerCosto($params = []) {
 
 		$filtros = "";
-		
-		
+
+
 		$filtros .= !empty($params['id']) ? " (" . $params['id'] . ")" : "";
 
-		
+
 
 		$sql = "
 			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
-			WITH listTarifario AS (	
+			WITH listTarifario AS (
 		select
 		ci. costo as CostoActual,
 		ci. fechaVigencia as Vigencia,
@@ -1346,12 +1354,12 @@ class M_Cotizacion extends MY_Model
 		from compras.itemTarifario ci
 		JOIN compras.cotizacionDetalle cd ON ci. idItem = cd. idItem
 			WHERE 1 = 1
-			
-			 AND cd.idCotizacion IN {$filtros} 
+
+			 AND cd.idCotizacion IN {$filtros}
 	       AND General.dbo.fn_fechaVigente(@fechaHoy,
 	        ci.fechaVigencia,@fechaInicio,@fechaFin) = 1
-	        AND flag_actual = 1 
-	        
+	        AND flag_actual = 1
+
 	     	), lst_tarifario_det AS(
 			SELECT
 			lt.CostoActual,
@@ -1367,7 +1375,7 @@ class M_Cotizacion extends MY_Model
 				, diasVigencia
 			FROM listTarifario lt
 		)
-	     SELECT   
+	     SELECT
 	     ls.*,
 		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
 		FROM
@@ -1391,9 +1399,9 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " (" . $params['idCotizacion'] . ")" : "";
 
 		$sql = "
-		
+
 			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
-			WITH listItem AS (	
+			WITH listItem AS (
 			SELECT
 			cd.idCotizacion AS idCotizacion,
 			cd.idCotizacionDetalle AS idCotizacionDetalle,
@@ -1423,8 +1431,8 @@ class M_Cotizacion extends MY_Model
 			AND flag_actual = 1
 			WHERE
 			1 = 1
-			and cd.idCotizacion in {$filtros} 
-			 
+			and cd.idCotizacion in {$filtros}
+
 			 ), lst_tarifario_det AS(
 			 SELECT
 			lt.idCotizacion ,
@@ -1451,10 +1459,10 @@ class M_Cotizacion extends MY_Model
 				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
 				ELSE 'red' END
 				AS semaforoVigencia
-			
+
 		FROM listItem lt
 	)
-	 SELECT   
+	 SELECT
 	 ls.*,
 	CASE
 	 WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
@@ -1462,7 +1470,7 @@ class M_Cotizacion extends MY_Model
 	END cotizacionInterna
 	FROM
 	lst_tarifario_det ls
-		
+
 		";
 
 		$query = $this->db->query($sql);
@@ -1504,7 +1512,7 @@ class M_Cotizacion extends MY_Model
 				cds.monto,
 				UPPER(ts.nombre) tipoServicio,
 				um.nombre unidadMedida
-			
+
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1513,7 +1521,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cds.idUnidadMedida
 			WHERE
 			1 = 1
-			{$filtros} 
+			{$filtros}
 			";
 
 

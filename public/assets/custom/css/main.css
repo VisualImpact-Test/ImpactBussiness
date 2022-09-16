@@ -381,7 +381,7 @@ small, .small {
   padding-top: 0;
   padding-bottom: 0;
   padding-right: .625rem;
-  height: 3.5rem;
+  min-height: 3.5rem;
 }
 
 .card-header {

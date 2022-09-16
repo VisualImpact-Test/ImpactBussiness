@@ -55,6 +55,15 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerCorreosAdicionales($params = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.proveedorCorreo pc')
+		->where('pc.idProveedor', $params['idProveedor']);
+		return $this->db->get();
+	}
+
 	public function obtenerEstado($params = [])
 	{
 		$sql = "

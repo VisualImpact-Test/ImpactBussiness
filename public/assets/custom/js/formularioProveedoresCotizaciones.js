@@ -49,6 +49,32 @@ var FormularioProveedores = {
 				}
 			});
 		});
+		$(document).on("click",".btnContraoferta", function(){
+			let id = $(this).data('id');
+			++modalId;
+
+			let jsonString = { 'data': JSON.stringify({'id' : id}) };
+			$.when(Fn.ajax({'url': FormularioProveedores.url + 'validarPropuestaExistencia', 'data': jsonString})).then((rpta) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				if(rpta.continuar){
+					let config = { 'url': FormularioProveedores.url + 'viewRegistroContraoferta', 'data': jsonString };
+					$.when(Fn.ajax(config)).then((a) => {
+						fn[1] = 'FormularioProveedores.agregarPropuesta('+id+');';
+						btn[1] = { title: 'Agregar', fn: fn[1] };
+						fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta('+modalId+')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
+						btn[2] = { title: 'Guardar', fn: fn[2] };
+						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+					});
+				}else{
+					Fn.showModal({ id: modalId, show: true, title: 'Error', content: 'Ya se registro una Propuesta para articulo seleccionado.', btn: btn, width: '500px' });
+				}
+			});
+
+
+		});
 		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
 			var control = $(this);
 			var data = control.data();
@@ -143,27 +169,71 @@ var FormularioProveedores = {
 			}
 
 		});
+		$(document).off('change', '.files-upload').on('change', '.files-upload', function(e){
+			var control = $(this);
+			var data = control.data();
+
+			if( control.val() ){
+				var num = control.get(0).files.length;
+
+				list: {
+					let div = control.parents('.divUploaded:first').find('.content_files');
+					var total = div.find('.file_uploaded').length;
+					if( (num + total) > MAX_ARCHIVOS ){
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} archivos como máximo` });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+
+						break list;
+					}
+					//
+					for(var i = 0; i < num; ++i){
+						var size = control.get(0).files[i].size;
+							size = Math.round((size / 1024));
+
+						if( size > KB_MAXIMO_ARCHIVO ){
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+
+							break list;
+						}
+					}
+					div.html(`<input type="hidden" class="form-control" name="cantidadImagenes" value="${num}">`);
+          let file = '';
+
+					for(var i = 0; i < num; ++i){
+            file = control.get(0).files[i];
+            Fn.getBase64(file).then(function(fileBase){
+
+							let fileApp = '<div class="file_uploaded">'+
+								              `<input type="hidden" class="form-control" name="f_base64" value="${fileBase.base64}">`+
+								              `<input type="hidden" class="form-control" name="f_type" value="${fileBase.type}">`+
+								              `<input type="text" class="form-control" name="f_name" value="${fileBase.name}">`+
+								            '</div>';
+              div.append(fileApp);
+            });
+					}
+				}
+				control.val('');
+			}
+
+		});
 		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
 			e.preventDefault();
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		/*
-		$(document).on("click",".btnLogoutProveedor", ()=>{
-
-			let jsonString = {};
-			let url = "FormularioProveedor/logout";
-			let config = { url: url, data: jsonString };
-
-			$.when(Fn.ajax(config)).then(function (b) {
-				++modalId;
-				var btn = [];
-				let fn = 'Fn.showModal({ id: ' + modalId + ',show:false});Fn.goToUrl(`' + b.data.url + '`);';
-				btn[0] = { title: 'Aceptar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-			});
-		});
-		*/
 		$(document).on("click",".btnVolverProveedor", ()=>{
 			Fn.goToUrl(site_url+'FormularioProveedor/cotizacionesLista');
 		});
@@ -204,33 +274,64 @@ var FormularioProveedores = {
 		$('#valorTotal'+i).val(tot_);
 		$('#lb_valorTotal'+i).html('S/. '+tot_);
 	},
-	calcularFecha: function(i, val){
-		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 1}, function(data){
-			data = jQuery.parseJSON(data);
-			$('#fechaValidez'+i).val(data.fecha);
-		});
+	calcularDiasEntrega: function(i, t, fechaHoy){
+		val = new Date(t.value);
+		fechaHoy = new Date(fechaHoy);
+		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
+		$('#de_input'+i).val(dias);
 	},
-	calcularFechaEntrega: function(i, val){
-		$.post(site_url+'FormularioProveedor/obtenerFecha',{ fecha: val, format: 2}, function(data){
-			data = jQuery.parseJSON(data);
-			$('#fechaEntrega'+i).attr('readonly', true);
-			$('#fechaEntrega'+i).val(data.fecha);
-		});
+	calcularDiasValidez: function(i, t, fechaHoy){
+		val = new Date(t.value);
+		fechaHoy = new Date(fechaHoy);
+		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
+		$('#dv_input'+i).val(dias);
 	},
-	mostrarComentario: function(i){
-		++modalId;
-		var btn = [];
-		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		let fn1 = "FormularioProveedores.guardarComentario("+i+","+modalId+"); "
-		console.log(fn+fn1);
-		btn[0] = { title: 'Cancelar', fn: fn };
-		btn[1] = { title: 'Aceptar', fn: fn1+fn  };
+	calcularFecha: function(i, val, fechaHoy){
+		fechaHoy = new Date(fechaHoy);
+		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
+		fecha = fechaHoy.toISOString().slice(0, 10);
+		$('#fechaValidez'+i).val(fecha);
 
-		var content = '<h3 class="ui header">Indicar el comentario</h3><div class="ui fluid input"><input type="text" value="'+($('#comentario'+i).val())+'" placeholder="Comentario" id="coment'+modalId+'"></div>';
-		Fn.showModal({ id: modalId, show: true, title: 'Comentario', content: content, btn: btn });
 	},
-	guardarComentario: function(i, modal){
-		$('#comentario'+i).val($('#coment'+modalId).val());
+	calcularFechaEntrega: function(i, val, fechaHoy){
+		fechaHoy = new Date(fechaHoy);
+		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
+		fecha = fechaHoy.toISOString().slice(0, 10);
+		$('#fechaEntrega'+i).val(fecha);
+	},
+	registrarPropuesta: function(){
+		$.when(Fn.validateForm({ id: 'formRegistroPropuesta' })).then(function (a) {
+			if (a === true) {
+				let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroPropuesta')) };
+				let url = FormularioProveedores.url + "registrarPropuesta";
+				let config = { url: url, data: jsonString };
+
+				$.when(Fn.ajax(config)).then(function (b) {
+					++modalId;
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+					if (b.result == 1) {
+						fn = 'Fn.closeModals(' + modalId + ');';
+					}
+
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+				});
+			}
+		});
+	},
+	agregarPropuesta: function(id){
+		let base = $('#divBase'+id).html();
+		$('#divExtra'+id).append(base);
+	},
+	calcularTotalPropuesta: function(t){
+		let cantidad = $(t).parents().find('.cantidad');
+		let costo = $(t).parents().find('.costo');
+		let total = $(t).parents().find('.total');
+		for (var i = 0; i < cantidad.length; i++) {
+			total[i].value = parseFloat(cantidad[i].value || 0) * parseFloat(costo[i].value || 0);
+		}
 	}
 
 }

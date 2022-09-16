@@ -88,7 +88,7 @@
                     </thead>
                     <tbody>
                         <tr class="d-none trParent">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura"  name="regionCobertura" data-live-search="true" patron="requerido" disabled>
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
@@ -114,7 +114,7 @@
                             </td>
                         </tr>
                         <tr class="trChildren">
-                            <td class="w-25">                    
+                            <td class="w-25">
                                 <select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido">
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
@@ -141,7 +141,7 @@
                         </tr>
                     </tbody>
                 </table>
-               
+
             </fieldset>
         </div>
     </div>
@@ -154,13 +154,17 @@
                                 <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto" patron="requerido">
                             </div>
                             <div class="control-group child-divcenter row" style="width:85%">
-                                <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
-                                <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email">
+                              <label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
+                              <input class="form-control col-md-8" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
                             </div>
-                            <div class="control-group child-divcenter row" style="width:85%">
-                                <label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
-                                <input class="form-control col-md-8" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
+                            <div class="input-group control-group child-divcenter row" style="width:85%">
+                              <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
+                              <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email">
+                              <div class="input-group-append" id="button-addon4">
+                                <button class="btn btn-outline-success btnAddCorreo" type="button"><i class="fa fa-plus"></i></button>
+                              </div>
                             </div>
+                            <div id="extraCorreo"></div>
                         </fieldset>
                     </div>
                 </div>
