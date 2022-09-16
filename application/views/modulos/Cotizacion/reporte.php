@@ -22,54 +22,58 @@
                 // $badge = $row['cotizacionEstado'] == 'Confirmado' ? 'badge-primary' : 'badge-success';
                 // $badge = $row['cotizacionEstado'] == 'Finalizado' ? 'badge-success' : 'badge-success';
                 $toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
+
             ?>
                 <tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
-                      <a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
-					        <i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
-				        </a>
-                        <a href="../Cotizacion/viewFormularioDuplicar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
-                          <i class="fa-lg copy icon"></i> <span class="txt_filtro"></span>
-				        </a>
-
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
-                        <? if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS) { ?>
-                            <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="fa fa-lg fa-file-import" title="Generar PDF cotizacion"></i></a>
-                        <?}?>
 
-                        <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
-                        <? } ?>
+                        <a href="../Cotizacion/viewFormularioDuplicar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
+                            <i class="fa fa-lg  fa-copy"></i> <span class="txt_filtro"></span>
+                        </a>
 
-                        <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO) { ?>
-                        <? } ?>
+                        <div class="<?= (!$row['cotizacionValidaCliente']) ? 'disabled' : '' ?>">
 
-                        <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OPER_GENERADO) { ?>
-                            <!-- <a href="/ImpactBussiness/formato_oper.pdf" download class="btn btn-outline-secondary border-0 btnDescargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
-                            <!-- <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOper"><i class="fa fa-lg fa-file-pdf" title="Descargar OPER"></i></a> -->
-                        <? } ?>
+                            <a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
+                                <i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
+                            </a>
+                            <? if ($row['idCotizacionEstado'] >= ESTADO_ENVIADO_CLIENTE) { ?>
+                                <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="fa fa-lg fa-file-import" title="Generar PDF cotizacion"></i></a>
+                            <? } ?>
 
-                        <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
+                            <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) { ?>
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
+                            <? } ?>
 
-                            <a  href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
-                        <? } ?>
-                        <? if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
-                            <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
-                        <? } ?>
+                            <? if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) { ?>
+
+                                <a href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
+                            <? } ?>
+                            <? if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) { ?>
+                                <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
+                            <? } ?>
+                        </div>
+
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cotizacion'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuenta'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'], 3); ?></td>
-                    <!-- <td class="td-left"><?= verificarEmpty($row['cotizacionEstado'], 3); ?></td> -->
                     <td class="text-center style-icons">
-                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>"><?= $row['cotizacionEstado']; ?></span>
+                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>">
+                            <?= $row['cotizacionEstado']; ?>
+                        </span>
+                        <? if (!$row['cotizacionValidaCliente']) { ?>
+                            <br>
+                            <div class="ui pointing red basic label">
+                                Cotizacion no válida
+                            </div>
+                        <? } ?>
+
                     </td>
-                    <!-- <td class="text-center style-icons">
-                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>"><?= $mensajeEstado; ?></span>
-                    </td> -->
+
                 </tr>
             <? $ix++;
             } ?>

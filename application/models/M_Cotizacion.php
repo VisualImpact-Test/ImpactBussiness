@@ -127,6 +127,20 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 
 		$sql = "
+			DECLARE @hoy DATE = GETDATE();
+			WITH lst_historico_estado AS (
+				SELECT 
+				idCotizacionEstadoHistorico,
+				idCotizacionEstado,
+				idCotizacionInternaEstado,
+				idCotizacion,
+				fechaReg,
+				idUsuarioReg,
+				estado,
+				ROW_NUMBER() OVER (PARTITION BY idCotizacion,idCotizacionEstado  ORDER BY idCotizacionEstado) fila
+				FROM
+				compras.cotizacionEstadoHistorico
+			)
 			SELECT DISTINCT
 				p.idCotizacion
 				, p.nombre AS cotizacion
@@ -155,6 +169,7 @@ class M_Cotizacion extends MY_Model
 				, p.motivoAprobacion
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
+				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -1262,9 +1277,9 @@ class M_Cotizacion extends MY_Model
 			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
 			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
-			'Coordinadora de compras' usuarioReceptor
+			'Coordinadora de compras' usuarioReceptor,
+			o.observacion
 		FROM compras.oper o
-
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		WHERE o.estado = 1

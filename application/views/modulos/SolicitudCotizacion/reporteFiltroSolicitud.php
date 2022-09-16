@@ -8,7 +8,7 @@
                 <th>N° DE RQ</th>
                 <th>USUARIO REGISTRO</th>
                 <th>FECHA REGISTRO</th>
-                <!-- <th class="td-center">ESTADO</th> -->
+                <th class="td-center">OBSERVACION</th>
             </tr>
         </thead>
         <tbody>
@@ -21,6 +21,7 @@
                     <td class="text-left"> <?= !empty($row['requerimiento']) ? $row['requerimiento'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['usuarioRegistro']) ? $row['usuarioRegistro'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['fechaReg']) ? $row['fechaReg'] : '-' ?></td>
+                    <td class="text-left"> <?= !empty($row['observacion']) ? $row['observacion'] : '-' ?></td>
                 </tr>
             <? endforeach; ?>
         </tbody>
