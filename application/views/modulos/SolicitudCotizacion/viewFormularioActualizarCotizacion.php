@@ -107,9 +107,11 @@
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
                     <div class="ui right floated header sticky stickyDetalleCotizacion">
                         <div class="ui icon menu">
-                          <a class="item btnCotizacionesProveedores" data-id="<?= $row['idCotizacionDetalle'] ?>">
+                          <?php if (!empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']])): ?>
+                            <a class="item btnCotizacionesProveedores" data-id="<?= $row['idCotizacionDetalle'] ?>">
                               <i class="users icon"></i>
-                          </a>
+                            </a>
+                          <?php endif; ?>
                           <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
                               <i class="square outline icon"></i>
                               <input type="checkbox" name="checkItem" class="d-none">

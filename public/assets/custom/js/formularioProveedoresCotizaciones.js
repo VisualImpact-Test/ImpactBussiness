@@ -2,7 +2,7 @@ var FormularioProveedores = {
 	frm: 'frmCotizacionProveedorCabecera',
 	contentDetalle: 'content-tb-cotizaciones-proveedor',
 	url: 'FormularioProveedor/',
-
+	divPropuesta: '',
 	load: function () {
 
 		$(document).ready(function(){
@@ -63,13 +63,15 @@ var FormularioProveedores = {
 					let config = { 'url': FormularioProveedores.url + 'viewRegistroContraoferta', 'data': jsonString };
 					$.when(Fn.ajax(config)).then((a) => {
 						fn[1] = 'FormularioProveedores.agregarPropuesta('+id+');';
-						btn[1] = { title: 'Agregar', fn: fn[1] };
+						btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
 						fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta('+modalId+')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
 						btn[2] = { title: 'Guardar', fn: fn[2] };
 						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+						FormularioProveedores.divPropuesta = $('#divBase'+id).html();
 					});
 				}else{
-					Fn.showModal({ id: modalId, show: true, title: 'Error', content: 'Ya se registro una Propuesta para articulo seleccionado.', btn: btn, width: '500px' });
+					let mensaje = Fn.message({type: 2, message: 'Ya se registro una Propuesta para articulo seleccionado.'});
+					Fn.showModal({ id: modalId, show: true, title: 'Error', content: mensaje, btn: btn, width: '500px' });
 				}
 			});
 
@@ -322,8 +324,7 @@ var FormularioProveedores = {
 		});
 	},
 	agregarPropuesta: function(id){
-		let base = $('#divBase'+id).html();
-		$('#divExtra'+id).append(base);
+		$('#divExtra'+id).append(FormularioProveedores.divPropuesta);
 	},
 	calcularTotalPropuesta: function(t){
 		let cantidad = $(t).parents().find('.cantidad');
