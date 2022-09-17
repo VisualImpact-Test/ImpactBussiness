@@ -571,6 +571,7 @@ class Cotizacion extends MY_Controller
             foreach($usuariosCompras as $usuario){
                 $toCompras[] = $usuario['email'];
             }
+
             $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'],'to' => $toCompras]);
             //Verificamos si es necesario enviar a compras para cotizar con el proveedor
             
@@ -722,6 +723,11 @@ class Cotizacion extends MY_Controller
         $this->email->message($correo);
 
         $estadoEmail = $this->email->send();
+
+        if(!$estadoEmail){
+
+            $mensaje = $this->email->print_debugger();
+        }
 
         return $estadoEmail;
     }
@@ -1248,8 +1254,22 @@ class Cotizacion extends MY_Controller
 
             $html = $this->load->view("modulos/Cotizacion/correoGeneracionOper", $dataParaVista, true);
             $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "SolicitudCotizacion/viewUpdateOper/{$oper['id']}"], true);
+
+            $usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_OPERACIONES])['query']->result_array();
+            $toOperaciones = [];
+            foreach($usuariosOperaciones as $usuario){
+                $toOperaciones[] = $usuario['email'];
+            }
+
+            $usuariosCompras= $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+            $toCompras = [];
+            foreach($usuariosCompras as $usuario){
+                $toCompras[] = $usuario['email'];
+            }
+
             $config = [
-                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'to' => $toOperaciones,
+                'cc' =>  $toCompras,
                 'asunto' => 'Generación de Oper',
                 'contenido' => $correo,
             ];

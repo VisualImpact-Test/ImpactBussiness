@@ -48,7 +48,7 @@
                         </div>
                       </div>
                       <a target="_blank" href="<?= RUTA_WASABI.'cotizacion/'.$img['nombre_archivo']?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                      <img height="100" src="<?= $img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI.'cotizacion/'.$img['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+                      <img height="100" src="<?= $img['idTipoArchivo'] == TIPO_OTROS ? (RUTA_WIREFRAME . "file.png") :  ($img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI.'cotizacion/'.$img['nombre_archivo'])) ?>" class="img-responsive img-thumbnail">
                     </div>
                   <?php endforeach; ?>
                 </div>
