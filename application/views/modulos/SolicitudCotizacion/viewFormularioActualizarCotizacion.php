@@ -114,7 +114,7 @@
                           <?php endif; ?>
                           <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
                               <i class="square outline icon"></i>
-                              <input type="checkbox" name="checkItem" class="d-none">
+                              <input type="checkbox" name="checkItem[<?=$row['idCotizacionDetalle']?>]" class="checkItem d-none">
                           </a>
                           <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
                               <i class="hand holding usd icon"></i>

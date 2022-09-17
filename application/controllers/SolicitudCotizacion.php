@@ -754,7 +754,7 @@ class SolicitudCotizacion extends MY_Controller
 
         $config['data']['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
         //Obteniendo Solo los Items Nuevos para verificacion de los proveedores
-        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+        $config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false,'noTipoItem'=>COD_DISTRIBUCION['id']])['query']->result_array();
         $autorizaciones = $this->model_autorizacion->getAutorizaciones(['idCotizacion'=> $idCotizacion])['query']->result_array();
 
         foreach($autorizaciones as $autorizacion){
@@ -895,8 +895,16 @@ class SolicitudCotizacion extends MY_Controller
 
             $html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
             $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/viewOrdenCompra/{$rs_oc['id']}"], true);
+
+            $usuariosCompras= $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+            $toCompras = [];
+            foreach($usuariosCompras as $usuario){
+                $toCompras[] = $usuario['email'];
+            }
+
+
             $config = [
-                'to' => 'aaron.ccenta@visualimpact.com.pe',
+                'to' => $toCompras,
                 'asunto' => 'Generación de OC',
                 'contenido' => $correo,
             ];

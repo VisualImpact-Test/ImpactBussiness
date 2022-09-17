@@ -211,12 +211,12 @@
     </div>
     <div class="element-container">
         <a href="javascript:;">
-            <!-- <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroOrdenCompra", fn: "<?= $controller ?>.registrarOrdenCompra(<?= $siguienteEstado ?>)", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });'>
+            <span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroOrdenCompra", fn: "<?= $controller ?>.registrarOrdenCompra(<?= $siguienteEstado ?>)", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });'>
                 <i class="send icon"></i>
-            </span> -->
-            <span class="float-element tooltip-left btn-preview-orden-compra" data-message="Generar OC">
-                <i class="search dollar icon"></i>
             </span>
+            <!-- <span class="float-element tooltip-left btn-preview-orden-compra" data-message="Generar OC">
+                <i class="search dollar icon"></i>
+            </span> -->
             <!-- <span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
                 <i class="plus icon"></i>
             </span> -->
