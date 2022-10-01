@@ -40,7 +40,7 @@
 
     table.tb-detalle th,
     table.tb-detalle td {
-        border: 1px solid #484848;
+        /* border: 1px solid #484848; */
         padding: 5px;
         font-size: 12px !important;
     }
@@ -54,5 +54,10 @@
     body {
         font-size: 12px;
     }
+
+    .d-none{
+        display: none;
+    }
+    
     
 </style>

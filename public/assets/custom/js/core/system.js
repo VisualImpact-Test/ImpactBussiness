@@ -83,6 +83,8 @@ $.ajaxSetup({
 const KB_MAXIMO_ARCHIVO = 7168;
 const MAX_ARCHIVOS = 10;
 const IGV_SYSTEM = 0.18;
+const GAP_MONTO_MINIMO = 1500;
+const GAP_MINIMO = 15;
 const LIMITE_COMPRAS = 1000;
 
 const RUTA_WIREFRAME = '../public/assets/images/wireframe/';

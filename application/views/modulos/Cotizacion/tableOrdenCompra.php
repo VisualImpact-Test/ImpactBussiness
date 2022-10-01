@@ -8,6 +8,7 @@
                 <th>N° DE RQ</th>
                 <th>USUARIO REGISTRO</th>
                 <th>FECHA REGISTRO</th>
+                <th>COTIZACIONES</th>
                 <!-- <th class="td-center">ESTADO</th> -->
             </tr>
         </thead>
@@ -22,6 +23,8 @@
                     <td class="text-left"> <?= !empty($row['requerimiento']) ? $row['requerimiento'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['usuario']) ? $row['usuario'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['fechaReg']) ? $row['fechaReg'] : '-' ?></td>
+                    <td class="text-left"> <?= !empty($cotizaciones[$row['idOrdenCompra']]) ? implode(',',$cotizaciones[$row['idOrdenCompra']]) : '-' ?></td>
+
                 </tr>
             <? endforeach; ?>
         </tbody>

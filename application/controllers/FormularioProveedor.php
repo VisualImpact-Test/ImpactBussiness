@@ -488,6 +488,28 @@ class FormularioProveedor extends MY_Controller
 	}
 	public function cotizaciones($idCotizacion = '0')
 	{
+		$get = [];
+		$get = $this->input->get();
+
+		foreach($get as $k => $g){
+			$get[$k] = base64_decode($g);
+		}
+
+		$hoy = new DateTime(date('Y-m-d'));
+		$fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
+		$diasDiferencia = $fechaAcceso->diff($hoy)->days;
+
+		if($diasDiferencia > DIAS_MAX_ACCESO){
+			echo 'Ha excedido los dias de acceso disponibles';
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+
+		if(!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])){
+			$proveedor = $this->model->loginProveedor(['ruc'=>$get['doc'],'email' => $get['email'], 'idProveedor'=>$get['cod']])->row_array();
+			$this->session->set_userdata('proveedor',$proveedor);
+		}
+
 		$proveedor = $this->session->userdata('proveedor');
 		if(empty($proveedor)){
 			redirect('FormularioProveedor','refresh');
@@ -758,7 +780,30 @@ class FormularioProveedor extends MY_Controller
 
 	public function viewOrdenCompra($idOrdenCompra = '0')
 	{
+		$get = [];
+		$get = $this->input->get();
+
+		foreach($get as $k => $g){
+			$get[$k] = base64_decode($g);
+		}
+
+		$hoy = new DateTime(date('Y-m-d'));
+		$fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
+		$diasDiferencia = $fechaAcceso->diff($hoy)->days;
+
+		if($diasDiferencia > DIAS_MAX_ACCESO){
+			echo 'Ha excedido los dias de acceso disponibles';
+			redirect('FormularioProveedor','refresh');
+			exit();
+		}
+
+		if(!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])){
+			$proveedor = $this->model->loginProveedor(['ruc'=>$get['doc'],'email' => $get['email'], 'idProveedor'=>$get['cod']])->row_array();
+			$this->session->set_userdata('proveedor',$proveedor);
+		}
+
 		$proveedor = $this->session->userdata('proveedor');
+
 		if(empty($proveedor)){
 			redirect('FormularioProveedor','refresh');
 			exit();

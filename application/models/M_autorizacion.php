@@ -19,8 +19,8 @@ class M_Autorizacion extends MY_Model
     public function getAutorizaciones($params = []){
 
 		$filtros = "";
-		$filtros = !empty($params['id']) ? " AND a.idAutorizacion = {$params['id']}" : '';
-		$filtros = !empty($params['idCotizacion']) ? " AND a.idCotizacion IN({$params['idCotizacion']})" : '';
+		$filtros .= !empty($params['id']) ? " AND a.idAutorizacion = {$params['id']}" : '';
+		$filtros .= !empty($params['idCotizacion']) ? " AND a.idCotizacion IN({$params['idCotizacion']})" : '';
         $sql = "
 			SELECT
 				a.idAutorizacion,
@@ -39,6 +39,7 @@ class M_Autorizacion extends MY_Model
 				p.razonSocial proveedor,
 				cd.nombre item,
 				cd.costo,
+				cd.costoAnterior,
 				a.nuevoValor,
 				a.nuevoGap
 			FROM compras.autorizacion a 
@@ -102,7 +103,7 @@ class M_Autorizacion extends MY_Model
 				cda.extension
 			FROM
 			compras.autorizacion a
-			LEFT JOIN compras.cotizacionDetalleArchivos cda ON a.idAutorizacion = cda.idAutorizacion
+			JOIN compras.cotizacionDetalleArchivos cda ON a.idAutorizacion = cda.idAutorizacion
 			WHERE
 			1 = 1
 			{$filtros}
