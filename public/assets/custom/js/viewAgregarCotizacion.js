@@ -1,3 +1,31 @@
+var Autorizacion = {
+
+	frm: 'frm-autorizacion',
+	contentDetalle: 'idContentAutorizaciones',
+    btnFiltrar : '#btn-filtrarAutorizacion',
+	url: 'Finanzas/Autorizacion/',
+
+	actualizarAutorizacion: function(){
+		let formValues = Fn.formSerializeObject('formActualizarAutorizacion');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Autorizacion.url + "actualizarAutorizacion";
+		let config = { url: url, data: jsonString };
+	
+			$.when(Fn.ajax(config)).then(function (b) {
+				++modalId;
+				var btn = [];
+				let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+	
+				if (b.result == 1) {
+					fn = 'Fn.closeModals(' + modalId + '); location.reload(); $("#btn-filtrarAutorizacion").click();';
+				}
+	
+				btn[0] = { title: 'Aceptar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+			});
+	}
+}
+
 var SolicitudCotizacion = {
 	url: 'SolicitudCotizacion/',
 	load: function () {
@@ -22,9 +50,14 @@ var SolicitudCotizacion = {
 				let btn = [];
 				let fn = [];
 
+				Fn.loadSemanticFunctions();
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Aceptar', fn: fn[0] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
+				
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				btn[1] = { title: 'Aceptar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
@@ -75,9 +108,8 @@ var SolicitudCotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	registrarOrdenCompra: function(tipoRegistro){
-		let formValues = Fn.formSerializeObject('formRegistroOrdenCompra');
-			formValues.tipoRegistro = tipoRegistro;
+	registrarOrdenCompra: function(){
+		let formValues = Fn.formSerializeObject('formRegistroOperValidado');
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "registrarOrdenCompra";
 		let config = { url: url, data: jsonString };
@@ -102,6 +134,7 @@ var Cotizacion = {
 	contentDetalle: 'idContentCotizacion',
 	url: 'Cotizacion/',
 	itemServicio: [],
+	tachadoDistribucion: [], //items
 	modalIdForm: 0,
 	itemsLogistica: [],
 	htmlG: '',
@@ -126,6 +159,8 @@ var Cotizacion = {
             $('.simpleDropdown').dropdown();
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
             Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
+            Cotizacion.tachadoDistribucion =   $.parseJSON($('#tachadoDistribucion').val());
+
             Cotizacion.htmlG = $('.default-item').html();
 			   
 			if($('#gapEmpresas').val()){
@@ -152,13 +187,20 @@ var Cotizacion = {
             Cotizacion.actualizarPopupsTitle();
             Cotizacion.actualizarAutocomplete();
 
-			$.each($('.btnPopupCotizacionesProveedor'), function(i,v){    var custom_popup = $(v).parents('.nuevo').find('custom.popup');
+			$.each($('.btnPopupCotizacionesProveedor'), function(i,v){    
 				var id = $(v).data('id');
 				$(v).popup({
 					popup : $(`.custom-popup-${id}`),
 					on    : 'click'
 				})
 			});
+			// $.each($('.btnPopupPropuestaItem'), function(i,v){    
+			// 	var id = $(v).data('id');
+			// 	$(v).popup({
+			// 		popup : $(`.popup-propuesta-${id}`),
+			// 		on    : 'click'
+			// 	})
+			// });
         });
 
 		$(document).on('click', '#btn-filtrarCotizacion', function () {
@@ -435,6 +477,36 @@ var Cotizacion = {
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
 		});
 
+		$(document).on('change', '.flagRedondearForm', function (e) {
+			e.preventDefault();
+
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let thisPrecioForm = thisControlParents.find('.precioForm');
+			let thisCostoForm = thisControlParents.find('.costoForm');
+			let thisCantidadForm = thisControlParents.find('.cantidadForm');
+
+			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm');
+			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm');
+			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
+
+			let costo = Number(thisCostoForm.val());
+			let enteroSuperior = Math.ceil(costo);
+			let flagRedondear = flagRedondearForm.val();
+
+			if(costoRedondeadoForm.val() == 0 && costoNoRedondeadoForm.val() == 0){
+				costoRedondeadoForm.val(enteroSuperior);
+				costoNoRedondeadoForm.val(costo);
+			}
+
+			let costoRedondeado = Number(costoRedondeadoForm.val());
+			let costoNoRedondeado = Number(costoNoRedondeadoForm.val());
+
+			thisCantidadForm.keyup();
+
+		});
+	
+
 		$(document).on('keyup', '.cantidadForm', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
@@ -444,26 +516,38 @@ var Cotizacion = {
 			let costoForm = thisControlParents.find('.costoForm');
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
+			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
 
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
 
-			gapForm.keyup();
 			let cantidad = Number(thisControl.val());
 			let costo = Number(costoForm.val());
-			let precio = Number(precioForm.val());
+			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
+			if(subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0){
+				gapForm.val(GAP_MINIMO);
+			}
+
+			gapForm.keyup();
+
+			let precio = Number(precioForm.val());
 			let subTotal = Fn.multiply(cantidad, precio);
 
 			let costoDistribucion = 0;
 			let costoTotalDistribucionPDV = 0;
+			let costoTachadoDistribucion = 0;
 			if(tipoItem.val() == COD_DISTRIBUCION.id){
 				costoDistribucion = Number($("#costoDistribucion").val());
 				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val()) ;
-
 				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion,cantPdv);
 
-				subTotal = Number(subTotal + costoTotalDistribucionPDV);
+				let trTachadoDistribucion = thisControlParents.find('.chkTachadoDistribucion:checked').closest('tr');
+				if(trTachadoDistribucion.length !== 0){
+					costoTachadoDistribucion = trTachadoDistribucion.data('subtotal');
+				}
+
+				subTotal = Number(subTotal + costoTotalDistribucionPDV + costoTachadoDistribucion);
 			}
 
 			subTotalForm.val(subTotal);
@@ -477,6 +561,7 @@ var Cotizacion = {
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let costoForm = thisControlParents.find('.costoForm');
+			let costoFormLabel = thisControlParents.find('.costoFormLabel');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
 
@@ -486,6 +571,7 @@ var Cotizacion = {
 			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio,costoTipoServicio);
 
 			costoForm.val(subTotalTipoServicio);
+			costoFormLabel.val(moneyFormatter.format(subTotalTipoServicio));
 
 			cantidadForm.keyup();
 
@@ -537,8 +623,7 @@ var Cotizacion = {
 				});
 				return false;
 			}
-			let gapActual = (((precio - costo) * 100) / 15).toFixed(2);
-
+			let gapActual = (((precio - costo) * 100) / costo).toFixed(2);
 			if(costo <= costoAnterior){
 				console.log('No hay problema');
 				gapForm.val(gapActual);
@@ -582,16 +667,81 @@ var Cotizacion = {
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
+			
+			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm');
+			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm');
+			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
 
+			let precioForm = thisControlParents.find('.precioForm');
+			let precioFormLabel = thisControlParents.find('.precioFormLabel');
+
+			let costo = Number(costoForm.val());
+			let cantidad = Number(cantidadForm.val());
+			let subTotalSinGap = Fn.multiply(cantidad, costo);
+			
+			let enteroSuperior = Math.ceil(costo);
+			let flagRedondear = flagRedondearForm.val();
+
+			if(flagRedondear == 1) costo = enteroSuperior;
+
+			let gap = Number(thisControl.val());
+			let precio = (costo + (costo * (gap/100)));
+			let subTotal = Fn.multiply(cantidad, precio);
+			
+
+
+			precioForm.val(precio);
+			precioFormLabel.val(moneyFormatter.format(precio));
+
+			subTotalForm.val(subTotal);
+			subTotalFormLabel.val(moneyFormatter.format(subTotal));
+			Cotizacion.actualizarTotal();
+		});
+		$(document).on('focusout', '.gapFormOperaciones', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			let tipoItem = thisControlParents.find('#tipoItemForm');
+			let cantPdvDist = thisControlParents.find('.cantidadPdvSubItemDistribucion');
+			let costoForm = thisControlParents.find('.costoForm');
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+			let subTotalForm = thisControlParents.find('.subtotalForm');
+			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
+			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
+			
 			let precioForm = thisControlParents.find('.precioForm');
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
 
 			let gap = Number(thisControl.val());
 			let costo = Number(costoForm.val());
-
 			let cantidad = Number(cantidadForm.val());
+	
+			let subTotalSinGap = Fn.multiply(cantidad, costo);
+			//Si el monto es mayor a 1500, el gap no puede ser menor al 15%
+			if(subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0){
+				thisControl.val(GAP_MINIMO);
+				$("#nagGapValidacion").nag({
+					persist:true
+				});
+				return false;
+			}
 			let precio = (costo + (costo * (gap/100)));
 			let subTotal = Fn.multiply(cantidad, precio);
+
+			let costoDistribucion = 0;
+			let costoTotalDistribucionPDV = 0;
+			let costoTachadoDistribucion = 0;
+			if(tipoItem.val() == COD_DISTRIBUCION.id){
+				costoDistribucion = Number($("#costoDistribucion").val());
+				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val()) ;
+				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion,cantPdv);
+				
+				let trTachadoDistribucion = thisControlParents.find('.chkTachadoDistribucion:checked').closest('tr');
+				if(trTachadoDistribucion.length !== 0){
+					costoTachadoDistribucion = trTachadoDistribucion.data('subtotal');
+				}
+				subTotal = Number(subTotal + costoTotalDistribucionPDV + costoTachadoDistribucion);
+			}
 
 			precioForm.val(precio);
 			precioFormLabel.val(moneyFormatter.format(precio));
@@ -1000,7 +1150,24 @@ var Cotizacion = {
 			let precio = $(this).find('.txtCostoProveedor').val();
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
+			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
+			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
+			
+			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');
 
+			$.each(bodySubItem,function(k,v){
+				let idCotizacionDetalleSub = $(v).find('.idCotizacionDetalleSubForm');
+				let costoSubItem = $(v).find('.costoSubItem');
+				let subtotalSubItem = $(v).find('.subtotalSubItem');
+
+				let detalleSubItem = proveedorSubCotizacion.find((detalle) => {
+					return (detalle.idCotizacionDetalleSub == idCotizacionDetalleSub.val())
+				})
+
+				costoSubItem.val(detalleSubItem.costo);
+				subtotalSubItem.val(detalleSubItem.subTotal);
+
+			});
 			costoForm.val(precio);
 			costoFormLabel.val(moneyFormatter.format(precio));
 
@@ -1107,14 +1274,54 @@ var Cotizacion = {
 		});
 		$(document).on('change', '.itemLogisticaForm', function () {
 			let control = $(this);
+			let controlParent = control.parents('.nuevo');
 			let parent = control.closest('.div-features');
 			let peso = control.find('option:selected').data('pesologistica');
+			let cantidadForm = controlParent.find('.cantidadForm');
 
 			let pesoCantidadForm = parent.find('.cantidadSubItemDistribucion');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
 			
 			pesoCantidadForm.val(peso);
 			cantidadFormSubItem.keyup();
+		
+			let idItem = control.find('option:selected').val();
+
+			//Llenamos la tabla de tachado
+			htmlTachado = '';
+			Cotizacion.tachadoDistribucion.filter((tachado) => {
+				if(tachado.idItem == idItem){
+					let costoLabel = moneyFormatter.format(Number(tachado.costoDia));
+					let subTotalTachado = (Number(tachado.dias) * Number(tachado.personas)) * Number(tachado.costoDia) ;
+					let subTotalTachadoLabel = moneyFormatter.format(subTotalTachado);
+					htmlTachado += `<tr data-id='${tachado.idDistribucionTachado}' data-subtotal='${subTotalTachado}' >`;
+
+						htmlTachado += `
+						<td> 
+							<div class="ui radio checkbox dvTachadoDistribucion">
+								<input value='${tachado.idDistribucionTachado}' class='chkTachadoDistribucion' type="radio" name="chkTachado">
+								<label></label>
+							</div>
+						</td>`;
+						htmlTachado += `<td> ${tachado.limiteInferior} - ${tachado.limiteSuperior}</td>`;
+						htmlTachado += `<td> ${tachado.dias}</td>`;
+						htmlTachado += `<td> ${tachado.personas}</td>`;
+						htmlTachado += `<td> ${costoLabel}</td>`;
+						htmlTachado += `<td> ${subTotalTachadoLabel}</td>`;
+					htmlTachado += `</tr>`;
+				}
+			});
+
+			parent.find('.tbDistribucionTachado').find('tbody').html(htmlTachado);
+			if(htmlTachado != ''){
+				parent.find('.tbDistribucionTachado').removeClass('d-none');
+			}else{
+				parent.find('.tbDistribucionTachado').addClass('d-none');
+			}
+
+			Cotizacion.actualizarOnAddRowCampos(controlParent);
+			cantidadForm.keyup();
+			
 		});
 
 		$(document).on('keyup', '.items', function () {
@@ -1130,7 +1337,6 @@ var Cotizacion = {
 			let control = $(this);
 			let cod = control.val();
 			let gap = 0;
-			console.log(cod);
 			$.each(Cotizacion.gapEmpresas,(k,v) => {
 				if(v.idEmpresa == cod){
 					gap = v.gap;
@@ -1145,10 +1351,126 @@ var Cotizacion = {
 			}
 
 		});
+		$(document).on('click', '.btnPopupPropuestaItem', function () {
+
+			++modalId;
+			let data = {
+				'idCotizacionDetalle': $(this).data('id')
+			};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': SolicitudCotizacion.url + 'frmPropuestasItem', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+			});
+
+		});
+		$(document).on('click', '.btnAutorizarCosto', function () {
+
+			++modalId;
+			let id = $(this).parents('.nuevo').find('.idAutorizacion').val();
+			let data = {
+				id
+			};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Autorizacion.url + 'frmActualizarAutorizacion', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				if(a.flagUpdate){
+                    fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionProveedores", fn: "Autorizacion.actualizarAutorizacion()", content: "¿Esta seguro de actualizar esta autorización?" });';
+                    btn[1] = { title: 'Actualizar', fn: fn[1] };
+                }
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+
+		});
+		$(document).on('click', '.rowPropuesta', function () {
+
+			++modalId;
+			let data = {
+				'idPropuestaItem': $(this).data('id'),
+				'idCotizacionDetalle': $(this).data('idcotizaciondetalle'),
+				'dataPropuesta': JSON.parse($(this).find('.jsonPropuesta').val()),
+			};
+
+			
+			Fn.showConfirm({ fn: `Cotizacion.actualizarPropuestaItem(${JSON.stringify(data)})`, content: `¿Desea confirmar esta propuesta para reemplazar el item elegido?` });
+
+		});
+		$(document).on('click', '.dvTachadoDistribucion', function () {
+
+			let control = $(this);
+			let parent = control.closest('tr');
+			let controlParents = control.parents('.nuevo');
+			let cantidadForm = controlParents.find('.cantidadForm');
+			
+			cantidadForm.keyup();
+		});
 
 	
 
 		
+	},
+
+	actualizarPropuestaItem: function(data){
+		let parent = $(`.idCotizacionDetalleForm-${data.idCotizacionDetalle}`).closest('.nuevo');
+
+		let costoForm = parent.find('.costoForm')
+		let costoFormLabel = parent.find('.costoFormLabel');
+		let cantidadForm = parent.find('.cantidadForm');
+		let gapForm = parent.find('.gapForm');
+		let proveedorForm = parent.find('.idProveedor');
+		let proveedoresForm = parent.find('.proveedoresForm');
+		let nameItemForm = parent.find('.nameItemForm');
+
+		let precio = Number(data.dataPropuesta.costo);
+		let proveedorElegido = data.dataPropuesta.idProveedor;
+		let proveedorElegidoName = data.dataPropuesta.proveedor;
+		// let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').val();
+		// let proveedorSubCotizacion = JSON.parse(jsonProveedorSubCotizacion);
+		
+		// let bodySubItem = parent.find('.body-sub-item');
+
+		// $.each(bodySubItem,function(k,v){
+		// 	let idCotizacionDetalleSub = $(v).find('.idCotizacionDetalleSubForm');
+		// 	let costoSubItem = $(v).find('.costoSubItem');
+		// 	let subtotalSubItem = $(v).find('.subtotalSubItem');
+
+		// 	let detalleSubItem = proveedorSubCotizacion.find((detalle) => {
+		// 		return (detalle.idCotizacionDetalleSub == idCotizacionDetalleSub.val())
+		// 	})
+
+		// 	costoSubItem.val(detalleSubItem.costo);
+		// 	subtotalSubItem.val(detalleSubItem.subTotal);
+
+		// });
+
+		nameItemForm.val(data.dataPropuesta.nombre);
+
+		costoForm.val(precio);
+		costoFormLabel.val(moneyFormatter.format(precio));
+
+		proveedorForm.val(proveedorElegido);
+		proveedoresForm.val(proveedorElegidoName);
+
+		cantidadForm.keyup();
+		gapForm.keyup();
+
+		Cotizacion.actualizarTotal();
+
+		Fn.closeModals(modalId);
 	},
 
 	restaurarCosto: function(costoAnterior){
@@ -1221,23 +1543,30 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
-				//Llenamos los items con el nombre
-				$(this).val(ui.item.label);
-				//Llenamos una caja de texto invisible que contiene el ID del Artículo
-				$(this).parents(".ui-widget").find(".codItems").val(ui.item.value);
-
-				//Llenamos el precio actual
-				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
-					ui.item.costo = 0;
-				}
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
+				control.find(".flagCuentaSelect").dropdown('set selected',ui.item.flagCuenta);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
+				
+				//Llenamos los items con el nombre
+				$(this).val(ui.item.label);
+				//Llenamos una caja de texto invisible que contiene el ID del Artículo
+				control.find(".codItems").val(ui.item.value);
+				//Llenamos el precio actual
+				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
+					ui.item.costo = 0;
+				}
 
-				control.find(".costoForm").val(ui.item.costo);
-				control.find(".costoFormLabel").text(ui.item.costo);
+
+				control.find(".costoForm").val(ui.item.costo == 0 ? '' : ui.item.costo);
+				control.find(".costoFormLabel").text((ui.item.costo == 0) ? '' : ui.item.costo);
+
+				//Llenar para poder redondear
+				control.find('.costoRedondeadoForm').val(Math.ceil(ui.item.costo));
+				control.find('.costoNoRedondeadoForm').val(ui.item.costo);
+				control.find(".flagRedondearForm").change(); //evento para que se redondee
 				//Llenamos el estado
 				control.find(".estadoItemForm").removeClass('fa-sparkles');
 				control.removeClass('nuevoItem');
@@ -1259,12 +1588,12 @@ var Cotizacion = {
 				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
+				control.find(".cantidadForm").attr('readonly',false);
 
-				let $cod = $(this).parents(".ui-widget").find(".codItems").val();
+				let $cod = ui.item.value;
 				if ($cod != '') {
 					// $(this).attr('readonly', 'readonly');
 					control.find('.costoForm').attr('readonly', 'readonly');
-					control.find(".cantidadForm").attr('readonly',false);
 					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');
 				}
 			},
@@ -1555,7 +1884,14 @@ var Cotizacion = {
 
    actualizarOnAddRowCampos:(parent) =>{
 
-		let number = parent.index();
+		let number = '';
+
+		if(parent.data('id') !== undefined){
+			number = parent.data('id');
+		}
+		else{
+			number = parent.index();
+		}
 		//Archivos
 		let fileItem = parent.find('.file-item');
 		let fileType = parent.find('.file-type');
@@ -1575,6 +1911,7 @@ var Cotizacion = {
 		let cantidadSubItem = parent.find('.cantidadSubItem');
 	
 		let cantidadSubItemDistribucion = parent.find('.cantidadSubItemDistribucion');
+		let chkTachadoDistribucion = parent.find('.chkTachadoDistribucion');
 		let cantidadPdvSubItemDistribucion = parent.find('.cantidadPdvSubItemDistribucion');
 		let itemLogisticaForm = parent.find('.itemLogisticaForm').find('select');
 
@@ -1599,6 +1936,7 @@ var Cotizacion = {
 		cantidadSubItem.attr('name',`cantidadSubItemServicio[${number}]`);
 
 		cantidadSubItemDistribucion.attr('name',`cantidadSubItemDistribucion[${number}]`);
+		chkTachadoDistribucion.attr('name',`chkTachado[${number}]`);
 		cantidadPdvSubItemDistribucion.attr('name',`cantidadPdvSubItemDistribucion[${number}]`);
 		itemLogisticaForm.attr('name',`itemLogisticaForm[${number}]`);
 
@@ -1612,12 +1950,14 @@ var Cotizacion = {
    cleanDetalle:(parent)=>{
 	let tipoForm = parent.find('#tipoItemForm');
 	let costoForm = parent.find('.costoForm');
+	let costoFormLabel = parent.find('.costoFormLabel');
 	let gapForm = parent.find('.gapForm');
 	let cantidadForm = parent.find('.cantidadForm');
 	let codItems = parent.find('.codItems');
 	let idProveedor = parent.find('.idProveedor');
 	let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 	let semaforoForm = parent.find('.semaforoForm');
+	let tachadoDistribucion = parent.find('.tbDistribucionTachado');
 
 	codItems.val('');
 	idProveedor.val('');
@@ -1633,11 +1973,15 @@ var Cotizacion = {
 	semaforoForm.popup('destroy');
 
 	costoForm.val('');
+	costoFormLabel.val('');
 	gapForm.val('');
 
 	cantidadForm.val('');
 
 	cantidadForm.keyup();
+
+	// tachadoDistribucion.find('tbody').html('');
+	// tachadoDistribucion.addClass('d-none');
    },
 
    actualizarCotizacionView: function (idCotizacion) {

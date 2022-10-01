@@ -8,7 +8,7 @@
                 <th>FECHA EMISION</th>
                 <th>NOMBRE</th>
                 <th>CUENTA</th>
-                <th>CENTRO COSTO</th>
+                <!-- <th>CENTRO COSTO</th> -->
                 <th>NRO COTIZACION</th>
                 <th>ESTADO DEL PROCESO</th>
                 <!-- <th class="td-center">ESTADO</th> -->
@@ -56,7 +56,7 @@
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cotizacion'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuenta'], 3); ?></td>
-                    <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'], 3); ?></td>
+                    <!-- <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'], 3); ?></td> -->
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'], 3); ?></td>
                     <!-- <td class="td-left"><?= verificarEmpty($row['cotizacionEstado'], 3); ?></td> -->
                     <td class="text-center style-icons">

@@ -163,6 +163,18 @@ function moneda($valor, $igv = false, $dec = 2)
 		return $valor;
 	}
 }
+function monedaNew($params = [])
+{
+	$valor = !empty($params['valor']) ? $params['valor'] : '';
+	$dec = !empty($params['dec']) ? $params['dec'] : 2;
+	$simbolo = !empty($params['simbolo']) ? $params['simbolo'] : 'S/';
+
+	if (is_string($valor)) return $valor;
+	else {
+		$valor = $simbolo . number_format($valor, $dec, '.', ',');
+		return $valor;
+	}
+}
 
 function getFechaDias($fecha, $dias = 0)
 {
@@ -1249,7 +1261,13 @@ function htmlSelectOptionArray2($params = [])
 			}
 		}
 
-		$html .= "<option $data_option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" . strtoupper($f[$v]) . "</option>";
+		if(!empty($f['icono'])){
+			$icono = "<i class='{$f['icono']}'></i>";
+		}else{
+			$icono = '';
+		}
+
+		$html .= "<option $data_option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" .$icono. strtoupper($f[$v]) . "</option>";
 	}
 
 	return $html;
@@ -1898,6 +1916,9 @@ function costoUnitario($cantidad, $importe, $decimales = 2)
 }
 
 function moneyToText($params = []){
+
+	$moneda = !empty($params['moneda']) ? $params['moneda'] : '';
+
 	$CI = &get_instance();
 	$CI->load->library('NumeroALetras');
 	$CI->load->library('S3');
@@ -1905,7 +1926,7 @@ function moneyToText($params = []){
 	$formatter = $CI->numeroaletras;
 	$numero = $params['numero'];
 	// return $formatter->toMoney(10.10, 2, 'SOLES', 'CENTIMOS');
-	return $formatter->toInvoice($numero, 2, 'SOLES');
+	return $formatter->toInvoice($numero, 2, $moneda);
 
 }
 
@@ -1913,6 +1934,7 @@ function completarFilasPdf($params){
 
 	$filas = count($params['data']);
 	$filasRequeridas = $params['filas'];
+	$filasAdicionales = !empty($params['filasAdicionales']) ? ($params['filasAdicionales'] + $filas) : 0;
 	$columnas = $params['columnas'];
 
 	$table = '';
@@ -1928,6 +1950,32 @@ function completarFilasPdf($params){
 			}
 		$table .= '</tr>';
 	}
+	for($x = $filas; $x < $filasAdicionales ; $x++){
+		$table .= '<tr>';
+			for ($y=0; $y < $columnas ; $y++) {
+				$table .= '<td class="text-center">';
+					if($y == 0 ){
+						//Solo ponemos el numero de fila si es la primera columna
+						$table .= ($x + 1);
+					}
+				$table .= '</td>';
+			}
+		$table .= '</tr>';
+	}
 
 	return $table;
 }
+
+function encrypt($string) {
+	$method = 'aes-256-cbc';
+	$iv = base64_decode("C8fBxl1g7EWtYTL1/M8jfstw==");
+	
+	return openssl_encrypt($string, $method, SECRET_KEY_GET, false, $iv);
+ }
+
+function decrypt($string) {
+	$method = 'aes-256-cbc';
+	$iv = base64_decode("C8fBxl1g7EWtYTL1/M8jfstw==");
+	
+	return openssl_decrypt($string, $method, SECRET_KEY_GET, false, $iv);
+ }

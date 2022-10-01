@@ -1416,6 +1416,7 @@ var Fn = {
 
 	loadSemanticFunctions: function () {
 		$('select.semantic-dropdown').dropdown();
+		$('div.semantic-dropdown').dropdown();
 
 
 		$('select.dropdown.parentDependiente').dropdown({

@@ -329,6 +329,7 @@ class M_Cotizacion extends MY_Model
 				, a.idItemLogistica
 				, ROW_NUMBER() OVER(PARTITION BY a.idItem ORDER BY a.idItem,ta.idItemTarifario) ntarifario
 				, art.peso pesoLogistica
+				, ISNULL(a.flagCuenta,0) flagCuenta
 			FROM compras.item a
 			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
 			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
@@ -351,6 +352,7 @@ class M_Cotizacion extends MY_Model
 				, diasVigencia
 				, lt.idItemLogistica
 				, lt.pesoLogistica
+				, lt.flagCuenta
 			FROM listTarifario lt
 			WHERE lt.ntarifario = 1
 		)
@@ -517,6 +519,8 @@ class M_Cotizacion extends MY_Model
 						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+
 					];
 				}
 
@@ -696,10 +700,12 @@ class M_Cotizacion extends MY_Model
 				cds.color,
 				cds.cantidad,
 				cds.costo,
-				cds.subtotal,
+				(cds.cantidad * cds.costo) subtotal,
+				-- cds.subtotal corregir
 				cds.monto,
 				cds.cantidadPdv,
 				cds.idItem,
+				cds.idDistribucionTachado,
 				ts.nombre tipoServicio,
 				um.nombre unidadMedida
 			FROM
@@ -888,6 +894,7 @@ class M_Cotizacion extends MY_Model
 			$sqlUnion = "
 			UNION
 			SELECT
+			'' idCotizacionDetalleProveedorDetalle,
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
@@ -912,6 +919,7 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 
 			SELECT
+			cd.idCotizacionDetalleProveedorDetalle,
 			c.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
@@ -1007,7 +1015,7 @@ class M_Cotizacion extends MY_Model
 				-- LEFT JOIN rrhh.dbo.Empleado e ON u.numDocumento = e.numTipoDocuIdent AND e.flag = 'ACTIVO'
 			WHERE
 				u.estado = 1
-				AND u.demo = 0
+				--AND u.demo = 0
 				$filtros
 			;
 		";
@@ -1069,12 +1077,23 @@ class M_Cotizacion extends MY_Model
 				, o.entrega
 				, o.observacion
 				, o.total
-				, CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega
+				, CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntregaLabel
+				, o.fechaEntrega 
 				, CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg
 				, c.nombre AS cuenta
 				, cc.nombre AS cuentaCentroCosto
 				, ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuario
+				, mp.nombre metodoPago
+				, o.comentario
+				, o.observacion
+				, m.nombreMoneda monedaPlural
+				, m.simbolo simboloMoneda
+				, o.igv
 			FROM compras.ordenCompra o
+			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
+			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
+				AND General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,o.fechaReg,o.fechaReg)=1
+			JOIN compras.metodoPago mp ON mp.idMetodoPago = o.idMetodoPago
 			LEFT JOIN visualImpact.logistica.cuenta c ON o.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON o.idCentroCosto = cc.idCuentaCentroCosto
 			LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
@@ -1082,6 +1101,37 @@ class M_Cotizacion extends MY_Model
 			o.estado = 1
 			{$filtros}
 			ORDER BY o.idOrdenCompra DESC
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerInformacionOrdenCompraCotizacion($params = [])
+	{
+		$filtros = "";
+
+		$sql = "
+			SELECT DISTINCT
+			ocd.idCotizacionDetalle,
+			ocd.idOrdenCompra,
+			c.codCotizacion,
+			c.nombre,
+			ISNULL(codCotizacion + ' - ','') + c.nombre cotizacionCodNombre
+			FROM 
+			compras.ordenCompraDetalle ocd
+			JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = ocd.idCotizacionDetalle
+			JOIN compras.cotizacion c ON c.idCotizacion = cd.idCotizacion
+			WHERE
+			ocd.estado = 1
+			{$filtros}
+			ORDER BY ocd.idOrdenCompra DESC
 		";
 
 		$query = $this->db->query($sql);
@@ -1262,6 +1312,11 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+
 					];
 				}
 			}
@@ -1303,7 +1358,6 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 		SELECT
 			o.idOper,
-
 			o.requerimiento,
 			o.concepto,
 			'' cuentas,
@@ -1334,6 +1388,39 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerOperDetalleCotizacion($params = []){
+		$filtros = '';
+		!empty($params['idOper']) ? $filtros .= " AND op.idOper IN({$params['idOper']})" : '';
+
+		$sql = "
+		SELECT 
+		op.idOperDetalle,
+		op.idOper,
+		c.codCotizacion,
+		c.nombre,
+		ISNULL(codCotizacion + ' - ','') + c.nombre cotizacionCodNombre
+		FROM 
+		compras.operDetalle op
+		JOIN compras.cotizacion c ON c.idCotizacion = op.idCotizacion
+		WHERE op.estado = 1
+		{$filtros}
+		ORDER BY op.idOper DESC
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+
+
+		return $this->resultado;
+	}
+
+
 
 	public function obtenerGapEmpresas($params = [])
 	{
@@ -1546,8 +1633,10 @@ class M_Cotizacion extends MY_Model
 				cds.monto,
 				cds.cantidadPdv,
 				cds.idItem,
+				cds.idDistribucionTachado,
 				UPPER(ts.nombre) tipoServicio,
-				um.nombre unidadMedida
+				um.nombre unidadMedida,
+
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1581,6 +1670,97 @@ class M_Cotizacion extends MY_Model
 			FROM compras.distribucionCosto
 			WHERE 
 			General.dbo.fn_fechaVigente(fecIni,fecFin,@hoy,@hoy) = 1
+			{$filtros} 
+			";
+
+			$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerMonedas($params = [])
+	{
+		$filtros = "";
+		$sql = "
+			DECLARE @hoy DATE = GETDATE();
+			SELECT 
+			m.idMoneda,
+			m.nombre moneda,
+			m.icono,
+			md.valor
+			FROM compras.moneda m
+			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
+			WHERE 
+			General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,@hoy,@hoy) = 1
+			{$filtros} 
+			";
+
+			$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function getPropuestasItem($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN({$params['idCotizacion']})" : '';
+		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN({$params['idCotizacionDetalle']})" : '';
+
+		$sql = "
+			SELECT
+				cd.idCotizacionDetalle,
+				pia.idPropuestaItemArchivo,
+				pia.nombre_inicial archivo,
+				pia.nombre_archivo archivoWasabi,
+				m.nombre motivo,
+				UPPER(p.razonSocial) proveedor,
+				p.idProveedor,
+				(pi.costo * pi.cantidad) subtotal,
+				pi.*
+			FROM
+			compras.propuestaItem pi
+			JOIN compras.propuestaMotivo m ON m.idPropuestaMotivo = pi.idPropuestaMotivo
+			JOIN compras.cotizacionDetalleProveedorDetalle pd ON pd.idCotizacionDetalleProveedorDetalle = pi.idCotizacionDetalleProveedorDetalle
+			JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = pd.idCotizacionDetalle
+			JOIN compras.cotizacionDetalleProveedor pp ON pp.idCotizacionDetalleProveedor = pd.idCotizacionDetalleProveedor
+			JOIN compras.proveedor p ON p.idProveedor = pp.idProveedor
+			JOIN compras.propuestaItemArchivo pia ON pia.idPropuestaItem = pi.idPropuestaItem
+			WHERE 
+			1 = 1
+			{$filtros} 
+			";
+
+			$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function getTachadoDistribucion($params = []){
+		$filtros = "";
+
+		$sql = "
+			SELECT
+			*
+			FROM
+			compras.distribucionTachado
+			WHERE 
+			1 = 1
+			AND estado = 1
 			{$filtros} 
 			";
 

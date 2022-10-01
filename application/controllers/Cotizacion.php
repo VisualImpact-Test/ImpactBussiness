@@ -361,7 +361,8 @@ class Cotizacion extends MY_Controller
             'comentario' => $post['comentarioForm'],
             'diasValidez' => $post['diasValidez'],
             'idCotizacionEstado' => ESTADO_REGISTRADO,
-            'idUsuarioReg' => $this->idUsuario
+            'idUsuarioReg' => $this->idUsuario,
+            'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
         ];
         $validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
         
@@ -430,6 +431,8 @@ class Cotizacion extends MY_Controller
         $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
         $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
         $post['cotizacionInternaForm'] = checkAndConvertToArray($post['cotizacionInternaForm']);
+        $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
+        $post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 
         foreach ($post['nameItem'] as $k => $r) {
             $dataItem = [];
@@ -480,6 +483,8 @@ class Cotizacion extends MY_Controller
                 'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL, 
                 'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
                 'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
+                'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
+                'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
                 'fechaCreacion' => getActualDateTime()
             ];
 
@@ -499,6 +504,7 @@ class Cotizacion extends MY_Controller
                         'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
                         'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
                         'idItemLogistica' => $post["itemLogisticaForm[$k]"],
+                        'idDistribucionTachado' => $post["chkTachado[$k]"] ,
                     ]);
                     break;
                 
@@ -537,6 +543,7 @@ class Cotizacion extends MY_Controller
                     'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
                     'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
                     'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
+                    'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 
                 ];
             }
@@ -732,7 +739,7 @@ class Cotizacion extends MY_Controller
         return $estadoEmail;
     }
 
-    public function generarCotizacionPDF()
+    public function generarCotizacionPDF() //DescargarCotizacion
     {
         $data = [];
         require_once('../mpdf/mpdf.php');
@@ -748,6 +755,7 @@ class Cotizacion extends MY_Controller
             $dataParaVista = [];
             $dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion'=> $idCotizacion,'anexo' => true])['query']->result_array();
             $data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
+            $dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
 
             foreach ($data as $key => $row) {
                 $dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
@@ -762,6 +770,7 @@ class Cotizacion extends MY_Controller
                 $dataParaVista['cabecera']['total'] = $row['total'];
                 $dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
                 $dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
+                $dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
                 $dataParaVista['detalle'][$key]['item'] = $row['item'];
                 $dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
                 $dataParaVista['detalle'][$key]['costo'] = $row['costo'];
@@ -769,6 +778,10 @@ class Cotizacion extends MY_Controller
                 $dataParaVista['detalle'][$key]['precio'] = $row['precio'];
                 $dataParaVista['detalle'][$key]['subtotal'] = $row['subtotal'];
                 $dataParaVista['detalle'][$key]['caracteristicas'] = $row['caracteristicas'];
+            }
+
+            foreach($dataArchivos as $archivo){
+                $dataParaVista['archivos'][$archivo['idCotizacionDetalle']][] = $archivo;
             }
 
             //
@@ -796,19 +809,29 @@ class Cotizacion extends MY_Controller
                $dataParaVista['cabecera']['total_fee_igv'] = $totalFee;
             }
             
-
+            $dataParaVista['cabecera']['mostrarPrecio'] = false;
             //
             if (count($dataParaVista) == 0) exit();
 
             $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
             $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
             $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
-            // $contenido['style'] = '<style>table { border-collapse: collapse; }table.tb-detalle th, table.tb-detalle td { border: 1px solid #484848; padding:5px; }.square { margin-right: 15px; border: 1px solid #000; text-align: center; }body {font-size: 12px;}</style>';
             $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style",[],true);
 
             require APPPATH . '/vendor/autoload.php';
-            $mpdf = new \Mpdf\Mpdf();
-
+            $mpdf = new \Mpdf\Mpdf([
+                'mode' => 'utf-8',
+                'setAutoTopMargin' => 'stretch',
+                // 'orientation' => '',
+                'autoMarginPadding' => 0,
+                'bleedMargin' => 0,
+                'crossMarkMargin' => 0,
+                'cropMarkMargin' => 0,
+                'nonPrintMargin' => 0,
+                'margBuffer' => 0,
+                'collapseBlockMargins' => false,
+            ]);
+            $mpdf->SetDisplayMode('fullpage');
             $mpdf->SetHTMLHeader($contenido['header']);
             $mpdf->SetHTMLFooter($contenido['footer']);
             $mpdf->AddPage();
@@ -1024,6 +1047,7 @@ class Cotizacion extends MY_Controller
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
             $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+            $data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['flagCuenta'] = $row['flagCuenta'];
         }
         foreach ($data['itemServicio'] as $k => $r) {
             $data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
@@ -1041,6 +1065,7 @@ class Cotizacion extends MY_Controller
         $config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
         $config['data']['itemLogistica'] = $this->model->obtenerItemServicio(['logistica' => true]);
         $config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
+        $config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
         $config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 
         $this->view($config);
@@ -1144,6 +1169,12 @@ class Cotizacion extends MY_Controller
         $config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
         $config['data']['itemLogistica'] = $this->model->obtenerItemServicio(['logistica' => true]);
         $config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
+        $config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
+
+        foreach($config['data']['tachadoDistribucion'] as $tachado){
+            $config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
+        }
+
         $config['data']['disabled'] = true;
         $config['data']['siguienteEstado'] = ESTADO_ENVIADO_CLIENTE;
         $config['data']['controller'] = 'Cotizacion';
@@ -1342,7 +1373,18 @@ class Cotizacion extends MY_Controller
         $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 
         require APPPATH . '/vendor/autoload.php';
-        $mpdf = new \Mpdf\Mpdf();
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'setAutoTopMargin' => 'stretch',
+            // 'orientation' => '',
+            'autoMarginPadding' => 0,
+            'bleedMargin' => 0,
+            'crossMarkMargin' => 0,
+            'cropMarkMargin' => 0,
+            'nonPrintMargin' => 0,
+            'margBuffer' => 0,
+            'collapseBlockMargins' => false,
+        ]);
 
         $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS','codigo'=>'SIG-LOG-FOR-001'], true);
         $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
@@ -1361,6 +1403,8 @@ class Cotizacion extends MY_Controller
         // $mpdf->Output('OPER.pdf', 'D');
         $mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 
+        return true;
+
     }
 
     public function getOrdenesCompra()
@@ -1370,7 +1414,11 @@ class Cotizacion extends MY_Controller
 
         // $ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idOrdenCompra' => $idOrdenCompra,'estado' => 1])['query']->result_array();
 		$dataParaVista['data'] = $this->model->obtenerInformacionOrdenCompra()['query']->result_array();
+        $ordenDetalle = $this->model->obtenerInformacionOrdenCompraCotizacion()['query']->result_array();
 
+        foreach($ordenDetalle as $row){
+            $dataParaVista['cotizaciones'][$row['idOrdenCompra']][] = $row['cotizacionCodNombre']; 
+        }
         $result['result'] = 1;
         $result['data']['width'] = '90%';
         $result['msg']['title'] = 'Ordenes de compra';
@@ -1401,7 +1449,18 @@ class Cotizacion extends MY_Controller
         // $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 
         require APPPATH . '/vendor/autoload.php';
-        $mpdf = new \Mpdf\Mpdf();
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'setAutoTopMargin' => 'stretch',
+            // 'orientation' => '',
+            'autoMarginPadding' => 0,
+            'bleedMargin' => 0,
+            'crossMarkMargin' => 0,
+            'cropMarkMargin' => 0,
+            'nonPrintMargin' => 0,
+            'margBuffer' => 0,
+            'collapseBlockMargins' => false,
+        ]);
 
         $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS','codigo'=>'SIG-LOG-FOR-009'], true);
         $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
@@ -1519,6 +1578,7 @@ class Cotizacion extends MY_Controller
             'motivo' => !empty($post['motivoForm']) ? trim($post['motivoForm']) : '',
             'comentario' => $post['comentarioForm'],
             'diasValidez' => $post['diasValidez'],
+            'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
         ];
 
 
@@ -1576,7 +1636,9 @@ class Cotizacion extends MY_Controller
         $post['gapForm'] = checkAndConvertToArray($post['gapForm']);
         $post['precioForm'] = checkAndConvertToArray($post['precioForm']);
         $post['linkForm'] = checkAndConvertToArray($post['linkForm']);
-        
+        $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
+        $post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
+
         foreach ($post['nameItem'] as $k => $r) {
             $data['update'][] = [
                 'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
@@ -1593,7 +1655,9 @@ class Cotizacion extends MY_Controller
                 'idItemEstado' => $post['idEstadoItemForm'][$k],
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 2, 
-                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
+                'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
+                'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0, 
             ];
 
             if(!empty($post["file-name[$k]"])){
@@ -1611,6 +1675,52 @@ class Cotizacion extends MY_Controller
                     'carpeta'=> 'cotizacion',
                     'nombreUnico' => uniqid(),
                     ];
+                }
+            }
+
+            if(!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])){
+                switch ($post['tipoItemForm'][$k]) {
+                    case COD_SERVICIO['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'nombre' => $post["nombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+                    
+                    case COD_DISTRIBUCION['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+                            'idItem' => $post["itemLogisticaForm[{$post['idCotizacionDetalle'][$k]}]"],
+                            'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"] ,
+                        ]);
+                        break;
+                    
+                    case COD_TEXTILES['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'talla' => $post["tallaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'tela' => $post["telaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                            'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+    
+                    case COD_TARJETAS_VALES['id']:
+                        $data['subDetalle'][$k] = getDataRefactorizada([
+                            'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+                            'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+                        ]);
+                        break;
+    
+                    default:
+                        $data['subDetalle'][$k] = [];
+                        break;
                 }
             }
 
@@ -2046,11 +2156,17 @@ class Cotizacion extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
         $dataParaVista = [];
         
-        $dataParaVista = $this->model->obtenerInformacionOperSolicitud($post)['query']->result_array();
+        $dataParaVista['datos'] = $this->model->obtenerInformacionOperSolicitud($post)['query']->result_array();
+        $operDetalle = $this->model->obtenerOperDetalleCotizacion()['query']->result_array();
+
+        foreach($operDetalle as $row){
+            $dataParaVista['cotizaciones'][$row['idOper']][] = $row['cotizacionCodNombre']; 
+        }
+
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
-            $html = $this->load->view("modulos/SolicitudCotizacion/reporteFiltroSolicitud", ['datos' => $dataParaVista], true);
+            $html = $this->load->view("modulos/SolicitudCotizacion/reporteFiltroSolicitud", $dataParaVista, true);
         }
 
         $result['result'] = 1;

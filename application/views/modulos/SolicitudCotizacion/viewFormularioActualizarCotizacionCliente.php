@@ -128,6 +128,20 @@
                 </div>
             </div>
         </div>
+        <div class="fields">
+            <div class="eight wide field">
+                <div class="ui sub header">Ver precio PDF</div>
+                <div class="ui basic floating dropdown button simpleDropdown w-100">
+                    <input type="hidden" name="flagMostrarPrecio" value="<?= !empty($cotizacion['flagMostrarPrecio']) ? $cotizacion['flagMostrarPrecio'] : 0 ?>" patron="requerido">
+                    <div class="text">Ver Precio PDF</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="1">Ver precio</div>
+                        <div class="item" data-value="0">Ocultar Precio</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
         </h4>
         <div class="default-item">
@@ -157,9 +171,23 @@
                                 <div class="six wide field">
                                     <div class="ui sub header">Item</div>
                                     <div class="ui-widget">
-                                        <div class="ui icon input w-100">
+                                        <!-- <div class="ui icon input w-100">
                                             <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
                                             <i class="semaforoForm flag link icon"></i>
+                                        </div> -->
+
+                                        <div class="ui right action left icon input w-100">
+                                            <i class="semaforoForm flag link icon"></i>
+                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
+                                            <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
+                                                <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagCuenta']) ? $row['flagCuenta'] : 0 ?>" patron="requerido">
+                                                <div class="text">Cuenta</div>
+                                                <i class="dropdown icon"></i>
+                                                <div class="menu">
+                                                    <div class="item" data-value="1">De la cuenta</div>
+                                                    <div class="item" data-value="0">Externo</div>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
@@ -196,6 +224,7 @@
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
                                             <div class="fields body-sub-item ">
+                                                <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                                 <div class="three wide field">
                                                     <div class="ui sub header">Talla</div>
                                                     <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
@@ -236,6 +265,8 @@
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
+                                        <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
                                         <div class="sixteen wide field">
                                             <div class="ui sub header">Monto S/</div>
                                             <input class="montoSubItem" name="montoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= !empty($dataSubItem['monto']) ? $dataSubItem['monto'] : '' ?>">
@@ -254,6 +285,8 @@
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
                                             <div class="fields body-sub-item body-sub-item-servicio">
+                                                <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
                                                 <div class="eleven wide field">
                                                     <div class="ui sub header">Sub item </div>
                                                     <input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
@@ -275,22 +308,8 @@
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
-                                        <div class="fields">
-                                            <div class="eight wide field">
-                                                <div class="ui sub header">Item Logística</div>
-                                                <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[<?= $row['idCotizacionDetalle'] ?>]">
-                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $dataSubItem['idItem'] , 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
-                                                </select>
-                                            </div>
-                                            <div class="four wide field">
-                                                <div class="ui sub header">Peso / Cantidad</div>
-                                                <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
-                                            </div>
-                                            <div class="four wide field">
-                                                <div class="ui sub header">Cantidad PDV</div>
-                                                <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
-                                            </div>
-                                        </div>
+                                        <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
                                         <div class="fields ">
                                             <div class="eight wide field">
                                                 <div class="ui sub header">Tipo Servicio</div>
@@ -307,6 +326,59 @@
                                                 <div class="ui sub header">Costo S/</div>
                                                 <input class="costoTipoServicio costoSubItem" name="costoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>" readonly>
                                             </div>
+                                        </div>
+                                        <div class="fields">
+                                            <div class="eight wide field ">
+                                                <div class="ui sub header">Item Logística</div>
+                                                <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm " name="itemLogisticaForm[<?= $row['idCotizacionDetalle'] ?>]">
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $dataSubItem['idItem'], 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+                                                </select>
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Peso / Cantidad</div>
+                                                <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Cantidad PDV</div>
+                                                <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                            </div>
+                                        </div>
+                                        <div class="tbDistribucionTachado <?= !empty($detalleTachado[$dataSubItem['idItem']]) ? '' : 'd-none' ?>">
+                                            <h4 class="ui dividing header">TACHADO</h4>
+                                            <input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[<?= $row['idCotizacionDetalle'] ?>]" <?= !empty($dataSubItem['idDistribucionTachado']) ? '' : 'checked' ?>>
+                                            <table class="ui single line table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="thCustomNameItem"></th>
+                                                        <th>Tiempo tachado (días)</th>
+                                                        <th>Personas para tachado</th>
+                                                        <th>Costo por día</th>
+                                                        <th>Total de costo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <? if (!empty($detalleTachado[$dataSubItem['idItem']])) : ?>
+                                                        <? foreach ($detalleTachado[$dataSubItem['idItem']] as $tachado) :
+                                                            $subTotalTachado = (($tachado['dias'] * $tachado['personas']) * $tachado['costoDia']);
+                                                        ?>
+                                                            <tr data-id="<?= $tachado['idDistribucionTachado'] ?>" data-subtotal="<?= $subTotalTachado ?>">
+                                                                <td>
+                                                                    <div class="ui radio checkbox dvTachadoDistribucion">
+                                                                        <input value="<?= $tachado['idDistribucionTachado'] ?>" class='chkTachadoDistribucion ' type="radio" name="chkTachado[<?= $row['idCotizacionDetalle'] ?>]" <?= $tachado['idDistribucionTachado'] == $dataSubItem['idDistribucionTachado'] ? 'checked' : '' ?>>
+                                                                        <label></label>
+                                                                    </div>
+                                                                </td>
+                                                                <td> <?= verificarEmpty($tachado['limiteInferior'], 3) . ' - ' . verificarEmpty($tachado['limiteSuperior'], 3) ?></td>
+                                                                <td> <?= verificarEmpty($tachado['dias'], 3) ?></td>
+                                                                <td> <?= verificarEmpty($tachado['personas'], 3) ?></td>
+                                                                <td> <?= !empty($tachado['costoDia']) ? moneda($tachado['costoDia']) : 0 ?></td>
+                                                                <td> <?= moneda($subTotalTachado) ?></td>
+                                                            </tr>
+                                                        <? endforeach; ?>
+                                                    <? endif; ?>
+                                                </tbody>
+                                            </table>
                                         </div>
                                 <?
                                     endforeach;
@@ -403,10 +475,28 @@
                             <div class="fields">
                                 <div class="sixteen wide field">
                                     <div class="ui sub header">Costo</div>
-                                    <div class="ui right labeled input">
+                                    <!-- <div class="ui right labeled input">
                                         <label for="amount" class="ui label">S/</label>
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
                                         <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
+                                    </div> -->
+                                    <div class="ui right action right labeled input">
+                                        <label for="amount" class="ui label">S/</label>
+                                        <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
+                                        <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
+
+                                        <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+                                        <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+
+                                        <div class="ui basic floating dropdown button simpleDropdown ">
+                                            <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="<?= !empty($row['flagRedondear']) ? $row['flagRedondear'] : 0 ?>" patron="requerido">
+                                            <div class="text">Redondear</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">Redondear arriba</div>
+                                                <div class="item" data-value="0">No redondear</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -541,3 +631,4 @@
 </div>
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
+<input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>

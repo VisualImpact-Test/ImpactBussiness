@@ -3,7 +3,6 @@ $filas = 10;
 ?>
 
 <div style="text-align:justify">
-    <br><br><br>
     <table border="1" style="width: 100%; float: left;">
         <tr>
             <td class="text-left w-20">Dirigido a: </td>
@@ -36,7 +35,7 @@ $filas = 10;
     </table>
 </div>
 <br>
-<table class="tb-detalle" style="width: 100%; margin-bottom: 100px;">
+<table border="1" class="tb-detalle" style="width: 100%; margin-bottom: 100px;">
     <thead>
         <tr>
             <th class="text-center">ITEM</th>

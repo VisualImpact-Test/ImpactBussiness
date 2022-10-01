@@ -9,6 +9,7 @@
                 <th>USUARIO REGISTRO</th>
                 <th>FECHA REGISTRO</th>
                 <th class="td-center">OBSERVACION</th>
+                <th>COTIZACIONES</th>
             </tr>
         </thead>
         <tbody>
@@ -22,6 +23,7 @@
                     <td class="text-left"> <?= !empty($row['usuarioRegistro']) ? $row['usuarioRegistro'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['fechaReg']) ? $row['fechaReg'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['observacion']) ? $row['observacion'] : '-' ?></td>
+                    <td class="text-left"> <?= !empty($cotizaciones[$row['idOper']]) ? implode(',',$cotizaciones[$row['idOper']]) : '-' ?></td>
                 </tr>
             <? endforeach; ?>
         </tbody>

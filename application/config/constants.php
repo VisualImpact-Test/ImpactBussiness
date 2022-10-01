@@ -104,6 +104,10 @@ defined('IGV')       OR define('IGV',0.18);
 defined('LIMITE_COMPRAS') OR define('LIMITE_COMPRAS',1000);
 defined('RUC_VISUAL') OR define('RUC_VISUAL','20467225155');
 
+//Operaciones
+defined('GAP') OR define('GAP',15);
+defined('MONTOGAP') OR define('MONTOGAP',1500);
+
 
 //Tipos de Item
 defined('COD_ARTICULO')       OR define('COD_ARTICULO',['id' => 1, 'nombre' => 'ARTICULO']);
@@ -174,3 +178,8 @@ defined("USER_GERENTE_OPERACIONES") OR define("USER_GERENTE_OPERACIONES",4);
 defined("MAIL_COORDINADORA_OPERACIONES") OR define("MAIL_COORDINADORA_OPERACIONES",['andrivette.tavara@visualimpact.com.pe','margarita.bailon@visualimpact.com.pe','tamar.roque@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_COMPRAS") OR define("MAIL_COORDINADORA_COMPRAS",['anghy.vega@visualimpact.com.pe','aaron.ccenta@outlook.com']);
 defined("MAIL_GERENCIA_OPERACIONES") OR define("MAIL_GERENCIA_OPERACIONES",['milenka.gargurevich@visualimpact.com.pe']);
+
+//Acceso
+defined("SECRET_KEY_GET") OR define("SECRET_KEY_GET",'CLAVESUPERSECRETA');
+defined("DIAS_MAX_ACCESO") OR define("DIAS_MAX_ACCESO",30);
+defined("URL_WASABI_ITEM_PROPUESTA") OR define("URL_WASABI_ITEM_PROPUESTA",'https://s3.us-central-1.wasabisys.com/impact.business/itemPropuesta/');

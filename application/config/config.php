@@ -378,7 +378,7 @@ $config['encryption_key'] = '';
 |
 */
 $config['sess_driver'] = 'files';
-$config['sess_cookie_name'] = 'ci_impactTrade_session';
+$config['sess_cookie_name'] = 'ci_impactBusiness_session';
 $config['sess_expiration'] = 5400;
 $config['sess_save_path'] = NULL;
 $config['sess_match_ip'] = FALSE;
