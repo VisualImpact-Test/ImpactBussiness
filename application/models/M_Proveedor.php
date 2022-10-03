@@ -60,7 +60,8 @@ class M_Proveedor extends MY_Model
 		$this->db
 		->select('*')
 		->from('compras.proveedorCorreo pc')
-		->where('pc.idProveedor', $params['idProveedor']);
+		->where('pc.idProveedor', $params['idProveedor'])
+		->where('pc.estado', $params['estado']);
 		return $this->db->get();
 	}
 
@@ -199,11 +200,13 @@ class M_Proveedor extends MY_Model
 				idProveedor
 			FROM compras.proveedor p
 			WHERE
-			(p.razonSocial LIKE '%{$params['razonSocial']}%'
-			OR p.nroDocumento LIKE '%{$params['nroDocumento']}%')
+			(
+				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
+				OR p.nroDocumento LIKE '%{$params['nroDocumento']}%'
+			)
 			{$filtros}
 		";
-
+		log_message('error', $sql);
 
 
 		$query = $this->db->query($sql);

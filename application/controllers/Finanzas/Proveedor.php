@@ -212,7 +212,8 @@ class Proveedor extends MY_Controller
         $dataParaVista['listadoRubros'] = $this->model->obtenerRubro()['query']->result_array();
         $dataParaVista['listadoMetodosPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
         $dataParaVista['zonasProveedor'] = $this->model->obtenerZonaCoberturaProveedor(['idProveedor' => $post['idProveedor']])['query']->result_array();
-
+        $dataParaVista['correosAdicionales'] = $this->model->obtenerCorreosAdicionales(['idProveedor' => $post['idProveedor'], 'estado' => '1'])->result_array();
+        
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Proveedor';
         $dataParaVista['disabled'] = false;

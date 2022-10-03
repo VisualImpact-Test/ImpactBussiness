@@ -207,7 +207,7 @@ class Proveedor extends MY_Controller
         $dataParaVista['listadoRubros'] = $this->model->obtenerRubro()['query']->result_array();
         $dataParaVista['listadoMetodosPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
         $dataParaVista['zonasProveedor'] = $this->model->obtenerZonaCoberturaProveedor(['idProveedor' => $post['idProveedor']])['query']->result_array();
-        $dataParaVista['correosAdicionales'] = $this->model->obtenerCorreosAdicionales(['idProveedor' => $post['idProveedor']])->result_array();
+        $dataParaVista['correosAdicionales'] = $this->model->obtenerCorreosAdicionales(['idProveedor' => $post['idProveedor'], 'estado' => '1'])->result_array();
 
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Proveedor';
@@ -318,6 +318,7 @@ class Proveedor extends MY_Controller
         $fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
         $data = [];
 
+        $fifth_insert = true;
         if (isset($post['correoAdicional'])) {
           foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
             $data['insert'][] = [
@@ -325,8 +326,8 @@ class Proveedor extends MY_Controller
               'correo' => $value,
             ];
           }
+          $fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
         }
-        $fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
 
 
         if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$fifth_insert) {
@@ -490,7 +491,22 @@ class Proveedor extends MY_Controller
           }
         }
 
-        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$rptaCorreo) {
+        $this->db->update('compras.proveedorCorreo', ['estado' => 0], ['idProveedor' => $post['idProveedor']]);
+
+        $data = [];
+        $sixth_insert = true;
+        if (isset($post['correoAdicional'])) {
+          foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
+            $data['insert'][] = [
+              'idProveedor' => $post['idProveedor'],
+              'correo' => $value,
+            ];
+          }
+          $sixth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
+        }
+
+
+        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$rptaCorreo || !$sixth_insert) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -628,9 +644,9 @@ class Proveedor extends MY_Controller
   		// );
   		// $this->email->bcc($bcc);
   		//$bcc = array('luis.durand@visualimpact.com.pe');
-  		$this->email->bcc($bcc);
+  		// $this->email->bcc($bcc);
 
-  		$this->email->subject('IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES');
+  		// $this->email->subject('IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES');
   		// $html = $this->load->view("formularioProveedores/informacionProveedor", $dataParaVista, true);
   		$html = $this->load->view("email/header", $dataParaVista, true);
   		$correo = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);

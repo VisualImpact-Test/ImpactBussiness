@@ -199,12 +199,23 @@
                         <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto" patron="requerido" value="<?= $nombreContacto ?>">
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
-                        <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email" value="<?= $correoContacto ?>">
-                    </div>
-                    <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
                         <input class="form-control col-md-8" id="numeroContacto" name="numeroContacto" patron="requerido,numeros" value="<?= $numeroContacto ?>">
+                    </div>
+                    <div class="control-group child-divcenter row" style="width:85%">
+                      <label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
+                      <input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email" value="<?= $correoContacto ?>">
+                    </div>
+                    <div id="extraCorreo">
+                      <?php foreach ($correosAdicionales as $key => $value): ?>
+                        <div class="input-group control-group child-divcenter row correoAdd" style="width:85%">
+                          <label class="form-control col-md-4" style="border:0px;">Correo Adicional:</label>
+                          <input class="form-control col-md-8" value="<?= $value['correo'] ?>">
+                          <!-- <div class="input-group-append">
+        										<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>
+        									</div> -->
+                        </div>
+                      <?php endforeach; ?>
                     </div>
                 </div>
             </fieldset>
