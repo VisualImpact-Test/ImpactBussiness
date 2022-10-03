@@ -646,7 +646,7 @@ class Proveedor extends MY_Controller
   		//$bcc = array('luis.durand@visualimpact.com.pe');
   		// $this->email->bcc($bcc);
 
-  		// $this->email->subject('IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES');
+  		$this->email->subject('IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES');
   		// $html = $this->load->view("formularioProveedores/informacionProveedor", $dataParaVista, true);
   		$html = $this->load->view("email/header", $dataParaVista, true);
   		$correo = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);
