@@ -6,12 +6,18 @@
     .floating-container {
         height: 200px !important;
     }
-    .stickyProveedores.fixed{
+
+    .stickyProveedores.fixed {
         margin-top: 8px !important;
         margin-left: 0px !important;
     }
-    .stickyDetalleCotizacion.fixed{
+
+    .stickyDetalleCotizacion.fixed {
         margin-top: 55px !important;
+    }
+
+    .ui.vertical.menu {
+        width: 20rem;
     }
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">
@@ -28,10 +34,10 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" >
+                        <input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" >
+                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
             </div>
         </div>
         <div class="fields disabled disabled-visible">
@@ -103,25 +109,28 @@
         </div>
         <div class="default-item">
             <? foreach ($cotizacionDetalle as $kd => $row) : ?>
-                <input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
+                    <input class="idCotizacionDetalleForm-<?= $row['idCotizacionDetalle'] ?>" type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
                     <div class="ui right floated header sticky stickyDetalleCotizacion">
                         <div class="ui icon menu">
-                          <?php if (!empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']])): ?>
-                            <a class="item btnCotizacionesProveedores" data-id="<?= $row['idCotizacionDetalle'] ?>">
-                              <i class="users icon"></i>
+                            <?php if (!empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']])) : ?>
+                                <a class="item btnCotizacionesProveedores" data-id="<?= $row['idCotizacionDetalle'] ?>">
+                                    <i class="users icon"></i>
+                                </a>
+                            <?php endif; ?>
+                            <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
+                                <i class="square outline icon"></i>
+                                <input type="checkbox" name="checkItem[<?= $row['idCotizacionDetalle'] ?>]" class="checkItem d-none">
                             </a>
-                          <?php endif; ?>
-                          <a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
-                              <i class="square outline icon"></i>
-                              <input type="checkbox" name="checkItem[<?=$row['idCotizacionDetalle']?>]" class="checkItem d-none">
-                          </a>
-                          <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
-                              <i class="hand holding usd icon"></i>
-                              <? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
-                                  <div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
-                              <? } ?>
-                          </a>
+                            <a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
+                                <i class="hand holding usd icon"></i>
+                                <? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
+                                    <div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
+                                <? } ?>
+                            </a>
+                            <a class="item btnPopupPropuestaItem" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
+                                <i class="sync alternate icon"></i>
+                            </a>
                         </div>
                         <? if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) { ?>
                             <div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
@@ -143,17 +152,31 @@
                                             <p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario']) ?></p>
 
                                             <div class="ui button btnElegirProveedor primary">Elegir
-                                              <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
-                                              <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
+                                                <input type="hidden" class="txtCodProveedorCotizacion" value="<?= $view['idCotizacionDetalleProveedorDetalle'] ?>">
+                                                <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
+                                                <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
+                                                <input type="hidden" class="txtSubProveedorCotizacion" value='<?= !empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) ? json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) : "" ?>'>
                                             </div>
-                                            <div  class="ui button btnConsultarItemProveedor"
-                                                  data-cot="<?= $row['idCotizacionDetalle'] ?>"
-                                                  data-pro="<?= $view['idProveedor'] ?>">
-                                              Consultar
+                                            <div class="ui button btnConsultarItemProveedor" data-cot="<?= $row['idCotizacionDetalle'] ?>" data-pro="<?= $view['idProveedor'] ?>">
+                                                Consultar
                                                 <!-- <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
                                                 <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>"> -->
                                             </div>
                                         </div>
+                                    <? } ?>
+                                </div>
+                            </div>
+                        <? } ?>
+                        <? if (true) { ?>
+                            <div class="ui flowing custom popup popup-propuesta-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
+                                <div class="ui vertical menu">
+                                    <? foreach ($cotizacionPropuesta[$row['idCotizacionDetalle']] as $cp) { ?>
+                                        <a class="item">
+                                            <h4 class="ui header"><?= !empty($cp['proveedor']) ? $cp['proveedor'] : '' ?></h4>
+                                            <p><?= !empty($cp['nombre']) ? $cp['nombre'] : '' ?></p>
+                                            <p><?= !empty($cp['motivo']) ? $cp['motivo'] : '' ?></p>
+
+                                        </a>
                                     <? } ?>
                                 </div>
                             </div>
@@ -165,7 +188,7 @@
                             <?= $row['item'] ?>
                         </span>
                         <br>
-                        <small class="text-primary"> Proveedores: <?= !empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) ? implode(', ',$cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) : 'No se han enviado solicitudes' ?></small>
+                        <small class="text-primary"> Proveedores: <?= !empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) ? implode(', ', $cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) : 'No se han enviado solicitudes' ?></small>
                     </div>
                     <div class="ui clearing divider"></div>
                     <div class="ui grid">
@@ -175,10 +198,19 @@
                                 <div class="six wide field">
                                     <div class="ui sub header">Item</div>
                                     <div class="ui-widget">
-                                        <input class="" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" >
-                                        <!-- <div class="ui icon input w-100">
+                                        <div class="ui right action left icon input w-100">
                                             <i class="semaforoForm flag link icon"></i>
-                                        </div> -->
+                                            <input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+                                            <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown">
+                                                <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagExterno']) ? $row['flagExterno'] : 0 ?>" patron="requerido">
+                                                <div class="text">Cuenta</div>
+                                                <i class="dropdown icon"></i>
+                                                <div class="menu">
+                                                    <div class="item" data-value="1">De la cuenta</div>
+                                                    <div class="item" data-value="0">Externo</div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 
@@ -213,23 +245,31 @@
                                     <?
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
-                                            <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                             <div class="fields body-sub-item ">
-                                                <div class="four wide field">
+                                                <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+                                                <div class="three wide field">
                                                     <div class="ui sub header">Talla</div>
-                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
+                                                    <input readonly="readonly" class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
                                                 </div>
-                                                <div class="four wide field">
+                                                <div class="three wide field">
                                                     <div class="ui sub header">Tela</div>
-                                                    <input class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+                                                    <input readonly="readonly" class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
                                                 </div>
-                                                <div class="four wide field">
+                                                <div class="three wide field">
                                                     <div class="ui sub header">Color</div>
-                                                    <input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+                                                    <input readonly="readonly" class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
                                                 </div>
-                                                <div class="four wide field">
+                                                <div class="two wide field">
                                                     <div class="ui sub header">Cantidad</div>
-                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                    <input readonly="readonly" class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                </div>
+                                                <div class="two wide field">
+                                                    <div class="ui sub header">Costo</div>
+                                                    <input patron="requerido" readonly="readonly" class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? moneda($dataSubItem['costo']) : '' ?>">
+                                                </div>
+                                                <div class="three wide field">
+                                                    <div class="ui sub header">Subtotal</div>
+                                                    <input patron="requerido" readonly="readonly" class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? moneda($dataSubItem['subtotal']) : '' ?>">
                                                 </div>
                                             </div>
                                     <?
@@ -245,7 +285,8 @@
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
-                                        <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+                                        <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
                                         <div class="sixteen wide field">
                                             <div class="ui sub header">Monto S/</div>
                                             <input class="montoSubItem" name="montoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= !empty($dataSubItem['monto']) ? $dataSubItem['monto'] : '' ?>">
@@ -263,15 +304,16 @@
                                     <?
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
-                                            <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
                                             <div class="fields body-sub-item body-sub-item-servicio">
+                                                <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                                 <div class="eleven wide field">
                                                     <div class="ui sub header">Sub item </div>
                                                     <input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
                                                 </div>
                                                 <div class="five wide field">
                                                     <div class="ui sub header">Cantidad</div>
-                                                    <input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                    <input readonly="readonly" class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
                                                 </div>
                                             </div>
                                     <?
@@ -290,7 +332,8 @@
                                 <?
                                 if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
-                                        <input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
+                                        <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
                                         <div class="seven wide field">
                                             <div class="ui sub header">Tipo Servicio</div>
                                             <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
@@ -341,7 +384,7 @@
                                 </div>
                             </div>
                             <div class="content-lsck-capturas">
-                                <input data-row="<?=$kd?>" type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*,.pdf" multiple="">
+                                <input data-row="<?= $kd ?>" type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*,.pdf" multiple="">
                                 <div class="fields ">
                                     <div class="sixteen wide field">
                                         <div class="ui small images content-lsck-galeria">
@@ -404,10 +447,23 @@
                             <div class="fields">
                                 <div class="sixteen wide field">
                                     <div class="ui sub header">Costo</div>
-                                    <div class="ui right labeled input">
+                                    <div class="ui right action right labeled input">
                                         <label for="amount" class="ui label">S/</label>
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
                                         <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
+
+                                        <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+                                        <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+
+                                        <div class="ui basic floating dropdown button simpleDropdown ">
+                                            <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="<?= !empty($row['flagRedondear']) ? $row['flagRedondear'] : 0 ?>" patron="requerido">
+                                            <div class="text">Redondear</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">Redondear arriba</div>
+                                                <div class="item" data-value="0">No redondear</div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -547,3 +603,4 @@
 </div>
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
+<input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>

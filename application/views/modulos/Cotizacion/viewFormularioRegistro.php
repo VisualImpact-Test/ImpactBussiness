@@ -117,6 +117,20 @@
                 </div>
             </div>
         </div>
+        <div class="fields">
+            <div class="eight wide field">
+                <div class="ui sub header">Ver precio PDF</div>
+                <div class="ui basic floating dropdown button simpleDropdown w-100">
+                    <input type="hidden" name="flagMostrarPrecio" value="1" patron="requerido">
+                    <div class="text">Ver Precio PDF</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="1">Ver precio</div>
+                        <div class="item" data-value="0">Ocultar Precio</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
         </h4>
         <div class="default-item">
@@ -139,12 +153,21 @@
                     <div class="sixteen wide tablet twelve wide computer column">
                         <div class="fields">
 
-                            <div class="six wide field">
+                            <div class="eight wide field">
                                 <div class="ui sub header">Item</div>
                                 <div class="ui-widget">
-                                    <div class="ui icon input w-100">
-                                        <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
+                                    <div class="ui right action left icon input w-100">
                                         <i class="semaforoForm flag link icon"></i>
+                                        <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
+                                        <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
+                                            <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="0" patron="requerido">
+                                            <div class="text">Cuenta</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">De la cuenta</div>
+                                                <div class="item" data-value="0">Externo</div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <input class="codItems" type='hidden' name='idItemForm'>
@@ -154,13 +177,13 @@
                                     <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                 </div>
                             </div>
-                            <div class="five wide field">
+                            <div class="four wide field">
                                 <div class="ui sub header">Tipo Item</div>
                                 <select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
                                     <?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
                                 </select>
                             </div>
-                            <div class="five wide field">
+                            <div class="four wide field">
                                 <div class="ui sub header">Características para el cliente</div>
                                 <div class="ui right labeled input w-100">
                                     <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
@@ -245,22 +268,6 @@
                         <div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
                             <div class="fields">
                                 <div class="eight wide field">
-                                    <div class="ui sub header">Item Logística</div>
-                                    <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
-                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione','query' => $itemLogistica, 'id'=>'value','value' => 'label','class' => 'text-titlecase','data-option'=>['pesoLogistica']]); ?>
-                                    </select>
-                                </div>
-                                <div class="four wide field">
-                                    <div class="ui sub header">Peso / Cantidad</div>
-                                    <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
-                                </div>
-                                <div class="four wide field">
-                                    <div class="ui sub header">Cantidad PDV</div>
-                                    <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
-                                </div>
-                            </div>
-                            <div class="fields">
-                                <div class="eight wide field">
                                     <div class="ui sub header">Tipo Servicio</div>
                                     <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
@@ -275,6 +282,41 @@
                                     <div class="ui sub header">Costo S/</div>
                                     <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
                                 </div>
+                            </div>
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <div class="ui sub header">Item Logística</div>
+                                    <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+                                    </select>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Peso / Cantidad</div>
+                                    <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Cantidad PDV</div>
+                                    <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                </div>
+                            </div>
+                            <div class="tbDistribucionTachado d-none">
+                                <h4 class="ui dividing header">TACHADO</h4>
+                                <input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
+                                <table class="ui single line table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="thCustomNameItem"></th>
+                                            <th>Tiempo tachado (días)</th>
+                                            <th>Personas para tachado</th>
+                                            <th>Costo por día</th>
+                                            <th>Total de costo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -328,15 +370,30 @@
                                 <div class="ui sub header">
                                     Cantidad <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>
                                 </div>
-                                <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                <div class="ui-widget">
+                                    <div class="ui right action input w-100">
+                                        <input class="cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="fields">
                             <div class="sixteen wide field">
                                 <div class="ui sub header">Costo</div>
-                                <div class="ui right labeled input">
+                                <div class="ui right action right labeled input">
                                     <label for="amount" class="ui label">S/</label>
                                     <input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
+                                    <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+                                    <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+                                    <div class="ui basic floating dropdown button simpleDropdown read-only">
+                                        <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
+                                        <div class="text">Redondear</div>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div class="item" data-value="1">Redondear arriba</div>
+                                            <div class="item" data-value="0">No redondear</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -346,7 +403,7 @@
                                     GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
                                 </div>
                                 <div class="ui right labeled input">
-                                    <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
+                                    <input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm gapFormOperaciones" name="gapForm" placeholder="Gap" value="<?= GAP ?>">
                                     <div class="ui basic label">
                                         %
                                     </div>
@@ -386,7 +443,7 @@
                 <!-- <div class="ui sub header">Total</div> -->
                 <div class="ui right labeled input">
                     <label for="feeForm" class="ui label">Fee: </label>
-                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
+                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
                     <div class="ui basic label">
                         %
                     </div>
@@ -466,5 +523,10 @@
         </div>
     </div>
 </div>
+<div class="ui red fixed nag" id="nagGapValidacion">
+    <div class="title">SI EL SUBTOTAL ES MAYOR A <?= MONTOGAP ?> EL GAP NO PUEDE SER MENOR A <?= GAP ?>% </div>
+    <i class="close icon"></i>
+</div>
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
+<input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>

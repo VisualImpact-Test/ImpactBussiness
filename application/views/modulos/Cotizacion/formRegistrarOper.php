@@ -11,7 +11,7 @@
             <div class="six wide field">
                 <div class="ui sub header">Dirigido a:</div>
                 <select name="receptor" class="ui fluid search clearable dropdown simpleDropdown" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $usuarios, 'class' => 'text-titlecase', 'id' => 'idUsuario', 'selected' => $this->idUsuario]); ?>
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $usuarios, 'class' => 'text-titlecase','value'=>'apeNom',  'id' => 'idUsuario', 'selected' => $this->idUsuario]); ?>
                 </select>
             </div>
             <div class="four wide field">

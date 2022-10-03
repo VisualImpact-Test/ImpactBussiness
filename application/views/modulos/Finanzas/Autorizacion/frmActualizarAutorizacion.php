@@ -53,11 +53,13 @@
         <div class="fields disabled disabled-visible">
             <div class="sixteen wide field">
                 <div class="ui sub header">Costo actual:</div>
-                <input type="text" value="<?= verificarEmpty($data['costo'], 2) ?>" readonly>
+                <input type="text" value="<?= !empty($data['costo']) ? moneda($data['costo']) : 'Sin costo' ?>" readonly>
             </div>
             <div class="sixteen wide field">
-                <div class="ui sub header">Nuevo costo:</div>
-                <input type="text" value="<?= verificarEmpty($data['nuevoValor'], 2) ?>" readonly>
+                <div class="ui sub header">
+                    <?=!empty($data['costoAnterior']) ? 'Costo Anterior' : 'Nuevo costo'?> : 
+                </div>
+                <input type="text" value="<?=!empty($data['costoAnterior']) ? moneda($data['costoAnterior']) : moneda($data['nuevoValor'])?>" readonly>
             </div>
         </div>
         <div class="fields">

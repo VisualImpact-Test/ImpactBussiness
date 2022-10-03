@@ -155,18 +155,18 @@ var Autorizacion = {
     let url = Autorizacion.url + "actualizarAutorizacion";
     let config = { url: url, data: jsonString };
 
-    $.when(Fn.ajax(config)).then(function (b) {
-        ++modalId;
-        var btn = [];
-        let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-        if (b.result == 1) {
-            fn = 'Fn.closeModals(' + modalId + '); $("#btn-filtrarAutorizacion").click();';
-        }
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + '); $("#btn-filtrarAutorizacion").click();';
+			}
 
-        btn[0] = { title: 'Aceptar', fn: fn };
-        Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-    });
+			btn[0] = { title: 'Aceptar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
     }
 
 }

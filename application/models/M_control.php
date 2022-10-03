@@ -45,7 +45,7 @@ class M_control extends MY_Model{
 		u.usuario,
 		u.nombres + ' ' + u.apePaterno + ' ' + ISNULL(u.apeMaterno,'') nombreUsuario,
 		u.email,
-		--'aaron.ccenta@gmail.com' email, --borrar
+		--'aaron.ccenta@visualimpact.com.pe' email, --borrar
 		ut.nombre tipoUsuario
 		FROM 
 		sistema.usuario u 

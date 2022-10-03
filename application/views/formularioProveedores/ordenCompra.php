@@ -28,10 +28,10 @@
                                         <label class="form-control form-control-sm col-md-7" for="nombre" style="border:0px;"><?= verificarEmpty($cabecera['requerimiento'], 3) ?></label>
 
                                     </div>
-                                    <div class="control-group child-divcenter row w-100">
+                                    <!-- <div class="control-group child-divcenter row w-100">
                                         <label class="form-control form-control-sm col-md-5" for="cuentaForm" style="border:0px;">CUENTA :</label>
                                         <label class="form-control form-control-sm col-md-7" for="cuentaForm" style="border:0px;"><?= verificarEmpty($cabecera['cuenta'], 3) ?></label>
-                                    </div>
+                                    </div> -->
                                     <div class="control-group child-divcenter row w-100">
                                     </div>
                                 </div>
@@ -40,10 +40,10 @@
                                         <label class="form-control form-control-sm col-md-5" for="tipo" style="border:0px;">FECHA :</label>
                                         <label class="form-control form-control-sm col-md-7" for="tipo" style="border:0px;"><?= verificarEmpty($cabecera['fechaReg'], 3) ?></label>
                                     </div>
-                                    <div class="control-group child-divcenter row w-100">
+                                    <!-- <div class="control-group child-divcenter row w-100">
                                         <label class="form-control form-control-sm col-md-5" for="cuentaCentroCostoForm" style="border:0px;">CENTRO DE COSTO :</label>
                                         <label class="form-control form-control-sm col-md-7" for="cuentaCentroCostoForm" style="border:0px;"><?= verificarEmpty($cabecera['cuentaCentroCosto'], 3) ?></label>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                             <div class="mb-3 w-100" id="content-tb-ordenCompra-proveedor" style="width:75%">
@@ -58,12 +58,12 @@
             <div class="sixteen wide field w-100">
                 <div class="ui sub header">Fecha de entrega</div>
                 <div class="ui calendar date-semantic ">
-                    <div class="ui input left icon w-100">
+                    <div class="ui input left icon w-100 disabled disabled-visible">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Fecha de entrega" value="" patron="requerido">
+                        <input type="text" placeholder="Fecha de entrega" value="<?= !empty($cabecera['fechaEntrega']) ? $cabecera['fechaEntrega'] : '' ?>" patron="requerido">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="" patron="requerido">
+                <input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="<?= !empty($cabecera['fechaEntrega']) ? $cabecera['fechaEntrega'] : '' ?>" patron="requerido">
             </div>
             <table id="tb-cotizaciones" class="ui compact celled definition table">
                 <thead class="full-width">
@@ -78,20 +78,20 @@
                 <tbody>
                     <? foreach ($detalle as $k => $row) {
                         $total = $row['subTotalOrdenCompra'];
-                        $igv_total = ($row['subTotalOrdenCompra'] * IGV);
+                        $igv_total = ($row['subTotalOrdenCompra'] * (!empty($row['igv']) ? ($row['igv'] / 100) : IGV));
                     ?>
                         <tr>
                             <td class="text-center"><?= ($k + 1) ?>
 
-                                <input type="hidden" name="idCotizacion" value="<?=$row['idCotizacion']?>">
+                                <input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
                             </td>
                             <td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
                             <td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'], 3) ?></td>
                             <td class="text-right">
-                                <?= !empty($row['precio']) ? moneda($row['precio']) : 0 ?>
+                                <?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
                             </td>
                             <td class="text-right">
-                                <?= !empty($row['subtotal']) ? moneda($row['subtotal']) : 0 ?>
+                                <?= !empty($row['subtotal']) ? monedaNew(['valor' => $row['subtotal'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
                             </td>
                         </tr>
                     <? } ?>
@@ -105,17 +105,17 @@
                             <p>TOTAL</p>
                         </th>
                         <th class="text-center">
-                            <p><?= (IGV * 100) . "%" ?></p>
+                            <p><?= !empty($data['igv']) ? $data['igv'] : (IGV * 100) ?>%</p>
                         </th>
                         <th class="text-right">
-                            <p><?= moneda($total) ?></p>
-                            <p><?= moneda($igv_total) ?></p>
-                            <p><?= moneda($igv_total + $total)  ?></p>
+                            <p><?= monedaNew(['valor' => $total, 'simbolo' => $cabecera['simboloMoneda']]) ?></p>
+                            <p><?= monedaNew(['valor' => $igv_total, 'simbolo' => $cabecera['simboloMoneda']]) ?></p>
+                            <p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $cabecera['simboloMoneda']])  ?></p>
                         </th>
                     </tr>
                     <tr>
                         <th colspan="6">
-                            Son: <?= moneyToText(['numero' => ($igv_total + $total)]) ?>
+                            Son: <?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $cabecera['monedaPlural']]) ?>
                         </th>
                     </tr>
                     <tr style="height: 100px">
@@ -124,7 +124,7 @@
                         </th>
                         <th>
                             <strong>
-                                90 Días
+                                <?= !empty($cabecera['metodoPago']) ? $cabecera['metodoPago'] : '' ?>
                             </strong>
                         </th>
                         <th>
@@ -134,7 +134,7 @@
                         </th>
                         <th colspan="2">
                             <strong>
-                                Visual Impact
+                                <?= !empty($cabecera['observacion']) ? $cabecera['observacion'] : '' ?>
                             </strong>
                         </th>
                     </tr>

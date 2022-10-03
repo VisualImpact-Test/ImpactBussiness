@@ -195,6 +195,9 @@ class M_FormularioProveedor extends MY_Model
 
 	public function loginProveedor($params = [])
 	{
+		$filtros = '';
+		$filtros .= !empty($params['idProveedor']) ? " AND idProveedor = {$params['idProveedor']}" : "";
+
 		$sql = "
 		SELECT
 			idProveedor,
@@ -206,6 +209,7 @@ class M_FormularioProveedor extends MY_Model
 		WHERE
 			nroDocumento like '%{$params['ruc']}%'
 			AND correoContacto like '%{$params['email']}%'
+			{$filtros}
 		";
 
 		return $this->db->query($sql);
@@ -376,30 +380,50 @@ class M_FormularioProveedor extends MY_Model
 
 		$sql = "
 			SELECT
-			o.idOrdenCompra,
-			SUM(cp.subTotal) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
-			p.razonSocial,
-			p.nroDocumento rucProveedor,
-			p.nombreContacto,
-			p.direccion,
-			p.correoContacto,
-			p.numeroContacto,
-			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
-			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaRegistro,
-			CONVERT(VARCHAR, c.fechaRequerida, 103) AS fechaRequerida,
-			c.idCotizacion,
-			o.requerimiento,
-			cp.*,
-			uf.nombre_archivo
+				o.idOrdenCompra,
+				--SUM(cp.costo * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
+				SUM((cp.costo / md.valor) * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
+				p.razonSocial,
+				p.nroDocumento rucProveedor,
+				p.nombreContacto,
+				p.direccion,
+				p.correoContacto,
+				p.numeroContacto,
+				CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+				CONVERT(VARCHAR, o.fechaReg, 103) AS fechaRegistro,
+				cp.idCotizacion,
+				o.requerimiento,
+				o.concepto,
+				o.observacion,
+				o.entrega,
+				o.idMetodoPago,
+				o.idMoneda,
+				o.pocliente,
+				o.igv,
+				o.comentario,
+				m.nombre moneda,
+				md.valor valorMoneda,
+				mp.nombre metodoPago,
+				uf.nombre_archivo,
+				cp.idCotizacion,
+				cp.cantidad,
+				cp.nombre,
+				cp.costo,
+				m.nombreMoneda monedaPlural,
+				m.simbolo simboloMoneda,
+				--(cp.costo * cp.cantidad) subtotal
+				((cp.costo / md.valor) * cp.cantidad) subtotal
+
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
 				AND od.estado = 1
 			JOIN compras.cotizacionDetalle cp ON od.idCotizacionDetalle = cp.idCotizacionDetalle
-			JOIN compras.cotizacion c ON c.idCotizacion = cp.idCotizacion
-			JOIN compras.operDetalle operd ON operd.idCotizacion = c.idCotizacion
-			JOIN compras.oper oper ON oper.idOper = operd.idOper
 			JOIN compras.proveedor p ON p.idProveedor = o.idProveedor
+			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
+			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
+				AND General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,o.fechaReg,o.fechaReg)=1
+			JOIN compras.metodoPago mp ON mp.idMetodoPago = o.idMetodoPago
 			LEFT JOIN sistema.usuario us ON us.idUsuario=o.idUsuarioReg
 			LEFT JOIN sistema.usuarioFirma uf ON uf.idUsuarioFirma=us.idUsuarioFirma
 
