@@ -4,148 +4,153 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class OrdenCompra extends MY_Controller
 {
 
-  public function __construct()
-  {
-    parent::__construct();
-    $this->load->model('M_OrdenCompra', 'model');
-    $this->load->model('M_Cotizacion', 'model_cotizacion');
-    $this->load->model('M_Item', 'model_item');
-    $this->load->model('M_Moneda', 'mMoneda');
-    $this->load->model('M_Proveedor', 'mProveedor');
-    $this->load->model('M_FormularioProveedor', 'mFormProveedor');
-    $this->load->model('Configuracion/M_Tipo', 'mTipo');
-  }
+	public function __construct()
+	{
+		parent::__construct();
+		$this->load->model('M_OrdenCompra', 'model');
+		$this->load->model('M_Cotizacion', 'model_cotizacion');
+		$this->load->model('M_Item', 'model_item');
+		$this->load->model('M_Moneda', 'mMoneda');
+		$this->load->model('M_Proveedor', 'mProveedor');
+		$this->load->model('M_FormularioProveedor', 'mFormProveedor');
+		$this->load->model('Configuracion/M_Tipo', 'mTipo');
+	}
 
-  public function index()
-  {
-    $config = array();
-    $config['nav']['menu_active'] = '131';
-    $config['css']['style'] = array(
-      'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
-      'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
-      'assets/custom/js/select.dataTables.min'
-    );
-    $config['js']['script'] = array(
-      'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
-      'assets/libs/handsontable@7.4.2/dist/languages/all',
-      'assets/libs/handsontable@7.4.2/dist/moment/moment',
-      'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
-      'assets/libs/fileDownload/jquery.fileDownload',
-      'assets/custom/js/core/HTCustom',
-      'assets/custom/js/OrdenCompra',
-      'assets/custom/js/dataTables.select.min'
-    );
-    $config['data']['icon'] = 'fas fa-money-check-edit-alt';
-    $config['data']['title'] = 'OC';
-    $config['data']['message'] = 'Lista de OCs';
-    $config['view'] = 'modulos/OrdenCompra/index';
-    $this->view($config);
-  }
+	public function index()
+	{
+		$config = array();
+		$config['nav']['menu_active'] = '131';
+		$config['css']['style'] = array(
+			'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/custom/js/select.dataTables.min'
+		);
+		$config['js']['script'] = array(
+			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+			'assets/libs/handsontable@7.4.2/dist/languages/all',
+			'assets/libs/handsontable@7.4.2/dist/moment/moment',
+			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/libs/fileDownload/jquery.fileDownload',
+			'assets/custom/js/core/HTCustom',
+			'assets/custom/js/OrdenCompra',
+			'assets/custom/js/dataTables.select.min'
+		);
+		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
+		$config['data']['title'] = 'OC';
+		$config['data']['message'] = 'Lista de OCs';
+		$config['view'] = 'modulos/OrdenCompra/index';
+		$this->view($config);
+	}
 
-  public function reporteLibre()
-  {
-    $result = $this->result;
-    $post = json_decode($this->input->post('data'), true);
+	public function reporteLibre()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
-    $dataParaVista = [];
+		$dataParaVista = [];
 
-    $data = $this->model->obtenerOrdenCompraLista($post)->result_array();
-    foreach ($data as $key => $row) {
-      $dataParaVista[$row['idOrdenCompra']] = [
-        'requerimiento' => $row['requerimiento'],
-        'concepto' => $row['concepto'],
-        'fechaEntrega' => date_change_format($row['fechaEntrega']),
-        'total' => $row['total'],
-        'IGVPorcentaje' => $row['IGVPorcentaje'],
-        'totalIGV' => $row['totalIGV'],
-        'observacion' => $row['observacion'],
-        'estado' => $row['estado']
-      ];
-      $item[$row['idOrdenCompra']][$row['idItem']] = $row['idItem'];
-    }
+		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
+		log_message('error', $this->db->last_query());
+		foreach ($data as $key => $row) {
+			$dataParaVista[$row['idOrdenCompra']] = [
+				'requerimiento' => $row['requerimiento'],
+				'concepto' => $row['concepto'],
+				'proveedor' => $row['razonSocial'],
+				'simboloMoneda' => $row['simboloMoneda'],
+				'entrega' => $row['entrega'],
+				'fechaEntrega' => date_change_format($row['fechaEntrega']),
+				'total' => $row['total'],
+				'IGVPorcentaje' => $row['IGVPorcentaje'],
+				'totalIGV' => $row['totalIGV'],
+				'observacion' => $row['observacion'],
+				'estado' => $row['estado'],
+				'monedaCambio' => $row['monedaCambio']
+			];
+			$item[$row['idOrdenCompra']][$row['item']] = $row['item'];
+		}
 
-    foreach ($dataParaVista as $key => $row) {
-      $dataParaVista[$key]['item'] = implode(', ', $item[$key]);
-    }
+		foreach ($dataParaVista as $key => $row) {
+			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
+		}
 
-    $html = getMensajeGestion('noRegistros');
-    if (!empty($dataParaVista)) {
-      $html = $this->load->view("modulos/OrdenCompra/reporte", ['datos' => $dataParaVista], true);
-    }
+		$html = getMensajeGestion('noRegistros');
+		if (!empty($dataParaVista)) {
+			$html = $this->load->view("modulos/OrdenCompra/reporte", ['datos' => $dataParaVista], true);
+		}
 
-    $result['result'] = 1;
-    $result['data']['views']['idContentOCLibre']['datatable'] = 'tb-oc';
-    $result['data']['views']['idContentOCLibre']['html'] = $html;
-    $result['data']['configTable'] =  [
-      'columnDefs' =>
-      [
-        0 =>
-        [
-          "visible" => false,
-          "targets" => []
-        ]
-      ]
-    ];
+		$result['result'] = 1;
+		$result['data']['views']['idContentOCLibre']['datatable'] = 'tb-oc';
+		$result['data']['views']['idContentOCLibre']['html'] = $html;
+		$result['data']['configTable'] =  [
+			'columnDefs' =>
+			[
+				0 =>
+				[
+					"visible" => false,
+					"targets" => []
+				]
+			]
+		];
 
-    echo json_encode($result);
-  }
+		echo json_encode($result);
+	}
 
-  public function formularioEditarOCLibre()
-  {
-    $result = $this->result;
-    $idOC = json_decode($this->input->post('data'), true);
-    $dataParaVista = [];
-    $dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
-    $dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-    $dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
-    $dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
-    $dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
-    $dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
-    $dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
-    $dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
-    $dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+	public function formularioEditarOCLibre()
+	{
+		$result = $this->result;
+		$idOC = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
+		$dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
+		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
+		$dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
+		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
+		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
+		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
+		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
 
-    $dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
-    foreach ($dataParaVista['oc'] as $key => $value) {
-      $dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
-    }
-    $result['result'] = 1;
-    $result['msg']['title'] = 'Editar OC';
-    $result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
+		$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
+		foreach ($dataParaVista['oc'] as $key => $value) {
+			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
+		}
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar OC';
+		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
 
-    echo json_encode($result);
-  }
-  public function formularioRegistroOCLibre()
-  {
+		echo json_encode($result);
+	}
+	public function formularioRegistroOCLibre()
+	{
 
-    $result = $this->result;
-    $post = json_decode($this->input->post('data'), true);
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
-    $dataParaVista = [];
+		$dataParaVista = [];
 
-    $dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array(); //
-    $dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-    $dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
-    $dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
-    $dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
-    $dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
-    $dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
-    $dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
-    $dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array(); //
+		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
+		$dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
+		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
+		$dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
+		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
+		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
+		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
+		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
 
-    $result['result'] = 1;
-    $result['msg']['title'] = 'Registrar OC';
-    $result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioRegistro", $dataParaVista, true);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar OC';
+		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioRegistro", $dataParaVista, true);
 
-    echo json_encode($result);
-  }
+		echo json_encode($result);
+	}
 
-  public function registrarOCLibre()
+	public function registrarOCLibre()
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		$post['item'] = checkAndConvertToArray($post['item']);
-    $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
+		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
@@ -153,55 +158,55 @@ class OrdenCompra extends MY_Controller
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
 
-    if (isset($post['subItem_monto'])) {
-      $post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
-      $post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
-      $post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);
-      $post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
-      $post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
-      $post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
-      $post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
-      $post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
-      $post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
-      $post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
-      $post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
-    }
+		if (isset($post['subItem_monto'])) {
+			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
+			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
+			$post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);
+			$post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
+			$post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
+			$post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
+			$post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
+			$post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
+			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
+			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
+			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
+		}
 
-    $insertData = [
-      'requerimiento' => $post['requerimiento'],
-      'fechaEntrega' => $post['fechaEntrega'],
-      'poCliente' => $post['poCliente'],
-      'idCuenta' => $post['cuentaForm'],
-      'idCentroCosto' => $post['cuentaCentroCostoForm'],
-      'idMoneda' => $post['moneda'],
-      'idProveedor' => $post['proveedor'],
-      'entrega' => $post['entrega'],
-      'comentario' => $post['comentario'],
-      'concepto' => $post['concepto'],
-      'idMetodoPago' => $post['metodoPago'],
-      'total' => $post['total'],
-      'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-      'totalIGV' => $post['totalIGV'],
-      'idUsuarioReg' => $this->idUsuario,
-      'observacion' => $post['observacion']
-    ];
-    $this->db->insert('orden.ordenCompra', $insertData);
-    $idOC = $this->db->insert_id();
-    $insertData = [];
-    $insertDataSub = [];
-    $orden = 0;
-		foreach ( $post['item'] as $key => $value) {
-      // En caso: el item es nuevo
-      $dataInserItem = [];
-      if($post['idItemForm'][$key] == '0'){
-        $dataInserItem = [
-          'nombre' => $post['item'][$key],
-          'idItemTipo' => $post['tipo'][$key]
-        ];
-        $this->db->insert('compras.item', $dataInserItem);
-        $post['idItemForm'][$key] = $this->db->insert_id();
-      }
-      // Fin: En Caso.
+		$insertData = [
+			'requerimiento' => $post['requerimiento'],
+			'fechaEntrega' => $post['fechaEntrega'],
+			'poCliente' => $post['poCliente'],
+			'idCuenta' => $post['cuentaForm'],
+			'idCentroCosto' => $post['cuentaCentroCostoForm'],
+			'idMoneda' => $post['moneda'],
+			'idProveedor' => $post['proveedor'],
+			'entrega' => $post['entrega'],
+			'comentario' => $post['comentario'],
+			'concepto' => $post['concepto'],
+			'idMetodoPago' => $post['metodoPago'],
+			'total' => $post['total'],
+			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
+			'totalIGV' => $post['totalIGV'],
+			'idUsuarioReg' => $this->idUsuario,
+			'observacion' => $post['observacion']
+		];
+		$this->db->insert('orden.ordenCompra', $insertData);
+		$idOC = $this->db->insert_id();
+		$insertData = [];
+		$insertDataSub = [];
+		$orden = 0;
+		foreach ($post['item'] as $key => $value) {
+			// En caso: el item es nuevo
+			$dataInserItem = [];
+			if ($post['idItemForm'][$key] == '0') {
+				$dataInserItem = [
+					'nombre' => $post['item'][$key],
+					'idItemTipo' => $post['tipo'][$key]
+				];
+				$this->db->insert('compras.item', $dataInserItem);
+				$post['idItemForm'][$key] = $this->db->insert_id();
+			}
+			// Fin: En Caso.
 			$insertData = [
 				'idOrdenCompra' => $idOC,
 				'idItem' => $post['idItemForm'][$key],
@@ -210,34 +215,33 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-        'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
 
-			for ($i=0; $i < intval($post['cantidadSubItem'][$key]); $i++) {
-        $insertDataSub[] = [
-          'idOrdenCompraDetalle' => $idOCDet,
-          'idTipoServicio' => $post['subItem_tipoServ'][$orden] == '' ? NULL : $post['subItem_tipoServ'][$orden],
-          'idItemLogistica' => $post['subItem_itemLog'][$orden] == '' ? NULL : $post['subItem_itemLog'][$orden],
-          'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
-          'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
-          'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
-          'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
-          'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
-          'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],
-          'cantidadPDV' => $post['subItem_cantidadPdv'][$orden] == '' ? NULL : $post['subItem_cantidadPdv'][$orden],
-          'costo' => $post['subItem_costo'][$orden] == '' ? NULL : $post['subItem_costo'][$orden],
-          'monto' => $post['subItem_monto'][$orden] == '' ? NULL : $post['subItem_monto'][$orden]
-        ];
+			for ($i = 0; $i < intval($post['cantidadSubItem'][$key]); $i++) {
+				$insertDataSub[] = [
+					'idOrdenCompraDetalle' => $idOCDet,
+					'idTipoServicio' => $post['subItem_tipoServ'][$orden] == '' ? NULL : $post['subItem_tipoServ'][$orden],
+					'idItemLogistica' => $post['subItem_itemLog'][$orden] == '' ? NULL : $post['subItem_itemLog'][$orden],
+					'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
+					'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
+					'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
+					'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
+					'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
+					'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],
+					'cantidadPDV' => $post['subItem_cantidadPdv'][$orden] == '' ? NULL : $post['subItem_cantidadPdv'][$orden],
+					'costo' => $post['subItem_costo'][$orden] == '' ? NULL : $post['subItem_costo'][$orden],
+					'monto' => $post['subItem_monto'][$orden] == '' ? NULL : $post['subItem_monto'][$orden]
+				];
 				$orden++;
 			}
-
 		}
 
-    if (!empty($insertDataSub)) {
-      $insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
-    }
+		if (!empty($insertDataSub)) {
+			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
+		}
 
 
 		$result['result'] = 1;
@@ -248,70 +252,70 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
-  public function editarOCLibre()
+	public function editarOCLibre()
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		$post['item'] = checkAndConvertToArray($post['item']);
-    $post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
+		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
-    if (isset($post['subItem_monto'])) {
-      $post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
-      $post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
-      $post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);
-      $post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
-      $post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
-      $post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
-      $post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
-      $post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
-      $post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
-      $post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
-      $post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
-    }
+		if (isset($post['subItem_monto'])) {
+			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
+			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
+			$post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);
+			$post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
+			$post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
+			$post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
+			$post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
+			$post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
+			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
+			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
+			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
+		}
 
-    $updateData[0] = [
-      'idOrdenCompra' => $post['idOc'],
-      'requerimiento' => $post['requerimiento'],
-      'fechaEntrega' => $post['fechaEntrega'],
-      'poCliente' => $post['poCliente'],
-      'idCuenta' => $post['cuentaForm'],
-      'idCentroCosto' => $post['cuentaCentroCostoForm'],
-      'idMoneda' => $post['moneda'],
-      'idProveedor' => $post['proveedor'],
-      'entrega' => $post['entrega'],
-      'comentario' => $post['comentario'],
-      'concepto' => $post['concepto'],
-      'idMetodoPago' => $post['metodoPago'],
-      'total' => $post['total'],
-      'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-      'totalIGV' => $post['totalIGV'],
-      'idUsuarioReg' => $this->idUsuario,
-      'observacion' => $post['observacion']
-    ];
-    $rpta = $this->model->actualizarMasivo('orden.ordenCompra', $updateData, 'idOrdenCompra');
-    $idOC = $updateData[0]['idOrdenCompra'];
-    $this->db->update('orden.ordenCompraDetalle', ['estado' => '0'], ['idOrdenCompra' => $idOC]);
+		$updateData[0] = [
+			'idOrdenCompra' => $post['idOc'],
+			'requerimiento' => $post['requerimiento'],
+			'fechaEntrega' => $post['fechaEntrega'],
+			'poCliente' => $post['poCliente'],
+			'idCuenta' => $post['cuentaForm'],
+			'idCentroCosto' => $post['cuentaCentroCostoForm'],
+			'idMoneda' => $post['moneda'],
+			'idProveedor' => $post['proveedor'],
+			'entrega' => $post['entrega'],
+			'comentario' => $post['comentario'],
+			'concepto' => $post['concepto'],
+			'idMetodoPago' => $post['metodoPago'],
+			'total' => $post['total'],
+			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
+			'totalIGV' => $post['totalIGV'],
+			'idUsuarioReg' => $this->idUsuario,
+			'observacion' => $post['observacion']
+		];
+		$rpta = $this->model->actualizarMasivo('orden.ordenCompra', $updateData, 'idOrdenCompra');
+		$idOC = $updateData[0]['idOrdenCompra'];
+		$this->db->update('orden.ordenCompraDetalle', ['estado' => '0'], ['idOrdenCompra' => $idOC]);
 
-    $insertData = [];
-    $insertDataSub = [];
-    $orden = 0;
-    foreach ( $post['item'] as $key => $value) {
-      // En caso: el item es nuevo
-      $dataInserItem = [];
-      if($post['idItemForm'][$key] == '0'){
-        $dataInserItem = [
-          'nombre' => $post['item'][$key],
-          'idItemTipo' => $post['tipo'][$key]
-        ];
-        $this->db->insert('compras.item', $dataInserItem);
-        $post['idItemForm'][$key] = $this->db->insert_id();
-      }
-      // Fin: En Caso.
+		$insertData = [];
+		$insertDataSub = [];
+		$orden = 0;
+		foreach ($post['item'] as $key => $value) {
+			// En caso: el item es nuevo
+			$dataInserItem = [];
+			if ($post['idItemForm'][$key] == '0') {
+				$dataInserItem = [
+					'nombre' => $post['item'][$key],
+					'idItemTipo' => $post['tipo'][$key]
+				];
+				$this->db->insert('compras.item', $dataInserItem);
+				$post['idItemForm'][$key] = $this->db->insert_id();
+			}
+			// Fin: En Caso.
 			$insertData = [
 				'idOrdenCompra' => $idOC,
 				'idItem' => $post['idItemForm'][$key],
@@ -320,34 +324,33 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-        'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
 
-			for ($i=0; $i < intval($post['cantidadSubItem'][$key]); $i++) {
-        $insertDataSub[] = [
-          'idOrdenCompraDetalle' => $idOCDet,
-          'idTipoServicio' => $post['subItem_tipoServ'][$orden] == '' ? NULL : $post['subItem_tipoServ'][$orden],
-          'idItemLogistica' => $post['subItem_itemLog'][$orden] == '' ? NULL : $post['subItem_itemLog'][$orden],
-          'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
-          'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
-          'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
-          'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
-          'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
-          'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],
-          'cantidadPDV' => $post['subItem_cantidadPdv'][$orden] == '' ? NULL : $post['subItem_cantidadPdv'][$orden],
-          'costo' => $post['subItem_costo'][$orden] == '' ? NULL : $post['subItem_costo'][$orden],
-          'monto' => $post['subItem_monto'][$orden] == '' ? NULL : $post['subItem_monto'][$orden]
-        ];
+			for ($i = 0; $i < intval($post['cantidadSubItem'][$key]); $i++) {
+				$insertDataSub[] = [
+					'idOrdenCompraDetalle' => $idOCDet,
+					'idTipoServicio' => $post['subItem_tipoServ'][$orden] == '' ? NULL : $post['subItem_tipoServ'][$orden],
+					'idItemLogistica' => $post['subItem_itemLog'][$orden] == '' ? NULL : $post['subItem_itemLog'][$orden],
+					'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
+					'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
+					'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
+					'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
+					'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
+					'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],
+					'cantidadPDV' => $post['subItem_cantidadPdv'][$orden] == '' ? NULL : $post['subItem_cantidadPdv'][$orden],
+					'costo' => $post['subItem_costo'][$orden] == '' ? NULL : $post['subItem_costo'][$orden],
+					'monto' => $post['subItem_monto'][$orden] == '' ? NULL : $post['subItem_monto'][$orden]
+				];
 				$orden++;
 			}
-
 		}
 
-    if (!empty($insertDataSub)) {
-      $insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
-    }
+		if (!empty($insertDataSub)) {
+			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
+		}
 
 
 		$result['result'] = 1;
@@ -358,36 +361,36 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
-  public function descargarOCLibre()
-  {
-    require_once('../mpdf/mpdf.php');
-    ini_set('memory_limit', '1024M');
-    set_time_limit(0);
+	public function descargarOCLibre()
+	{
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
 
-    $post = json_decode($this->input->post('data'), true);
-    $dataParaVista['dataOc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $post['idOC']])->result_array();
-    $ids = [];
-    foreach ($dataParaVista['dataOc'] as $key => $value) {
-      $dataParaVista['dataOc'][$key]['fechaEntrega'] = date_change_format($value['fechaEntrega']);
-    }
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista['dataOc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $post['idOC']])->result_array();
+		$ids = [];
+		foreach ($dataParaVista['dataOc'] as $key => $value) {
+			$dataParaVista['dataOc'][$key]['fechaEntrega'] = date_change_format($value['fechaEntrega']);
+		}
 
-    require APPPATH . '/vendor/autoload.php';
-    $mpdf = new \Mpdf\Mpdf();
+		require APPPATH . '/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf();
 
-    $contenido['header'] = $this->load->view("modulos/OrdenCompra/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS','codigo'=>'SIG-LOG-FOR-001'], true);
-    $contenido['footer'] = $this->load->view("modulos/OrdenCompra/pdf/footer", array(), true);
+		$contenido['header'] = $this->load->view("modulos/OrdenCompra/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-001'], true);
+		$contenido['footer'] = $this->load->view("modulos/OrdenCompra/pdf/footer", array(), true);
 
-    $contenido['style'] = $this->load->view("modulos/OrdenCompra/pdf/oper_style",[],true);
-    $contenido['body'] = $this->load->view("modulos/OrdenCompra/pdf/orden_compra", $dataParaVista,true);
-    $mpdf->SetHTMLHeader($contenido['header']);
-    $mpdf->SetHTMLFooter($contenido['footer']);
-    $mpdf->AddPage();
-    $mpdf->WriteHTML($contenido['style']);
-    $mpdf->WriteHTML($contenido['body']);
+		$contenido['style'] = $this->load->view("modulos/OrdenCompra/pdf/oper_style", [], true);
+		$contenido['body'] = $this->load->view("modulos/OrdenCompra/pdf/orden_compra", $dataParaVista, true);
+		$mpdf->SetHTMLHeader($contenido['header']);
+		$mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
 
-    header('Set-Cookie: fileDownload=true; path=/');
-    header('Cache-Control: max-age=60, must-revalidate');
-    $cod_oc = generarCorrelativo($dataParaVista['dataOc'][0]['idOrdenCompra'],6);
-    $mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
-  }
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+		$cod_oc = generarCorrelativo($dataParaVista['dataOc'][0]['idOrdenCompra'], 6);
+		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+	}
 };
