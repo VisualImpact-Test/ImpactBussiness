@@ -162,8 +162,8 @@ var Cotizacion = {
 
             $('.simpleDropdown').dropdown();
             $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
-            Cotizacion.itemServicio =   $.parseJSON($('#itemsServicio').val());
-            Cotizacion.tachadoDistribucion =   $.parseJSON($('#tachadoDistribucion').val());
+            Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());
+           // Cotizacion.tachadoDistribucion = $.parseJSON($('#tachadoDistribucion').val());
 
             Cotizacion.htmlG = $('.default-item').html();
 			   

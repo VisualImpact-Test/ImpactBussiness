@@ -32,10 +32,10 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Deadline compras"  value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
+                        <input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
                     </div>
                 </div>
-                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>" >
+                <input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerida</div>
@@ -147,11 +147,11 @@
         <h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
         </h4>
         <div class="default-item">
-           
+
             <? foreach ($cotizacionTarifario as $key => $row) : ?>
-                
+
                 <div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
-                <input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
+                    <input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
                     <div class="ui right floated header">
                         <div class="ui icon menu">
                             <a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
@@ -163,7 +163,7 @@
                         </div>
                     </div>
                     <div class="ui left floated header">
-                        <span class="ui medium text ">Detalle N. <?= generarCorrelativo($key+1,5) ?></span></span>
+                        <span class="ui medium text ">Detalle N. <?= generarCorrelativo($key + 1, 5) ?></span></span>
                     </div>
                     <div class="ui clearing divider"></div>
                     <div class="ui grid">
@@ -173,19 +173,18 @@
                                 <div class="six wide field">
                                     <div class="ui sub header">Item</div>
                                     <div class="ui-widget">
-                                        <div class="ui icon input w-100">
-                                            <input class="items" type='text' name='nameItem' patron="requerido" value="<?= $row['item'] ?>" placeholder="Buscar item" readonly>
+                                        <div class="ui right action left icon input w-100">
                                             <i class="semaforoForm flag visible link icon semaforoForm-<?= $row['semaforoVigencia'] ?>"></i>
-                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
+                                            <input class="items" type='text' name='nameItem' patron="requerido" value="<?= $row['item'] ?>" placeholder="Buscar item" readonly>
                                             <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
-                                            <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="0" patron="requerido">
-                                            <div class="text">Cuenta</div>
-                                            <i class="dropdown icon"></i>
-                                            <div class="menu">
-                                                <div class="item" data-value="1">De la cuenta</div>
-                                                <div class="item" data-value="0">Externo</div>
+                                                <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="0" patron="requerido">
+                                                <div class="text">Cuenta</div>
+                                                <i class="dropdown icon"></i>
+                                                <div class="menu">
+                                                    <div class="item" data-value="1">De la cuenta</div>
+                                                    <div class="item" data-value="0">Externo</div>
+                                                </div>
                                             </div>
-                                        </div>
                                         </div>
 
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
@@ -218,47 +217,47 @@
                             <div class="ui form attached div-features fluid segment my-3 <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
                                 <h4 class="ui dividing header">SUB ITEMS</h4>
                                 <div class="content-body-sub-item">
-                                  
 
-                                        <?
-                                        if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
-                                            foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
-                                                <div class="fields body-sub-item ">
-                                                    <div class="three wide field">
-                                                        <div class="ui sub header">Talla</div>
-                                                        <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
-                                                    </div>
-                                                    <div class="three wide field">
-                                                        <div class="ui sub header">Tela</div>
-                                                        <input class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
-                                                    </div>
-                                                    <div class="three wide field">
-                                                        <div class="ui sub header">Color</div>
-                                                        <input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
-                                                    </div>
-                                                    <div class="two wide field">
-                                                        <div class="ui sub header">Cantidad</div>
-                                                        <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
-                                                    </div>
-                                                    <div class="one wide field">
-                                                    <div class="ui sub header">Eliminar</div>
-                                                     <button type="button" class="ui basic button btn-eliminar-sub-item">
-                                                         <i class="trash icon"></i>
-                                                     </button>
-                                                     </div>
-                                                  
+
+                                    <?
+                                    if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
+                                        foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
+                                            <div class="fields body-sub-item ">
+                                                <div class="three wide field">
+                                                    <div class="ui sub header">Talla</div>
+                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
                                                 </div>
-                                        <?
-                                            endforeach;
+                                                <div class="three wide field">
+                                                    <div class="ui sub header">Tela</div>
+                                                    <input class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+                                                </div>
+                                                <div class="three wide field">
+                                                    <div class="ui sub header">Color</div>
+                                                    <input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+                                                </div>
+                                                <div class="two wide field">
+                                                    <div class="ui sub header">Cantidad</div>
+                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                </div>
+                                                <div class="one wide field">
+                                                    <div class="ui sub header">Eliminar</div>
+                                                    <button type="button" class="ui basic button btn-eliminar-sub-item">
+                                                        <i class="trash icon"></i>
+                                                    </button>
+                                                </div>
 
-                                            
-                                        endif;
-                                        ?>
+                                            </div>
+                                    <?
+                                        endforeach;
 
-                              
 
-                                   
-                                </div>             
+                                    endif;
+                                    ?>
+
+
+
+
+                                </div>
                                 <button type="button" class="ui basic button btn-add-sub-item">
                                     <i class="plus icon"></i>
                                     Agregar
@@ -296,12 +295,12 @@
                                                     <input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
                                                 </div>
                                                 <div class="one wide field">
-                                                  <div class="ui sub header">Eliminar</div>
-                                                <button type="button" class="ui basic button btn-eliminar-sub-item">
-                                                   <i class="trash icon"></i>
-                                                </button>
+                                                    <div class="ui sub header">Eliminar</div>
+                                                    <button type="button" class="ui basic button btn-eliminar-sub-item">
+                                                        <i class="trash icon"></i>
+                                                    </button>
                                                 </div>
-                                              </div>
+                                            </div>
                                     <?
                                         endforeach;
                                     endif;
@@ -320,7 +319,7 @@
                                         <div class="seven wide field">
                                             <div class="ui sub header">Tipo Servicio</div>
                                             <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-                                                <?= htmlSelectOptionArray2([ 'selected' => $dataSubItem['tipoServicio'], 'query' => $tipoServicios,  'class' => 'text-titlecase ', 'simple' => true, 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                                <?= htmlSelectOptionArray2(['selected' => $dataSubItem['tipoServicio'], 'query' => $tipoServicios,  'class' => 'text-titlecase ', 'simple' => true, 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                             </select>
                                         </div>
                                         <div class="three wide field">
@@ -335,6 +334,25 @@
                                         <div class="three wide field">
                                             <div class="ui sub header">Cantidad</div>
                                             <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                        </div>
+                                        <div class="tbDistribucionTachado d-none">
+                                            <h4 class="ui dividing header">TACHADO</h4>
+                                            <input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
+                                            <table class="ui single line table">
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th class="thCustomNameItem"></th>
+                                                        <th>Tiempo tachado (días)</th>
+                                                        <th>Personas para tachado</th>
+                                                        <th>Costo por día</th>
+                                                        <th>Total de costo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
                                         </div>
                                 <?
                                     endforeach;
@@ -414,7 +432,7 @@
                                                             <a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
                                                             <input type="hidden" name="file-item[<?= $key ?>]" value="<?= $archivo['nombre_archivo'] ?>">
                                                             <input type="hidden" name="file-type[<?= $key ?>]" value="application/<?= $archivo['extension'] ?>">
-                                                            <input type="hidden" name="file-name[<?=  $key ?>]" value="<?= $archivo['nombre_inicial'] ?>">
+                                                            <input type="hidden" name="file-name[<?= $key ?>]" value="<?= $archivo['nombre_inicial'] ?>">
                                                             <img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
                                                         </div>
                                                 <? }
@@ -444,16 +462,16 @@
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= $row['semaforoVigencia'] != 'red' ? moneda($row['costo']) : '' ?>" readonly>
                                         <input class="costoForm" type="hidden" name="costoForm" placeholder="0.00" value="<?= $row['semaforoVigencia'] != 'red' ? ($row['costo']) : '' ?>" readonly>
                                         <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
-                                    <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
-                                    <div class="ui basic floating dropdown button simpleDropdown read-only">
-                                        <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
-                                        <div class="text">Redondear</div>
-                                        <i class="dropdown icon"></i>
-                                        <div class="menu">
-                                            <div class="item" data-value="1">Redondear arriba</div>
-                                            <div class="item" data-value="0">No redondear</div>
+                                        <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+                                        <div class="ui basic floating dropdown button simpleDropdown read-only">
+                                            <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
+                                            <div class="text">Redondear</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">Redondear arriba</div>
+                                                <div class="item" data-value="0">No redondear</div>
+                                            </div>
                                         </div>
-                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -492,7 +510,7 @@
                     </div>
                 </div>
             <? endforeach; ?>
-           
+
             <div class="ui segment body-item nuevo body-item-vacio">
                 <div class="ui right floated header">
                     <div class="ui icon menu">
@@ -827,3 +845,4 @@
 </div>
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
+<input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>

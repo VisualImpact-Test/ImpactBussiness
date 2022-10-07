@@ -1635,7 +1635,7 @@ class M_Cotizacion extends MY_Model
 				cds.idItem,
 				cds.idDistribucionTachado,
 				UPPER(ts.nombre) tipoServicio,
-				um.nombre unidadMedida,
+				um.nombre unidadMedida
 
 			FROM
 			compras.cotizacion c
