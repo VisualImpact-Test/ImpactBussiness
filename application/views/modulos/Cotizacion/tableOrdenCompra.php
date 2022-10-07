@@ -5,6 +5,7 @@
                 <th class="td-center">#</th>
                 <th></th>
                 <th>N° DE ORDEN</th>
+                <th>CODIGO OPER</th>
                 <th>N° DE RQ</th>
                 <th>USUARIO REGISTRO</th>
                 <th>FECHA REGISTRO</th>
@@ -20,6 +21,7 @@
                         <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOrdenCompra"><i class="fa fa-lg fa-file-pdf" title="Descargar pdf"></i></a>
                     </td>
                     <td class="text-left"> <?= generarCorrelativo($row['idOrdenCompra'],6)?></td>
+                    <td class="text-left"><?= $row['idOrdenCompra'].substr(implode(',',$cotizaciones[$row['idOrdenCompra']]), 3, 4)?></td>
                     <td class="text-left"> <?= !empty($row['requerimiento']) ? $row['requerimiento'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['usuario']) ? $row['usuario'] : '-' ?></td>
                     <td class="text-left"> <?= !empty($row['fechaReg']) ? $row['fechaReg'] : '-' ?></td>

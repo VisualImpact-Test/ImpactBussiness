@@ -1419,6 +1419,11 @@ class Cotizacion extends MY_Controller
         foreach($ordenDetalle as $row){
             $dataParaVista['cotizaciones'][$row['idOrdenCompra']][] = $row['cotizacionCodNombre']; 
         }
+
+        foreach ($ordenDetalle as $key => $value) {
+            $dataParaVista['codCotizacion'][] = $key['codCotizacion'];
+        }
+
         $result['result'] = 1;
         $result['data']['width'] = '90%';
         $result['msg']['title'] = 'Ordenes de compra';

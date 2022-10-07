@@ -21,6 +21,10 @@
     .floating-container {
         height: 200px !important;
     }
+
+    .plomo {
+        color: #d2d2d2 !important;
+    }
 </style>
 <div class="ui form attached fluid segment p-4">
     <form class="ui form" role="form" id="formRegistroCotizacion" method="post">
@@ -68,13 +72,13 @@
             </div>
             <div class="five wide field">
                 <div class="ui sub header">Cuenta</div>
-                <select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
+                <select class="ui search dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+                    <?= htmlSelectOptionArray2([ 'title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>
             <div class="six wide field">
                 <div class="ui sub header">Centro de costo</div>
-                <select class="ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+                <select class="ui search dropdown  clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>

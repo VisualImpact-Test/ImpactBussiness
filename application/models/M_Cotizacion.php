@@ -56,7 +56,7 @@ class M_Cotizacion extends MY_Model
 			c.subcanal value
 		FROM
 		rrhh.dbo.empresa_Canal c
-		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idCanal
+		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
 			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
 		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
