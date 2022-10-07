@@ -227,7 +227,12 @@
                               <input type="hidden" name="file-item[0]" value="">
                               <input type="hidden" name="file-type[0]" value="image/<?= $archivo['extension'] ?>">
                               <input type="hidden" name="file-name[0]" value="<?= $archivo['nombre_inicial'] ?>">
-                              <img src="<?= RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}" ?>" class="rounded img-lsck-capturas img-responsive img-thumbnail">
+                              <?php if ($archivo['extension'] == 'pdf') {
+                                $ruta = RUTA_WIREFRAME . "pdf.png";
+                              }else{
+                                $ruta = RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}";
+                              }?>
+                              <img src="<?= $ruta ?>" class="rounded img-lsck-capturas img-responsive img-thumbnail">
                             </div>
                         <?php endif; ?>
                       <?php endforeach; ?>
