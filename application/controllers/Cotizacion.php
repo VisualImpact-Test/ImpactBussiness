@@ -1895,10 +1895,11 @@ class Cotizacion extends MY_Controller
     public function viewFormularioDuplicar($idCotizacion = '') {
 
 
+        
         if(empty($idCotizacion)){
             redirect('Cotizacion','refresh');
         }
-
+        
 
         $config = array();
         $config['nav']['menu_active'] = '131';
@@ -1917,7 +1918,7 @@ class Cotizacion extends MY_Controller
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/viewAgregarCotizacion'
         );
-
+        
         $config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
         $config['data']['costo'] = $this->model->obtenerCosto(['id'=> $idCotizacion])['query']->row_array();
         $config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion'=> $idCotizacion,'anexo' => true])['query']->result_array();
@@ -1928,8 +1929,8 @@ class Cotizacion extends MY_Controller
        // $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
         $cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 
-
-
+        
+        
         $cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
             [
             'idCotizacion'=> $idCotizacion,
@@ -1944,7 +1945,7 @@ class Cotizacion extends MY_Controller
         foreach($archivos as $archivo){
             $config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
         }
-
+       
         foreach($cotizacionProveedoresVista as $cotizacionProveedorVista){
             $config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
         }
@@ -1955,7 +1956,7 @@ class Cotizacion extends MY_Controller
 
         foreach($proveedores as $proveedor){
             $config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
-        }
+        } 
 
         $itemServicio =  $this->model->obtenerItemServicio();
         foreach ($itemServicio as $key => $row) {
@@ -1976,7 +1977,7 @@ class Cotizacion extends MY_Controller
         $config['data']['itemServicio'] = $data['itemServicio'];
 
         $config['single'] = true;
-
+        
         $config['data']['icon'] = 'fas fa-money-check-edit-alt';
         $config['data']['title'] = 'Cotizacion';
         $config['data']['message'] = 'Lista de Cotizacions';
@@ -2384,8 +2385,8 @@ class Cotizacion extends MY_Controller
                 'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2  : $post['idEstadoItemForm'][$k],
                 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
                 'idCotizacionDetalleEstado' => 1,
-                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
-                'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+                'caracteristicas'=> !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL, 
+                'caracteristicasCompras'=> !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL, 
                 'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
                 'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
                 'fechaCreacion' => getActualDateTime()
@@ -2478,6 +2479,22 @@ class Cotizacion extends MY_Controller
 
 
         }
+
+            foreach($data['archivos_arreglo'][$k] as $key => $archivo){
+                if (empty($archivo['idCotizacionDetalleArchivo'])) {
+
+                $data['archivos'][$k][] = [
+                'base64' => $archivo['base64'],
+                'type' => $archivo['type'],
+                'name' => $archivo['name'],
+                'carpeta'=> 'cotizacion',
+                'nombreUnico' => uniqid(),
+
+                ];
+
+              }  
+            }
+
 
             foreach($data['archivos_arreglo'][$k] as $key => $archivo){
                 if (empty($archivo['idCotizacionDetalleArchivo'])) {

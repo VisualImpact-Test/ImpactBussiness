@@ -130,6 +130,20 @@
                 </div>
             </div>
         </div>
+        <div class="fields">
+            <div class="eight wide field">
+                <div class="ui sub header">Ver precio PDF</div>
+                <div class="ui basic floating dropdown button simpleDropdown w-100">
+                    <input type="hidden" name="flagMostrarPrecio" value="1" patron="requerido">
+                    <div class="text">Ver Precio PDF</div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <div class="item" data-value="1">Ver precio</div>
+                        <div class="item" data-value="0">Ocultar Precio</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
         </h4>
         <div class="default-item">
@@ -162,6 +176,16 @@
                                         <div class="ui icon input w-100">
                                             <input class="items" type='text' name='nameItem' patron="requerido" value="<?= $row['item'] ?>" placeholder="Buscar item" readonly>
                                             <i class="semaforoForm flag visible link icon semaforoForm-<?= $row['semaforoVigencia'] ?>"></i>
+                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
+                                            <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
+                                            <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="0" patron="requerido">
+                                            <div class="text">Cuenta</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">De la cuenta</div>
+                                                <div class="item" data-value="0">Externo</div>
+                                            </div>
+                                        </div>
                                         </div>
 
                                         <input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
@@ -226,6 +250,8 @@
                                                 </div>
                                         <?
                                             endforeach;
+
+                                            
                                         endif;
                                         ?>
 
@@ -417,6 +443,17 @@
 
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= $row['semaforoVigencia'] != 'red' ? moneda($row['costo']) : '' ?>" readonly>
                                         <input class="costoForm" type="hidden" name="costoForm" placeholder="0.00" value="<?= $row['semaforoVigencia'] != 'red' ? ($row['costo']) : '' ?>" readonly>
+                                        <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+                                    <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+                                    <div class="ui basic floating dropdown button simpleDropdown read-only">
+                                        <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
+                                        <div class="text">Redondear</div>
+                                        <i class="dropdown icon"></i>
+                                        <div class="menu">
+                                            <div class="item" data-value="1">Redondear arriba</div>
+                                            <div class="item" data-value="0">No redondear</div>
+                                        </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

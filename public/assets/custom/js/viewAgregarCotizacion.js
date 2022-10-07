@@ -143,8 +143,12 @@ var Cotizacion = {
     nDetalle: 1,
 	anexoEliminado: [],
 	archivoEliminado: [],
+	subItemEliminado: [],
+	repetidoSubItem: [],
+	repetidoSubItem2: [],
 	gapEmpresas:[],
 	controlesOC: [],
+	nuevo_item: [],
 
 	load: function () {
 
@@ -489,6 +493,14 @@ var Cotizacion = {
 			let allFeatures = parent.find(`.div-features`);
 			let divFeature = parent.find(`.div-feature-${idTipo}`);
 
+			let idRepetido = parent.find("#monto");
+			let buscado = idRepetido.find("#monto2");
+			let elementoBuscado = buscado.data('id');
+
+			let idRepetido2 = parent.find("#distribucion");
+			let buscado2 = idRepetido2.find("#distribucion2");
+			let elementoBuscado2 = buscado2.data('id');
+
 			if(idTipo == COD_DISTRIBUCION.id){
 				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
@@ -500,8 +512,18 @@ var Cotizacion = {
 				}
 			}
 
+			if(elementoBuscado ){
+				Cotizacion.repetidoSubItem.push(elementoBuscado);
+				
+			}
+			
+			if(elementoBuscado2){
+				Cotizacion.repetidoSubItem2.push(elementoBuscado2);
+			}
+
 			allFeatures.addClass('d-none');
 			divFeature.removeClass('d-none');
+			$("input").remove("#identificador");
 
 			Cotizacion.cleanDetalle(parent);
 		});
@@ -1292,6 +1314,11 @@ var Cotizacion = {
 			let control = $(this);
 			let parent = control.closest('.content-body-sub-item');
 			let element = control.closest('.body-sub-item');
+			let idEliminado = element.data('id');
+
+			if(idEliminado){
+				Cotizacion.subItemEliminado.push(idEliminado);
+			}
 
 			if(parent.find('.body-sub-item').length <= 1){
 				element.find(':input').val('');
@@ -2041,6 +2068,11 @@ var Cotizacion = {
 
    actualizarCotizacionView: function (idCotizacion) {
 	let formValues = Fn.formSerializeObject('formActualizarCotizacion');
+		formValues.archivosEliminados = Cotizacion.archivoEliminado;
+			formValues.anexosEliminados = Cotizacion.anexoEliminado;
+			formValues.subItemEliminado = Cotizacion.subItemEliminado;
+			formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
+			formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
 
 	let jsonString = { 'data': JSON.stringify(formValues) };
 	let url = Cotizacion.url + "actualizarCotizacion";
