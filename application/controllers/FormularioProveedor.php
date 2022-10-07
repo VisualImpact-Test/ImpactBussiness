@@ -15,9 +15,11 @@ class FormularioProveedor extends MY_Controller
 
 	public function index()
 	{
+
 		$proveedor = $this->session->userdata('proveedor');
+
 		if(!empty($proveedor)){
-			redirect('FormularioProveedor/Cotizaciones','refresh');
+			redirect('FormularioProveedor/CotizacionesLista','refresh');
 			exit();
 		}
 		$config['css']['style'] = array('');

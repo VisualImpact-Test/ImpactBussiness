@@ -112,6 +112,15 @@ class M_Proveedor extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerProveedoresActivos($params = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.proveedor')
+		->where('idProveedorEstado','2')
+		->order_by('razonSocial asc'); //Activo
+		return $this->db->get();
+	}
 	public function obtenerUltimaRespuestaEstado($idProveedor)
 	{
 		$this->db
