@@ -344,6 +344,54 @@ var Cotizacion = {
 
 		});
 
+		// centro costo
+		// $(document).ready(function() {
+		// 	let centro = $(".centro-ocultado .item").hide();
+			
+		// 	//console.log(centro);
+		// });
+
+		// $(".centro visible").click(function(){
+			
+		// 	console.log('hola mundo');
+		//   });
+
+		$(document).ready(function() {
+			$(".centro-ocultado .menu").attr("id","centroCosto_oculto");
+			$(".centro-visible .menu").attr("id","centroCosto_visible");
+			
+			});
+
+				 $(document).ready(function() {
+				$("#centroCosto_oculto .item").hide();
+				
+				});
+
+
+			
+	
+					// $("#centroCosto_visible .item").click(function(){
+					// 	alert("go");
+					// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
+					//   });
+
+					  $(document).on('click', '#centroCosto_visible .item',  function(){
+						$("#centroCosto_oculto .item").removeAttr("style", "display");
+						$("#centroCosto_oculto .seleccion").attr("style", "display").addClass("d-none");
+
+					});
+
+					$(document).ready(function() {
+				
+					let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
+					$elementoDiv.prependTo('#centroCosto_oculto');
+					});
+				
+		
+
+
+		
+
 		$(document).on('click', '.editFeatures', function () {
 			++modalId;
 			let control = $(this).closest("tr");
@@ -517,6 +565,7 @@ var Cotizacion = {
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
 			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
+		
 
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
@@ -564,9 +613,10 @@ var Cotizacion = {
 			let costoFormLabel = thisControlParents.find('.costoFormLabel');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
-
+			console.log(costoTipoServicioForm);
 			let cantidadTipoServicio = Number(thisControl.val());
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
+			console.log(costoTipoServicio);
 
 			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio,costoTipoServicio);
 
@@ -1335,14 +1385,18 @@ var Cotizacion = {
 
 		$(document).on('change', '#cuentaForm', function () {
 			let control = $(this);
+			
 			let cod = control.val();
+		
 			let gap = 0;
+
 			$.each(Cotizacion.gapEmpresas,(k,v) => {
 				if(v.idEmpresa == cod){
 					gap = v.gap;
 					return;
 				}
 			});
+			
 			if(gap){
 				$('.gapForm').val(gap);
 				$('.cantidadForm').keyup();
@@ -1916,6 +1970,7 @@ var Cotizacion = {
 		let itemLogisticaForm = parent.find('.itemLogisticaForm').find('select');
 
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
+		console.log(tipoServicioSubItem);
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
 
