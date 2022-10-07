@@ -396,6 +396,7 @@
                                         <div class="menu">
                                             <div class="item" data-value="1">Redondear arriba</div>
                                             <div class="item" data-value="0">No redondear</div>
+                                            
                                         </div>
                                     </div>
                                 </div>
