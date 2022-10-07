@@ -168,10 +168,11 @@ function monedaNew($params = [])
 	$valor = !empty($params['valor']) ? $params['valor'] : '';
 	$dec = !empty($params['dec']) ? $params['dec'] : 2;
 	$simbolo = !empty($params['simbolo']) ? $params['simbolo'] : 'S/';
+	$cambio = !empty($params['cambio']) ? $params['cambio'] : 1;
 
 	if (is_string($valor)) return $valor;
 	else {
-		$valor = $simbolo . number_format($valor, $dec, '.', ',');
+		$valor = $simbolo . number_format($valor / $cambio, $dec, '.', ',');
 		return $valor;
 	}
 }
