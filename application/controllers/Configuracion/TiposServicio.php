@@ -182,7 +182,6 @@ class TiposServicio extends MY_Controller
           'idUnidadMedida' => $post['unidadMedida'],
           'nombre' => $post['nombre'],
         ];
-        log_message('error', json_encode($datos));
 
         $validacionExistencia = $this->model->obtenerInformacionTiposServicio($datos);
         unset($datos['NO_idTipoServicio']);
@@ -199,8 +198,7 @@ class TiposServicio extends MY_Controller
         ];
 
         $update = $this->model->actualizarDatos('compras.tipoServicio', $datos, $filtro);
-        log_message('error', $this->db->last_query());
-        
+
         if (!$update['estado']) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
