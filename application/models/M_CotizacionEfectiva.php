@@ -165,28 +165,6 @@ class M_CotizacionEfectiva extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerItemServicio()
-	{
-		$sql = "
-			SELECT
-				a.idItem AS value
-				, a.nombre AS label
-				, ta.costo
-				, pr.idProveedor
-				, pr.razonSocial AS proveedor
-				, 1 AS tipo
-			FROM compras.item a
-			LEFT JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
-			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
-			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
-		";
-
-		$result = $this->db->query($sql)->result_array();
-
-		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
-		return $result;
-	}
-
 	public function validarExistenciaCotizacionEfectiva($params = [])
 	{
 		$filtros = "";
@@ -309,7 +287,4 @@ class M_CotizacionEfectiva extends MY_Model
 
 		return $this->resultado;
 	}
-
-
-	
 }

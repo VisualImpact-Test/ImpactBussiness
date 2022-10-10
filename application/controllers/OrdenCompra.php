@@ -102,9 +102,9 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-		$dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
+		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
-		$dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
+		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
@@ -130,9 +130,9 @@ class OrdenCompra extends MY_Controller
 
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array(); //
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-		$dataParaVista['item'] = $this->model_cotizacion->obtenerItemServicio();
+		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
-		$dataParaVista['itemLogistica'] = $this->model_cotizacion->obtenerItemServicio(['logistica' => true]);
+		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
