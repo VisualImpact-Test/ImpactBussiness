@@ -250,7 +250,7 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion = ' . $params['idCotizacion'] : '';
-		$filtros .= !empty($params['idsCotizacion']) ? ' AND p.idCotizacion IN('. $params['idsCotizacion'].')' : '';
+		$filtros .= !empty($params['idsCotizacion']) ? ' AND p.idCotizacion IN(' . $params['idsCotizacion'] . ')' : '';
 
 		$sql = "
 			SELECT
@@ -309,67 +309,6 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerItemServicio($params = [])
-	{	
-		$filtros = "";
-		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica,0) <> 0" : "";
-
-
-		$sql = "
-		DECLARE @fechaHoy DATE = GETDATE();
-		WITH listTarifario AS (
-			SELECT
-				a.idItem AS value
-				, a.nombre AS label
-				, ta.costo
-				, pr.idProveedor
-				, pr.razonSocial AS proveedor
-				, a.idItemTipo AS tipo
-				, ISNULL(DATEDIFF(DAY,ta.fechaVigencia,@fechaHoy),0) AS diasVigencia
-				, a.idItemLogistica
-				, ROW_NUMBER() OVER(PARTITION BY a.idItem ORDER BY a.idItem,ta.idItemTarifario) ntarifario
-				, art.peso pesoLogistica
-				, ISNULL(a.flagCuenta,0) flagCuenta
-			FROM compras.item a
-			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
-			LEFT JOIN compras.proveedor pr ON ta.idProveedor = pr.idProveedor
-			LEFT JOIN visualimpact.logistica.articulo art ON art.idArticulo = a.idItemLogistica
-			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
-			{$filtros}
-		), lst_tarifario_det AS(
-			SELECT
-				lt.value
-				, lt.label
-				, lt.costo
-				, lt.idProveedor
-				, lt.proveedor
-				, lt.tipo
-				, CASE
-					WHEN diasVigencia <= 7 THEN 'green'
-					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
-					ELSE 'red' END
-					AS semaforoVigencia
-				, diasVigencia
-				, lt.idItemLogistica
-				, lt.pesoLogistica
-				, lt.flagCuenta
-			FROM listTarifario lt
-			WHERE lt.ntarifario = 1
-		)
-
-		SELECT
-		ls.*,
-		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
-		FROM
-		lst_tarifario_det ls
-		";
-
-		$result = $this->db->query($sql)->result_array();
-
-		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
-		return $result;
-	}
-
 	public function validarExistenciaCotizacion($params = [])
 	{
 		$filtros = "";
@@ -413,33 +352,33 @@ class M_Cotizacion extends MY_Model
 	public function insertarCotizacionDetalle($params = [])
 	{
 		$insertArchivos = [];
-		foreach($params['insert'] as $k => $insert){
+		foreach ($params['insert'] as $k => $insert) {
 			$queryCotizacionDetalle = $this->db->insert($params['tabla'], $insert);
 			$idCotizacionDetalle = $this->db->insert_id();
 
-			if(!empty($params['archivos'][$k])){
-				foreach($params['archivos'][$k] as $archivo){
-					$tipoArchivo = explode('/',$archivo['type']);
+			if (!empty($params['archivos'][$k])) {
+				foreach ($params['archivos'][$k] as $archivo) {
+					$tipoArchivo = explode('/', $archivo['type']);
 
 					$extension = '';
 
-					if($tipoArchivo[0] == 'image'){
+					if ($tipoArchivo[0] == 'image') {
 						$extension = $tipoArchivo[1];
-					}else if($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+					} else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
 						$extension = 'xlsx';
-					}else if($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation'){
+					} else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
 						$extension = 'pptx';
-					}else if($tipoArchivo[1] == 'vnd.ms-excel'){
+					} else if ($tipoArchivo[1] == 'vnd.ms-excel') {
 						$extension = 'xls';
-					}else if($tipoArchivo[1] == 'vnd.ms-powerpoint'){
+					} else if ($tipoArchivo[1] == 'vnd.ms-powerpoint') {
 						$extension = 'ppt';
-					}else if($tipoArchivo[1] == 'pdf'){
+					} else if ($tipoArchivo[1] == 'pdf') {
 						$extension = 'pdf';
 					}
 
 					$archivo['extensionVisible'] = $extension;
 					$archivoName = $this->saveFileWasabi($archivo);
-					
+
 					$insertArchivos[] = [
 						'idCotizacion' => $insert['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -454,11 +393,11 @@ class M_Cotizacion extends MY_Model
 				}
 			}
 
-			if(!empty($params['archivoExistente'][$k])){
+			if (!empty($params['archivoExistente'][$k])) {
 
 				$id = implode(',', $params['archivoExistente'][$k]);
-		
-					$sql = "
+
+				$sql = "
 					SELECT
 						da.idCotizacionDetalleArchivo,
 						da.idCotizacion,
@@ -472,38 +411,36 @@ class M_Cotizacion extends MY_Model
 					FROM compras.cotizacionDetalleArchivos da
 					WHERE idCotizacionDetalleArchivo in ($id);
 				";
-		
+
 				$query = $this->db->query($sql)->result_array();
-		
+
 				$archivosExistentes = [];
-		
+
 				foreach ($query as $row) {
-		
-					$archivosExistentes [] = [
-							'idCotizacion' => $params['idCotizacion'],
-							'idCotizacionDetalle' => $idCotizacionDetalle,
-							'idTipoArchivo'=> $row['idTipoArchivo'],
-							'nombre_inicial' => $row['nombre_inicial'],
-							'nombre_archivo' => $row['nombre_archivo'],
-							'nombre_unico' => $row['nombre_unico'],
-							'extension' => $row['extension'],
-							'idUsuarioReg' => $row['idUsuarioReg'],
-							'estado' => true,
-							
-					
+
+					$archivosExistentes[] = [
+						'idCotizacion' => $params['idCotizacion'],
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idTipoArchivo' => $row['idTipoArchivo'],
+						'nombre_inicial' => $row['nombre_inicial'],
+						'nombre_archivo' => $row['nombre_archivo'],
+						'nombre_unico' => $row['nombre_unico'],
+						'extension' => $row['extension'],
+						'idUsuarioReg' => $row['idUsuarioReg'],
+						'estado' => true,
+
+
 					];
-		
 				}
-		
-				if(!empty($archivosExistentes)){
+
+				if (!empty($archivosExistentes)) {
 					$this->db->insert_batch('compras.cotizacionDetalleArchivos', $archivosExistentes);
 				}
-		
 			}
 
 			//Sub Items
-			if(!empty($params['insertSubItem'][$k])){
-				foreach($params['insertSubItem'][$k] as $subItem){
+			if (!empty($params['insertSubItem'][$k])) {
+				foreach ($params['insertSubItem'][$k] as $subItem) {
 					$insertSubItem[] = [
 						'idCotizacionDetalle' => $idCotizacionDetalle,
 						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
@@ -523,7 +460,6 @@ class M_Cotizacion extends MY_Model
 
 					];
 				}
-
 			}
 		}
 
@@ -532,10 +468,10 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
 
-			if(!empty($insertArchivos)){
+			if (!empty($insertArchivos)) {
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
 			}
-			if(!empty($insertSubItem)){
+			if (!empty($insertSubItem)) {
 				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
 			}
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
@@ -811,8 +747,8 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 
-		$sqlUnion ="";
-		if(!empty($params['union'])){
+		$sqlUnion = "";
+		if (!empty($params['union'])) {
 			$sqlUnion = "
 			UNION
 			SELECT
@@ -874,12 +810,12 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-	public function obtenerArchivoCotizacionDetalleProveedors(array $param=[])
+	public function obtenerArchivoCotizacionDetalleProveedors(array $param = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.cotizacionDetalleProveedorDetalleArchivos')
-		->where('idCotizacionDetalleProveedorDetalle', $param['idCotizacionDetalleProveedorDetalle']);
+			->select('*')
+			->from('compras.cotizacionDetalleProveedorDetalleArchivos')
+			->where('idCotizacionDetalleProveedorDetalle', $param['idCotizacionDetalleProveedorDetalle']);
 
 		return $this->db->get();
 	}
@@ -890,7 +826,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 
 		$sqlUnion = "";
-		if(!empty($params['union'])){
+		if (!empty($params['union'])) {
 			$sqlUnion = "
 			UNION
 			SELECT
@@ -1049,16 +985,16 @@ class M_Cotizacion extends MY_Model
 		{$filtros}
 	";
 
-	$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
-	if ($query) {
-		$this->resultado['query'] = $query;
-		$this->resultado['estado'] = true;
-	}
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
 
 
 
-	return $this->resultado;
+		return $this->resultado;
 	}
 
 	public function obtenerInformacionOrdenCompra($params = [])
@@ -1169,12 +1105,13 @@ class M_Cotizacion extends MY_Model
 	}
 
 
-	public function insertarCotizacionAnexos($data = []){
+	public function insertarCotizacionAnexos($data = [])
+	{
 		$insert = true;
 
-		foreach($data['anexos'] as $archivo){
+		foreach ($data['anexos'] as $archivo) {
 			$archivoName = $this->saveFileWasabi($archivo);
-			$tipoArchivo = explode('/',$archivo['type']);
+			$tipoArchivo = explode('/', $archivo['type']);
 			$insertArchivos[] = [
 				'idCotizacion' => $data['idCotizacion'],
 				'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
@@ -1190,11 +1127,11 @@ class M_Cotizacion extends MY_Model
 
 
 
-		if(!empty($insertArchivos)){
+		if (!empty($insertArchivos)) {
 			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
 		}
 
-		if(!empty($data['anexoExistente'])){
+		if (!empty($data['anexoExistente'])) {
 
 			$id = implode(',', $data['anexoExistente']);
 
@@ -1213,15 +1150,15 @@ class M_Cotizacion extends MY_Model
 			WHERE idCotizacionDetalleArchivo in ($id);
 		";
 
-		$query = $this->db->query($sql)->result_array();
+			$query = $this->db->query($sql)->result_array();
 
-		$imagenesExistentes = [];
+			$imagenesExistentes = [];
 
-		foreach ($query as $row) {
+			foreach ($query as $row) {
 
-			$imagenesExistentes [] = [
+				$imagenesExistentes[] = [
 					'idCotizacion' => $data['idCotizacion'],
-					'idTipoArchivo'=> $row['idTipoArchivo'],
+					'idTipoArchivo' => $row['idTipoArchivo'],
 					'nombre_inicial' => $row['nombre_inicial'],
 					'nombre_archivo' => $row['nombre_archivo'],
 					'nombre_unico' => $row['nombre_unico'],
@@ -1231,21 +1168,19 @@ class M_Cotizacion extends MY_Model
 					'estado' => true,
 
 
-			];
+				];
+			}
 
+			if (!empty($imagenesExistentes)) {
+				$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $imagenesExistentes);
+			}
 		}
 
-		if(!empty($imagenesExistentes)){
-			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $imagenesExistentes);
-		}
-
-		}
-
-		if(!empty($data['anexosEliminados'])){
+		if (!empty($data['anexosEliminados'])) {
 			$data['anexosEliminados'] = checkAndConvertToArray($data['anexosEliminados']);
 
-			foreach($data['anexosEliminados'] as $anexoEliminado){
-				$this->db->delete('compras.cotizacionDetalleArchivos',['idCotizacionDetalleArchivo' => $anexoEliminado]);
+			foreach ($data['anexosEliminados'] as $anexoEliminado) {
+				$this->db->delete('compras.cotizacionDetalleArchivos', ['idCotizacionDetalleArchivo' => $anexoEliminado]);
 			}
 		}
 
@@ -1255,15 +1190,15 @@ class M_Cotizacion extends MY_Model
 	public function actualizarCotizacionDetalleArchivos($params = [])
 	{
 		$insertArchivos = [];
-		foreach($params['update'] as $k => $update){
+		foreach ($params['update'] as $k => $update) {
 			$idCotizacionDetalle = $update['idCotizacionDetalle'];
 			unset($update['idCotizacionDetalle']);
-			$queryCotizacionDetalle = $this->db->update($params['tabla'], $update, ['idCotizacionDetalle' => $idCotizacionDetalle ]);
+			$queryCotizacionDetalle = $this->db->update($params['tabla'], $update, ['idCotizacionDetalle' => $idCotizacionDetalle]);
 
-			if(!empty($params['archivos'][$k])){
-				foreach($params['archivos'][$k] as $archivo){
+			if (!empty($params['archivos'][$k])) {
+				foreach ($params['archivos'][$k] as $archivo) {
 					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/',$archivo['type']);
+					$tipoArchivo = explode('/', $archivo['type']);
 					$insertArchivos[] = [
 						'idCotizacion' => $update['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -1279,8 +1214,8 @@ class M_Cotizacion extends MY_Model
 			}
 
 			//Sub Items
-			if(!empty($params['insertSubItem'][$k])){
-				foreach($params['insertSubItem'][$k] as $subItem){
+			if (!empty($params['insertSubItem'][$k])) {
+				foreach ($params['insertSubItem'][$k] as $subItem) {
 					$insertSubItem[] = [
 						'idCotizacionDetalle' => $idCotizacionDetalle,
 						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
@@ -1297,8 +1232,8 @@ class M_Cotizacion extends MY_Model
 				}
 			}
 			//Sub Items Actualizar
-			if(!empty($params['subDetalle'][$k])){
-				foreach($params['subDetalle'][$k] as $subItem){
+			if (!empty($params['subDetalle'][$k])) {
+				foreach ($params['subDetalle'][$k] as $subItem) {
 					$updateSubItem[] = [
 						'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -1329,20 +1264,20 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
 
-			if(!empty($insertArchivos)){
+			if (!empty($insertArchivos)) {
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
 			}
-			if(!empty($insertSubItem)){
+			if (!empty($insertSubItem)) {
 				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
 			}
-			if(!empty($updateSubItem)){
-				$this->db->update_batch('compras.cotizacionDetalleSub', $updateSubItem,'idCotizacionDetalleSub');
+			if (!empty($updateSubItem)) {
+				$this->db->update_batch('compras.cotizacionDetalleSub', $updateSubItem, 'idCotizacionDetalleSub');
 			}
 
-			if(!empty($params['archivoEliminado'])){
+			if (!empty($params['archivoEliminado'])) {
 				$params['archivoEliminado'] = checkAndConvertToArray($params['archivoEliminado']);
-				foreach($params['archivoEliminado'] as $archivoEliminado){
-					$this->db->delete('compras.cotizacionDetalleArchivos',['idCotizacionDetalleArchivo' => $archivoEliminado]);
+				foreach ($params['archivoEliminado'] as $archivoEliminado) {
+					$this->db->delete('compras.cotizacionDetalleArchivos', ['idCotizacionDetalleArchivo' => $archivoEliminado]);
 				}
 			}
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
@@ -1389,7 +1324,8 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerOperDetalleCotizacion($params = []){
+	public function obtenerOperDetalleCotizacion($params = [])
+	{
 		$filtros = '';
 		!empty($params['idOper']) ? $filtros .= " AND op.idOper IN({$params['idOper']})" : '';
 
@@ -1454,7 +1390,8 @@ class M_Cotizacion extends MY_Model
 
 
 
-	public function obtenerCosto($params = []) {
+	public function obtenerCosto($params = [])
+	{
 
 		$filtros = "";
 
@@ -1515,7 +1452,8 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerCotizacionDetalleTarifario($params = []) {
+	public function obtenerCotizacionDetalleTarifario($params = [])
+	{
 
 		$filtros = "";
 
@@ -1649,7 +1587,7 @@ class M_Cotizacion extends MY_Model
 			";
 
 
-			$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -1673,7 +1611,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros} 
 			";
 
-			$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -1700,7 +1638,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros} 
 			";
 
-			$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -1740,7 +1678,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros} 
 			";
 
-			$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -1750,7 +1688,8 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function getTachadoDistribucion($params = []){
+	public function getTachadoDistribucion($params = [])
+	{
 		$filtros = "";
 
 		$sql = "
@@ -1764,7 +1703,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros} 
 			";
 
-			$query = $this->db->query($sql);
+		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -1773,5 +1712,4 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-
 }

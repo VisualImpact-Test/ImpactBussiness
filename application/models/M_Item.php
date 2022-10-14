@@ -169,6 +169,56 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerItemServicio($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica,0) <> 0" : "";
+
+
+		$sql = "
+		DECLARE @fechaHoy DATE = GETDATE();
+		WITH listTarifario AS (
+			SELECT
+				ta.*
+				, ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem,ta.flag_actual) ntarifario
+				, art.peso pesoLogistica
+			FROM compras.item a
+			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
+			LEFT JOIN visualimpact.logistica.articulo art ON art.idArticulo = a.idItemLogistica
+			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
+			{$filtros}
+		)
+		select 
+			i.idItem as value,
+			i.nombre as label,
+			it.costo,
+			it.idProveedor,
+			pr.razonSocial as proveedor,
+			i.idItemTipo as tipo,
+			CASE
+			WHEN it.fechaVigencia IS NULL THEN 'gray'
+			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) <= 7 THEN 'green'
+			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 7 AND ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) < 15 THEN 'yellow'
+			ELSE 'red' END
+			AS semaforoVigencia,
+			ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) AS diasVigencia,
+			i.idItemLogistica,
+			it.pesoLogistica,
+			ISNULL(i.flagCuenta,0) flagCuenta,
+			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna
+
+		from compras.item i
+		LEFT JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
+		LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor
+		WHERE i.estado = 1
+		order by 2
+		";
+
+		$result = $this->db->query($sql)->result_array();
+
+		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
+		return $result;
+	}
 	public function obtenerItemsLogistica()
 	{
 		$sql = "
@@ -224,41 +274,39 @@ class M_Item extends MY_Model
 	{
 		$insertArchivos = [];
 
-			if(!empty($params['archivos'])){
-				foreach($params['archivos'] as $Grupo_archivo){
-					foreach($Grupo_archivo as $archivo ){
+		if (!empty($params['archivos'])) {
+			foreach ($params['archivos'] as $Grupo_archivo) {
+				foreach ($Grupo_archivo as $archivo) {
 
 					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/',$archivo['type']);
+					$tipoArchivo = explode('/', $archivo['type']);
 					$insertArchivos[] = [
 						'idItem' => $archivo['idItem'],
-               		    'idTipoArchivo' => TIPO_IMAGEN,
-                        'nombre_inicial' => $archivo['name'],
-                        'nombre_archivo' => $archivoName,
-                        'nombre_unico' => $archivo['nombreUnico'],
-                        'extension' => $tipoArchivo[1],
-                        'estado' => true
+						'idTipoArchivo' => TIPO_IMAGEN,
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => $tipoArchivo[1],
+						'estado' => true
 					];
-
-					}
 				}
 			}
-		
-			
+		}
 
-			if(!empty($insertArchivos)){
-				$query = $this->db->insert_batch('compras.itemImagen', $insertArchivos);
-				$this->resultado['query'] = $query;
-				$this->resultado['estado'] = true;
-				
-			}
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
-		
+
+
+		if (!empty($insertArchivos)) {
+			$query = $this->db->insert_batch('compras.itemImagen', $insertArchivos);
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+
 
 		return $this->resultado;
 	}
 
-	
+
 
 	public function insertarItem($params = [])
 	{
@@ -291,6 +339,4 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
-
-
 }
