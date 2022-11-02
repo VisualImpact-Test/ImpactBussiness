@@ -19,7 +19,7 @@
 							<div class="position-relative form-group"><label for="password" class="text-white">Contraseña</label><input name="password" id="password" placeholder="Ingrese aquí" type="password" class="form-control" patron="requerido"></div>
 						</div>
 					</div>
-					<!-- <div class="form-row">
+					<!-- <div class="form-row row">
 						<div class="col-md-12 text-center">
 							<div class="g-recaptcha" data-sitekey="6LdAotoaAAAAAEynxHe-NS_mErDdqSSw8AlERnTh" data-size="normal"></div>
 						</div>
