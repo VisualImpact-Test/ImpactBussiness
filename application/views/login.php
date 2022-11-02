@@ -21,7 +21,7 @@
 					</div>
 					<!-- <div class="form-row"> abcdefggg
 						holaas
-					<!-- <div class="form-row row">
+					<div class="form-row row">
 						<div class="col-md-12 text-center">
 							<div class="g-recaptcha" data-sitekey="6LdAotoaAAAAAEynxHe-NS_mErDdqSSw8AlERnTh" data-size="normal"></div>
 						</div>
