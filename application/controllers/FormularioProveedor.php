@@ -10,7 +10,6 @@ class FormularioProveedor extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'model');
 		$this->load->model('M_cotizacion', 'm_cotizacion');
 		$proveedor = $this->session->userdata('proveedor');
-
 	}
 
 	public function index()
@@ -18,8 +17,8 @@ class FormularioProveedor extends MY_Controller
 
 		$proveedor = $this->session->userdata('proveedor');
 
-		if(!empty($proveedor)){
-			redirect('FormularioProveedor/CotizacionesLista','refresh');
+		if (!empty($proveedor)) {
+			redirect('FormularioProveedor/CotizacionesLista', 'refresh');
 			exit();
 		}
 		$config['css']['style'] = array('');
@@ -47,36 +46,37 @@ class FormularioProveedor extends MY_Controller
 		$this->view($config);
 	}
 
-	public function login(){
+	public function login()
+	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
 		$proveedor = $this->model->loginProveedor($post)->row_array();
 
-		if(empty($proveedor)){
+		if (empty($proveedor)) {
 			$result['result'] = 0;
-			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Datos inválidos']);
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Datos inválidos']);
 			goto respuesta;
 		}
 
-		if($proveedor['idProveedorEstado'] == 1){
+		if ($proveedor['idProveedorEstado'] == 1) {
 			$result['result'] = 0;
-			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Usuario por aprobar']);
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Usuario por aprobar']);
 			goto respuesta;
 		}
 
-		if($proveedor['idProveedorEstado'] != 2){
+		if ($proveedor['idProveedorEstado'] != 2) {
 			$result['result'] = 0;
-			$result['msg']['content'] = createMessage(['type'=> 2 , 'message' => 'Datos inválidos']);
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Datos inválidos']);
 			goto respuesta;
 		}
 
 
 		$result['result'] = 1;
-		$result['msg']['content'] = createMessage(['type'=> 1 , 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
-		$result['data']['url'] = base_url()."FormularioProveedor/cotizacionesLista";
+		$result['msg']['content'] = createMessage(['type' => 1, 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
+		$result['data']['url'] = base_url() . "FormularioProveedor/cotizacionesLista";
 
-		$this->session->set_userdata('proveedor',$proveedor);
+		$this->session->set_userdata('proveedor', $proveedor);
 		respuesta:
 		echo json_encode($result);
 	}
@@ -134,12 +134,12 @@ class FormularioProveedor extends MY_Controller
 
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
 
-        if (!empty($validacionExistencia['query']->row_array())) {
-            $result['result'] = 0;
-            $result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroRepetido');
-            goto respuesta;
-        }
+		if (!empty($validacionExistencia['query']->row_array())) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroRepetido');
+			goto respuesta;
+		}
 
 		$data['tabla'] = 'compras.proveedor';
 
@@ -147,35 +147,35 @@ class FormularioProveedor extends MY_Controller
 		$data = [];
 
 		$zonasCobertura = [
-            'regionCobertura' => $post['regionCobertura'],
-            'provinciaCobertura' => $post['provinciaCobertura'],
-            'distritoCobertura' => $post['distritoCobertura'],
-        ];
+			'regionCobertura' => $post['regionCobertura'],
+			'provinciaCobertura' => $post['provinciaCobertura'],
+			'distritoCobertura' => $post['distritoCobertura'],
+		];
 
 		$zonasCobertura = getDataRefactorizada($zonasCobertura);
-        $zonasInsertadas = [];
+		$zonasInsertadas = [];
 
-		foreach ( $zonasCobertura as $key => $value) {
+		foreach ($zonasCobertura as $key => $value) {
 
-            $idRegion = 0;
-            $idProvincia = 0;
-            $idDistrito = 0;
+			$idRegion = 0;
+			$idProvincia = 0;
+			$idDistrito = 0;
 
-            !empty($value['regionCobertura']) ? $idRegion = $value['regionCobertura'] : '';
-            !empty($value['provinciaCobertura']) ? $idProvincia = $value['provinciaCobertura'] : '';
-            !empty($value['distritoCobertura']) ? $idDistrito = $value['distritoCobertura'] : '';
+			!empty($value['regionCobertura']) ? $idRegion = $value['regionCobertura'] : '';
+			!empty($value['provinciaCobertura']) ? $idProvincia = $value['provinciaCobertura'] : '';
+			!empty($value['distritoCobertura']) ? $idDistrito = $value['distritoCobertura'] : '';
 
-            if(!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
+			if (!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
 
-            $data['insert'][] = [
-                'idProveedor' => $insert['id'],
-                'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
-                'cod_provincia' => !empty($value['provinciaCobertura']) ? $value['provinciaCobertura'] : NULL,
-                'cod_distrito' => !empty($value['distritoCobertura']) ? $value['distritoCobertura'] : NULL
-            ];
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
+				'cod_provincia' => !empty($value['provinciaCobertura']) ? $value['provinciaCobertura'] : NULL,
+				'cod_distrito' => !empty($value['distritoCobertura']) ? $value['distritoCobertura'] : NULL
+			];
 
-            $zonasInsertadas[$idRegion][$idProvincia][$idDistrito] = 1;
-        }
+			$zonasInsertadas[$idRegion][$idProvincia][$idDistrito] = 1;
+		}
 
 		$data['tabla'] = 'compras.zonaCobertura';
 
@@ -185,21 +185,21 @@ class FormularioProveedor extends MY_Controller
 
 
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
-            $data['insert'][] = [
-                'idProveedor' => $insert['id'],
-                'idMetodoPago' => $value,
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idMetodoPago' => $value,
 
-            ];
-        }
+			];
+		}
 
 		$third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
 		$data = [];
 
 		foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
-				$data['insert'][] = [
-						'idProveedor' => $insert['id'],
-						'idRubro' => $value,
-				];
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idRubro' => $value,
+			];
 		}
 
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
@@ -224,7 +224,6 @@ class FormularioProveedor extends MY_Controller
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
 			goto respuesta;
-
 		} else {
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
@@ -236,7 +235,6 @@ class FormularioProveedor extends MY_Controller
 		respuesta:
 
 		echo json_encode($result);
-
 	}
 
 	public function enviarCorreo($idProveedor)
@@ -314,28 +312,30 @@ class FormularioProveedor extends MY_Controller
 		$data = $this->model->validarPropuestaExistencia(['idCotizacionDetalleProveedorDetalle' => $post['id']])->result_array();
 		if (empty($data)) {
 			$rpta['continuar'] = true;
-		}else{
+		} else {
 			$rpta['continuar'] = false;
 		}
 		echo json_encode($rpta);
 	}
+
 	public function viewRegistroContraoferta()
 	{
-			$result = $this->result;
-			$post = json_decode($this->input->post('data'), true);
-			$dataParaVista = [
-				'categoria' => $this->model->obtenerCategorias()->result_array(),
-				'marca' => $this->model->obtenerMarcas()->result_array(),
-				'motivo' => $this->model->obtenerMotivos()->result_array(),
-				'id' => $post['id']
-			];
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [
+			'categoria' => $this->model->obtenerCategorias()->result_array(),
+			'marca' => $this->model->obtenerMarcas()->result_array(),
+			'motivo' => $this->model->obtenerMotivos()->result_array(),
+			'id' => $post['id']
+		];
 
-			$result['result'] = 1;
-			$result['msg']['title'] = 'Registrar Tipos Servicio';
-			$result['data']['html'] = $this->load->view("formularioProveedores/viewRegistroContraoferta", $dataParaVista, true);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Propuesta';
+		$result['data']['html'] = $this->load->view("formularioProveedores/viewRegistroContraoferta", $dataParaVista, true);
 
-			echo json_encode($result);
+		echo json_encode($result);
 	}
+
 	public function registrarPropuesta()
 	{
 		$result = $this->result;
@@ -347,6 +347,10 @@ class FormularioProveedor extends MY_Controller
 		$post['idPropuestaMotivo'] = checkAndConvertToArray($post['motivo']);
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
+		$post['cantidadImagenes'] = checkAndConvertToArray($post['cantidadImagenes']);
+		$post['f_base64'] = checkAndConvertToArray($post['f_base64']);
+		$post['f_name'] = checkAndConvertToArray($post['f_name']);
+		$post['f_type'] = checkAndConvertToArray($post['f_type']);
 
 		$orden = 0;
 		$insertArchivos = [];
@@ -363,16 +367,16 @@ class FormularioProveedor extends MY_Controller
 			$insert = $this->db->insert('compras.propuestaItem', $insertData);
 			$id = $this->db->insert_id();
 			/////////////////////
-			for ($i=0; $i < intval($post['cantidadImagenes'][$key]); $i++) {
+			for ($i = 0; $i < intval($post['cantidadImagenes'][$key]); $i++) {
 				$archivo = [
 					'base64' => $post['f_base64'][$orden],
 					'name' => $post['f_name'][$orden],
 					'type' => $post['f_type'][$orden],
 					'carpeta' => 'itemPropuesta',
-					'nombreUnico' => 'PROITM_'.$id.str_replace(':', '', $this->hora).'_'.$i,
+					'nombreUnico' => 'PROITM_' . $id . str_replace(':', '', $this->hora) . '_' . $i,
 				];
 				$archivoName = $this->saveFileWasabi($archivo);
-				$tipoArchivo = explode('/',$archivo['type']);
+				$tipoArchivo = explode('/', $archivo['type']);
 
 				$insertArchivos[] = [
 					'idPropuestaItem' => $id,
@@ -382,7 +386,7 @@ class FormularioProveedor extends MY_Controller
 					'nombre_unico' => $archivo['nombreUnico'],
 					'extension' => $tipoArchivo[1],
 					'fechaReg' => getFechaActual(),
-          'horaReg' => time_change_format(getActualDateTime()),
+					'horaReg' => time_change_format(getActualDateTime()),
 					// 'idUsuarioReg' => $this->idUsuario
 				];
 				$orden++;
@@ -400,7 +404,6 @@ class FormularioProveedor extends MY_Controller
 
 		echo json_encode($result);
 	}
-
 
 	public function validar_captcha_v3($post)
 	{
@@ -439,11 +442,12 @@ class FormularioProveedor extends MY_Controller
 			return (object)['success' => 0];
 		}
 	}
+
 	public function cotizacionesLista()
 	{
 		$proveedor = $this->session->userdata('proveedor');
-		if(empty($proveedor)){
-			redirect('FormularioProveedor','refresh');
+		if (empty($proveedor)) {
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 
@@ -456,11 +460,12 @@ class FormularioProveedor extends MY_Controller
 		$config['single'] = true;
 		$this->view($config);
 	}
+
 	public function cotizacionesListaRefresh()
 	{
 		$proveedor = $this->session->userdata('proveedor');
-		if(empty($proveedor)){
-			redirect('FormularioProveedor','refresh');
+		if (empty($proveedor)) {
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 		$result = $this->result;
@@ -468,53 +473,54 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
 		$dataParaVista = [];
 		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
-		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista,'idProveedor' => $proveedor['idProveedor']], true);
+		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
-    $result['result'] = 1;
-    $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
-    $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
-    $result['data']['configTable'] =  [
-        'columnDefs' =>
-        [
-            0 =>
-            [
-                "visible" => false,
-                "targets" => []
-            ]
-        ]
-    ];
+		$result['result'] = 1;
+		$result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
+		$result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
+		$result['data']['configTable'] =  [
+			'columnDefs' =>
+			[
+				0 =>
+				[
+					"visible" => false,
+					"targets" => []
+				]
+			]
+		];
 
-    echo json_encode($result);
+		echo json_encode($result);
 		// echo json_encode($this->model->obtenerListaCotizaciones($post)->result_array());
 
 	}
+	
 	public function cotizaciones($idCotizacion = '0')
 	{
 		$get = [];
 		$get = $this->input->get();
 
-		foreach($get as $k => $g){
+		foreach ($get as $k => $g) {
 			$get[$k] = base64_decode($g);
 		}
 
-		$hoy = new DateTime(date('Y-m-d'));
-		$fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
-		$diasDiferencia = $fechaAcceso->diff($hoy)->days;
+		// $hoy = new DateTime(date('Y-m-d'));
+		// $fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
+		// $diasDiferencia = $fechaAcceso->diff($hoy)->days;
 
-		if($diasDiferencia > DIAS_MAX_ACCESO){
-			echo 'Ha excedido los dias de acceso disponibles';
-			redirect('FormularioProveedor','refresh');
-			exit();
-		}
+		// if ($diasDiferencia > DIAS_MAX_ACCESO) {
+		// 	echo 'Ha excedido los dias de acceso disponibles';
+		// 	redirect('FormularioProveedor', 'refresh');
+		// 	exit();
+		// }
 
-		if(!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])){
-			$proveedor = $this->model->loginProveedor(['ruc'=>$get['doc'],'email' => $get['email'], 'idProveedor'=>$get['cod']])->row_array();
-			$this->session->set_userdata('proveedor',$proveedor);
+		if (!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])) {
+			$proveedor = $this->model->loginProveedor(['ruc' => $get['doc'], 'email' => $get['email'], 'idProveedor' => $get['cod']])->row_array();
+			$this->session->set_userdata('proveedor', $proveedor);
 		}
 
 		$proveedor = $this->session->userdata('proveedor');
-		if(empty($proveedor)){
-			redirect('FormularioProveedor','refresh');
+		if (empty($proveedor)) {
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 
@@ -527,30 +533,30 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
 		// $cotizacionProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor',['idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $idCotizacion,'estado' => 1])->row_array();
-		$cotizacionProveedor = $this->model->obtenerCotizacionDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idCotizacion' => $idCotizacion,'estado' => 1])['query']->row_array();
+		$cotizacionProveedor = $this->model->obtenerCotizacionDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idCotizacion' => $idCotizacion, 'estado' => 1])['query']->row_array();
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionCotizacion(['id' => $cotizacionProveedor['idCotizacion']])['query']->row_array();
 
 		$config['single'] = true;
-		if( empty($idCotizacion) || empty($cotizacionProveedor)){
+		if (empty($idCotizacion) || empty($cotizacionProveedor)) {
 			$config['view'] = 'formularioProveedores/validacionEmail';
 		}
 		$this->view($config);
 	}
 
 	public function cotizacionesRefresh()
-  {
+	{
 
 		$proveedor = $this->session->userdata('proveedor');
-		if(empty($proveedor)){
-			redirect('FormularioProveedor','refresh');
+		if (empty($proveedor)) {
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 
-    $result = $this->result;
-    $post = json_decode($this->input->post('data'), true);
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 		$post['idProveedor'] = $proveedor['idProveedor'];
-    $dataParaVista = [];
-    $dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
+		$dataParaVista = [];
+		$dataParaVista = $this->model->obtenerInformacionCotizacionProveedor($post)->result_array();
 		$dataParaVistaImg = [];
 		$dataParaVistaSub = [];
 		foreach ($dataParaVista as $key => $value) {
@@ -566,32 +572,34 @@ class FormularioProveedor extends MY_Controller
 			'archivos' => $archivos,
 			'cotizacionIMG' => $dataParaVistaImg
 		], true);
-    $result['result'] = 1;
-    // $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
-    $result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
-    $result['data']['configTable'] =  [
-        'columnDefs' =>
-        [
-            0 =>
-            [
-                "visible" => false,
-                "targets" => []
-            ]
-        ]
-    ];
+		$result['result'] = 1;
+		// $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
+		$result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
+		$result['data']['configTable'] =  [
+			'columnDefs' =>
+			[
+				0 =>
+				[
+					"visible" => false,
+					"targets" => []
+				]
+			]
+		];
 
-    echo json_encode($result);
-  }
+		echo json_encode($result);
+	}
+
 	public function obtenerFecha()
 	{
 		$post = $this->input->post();
 		if ($post['format'] == 1) {
 			$post['fecha'] = getFechaActual($post['fecha']);
-		}else{
+		} else {
 			$post['fecha'] = date_change_format_bd(getFechaActual($post['fecha']));
 		}
 		echo json_encode($post);
 	}
+
 	public function actualizarCotizacionProveedor()
 	{
 		$this->db->trans_start();
@@ -612,7 +620,7 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
 			$cantidad = (!empty($post['cantidad'][$k])) ? $post['cantidad'][$k] : 0;
-      		$data['update'][] = [
+			$data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
 				// 'costo' => costoUnitario($cantidad,$subTotal),
 				'costo' => $subTotal,
@@ -622,19 +630,19 @@ class FormularioProveedor extends MY_Controller
 				'comentario' => $post['comentario'][$k],
 				'diasEntrega' => $post['diasEntrega'][$k],
 				'fechaEntrega' => $post['fechaEntrega'][$k]
-      ];
-			if(isset($post['file-type['.$r.']'])){
-				if(is_array($post['file-type['.$r.']'])){
-					foreach ($post['file-type['.$r.']'] as $key => $value) {
+			];
+			if (isset($post['file-type[' . $r . ']'])) {
+				if (is_array($post['file-type[' . $r . ']'])) {
+					foreach ($post['file-type[' . $r . ']'] as $key => $value) {
 						$archivo = [
-							'base64' => $post['file-item['.$r.']'][$key],
-							'name' => $post['file-name['.$r.']'][$key],
-							'type' => $post['file-type['.$r.']'][$key],
+							'base64' => $post['file-item[' . $r . ']'][$key],
+							'name' => $post['file-name[' . $r . ']'][$key],
+							'type' => $post['file-type[' . $r . ']'][$key],
 							'carpeta' => 'cotizacionProveedor',
-							'nombreUnico' => 'COTIPRO'.$post['idCotizacionDetalleProveedorDetalle'][$k].str_replace(':', '', $this->hora).'_'.$key.'CP',
+							'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_' . $key . 'CP',
 						];
 						$archivoName = $this->saveFileWasabi($archivo);
-						$tipoArchivo = explode('/',$archivo['type']);
+						$tipoArchivo = explode('/', $archivo['type']);
 						$insertArchivos[] = [
 							'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
 							'idTipoArchivo' => TIPO_ORDEN_COMPRA,
@@ -646,16 +654,16 @@ class FormularioProveedor extends MY_Controller
 							'idUsuarioReg' => $this->idUsuario
 						];
 					}
-				}else{
+				} else {
 					$archivo = [
-						'base64' => $post['file-item['.$r.']'],
-						'name' => $post['file-name['.$r.']'],
-						'type' => $post['file-type['.$r.']'],
+						'base64' => $post['file-item[' . $r . ']'],
+						'name' => $post['file-name[' . $r . ']'],
+						'type' => $post['file-type[' . $r . ']'],
 						'carpeta' => 'cotizacionProveedor',
-						'nombreUnico' => 'COTIPRO'.$post['idCotizacionDetalleProveedorDetalle'][$k].str_replace(':', '', $this->hora).'_0'.'CP',
+						'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_0' . 'CP',
 					];
 					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/',$archivo['type']);
+					$tipoArchivo = explode('/', $archivo['type']);
 					$insertArchivos[] = [
 						'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
 						'idTipoArchivo' => TIPO_ORDEN_COMPRA,
@@ -668,13 +676,13 @@ class FormularioProveedor extends MY_Controller
 					];
 				}
 			}
-    }
-		if(!empty($insertArchivos)){
+		}
+		if (!empty($insertArchivos)) {
 			$this->db->insert_batch('compras.cotizacionDetalleProveedorDetalleArchivos', $insertArchivos);
 		}
-    $data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
-    $data['where'] = 'idCotizacionDetalleProveedorDetalle';
-    $updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+		$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
+		$data['where'] = 'idCotizacionDetalleProveedorDetalle';
+		$updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
 		$data = [];
 		if (isset($post['idCDPDS'])) {
 			$post['idCDPDS'] = checkAndConvertToArray($post['idCDPDS']);
@@ -688,48 +696,48 @@ class FormularioProveedor extends MY_Controller
 				];
 			}
 			$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
-	    $data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
-	    $updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+			$data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
+			$updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
 		}
 
-    if (!$updateDetalle['estado']) {
-	    $result['result'] = 0;
-	    $result['msg']['title'] = 'Alerta!';
-	    $result['msg']['content'] = getMensajeGestion('registroErroneo');
-    } else {
-      $result['result'] = 1;
-      $result['msg']['title'] = 'Hecho!';
-      $result['msg']['content'] = getMensajeGestion('registroExitoso');
+		if (!$updateDetalle['estado']) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
 
 			// $proveedor = $this->session->userdata('proveedor');
 			// $dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor',['idProveedor' => $proveedor['idProveedor']])->row_array();
 			// $dataParaVista['cotizacion'] = $this->db->get_where('compras.cotizacion',['idCotizacion' => $post['idCotizacion']])->row_array();
 
 			// $html = $this->load->view("formularioProveedores/correoProveedorPrecios", $dataParaVista, true);
-      // $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
-      // $config = [
-      //     'to' => 'aaron.ccenta@visualimpact.com.pe',
-      //     'asunto' => 'Solicitud de Cotizacion',
-      //     'contenido' => $correo,
-      // ];
-      // email($config);
+			// $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
+			// $config = [
+			//     'to' => 'aaron.ccenta@visualimpact.com.pe',
+			//     'asunto' => 'Solicitud de Cotizacion',
+			//     'contenido' => $correo,
+			// ];
+			// email($config);
 
 			$insertCotizacionHistorico = [
-        'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS,
+				'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS,
 				'idCotizacionInternaEstado' => INTERNA_PRECIO_RECIBIDO,
-        'idCotizacion' => $post['idCotizacion'],
-        'idUsuarioReg' => $this->idUsuario,
-        'estado' => true,
-      ];
-      $insertCotizacionHistorico = $this->model->insertarProveedor(['tabla'=>'compras.cotizacionEstadoHistorico','insert'=>$insertCotizacionHistorico]);
+				'idCotizacion' => $post['idCotizacion'],
+				'idUsuarioReg' => $this->idUsuario,
+				'estado' => true,
+			];
+			$insertCotizacionHistorico = $this->model->insertarProveedor(['tabla' => 'compras.cotizacionEstadoHistorico', 'insert' => $insertCotizacionHistorico]);
 
-			$insertItemTarifario =[];
+			$insertItemTarifario = [];
 			foreach ($post['idItem'] as $key => $value) {
 				$datos = [
 					'idItem' => $post['idItem'][$key],
 					'idProveedor' => $post['idProveedor']
 				];
-				$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario',$datos)->row_array();
+				$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
 
 				if (!empty($consulta)) {
 					$update[0] = [
@@ -739,7 +747,7 @@ class FormularioProveedor extends MY_Controller
 					];
 					$rpta = $this->model->actualizarMasivo('compras.itemTarifario', $update, 'idItemTarifario');
 					$idItemTarifario = $consulta['idItemTarifario'];
-				}else{
+				} else {
 					$insertar = [
 						'idItem' => $post['idItem'][$key],
 						'idProveedor' => $post['idProveedor'],
@@ -760,24 +768,24 @@ class FormularioProveedor extends MY_Controller
 				];
 				$rpta = $this->db->insert('compras.itemTarifarioHistorico', $historicoInsert);
 			}
-    }
+		}
 
 		$this->db->trans_complete();
-    respuesta:
-    echo json_encode($result);
-
+		respuesta:
+		echo json_encode($result);
 	}
 
-	public function logout(){
+	public function logout()
+	{
 		$result = $this->result;
 		$this->session->unset_userdata('proveedor');
 
 		$result['msg']['title'] = 'Cerrar Sesion';
-		$result['msg']['content'] = createMessage(['type'=>1,'message'=>'La sesion ha sido finalizada']);
-		$result['data']['url'] = base_url()."FormularioProveedor";
+		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'La sesion ha sido finalizada']);
+		$result['data']['url'] = base_url() . "FormularioProveedor";
 		echo json_encode($result);
 
-		redirect('FormularioProveedor','refresh');
+		redirect('FormularioProveedor', 'refresh');
 	}
 
 	public function viewOrdenCompra($idOrdenCompra = '0')
@@ -785,7 +793,7 @@ class FormularioProveedor extends MY_Controller
 		$get = [];
 		$get = $this->input->get();
 
-		foreach($get as $k => $g){
+		foreach ($get as $k => $g) {
 			$get[$k] = base64_decode($g);
 		}
 
@@ -793,27 +801,27 @@ class FormularioProveedor extends MY_Controller
 		$fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
 		$diasDiferencia = $fechaAcceso->diff($hoy)->days;
 
-		if($diasDiferencia > DIAS_MAX_ACCESO){
+		if ($diasDiferencia > DIAS_MAX_ACCESO) {
 			echo 'Ha excedido los dias de acceso disponibles';
-			redirect('FormularioProveedor','refresh');
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 
-		if(!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])){
-			$proveedor = $this->model->loginProveedor(['ruc'=>$get['doc'],'email' => $get['email'], 'idProveedor'=>$get['cod']])->row_array();
-			$this->session->set_userdata('proveedor',$proveedor);
+		if (!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])) {
+			$proveedor = $this->model->loginProveedor(['ruc' => $get['doc'], 'email' => $get['email'], 'idProveedor' => $get['cod']])->row_array();
+			$this->session->set_userdata('proveedor', $proveedor);
 		}
 
 		$proveedor = $this->session->userdata('proveedor');
 
-		if(empty($proveedor)){
-			redirect('FormularioProveedor','refresh');
+		if (empty($proveedor)) {
+			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
 
 		$config['css']['style'] = array(
-            'assets/custom/css/floating-action-button'
-        );
+			'assets/custom/css/floating-action-button'
+		);
 		$config['js']['script'] = array(
 			'assets/custom/js/FormularioProveedoresCotizaciones',
 			'assets/custom/js/FormularioProveedoresOC',
@@ -824,12 +832,12 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['idOrdenCompra'] = $idOrdenCompra;
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
-		$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'],'idOrdenCompra' => $idOrdenCompra,'estado' => 1])['query']->result_array();
+		$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		$config['data']['detalle'] = $ordenCompraProveedor;
 
 		$config['single'] = true;
-		if(empty($idOrdenCompra) || empty($ordenCompraProveedor)){
+		if (empty($idOrdenCompra) || empty($ordenCompraProveedor)) {
 			$config['view'] = 'formularioProveedores/validacionEmail';
 		}
 		$this->view($config);
@@ -839,49 +847,47 @@ class FormularioProveedor extends MY_Controller
 	{
 		$this->db->trans_start();
 		$result = $this->result;
-        $post = json_decode($this->input->post('data'), true);
+		$post = json_decode($this->input->post('data'), true);
 
 		$post['idCotizacion'] = array_unique(checkAndConvertToArray($post['idCotizacion']));
 
-        $updateCotizacion = [];
-        $insertHistoricoCotizacion = [];
-        foreach($post['idCotizacion'] as $idCotizacion){
+		$updateCotizacion = [];
+		$insertHistoricoCotizacion = [];
+		foreach ($post['idCotizacion'] as $idCotizacion) {
 
-            $updateCotizacion[] = [
-                'idCotizacion' => $idCotizacion,
-                'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
-            ];
+			$updateCotizacion[] = [
+				'idCotizacion' => $idCotizacion,
+				'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
+			];
 
-            $insertHistoricoCotizacion[] = [
-                'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
-                'idCotizacion' => $idCotizacion,
-                'idUsuarioReg' => $this->idUsuario,
-            ];
-        }
-		$updateOrdenCompra = $this->db->update("compras.ordenCompra",[
+			$insertHistoricoCotizacion[] = [
+				'idCotizacionEstado' => ESTADO_OC_CONFIRMADA,
+				'idCotizacion' => $idCotizacion,
+				'idUsuarioReg' => $this->idUsuario,
+			];
+		}
+		$updateOrdenCompra = $this->db->update("compras.ordenCompra", [
 			'fechaEntrega' => $post['fechaEntrega']
-		],[
+		], [
 			'idOrdenCompra' => $post['idOrdenCompra']
 		]);
 
-		$updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion',$updateCotizacion,'idCotizacion');
-        $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION,$insertHistoricoCotizacion);
+		$updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion', $updateCotizacion, 'idCotizacion');
+		$insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION, $insertHistoricoCotizacion);
 
 
-		if($updateOrdenCompra && $updateCotizacion && $insertHistoricoCotizacion){
+		if ($updateOrdenCompra && $updateCotizacion && $insertHistoricoCotizacion) {
 			$result['result'] = 1;
-            $result['msg']['title'] = 'Confirmar OC';
-            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$result['msg']['title'] = 'Confirmar OC';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
 
 			$this->db->trans_complete();
-		}else{
+		} else {
 			$result['result'] = 0;
-            $result['msg']['title'] = 'Confirmar OC';
-            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+			$result['msg']['title'] = 'Confirmar OC';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
 		}
 
-        echo json_encode($result);
+		echo json_encode($result);
 	}
-
-
 }

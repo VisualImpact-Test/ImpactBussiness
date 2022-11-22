@@ -50,7 +50,6 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista = [];
 
 		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
-		log_message('error', $this->db->last_query());
 		foreach ($data as $key => $row) {
 			$dataParaVista[$row['idOrdenCompra']] = [
 				'requerimiento' => $row['requerimiento'],

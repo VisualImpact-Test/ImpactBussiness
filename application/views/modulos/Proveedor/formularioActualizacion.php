@@ -227,7 +227,7 @@
     <div class="row">
         <div class="col-md-10 child-divcenter">
             <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Title</legend>
+                <legend class="scheduler-border">Costo</legend>
                 <div class="<?= ($disabled) ? "disabled" : "" ?>">
                     <div class="control-group child-divcenter row" style="width:85%">
                         <label class="form-control col-md-4" for="costo" style="border:0px;">Costo (S/):</label>

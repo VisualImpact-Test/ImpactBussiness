@@ -30,7 +30,7 @@
         <? } ?>
     </table>
 </div><br>
-<table border="0" class="tb-detalle" style="width: 100%; margin-bottom: 100px;">
+<table class="tb-detalle" style="width: 100%; margin-bottom: 100px;">
     <thead>
         <tr style="background-color: #222c33;">
             <!-- <th style="color:white">ITEM</th> -->

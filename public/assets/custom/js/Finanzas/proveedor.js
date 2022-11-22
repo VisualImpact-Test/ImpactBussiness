@@ -227,6 +227,22 @@ var Proveedor = {
 			});
 		});
 
+		$(document).on('click', '.btnAddCorreo', function (e) {
+			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">'+
+									'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>'+
+									'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">'+
+									'<div class="input-group-append">'+
+										'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>'+
+									'</div>'+
+								'</div>';
+			$('#extraCorreo').append(div);
+		});
+
+		$(document).on('click', '.btnEliminarCorreo', function (e) {
+			let tr = $(this).closest(".correoAdd");
+			tr.remove();
+		});
+
 		$(document).on('shown.bs.modal', '.modalCargaMasivaObjetivos', function () {
 			HTCustom.crearHTObjects(HTCustom.HTObjectsFeatures);
 		});

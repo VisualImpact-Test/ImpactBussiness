@@ -33,6 +33,7 @@
                 <div class="control-group child-divcenter row" style="width:85%">
                     <label class="form-control col-md-4" for="region" style="border:0px;">Region :</label>
                     <select class="form-control col-md-8" id="region" name="region" patron="requerido">
+                        <option value="">Seleccione</option>
                         <?
                         foreach ($departamento as $k_dp => $v_dp) {
                         ?>
@@ -106,6 +107,7 @@
                         <tr class="trChildren">
                             <td class="w-25">
                                 <select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido">
+                                    <option value="">Seleccione</option>
                                     <?
                                     foreach ($departamento as $k_dp => $v_dp) {
                                     ?>
