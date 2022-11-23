@@ -570,7 +570,7 @@ class Cotizacion extends MY_Controller
 		$insertDetalle = $this->model->insertarCotizacionDetalle($data);
 		$data = [];
 
-		$estadoEmail = true;
+		// $estadoEmail = true;
 		if ($post['tipoRegistro'] == 2) {
 			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
 			$toCompras = [];
@@ -578,7 +578,7 @@ class Cotizacion extends MY_Controller
 				$toCompras[] = $usuario['email'];
 			}
 
-			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => $toCompras]);
+			// $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => $toCompras]);
 			//Verificamos si es necesario enviar a compras para cotizar con el proveedor
 
 			$necesitaCotizacionIntera = false;
@@ -609,7 +609,7 @@ class Cotizacion extends MY_Controller
 			$insertCotizacionHistorico = $this->model->insertar(['tabla' => TABLA_HISTORICO_ESTADO_COTIZACION, 'insert' => $insertCotizacionHistorico]);
 		}
 
-		if (!$insert['estado'] || !$insertDetalle['estado'] || !$estadoEmail) {
+		if (!$insert['estado'] || !$insertDetalle['estado']) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -1824,20 +1824,32 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/viewAgregarCotizacion'
 		);
 
+		
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
-
+		$config['data']['costo'] = $this->model->obtenerCosto(['id' => $idCotizacion])['query']->row_array();
+		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
+		$config['data']['cotizacionTarifario'] = $this->model->obtenerCotizacionDetalleTarifario(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		// $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+
+		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
+			[
+				'idCotizacion' => $idCotizacion,
+				'cotizacionInterna' => true
+			]
+		)['query']->result_array();
+
+		foreach ($cotizacionDetalleSub as $sub) {
+			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
+		}
 
 		foreach ($archivos as $archivo) {
 			$config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
 		}
-		foreach ($cotizacionProveedores as $cotizacionProveedor) {
-			$config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
-		}
+
 		foreach ($cotizacionProveedoresVista as $cotizacionProveedorVista) {
 			$config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
 		}
@@ -1923,8 +1935,6 @@ class Cotizacion extends MY_Controller
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		// $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-
-
 
 		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
