@@ -77,6 +77,10 @@ var FormularioProveedores = {
 
 
 		});
+		$(document).on("click",".eliminarDatos", function(){
+			$(this).parents('.contenido').remove();
+		});
+
 		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
 			var control = $(this);
 			var data = control.data();

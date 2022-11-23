@@ -114,7 +114,6 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-
 	public function filtroCotizacion()
 	{
 		$result = $this->result;
@@ -173,7 +172,6 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
-
 
 	public function formularioVisualizacionCotizacion()
 	{
@@ -764,7 +762,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
 				$dataParaVista['cabecera']['igv'] = $row['flagIgv'];
-				$dataParaVista['cabecera']['total'] = $row['total'];
+				$dataParaVista['cabecera']['total'] = $total = $row['total'];
 				$dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
 				$dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
@@ -792,10 +790,10 @@ class Cotizacion extends MY_Controller
 			if (!empty($dataParaVista['cabecera']['total_fee_igv'])) {
 				$total = $dataParaVista['cabecera']['total'];
 				if (!empty($totalFee)) {
-					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * IGV);
+					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * $dataParaVista['cabecera']['igv']?IGV:0);
 					$dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
 				} else if (empty($totalFee) && $dataParaVista['cabecera']['igv']) {
-					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($total * IGV);
+					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($total * $dataParaVista['cabecera']['igv']?IGV:0);
 					$dataParaVista['cabecera']['total_fee_igv'] = $total + $igv;
 				}
 			}
@@ -989,6 +987,7 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+
 	public function viewItemDetalle()
 	{
 		$result = $this->result;
@@ -2146,7 +2145,6 @@ class Cotizacion extends MY_Controller
 	}
 
 	//filtroReporte
-
 	public function filtroOper()
 	{
 		$result = $this->result;
@@ -2174,10 +2172,7 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-
-
 	//DuplicarCotizacion
-
 	public function duplicarCotizacion()
 	{
 

@@ -70,7 +70,8 @@ class M_FormularioProveedor extends MY_Model
 		$this->db
 		->select('ic.*')
 		->from('compras.itemCategoria ic')
-		->where('ic.estado', '1');
+		->where('ic.estado', '1')
+		->order_by('nombre');
 		return $this->db->get();
 	}
 
@@ -79,7 +80,8 @@ class M_FormularioProveedor extends MY_Model
 		$this->db
 		->select('im.*')
 		->from('compras.itemMarca im')
-		->where('im.estado', '1');
+		->where('im.estado', '1')
+		->order_by('nombre');
 		return $this->db->get();
 	}
 

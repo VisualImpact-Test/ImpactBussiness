@@ -242,7 +242,7 @@ class Proveedor extends MY_Controller
             'razonSocial' => $post['razonSocial'],
             'idTipoDocumento' => 3,
             'nroDocumento' => $post['ruc'],
-            'idRubro' => $post['rubro'],
+            // 'idRubro' => $post['rubro'],
             //'idMetodoPago' => $post['metodoPago'],
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
@@ -313,7 +313,19 @@ class Proveedor extends MY_Controller
 
         $third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
 
-        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert) {
+        $data = [];
+
+        foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
+            $data['insert'][] = [
+                'idProveedor' => $insert['id'],
+                'idRubro' => $value,
+
+            ];
+        }
+
+        $fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
+
+        if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert) {
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
