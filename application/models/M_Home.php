@@ -1,13 +1,16 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class M_Home extends MY_Model{
-	
-	public function __construct(){
+class M_Home extends MY_Model
+{
+
+	public function __construct()
+	{
 		parent::__construct();
 	}
-	
-	public function query_cotizacion($input){
+
+	public function query_cotizacion($input)
+	{
 		$sql = "
 			SELECT 
 				idCotizacion
@@ -27,11 +30,12 @@ class M_Home extends MY_Model{
 				JOIN compras.cotizacionEstado ce ON c.idCotizacionEstado = ce.idCotizacionEstado
 				JOIN visualImpact.logistica.cuentaCentroCosto cc ON cc.idCuenta = c.idCuenta AND cc.idCuentaCentroCosto = c.idCentroCosto
 			WHERE
-				idCotizacion = ".$input['idCotizacion'];
+				idCotizacion = " . $input['idCotizacion'];
 		return $this->db->query($sql);
 	}
-	
-	public function query_cotizacion_detalle($input){
+
+	public function query_cotizacion_detalle($input)
+	{
 		$sql = "
 			SELECT 
 				cd.idItem
@@ -49,11 +53,12 @@ class M_Home extends MY_Model{
 				JOIN compras.itemTipo it ON it.idItemTipo = cd.idItemTipo
 				
 			WHERE
-				idCotizacion = ".$input['idCotizacion'];
+				idCotizacion = " . $input['idCotizacion'];
 		return $this->db->query($sql);
 	}
-	
-	public function query_estados_cotizacion(){
+
+	public function query_estados_cotizacion()
+	{
 		$sql = "
 			SELECT 
 				idCotizacionEstado, nombre
@@ -63,8 +68,9 @@ class M_Home extends MY_Model{
 		";
 		return $this->db->query($sql);
 	}
-	
-	public function query_estados_cotizacion_proceso(){
+
+	public function query_estados_cotizacion_proceso()
+	{
 		$sql = "
 			SELECT 
 				idCotizacionEstado, nombre
@@ -77,8 +83,9 @@ class M_Home extends MY_Model{
 		";
 		return $this->db->query($sql);
 	}
-	
-	public function query_cotizaciones_proceso(){
+
+	public function query_cotizaciones_proceso()
+	{
 		$sql = "
 			SELECT 
 				ce.idCotizacionEstado, COUNT(c.idCotizacion) cantidad
@@ -91,8 +98,9 @@ class M_Home extends MY_Model{
 		";
 		return $this->db->query($sql);
 	}
-	
-	public function query_cotizaciones(){
+
+	public function query_cotizaciones()
+	{
 		$sql = "
 			DECLARE @fecIni DATE =  DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0);
 			DECLARE @fecFin DATE = GETDATE();
@@ -110,14 +118,12 @@ class M_Home extends MY_Model{
 				, replace(ce.icono,'large','x-small') icono
 			FROM compras.cotizacion c
 			JOIN compras.cotizacionEstado ce ON c.idCotizacionEstado = ce.idCotizacionEstado
-			JOIN visualImpact.logistica.cuentaCentroCosto cc ON cc.idCuenta = c.idCuenta AND cc.idCuentaCentroCosto = c.idCentroCosto
+			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON cc.idCuenta = c.idCuenta AND cc.idCuentaCentroCosto = c.idCentroCosto
 			WHERE
-				fechaEmision BETWEEN @fecIni AND @fecFin
+				ce.idCotizacionEstado <> 7 AND (fechaEmision BETWEEN @fecIni AND @fecFin
 				OR fechaTermino IS NULL
-				OR fechaTermino BETWEEN @fecIni AND @fecFin
+				OR fechaTermino BETWEEN @fecIni AND @fecFin)
 		";
 		return $this->db->query($sql);
 	}
-	
-	
 }

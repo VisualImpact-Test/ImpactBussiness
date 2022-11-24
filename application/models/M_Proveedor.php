@@ -58,10 +58,10 @@ class M_Proveedor extends MY_Model
 	public function obtenerCorreosAdicionales($params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.proveedorCorreo pc')
-		->where('pc.idProveedor', $params['idProveedor'])
-		->where('pc.estado', $params['estado']);
+			->select('*')
+			->from('compras.proveedorCorreo pc')
+			->where('pc.idProveedor', $params['idProveedor'])
+			->where('pc.estado', $params['estado']);
 		return $this->db->get();
 	}
 
@@ -115,27 +115,27 @@ class M_Proveedor extends MY_Model
 	public function obtenerProveedoresActivos($params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.proveedor')
-		->where('idProveedorEstado','2')
-		->order_by('razonSocial asc'); //Activo
+			->select('*')
+			->from('compras.proveedor')
+			->where('idProveedorEstado', '2')
+			->order_by('razonSocial asc'); //Activo
 		return $this->db->get();
 	}
 	public function obtenerUltimaRespuestaEstado($idProveedor)
 	{
 		$this->db
-		->select('*')
-		->from('compras.proveedorEstadoHistorico')
-		->where('idProveedor',$idProveedor)
-		->order_by('fechaReg desc');
+			->select('*')
+			->from('compras.proveedorEstadoHistorico')
+			->where('idProveedor', $idProveedor)
+			->order_by('fechaReg desc');
 		return $this->db->get();
 	}
 	public function obtenerInformacionProveedores($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['proveedorEstado']) ? ' AND p.idProveedorEstado = ' . $params['proveedorEstado'] : '';
-		$filtros .= !empty($params['rubroProveedor']) ? ' AND p.idRubro = ' . $params['rubroProveedor'] : '';
-		$filtros .= !empty($params['metodoPagoProveedor']) ? ' AND p.idMetodoPago = ' . $params['metodoPagoProveedor'] : '';
+		$filtros .= !empty($params['estadoProveedor']) ? ' AND p.idProveedorEstado = ' . $params['estadoProveedor'] : '';
+		$filtros .= !empty($params['rubroProveedor']) ? ' AND pr.idRubro = ' . $params['rubroProveedor'] : '';
+		$filtros .= !empty($params['metodoPagoProveedor']) ? ' AND at.idMetodoPago = ' . $params['metodoPagoProveedor'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
 
 		$sql = "
@@ -245,7 +245,7 @@ class M_Proveedor extends MY_Model
 
 	public function insertarProveedorCobertura($params = [])
 	{
-		if(!empty($params['where'])){
+		if (!empty($params['where'])) {
 			$this->db->delete($params['tabla'], $params['where']);
 		}
 		$query = $this->db->insert_batch($params['tabla'], (empty($params['insert'])) ? $params['update'] : $params['insert']);
@@ -318,7 +318,4 @@ class M_Proveedor extends MY_Model
 
 		return $this->resultado;
 	}
-
-
-
 }
