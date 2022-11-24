@@ -1878,9 +1878,7 @@ class Cotizacion extends MY_Controller
 		}
 		$data['itemServicio'][0] = array();
 		$config['data']['itemServicio'] = $data['itemServicio'];
-
 		$config['single'] = true;
-
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'Cotizacion';
 		$config['data']['message'] = 'Lista de Cotizacions';

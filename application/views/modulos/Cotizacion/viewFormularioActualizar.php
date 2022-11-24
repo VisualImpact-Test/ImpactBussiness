@@ -300,24 +300,58 @@
                             </button>
                         </div>
                         <!-- Distribucion -->
-                        <div class="fields d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
-                            <div class="seven wide field">
-                                <div class="ui sub header">Tipo Servicio</div>
-                                <select class="ui search dropdown simpleDropdown tipoServicioForm" name="<?=COD_DISTRIBUCION['nombre']?>">
-                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase','data-option'=>['costo','unidadMedida']]); ?>
-                                </select>
+                        <div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <div class="ui sub header">Tipo Servicio</div>
+                                    <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                    </select>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Unidad de medida</div>
+                                    <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($data['unidadMedidaTipoServicio']) ? $data['unidadMedidaTipoServicio'] : '' ?>" readonly>
+                                    <input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($data['idUnidadMedidaTipoServicio']) ? $data['idUnidadMedidaTipoServicio'] : '' ?>" readonly>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Costo S/</div>
+                                    <input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
+                                </div>
                             </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Unidad de medida</div>
-                                <input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($row['unidadMedidaTipoServicio']) ? $row['unidadMedidaTipoServicio'] : '' ?>" >
+                            <div class="fields">
+                                <div class="eight wide field">
+                                    <div class="ui sub header">Item Logística</div>
+                                    <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+                                    </select>
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Peso / Cantidad</div>
+                                    <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+                                </div>
+                                <div class="four wide field">
+                                    <div class="ui sub header">Cantidad PDV</div>
+                                    <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                </div>
                             </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Costo S/</div>
-                                <input class="costoTipoServicio" placeholder="Costo" value="<?= !empty($row['costoTipoServicio']) ? $row['costoTipoServicio'] : '' ?>" >
-                            </div>
-                            <div class="three wide field">
-                                <div class="ui sub header">Cantidad</div>
-                                <input class="onlyNumbers" name="<?=COD_DISTRIBUCION['nombre']?>" placeholder="Cantidad" value="<?= !empty($row['cantidadTipoServicio']) ? $row['cantidadTipoServicio'] : '' ?>">
+                            <div class="tbDistribucionTachado d-none">
+                                <h4 class="ui dividing header">TACHADO</h4>
+                                <input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
+                                <table class="ui single line table">
+                                    <thead>
+                                        <tr>
+                                            <th></th>
+                                            <th class="thCustomNameItem"></th>
+                                            <th>Tiempo tachado (días)</th>
+                                            <th>Personas para tachado</th>
+                                            <th>Costo por día</th>
+                                            <th>Total de costo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
 
@@ -552,3 +586,4 @@
 </div>
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
+<input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>
