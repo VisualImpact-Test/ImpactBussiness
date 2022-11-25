@@ -144,9 +144,10 @@ class M_Item extends MY_Model
 	public function obtenerInformacionItemTarifario($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['itemTipo']) ? ' AND ta.idItemTipo = ' . $params['itemTipo'] : '';
-		$filtros .= !empty($params['itemMarca']) ? ' AND ma.idItemMarca = ' . $params['itemMarca'] : '';
-		$filtros .= !empty($params['itemCategoria']) ? ' AND ca.idItemCategoria = ' . $params['itemCategoria'] : '';
+		$filtros .= !empty($params['tipoItem']) ? ' AND ta.idItemTipo = ' . $params['tipoItem'] : '';
+		$filtros .= !empty($params['marcaItem']) ? ' AND ma.idItemMarca = ' . $params['marcaItem'] : '';
+		$filtros .= !empty($params['categoriaItem']) ? ' AND ca.idItemCategoria = ' . $params['categoriaItem'] : '';
+		$filtros .= !empty($params['subCategoriaItem']) ? ' AND sca.idItemSubCategoria = ' . $params['subCategoriaItem'] : '';
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['proveedor']) ? ' AND p.idProveedor = ' . $params['proveedor'] : '';
 		$filtros .= !empty($params['chMostrar']) ? ' AND tfa.flag_actual = ' . $params['chMostrar'] : '';

@@ -38,7 +38,7 @@ class Item extends MY_Controller
         $config['data']['tipoItem'] = $this->model->obtenerItemTipo()['query']->result_array();
         $config['data']['itemMarca'] = $this->model->obtenerItemMarca()['query']->result_array();
         $config['data']['itemCategoria'] = $this->model->obtenerItemCategoria()['query']->result_array();
-        $config['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
+        $config['data']['subCategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
         $config['data']['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
         $config['view'] = 'modulos/Tarifario/item/index';
 
@@ -164,6 +164,7 @@ class Item extends MY_Controller
         $result['msg']['title'] = "Carga masiva de tarifario";
 
         $post = json_decode($this->input->post('data'), true);
+        
 
         
         $itemProveedores = [];

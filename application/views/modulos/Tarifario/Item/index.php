@@ -56,13 +56,19 @@
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Marca Item</span>
 							<select class="form-control form-control-sm ui my_select2Full" name="marcaItem" id="marcaItem">
-								<?= htmlSelectOptionArray2(['query' => $marcaItem, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= htmlSelectOptionArray2(['query' => $itemMarca, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Categoria Item</span>
 							<select class="form-control form-control-sm ui my_select2Full" name="categoriaItem" id="categoriaItem">
-								<?= htmlSelectOptionArray2(['query' => $categoriaItem, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= htmlSelectOptionArray2(['query' => $itemCategoria, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">SubCategoria Item</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="subCategoriaItem" id="subCategoriaItem">
+								<?= htmlSelectOptionArray2(['query' => $subCategoriaItem, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
