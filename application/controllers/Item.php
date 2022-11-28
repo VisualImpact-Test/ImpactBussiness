@@ -440,13 +440,14 @@ class Item extends MY_Controller
                 'monto' => null,
                 ]
 			],
-            'headers' => ['TIPO (*)'
+            'headers' => [
+                  'TIPO (*)'
                 , 'MARCA (*)'
                 , 'CATEGORIA (*)'
                 , 'SUBCATEGORIA (*)'
                 , 'ITEM (*)'
                 , 'CARACTERISTICAS (*)'
-                , 'EQUIVALENTE EN LOGISTICA (*)'
+                , 'EQUIVALENTE EN LOGISTICA'
                 , 'TALLA'
                 , 'TELA'
                 , 'COLOR'
@@ -529,23 +530,21 @@ class Item extends MY_Controller
         foreach ($dataParaVista['logisticaItem'] as $key => $row) {
             $itemLogistica[$row['label']] = $row['value'];
         }
+            
+         array_pop($post['HT'][0]);
 
-      
+         
+        
 
         foreach($post['HT'][0] as $tablaHT) {
-            // !empty($tablaHT['Tipo']) ? 
-            //VALIDAR OBLIGATORIOS
 
-            if(empty($tablaHT['item'])){
-                continue;
-            }
-
+           
             if(
                 empty($tablaHT['tipo'] || $tablaHT['marca'] || $tablaHT['categoria'] || $tablaHT['subcategoria'] || $tablaHT['item'] || $tablaHT['caracteristicas'] || $tablaHT['logistica']) 
-            ){
+             )  {
                 $msg = createMessage(['type' => 2,'message' => 'Complete los campos obligatorios']);
                 goto respuesta;
-            }
+             }
 
             $idTipo = !empty($itemTipo[$tablaHT['tipo']]) ? $itemTipo[$tablaHT['tipo']] : NULL;
             $idMarca = !empty($itemMarca[$tablaHT['marca']]) ? $itemMarca[$tablaHT['marca']] : NULL;
@@ -571,8 +570,20 @@ class Item extends MY_Controller
                 'idItemLogistica' => $idLogistica
             ];
 
+            $validacionExistencia = $this->model->validarExistenciaItemMasivo($data['insert']);
+
+            if (!empty($validacionExistencia['query']->row_array())) {
+                $result['result'] = 0;
+                $result['msg']['title'] = 'Alerta!';
+                $result['msg']['content'] = getMensajeGestion('registroRepetido');
+                goto respuesta;
+            }  
+           
+           
+
         }
 
+        
         $insertItem = $this->model->insertarMasivo('compras.item', $data['insert']);
 
         $dataItem['item'] = $this->model->obtenerInformacionItems($post)['query']->result_array();

@@ -314,6 +314,39 @@ public function obteneFlagNoRepetido()
 		return $this->resultado;
 	}
 
+	public function validarExistenciaItemTarifarioMasivo($params = array())
+	{
+		$filtros = "";
+		$nombre = "";
+
+
+		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
+
+		foreach ($params as $key => $value) {
+			
+		}
+
+
+		$sql = "
+			SELECT
+				idItem
+			FROM compras.itemTarifario ta
+			WHERE
+			ta.idItem = {$value['idItem']} AND ta.idProveedor = {$value['idProveedor']}
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function validarItemTarifarioActual($params = [])
 	{
 		$filtros = "";
