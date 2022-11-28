@@ -164,14 +164,17 @@ class Item extends MY_Controller
         $result['msg']['title'] = "Carga masiva de tarifario";
 
         $post = json_decode($this->input->post('data'), true);
-        
+
 
         
         $itemProveedores = [];
         $itemNombre = [];
+        $itemTarifario = [];
 
         $proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]] )->result_array();
         $item['item'] = $this->model->obtenerItems();
+        $tarifario ['itemTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+
 
         foreach ($proveedores as $key => $row) {
             $itemProveedores[$row['razonSocial']] = $row['idProveedor'];
@@ -180,6 +183,9 @@ class Item extends MY_Controller
         foreach ($item['item'] as $key => $row) {
             $itemNombre[$row['label']] = $row['value'];
         }
+
+       
+        
 
 
 
@@ -196,6 +202,13 @@ class Item extends MY_Controller
             if(empty($proveedoresItem || $nombreItem )) {
                 goto respuesta;
             }
+            
+            foreach ($tarifario['itemTarifario'] as $key => $row) {
+                if ($key['idItem'] = $nombreItem) {
+                    goto respuesta;
+                }
+    
+            }
 
             $dataTarifario['insert'][] = [
                 'idItem' => $nombreItem,
@@ -206,6 +219,15 @@ class Item extends MY_Controller
                 
             ];
 
+            $validacionExistencia = $this->model->validarExistenciaItemTarifarioMasivo($dataTarifario['insert']);
+
+        }
+
+        if (!empty($validacionExistencia['query']->row_array())) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroRepetido');
+            goto respuesta;
         }
 
         $insertarTarifario = $this->model->insertarMasivo('compras.itemTarifario', $dataTarifario['insert']);

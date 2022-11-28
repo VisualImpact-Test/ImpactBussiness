@@ -268,6 +268,39 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	
+	public function validarExistenciaItemMasivo($params = array())
+	{
+		$filtros = "";
+		$nombre = "";
+
+
+		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
+
+		foreach ($params as $key => $value) {
+			
+		}
+
+		$sql = "
+			SELECT
+				idItem
+			FROM compras.item a
+			WHERE
+			a.nombre = '{$value['nombre']}'
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	//validar existencia itemImagen
 
 	public function insertarItemImage($params = [])
