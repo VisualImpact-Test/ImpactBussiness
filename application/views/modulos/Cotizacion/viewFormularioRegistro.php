@@ -66,19 +66,19 @@
         <div class="fields">
             <div class="five wide field">
                 <div class="ui sub header">Solicitante</div>
-                <select name="solicitante" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+                <select name="solicitante" class="ui fluid clearable dropdown dropdownSingleAditions" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $solicitantes, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>
             <div class="five wide field">
                 <div class="ui sub header">Cuenta</div>
-                <select class="ui search dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+                <select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
                     <?= htmlSelectOptionArray2([ 'title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>
             <div class="six wide field">
                 <div class="ui sub header">Centro de costo</div>
-                <select class="ui search dropdown  clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+                <select class="ui dropdown  clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>
@@ -86,8 +86,8 @@
         <div class="fields">
             <div class="five wide field">
                 <div class="ui sub header">Prioridad</div>
-                <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
-                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase', 'selected' => $cotizacion['idPrioridad']]); ?>
+                <select class="ui dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
+                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase']); ?>
                 </select>
             </div>
             <div class="eleven wide field">
@@ -273,7 +273,7 @@
                             <div class="fields">
                                 <div class="eight wide field">
                                     <div class="ui sub header">Tipo Servicio</div>
-                                    <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+                                    <select class="ui dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                     </select>
                                 </div>
@@ -290,7 +290,7 @@
                             <div class="fields">
                                 <div class="eight wide field">
                                     <div class="ui sub header">Item Logística</div>
-                                    <select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
+                                    <select class="ui clearable dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
                                     </select>
                                 </div>
@@ -305,7 +305,9 @@
                             </div>
                             <div class="tbDistribucionTachado d-none">
                                 <h4 class="ui dividing header">TACHADO</h4>
-                                <input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
+                                <!-- <input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]" type="radio" checked> -->
+                                <!-- El input de tipo radio al ser duplicado se pierde el valor original de la funcion serializeArray de js -->
+                                <input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]">
                                 <table class="ui single line table">
                                     <thead>
                                         <tr>

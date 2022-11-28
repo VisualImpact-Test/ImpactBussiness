@@ -13,6 +13,7 @@ class SolicitudCotizacion extends MY_Controller
 		$this->load->model('M_proveedor', 'model_proveedor');
 		$this->load->model('M_formularioProveedor', 'model_formulario_proveedor');
 		$this->load->model('M_Autorizacion', 'model_autorizacion');
+		$this->load->model('M_Oper', 'mOper');
 	}
 
 	public function index()
@@ -197,6 +198,56 @@ class SolicitudCotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioConsultaMultiple()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+
+		// Si se consulta Cotización;
+		if (1 <= intval($post['tipo']) && intval($post['tipo']) <= 5) {
+			$dataCotizacion = $this->model->obternerCotizacionDetalle($post)->result_array();
+
+			foreach ($dataCotizacion as $key => $row) {
+				$dataCotizacion[$key]['fechaDeadline'] = date_change_format($row['fechaDeadline']);
+				$dataCotizacion[$key]['fechaRequerida'] = date_change_format($row['fechaRequerida']);
+				$dataCotizacion[$key]['item'] = $row['nombre'];
+				$dataSub[$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
+			};
+
+			$dataParaVista['cotizacion'] = $dataCotizacion;
+			$dataParaVista['cotizacionSub'] = $dataSub;
+			$result['result'] = 1;
+			$dataParaVista['incluirCosto'] = false;
+
+			
+			if (intval($post['tipo']) <= 2) {
+				$result['msg']['title'] = 'Cotización Registrada';
+			} else
+			if (intval($post['tipo']) <= 5) {
+				$dataParaVista['incluirCosto'] = true;
+				$result['msg']['title'] = 'Cotización Valorizada';
+			}
+
+			$result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/viewCotizacionRegistro", $dataParaVista, true);
+			goto respuesta;
+		}
+
+		// Si se consulta Oper;
+		if (6 <= intval($post['tipo']) && intval($post['tipo']) <= 7) {
+			$idOper = $this->mOper->obtenerInformacionComprasOper($post)->row_array()['idOper'];
+			$oper = $this->mOper->obtenerInformacionComprasOper(['idOper' => $idOper])->result_array();
+
+			$dataParaVista['oper'] = $oper;
+			$result['msg']['title'] = 'Oper Registrado';
+			$result['data']['html'] = $this->load->view("modulos/SolicitudCotizacion/viewOperRegistro", $dataParaVista, true);
+
+		}
+		respuesta:
+		echo json_encode($result);
+	}
+
 	public function formularioVisualizacionCotizacionProveedor()
 	{
 		$result = $this->result;
@@ -233,6 +284,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+
 	public function formularioVisualizacionCotizacionProveedorItems()
 	{
 		$result = $this->result;
