@@ -184,10 +184,7 @@ class Item extends MY_Controller
             $itemNombre[$row['label']] = $row['value'];
         }
 
-       
-        
-
-
+        array_pop($post['HT'][0]);
 
         foreach ($post['HT'][0] as $tablaHT) {
 
@@ -204,14 +201,14 @@ class Item extends MY_Controller
             }
             
             foreach ($tarifario['itemTarifario'] as $key => $row) {
-                if ($key['idItem'] = $nombreItem) {
-                    goto respuesta;
-                }
+                // if ($key['idItem'] = $nombreItem) {
+                //     goto respuesta;
+                // }
     
             }
 
             $dataTarifario['insert'][] = [
-                'idItem' => $nombreItem,
+                'idItem' => $row['idItem'],
                 'idProveedor' => $proveedoresItem,
                 'costo' => $tablaHT['costo'],
                 'flag_actual' => $tablaHT['itemActual'],
@@ -221,14 +218,16 @@ class Item extends MY_Controller
 
             $validacionExistencia = $this->model->validarExistenciaItemTarifarioMasivo($dataTarifario['insert']);
 
+            if (!empty($validacionExistencia['query']->row_array())) {
+                $result['result'] = 0;
+                $result['msg']['title'] = 'Alerta!';
+                $result['msg']['content'] = getMensajeGestion('registroRepetido');
+                goto respuesta;
+            }
+
         }
 
-        if (!empty($validacionExistencia['query']->row_array())) {
-            $result['result'] = 0;
-            $result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroRepetido');
-            goto respuesta;
-        }
+       
 
         $insertarTarifario = $this->model->insertarMasivo('compras.itemTarifario', $dataTarifario['insert']);
 
@@ -275,8 +274,6 @@ class Item extends MY_Controller
         }
 
         echo json_encode($result);
-
-
 
     }
 
