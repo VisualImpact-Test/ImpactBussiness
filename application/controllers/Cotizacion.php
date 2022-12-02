@@ -511,7 +511,17 @@ class Cotizacion extends MY_Controller
 						'tela' => $post["telaSubItem[$k]"],
 						'color' => $post["colorSubItem[$k]"],
 						'cantidad' => $post["cantidadTextil[$k]"],
+						'genero' => $post["genero[$k]"]
+
+
 					]);
+
+					// foreach ($data['subDetalle'][$k] as $subItem) {
+						
+						
+					// };
+
+					
 					break;
 
 				case COD_TARJETAS_VALES['id']:
@@ -526,6 +536,11 @@ class Cotizacion extends MY_Controller
 			}
 
 			foreach ($data['subDetalle'][$k] as $subItem) {
+
+				if ($subItem['genero'] === NULL or empty($subItem['genero'])) {
+					unset($subItem['genero']);
+				
+
 				$data['insertSubItem'][$k][] = [
 					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
@@ -535,6 +550,7 @@ class Cotizacion extends MY_Controller
 					'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
 					'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
 					'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
+					'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
 					'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
 					'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
 					'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
@@ -543,7 +559,46 @@ class Cotizacion extends MY_Controller
 					'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 
 				];
+
+			} else {
+
+				$data['insertSubItem'][$k][] = [
+					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
+					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
+					'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
+					'tipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
+					'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
+					'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
+					'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
+					'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
+					'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
+					'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
+					'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
+					'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
+					'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+					'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
+					'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+
+				];
+
+
 			}
+
+				// if ($subItem['genero'] === NULL or empty($subItem['genero'])) {
+				// 	unset($subItem['genero']);
+				// }
+
+				
+			}
+
+			// foreach ($data['insertSubItem'][$k] as $subItem) {
+			// 	if ($subItem['genero'] === NULL) {
+			// 		unset($subItem['genero']);
+			// 	}
+				
+			//  };
+
+
 
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([
@@ -554,7 +609,7 @@ class Cotizacion extends MY_Controller
 				foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
 					$data['archivos'][$k][] = [
 						'base64' => $archivo['base64'],
-						'type' => $archivo['type'],
+						'type' => $archivo['ty5pe'],
 						'name' => $archivo['name'],
 						'carpeta' => 'cotizacion',
 						'nombreUnico' => uniqid(),
