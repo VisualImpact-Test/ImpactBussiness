@@ -497,6 +497,7 @@ class M_Cotizacion extends MY_Model
 						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
 						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
 						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',

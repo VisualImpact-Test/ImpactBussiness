@@ -1298,6 +1298,10 @@ var Cotizacion = {
 			let tipo = parent.data('tipo');
 
             let contenedor = parent.find('.content-body-sub-item');
+			
+			
+
+			
 
 			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
 
@@ -1305,10 +1309,17 @@ var Cotizacion = {
             contenedor.append(bodyHtmlSubItem.html());
 
             let childInserted = contenedor.children().last();
+		
+			console.log(childInserted);
 
 			// $("html").animate({ scrollTop: contenedor.height() }, 500);
             childInserted.transition('glow');
 			childInserted.find(':input').val('');
+			let gen_nuevo = childInserted.find('#genero .item-4');
+			// hola3 = hola.remove('option');
+			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
+			gen_nuevo.remove('option');
+			
 		});
 		$(document).on('click', '.btn-eliminar-sub-item', function () {
 			let control = $(this);
@@ -1316,13 +1327,53 @@ var Cotizacion = {
 			let element = control.closest('.body-sub-item');
 			let idEliminado = element.data('id');
 
+			// console.log(element);
+
 			if(idEliminado){
 				Cotizacion.subItemEliminado.push(idEliminado);
 			}
 
 			if(parent.find('.body-sub-item').length <= 1){
-				element.find(':input').val('');
-				// element.transition('glow')
+				
+			element.find(':input').val('');
+			// let hola = element.find('#genero .menu .item');
+			// let hola2 = element.find('#genero .text');
+			// let hola4 = element.find('#genero .menu');
+			let gen = element.find('#genero');
+
+			let gen_nuevo_item = gen.find('.dropdown')
+			// hola3 = hola.remove('option');
+			// gen3 = gen.find('.item-4').remove('option');
+			 gen_nuevo_item.html(
+				
+				'<option class="item-4" value="">seleccione</option>'+
+				'<option class="item" value="0">Hombre</option>'+
+				'<option class="item" value="1">Mujer</option>'+
+				'<option class="item" value="2">Unisex</option>'
+				
+				);
+			
+
+
+			
+			
+
+			// hola2.addClass('select');
+
+			// hola.removeClass('active');
+			// hola.removeClass('selected');
+
+			// hola3 = hola2.remove('div');
+
+			// hola.first().addClass('selected active');
+
+			// console.log(hola);
+			// console.log(hola2);
+			// console.log(hola4);
+
+			// hola4.before('<div class="text">seleccione<div/>');
+			
+			
 				return false;
 			}
 
