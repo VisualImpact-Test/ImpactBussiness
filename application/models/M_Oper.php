@@ -14,6 +14,17 @@ class M_Oper extends MY_Model
 	{
 		parent::__construct();
 	}
+
+	public function obtenerInformacionComprasOper($params = [])
+	{
+		$this->db
+		->select('od.*')
+		->from('compras.operDetalle od')
+		->join('compras.oper o', 'o.idOper = od.idOper', 'LEFT');
+
+		if(isset($params['idCotizacion'])) $this->db->where('od.idCotizacion', $params['idCotizacion']);
+		if(isset($params['idOper'])) $this->db->where('od.idOper', $params['idOper']);
+	}
 	public function obtenerInformacionOper($params = [])
 	{
 		$this->db

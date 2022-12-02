@@ -243,8 +243,56 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obternerCotizacionDetalle($params = [])
+	{
+		$this->db
+			->select('cd.*,
+							c.nombre as cotizacion,
+							c.fechaDeadline,
+							c.fechaRequerida,
+							c.motivo,
+							c.comentario,
+							c.diasValidez,
+							c.idPrioridad,
+							c.total,
+							c.total_fee_igv,
+							c.flagIgv,
+							c.fee,
+							prioridad.nombre as prioridad,
+							cu.nombre AS cuenta,
+							cc.nombre AS centroCosto,
+							sol.nombre AS solicitante,
+							it.nombre AS itemTipo,
+							proveedor.razonSocial AS proveedor')
+			->from('compras.cotizacionDetalle cd')
+			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'LEFT')
+			->join('compras.cotizacionPrioridad prioridad', 'prioridad.idPrioridad = c.idPrioridad', 'LEFT')
+			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'LEFT')
+			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
+			->join('compras.solicitante sol', 'c.idSolicitante = sol.idSolicitante', 'LEFT')
+			->join('compras.itemTipo it', 'it.idItemTipo = cd.idItemTipo', 'LEFT')
+			->join('compras.proveedor', 'proveedor.idProveedor = cd.idProveedor', 'LEFT');
 
+		if (isset($params['idCotizacion'])) $this->db->where('c.idCotizacion', $params['idCotizacion']);
+		return $this->db->get();
+	}
 
+	public function obtenerCotizacionDetalleSub($params = [])
+	{
+		$this->db
+			->select('
+				cds.*,
+				um.nombre as unidadMedida,
+				ts.nombre as tipoServicio,
+				il.nombre as itemLogistica')
+			->from('compras.cotizacionDetalleSub cds')
+			->join('compras.unidadMedida um', 'um.idUnidadMedida = cds.idUnidadMedida', 'LEFT')
+			->join('compras.tipoServicio ts', 'ts.idTipoServicio = cds.idTipoServicio', 'LEFT')
+			->join('compras.item il', 'il.idItem = cds.idItem', 'LEFT');
+
+		if (isset($params['idCotizacionDetalle'])) $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']);
+		return $this->db->get();
+	}
 
 	public function obtenerInformacionCotizacionDetalle($params = [])
 	{
@@ -280,7 +328,6 @@ class M_Cotizacion extends MY_Model
 				, ei.nombre AS estadoItem
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
-				--, CONVERT( VARCHAR, pd.fechaCreacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaCreacion, 108) AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 				, pd.caracteristicas
@@ -541,7 +588,6 @@ class M_Cotizacion extends MY_Model
 	}
 
 	//OBTEBER ARTUCUOI
-
 	public function obtenerItem($nombreItem)
 	{
 		$sql = "
@@ -704,6 +750,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
 	public function obtenerInformacionCotizacionArchivos($params = [])
 	{
 		$filtros = "";
@@ -810,6 +857,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
 	public function obtenerArchivoCotizacionDetalleProveedors(array $param = [])
 	{
 		$this->db
@@ -819,6 +867,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->db->get();
 	}
+
 	public function obtenerInformacionDetalleCotizacionProveedoresParaVista($params = [])
 	{
 		$filtros = "";
@@ -885,6 +934,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
 	public function insertar($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
@@ -898,6 +948,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
 	public function obtenerSolicitante($params = [])
 	{
 		$sql = "
@@ -982,8 +1033,7 @@ class M_Cotizacion extends MY_Model
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		WHERE o.estado = 1
-		{$filtros}
-	";
+		{$filtros}";
 
 		$query = $this->db->query($sql);
 

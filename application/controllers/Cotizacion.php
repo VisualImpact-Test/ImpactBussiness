@@ -2199,6 +2199,8 @@ class Cotizacion extends MY_Controller
 		$tablaSolicitantes = 'compras.solicitante';
 
 		$solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes, $whereSolicitante)->result_array();
+
+		
 		foreach ($solicitantes as $solicitante) {
 			$solicitantes[$solicitante['nombre']] = $solicitante['idSolicitante'];
 		}
@@ -2227,8 +2229,8 @@ class Cotizacion extends MY_Controller
 			'nombre' => $post['nombre'],
 			'fechaEmision' => getActualDateTime(),
 			'idCuenta' => $post['cuentaForm'],
-			// 'idCentroCosto' => $post['cuentaCentroCostoForm'],
-			'idCentroCosto' => trim(explode('-', $post['cuentaCentroCostoForm'])[1]),
+			'idCentroCosto' => $post['cuentaCentroCostoForm'],
+			// 'idCentroCosto' => trim(explode('-', $post['cuentaCentroCostoForm'])[1]),
 			'idSolicitante' => $idSolicitante,
 			'fechaDeadline' => !empty($post['deadline']) ? $post['deadline'] : NULL,
 			'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
@@ -2509,7 +2511,7 @@ class Cotizacion extends MY_Controller
 
 		$estadoEmail = true;
 
-		$estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id']]);
+		$estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => []]); // Si se desea enviar correo indicarlo aqui.
 		//Verificamos si es necesario enviar a compras para cotizar con el proveedor
 
 		$necesitaCotizacionIntera = false;

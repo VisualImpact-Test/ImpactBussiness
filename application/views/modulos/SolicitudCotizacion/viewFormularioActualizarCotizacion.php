@@ -200,7 +200,7 @@
                                     <div class="ui-widget">
                                         <div class="ui right action left icon input w-100">
                                             <i class="semaforoForm flag link icon"></i>
-                                            <input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+                                            <input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
                                             <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown">
                                                 <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagExterno']) ? $row['flagExterno'] : 0 ?>" patron="requerido">
                                                 <div class="text">Cuenta</div>

@@ -1964,9 +1964,7 @@ var Cotizacion = {
    },
 
    actualizarOnAddRowCampos:(parent) =>{
-
 		let number = '';
-
 		if(parent.data('id') !== undefined){
 			number = parent.data('id');
 		}
@@ -1997,7 +1995,6 @@ var Cotizacion = {
 		let itemLogisticaForm = parent.find('.itemLogisticaForm').find('select');
 
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
-		console.log(tipoServicioSubItem);
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
 

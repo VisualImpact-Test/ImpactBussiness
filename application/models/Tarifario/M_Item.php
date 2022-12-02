@@ -154,6 +154,8 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['precioMinimo']) ? ' AND tfa.costo >= ' . $params['precioMinimo'] : '';
 		$filtros .= !empty($params['precioMaximo']) ? ' AND tfa.costo <= ' . $params['precioMaximo'] : '';
 		$filtros .= !empty($params['idItemTarifario']) ? ' AND tfa.idItemTarifario = ' . $params['idItemTarifario'] : '';
+		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
+		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
 
 		$sql = "
 			SELECT 
@@ -279,6 +281,7 @@ public function obteneFlagNoRepetido()
 				a.idItem AS value
 				, a.nombre AS label
 			FROM compras.item a
+			ORDER BY 2
 		";
 
 		$result = $this->db->query($sql)->result_array();

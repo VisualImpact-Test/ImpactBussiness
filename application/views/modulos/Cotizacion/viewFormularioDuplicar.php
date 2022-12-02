@@ -57,19 +57,19 @@
         <div class="fields">
             <div class="five wide field">
                 <div class="ui sub header">Solicitante</div>
-                <select name="solicitante" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+                <select name="solicitante" class="ui fluid clearable dropdown dropdownSingleAditions" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $solicitantes, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idSolicitante']) ? $cotizacion['idSolicitante'] : '']); ?>
                 </select>
             </div>
             <div class="five wide field">
                 <div class="ui sub header">Cuenta</div>
-                <select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+                <select class="ui dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuenta']) ? $cotizacion['idCuenta'] : '']); ?>
                 </select>
             </div>
             <div class="six wide field">
                 <div class="ui sub header">Centro de costo</div>
-                <select class="ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+                <select class="ui dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
                 </select>
             </div>
@@ -77,7 +77,7 @@
         <div class="fields">
             <div class="five wide field">
                 <div class="ui sub header">Prioridad</div>
-                <select class="ui search dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
+                <select class="ui dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idPrioridad']) ? $cotizacion['idPrioridad'] : '']); ?>
                 </select>
             </div>
@@ -221,23 +221,24 @@
 
                                     <?
                                     if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
+                                        $cont = 0;
                                         foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
                                             <div class="fields body-sub-item ">
                                                 <div class="three wide field">
                                                     <div class="ui sub header">Talla</div>
-                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
+                                                    <input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $cont ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
                                                 </div>
                                                 <div class="three wide field">
                                                     <div class="ui sub header">Tela</div>
-                                                    <input class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+                                                    <input class="telaSubItem camposTextil" name="telaSubItem[<?= $cont ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
                                                 </div>
                                                 <div class="three wide field">
                                                     <div class="ui sub header">Color</div>
-                                                    <input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+                                                    <input class="colorSubItem " name="colorSubItem[<?= $cont ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
                                                 </div>
                                                 <div class="two wide field">
                                                     <div class="ui sub header">Cantidad</div>
-                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                                    <input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $cont ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
                                                 </div>
                                                 <div class="one wide field">
                                                     <div class="ui sub header">Eliminar</div>
@@ -248,6 +249,7 @@
 
                                             </div>
                                     <?
+                                        $cont++;
                                         endforeach;
 
 
@@ -318,7 +320,7 @@
                                     foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
                                         <div class="seven wide field">
                                             <div class="ui sub header">Tipo Servicio</div>
-                                            <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
+                                            <select class="ui dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
                                                 <?= htmlSelectOptionArray2(['selected' => $dataSubItem['tipoServicio'], 'query' => $tipoServicios,  'class' => 'text-titlecase ', 'simple' => true, 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                             </select>
                                         </div>
@@ -636,7 +638,7 @@
                         <div class="fields d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
                             <div class="seven wide field">
                                 <div class="ui sub header">Tipo Servicio</div>
-                                <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+                                <select class="ui dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
                                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                 </select>
                             </div>
