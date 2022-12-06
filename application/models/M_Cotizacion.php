@@ -360,6 +360,7 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion != ' . $params['idCotizacion'] : '';
+		$filtros .= !empty($params['nombre']) ? " AND p.nombre != '" . $params['nombre']. "'" : '';
 
 		$sql = "
 			SELECT
@@ -1624,8 +1625,8 @@ class M_Cotizacion extends MY_Model
 				cds.idItem,
 				cds.idDistribucionTachado,
 				UPPER(ts.nombre) tipoServicio,
-				um.nombre unidadMedida
-
+				um.nombre unidadMedida,
+				cds.genero
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

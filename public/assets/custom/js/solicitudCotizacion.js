@@ -8,14 +8,14 @@ var Cotizacion = {
 	itemsLogistica: [],
 	htmlG: '',
 	htmlCotizacion: '',
-	tablaCotizacionesOper : '',
+	tablaCotizacionesOper: '',
 
 	load: function () {
 
-		
+
 
 		//filtroCotizacion
-		
+
 
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
 			++modalId;
@@ -24,14 +24,14 @@ var Cotizacion = {
 			let config = { 'url': Cotizacion.url + 'getOrdenesCompra', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				
+
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
@@ -43,12 +43,12 @@ var Cotizacion = {
 
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
 		});
-	
+
 
 		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
@@ -69,8 +69,8 @@ var Cotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				Cotizacion.modalIdForm = modalId;
-			
-				
+
+
 			});
 		});
 
@@ -78,27 +78,27 @@ var Cotizacion = {
 
 		$(document).on('click', '.btn-finalizarCotizacion', function () {
 			let idCotizacion = $(this).closest('tr').data('id');
-			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion("+idCotizacion+")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
+			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion(" + idCotizacion + ")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
 		});
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
 			let data = { idOper };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(site_url + Cotizacion.url + 'descargarOper' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOper', jsonString);
 		});
 		$(document).on('click', '.btn-descargarOrdenCompra', function () {
 			let id = $(this).closest('tr').data('id');
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra', jsonString);
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
 			let id = $(this).closest('tr').data('id');
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
 		});
-		
+
 	},
 
 	actualizarCotizacion: function () {
@@ -121,7 +121,7 @@ var Cotizacion = {
 		});
 	},
 
-	generarOPER: function(){
+	generarOPER: function () {
 		var ids = [];
 
 		if (typeof Cotizacion.tablaCotizacionesOper !== 'undefined') {
@@ -137,7 +137,7 @@ var Cotizacion = {
 			return false;
 		}
 
-		let data = { ids: ids};
+		let data = { ids: ids };
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'frmGenerarOper', 'data': jsonString };
 
@@ -150,18 +150,18 @@ var Cotizacion = {
 			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_guardar()", content: "¿Esta seguro de guardar y enviar el OPER ?" });';
 			btn[1] = { title: 'Enviar', fn: fn[1] };
 
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			$('.simpleDropdown').dropdown();
 		});
-		
+
 	},
 	finalizarCotizacion: function (idCotizacion) {
-		let data = {idCotizacion};
+		let data = { idCotizacion };
 		let jsonString = { 'data': JSON.stringify(data) };
 		let url = Cotizacion.url + "finalizarCotizacion";
 		let config = { url: url, data: jsonString };
-		
+
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
 			var btn = [];
@@ -175,8 +175,8 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	generarOPER_guardar: function (){
-		
+	generarOPER_guardar: function () {
+
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
 		let config = { 'url': Cotizacion.url + 'registrarOper', 'data': jsonString };
 
@@ -193,7 +193,7 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
 		});
 	},
-	
+
 	generarRequerimientoPDF: function (id) {
 		var url = site_url + '/Cotizacion/generarCotizacionPDF/' + id;
 		window.open(url, '_blank');
@@ -203,7 +203,7 @@ var Cotizacion = {
 
 	registrarItem: function (idCotizacion) {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
-			formValues.idCotizacion = idCotizacion;
+		formValues.idCotizacion = idCotizacion;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarItem";
 		let config = { url: url, data: jsonString };
@@ -224,7 +224,7 @@ var Cotizacion = {
 
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.tipoRegistro = tipoRegistro;
+		formValues.tipoRegistro = tipoRegistro;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarCotizacion";
 		let config = { url: url, data: jsonString };
@@ -297,7 +297,7 @@ var SolicitudCotizacion = {
 		$(document).on('click', '.btn-frmSolicitudCotizacion', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
@@ -336,26 +336,26 @@ var SolicitudCotizacion = {
 			let config = { 'url': SolicitudCotizacion.url + 'filtroOper', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				
+
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				
-				
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
 
 		//reportefiltro
-		
+
 		$(document).on('click', '.btn-demofechacierre', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacionfecha', 'data': jsonString };
 
@@ -404,6 +404,28 @@ var SolicitudCotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				SolicitudCotizacion.actualizarAutocomplete();
+			});
+		});
+
+		$(document).on('click', '.btn-consultarMultiple', function () {
+			++modalId;
+
+			let id = $(this).data('id');
+			let tipo = $(this).data('estado');
+
+			let data = { 'idCotizacion': id, 'tipo': tipo };
+			let jsonString = { 'data': JSON.stringify(data) };
+
+			let config = { 'url': SolicitudCotizacion.url + 'formularioConsultaMultiple', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 			});
 		});
 
@@ -540,7 +562,7 @@ var SolicitudCotizacion = {
 			++modalId;
 
 			let items = [];
-			$.each($(this).parents('.row').find('.item'), function(index, value){
+			$.each($(this).parents('.row').find('.item'), function (index, value) {
 				items.push($(value).val());
 			});
 			let data = { 'items': items };
@@ -608,7 +630,7 @@ var SolicitudCotizacion = {
 
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.tipoRegistro = tipoRegistro;
+		formValues.tipoRegistro = tipoRegistro;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "actualizarCotizacion";
 		let config = { url: url, data: jsonString };

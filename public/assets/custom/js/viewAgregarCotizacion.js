@@ -1298,10 +1298,6 @@ var Cotizacion = {
 			let tipo = parent.data('tipo');
 
             let contenedor = parent.find('.content-body-sub-item');
-			
-			
-
-			
 
 			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
 
@@ -1309,12 +1305,11 @@ var Cotizacion = {
             contenedor.append(bodyHtmlSubItem.html());
 
             let childInserted = contenedor.children().last();
-		
-			console.log(childInserted);
 
 			// $("html").animate({ scrollTop: contenedor.height() }, 500);
             childInserted.transition('glow');
 			childInserted.find(':input').val('');
+			
 			let gen_nuevo = childInserted.find('#genero .item-4');
 			// hola3 = hola.remove('option');
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
@@ -2032,6 +2027,7 @@ var Cotizacion = {
 		let telaSubItem = parent.find('.telaSubItem');
 		let colorSubItem = parent.find('.colorSubItem');
 		let cantidadSubItemTextil = parent.find('.cantidadSubItemTextil');
+		let generoSubItem = parent.find('.generoSubItem');
 		//Tarjetas o vales
 		let montoSubItem = parent.find('.montoSubItem');
 
@@ -2058,6 +2054,7 @@ var Cotizacion = {
 		tallaSubItem.attr('name',`tallaSubItem[${number}]`);
 		telaSubItem.attr('name',`telaSubItem[${number}]`);
 		colorSubItem.attr('name',`colorSubItem[${number}]`);
+		generoSubItem.attr('name',`generoSubItem[${number}]`);
 		cantidadSubItemTextil.attr('name',`cantidadTextil[${number}]`);
 
 		montoSubItem.attr('name',`montoSubItem[${number}]`);

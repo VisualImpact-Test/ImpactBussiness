@@ -183,3 +183,6 @@ defined("MAIL_GERENCIA_OPERACIONES") OR define("MAIL_GERENCIA_OPERACIONES",['mil
 defined("SECRET_KEY_GET") OR define("SECRET_KEY_GET",'CLAVESUPERSECRETA');
 defined("DIAS_MAX_ACCESO") OR define("DIAS_MAX_ACCESO",30);
 defined("URL_WASABI_ITEM_PROPUESTA") OR define("URL_WASABI_ITEM_PROPUESTA",'https://s3.us-central-1.wasabisys.com/impact.business/itemPropuesta/');
+
+// Genero
+defined('LIST_GENERO') OR define('LIST_GENERO',[['id' => 1, 'value' => 'Hombre'], ['id' => 2, 'value' => 'Mujer'], ['id' => 3, 'value' => 'Unisex']]);
