@@ -1342,9 +1342,9 @@ var Cotizacion = {
 			 gen_nuevo_item.html(
 				
 				'<option class="item-4" value="">seleccione</option>'+
-				'<option class="item" value="0">Hombre</option>'+
-				'<option class="item" value="1">Mujer</option>'+
-				'<option class="item" value="2">Unisex</option>'
+				'<option class="item" value="1">Hombre</option>'+
+				'<option class="item" value="2">Mujer</option>'+
+				'<option class="item" value="3">Unisex</option>'
 				
 				);
 			
