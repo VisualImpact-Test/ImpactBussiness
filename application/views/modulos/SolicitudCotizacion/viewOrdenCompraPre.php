@@ -60,8 +60,12 @@
                             </div>
                         </div>
                         <div class="two wide field">
-                            <div class="ui sub header">IGV %</div>
-                            <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido">
+                            <div class="ui sub header">IGV 18%</div>
+                            <div class="custom-control custom-switch custom-switch-lg">
+                                <input type="checkbox" class="custom-control-input" id="igvOrden" name="igvOrden">
+                                <label class="custom-control-label" for="igvOrden"></label>
+                            </div>
+                            <!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
                         </div>
 
                     </div>
@@ -230,7 +234,7 @@
                                         <div class="ui sub header">Costo</div>
                                         <div class="ui right labeled input">
                                             <label for="amount" class="ui label">S/</label>
-                                            <input class="costoForm" type="text" name="costoForm[<?= $k ?>]" placeholder="0.00" value="<?= moneda($rowDetalle['costoForm']) ?>" readonly patron="requerido">
+                                            <input class="costoForm" type="text" name="costoForm[<?= $k ?>]" placeholder="0.00" value="<?= number_format($rowDetalle['costoForm'], 2, '.', '') ?>" readonly patron="requerido">
                                         </div>
                                     </div>
                                     <div class="six wide field">

@@ -40,7 +40,7 @@
         <div class="fields">
             <div class="eight wide field">
                 <div class="ui sub header">Concepto PO / CR Cliente</div>
-                <input type="text" name="concepto" placeholder="Concepto PO / CR Cliente" value="">
+                <input type="text" name="concepto" placeholder="Concepto PO / CR Cliente" value="<?= $cotizaciones[0]['codOrdenCompra']; ?>">
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerimiento</div>
@@ -57,7 +57,7 @@
                 <div class="ui calendar date-semantic">
                     <div class="ui input left icon">
                         <i class="calendar icon"></i>
-                        <input type="text" placeholder="Fecha Requerida" value="">
+                        <input type="text" placeholder="Fecha Requerida" value="<?= $fechaEntrega['fecha'] ?>">
                     </div>
                 </div>
                 <input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="">
@@ -79,13 +79,6 @@
                     <div class="ui left floated header">
                         <span class="ui medium text "><?= $row['cotizacion'] ?> <span class="title-n-detalle"><?= !empty($row['codCotizacion']) ? $row['codCotizacion'] : '' ?></span></span>
                     </div>
-                    <!-- <div class="ui right floated header">
-                        <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($row['total']) ? $row['total'] : '' ?>" readonly>
-                        <a class="item">
-                            <div class="ui green horizontal label">Total </div>
-                            <?= !empty($row['total']) ? moneda($row['total']) : '0.00' ?>
-                        </a>
-                    </div> -->
                     <div class="ui clearing divider"></div>
                     <? foreach ($detalle[$row['idCotizacion']] as $rowDetalle) { ?>
                         <div class="ui grid">

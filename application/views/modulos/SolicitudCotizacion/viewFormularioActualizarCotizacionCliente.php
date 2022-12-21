@@ -243,11 +243,11 @@
                                                 </div>
                                                 <div class="two wide field">
                                                     <div class="ui sub header">Costo</div>
-                                                    <input class="onlyNumbers  costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['costo']) ? moneda($dataSubItem['costo']) : '' ?>">
+                                                    <input class="onlyNumbers  costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
                                                 </div>
                                                 <div class="three wide field">
                                                     <div class="ui sub header">Subtotal</div>
-                                                    <input class="onlyNumbers  subtotalItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['subtotal']) ? moneda($dataSubItem['subtotal']) : '' ?>">
+                                                    <input class="onlyNumbers  subtotalItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '' ?>">
                                                 </div>
                                             </div>
                                     <?

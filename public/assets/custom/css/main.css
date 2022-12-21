@@ -103,7 +103,8 @@ body {
   font-size: 90%;
 }
 
-small, .small {
+small,
+.small {
   font-size: 70%;
   font-weight: 400;
 }
@@ -644,7 +645,8 @@ div.dataTables_wrapper span.select-item {
   background-color: var(--color-vi);
 }
 
-.btn-trade-visual.focus, .btn-trade-visual:focus {
+.btn-trade-visual.focus,
+.btn-trade-visual:focus {
   /* box-shadow: 0 0 0 0.2rem rgb(255 0 0 / 25%); */
   box-shadow: 0 0 0 0.2rem var(--color-vi-focus);
 }
@@ -725,7 +727,8 @@ div.dataTables_wrapper div.dataTables_filter input {
   color: black !important;
 }
 
-.main-menu:hover, nav.main-menu.expanded {
+.main-menu:hover,
+nav.main-menu.expanded {
   width: 250px;
   overflow: visible;
 }
@@ -789,7 +792,8 @@ div.dataTables_wrapper div.dataTables_filter input {
   color: var(--color-vi);
 }
 
-.dropdown-item.active, .dropdown-item:active {
+.dropdown-item.active,
+.dropdown-item:active {
   color: #fff;
   text-decoration: none;
   background-color: var(--color-vi);
@@ -1108,7 +1112,9 @@ legend.scheduler-border {
   justify-content: center;
 }
 
-.has-error input, .has-error select, .has-error span span span.select2-selection {
+.has-error input,
+.has-error select,
+.has-error span span span.select2-selection {
   border-color: #eb211d !important;
 }
 
@@ -1128,17 +1134,20 @@ li.select2-results__option:empty {
   overflow-x: auto
 }
 
-.ui.table>tbody>tr>.td-center, .ui.table>tr>.td-center {
+.ui.table>tbody>tr>.td-center,
+.ui.table>tr>.td-center {
   text-align: center !important;
   vertical-align: middle !important;
 }
 
-.ui.table>tbody>tr>.td-right, .ui.table>tr>.td-right {
+.ui.table>tbody>tr>.td-right,
+.ui.table>tr>.td-right {
   text-align: right !important;
   vertical-align: middle !important;
 }
 
-.ui.table>tbody>tr>.td-left, .ui.table>tr>.td-left {
+.ui.table>tbody>tr>.td-left,
+.ui.table>tr>.td-left {
   text-align: center !important;
   vertical-align: left !important;
 }
@@ -1192,13 +1201,13 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-.ui.table thead tr:first-child > th {
+.ui.table thead tr:first-child>th {
   position: sticky !important;
   top: 0;
   z-index: 2;
 }
 
-.ui.table tfoot tr:first-child > th {
+.ui.table tfoot tr:first-child>th {
   position: sticky !important;
   bottom: 0;
   z-index: 2;
@@ -1214,14 +1223,110 @@ body .grecaptcha-badge {
   z-index: 9999999999;
 }
 
-.disabled-visible{
+.disabled-visible {
   opacity: 1 !important;
 }
-.disabled-visible .field{
+
+.disabled-visible .field {
   opacity: 1 !important;
 }
 
 .ui.sticky.fixed {
-  margin-top: 8px ;
+  margin-top: 8px;
   background-color: white;
 }
+
+/* INICIO CSS TOOGLE SWITCH TAMAÑOS*/
+/* for sm */
+
+.custom-switch.custom-switch-sm .custom-control-label {
+  padding-left: 1rem;
+  padding-bottom: 1rem;
+}
+
+.custom-switch.custom-switch-sm .custom-control-label::before {
+  height: 1rem;
+  width: calc(1rem + 0.75rem);
+  border-radius: 2rem;
+}
+
+.custom-switch.custom-switch-sm .custom-control-label::after {
+  width: calc(1rem - 4px);
+  height: calc(1rem - 4px);
+  border-radius: calc(1rem - (1rem / 2));
+}
+
+.custom-switch.custom-switch-sm .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(calc(1rem - 0.25rem));
+}
+
+/* for md */
+
+.custom-switch.custom-switch-md .custom-control-label {
+  padding-left: 2rem;
+  padding-bottom: 1.5rem;
+}
+
+.custom-switch.custom-switch-md .custom-control-label::before {
+  height: 1.5rem;
+  width: calc(2rem + 0.75rem);
+  border-radius: 3rem;
+}
+
+.custom-switch.custom-switch-md .custom-control-label::after {
+  width: calc(1.5rem - 4px);
+  height: calc(1.5rem - 4px);
+  border-radius: calc(2rem - (1.5rem / 2));
+}
+
+.custom-switch.custom-switch-md .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(calc(1.5rem - 0.25rem));
+}
+
+/* for lg */
+
+.custom-switch.custom-switch-lg .custom-control-label {
+  padding-left: 3rem;
+  padding-bottom: 2rem;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::before {
+  height: 2rem;
+  width: calc(3rem + 0.75rem);
+  border-radius: 4rem;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::after {
+  width: calc(2rem - 4px);
+  height: calc(2rem - 4px);
+  border-radius: calc(3rem - (2rem / 2));
+}
+
+.custom-switch.custom-switch-lg .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(calc(2rem - 0.25rem));
+}
+
+/* for xl */
+
+.custom-switch.custom-switch-xl .custom-control-label {
+  padding-left: 4rem;
+  padding-bottom: 2.5rem;
+}
+
+.custom-switch.custom-switch-xl .custom-control-label::before {
+  height: 2.5rem;
+  width: calc(4rem + 0.75rem);
+  border-radius: 5rem;
+}
+
+.custom-switch.custom-switch-xl .custom-control-label::after {
+  width: calc(2.5rem - 4px);
+  height: calc(2.5rem - 4px);
+  border-radius: calc(4rem - (2.5rem / 2));
+}
+
+.custom-switch.custom-switch-xl .custom-control-input:checked~.custom-control-label::after {
+  transform: translateX(calc(2.5rem - 0.25rem));
+}
+
+/* FIN: CSS TOOGLE SWITCH TAMAÑOS*/

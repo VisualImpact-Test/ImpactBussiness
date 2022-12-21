@@ -253,7 +253,7 @@ class FormularioProveedor extends MY_Controller
 		$this->email->set_newline("\r\n");
 
 		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to('jean.alarcon@visualimpact.com.pe');
+		$this->email->to('eder.alata@visualimpact.com.pe');
 
 		$data = [];
 		$dataParaVista = [];
@@ -545,7 +545,6 @@ class FormularioProveedor extends MY_Controller
 
 	public function cotizacionesRefresh()
 	{
-
 		$proveedor = $this->session->userdata('proveedor');
 		if (empty($proveedor)) {
 			redirect('FormularioProveedor', 'refresh');
@@ -589,15 +588,35 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function obtenerFecha()
-	{
+	public function calcularFechaDiasHabiles(){
 		$post = $this->input->post();
-		if ($post['format'] == 1) {
-			$post['fecha'] = getFechaActual($post['fecha']);
-		} else {
-			$post['fecha'] = date_change_format_bd(getFechaActual($post['fecha']));
+		if(isset($post['diasHabiles'])){
+			if($post['diasHabiles'] == 'false'){
+				$fecha = !empty($post['fecha']) ? date("Ymd", strtotime($post['fecha'])) : date('Ymd');
+				$fechaNueva = strtotime($post['dias'].' day', strtotime($fecha));
+				$result = date('Y-m-d', $fechaNueva);
+				goto resultado;
+			}
 		}
-		echo json_encode($post);
+		$result = $this->model->calcularDiasHabiles($post)['fecha'];
+		resultado:
+		echo $result;
+	}
+	public function contarDiasHabiles(){
+		$post = $this->input->post();
+		if(isset($post['diasHabiles'])){
+			if($post['diasHabiles'] == 'false'){
+				$fechaIni = !empty($post['fechaIni']) ? date("Ymd", strtotime($post['fechaIni'])) : date('Ymd');
+				$fechaFin = !empty($post['fechaFin']) ? date("Ymd", strtotime($post['fechaFin'])) : date('Ymd');
+
+				$dias = (strtotime($fechaFin) - strtotime($fechaIni)) / 86400;
+				$result = round($dias, 0, PHP_ROUND_HALF_UP);
+				goto resultado;
+			}
+		}
+		$result = $this->model->contarDiasHabiles($post)['conteo'];
+		resultado:
+		echo $result;
 	}
 
 	public function actualizarCotizacionProveedor()

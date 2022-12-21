@@ -5,13 +5,13 @@ var FormularioProveedores = {
 	divPropuesta: '',
 	load: function () {
 
-		$(document).ready(function(){
-			if($('#idCotizacion').val()){
+		$(document).ready(function () {
+			if ($('#idCotizacion').val()) {
 				FormularioProveedores.actualizarTable();
 			}
 		});
 
-		$(document).on("click",".btnGuardarCotizacion", ()=>{
+		$(document).on("click", ".btnGuardarCotizacion", () => {
 			let idForm = 'frmCotizacionesProveedor';
 			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
 				if (a === true) {
@@ -30,7 +30,7 @@ var FormularioProveedores = {
 				}
 			});
 		});
-		$(document).on("click",".btnPopupCotizacionesProveedor", ()=>{
+		$(document).on("click", ".btnPopupCotizacionesProveedor", () => {
 			let idForm = 'frmCotizacionesProveedor';
 			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
 				if (a === true) {
@@ -49,64 +49,64 @@ var FormularioProveedores = {
 				}
 			});
 		});
-		$(document).on("click",".btnContraoferta", function(){
+		$(document).on("click", ".btnContraoferta", function () {
 			let id = $(this).data('id');
 			++modalId;
 
-			let jsonString = { 'data': JSON.stringify({'id' : id}) };
-			$.when(Fn.ajax({'url': FormularioProveedores.url + 'validarPropuestaExistencia', 'data': jsonString})).then((rpta) => {
+			let jsonString = { 'data': JSON.stringify({ 'id': id }) };
+			$.when(Fn.ajax({ 'url': FormularioProveedores.url + 'validarPropuestaExistencia', 'data': jsonString })).then((rpta) => {
 				let btn = [];
 				let fn = [];
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				if(rpta.continuar){
+				if (rpta.continuar) {
 					let config = { 'url': FormularioProveedores.url + 'viewRegistroContraoferta', 'data': jsonString };
 					$.when(Fn.ajax(config)).then((a) => {
-						fn[1] = 'FormularioProveedores.agregarPropuesta('+id+');';
+						fn[1] = 'FormularioProveedores.agregarPropuesta(' + id + ');';
 						btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-						fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta('+modalId+')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
+						fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta(' + modalId + ')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
 						btn[2] = { title: 'Guardar', fn: fn[2] };
 						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-						FormularioProveedores.divPropuesta = $('#divBase'+id).html();
+						FormularioProveedores.divPropuesta = $('#divBase' + id).html();
 					});
-				}else{
-					let mensaje = Fn.message({type: 2, message: 'Ya se registro una Propuesta para articulo seleccionado.'});
+				} else {
+					let mensaje = Fn.message({ type: 2, message: 'Ya se registro una Propuesta para articulo seleccionado.' });
 					Fn.showModal({ id: modalId, show: true, title: 'Error', content: mensaje, btn: btn, width: '500px' });
 				}
 			});
 
 
 		});
-		$(document).on("click",".eliminarDatos", function(){
+		$(document).on("click", ".eliminarDatos", function () {
 			$(this).parents('.contenido').remove();
 		});
 
-		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
+		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
 			var data = control.data();
 			console.log(data);
 			var id = '';
 			var nameImg = '';
 			console.log(data['row']);
-			if( data['row'] ){
+			if (data['row']) {
 				id = data['row'];
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
-			}else{
+			} else {
 				id = 0;
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
 			}
-			if( control.val() ){
+			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
 				var num = control.get(0).files.length;
 
 				list: {
 					var total = $('input[name="' + name + '[' + id + ']"]').length;
-					if( (num + total) > MAX_ARCHIVOS ){
+					if ((num + total) > MAX_ARCHIVOS) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} archivos como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -119,11 +119,11 @@ var FormularioProveedores = {
 						break list;
 					}
 
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024));
+						size = Math.round((size / 1024));
 
-						if( size > KB_MAXIMO_ARCHIVO ){
+						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
 							Fn.showModal({
 								'id': ++modalId,
@@ -136,56 +136,56 @@ var FormularioProveedores = {
 							break list;
 						}
 					}
-          let file = '';
-          let imgFile = '';
-          let contenedor = '';
-					for(var i = 0; i < num; ++i){
-            file = control.get(0).files[i];
-            Fn.getBase64(file).then(function(fileBase){
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-              if(fileBase.type.split('/')[0] == 'image'){
-                  imgFile = fileBase.base64;
-                  contenedor = content;
-              }else{
-                  imgFile = `${RUTA_WIREFRAME}pdf.png`;
-                  contenedor = content_files;
-              }
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							}
 
-              var fileApp = '';
+							var fileApp = '';
 							fileApp += '<div class="col-md-2 text-center">';
-              fileApp += `
+							fileApp += `
                       		<div class="ui dimmer dimmer-file-detalle">
 	                          <div class="content">
 	                            <p class="ui tiny inverted header">${fileBase.name}</p>
 	                          </div>
                       		</div>`;
-              fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-              fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
-              fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
-              fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
+							fileApp += '<input type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
 							fileApp += `<img src="${imgFile}" class="rounded img-lsck-capturas img-responsive img-thumbnail">`;
-              fileApp += '</div>';
+							fileApp += '</div>';
 							console.log(fileApp);
-              contenedor.append(fileApp);
-              control.parents('.nuevo').find('.dimmer-file-detalle').dimmer({	on: 'click' });
-            });
+							contenedor.append(fileApp);
+							control.parents('.nuevo').find('.dimmer-file-detalle').dimmer({ on: 'click' });
+						});
 					}
 				}
 				control.val('');
 			}
 
 		});
-		$(document).off('change', '.files-upload').on('change', '.files-upload', function(e){
+		$(document).off('change', '.files-upload').on('change', '.files-upload', function (e) {
 			var control = $(this);
 			var data = control.data();
 
-			if( control.val() ){
+			if (control.val()) {
 				var num = control.get(0).files.length;
 
 				list: {
 					let div = control.parents('.divUploaded:first').find('.content_files');
 					var total = div.find('.file_uploaded').length;
-					if( (num + total) > MAX_ARCHIVOS ){
+					if ((num + total) > MAX_ARCHIVOS) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} archivos como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -198,11 +198,11 @@ var FormularioProveedores = {
 						break list;
 					}
 					//
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024));
+						size = Math.round((size / 1024));
 
-						if( size > KB_MAXIMO_ARCHIVO ){
+						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
 							Fn.showModal({
 								'id': ++modalId,
@@ -216,39 +216,39 @@ var FormularioProveedores = {
 						}
 					}
 					div.html(`<input type="hidden" class="form-control" name="cantidadImagenes" value="${num}">`);
-          let file = '';
+					let file = '';
 
-					for(var i = 0; i < num; ++i){
-            file = control.get(0).files[i];
-            Fn.getBase64(file).then(function(fileBase){
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-							let fileApp = '<div class="file_uploaded">'+
-								              `<input type="hidden" class="form-control" name="f_base64" value="${fileBase.base64}">`+
-								              `<input type="hidden" class="form-control" name="f_type" value="${fileBase.type}">`+
-								              `<input type="text" class="form-control" name="f_name" value="${fileBase.name}">`+
-								            '</div>';
-              div.append(fileApp);
-            });
+							let fileApp = '<div class="file_uploaded">' +
+								`<input type="hidden" class="form-control" name="f_base64" value="${fileBase.base64}">` +
+								`<input type="hidden" class="form-control" name="f_type" value="${fileBase.type}">` +
+								`<input type="text" class="form-control" name="f_name" value="${fileBase.name}">` +
+								'</div>';
+							div.append(fileApp);
+						});
 					}
 				}
 				control.val('');
 			}
 
 		});
-		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
+		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		$(document).on("click",".btnVolverProveedor", ()=>{
-			Fn.goToUrl(site_url+'FormularioProveedor/cotizacionesLista');
+		$(document).on("click", ".btnVolverProveedor", () => {
+			Fn.goToUrl(site_url + 'FormularioProveedor/cotizacionesLista');
 		});
-		$(document).on("click",".btnRefreshCotizaciones", ()=>{
+		$(document).on("click", ".btnRefreshCotizaciones", () => {
 			FormularioProveedores.actualizarTable();
 		});
 
 	},
-	actualizarTable: function(){
+	actualizarTable: function () {
 		var ruta = 'cotizacionesRefresh';
 		var config = {
 			'idFrm': FormularioProveedores.frm
@@ -258,54 +258,92 @@ var FormularioProveedores = {
 
 		Fn.loadReporte_new(config);
 	},
-	calcularTotalSub: function(id){
-		costo = $("[findCosto="+id+"]");
-		cantidad = $("[findCantidad="+id+"]");
+	calcularTotalSub: function (id) {
+		costo = $("[findCosto=" + id + "]");
+		cantidad = $("[findCantidad=" + id + "]");
 		suma = 0; canTot = 0;
 		for (var i = 0; i < costo.length; i++) {
-			suma += parseFloat((costo[i].value||0)) * parseFloat(cantidad[i].value);
+			suma += parseFloat((costo[i].value || 0)) * parseFloat(cantidad[i].value);
 			canTot += parseFloat(cantidad[i].value);
 		}
 		var promedio = suma / canTot;
-		$('#costo_'+id).val(promedio);
-		$('#costoredondo_'+id).val(promedio.toFixed(2));
-		$('#costo_'+id).keyup();
-		$('#msgCosto_'+id).removeClass('d-none');
-		$('#costo_'+id).attr('readonly', true);
-		$('#costoredondo_'+id).attr('readonly', true);
+		$('#costo_' + id).val(promedio);
+		$('#costoredondo_' + id).val(promedio.toFixed(2));
+		$('#costo_' + id).keyup();
+		$('#msgCosto_' + id).removeClass('d-none');
+		$('#costo_' + id).attr('readonly', true);
+		$('#costoredondo_' + id).attr('readonly', true);
 	},
-	calcularTotal: function(i, cantidad, val){
+	calcularTotal: function (i, cantidad, val) {
 		var tot = cantidad * val;
 		var tot_ = tot.toFixed(2);
-		$('#valorTotal'+i).val(tot_);
-		$('#lb_valorTotal'+i).html('S/. '+tot_);
+		$('#valorTotal' + i).val(tot_);
+		$('#lb_valorTotal' + i).html('S/. ' + tot_);
 	},
-	calcularDiasEntrega: function(i, t, fechaHoy){
-		val = new Date(t.value);
-		fechaHoy = new Date(fechaHoy);
-		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
-		$('#de_input'+i).val(dias);
+	calcularDiasEntrega: function (i, t, fechaHoy) {
+		// Tratar de poner esta funcion en Function.js
+		Fn.showLoading(true);
+		post = $.post(site_url + FormularioProveedores.url + 'contarDiasHabiles', {
+			'fechaFin': t.value,
+			'diasHabiles': false //Quitar el false si solo son dias habiles
+		});
+		post.done(function (dias) {
+			$('#de_input' + i).val(dias);
+			$('#de_input' + i).keyup();
+			Fn.showLoading(false);
+		});
 	},
-	calcularDiasValidez: function(i, t, fechaHoy){
-		val = new Date(t.value);
-		fechaHoy = new Date(fechaHoy);
-		var dias = -1 * Fn.diasDesdeFecha(val, fechaHoy);
-		$('#dv_input'+i).val(dias);
+	calcularDiasValidez: function (i, t, fechaHoy) {
+		// Tratar de poner esta funcion en Function.js
+		Fn.showLoading(true);
+		post = $.post(site_url + FormularioProveedores.url + 'contarDiasHabiles', {
+			'fechaFin': t.value,
+			'diasHabiles': false //Quitar el false si solo son dias habiles
+		});
+		post.done(function (dias) {
+			$('#dv_input' + i).val(dias);
+			$('#dv_input' + i).keyup();
+			Fn.showLoading(false);
+		});
 	},
-	calcularFecha: function(i, val, fechaHoy){
-		fechaHoy = new Date(fechaHoy);
-		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
-		fecha = fechaHoy.toISOString().slice(0, 10);
-		$('#fechaValidez'+i).val(fecha);
+	calcularFecha: function (i, val, fechaHoy) {
+		// Tratar de poner esta funcion en Function.js
+		if (parseInt(val) <= 0) {
+			$('#dv_input' + i).val('1');
+			$('#dv_input' + i).keyup();
+		} else {
+			Fn.showLoading(true);
+			post = $.post(site_url + FormularioProveedores.url + 'calcularFechaDiasHabiles', {
+				'dias': val,
+				'diasHabiles': false
+			});
+			post.done(function (fecha) {
+				$('#fechaValidez' + i).val(fecha);
+				$('#dv_input' + i).focus();
+				Fn.showLoading(false);
+			});
 
+		}
 	},
-	calcularFechaEntrega: function(i, val, fechaHoy){
-		fechaHoy = new Date(fechaHoy);
-		fechaHoy.setDate(fechaHoy.getDate() + parseInt(val));
-		fecha = fechaHoy.toISOString().slice(0, 10);
-		$('#fechaEntrega'+i).val(fecha);
+	calcularFechaEntrega: function (i, val, fechaHoy) {
+		// Tratar de poner esta funcion en Function.js
+		if (parseInt(val) <= 0) {
+			$('#de_input' + i).val('1');
+			$('#de_input' + i).keyup();
+		} else {
+			// Fn.showLoading(true);
+			post = $.post(site_url + FormularioProveedores.url + 'calcularFechaDiasHabiles', {
+				'dias': val,
+				'diasHabiles': false
+			});
+			post.done(function (fecha) {
+				$('#fechaEntrega' + i).val(fecha);
+				$('#de_input' + i).focus();
+				// Fn.showLoading(false);
+			});
+		}
 	},
-	registrarPropuesta: function(){
+	registrarPropuesta: function () {
 		$.when(Fn.validateForm({ id: 'formRegistroPropuesta' })).then(function (a) {
 			if (a === true) {
 				let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroPropuesta')) };
@@ -327,10 +365,10 @@ var FormularioProveedores = {
 			}
 		});
 	},
-	agregarPropuesta: function(id){
-		$('#divExtra'+id).append(FormularioProveedores.divPropuesta);
+	agregarPropuesta: function (id) {
+		$('#divExtra' + id).append(FormularioProveedores.divPropuesta);
 	},
-	calcularTotalPropuesta: function(t){
+	calcularTotalPropuesta: function (t) {
 		let cantidad = $(t).parents().find('.cantidad');
 		let costo = $(t).parents().find('.costo');
 		let total = $(t).parents().find('.total');

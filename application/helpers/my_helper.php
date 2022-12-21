@@ -1402,7 +1402,7 @@ function ocultarEmail($email)
 	}
 }
 
-function verificarEmpty($string, $tipo = 1)
+function verificarEmpty($string, $tipo = 1, $txtAntes = '', $txtDespues = '')
 {
 	$resultado = "";
 	if ($tipo == 2) {
@@ -1415,7 +1415,7 @@ function verificarEmpty($string, $tipo = 1)
 		$resultado = NULL;
 	}
 	if (!empty($string)) {
-		$resultado = $string;
+		$resultado = $txtAntes . $string . $txtDespues;
 	}
 	return $resultado;
 }

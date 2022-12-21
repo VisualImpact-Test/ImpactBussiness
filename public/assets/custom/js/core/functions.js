@@ -23,14 +23,14 @@ var Fn = {
 			$('.' + config.div).append(msg);
 		}
 	},
-	mostrarNotificacion: function(cabecera, cuerpo, img = site_url+'/public/assets/images/logos/visual.png', direccion = 'https://google.com.pe', timeout = 0){
+	mostrarNotificacion: function (cabecera, cuerpo, img = site_url + '/public/assets/images/logos/visual.png', direccion = 'https://google.com.pe', timeout = 0) {
 		Push.create(cabecera, {
-				body: cuerpo,
-				icon: img,
-				timeout: timeout,
-				onClick: function () {
-					location.href = direccion
-				}
+			body: cuerpo,
+			icon: img,
+			timeout: timeout,
+			onClick: function () {
+				location.href = direccion
+			}
 		});
 	},
 	showLoading: function (show, msg) {
@@ -135,13 +135,12 @@ var Fn = {
 
 		$(".navbar").removeAttr("style");
 	},
-	diasDesdeFecha: function(fecha1, fecha2 = new Date()){
+	diasDesdeFecha: function (fecha1, fecha2 = new Date()) {
 		let fecha1utc = Date.UTC(fecha1.getFullYear(), fecha1.getMonth(), fecha1.getDate());
-	  let fecha2utc = Date.UTC(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate());
-    let day = 1000*60*60*24;
-	  return(fecha2utc - fecha1utc)/day;
+		let fecha2utc = Date.UTC(fecha2.getFullYear(), fecha2.getMonth(), fecha2.getDate());
+		let day = 1000 * 60 * 60 * 24;
+		return (fecha2utc - fecha1utc) / day;
 	},
-
 	showConfirm: function (config) {
 
 		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
@@ -201,22 +200,22 @@ var Fn = {
 		}
 	},
 
-	download: function (url,data){
+	download: function (url, data) {
 		Fn.showLoading(true);
-		$.fileDownload(url,{
+		$.fileDownload(url, {
 			httpMethod: "POST",
 			data: data,
-			successCallback:function(url){
-				setTimeout(function(){
-					Fn.showLoading( false );
+			successCallback: function (url) {
+				setTimeout(function () {
+					Fn.showLoading(false);
 				}, 500);
 			},
-			failCallback:function(responseHtml,url){
-			$.when( Fn.showLoading(false) ).then(function(){
-				var id=++modalId;
-				var btn=new Array();
-				btn[0]={title:'Aceptar',fn:'Fn.showModal({ id:'+id+',show:false });'};
-				Fn.showModal({ id:id,show:true,title:'ERROR',content:'Ocurrio un error inesperado en el sistema.',btn:btn });
+			failCallback: function (responseHtml, url) {
+				$.when(Fn.showLoading(false)).then(function () {
+					var id = ++modalId;
+					var btn = new Array();
+					btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:' + id + ',show:false });' };
+					Fn.showModal({ id: id, show: true, title: 'ERROR', content: 'Ocurrio un error inesperado en el sistema.', btn: btn });
 				})
 			}
 		});
@@ -1484,7 +1483,7 @@ var Fn = {
 		$('.ui.checkbox').checkbox();
 	},
 
-	multiply: function(a, b) {
+	multiply: function (a, b) {
 		var commonMultiplier = 1000000;
 
 		a *= commonMultiplier;
@@ -1495,17 +1494,17 @@ var Fn = {
 
 	getBase64: function (file) {
 		return new Promise((resolve, reject) => {
-		  const reader = new FileReader();
-		  reader.readAsDataURL(file);
-		  reader.onload = () => resolve(
-			{
-				'base64': reader.result,
-				'name' : file.name,
-				'type' : file.type
-			}
+			const reader = new FileReader();
+			reader.readAsDataURL(file);
+			reader.onload = () => resolve(
+				{
+					'base64': reader.result,
+					'name': file.name,
+					'type': file.type
+				}
 			);
-		  reader.onerror = error => reject(error);
+			reader.onerror = error => reject(error);
 		});
-	  }
+	}
 
 }

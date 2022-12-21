@@ -154,6 +154,7 @@
                                             <div class="ui button btnElegirProveedor primary">Elegir
                                                 <input type="hidden" class="txtCodProveedorCotizacion" value="<?= $view['idCotizacionDetalleProveedorDetalle'] ?>">
                                                 <input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
+                                                <input type="hidden" class="txtDiasEntregaItemProveedor" value="<?= $view['diasEntrega'] ?>">
                                                 <input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
                                                 <input type="hidden" class="txtSubProveedorCotizacion" value='<?= !empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) ? json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) : "" ?>'>
                                             </div>
@@ -229,6 +230,7 @@
                                     <div class="ui sub header">Características</div>
                                     <div class="ui input w-100">
                                         <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
+                                        <input class="diasEntregaItemForm" type='hidden' name='diasEntregaItem' value="<?= !empty($row['diasEntrega']) ? $row['diasEntrega'] : '' ?>">
                                     </div>
                                 </div>
                             </div>

@@ -773,18 +773,27 @@ var Cotizacion = {
 		});
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
+			if (idOper==undefined) {
+				idOper = $(this).data('idoper');
+			}
 			let data = { idOper };
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Cotizacion.url + 'descargarOper' ,jsonString);
 		});
 		$(document).on('click', '.btn-descargarOrdenCompra', function () {
 			let id = $(this).closest('tr').data('id');
+			if (id==undefined) {
+				id = $(this).data('id');
+			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
 			let id = $(this).closest('tr').data('id');
+			if (id==undefined) {
+				id = $(this).data('id');
+			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);

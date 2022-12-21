@@ -69,8 +69,10 @@
                           id="dv_input<?=($k + 1) ?>"
                           onkeypress='return event.charCode >= 48 && event.charCode <= 57'
                           value="<?= !isset($row['diasValidez'])?'10': $row['diasValidez']; ?>"
-                          onkeyup="FormularioProveedores.calcularFecha(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
-                          onchange="FormularioProveedores.calcularFecha(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
+                          <?= (!empty($row['diasValidez']))?'readonly':''; ?>
+								  <?php  if (empty($row['diasValidez'])) :  ?>
+										onkeyup="FormularioProveedores.calcularFecha(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
+								  <?php endif; ?>
                   >
                 </div>
               </div>
@@ -79,9 +81,12 @@
               <div class="form-group">
                 <h4 class="mb-1">FECHA VALIDEZ</h4>
                 <input  type="date" class="form-control" name="fechaValidez"
-                        value="<?= date_change_format_bd(!isset($row['diasValidez'])?getFechaActual(10): $row['fechaValidez'])  ?>" id="fechaValidez<?=($k + 1) ?>"
-                        onkeyup="FormularioProveedores.calcularDiasValidez(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
-                        onchange="FormularioProveedores.calcularDiasValidez(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
+                        value="<?= !isset($row['diasValidez'])?($this->model->calcularDiasHabiles(['dias'=>'10'])['fecha']): date_change_format_bd($row['fechaValidez'])  ?>" id="fechaValidez<?=($k + 1) ?>"
+                        <?= (!empty($row['fechaValidez']))?'readonly':''; ?>
+								<?php  if (empty($row['fechaValidez'])) :  ?>
+									onkeyup="FormularioProveedores.calcularDiasValidez(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
+									onchange="FormularioProveedores.calcularDiasValidez(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
+								<?php endif; ?>
                 >
               </div>
             </div>
@@ -92,24 +97,27 @@
                   <input  class="form-control" placeholder="días" name="diasEntrega" patron="requerido,numerico"
                           id="de_input<?=($k + 1) ?>"
                           onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                          <?= (!empty($row['diasEntrega']))?'readonly':''; ?>
                           value="<?= !isset($row['diasEntrega'])?'10': $row['diasEntrega']; ?>"
-                          onkeyup="FormularioProveedores.calcularFechaEntrega(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
-                          onchange="FormularioProveedores.calcularFechaEntrega(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
+								  <?php  if (empty($row['diasEntrega'])) :  ?>
+										onkeyup="FormularioProveedores.calcularFechaEntrega(<?=($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');"
+								  <?php endif; ?>
                   >
                 </div>
               </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-2 d-none">
               <div class="form-group">
                 <h4 class="mb-1">FECHA ENTREGA</h4>
                 <input  type="date" class="form-control" name="fechaEntrega"
-                        value="<?= empty($row['fechaEntrega'])?date_change_format_bd(getFechaActual(10)):$row['fechaEntrega'] ?>" id="fechaEntrega<?=($k + 1) ?>"
+                        value="<?= empty($row['fechaEntrega'])?($this->model->calcularDiasHabiles(['dias'=>'10'])['fecha']):$row['fechaEntrega'] ?>" id="fechaEntrega<?=($k + 1) ?>"
+                        <?= (!empty($row['fechaEntrega']))?'readonly':''; ?>
                         onkeyup="FormularioProveedores.calcularDiasEntrega(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
                         onchange="FormularioProveedores.calcularDiasEntrega(<?=($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')"
                 >
               </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
               <div class="form-group">
                 <h4 class="mb-1">COMENTARIO</h4>
                 <input class="form-control" name="comentario" value="<?= $row['comentario'] ?>" id="comentario<?=($k + 1) ?>">

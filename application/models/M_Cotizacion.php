@@ -293,7 +293,27 @@ class M_Cotizacion extends MY_Model
 		if (isset($params['idCotizacionDetalle'])) $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
 	}
+	public function obtenerMaxDiasEntrega($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idsCotizacion']) ? ' AND idCotizacion IN(' . $params['idsCotizacion'] . ')' : '';
+		$sql = "
+			SELECT isNull(max(diasEntrega),0) as diasEntrega 
+			FROM compras.cotizacionDetalle
+			WHERE 1 = 1
+			{$filtros}
+		";
 
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
 	public function obtenerInformacionCotizacionDetalle($params = [])
 	{
 		$filtros = "";
@@ -343,6 +363,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
 			WHERE 1 = 1
 			{$filtros}
+			ORDER BY itemTipo, pd.idCotizacionDetalle
 		";
 
 		$query = $this->db->query($sql);
@@ -360,14 +381,14 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion != ' . $params['idCotizacion'] : '';
-		$filtros .= !empty($params['nombre']) ? " AND p.nombre != '" . $params['nombre']. "'" : '';
+		// $filtros .= !empty($params['nombre']) ? " AND p.nombre != '" . $params['nombre']. "'" : '';
 
 		$sql = "
 			SELECT
 				idCotizacion
 			FROM compras.cotizacion p
 			WHERE
-			(p.nombre LIKE '%{$params['nombre']}%')
+			(p.nombre LIKE '{$params['nombre']}')
 			{$filtros}
 		";
 
@@ -889,7 +910,8 @@ class M_Cotizacion extends MY_Model
 			(ith.costo * cd.cantidad) subTotal,
 			cd.cantidad,
 			p.razonSocial,
-			ith.costo costoUnitario
+			ith.costo costoUnitario,
+			0 as diasEntrega
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
@@ -904,7 +926,6 @@ class M_Cotizacion extends MY_Model
 		}
 
 		$sql = "
-
 			SELECT
 			cd.idCotizacionDetalleProveedorDetalle,
 			c.idCotizacion,
@@ -914,7 +935,8 @@ class M_Cotizacion extends MY_Model
 			cd.costo subTotal,
 			cdl.cantidad,
 			p.razonSocial,
-			(cd.costo / cdl.cantidad) costoUnitario
+			(cd.costo / cdl.cantidad) costoUnitario,
+			cd.diasEntrega
 			FROM
 			compras.cotizacionDetalleProveedor c
 			JOIN compras.cotizacionDetalleProveedorDetalle cd ON cd.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor

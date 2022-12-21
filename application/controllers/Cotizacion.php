@@ -182,8 +182,10 @@ class Cotizacion extends MY_Controller
 
 		$data = $this->model->obtenerInformacionCotizacionDetalle($post)['query']->result_array();
 		foreach ($data as $key => $row) {
+			$oper = ($this->db->where('idCotizacion', $row['idCotizacion'])->get('compras.operDetalle'))->row_array();
 			$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 			$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
+			$dataParaVista['cabecera']['idOper'] = $oper['idOper'];
 			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
 			$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
@@ -199,6 +201,7 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['detalle'][$key]['fecha'] = !empty($row['fechaModificacion']) ? $row['fechaModificacion'] : $row['fechaCreacion'];
 			$dataParaVista['detalle'][$key]['cotizacionDetalleEstado'] = $row['cotizacionDetalleEstado'];
 		}
+		$dataParaVista['cabecera']['idOC'] = ($this->db->where('estado', '1')->where('idCotizacionDetalle', $data[0]['idCotizacionDetalle'])->get('compras.ordenCompraDetalle'))->row_array()['idOrdenCompra'];
 
 		$dataParaVista['estados'] = $this->model_control->get_estados_cotizacion()->result_array();
 
@@ -231,9 +234,9 @@ class Cotizacion extends MY_Controller
 			$toOperaciones = [];
 			foreach ($usuariosOperaciones as $usuario) {
 				$toOperaciones[] = $usuario['email'];
-			}
+			}	
 
-			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
+			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => ['eder.alata@visualimpact.com.pe','jean.alarcon@visualimpact.com.pe']]);
 		}
 
 		if ($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE) {
@@ -316,12 +319,13 @@ class Cotizacion extends MY_Controller
 		$tablaSolicitantes = 'compras.solicitante';
 
 		$solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes, $whereSolicitante)->result_array();
+		$dataSolicitante = [];
 		foreach ($solicitantes as $solicitante) {
-			$solicitantes[$solicitante['nombre']] = $solicitante['idSolicitante'];
+			$dataSolicitante[$solicitante['nombre']] = $solicitante['idSolicitante'];
 		}
 
 		$idSolicitante = NULL;
-		if (empty($solicitantes[$post['solicitante']])) {
+		if (empty($dataSolicitante[$post['solicitante']])) {
 			$insertSolicitante = [
 				'nombre' => $post['solicitante'],
 				'fechaRegistro' => getActualDateTime(),
@@ -331,9 +335,9 @@ class Cotizacion extends MY_Controller
 			$idSolicitante = $insertSolicitante['id'];
 		}
 
-		if (!empty($solicitantes[$post['solicitante']])) {
+		if (!empty($dataSolicitante[$post['solicitante']])) {
 			if (!is_numeric($post['solicitante'])) {
-				$idSolicitante = $solicitantes[$post['solicitante']];
+				$idSolicitante = $dataSolicitante[$post['solicitante']];
 			}
 			if (is_numeric($post['solicitante'])) {
 				$idSolicitante = $post['solicitante'];
@@ -362,6 +366,7 @@ class Cotizacion extends MY_Controller
 			'idUsuarioReg' => $this->idUsuario,
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
+		
 		$validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
 
 		if (!empty($validacionExistencia['query']->row_array())) {
@@ -516,11 +521,6 @@ class Cotizacion extends MY_Controller
 
 					]);
 
-					// foreach ($data['subDetalle'][$k] as $subItem) {
-
-
-					// };
-
 
 					break;
 
@@ -537,65 +537,28 @@ class Cotizacion extends MY_Controller
 
 			foreach ($data['subDetalle'][$k] as $subItem) {
 
-				if ($subItem['genero'] === NULL or empty($subItem['genero'])) {
-					unset($subItem['genero']);
+				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']); 
+				$data['insertSubItem'][$k][] = [
+					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
+					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
+					'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
+					'tipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
+					'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
+					'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
+					'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
+					'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
+					'genero' => isset($subItem['genero']) ? $subItem['genero'] : NULL,
+					'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
+					'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
+					'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
+					'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+					'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
+					'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 
-
-					$data['insertSubItem'][$k][] = [
-						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
-						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
-						'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
-						'tipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
-						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
-						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
-						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
-						'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
-						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
-						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
-						'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
-						'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
-						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
-						'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
-						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-
-					];
-				} else {
-
-					$data['insertSubItem'][$k][] = [
-						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
-						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
-						'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
-						'tipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : NULL,
-						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : NULL,
-						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : NULL,
-						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : NULL,
-						'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
-						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
-						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
-						'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
-						'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
-						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
-						'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
-						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-
-					];
-				}
-
-				// if ($subItem['genero'] === NULL or empty($subItem['genero'])) {
-				// 	unset($subItem['genero']);
-				// }
+				];
 
 
 			}
-
-			// foreach ($data['insertSubItem'][$k] as $subItem) {
-			// 	if ($subItem['genero'] === NULL) {
-			// 		unset($subItem['genero']);
-			// 	}
-
-			//  };
-
-
 
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([
@@ -606,7 +569,7 @@ class Cotizacion extends MY_Controller
 				foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
 					$data['archivos'][$k][] = [
 						'base64' => $archivo['base64'],
-						'type' => $archivo['ty5pe'],
+						'type' => $archivo['type'],
 						'name' => $archivo['name'],
 						'carpeta' => 'cotizacion',
 						'nombreUnico' => uniqid(),
@@ -669,7 +632,6 @@ class Cotizacion extends MY_Controller
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
 			$this->db->trans_complete();
 		}
-
 
 		respuesta:
 		echo json_encode($result);
@@ -803,13 +765,12 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 			$data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 			$dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
-
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
 				$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 				$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
-				$dataParaVista['cabecera']['tipoCotizacion'] = $row['tipoCotizacion'];
+				// $dataParaVista['cabecera']['tipoCotizacion'] = $row['tipoCotizacion'];
 				$dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
@@ -825,13 +786,15 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['precio'] = $row['precio'];
 				$dataParaVista['detalle'][$key]['subtotal'] = $row['subtotal'];
 				$dataParaVista['detalle'][$key]['caracteristicas'] = $row['caracteristicas'];
+				$dataParaVista['detalle'][$key]['idItemTipo'] = $row['idItemTipo'];
+
+				$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 			}
 
 			foreach ($dataArchivos as $archivo) {
 				$dataParaVista['archivos'][$archivo['idCotizacionDetalle']][] = $archivo;
 			}
 
-			//
 			if (!empty($dataParaVista['cabecera']['fee'])) {
 
 				$dataParaVista['cabecera']['fee_prc'] = $fee = ($total * ($dataParaVista['cabecera']['fee'] / 100));
@@ -867,7 +830,7 @@ class Cotizacion extends MY_Controller
 			$mpdf = new \Mpdf\Mpdf([
 				'mode' => 'utf-8',
 				'setAutoTopMargin' => 'stretch',
-				// 'orientation' => '',
+				'orientation' => 'L',
 				'autoMarginPadding' => 0,
 				'bleedMargin' => 0,
 				'crossMarkMargin' => 0,
@@ -1237,7 +1200,7 @@ class Cotizacion extends MY_Controller
 		$ids = implode(',', $post['ids']);
 		$cotizaciones = $this->model->obtenerInformacionCotizacion(['id' => $ids])['query']->result_array();
 		$cotizacionDetalle = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
-
+		$diasMax = ($this->model->obtenerMaxDiasEntrega(['idsCotizacion' => $ids])['query']->row_array())['diasEntrega'];
 		$dataParaVista = [];
 		$dataParaVista['totalOper'] = 0;
 		foreach ($cotizaciones as $row) {
@@ -1258,10 +1221,12 @@ class Cotizacion extends MY_Controller
 		}
 		$dataParaVista['cotizaciones'] = $cotizaciones;
 		$dataParaVista['usuarios'] = $this->model->obtenerUsuarios()->result_array();
-
+		$dataParaVista['fechaEntrega'] = $this->model->calcularDiasHabiles(['dias' => $diasMax]);
+		
 		$result['result'] = 1;
 		$result['data']['width'] = '95%';
 		$result['msg']['title'] = 'GENERAR OPER';
+		
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formRegistrarOper", $dataParaVista, true);
 
 		$this->db->trans_complete();
@@ -1759,6 +1724,8 @@ class Cotizacion extends MY_Controller
 							'tela' => $post["telaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 							'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 							'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
+							'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
+							'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
 						]);
 						break;
 
@@ -1889,7 +1856,7 @@ class Cotizacion extends MY_Controller
 		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion,
-				'cotizacionInterna' => true
+				// 'cotizacionInterna' => true
 			]
 		)['query']->result_array();
 
@@ -2066,12 +2033,13 @@ class Cotizacion extends MY_Controller
 		$tablaSolicitantes = 'compras.solicitante';
 
 		$solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes, $whereSolicitante)->result_array();
+		$dataSolicitante = [];
 		foreach ($solicitantes as $solicitante) {
-			$solicitantes[$solicitante['nombre']] = $solicitante['idSolicitante'];
+			$dataSolicitante[$solicitante['nombre']] = $solicitante['idSolicitante'];
 		}
 
 		$idSolicitante = NULL;
-		if (empty($solicitantes[$post['solicitante']])) {
+		if (empty($dataSolicitante[$post['solicitante']])) {
 			$insertSolicitante = [
 				'nombre' => $post['solicitante'],
 				'fechaRegistro' => getActualDateTime(),
@@ -2081,9 +2049,9 @@ class Cotizacion extends MY_Controller
 			$idSolicitante = $insertSolicitante['id'];
 		}
 
-		if (!empty($solicitantes[$post['solicitante']])) {
+		if (!empty($dataSolicitante[$post['solicitante']])) {
 			if (!is_numeric($post['solicitante'])) {
-				$idSolicitante = $solicitantes[$post['solicitante']];
+				$idSolicitante = $dataSolicitante[$post['solicitante']];
 			}
 			if (is_numeric($post['solicitante'])) {
 				$idSolicitante = $post['solicitante'];
@@ -2241,7 +2209,7 @@ class Cotizacion extends MY_Controller
 
 		$data = [];
 		$data['tabla'] = 'compras.cotizacion';
-		
+
 		$data['insert'] = [
 			'nombre' => $post['nombre'],
 			'fechaEmision' => getActualDateTime(),
@@ -2270,10 +2238,10 @@ class Cotizacion extends MY_Controller
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'El título de cotizacion ya se encuentra registrado']);
 		}
-		
+
 		$insert = $this->model->insertarCotizacion($data);
 		$data['idCotizacion'] = $insert['id'];
-		
+
 		$data['anexos_arreglo'] = [];
 		$data['anexos'] = [];
 		if (!empty($post['anexo-name'])) {
@@ -2366,7 +2334,7 @@ class Cotizacion extends MY_Controller
 				if (!empty($item)) {
 					$idItem = $item['idItem'];
 					$itemsSinProveedor[$idItem] = true;
-					$post['idEstadoItemForm'][$k] = 3 ; // Estado Item: En desuso.
+					$post['idEstadoItemForm'][$k] = 3; // Estado Item: En desuso.
 				}
 			}
 

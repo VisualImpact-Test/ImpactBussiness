@@ -19,7 +19,7 @@
                   <ul class="list-group list-group-flush mt-3">
                     <li class="list-group-item"><b>Costo Unitario</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['costoUnitario'], 3) ?></li>
                     <li class="list-group-item"><b>Fecha Validez</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['fechaValidez'], 3) ?></li>
-                    <li class="list-group-item"><b>Fecha Entrega</b>&nbsp&nbsp&nbsp <?= verificarEmpty(date_change_format($itemProveedor[$keyItem][$keyProveedor]['fechaEntrega']),3) ?></li>
+                    <li class="list-group-item"><b>Días Entrega</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['diasEntrega'],3) ?></li>
                     <?php foreach ($subItems[$keyItem][$keyProveedor] as $keySI => $valueSI): ?>
                       <li class="list-group-item">
                       <?php if ($dato['tipoItem'] == 'Servicio'): ?>

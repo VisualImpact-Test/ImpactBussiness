@@ -1218,9 +1218,11 @@ var Cotizacion = {
 			let gapForm = $(this).parents('.nuevo').find('.gapForm');
 			let proveedorForm = $(this).parents('.nuevo').find('.idProveedor');
 			let proveedoresForm = $(this).parents('.nuevo').find('.proveedoresForm');
+			let diasEntregaItemForm = $(this).parents('.nuevo').find('.diasEntregaItemForm');
 
 			let precio = $(this).find('.txtCostoProveedor').val();
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
+			let diasEntregaElegido = $(this).find('.txtDiasEntregaItemProveedor').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
 			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
 			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
@@ -1242,7 +1244,7 @@ var Cotizacion = {
 			});
 			costoForm.val(precio);
 			costoFormLabel.val(moneyFormatter.format(precio));
-
+			diasEntregaItemForm.val(diasEntregaElegido);
 			proveedorForm.val(proveedorElegido);
 			proveedoresForm.val(proveedorElegidoName);
 
