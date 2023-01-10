@@ -1569,9 +1569,13 @@ class Cotizacion extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-
-	public function actualizarCotizacion($post)
+	public function actualizaCotizacionData()
 	{
+		$post = json_decode($this->input->post('data'), true);
+		echo json_encode($this->actualizarCotizacion($post));
+	}
+	public function actualizarCotizacion($post)
+	{		
 		$this->db->trans_start();
 		$result = $this->result;
 
@@ -1597,6 +1601,24 @@ class Cotizacion extends MY_Controller
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
 
+		if(isset($post['solicitante'])){
+			// Validar Existencia de Solicitante
+			if(intval($post['solicitante'] == 0)){
+				$rpta = null;
+			}else{
+				$query = $this->db->get_where('compras.solicitante', ['idSolicitante' => $post['solicitante']]);
+				$rpta = $query->row_array();
+			}
+			if(empty($rpta)){
+				$this->db->insert('compras.solicitante', [
+					'nombre' => $post['solicitante'],
+					'fechaRegistro' => getActualDateTime()
+				]);
+				$data['update']['idSolicitante'] = $this->db->insert_id();
+			}else{
+				$data['update']['idSolicitante'] = $post['solicitante'];
+			}
+		}
 
 		$validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
 		if (!empty($validacionExistencia['query']->row_array())) {
@@ -1652,7 +1674,8 @@ class Cotizacion extends MY_Controller
 		$post['gapForm'] = checkAndConvertToArray($post['gapForm']);
 		$post['precioForm'] = checkAndConvertToArray($post['precioForm']);
 		$post['linkForm'] = checkAndConvertToArray($post['linkForm']);
-		$post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
+		if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
+		
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 
 		foreach ($post['nameItem'] as $k => $r) {
@@ -1742,7 +1765,7 @@ class Cotizacion extends MY_Controller
 				}
 			}
 		}
-		$data['archivoEliminado'] = $post['archivoEliminado'];
+		$data['archivoEliminado'] = isset($post['archivoEliminado']) ? $post['archivoEliminado'] : null;
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 		$data['where'] = 'idCotizacionDetalle';

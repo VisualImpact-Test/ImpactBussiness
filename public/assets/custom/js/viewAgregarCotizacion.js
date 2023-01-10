@@ -2,38 +2,38 @@ var Autorizacion = {
 
 	frm: 'frm-autorizacion',
 	contentDetalle: 'idContentAutorizaciones',
-    btnFiltrar : '#btn-filtrarAutorizacion',
+	btnFiltrar: '#btn-filtrarAutorizacion',
 	url: 'Finanzas/Autorizacion/',
 
-	actualizarAutorizacion: function(){
+	actualizarAutorizacion: function () {
 		let formValues = Fn.formSerializeObject('formActualizarAutorizacion');
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Autorizacion.url + "actualizarAutorizacion";
 		let config = { url: url, data: jsonString };
-	
-			$.when(Fn.ajax(config)).then(function (b) {
-				++modalId;
-				var btn = [];
-				let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-	
-				if (b.result == 1) {
-					fn = 'Fn.closeModals(' + modalId + '); location.reload(); $("#btn-filtrarAutorizacion").click();';
-				}
-	
-				btn[0] = { title: 'Aceptar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-			});
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + '); location.reload(); $("#btn-filtrarAutorizacion").click();';
+			}
+
+			btn[0] = { title: 'Aceptar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
 	}
 }
 
 var SolicitudCotizacion = {
 	url: 'SolicitudCotizacion/',
 	load: function () {
-		$(document).ready(function(){
+		$(document).ready(function () {
 			$('.dimmer-file-detalle')
-			.dimmer({
-				on: 'click'
-			});
+				.dimmer({
+					on: 'click'
+				});
 			$('.ui.stickyProveedores').sticky();
 
 
@@ -45,7 +45,7 @@ var SolicitudCotizacion = {
 
 			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenCompra')) };
 			let config = { 'url': SolicitudCotizacion.url + 'formPreviewOrdenCompra', 'data': jsonString };
-			
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
@@ -54,7 +54,7 @@ var SolicitudCotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
-				
+
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				btn[1] = { title: 'Aceptar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
@@ -64,8 +64,8 @@ var SolicitudCotizacion = {
 	},
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.tipoRegistro = tipoRegistro;
-			formValues.archivoEliminado = Cotizacion.archivoEliminado;
+		formValues.tipoRegistro = tipoRegistro;
+		formValues.archivoEliminado = Cotizacion.archivoEliminado;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "actualizarCotizacion";
 		let config = { url: url, data: jsonString };
@@ -97,9 +97,9 @@ var SolicitudCotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				if(tipoRegistro == 1){
+				if (tipoRegistro == 1) {
 					fn = 'Fn.closeModals(' + modalId + ');location.reload();';
-				}else{
+				} else {
 					fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
 				}
 			}
@@ -108,7 +108,7 @@ var SolicitudCotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	registrarOrdenCompra: function(){
+	registrarOrdenCompra: function () {
 		let formValues = Fn.formSerializeObject('formRegistroOperValidado');
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = SolicitudCotizacion.url + "registrarOrdenCompra";
@@ -140,15 +140,16 @@ var Cotizacion = {
 	htmlG: '',
 	htmlBodySubItem: [],
 	htmlCotizacion: '',
-    nDetalle: 1,
+	nDetalle: 1,
 	anexoEliminado: [],
 	archivoEliminado: [],
 	subItemEliminado: [],
 	repetidoSubItem: [],
 	repetidoSubItem2: [],
-	gapEmpresas:[],
+	gapEmpresas: [],
 	controlesOC: [],
 	nuevo_item: [],
+	// solicitanteData: [],
 
 	load: function () {
 
@@ -158,29 +159,29 @@ var Cotizacion = {
 
 		$(document).ready(function () {
 			// $('#btn-filtrarCotizacion').click();
-            Fn.loadSemanticFunctions();
+			Fn.loadSemanticFunctions();
 
-            $('.simpleDropdown').dropdown();
-            $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
-            Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());
-           // Cotizacion.tachadoDistribucion = $.parseJSON($('#tachadoDistribucion').val());
+			$('.simpleDropdown').dropdown();
+			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+			Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());
+			// Cotizacion.tachadoDistribucion = $.parseJSON($('#tachadoDistribucion').val());
 
-            Cotizacion.htmlG = $('.default-item').html();
-			   
-			if($('#gapEmpresas').val()){
+			Cotizacion.htmlG = $('.default-item').html();
+
+			if ($('#gapEmpresas').val()) {
 				Cotizacion.gapEmpresas = JSON.parse($('#gapEmpresas').val());
 			}
-			
-			if($('.body-item-vacio').length > 0 ){
+
+			if ($('.body-item-vacio').length > 0) {
 				Cotizacion.htmlG = $('.body-item-vacio').wrap('<p/>').parent().html();
 				$('.body-item-vacio').unwrap();
 				$('.body-item-vacio').remove();
-			}else{
+			} else {
 				Cotizacion.htmlG = $('.default-item').html();
 			}
 
 
-			$.each($('.content-body-sub-item'),(i,v) => {
+			$.each($('.content-body-sub-item'), (i, v) => {
 				let control = $(v);
 				let dvfeatures = control.closest('.div-features');
 				let tipo = dvfeatures.data('tipo');
@@ -188,14 +189,14 @@ var Cotizacion = {
 				Cotizacion.htmlBodySubItem[tipo] = html;
 			});
 
-            Cotizacion.actualizarPopupsTitle();
-            Cotizacion.actualizarAutocomplete();
+			Cotizacion.actualizarPopupsTitle();
+			Cotizacion.actualizarAutocomplete();
 
-			$.each($('.btnPopupCotizacionesProveedor'), function(i,v){    
+			$.each($('.btnPopupCotizacionesProveedor'), function (i, v) {
 				var id = $(v).data('id');
 				$(v).popup({
-					popup : $(`.custom-popup-${id}`),
-					on    : 'click'
+					popup: $(`.custom-popup-${id}`),
+					on: 'click'
 				})
 			});
 			// $.each($('.btnPopupPropuestaItem'), function(i,v){    
@@ -205,7 +206,9 @@ var Cotizacion = {
 			// 		on    : 'click'
 			// 	})
 			// });
-        });
+			// Cotizacion.solicitanteData = $.parseJSON($('#solicitantes').val());
+			// Cotizacion.solicitanteInputComplete();
+		});
 
 		$(document).on('click', '#btn-filtrarCotizacion', function () {
 			var ruta = 'reporte';
@@ -239,7 +242,7 @@ var Cotizacion = {
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
 				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%',large: true });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%', large: true });
 
 				Cotizacion.modalIdForm = modalId;
 
@@ -248,10 +251,10 @@ var Cotizacion = {
 				$(".btn-add-row").click();
 
 				$('.dropdownSingleAditions')
-				.dropdown({
-					allowAdditions: true
-				})
-				;
+					.dropdown({
+						allowAdditions: true
+					})
+					;
 
 			});
 		});
@@ -324,13 +327,13 @@ var Cotizacion = {
 
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
-            let defaultItem = $('.default-item');
-            defaultItem.append(Cotizacion.htmlG);
+			let defaultItem = $('.default-item');
+			defaultItem.append(Cotizacion.htmlG);
 
-            let childInserted = defaultItem.children().last();
-            let childInsertedNumber = (++Cotizacion.nDetalle);
-            childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`,5))
-            childInserted.find('.file-lsck-capturas').attr('data-row',childInserted.index())
+			let childInserted = defaultItem.children().last();
+			let childInsertedNumber = (++Cotizacion.nDetalle);
+			childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5))
+			childInserted.find('.file-lsck-capturas').attr('data-row', childInserted.index())
 			// let $filas = $('#listaItemsCotizacion tbody tr').length;
 			// $filas = $filas + 1;
 			// let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
@@ -340,9 +343,9 @@ var Cotizacion = {
 
 			//Para ordenar los select2 que se descuadran
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
-            childInserted.transition('glow');
+			childInserted.transition('glow');
 
-            Cotizacion.actualizarAutocomplete();
+			Cotizacion.actualizarAutocomplete();
 			Cotizacion.actualizarOnAddRow(childInserted);
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
 
@@ -351,50 +354,50 @@ var Cotizacion = {
 		// centro costo
 		// $(document).ready(function() {
 		// 	let centro = $(".centro-ocultado .item").hide();
-			
+
 		// 	//console.log(centro);
 		// });
 
 		// $(".centro visible").click(function(){
-			
+
 		// 	console.log('hola mundo');
 		//   });
 
-		$(document).ready(function() {
-			$(".centro-ocultado .menu").attr("id","centroCosto_oculto");
-			$(".centro-visible .menu").attr("id","centroCosto_visible");
-			
-			});
+		$(document).ready(function () {
+			$(".centro-ocultado .menu").attr("id", "centroCosto_oculto");
+			$(".centro-visible .menu").attr("id", "centroCosto_visible");
 
-				 $(document).ready(function() {
-				$("#centroCosto_oculto .item").hide();
-				
-				});
+		});
 
+		$(document).ready(function () {
+			$("#centroCosto_oculto .item").hide();
 
-			
-	
-					// $("#centroCosto_visible .item").click(function(){
-					// 	alert("go");
-					// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
-					//   });
-
-					  $(document).on('click', '#centroCosto_visible .item',  function(){
-						$("#centroCosto_oculto .item").removeAttr("style", "display");
-						$("#centroCosto_oculto .seleccion").attr("style", "display").addClass("d-none");
-
-					});
-
-					$(document).ready(function() {
-				
-					let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
-					$elementoDiv.prependTo('#centroCosto_oculto');
-					});
-				
-		
+		});
 
 
-		
+
+
+		// $("#centroCosto_visible .item").click(function(){
+		// 	alert("go");
+		// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
+		//   });
+
+		$(document).on('click', '#centroCosto_visible .item', function () {
+			$("#centroCosto_oculto .item").removeAttr("style", "display");
+			$("#centroCosto_oculto .seleccion").attr("style", "display").addClass("d-none");
+
+		});
+
+		$(document).ready(function () {
+
+			let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
+			$elementoDiv.prependTo('#centroCosto_oculto');
+		});
+
+
+
+
+
 
 		$(document).on('click', '.editFeatures', function () {
 			++modalId;
@@ -432,36 +435,36 @@ var Cotizacion = {
 
 		$(document).on('click', '.btneliminarfila', function (e) {
 			e.preventDefault();
-            let body = $(this).parents('.body-item');
-            let div_locked = body.find('.btn-bloquear-detalle');
+			let body = $(this).parents('.body-item');
+			let div_locked = body.find('.btn-bloquear-detalle');
 
 			let cantItems = $('.body-item').length;
 
-			if(cantItems <= 1 ){
+			if (cantItems <= 1) {
 
 
 			}
 
-            if(div_locked.find('i').hasClass('lock')){
-                $(this).parents('.body-item').find('.btn-bloquear-detalle').transition('shake');
-                return false;
-            }
-            body.transition({
-                animation  : 'slide left',
-                duration   : '0.4s',
-                onComplete : function() {
-                    body.remove();
+			if (div_locked.find('i').hasClass('lock')) {
+				$(this).parents('.body-item').find('.btn-bloquear-detalle').transition('shake');
+				return false;
+			}
+			body.transition({
+				animation: 'slide left',
+				duration: '0.4s',
+				onComplete: function () {
+					body.remove();
 
-					$.each($('.body-item'),function(i,v){
+					$.each($('.body-item'), function (i, v) {
 						Cotizacion.actualizarOnAddRowCampos($(v));
 					});
-                }
-            });
-			if(cantItems <= 1 ){
+				}
+			});
+			if (cantItems <= 1) {
 				$(".btn-add-row").click();
 			}
 
-            // $(this).parents('.fila-existente').remove();
+			// $(this).parents('.fila-existente').remove();
 
 			// $.each($('#listaItemsCotizacion tbody tr .n_fila'), function (index, value) {
 			// 	$(this).find('.nfila').text(Number(index) + 1);
@@ -501,23 +504,23 @@ var Cotizacion = {
 			let buscado2 = idRepetido2.find("#distribucion2");
 			let elementoBuscado2 = buscado2.data('id');
 
-			if(idTipo == COD_DISTRIBUCION.id){
+			if (idTipo == COD_DISTRIBUCION.id) {
 				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
-			}else{
+			} else {
 				let codItem = parent.find('.codItems');
 
-				if(codItem !== typeof undefined && codItem > 0){
+				if (codItem !== typeof undefined && codItem > 0) {
 					parent.find('.cotizacionInternaForm').val(1);
 				}
 			}
 
-			if(elementoBuscado ){
+			if (elementoBuscado) {
 				Cotizacion.repetidoSubItem.push(elementoBuscado);
-				
+
 			}
-			
-			if(elementoBuscado2){
+
+			if (elementoBuscado2) {
 				Cotizacion.repetidoSubItem2.push(elementoBuscado2);
 			}
 
@@ -531,10 +534,10 @@ var Cotizacion = {
 		$(document).on('change', '#prioridadForm', function (e) {
 			let prioridad = $(this).val();
 
-			if(prioridad == 1 ){ //Si es prioridad ALTA
-				$(motivoForm).attr("patron",'requerido');
+			if (prioridad == 1) { //Si es prioridad ALTA
+				$(motivoForm).attr("patron", 'requerido');
 			}
-			else{
+			else {
 				$(motivoForm).removeAttr("patron");
 			}
 		});
@@ -564,7 +567,7 @@ var Cotizacion = {
 			let enteroSuperior = Math.ceil(costo);
 			let flagRedondear = flagRedondearForm.val();
 
-			if(costoRedondeadoForm.val() == 0 && costoNoRedondeadoForm.val() == 0){
+			if (costoRedondeadoForm.val() == 0 && costoNoRedondeadoForm.val() == 0) {
 				costoRedondeadoForm.val(enteroSuperior);
 				costoNoRedondeadoForm.val(costo);
 			}
@@ -575,7 +578,7 @@ var Cotizacion = {
 			thisCantidadForm.keyup();
 
 		});
-	
+
 
 		$(document).on('keyup', '.cantidadForm', function (e) {
 			e.preventDefault();
@@ -587,7 +590,7 @@ var Cotizacion = {
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
 			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
-		
+
 
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
@@ -596,7 +599,7 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if(subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0){
+			if (subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
 				gapForm.val(GAP_MINIMO);
 			}
 
@@ -608,13 +611,13 @@ var Cotizacion = {
 			let costoDistribucion = 0;
 			let costoTotalDistribucionPDV = 0;
 			let costoTachadoDistribucion = 0;
-			if(tipoItem.val() == COD_DISTRIBUCION.id){
+			if (tipoItem.val() == COD_DISTRIBUCION.id) {
 				costoDistribucion = Number($("#costoDistribucion").val());
-				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val()) ;
-				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion,cantPdv);
+				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val());
+				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion, cantPdv);
 
 				let trTachadoDistribucion = thisControlParents.find('.chkTachadoDistribucion:checked').closest('tr');
-				if(trTachadoDistribucion.length !== 0){
+				if (trTachadoDistribucion.length !== 0) {
 					costoTachadoDistribucion = trTachadoDistribucion.data('subtotal');
 				}
 
@@ -640,7 +643,7 @@ var Cotizacion = {
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
 			console.log(costoTipoServicio);
 
-			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio,costoTipoServicio);
+			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio, costoTipoServicio);
 
 			costoForm.val(subTotalTipoServicio);
 			costoFormLabel.val(moneyFormatter.format(subTotalTipoServicio));
@@ -656,7 +659,7 @@ var Cotizacion = {
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 
 			let cantAcumulada = 0;
-			$.each(thisControlParentsSub.find('.body-sub-item'),(i,v) => {
+			$.each(thisControlParentsSub.find('.body-sub-item'), (i, v) => {
 				cantAcumulada += Number($(v).find('.cantidadSubItemAcumulativo').val());
 
 			});
@@ -687,16 +690,16 @@ var Cotizacion = {
 			let precio = Number(precioForm.val());
 			let costoAnterior = Number(costoForm.val());
 
-			if(costo >= precio) {
+			if (costo >= precio) {
 				thisControl.val(costoAnterior);
 				fieldPrecioFormLabel.transition('shake');
 				$("#nagPrecioValidacion").nag({
-					persist:true
+					persist: true
 				});
 				return false;
 			}
 			let gapActual = (((precio - costo) * 100) / costo).toFixed(2);
-			if(costo <= costoAnterior){
+			if (costo <= costoAnterior) {
 				console.log('No hay problema');
 				gapForm.val(gapActual);
 				// costoForm.val(costo);
@@ -719,10 +722,10 @@ var Cotizacion = {
 					type: 3,
 					message: 'Este cambio de costo, requiere autorizacion. ¿Desea enviar la solicitud?'
 				});
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.restaurarCosto('+costoAnterior+');';
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.restaurarCosto(' + costoAnterior + ');';
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
 
-			fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.solicitarAutorizacion('+JSON.stringify(config)+')';
+			fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });Cotizacion.solicitarAutorizacion(' + JSON.stringify(config) + ')';
 			btn[1] = { title: 'Aceptar', fn: fn[1] };
 
 			Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
@@ -739,7 +742,7 @@ var Cotizacion = {
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
-			
+
 			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm');
 			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm');
 			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
@@ -750,16 +753,16 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let cantidad = Number(cantidadForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
-			
+
 			let enteroSuperior = Math.ceil(costo);
 			let flagRedondear = flagRedondearForm.val();
 
-			if(flagRedondear == 1) costo = enteroSuperior;
+			if (flagRedondear == 1) costo = enteroSuperior;
 
 			let gap = Number(thisControl.val());
-			let precio = (costo + (costo * (gap/100)));
+			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
-			
+
 
 
 			precioForm.val(precio);
@@ -780,36 +783,36 @@ var Cotizacion = {
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
 			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
-			
+
 			let precioForm = thisControlParents.find('.precioForm');
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
 
 			let gap = Number(thisControl.val());
 			let costo = Number(costoForm.val());
 			let cantidad = Number(cantidadForm.val());
-	
+
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 			//Si el monto es mayor a 1500, el gap no puede ser menor al 15%
-			if(subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0){
+			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
 				thisControl.val(GAP_MINIMO);
 				$("#nagGapValidacion").nag({
-					persist:true
+					persist: true
 				});
 				return false;
 			}
-			let precio = (costo + (costo * (gap/100)));
+			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
 
 			let costoDistribucion = 0;
 			let costoTotalDistribucionPDV = 0;
 			let costoTachadoDistribucion = 0;
-			if(tipoItem.val() == COD_DISTRIBUCION.id){
+			if (tipoItem.val() == COD_DISTRIBUCION.id) {
 				costoDistribucion = Number($("#costoDistribucion").val());
-				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val()) ;
-				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion,cantPdv);
-				
+				cantPdv = (cantPdvDist.val() == 0 ? 1 : cantPdvDist.val());
+				costoTotalDistribucionPDV = Fn.multiply(costoDistribucion, cantPdv);
+
 				let trTachadoDistribucion = thisControlParents.find('.chkTachadoDistribucion:checked').closest('tr');
-				if(trTachadoDistribucion.length !== 0){
+				if (trTachadoDistribucion.length !== 0) {
 					costoTachadoDistribucion = trTachadoDistribucion.data('subtotal');
 				}
 				subTotal = Number(subTotal + costoTotalDistribucionPDV + costoTachadoDistribucion);
@@ -823,9 +826,9 @@ var Cotizacion = {
 			Cotizacion.actualizarTotal();
 		});
 
-		$(document).on('change','input[name=upload_orden_compra]', function(e){
-			let idCotizacion =  $(this).closest('tr').data('id');
-			var archivos = document.getElementById("upload_orden_compra["+idCotizacion+"]");
+		$(document).on('change', 'input[name=upload_orden_compra]', function (e) {
+			let idCotizacion = $(this).closest('tr').data('id');
+			var archivos = document.getElementById("upload_orden_compra[" + idCotizacion + "]");
 
 			//Creamos un objeto con el elemento que contiene los archivos: el campo input file, que tiene el id = 'archivos'
 			var archivo = archivos.files; //Obtenemos los archivos seleccionados en el imput
@@ -834,45 +837,45 @@ var Cotizacion = {
 			/* Como son multiples archivos creamos un ciclo for que recorra la el arreglo de los archivos seleccionados en el input
 			Este y añadimos cada elemento al formulario FormData en forma de arreglo, utilizando la variable i (autoincremental) como
 			indice para cada archivo, si no hacemos esto, los valores del arreglo se sobre escriben*/
-			for(i=0; i<archivo.length; i++){
-			archivos.append('archivo'+i,archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
+			for (i = 0; i < archivo.length; i++) {
+				archivos.append('archivo' + i, archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
 			}
 			$.ajax({
-				url:site_url+Cotizacion.url + 'guardarArchivo/', //Url a donde la enviaremos
-				type:'POST', //Metodo que usaremos
-				contentType:false, //Debe estar en false para que pase el objeto sin procesar
-				data:archivos, //Le pasamos el objeto que creamos con los archivos
-				processData:false, //Debe estar en false para que JQuery no procese los datos a enviar
-				cache:false, //Para que el formulario no guarde cache
-				beforeSend: function(){ Fn.showLoading(true) },
-			}).done(function(a){//Escuchamos la respuesta y continuamos
-				Fn.showLoading( false );
+				url: site_url + Cotizacion.url + 'guardarArchivo/', //Url a donde la enviaremos
+				type: 'POST', //Metodo que usaremos
+				contentType: false, //Debe estar en false para que pase el objeto sin procesar
+				data: archivos, //Le pasamos el objeto que creamos con los archivos
+				processData: false, //Debe estar en false para que JQuery no procese los datos a enviar
+				cache: false, //Para que el formulario no guarde cache
+				beforeSend: function () { Fn.showLoading(true) },
+			}).done(function (a) {//Escuchamos la respuesta y continuamos
+				Fn.showLoading(false);
 
 				a = $.parseJSON(a);
-				var data= {};
-					data= a ;
-					data.idCotizacion = idCotizacion;
+				var data = {};
+				data = a;
+				data.idCotizacion = idCotizacion;
 
-				var jsonString={ 'data':JSON.stringify(data) };
-				var url=Cotizacion.url+'guardarArchivoBD';
-				var config={ url:url,data:jsonString };
+				var jsonString = { 'data': JSON.stringify(data) };
+				var url = Cotizacion.url + 'guardarArchivoBD';
+				var config = { url: url, data: jsonString };
 
-				$.when( Fn.ajax(config) ).then(function(a){
-					if( a.result!=2 ){
+				$.when(Fn.ajax(config)).then(function (a) {
+					if (a.result != 2) {
 						++modalId;
-						var btn=[];
-						var fn=[];
+						var btn = [];
+						var fn = [];
 
-						if(a.result==0){
-							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');';
-							btn[0]={title:'Aceptar',fn:fn[0]};
+						if (a.result == 0) {
+							fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Fn.closeModals(' + modalId + ');';
+							btn[0] = { title: 'Aceptar', fn: fn[0] };
 						}
-						else{
-							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');$("#btn-filtrarCotizacion").click();';
-							btn[0]={title:'Aceptar',fn:fn[0]};
+						else {
+							fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+							btn[0] = { title: 'Aceptar', fn: fn[0] };
 						}
 
-						Fn.showModal({ id:modalId,show:true,title:a.msg.title,content:a.data.html,btn:btn,width:a.data.width });
+						Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.data.html, btn: btn, width: a.data.width });
 					}
 				});
 			});
@@ -882,7 +885,7 @@ var Cotizacion = {
 		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
@@ -911,7 +914,7 @@ var Cotizacion = {
 		$(document).on('click', '.btn-generar-cotizacionEfectivaSinOc', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioProcesarSinOc', 'data': jsonString };
 
@@ -940,7 +943,7 @@ var Cotizacion = {
 			let control = $(this).closest("tr");
 			let codItem = control.find('.codItems').val();
 
-			if(codItem == '') return false;
+			if (codItem == '') return false;
 
 			let data = { codItem };
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -959,7 +962,7 @@ var Cotizacion = {
 			});
 		});
 
-        $(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
+		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
 
 			var data = control.data();
@@ -967,26 +970,26 @@ var Cotizacion = {
 
 			var id = '';
 			var nameImg = '';
-			if( data['row'] ){
+			if (data['row']) {
 				id = data['row'];
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
-			}else{
+			} else {
 				id = 0;
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
 			}
 
-			if( control.val() ){
+			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
 				var num = control.get(0).files.length;
 
 				list: {
 					var total = $('input[name="' + name + '[' + id + ']"]').length;
-					if( (num + total) > MAX_ARCHIVOS ){
+					if ((num + total) > MAX_ARCHIVOS) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} capturas como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -999,11 +1002,11 @@ var Cotizacion = {
 						break list;
 					}
 
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024));
+						size = Math.round((size / 1024));
 
-						if( size > KB_MAXIMO_ARCHIVO ){
+						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
 							Fn.showModal({
 								'id': ++modalId,
@@ -1016,45 +1019,45 @@ var Cotizacion = {
 							break list;
 						}
 					}
-                    let file = '';
-                    let imgFile = '';
-                    let contenedor = '';
-					for(var i = 0; i < num; ++i){
-                        file = control.get(0).files[i];
-                            Fn.getBase64(file).then(function(fileBase){
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-                                if(fileBase.type.split('/')[0] == 'image'){
-                                    imgFile = fileBase.base64;
-                                    contenedor = content;
-                                }else if(fileBase.type.split('/')[1] == 'pdf'){
-                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
-                                    contenedor = content_files;
-                                }else{
-									imgFile = `${RUTA_WIREFRAME}file.png`;
-                                    contenedor = content_files;
-								}
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else if (fileBase.type.split('/')[1] == 'pdf') {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}file.png`;
+								contenedor = content_files;
+							}
 
-                                var fileApp = '';
-                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
-                                        fileApp += `
+							var fileApp = '';
+							fileApp += '<div class="ui fluid image content-lsck-capturas">';
+							fileApp += `
                                         <div class="ui dimmer dimmer-file-detalle">
                                             <div class="content">
                                                 <p class="ui tiny inverted header">${fileBase.name}</p>
                                             </div>
                                         </div>`;
-                                        fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-                                        fileApp += '<input class="'+ name +'" type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
-                                        fileApp += '<input class="'+ nameType +'" type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
-                                        fileApp += '<input class="'+ nameFile +'" type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
-                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
-                                    fileApp += '</div>';
+							fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
+							fileApp += '<input class="' + name + '" type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
+							fileApp += '<input class="' + nameType + '" type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
+							fileApp += '<input class="' + nameFile + '" type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+							fileApp += '</div>';
 
-                                    contenedor.append(fileApp);
-                                    control.parents('.nuevo').find('.dimmer-file-detalle')
-                                    .dimmer({
-                                        on: 'click'
-                                    });
-                            });
+							contenedor.append(fileApp);
+							control.parents('.nuevo').find('.dimmer-file-detalle')
+								.dimmer({
+									on: 'click'
+								});
+						});
 
 					}
 				}
@@ -1062,22 +1065,22 @@ var Cotizacion = {
 				control.val('');
 			}
 		});
-        $(document).off('change', '.file-lsck-capturas-anexos').on('change', '.file-lsck-capturas-anexos', function(e){
+		$(document).off('change', '.file-lsck-capturas-anexos').on('change', '.file-lsck-capturas-anexos', function (e) {
 			var control = $(this);
 
 			let name = 'anexo-file';
-			let	nameType = 'anexo-type';
-			let	nameFile = 'anexo-name';
+			let nameType = 'anexo-type';
+			let nameFile = 'anexo-name';
 
 
-			if( control.val() ){
+			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
 				var num = control.get(0).files.length;
 
 				list: {
 					var total = $(`input[name=${name}]`).length;
-					if( (num + total) > MAX_ARCHIVOS ){
+					if ((num + total) > MAX_ARCHIVOS) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${MAX_ARCHIVOS} capturas como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -1090,11 +1093,11 @@ var Cotizacion = {
 						break list;
 					}
 
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024));
+						size = Math.round((size / 1024));
 
-						if( size > KB_MAXIMO_ARCHIVO ){
+						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por captura` });
 							Fn.showModal({
 								'id': ++modalId,
@@ -1107,45 +1110,45 @@ var Cotizacion = {
 							break list;
 						}
 					}
-                    let file = '';
-                    let imgFile = '';
-                    let contenedor = '';
-					for(var i = 0; i < num; ++i){
-                        file = control.get(0).files[i];
-                            Fn.getBase64(file).then(function(fileBase){
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-                                if(fileBase.type.split('/')[0] == 'image'){
-                                    imgFile = fileBase.base64;
-                                    contenedor = content;
-                                }else if(fileBase.type.split('/')[1] == 'pdf'){
-                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
-                                    contenedor = content_files;
-                                }else{
-									imgFile = `${RUTA_WIREFRAME}file.png`;
-                                    contenedor = content_files;
-								}
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else if (fileBase.type.split('/')[1] == 'pdf') {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}file.png`;
+								contenedor = content_files;
+							}
 
-                                var fileApp = '';
-                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
-                                        fileApp += `
+							var fileApp = '';
+							fileApp += '<div class="ui fluid image content-lsck-capturas">';
+							fileApp += `
                                         <div class="ui dimmer dimmer-file-detalle">
                                             <div class="content">
                                                 <p class="ui tiny inverted header">${fileBase.name}</p>
                                             </div>
                                         </div>`;
-                                        fileApp += '<a class="ui red right corner label img-lsck-anexos-delete"><i class="trash icon"></i></a>';
-                                        fileApp += '<input type="hidden" name="' + name +'"  value="' + fileBase.base64 + '">';
-                                        fileApp += '<input type="hidden" name="' + nameType +'"  value="' + fileBase.type + '">';
-                                        fileApp += '<input type="hidden" name="' + nameFile +'"  value="' + fileBase.name + '">';
-                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
-                                    fileApp += '</div>';
+							fileApp += '<a class="ui red right corner label img-lsck-anexos-delete"><i class="trash icon"></i></a>';
+							fileApp += '<input type="hidden" name="' + name + '"  value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '"  value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '"  value="' + fileBase.name + '">';
+							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+							fileApp += '</div>';
 
-                                    contenedor.append(fileApp);
-                                    control.parents('.nuevo').find('.dimmer-file-detalle')
-                                    .dimmer({
-                                        on: 'click'
-                                    });
-                            });
+							contenedor.append(fileApp);
+							control.parents('.nuevo').find('.dimmer-file-detalle')
+								.dimmer({
+									on: 'click'
+								});
+						});
 
 					}
 				}
@@ -1154,29 +1157,29 @@ var Cotizacion = {
 			}
 		});
 
-		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function(e){
+		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function (e) {
 			e.preventDefault();
 		});
 
-		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
+		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
 			let parent = $(this).closest(".content-lsck-capturas");
 			let idEliminado = parent.data('id');
 
-			if(idEliminado){
+			if (idEliminado) {
 				Cotizacion.archivoEliminado.push(idEliminado);
 			}
 
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		$(document).off('click', '.img-lsck-anexos-delete').on('click', '.img-lsck-anexos-delete', function(e){
+		$(document).off('click', '.img-lsck-anexos-delete').on('click', '.img-lsck-anexos-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
 			let parent = $(this).closest(".content-lsck-capturas");
 			let idEliminado = parent.data('id');
 
-			if(idEliminado){
+			if (idEliminado) {
 				Cotizacion.anexoEliminado.push(idEliminado);
 			}
 
@@ -1186,12 +1189,12 @@ var Cotizacion = {
 		$(document).on('click', '.btnSolicitarCotizacion', function () {
 			++modalId;
 
-			if($('.proveedorSolicitudForm').find('select').val().length <= 0){
+			if ($('.proveedorSolicitudForm').find('select').val().length <= 0) {
 				$('.proveedorSolicitudForm').transition('shake')
 				return false;
 			}
 
-			if(!$('.checkItem').is(' :checked')){
+			if (!$('.checkItem').is(' :checked')) {
 				$('.chk-item').transition('glow');
 				return false;
 
@@ -1226,10 +1229,10 @@ var Cotizacion = {
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
 			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
 			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
-			
+
 			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');
 
-			$.each(bodySubItem,function(k,v){
+			$.each(bodySubItem, function (k, v) {
 				let idCotizacionDetalleSub = $(v).find('.idCotizacionDetalleSubForm');
 				let costoSubItem = $(v).find('.costoSubItem');
 				let subtotalSubItem = $(v).find('.subtotalSubItem');
@@ -1254,11 +1257,11 @@ var Cotizacion = {
 			Cotizacion.actualizarTotal();
 		});
 
-		$(document).on('click','.btnConsultarItemProveedor',function(){
+		$(document).on('click', '.btnConsultarItemProveedor', function () {
 			++modalId;
 			let data = {
 				'idCotizacionDetalle': $(this).data('cot'),
-			 	'idProveedor': $(this).data('pro')
+				'idProveedor': $(this).data('pro')
 			};
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioVisualizacionCotizacionProveedorItems', 'data': jsonString };
@@ -1274,7 +1277,7 @@ var Cotizacion = {
 				SolicitudCotizacion.actualizarAutocomplete();
 			});
 		});
-		$(document).on('click','.btnCotizacionesProveedores',function(){
+		$(document).on('click', '.btnCotizacionesProveedores', function () {
 			++modalId;
 			let data = {
 				'idCotizacionDetalle': $(this).data('id')
@@ -1299,24 +1302,24 @@ var Cotizacion = {
 			let parent = control.closest('.div-features');
 			let tipo = parent.data('tipo');
 
-            let contenedor = parent.find('.content-body-sub-item');
+			let contenedor = parent.find('.content-body-sub-item');
 
 			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
 
-            // contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
-            contenedor.append(bodyHtmlSubItem.html());
+			// contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
+			contenedor.append(bodyHtmlSubItem.html());
 
-            let childInserted = contenedor.children().last();
+			let childInserted = contenedor.children().last();
 
 			// $("html").animate({ scrollTop: contenedor.height() }, 500);
-            childInserted.transition('glow');
+			childInserted.transition('glow');
 			childInserted.find(':input').val('');
-			
+
 			let gen_nuevo = childInserted.find('#genero .item-4');
 			// hola3 = hola.remove('option');
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
 			gen_nuevo.remove('option');
-			
+
 		});
 		$(document).on('click', '.btn-eliminar-sub-item', function () {
 			let control = $(this);
@@ -1326,51 +1329,51 @@ var Cotizacion = {
 
 			// console.log(element);
 
-			if(idEliminado){
+			if (idEliminado) {
 				Cotizacion.subItemEliminado.push(idEliminado);
 			}
 
-			if(parent.find('.body-sub-item').length <= 1){
-				
-			element.find(':input').val('');
-			// let hola = element.find('#genero .menu .item');
-			// let hola2 = element.find('#genero .text');
-			// let hola4 = element.find('#genero .menu');
-			let gen = element.find('#genero');
+			if (parent.find('.body-sub-item').length <= 1) {
 
-			let gen_nuevo_item = gen.find('.dropdown')
-			// hola3 = hola.remove('option');
-			// gen3 = gen.find('.item-4').remove('option');
-			 gen_nuevo_item.html(
-				
-				'<option class="item-4" value="">seleccione</option>'+
-				'<option class="item" value="1">Hombre</option>'+
-				'<option class="item" value="2">Mujer</option>'+
-				'<option class="item" value="3">Unisex</option>'
-				
+				element.find(':input').val('');
+				// let hola = element.find('#genero .menu .item');
+				// let hola2 = element.find('#genero .text');
+				// let hola4 = element.find('#genero .menu');
+				let gen = element.find('#genero');
+
+				let gen_nuevo_item = gen.find('.dropdown')
+				// hola3 = hola.remove('option');
+				// gen3 = gen.find('.item-4').remove('option');
+				gen_nuevo_item.html(
+
+					'<option class="item-4" value="">seleccione</option>' +
+					'<option class="item" value="1">Hombre</option>' +
+					'<option class="item" value="2">Mujer</option>' +
+					'<option class="item" value="3">Unisex</option>'
+
 				);
-			
 
 
-			
-			
 
-			// hola2.addClass('select');
 
-			// hola.removeClass('active');
-			// hola.removeClass('selected');
 
-			// hola3 = hola2.remove('div');
 
-			// hola.first().addClass('selected active');
+				// hola2.addClass('select');
 
-			// console.log(hola);
-			// console.log(hola2);
-			// console.log(hola4);
+				// hola.removeClass('active');
+				// hola.removeClass('selected');
 
-			// hola4.before('<div class="text">seleccione<div/>');
-			
-			
+				// hola3 = hola2.remove('div');
+
+				// hola.first().addClass('selected active');
+
+				// console.log(hola);
+				// console.log(hola2);
+				// console.log(hola4);
+
+				// hola4.before('<div class="text">seleccione<div/>');
+
+
 				return false;
 			}
 
@@ -1406,76 +1409,76 @@ var Cotizacion = {
 
 			let pesoCantidadForm = parent.find('.cantidadSubItemDistribucion');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
-			
+
 			pesoCantidadForm.val(peso);
 			cantidadFormSubItem.keyup();
-		
+
 			let idItem = control.find('option:selected').val();
 
 			//Llenamos la tabla de tachado
 			htmlTachado = '';
 			Cotizacion.tachadoDistribucion.filter((tachado) => {
-				if(tachado.idItem == idItem){
+				if (tachado.idItem == idItem) {
 					let costoLabel = moneyFormatter.format(Number(tachado.costoDia));
-					let subTotalTachado = (Number(tachado.dias) * Number(tachado.personas)) * Number(tachado.costoDia) ;
+					let subTotalTachado = (Number(tachado.dias) * Number(tachado.personas)) * Number(tachado.costoDia);
 					let subTotalTachadoLabel = moneyFormatter.format(subTotalTachado);
 					htmlTachado += `<tr data-id='${tachado.idDistribucionTachado}' data-subtotal='${subTotalTachado}' >`;
 
-						htmlTachado += `
+					htmlTachado += `
 						<td> 
 							<div class="ui radio checkbox dvTachadoDistribucion">
 								<input value='${tachado.idDistribucionTachado}' class='chkTachadoDistribucion' type="radio" name="chkTachado">
 								<label></label>
 							</div>
 						</td>`;
-						htmlTachado += `<td> ${tachado.limiteInferior} - ${tachado.limiteSuperior}</td>`;
-						htmlTachado += `<td> ${tachado.dias}</td>`;
-						htmlTachado += `<td> ${tachado.personas}</td>`;
-						htmlTachado += `<td> ${costoLabel}</td>`;
-						htmlTachado += `<td> ${subTotalTachadoLabel}</td>`;
+					htmlTachado += `<td> ${tachado.limiteInferior} - ${tachado.limiteSuperior}</td>`;
+					htmlTachado += `<td> ${tachado.dias}</td>`;
+					htmlTachado += `<td> ${tachado.personas}</td>`;
+					htmlTachado += `<td> ${costoLabel}</td>`;
+					htmlTachado += `<td> ${subTotalTachadoLabel}</td>`;
 					htmlTachado += `</tr>`;
 				}
 			});
 
 			parent.find('.tbDistribucionTachado').find('tbody').html(htmlTachado);
-			if(htmlTachado != ''){
+			if (htmlTachado != '') {
 				parent.find('.tbDistribucionTachado').removeClass('d-none');
-			}else{
+			} else {
 				parent.find('.tbDistribucionTachado').addClass('d-none');
 			}
 
 			Cotizacion.actualizarOnAddRowCampos(controlParent);
 			cantidadForm.keyup();
-			
+
 		});
 
 		$(document).on('keyup', '.items', function () {
 			let control = $(this);
 			let val = control.val();
 			let parent = control.closest('.nuevo');
-			if(val.length == 0){
+			if (val.length == 0) {
 				Cotizacion.cleanDetalle(parent);
 			}
 		});
 
 		$(document).on('change', '#cuentaForm', function () {
 			let control = $(this);
-			
+
 			let cod = control.val();
-		
+
 			let gap = 0;
 
-			$.each(Cotizacion.gapEmpresas,(k,v) => {
-				if(v.idEmpresa == cod){
+			$.each(Cotizacion.gapEmpresas, (k, v) => {
+				if (v.idEmpresa == cod) {
 					gap = v.gap;
 					return;
 				}
 			});
-			
-			if(gap){
+
+			if (gap) {
 				$('.gapForm').val(gap);
 				$('.cantidadForm').keyup();
-			}else{
+			} else {
 				$('.gapForm').val('');
 			}
 
@@ -1516,10 +1519,10 @@ var Cotizacion = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
-				if(a.flagUpdate){
-                    fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionProveedores", fn: "Autorizacion.actualizarAutorizacion()", content: "¿Esta seguro de actualizar esta autorización?" });';
-                    btn[1] = { title: 'Actualizar', fn: fn[1] };
-                }
+				if (a.flagUpdate) {
+					fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionProveedores", fn: "Autorizacion.actualizarAutorizacion()", content: "¿Esta seguro de actualizar esta autorización?" });';
+					btn[1] = { title: 'Actualizar', fn: fn[1] };
+				}
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
@@ -1534,7 +1537,7 @@ var Cotizacion = {
 				'dataPropuesta': JSON.parse($(this).find('.jsonPropuesta').val()),
 			};
 
-			
+
 			Fn.showConfirm({ fn: `Cotizacion.actualizarPropuestaItem(${JSON.stringify(data)})`, content: `¿Desea confirmar esta propuesta para reemplazar el item elegido?` });
 
 		});
@@ -1544,16 +1547,16 @@ var Cotizacion = {
 			let parent = control.closest('tr');
 			let controlParents = control.parents('.nuevo');
 			let cantidadForm = controlParents.find('.cantidadForm');
-			
+
 			cantidadForm.keyup();
 		});
 
-	
 
-		
+
+
 	},
 
-	actualizarPropuestaItem: function(data){
+	actualizarPropuestaItem: function (data) {
 		let parent = $(`.idCotizacionDetalleForm-${data.idCotizacionDetalle}`).closest('.nuevo');
 
 		let costoForm = parent.find('.costoForm')
@@ -1569,7 +1572,7 @@ var Cotizacion = {
 		let proveedorElegidoName = data.dataPropuesta.proveedor;
 		// let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').val();
 		// let proveedorSubCotizacion = JSON.parse(jsonProveedorSubCotizacion);
-		
+
 		// let bodySubItem = parent.find('.body-sub-item');
 
 		// $.each(bodySubItem,function(k,v){
@@ -1602,7 +1605,7 @@ var Cotizacion = {
 		Fn.closeModals(modalId);
 	},
 
-	restaurarCosto: function(costoAnterior){
+	restaurarCosto: function (costoAnterior) {
 		Cotizacion.controlesOC.costoForm.val(costoAnterior);
 		Cotizacion.controlesOC.costoFormLabel.val(costoAnterior);
 	},
@@ -1615,9 +1618,9 @@ var Cotizacion = {
 
 		++modalId;
 		let data = Fn.formSerializeObject('formRegistroOrdenCompra');
-			data.idCotizacionDetalle = idCotizacionDetalle;
-			data.nuevoCosto = configOC.costo;
-			data.nuevoGap = configOC.gapActual;
+		data.idCotizacionDetalle = idCotizacionDetalle;
+		data.nuevoCosto = configOC.costo;
+		data.nuevoGap = configOC.gapActual;
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'registrarSolicitudAutorizacion', 'data': jsonString };
 
@@ -1637,7 +1640,7 @@ var Cotizacion = {
 	actualizarCotizacion: function () {
 		++modalId;
 		let data = Fn.formSerializeObject('formActualizacionCotizacions');
-			data.archivoEliminado = Cotizacion.archivoEliminado;
+		data.archivoEliminado = Cotizacion.archivoEliminado;
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
 
@@ -1662,8 +1665,8 @@ var Cotizacion = {
 		let nro = 0;
 		$.each(Cotizacion.itemServicio[1], function (index, value) {
 			// if (tipo == value.tipo || tipo == 3) {
-				items[nro] = value;
-				nro++;
+			items[nro] = value;
+			nro++;
 			// }
 		});
 		$(".items").autocomplete({
@@ -1675,16 +1678,16 @@ var Cotizacion = {
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
-				control.find(".idTipoItem").dropdown('set selected',ui.item.tipo);
-				control.find(".flagCuentaSelect").dropdown('set selected',ui.item.flagCuenta);
+				control.find(".idTipoItem").dropdown('set selected', ui.item.tipo);
+				control.find(".flagCuentaSelect").dropdown('set selected', ui.item.flagCuenta);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
-				
+
 				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
 				control.find(".codItems").val(ui.item.value);
 				//Llenamos el precio actual
-				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
+				if (ui.item.costo == null || ui.item.semaforoVigencia == "red") {
 					ui.item.costo = 0;
 				}
 
@@ -1710,14 +1713,14 @@ var Cotizacion = {
 
 				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
 
-				control.find('.semaforoForm').popup({content : `Vigencia: ${ui.item.diasVigencia} días`});
+				control.find('.semaforoForm').popup({ content: `Vigencia: ${ui.item.diasVigencia} días` });
 
 				//Validar boton ver caracteristicas del articulo
 
 				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
-				control.find(".cantidadForm").attr('readonly',false);
+				control.find(".cantidadForm").attr('readonly', false);
 
 				let $cod = ui.item.value;
 				if ($cod != '') {
@@ -1758,7 +1761,7 @@ var Cotizacion = {
 
 	registrarItem: function (idCotizacion) {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
-			formValues.idCotizacion = idCotizacion;
+		formValues.idCotizacion = idCotizacion;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarItem";
 		let config = { url: url, data: jsonString };
@@ -1779,7 +1782,7 @@ var Cotizacion = {
 
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.tipoRegistro = tipoRegistro;
+		formValues.tipoRegistro = tipoRegistro;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarCotizacion";
 		let config = { url: url, data: jsonString };
@@ -1791,8 +1794,8 @@ var Cotizacion = {
 
 			if (b.result == 1) {
 
-				if(tipoRegistro == 3 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
-				if(tipoRegistro == 2 ) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
+				if (tipoRegistro == 3) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
+				if (tipoRegistro == 2) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -1817,15 +1820,15 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: b.data.width });
 
 			$('.simpleDropdown').dropdown();
-            $('.dropdownSingleAditions').dropdown({allowAdditions: true	});
+			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 		});
 	},
 
-	sendToCliente: function(){
+	sendToCliente: function () {
 		let formValues = Fn.formSerializeObject('formSendToCliente');
-			formValues.formRegistro = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.archivosEliminados = Cotizacion.archivoEliminado;
-			formValues.anexosEliminados = Cotizacion.anexoEliminado;
+		formValues.formRegistro = Fn.formSerializeObject('formRegistroCotizacion');
+		formValues.archivosEliminados = Cotizacion.archivoEliminado;
+		formValues.anexosEliminados = Cotizacion.anexoEliminado;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "sendToCliente";
 		let config = { url: url, data: jsonString };
@@ -1845,17 +1848,17 @@ var Cotizacion = {
 	},
 
 	actualizarTotal: function () {
-		
+
 		let total = 0;
 		let totalDistribucion = 0;
-		
+
 		$.each($('.subtotalForm'), function (index, value) {
 			// Distribucion no se le agrega al FEE
-			if($(value).closest('.nuevo').find('.idTipoItem').find('select').val() != COD_DISTRIBUCION.id){
+			if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() != COD_DISTRIBUCION.id) {
 				total = Number(total) + Number($(value).val());
 				// totalSinDistribucion = Number(totalSinDistribucion) + Number($(value).val());
 			}
-			if($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_DISTRIBUCION.id){
+			if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_DISTRIBUCION.id) {
 				totalDistribucion = Number(totalDistribucion) + Number($(value).val());
 			}
 
@@ -1866,10 +1869,10 @@ var Cotizacion = {
 
 		let igv = 0;
 
-		if(igvForm.is(":checked")){
+		if (igvForm.is(":checked")) {
 			igv = IGV_SYSTEM;
 		}
-		let totalFee = ((total) + (total*(fee/100))) + totalDistribucion;
+		let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion;
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
 		$('.totalFormLabel').val(moneyFormatter.format(Number(totalFeeIgv)));
@@ -1879,144 +1882,144 @@ var Cotizacion = {
 		$('.totalForm').val(total + totalDistribucion);
 	},
 
-    actualizarPopupsTitle: () => {
-        //Boton enviar
-        $('.btn-send')
-        .popup({
-          position : 'left center',
-          target   : $('.btn-send'),
-          content    : 'Enviar',
-        });
+	actualizarPopupsTitle: () => {
+		//Boton enviar
+		$('.btn-send')
+			.popup({
+				position: 'left center',
+				target: $('.btn-send'),
+				content: 'Enviar',
+			});
 
-        //Boton Guardar
-        $('.btn-save')
-        .popup({
-          position : 'left center',
-          target   : $('.btn-save'),
-          content    : 'Guardar',
-        });
-        //Boton Guardar
-        $('.btn-preview-orden-compra')
-        .popup({
-          position : 'left center',
-          target   : $('.btn-preview-orden-compra'),
-          content    : 'Visualizar OC',
-        });
+		//Boton Guardar
+		$('.btn-save')
+			.popup({
+				position: 'left center',
+				target: $('.btn-save'),
+				content: 'Guardar',
+			});
+		//Boton Guardar
+		$('.btn-preview-orden-compra')
+			.popup({
+				position: 'left center',
+				target: $('.btn-preview-orden-compra'),
+				content: 'Visualizar OC',
+			});
 
-        //Boton Agregar Detalle
-        $('.btn-add-detalle')
-        .popup({
-          position : 'left center',
-          target   : $('.btn-add-detalle'),
-          content  : 'Agregar Detalle',
-        });
-        //Boton Eliminar Detalle
-        $('.btn-eliminar-detalle')
-        .popup({
-          position : 'top center',
-          target   : $('.btn-eliminar-detalle'),
-          content  : 'Eliminar Detalle',
-        });
-        //Boton Bloquear Detalle
-        $('.btn-bloquear-detalle')
-        .popup({
-          position : 'top center',
-          target   : $('.btn-bloquear-detalle'),
-          content  : 'Bloquear Detalle',
-        });
+		//Boton Agregar Detalle
+		$('.btn-add-detalle')
+			.popup({
+				position: 'left center',
+				target: $('.btn-add-detalle'),
+				content: 'Agregar Detalle',
+			});
+		//Boton Eliminar Detalle
+		$('.btn-eliminar-detalle')
+			.popup({
+				position: 'top center',
+				target: $('.btn-eliminar-detalle'),
+				content: 'Eliminar Detalle',
+			});
+		//Boton Bloquear Detalle
+		$('.btn-bloquear-detalle')
+			.popup({
+				position: 'top center',
+				target: $('.btn-bloquear-detalle'),
+				content: 'Bloquear Detalle',
+			});
 
-        //Boton Ver leyenda
-        $('.btn-leyenda')
-        .popup({
-            popup : $('.popup.leyenda'),
-            on    : 'click'
-        });
+		//Boton Ver leyenda
+		$('.btn-leyenda')
+			.popup({
+				popup: $('.popup.leyenda'),
+				on: 'click'
+			});
 
 		//Dimmer add file
-        $('.btn-add-file')
-        .dimmer({
-            on: 'hover'
-        });
+		$('.btn-add-file')
+			.dimmer({
+				on: 'hover'
+			});
 
 		//Info archivo
 		$('.btn-info-archivo')
-		.popup(
-			{
-				title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
-				content : `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
-			}
-		);
+			.popup(
+				{
+					title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
+					content: `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
+				}
+			);
 
 		//Info archivo
 		$('.btn-info-motivo')
-		.popup(
-			{
-				content : `Si la prioridad es ALTA el motivo será obligatorio.`
-			}
-		);
+			.popup(
+				{
+					content: `Si la prioridad es ALTA el motivo será obligatorio.`
+				}
+			);
 
 		//Info dias validez
 		$('.btn-info-validez')
-		.popup(
-			{
-				title: `Días de validez`,
-				content : `Se cuentan a partir de que la cotización es enviada al cliente.`
-			}
-		);
+			.popup(
+				{
+					title: `Días de validez`,
+					content: `Se cuentan a partir de que la cotización es enviada al cliente.`
+				}
+			);
 
 		$('.btn-info-cantidad')
-		.popup(
-			{
-				title: `Si requiere más de ${LIMITE_COMPRAS}`,
-				content : `Será necesario cotizar nuevamente con el proveedor`
-			}
-		);
+			.popup(
+				{
+					title: `Si requiere más de ${LIMITE_COMPRAS}`,
+					content: `Será necesario cotizar nuevamente con el proveedor`
+				}
+			);
 		$('.btn-info-gap')
-		.popup(
-			{
-				title: `GAP`,
-				content : `Solo podrá completar el GAP cuando se haya confirmado un costo`
-			}
-		);
+			.popup(
+				{
+					title: `GAP`,
+					content: `Solo podrá completar el GAP cuando se haya confirmado un costo`
+				}
+			);
 
-    },
+	},
 
 	actualizarOnAddRow: (childInserted) => {
 
-		$('.btn-add-file').dimmer({on: 'hover'});
+		$('.btn-add-file').dimmer({ on: 'hover' });
 		$('.btn-info-cantidad')
-		.popup(
-			{
-				title: `Si requiere más de ${LIMITE_COMPRAS}`,
-				content : `Será necesario cotizar nuevamente con el proveedor`
-			}
-		);
+			.popup(
+				{
+					title: `Si requiere más de ${LIMITE_COMPRAS}`,
+					content: `Será necesario cotizar nuevamente con el proveedor`
+				}
+			);
 		$('.btn-info-gap')
-		.popup(
-			{
-				title: `GAP`,
-				content : `Solo podrá completar el GAP cuando se haya confirmado un costo`
-			}
-		);
+			.popup(
+				{
+					title: `GAP`,
+					content: `Solo podrá completar el GAP cuando se haya confirmado un costo`
+				}
+			);
 		$('.simpleDropdown').dropdown();
 
 
 		//Boton info archivos
 		childInserted.find('.btn-info-archivo')
-		.popup(
-			{
-				title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
-				content : `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
-			}
-		);
-   },
+			.popup(
+				{
+					title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
+					content: `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
+				}
+			);
+	},
 
-   actualizarOnAddRowCampos:(parent) =>{
+	actualizarOnAddRowCampos: (parent) => {
 		let number = '';
-		if(parent.data('id') !== undefined){
+		if (parent.data('id') !== undefined) {
 			number = parent.data('id');
 		}
-		else{
+		else {
 			number = parent.index();
 		}
 		//Archivos
@@ -2037,7 +2040,7 @@ var Cotizacion = {
 
 		let nombreSubItem = parent.find('.nombreSubItem');
 		let cantidadSubItem = parent.find('.cantidadSubItem');
-	
+
 		let cantidadSubItemDistribucion = parent.find('.cantidadSubItemDistribucion');
 		let chkTachadoDistribucion = parent.find('.chkTachadoDistribucion');
 		let cantidadPdvSubItemDistribucion = parent.find('.cantidadPdvSubItemDistribucion');
@@ -2048,117 +2051,117 @@ var Cotizacion = {
 		let costoSubItem = parent.find('.costoSubItem');
 
 
-		fileItem.attr('name',`file-item[${number}]`);
-		fileType.attr('name',`file-type[${number}]`);
-		fileName.attr('name',`file-name[${number}]`);
+		fileItem.attr('name', `file-item[${number}]`);
+		fileType.attr('name', `file-type[${number}]`);
+		fileName.attr('name', `file-name[${number}]`);
 
 		//
-		tallaSubItem.attr('name',`tallaSubItem[${number}]`);
-		telaSubItem.attr('name',`telaSubItem[${number}]`);
-		colorSubItem.attr('name',`colorSubItem[${number}]`);
-		generoSubItem.attr('name',`generoSubItem[${number}]`);
-		cantidadSubItemTextil.attr('name',`cantidadTextil[${number}]`);
+		tallaSubItem.attr('name', `tallaSubItem[${number}]`);
+		telaSubItem.attr('name', `telaSubItem[${number}]`);
+		colorSubItem.attr('name', `colorSubItem[${number}]`);
+		generoSubItem.attr('name', `generoSubItem[${number}]`);
+		cantidadSubItemTextil.attr('name', `cantidadTextil[${number}]`);
 
-		montoSubItem.attr('name',`montoSubItem[${number}]`);
+		montoSubItem.attr('name', `montoSubItem[${number}]`);
 
-		nombreSubItem.attr('name',`nombreSubItemServicio[${number}]`);
-		cantidadSubItem.attr('name',`cantidadSubItemServicio[${number}]`);
+		nombreSubItem.attr('name', `nombreSubItemServicio[${number}]`);
+		cantidadSubItem.attr('name', `cantidadSubItemServicio[${number}]`);
 
-		cantidadSubItemDistribucion.attr('name',`cantidadSubItemDistribucion[${number}]`);
-		chkTachadoDistribucion.attr('name',`chkTachado[${number}]`);
-		cantidadPdvSubItemDistribucion.attr('name',`cantidadPdvSubItemDistribucion[${number}]`);
-		itemLogisticaForm.attr('name',`itemLogisticaForm[${number}]`);
+		cantidadSubItemDistribucion.attr('name', `cantidadSubItemDistribucion[${number}]`);
+		chkTachadoDistribucion.attr('name', `chkTachado[${number}]`);
+		cantidadPdvSubItemDistribucion.attr('name', `cantidadPdvSubItemDistribucion[${number}]`);
+		itemLogisticaForm.attr('name', `itemLogisticaForm[${number}]`);
 
-		tipoServicioSubItem.attr('name',`tipoServicioSubItem[${number}]`);
-		unidadMedidaSubItem.attr('name',`unidadMedidaSubItem[${number}]`);
-		costoSubItem.attr('name',`costoSubItem[${number}]`);
+		tipoServicioSubItem.attr('name', `tipoServicioSubItem[${number}]`);
+		unidadMedidaSubItem.attr('name', `unidadMedidaSubItem[${number}]`);
+		costoSubItem.attr('name', `costoSubItem[${number}]`);
 
-   },
+	},
 
 
-   cleanDetalle:(parent)=>{
-	let tipoForm = parent.find('#tipoItemForm');
-	let costoForm = parent.find('.costoForm');
-	let costoFormLabel = parent.find('.costoFormLabel');
-	let gapForm = parent.find('.gapForm');
-	let cantidadForm = parent.find('.cantidadForm');
-	let codItems = parent.find('.codItems');
-	let idProveedor = parent.find('.idProveedor');
-	let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
-	let semaforoForm = parent.find('.semaforoForm');
-	let tachadoDistribucion = parent.find('.tbDistribucionTachado');
+	cleanDetalle: (parent) => {
+		let tipoForm = parent.find('#tipoItemForm');
+		let costoForm = parent.find('.costoForm');
+		let costoFormLabel = parent.find('.costoFormLabel');
+		let gapForm = parent.find('.gapForm');
+		let cantidadForm = parent.find('.cantidadForm');
+		let codItems = parent.find('.codItems');
+		let idProveedor = parent.find('.idProveedor');
+		let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
+		let semaforoForm = parent.find('.semaforoForm');
+		let tachadoDistribucion = parent.find('.tbDistribucionTachado');
 
-	codItems.val('');
-	idProveedor.val('');
-	if(tipoForm.val() == COD_DISTRIBUCION.id){
-		cotizacionInternaForm.val('0');
-	}else{
-		cotizacionInternaForm.val('1');
-	}
+		codItems.val('');
+		idProveedor.val('');
+		if (tipoForm.val() == COD_DISTRIBUCION.id) {
+			cotizacionInternaForm.val('0');
+		} else {
+			cotizacionInternaForm.val('1');
+		}
 
-	semaforoForm.removeClass('semaforoForm-green');
-	semaforoForm.removeClass('semaforoForm-yellow');
-	semaforoForm.removeClass('semaforoForm-red');
-	semaforoForm.popup('destroy');
+		semaforoForm.removeClass('semaforoForm-green');
+		semaforoForm.removeClass('semaforoForm-yellow');
+		semaforoForm.removeClass('semaforoForm-red');
+		semaforoForm.popup('destroy');
 
-	costoForm.val('');
-	costoFormLabel.val('');
-	gapForm.val('');
+		costoForm.val('');
+		costoFormLabel.val('');
+		gapForm.val('');
 
-	cantidadForm.val('');
+		cantidadForm.val('');
 
-	cantidadForm.keyup();
+		cantidadForm.keyup();
 
-	// tachadoDistribucion.find('tbody').html('');
-	// tachadoDistribucion.addClass('d-none');
-   },
+		// tachadoDistribucion.find('tbody').html('');
+		// tachadoDistribucion.addClass('d-none');
+	},
 
-   actualizarCotizacionView: function (idCotizacion) {
-	let formValues = Fn.formSerializeObject('formActualizarCotizacion');
+	actualizarCotizacionView: function (idCotizacion) {
+		let formValues = Fn.formSerializeObject('formActualizarCotizacion');
 		formValues.archivosEliminados = Cotizacion.archivoEliminado;
-			formValues.anexosEliminados = Cotizacion.anexoEliminado;
-			formValues.subItemEliminado = Cotizacion.subItemEliminado;
-			formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
-			formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
+		formValues.anexosEliminados = Cotizacion.anexoEliminado;
+		formValues.subItemEliminado = Cotizacion.subItemEliminado;
+		formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
+		formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
 
-	let jsonString = { 'data': JSON.stringify(formValues) };
-	let url = Cotizacion.url + "actualizarCotizacion";
-	let config = { url: url, data: jsonString };
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "actualizaCotizacionData";
+		let config = { url: url, data: jsonString };
 
-	$.when(Fn.ajax(config)).then(function (b) {
-		++modalId;
-		var btn = [];
-		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-		if (b.result == 1) {
-			fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
-		}
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+			}
 
-		btn[0] = { title: 'Continuar', fn: fn };
-		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-	});
-},
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 
-duplicarCotizacionView: function (idCotizacion) {
-	let formValues = Fn.formSerializeObject('formDuplicarCotizacion');
+	duplicarCotizacionView: function (idCotizacion) {
+		let formValues = Fn.formSerializeObject('formDuplicarCotizacion');
 
-	let jsonString = { 'data': JSON.stringify(formValues) };
-	let url = Cotizacion.url + "duplicarCotizacion";
-	let config = { url: url, data: jsonString };
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "duplicarCotizacion";
+		let config = { url: url, data: jsonString };
 
-	$.when(Fn.ajax(config)).then(function (b) {
-		++modalId;
-		var btn = [];
-		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-		if (b.result == 1) {
-			fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
-		}
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+			}
 
-		btn[0] = { title: 'Continuar', fn: fn };
-		Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-	});
-},
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 
 }
 
