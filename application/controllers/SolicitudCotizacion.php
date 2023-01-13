@@ -938,6 +938,7 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
+		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 		$config['data']['siguienteEstado'] = ESTADO_OC_ENVIADA;
 		$config['data']['controller'] = 'SolicitudCotizacion';
 		$config['data']['disabled'] = false;
@@ -1224,7 +1225,7 @@ class SolicitudCotizacion extends MY_Controller
 							'nombre' => $post["nombreSubItemServicio[$k]"],
 							'cantidad' => $post["cantidadSubItemServicio[$k]"],
 						]);
-						break;
+					break;
 
 					case COD_TEXTILES['id']:
 						$dataParaVista['subDetalleOrden'][$k][$row['tipoItemForm']] = getDataRefactorizada([
@@ -1234,18 +1235,29 @@ class SolicitudCotizacion extends MY_Controller
 							'color' => $post["colorSubItem[$k]"],
 							'cantidad' => $post["cantidadTextil[$k]"],
 						]);
-						break;
+					break;
 
 					case COD_TARJETAS_VALES['id']:
 						$dataParaVista['subDetalleOrden'][$k][$row['tipoItemForm']] = getDataRefactorizada([
 							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[$k]"],
 							'monto' => $post["montoSubItem[$k]"],
 						]);
-						break;
+					break;
+					case COD_DISTRIBUCION['id']:
+						$dataParaVista['subDetalleOrden'][$k][$row['tipoItemForm']] = getDataRefactorizada([
+							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[$k]"],
+							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
+							'costo' => $post["costoSubItem[$k]"],
+							'idTipoServicio' => $post["tipoServicioSubItem[$k]"],
+							'cantidadPdv' => $post["cantidadPDVSubItemDistribucion[$k]"],
+							'unidadMedida' => $post["unidadMedidaNameSubItem[$k]"],
+							'idUnidadMedida' => $post["unidadMedidaSubItem[$k]"],
+						]);
+					break;
 
 					default:
 						$data['subDetalleOrden'][$k][$row['tipoItemForm']] = [];
-						break;
+					break;
 				}
 			}
 
@@ -1255,7 +1267,7 @@ class SolicitudCotizacion extends MY_Controller
 
 			$dataParaVista['dataOrden'][$row['idProveedorForm']] = $row;
 
-			$row['subtotalForm'] = $row['costoForm'] * $row['cantidadForm']; //Debe tomarse el precio de compra para calcular el subtotal, porque es orden de compra
+			// $row['subtotalForm'] = $row['costoForm'] * $row['cantidadForm']; //Debe tomarse el precio de compra para calcular el subtotal, porque es orden de compra
 			$dataParaVista['dataOrdenDet'][$row['idProveedorForm']][] = $row;
 		}
 
@@ -1263,6 +1275,7 @@ class SolicitudCotizacion extends MY_Controller
 		$html = getMensajeGestion('noRegistros');
 
 		if (!empty($dataParaVista)) {
+			$dataParaVista['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 			$html = $this->load->view("modulos/SolicitudCotizacion/viewOrdenCompraPre", $dataParaVista, true);
 		}
 

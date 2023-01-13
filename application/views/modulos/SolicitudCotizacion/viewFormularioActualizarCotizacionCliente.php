@@ -311,11 +311,17 @@
                                         <input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 
                                         <div class="fields ">
-                                            <div class="eight wide field">
+                                            <div class="six wide field">
                                                 <div class="ui sub header">Tipo Servicio</div>
                                                 <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
                                                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                                 </select>
+                                            </div>
+                                            <div class="two wide field">
+                                                <div class="ui sub header">Generar OC</div>
+                                                <div class="ui test toggle checkbox checkValidarOC mt-2">
+                                                    <input class="checkForm generarOCSubItem" name="generarOCSubItem[<?= $row['idCotizacionDetalle'] ?>]" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $dataSubItem['requiereOrdenCompra']=='1' ? 'checked' : '' ?>>
+                                                </div>
                                             </div>
                                             <div class="four wide field">
                                                 <div class="ui sub header">Unidad de medida</div>
@@ -341,6 +347,22 @@
                                             <div class="four wide field">
                                                 <div class="ui sub header">Cantidad PDV</div>
                                                 <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+                                            </div>
+                                        </div>
+                                        <div class="<? ($dataSubItem['requiereOrdenCompra']=='0')?'d-none':''; ?> fields divAddParaOC">
+                                            <div class="eight wide field">
+                                                <div class="ui sub header">Proveedor</div>
+                                                <select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[<?= $row['idCotizacionDetalle'] ?>]">
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'selected' => $dataSubItem['idProveedorDistribucion'], 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/ ]); ?>
+                                                </select>
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Real: Peso / Cantidad </div>
+                                                <input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad REAL" value="<?= $dataSubItem['cantidadReal']?>">
+                                            </div>
+                                            <div class="four wide field">
+                                                <div class="ui sub header">Observación Adicional</div>
+                                                <input class="observacionSubItemForm" name="observacion-NoGuarda[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Observación">
                                             </div>
                                         </div>
                                         <div class="tbDistribucionTachado <?= !empty($detalleTachado[$dataSubItem['idItem']]) ? '' : 'd-none' ?>">

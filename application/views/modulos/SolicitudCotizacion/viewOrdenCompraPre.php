@@ -200,10 +200,10 @@
                                     if (!empty($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :
                                         foreach ($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
                                             <input type="hidden" name="idCotizacionDetalleSub[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-                                            <div class="seven wide field">
+                                            <div class="four wide field">
                                                 <div class="ui sub header">Tipo Servicio</div>
                                                 <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $rowDetalle['idCotizacionDetalle'] ?>]">
-                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'] ,'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                                 </select>
                                             </div>
                                             <div class="three wide field">
@@ -218,6 +218,10 @@
                                             <div class="three wide field">
                                                 <div class="ui sub header">Pesos / Cantidad</div>
                                                 <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+                                            </div>
+                                            <div class="three wide field">
+                                                <div class="ui sub header">Cantidad PDV</div>
+                                                <input class="onlyNumbers cantidadPDVSubItemDistribucion cantidadPDVSubItem" name="cantidadPDVSubItemDistribucion[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>">
                                             </div>
                                     <?
                                         endforeach;

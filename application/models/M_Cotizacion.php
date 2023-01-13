@@ -527,7 +527,9 @@ class M_Cotizacion extends MY_Model
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-
+						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
 					];
 				}
 			}
@@ -638,7 +640,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
-		$filtros .= !empty($params['noTipoItem']) ? " AND cd.idItemTipo NOT IN({$params['noTipoItem']}) " : "";
+		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
 
 
 		$sql = "
@@ -657,19 +659,20 @@ class M_Cotizacion extends MY_Model
 			cd.gap,
 			cd.precio,
 			cd.enlaces,
-			cd.idProveedor,
+			p.idProveedor,
 			p.razonSocial,
 			cd.caracteristicasCompras
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
-			LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
+			LEFT JOIN ( SELECT idCotizacionDetalle, MAX(idProveedorDistribucion) as idProveedorDistribucion, CAST(MAX(CAST(requiereOrdenCompra as INT)) AS BIT) as requiereOrdenCompra from compras.cotizacionDetalleSub group by idCotizacionDetalle) cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
+			LEFT JOIN compras.proveedor p ON p.idProveedor = ISNULL(cd.idProveedor,cds.idProveedorDistribucion)
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			WHERE
 			1 = 1
 			{$filtros}
 		";
-
+		
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -688,7 +691,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
-		$filtros .= !empty($params['noTipoItem']) ? " AND cd.idItemTipo NOT IN({$params['noTipoItem']}) " : "";
+		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
 
 
 		$sql = "
@@ -712,7 +715,10 @@ class M_Cotizacion extends MY_Model
 				cds.idItem,
 				cds.idDistribucionTachado,
 				ts.nombre tipoServicio,
-				um.nombre unidadMedida
+				um.nombre unidadMedida,
+				cds.idProveedorDistribucion,
+				cds.cantidadReal,
+				cds.requiereOrdenCompra
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1160,6 +1166,7 @@ class M_Cotizacion extends MY_Model
 			SELECT
 				ts.idTipoServicio id,
 				ts.nombre value,
+				ts.idTipoServicioUbigeo,
 				ts.costo,
 				um.nombre unidadMedida,
 				um.idUnidadMedida

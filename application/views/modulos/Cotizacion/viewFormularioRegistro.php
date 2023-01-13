@@ -285,11 +285,17 @@
 						<!-- Distribucion -->
 						<div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
 							<div class="fields">
-								<div class="eight wide field">
+								<div class="six wide field">
 									<div class="ui sub header">Tipo Servicio</div>
 									<select class="ui dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
-										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida', 'idTipoServicioUbigeo']]); ?>
 									</select>
+								</div>
+								<div class="two wide field">
+									<div class="ui sub header">Generar OC</div>
+									<div class="ui test toggle checkbox checkValidarOC mt-2">
+										<input class="checkForm generarOCSubItem" name="generarOCSubItem[0]" type="checkbox" onchange="Cotizacion.actualizarTotal();">
+									</div>
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Unidad de medida</div>
@@ -317,6 +323,23 @@
 									<input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
 								</div>
 							</div>
+							<div class="d-none fields divAddParaOC">
+								<div class="eight wide field">
+									<div class="ui sub header">Proveedor</div>
+									<select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[0]">
+										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/ ]); ?>
+									</select>
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Real: Peso / Cantidad </div>
+									<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Cantidad REAL">
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Observación Adicional</div>
+									<input class="observacionSubItemForm" name="observacion-NoGuarda[0]" placeholder="Observación">
+								</div>
+							</div>
+							
 							<div class="tbDistribucionTachado d-none">
 								<h4 class="ui dividing header">TACHADO</h4>
 								<!-- <input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]" type="radio" checked> -->

@@ -413,9 +413,10 @@ class M_FormularioProveedor extends MY_Model
 				cp.costo,
 				m.nombreMoneda monedaPlural,
 				m.simbolo simboloMoneda,
-				--(cp.costo * cp.cantidad) subtotal
-				((cp.costo / md.valor) * cp.cantidad) subtotal
-
+				--(cp.costo * cp.cantidad) subtotal,
+				((cp.costo / md.valor) * cp.cantidad) subtotal,
+				cp.idItemTipo,
+				cp.subtotal as cotizacionSubTotal
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
@@ -431,8 +432,6 @@ class M_FormularioProveedor extends MY_Model
 
 			{$filtros}
 		";
-
-
 
 		$query = $this->db->query($sql);
 

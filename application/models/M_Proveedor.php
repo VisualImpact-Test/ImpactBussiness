@@ -85,6 +85,16 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerProveedorDistribucion($param = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.proveedor');
+
+		$this->db->where('visibleDistribucion', '1');
+
+		return $this->db->get();
+	}
 	public function obtenerCiudadUbigeo()
 	{
 
@@ -215,7 +225,6 @@ class M_Proveedor extends MY_Model
 			)
 			{$filtros}
 		";
-		log_message('error', $sql);
 
 
 		$query = $this->db->query($sql);

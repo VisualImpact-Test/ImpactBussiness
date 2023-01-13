@@ -348,6 +348,7 @@ var Cotizacion = {
 			Cotizacion.actualizarAutocomplete();
 			Cotizacion.actualizarOnAddRow(childInserted);
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
+			$('.ui.checkbox').checkbox();
 
 		});
 
@@ -1386,15 +1387,28 @@ var Cotizacion = {
 			let costo = control.find('option:selected').data('costo');
 			let unidadMedida = control.find('option:selected').data('unidadmedida');
 			let idUnidadMedida = control.find('option:selected').data('idunidadmedida');
+			let idTipoServicioUbigeo = control.find('option:selected').data('idtiposervicioubigeo');
 
 			let costoForm = parent.find('.costoTipoServicio');
 			let unidadMedidaForm = parent.find('.unidadMedidaTipoServicio');
 			let idUnidadMedidaForm = parent.find('.unidadMedidaSubItem');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
-
+			
 			costoForm.val(costo);
 			unidadMedidaForm.val(unidadMedida);
 			idUnidadMedidaForm.val(idUnidadMedida);
+
+			// Para el Check
+			let check = parent.find('.checkForm');
+			if( idTipoServicioUbigeo == '1'){ // Si es Urbano
+				if(check.is(":checked")){ // Si esta marcado
+					check.click(); // Para desmarcar
+				}
+			}else{ // Si es NO Urbano
+				if(!check.is(":checked")){ // Si NO esta marcado
+					check.click(); // Para marcar
+				}
+			}
 
 			cantidadFormSubItem.keyup();
 
@@ -1549,6 +1563,22 @@ var Cotizacion = {
 			let cantidadForm = controlParents.find('.cantidadForm');
 
 			cantidadForm.keyup();
+		});
+		$(document).on('click', '.checkValidarOC', function() {
+			// Input Check
+			let check = $(this).find('.checkForm');
+
+			// Div donde se tiene los campos adicionales
+			let div = $(this).parents('.div-features').find('.divAddParaOC');
+			
+			// Si(IF) el check esta activo mostrar los campos necesario. En caso contrario (ELSE) ocultarlo.
+			// La clase "d-none" sirve para ocultar.
+			if(check.is(":checked")){
+				div.removeClass('d-none');
+			}else{
+				div.addClass('d-none');
+			}
+			
 		});
 
 
@@ -2048,6 +2078,9 @@ var Cotizacion = {
 
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
+		let generarOC = parent.find('.generarOCSubItem');
+		let proveedorDistribucion = parent.find('.proveedorDistribucionSubItem');
+		let cantidadReal = parent.find('.cantidadRealSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
 
 
@@ -2074,6 +2107,9 @@ var Cotizacion = {
 
 		tipoServicioSubItem.attr('name', `tipoServicioSubItem[${number}]`);
 		unidadMedidaSubItem.attr('name', `unidadMedidaSubItem[${number}]`);
+		generarOC.attr('name', `generarOCSubItem[${number}]`);
+		proveedorDistribucion.attr('name', `proveedorDistribucionSubItem[${number}]`);
+		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
 
 	},

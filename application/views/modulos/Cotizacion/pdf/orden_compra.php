@@ -58,8 +58,8 @@
         </thead>
         <tbody style="border:1px solid black;">
             <? foreach ($detalle as $k => $row) {
-                $total = $row['subTotalOrdenCompra'];
-                $igv_total = ($row['subTotalOrdenCompra'] * (!empty($row['igv']) ? ($row['igv'] / 100) : IGV));
+                $total = (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']);
+                $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */));
             ?>
                 <tr style="border-bottom: none;">
                     <td class="text-center"><?= ($k + 1) ?>
@@ -69,10 +69,10 @@
                     <td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
                     <td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'], 3) ?></td>
                     <td class="text-right">
-                        <?= !empty($row['costo']) ? monedaNew(['valor'=>$row['costo'],'simbolo'=>$data['simboloMoneda']]) : 0 ?>
+                        <?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
                     </td>
                     <td class="text-right">
-                        <?= !empty($row['subtotal']) ? monedaNew(['valor'=>$row['subtotal'],'simbolo' => $data['simboloMoneda']]) : 0 ?>
+                        <?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
                     </td>
                 </tr>
             <? } ?>
@@ -125,9 +125,9 @@
                     <p><?= !empty($data['igv']) ? $data['igv'] : (IGV * 100) ?>%</p>
                 </td>
                 <td class="text-right">
-                    <p><?= monedaNew(['valor'=>$total,'simbolo' => $data['simboloMoneda']]) ?></p>
-                    <p><?= monedaNew(['valor'=> $igv_total,'simbolo' => $data['simboloMoneda']]) ?></p>
-                    <p><?= monedaNew(['valor'=> $igv_total + $total,'simbolo' => $data['simboloMoneda']])  ?></p>
+                    <p><?= monedaNew(['valor' => $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
+                    <p><?= empty($igv_total) ? 'S/ 0.00' : (monedaNew(['valor' => $igv_total, 'simbolo' => $data['simboloMoneda']])) ?></p>
+                    <p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']])  ?></p>
                 </td>
             </tr>
             <tr>
@@ -135,13 +135,13 @@
                     Son: <?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
                 </td>
             </tr>
-            <?if(!empty($data['comentario'])):?>
-            <tr>
-                <td colspan="6" class="text-left">
-                   <?= !empty($data['comentario']) ? $data['comentario'] : ''?>
-                </td>
-            </tr>
-            <?endif;?>
+            <? if (!empty($data['comentario'])) : ?>
+                <tr>
+                    <td colspan="6" class="text-left">
+                        <?= !empty($data['comentario']) ? $data['comentario'] : '' ?>
+                    </td>
+                </tr>
+            <? endif; ?>
             <tr style="border-bottom: none;">
                 <td colspan="2">
                     <strong>Forma de Pago</strong>
