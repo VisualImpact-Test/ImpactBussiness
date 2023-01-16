@@ -14,7 +14,7 @@
                         <input class="form-control col-md-8" id="ruc" name="ruc" patron="requerido,ruc" value="<?= $nroDocumento ?>">
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="rubro" style="border:0px;">Rubro :</label>
+                        <label class="form-control col-md-4" for="rubro" style="border:0px;">Actividad :</label>
                         <select class="form-control col-md-8 my_select2" id="rubro" name="rubro" multiple data-live-search="true" patron="requerido">
                           <?
                               foreach ($listadoRubros as $rubros) {
@@ -27,7 +27,7 @@
                         </select>
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="metodoPago" style="border:0px;">Método de pago :</label>
+                        <label class="form-control col-md-4" for="metodoPago" style="border:0px;">Forma de pago :</label>
                         <select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" multiple data-live-search="true" patron="requerido">
                         <?
 

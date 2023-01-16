@@ -15,11 +15,11 @@
                         <label class="form-control col-md-8" style="border:0px;"><?= $nroDocumento ?></label>
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="rubro" style="border:0px;"><strong>Rubro :</strong></label>
+                        <label class="form-control col-md-4" for="rubro" style="border:0px;"><strong>Actividad :</strong></label>
                         <label class="form-control col-md-8" style="border:0px;"><?= $rubro ?></label>
                     </div>
                     <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="metodoPago" style="border:0px;"><strong>Método de pago :</strong></label>
+                        <label class="form-control col-md-4" for="metodoPago" style="border:0px;"><strong>Forma de pago :</strong></label>
                         <label class="form-control col-md-8" style="border:0px;"><?= $metodoPago ?></label>
                     </div>
                 </fieldset>

@@ -244,7 +244,8 @@ class Proveedor extends MY_Controller
 			'idProveedorEstado' => 1,
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
-			'numeroContacto' => $post['numeroContacto']
+			'numeroContacto' => $post['numeroContacto'],
+			'costo' => $post['costo'],
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
@@ -601,7 +602,7 @@ class Proveedor extends MY_Controller
 		$this->email->set_newline("\r\n");
 
 		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to('jean.alarcon@visualimpact.com.pe');
+		$this->email->to('eder.alata@visualimpact.com.pe');
 
 		$data = [];
 		$dataParaVista = [];

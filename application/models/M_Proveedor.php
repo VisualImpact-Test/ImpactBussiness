@@ -20,7 +20,7 @@ class M_Proveedor extends MY_Model
 		$sql = "
 			SELECT
 				idRubro AS id
-				, nombre AS value
+				, codigoSunat + ' - ' + nombre AS value
 			FROM compras.rubro
 			WHERE estado = 1
 		";
