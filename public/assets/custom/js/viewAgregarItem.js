@@ -9,6 +9,7 @@ var Cotizacion = {
 	htmlG: '',
 	htmlCotizacion: '',
     nDetalle: 1,
+	itemsLogisticaData: [],
 
 	load: function () {
 
@@ -32,6 +33,9 @@ var Cotizacion = {
 					on    : 'click'
 				})
 			});
+
+			Cotizacion.itemsLogisticaData = JSON.parse($('#itemsLogistica').val());
+			Cotizacion.itemLogisticaInputComplete();
         });
 
 		//boton de agregar item
@@ -61,7 +65,18 @@ var Cotizacion = {
             $('.simpleDropdown').dropdown();
     
 		});
-	
+		$(document).on('focusout', '.itemLogistica', function () {
+			let control = $(this);
+			let val = control.val();
+			if(val != '' && val != undefined && val != null){
+				control.attr('readonly', 'readonly');
+			}
+			id = control.closest('.itemLogisticaDiv').find('.codItemLogistica').val();
+			if( id == '' || id == undefined || id == null){
+				control.closest('.itemLogisticaDiv').find('.codItemLogistica').val('0');
+			}
+		});
+
 		$(document).on('click', '.btneliminarfila', function (e) {
 			e.preventDefault();
             let body = $(this).parents('.body-item');
@@ -303,7 +318,45 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	itemLogisticaInputComplete: function(ord){
+		let tipo = 1;
+		let items = [];
+		let nro = 0;
+		$.each(Cotizacion.itemsLogisticaData, function (index, value) {
+			items[nro] = value;
+			nro++;
+		});
 
+		i = 0;
+		limit = $('.itemLogistica').length;
+
+		for (i; i < limit; i++) {
+			let input = $(".itemLogistica")[i];
+			$(input).autocomplete({
+				source: items,
+				select: function (event, ui) {
+					event.preventDefault();
+					let control = $(this).parents(".itemLogisticaDiv");
+					//Llenamos los items con el nombre
+					$(this).val(ui.item.label);
+					//Llenamos una caja de texto invisible que contiene el ID del Artículo
+					control.find(".codItemLogistica").val(ui.item.value);
+					//Tipo Item
+					$(this).focusout();
+				},
+				// appendTo: "#modal-page-" + Oper.modalId,
+				max: 5,
+				minLength: 3,
+			});
+		}
+
+
+	},
+	editItemLogisticaValue: function(t){
+		control = $(t);
+		control.closest('.itemLogisticaDiv').find('.itemLogistica').attr('readonly',false);
+		control.closest('.itemLogisticaDiv').find('.codItemLogistica').val('');
+	},
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
 			formValues.tipoRegistro = tipoRegistro;

@@ -349,7 +349,7 @@
                                                 <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
                                             </div>
                                         </div>
-                                        <div class="<? ($dataSubItem['requiereOrdenCompra']=='0')?'d-none':''; ?> fields divAddParaOC">
+                                        <div class="<?= ($dataSubItem['requiereOrdenCompra']=='0')? 'd-none ':''; ?> fields divAddParaOC">
                                             <div class="eight wide field">
                                                 <div class="ui sub header">Proveedor</div>
                                                 <select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[<?= $row['idCotizacionDetalle'] ?>]">

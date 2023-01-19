@@ -8,7 +8,7 @@
                 <input type="text" value="<?= $dataOper['requerimiento'] ?>" readonly patron="requerido">
             </div>
             <div class="six wide field">
-                <div class="ui sub header">Concepto PO</div>
+                <div class="ui sub header">Concepto OC</div>
                 <input type="text" value="<?= $dataOper['concepto'] ?>" readonly patron="requerido">
             </div>
         </div>
@@ -86,7 +86,7 @@
                             <input type="text" name="lugarEntrega" placeholder="Escriba aquí" value="">
                         </div>
                         <div class="three wide field">
-                            <div class="ui sub header">PO Cliente</div>
+                            <div class="ui sub header">OC Cliente</div>
                             <input type="text" name="pocliente" placeholder="Escriba aquí" value="">
                         </div>
                         <div class="six wide field">

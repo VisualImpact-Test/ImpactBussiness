@@ -184,12 +184,13 @@ class Item extends MY_Controller
         foreach ($itemsLogistica as $key => $row) {
             $data['items'][1][$row['value']]['value'] = $row['value'];
             $data['items'][1][$row['value']]['label'] = $row['label'];
-            $data['items'][1][$row['value']]['idum'][$row['idum']] = $row['idum'];
-            $data['items'][1][$row['value']]['um'][$row['idum']] = $row['um'];
+            $data['items'][1][$row['value']]['idum'] = $row['idum'];
+            $data['items'][1][$row['value']]['um'] = $row['um'];
         }
         foreach ($data['items'] as $k => $r) {
             $data['items'][$k] = array_values($data['items'][$k]);
         }
+
         $data['items'][0] = array();
         $result['data']['existe'] = 0;
 
@@ -198,8 +199,10 @@ class Item extends MY_Controller
         $dataParaVista['single'] = true;
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Item';
+
+        $dataParaVista['data']['itemsLogistica'] = $data['items'][1];
         $result['data']['html'] = $this->load->view("modulos/Item/viewRegistroItem", $dataParaVista, true);
-        $result['data']['itemsLogistica'] = $data['items'];
+        // $result['data']['itemsLogistica'] = $data['items'];
         $dataParaVista['view'] = 'modulos/Item/viewRegistroItem';
 
         $this->view($dataParaVista);

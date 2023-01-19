@@ -167,9 +167,11 @@ class M_Cotizacion extends MY_Model
 				, p.total
 				, p.codOrdenCompra
 				, p.motivoAprobacion
+				, p.montoOrdenCompra
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
+				, p.mostrarPrecio AS flagMostrarPrecio
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -274,6 +276,7 @@ class M_Cotizacion extends MY_Model
 			->join('compras.proveedor', 'proveedor.idProveedor = cd.idProveedor', 'LEFT');
 
 		if (isset($params['idCotizacion'])) $this->db->where('c.idCotizacion', $params['idCotizacion']);
+		if (isset($params['idProveedor'])) $this->db->where('cd.idProveedor', $params['idProveedor']);
 		return $this->db->get();
 	}
 
@@ -403,6 +406,13 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerCuentaDeLaCotizacionDetalle($param = NULL)
+	{
+		$this->db->select('*')->from('compras.cotizacion')->where('idCotizacion', $param);
+		$query = $this->db->get();
+		$data = $query->row_array();
+		return $data['idCuenta'];
+	}
 	public function insertarCotizacion($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
@@ -529,7 +539,7 @@ class M_Cotizacion extends MY_Model
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
+						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 					];
 				}
 			}

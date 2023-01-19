@@ -842,6 +842,7 @@ class SolicitudCotizacion extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
@@ -1004,6 +1005,7 @@ class SolicitudCotizacion extends MY_Controller
 				'igv' => $row['igvOrden'] ? '18' : null,
 				'entrega' => !empty($row['lugarEntrega']) ? $row['lugarEntrega'] : NULL,
 				'fechaEntrega' => !empty($row['fechaEntrega']) ? $row['fechaEntrega'] : NULL,
+				
 			];
 
 			$rs_oc = $this->model->insertar(['tabla' => 'compras.ordenCompra', 'insert' => $insert_oc]);
@@ -1085,6 +1087,108 @@ class SolicitudCotizacion extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
+	}
+
+	public function descargarOrdenCompraPdf() // Es la vista previa de como se veria la OC
+	{
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+
+		// Data de Cabecera
+		$dataOper = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])['query']->result_array();
+		$dataProveedor = $this->model_proveedor->obtenerInformacionProveedores(['idProveedor' => $post['idProveedor']])['query']->row_array();
+		$dataMoneda = $this->db->get_where('compras.moneda', ['idMoneda' => $post['idMoneda']])->row_array();
+		$dataMetodoPago = $this->db->get_where('compras.metodoPago', ['idMetodoPago' => $post['metodoPago']])->row_array();
+		$idUsuarioFirma = $this->db->get_where('sistema.usuario', ['idUsuario' => $this->idUsuario])->row_array()['idUsuarioFirma'];
+		$dataFirma = $this->db->get_where('sistema.usuarioFirma', ['idUsuarioFirma' => $idUsuarioFirma])->row_array();
+
+		// Data para detalle
+		$detalleCotizacion = $this->model->obternerCotizacionDetalle(['idCotizacion' => $post['idCotizacion'], 'idProveedor' => $post['idProveedor']])->result_array();
+		foreach ($detalleCotizacion as $key => $value) {
+			$detalleCotizacion[$key]['cotizacionSubTotal'] = $value['subtotal'];
+			$detalleCotizacion[$key]['subTotalOrdenCompra'] = $value['subtotal'];
+		}
+
+		$dataParaVista['data'] = 
+		[
+			'requerimiento' => $dataOper[0]['requerimiento'],
+			'pocliente' => $post['pocliente'],
+			'razonSocial' => $dataProveedor['razonSocial'],
+			'rucProveedor' => $dataProveedor['nroDocumento'],
+			'nombreContacto' => $dataProveedor['nombreContacto'],
+			'direccion' => $dataProveedor['direccion'],
+			'numeroContacto' => $dataProveedor['numeroContacto'],
+			'correoContacto' => $dataProveedor['correoContacto'],
+			'fechaEntrega' => $post['fechaEntrega'],
+			'simboloMoneda' => $dataMoneda['simbolo'],
+			'entrega' => $post['lugarEntrega'],
+			'observacion' => $post['observacion'],
+			'monedaPlural' => $dataMoneda['nombreMoneda'],
+			'comentario' => $post['comentario'],
+			'metodoPago' => $dataMetodoPago['nombre'],
+			'nombre_archivo' => $dataFirma['nombre_archivo'],
+			'igv' => (isset($post['igvOrden'])?'18':'0')
+		];
+
+		$dataParaVista['detalle'] = $detalleCotizacion;
+
+		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
+		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($post['idCotizacion']);
+		$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+
+		$dataParaVista['cuentas'] = implode(', ', $cuentas);
+
+		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+
+		// $ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+
+		// $dataParaVista['data'] = $ordenCompra[0];
+		// $dataParaVista['detalle'] = $ordenCompra;
+
+		// $ids = [];
+		// foreach ($ordenCompra as $v) {
+			// $cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+			// $cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+			// $ids[] = $v['idCotizacion'];
+		// }
+		// $dataParaVista['cuentas'] = implode(', ', $cuentas);
+		// $idCotizacion = implode(",", $ids);
+
+		require APPPATH . '/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
+
+		$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-009'], true);
+		$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+		$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra_vistaPrevia", $dataParaVista, true);
+
+		$mpdf->SetHTMLHeader($contenido['header']);
+		$mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
+
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+
+		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+
+		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 
 	public function getOrdenesCompra()

@@ -54,9 +54,11 @@ var SolicitudCotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.visualizarOrdenCompraPdf()", content: "Este reporte es solo una vista previa, no se actualizara la información hasta aceptar la operación." });';
 
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				btn[1] = { title: 'Aceptar', fn: fn[1] };
+				btn[1] = { title: 'Vizualizar OC', fn: fn[2] };
+				btn[2] = { title: 'Aceptar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
@@ -126,7 +128,15 @@ var SolicitudCotizacion = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: '40%' });
 		});
+	},
+	visualizarOrdenCompraPdf: function () {
+		let formValues = Fn.formSerializeObject('formRegistroOperValidado');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		console.log(jsonString);
+		console.log(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf');
+		Fn.download(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf', jsonString);
 	}
+	
 }
 var Cotizacion = {
 
@@ -1422,9 +1432,11 @@ var Cotizacion = {
 			let cantidadForm = controlParent.find('.cantidadForm');
 
 			let pesoCantidadForm = parent.find('.cantidadSubItemDistribucion');
+			let pesoCantidadRealForm = parent.find('.cantidadRealSubItem');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
 
 			pesoCantidadForm.val(peso);
+			pesoCantidadRealForm.val(peso);
 			cantidadFormSubItem.keyup();
 
 			let idItem = control.find('option:selected').val();
@@ -2004,6 +2016,13 @@ var Cotizacion = {
 					content: `Será necesario cotizar nuevamente con el proveedor`
 				}
 			);
+		$('.btn-info-descripcion')
+		.popup(
+			{
+				title: `Cantidad de elementos`,
+				content: `Esta cantidad es referente al Item`
+			}
+		);
 		$('.btn-info-gap')
 			.popup(
 				{
@@ -2021,7 +2040,9 @@ var Cotizacion = {
 			.popup(
 				{
 					title: `Si requiere más de ${LIMITE_COMPRAS}`,
-					content: `Será necesario cotizar nuevamente con el proveedor`
+					content: `Será necesario cotizar nuevamente con el proveedor \n
+					alsjkhfgkaljshgf
+					`
 				}
 			);
 		$('.btn-info-gap')

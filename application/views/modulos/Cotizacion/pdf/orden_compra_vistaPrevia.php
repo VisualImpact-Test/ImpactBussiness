@@ -4,7 +4,7 @@
             <td class="text-left w-40">RUC: <?= RUC_VISUAL ?> </td>
             <td class="text-left w-20">N° DE RQ: </td>
             <td class="text-left w-20"><?= verificarEmpty($data['requerimiento'], 3) ?></td>
-            <td class="text-left w-40">N° DE ORDEN: <span style="margin-left: 50px"> OC<?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
+            <td class="text-left w-40">N° DE ORDEN: <span style="margin-left: 50px"> OCXXXXXX</span></td>
         </tr>
         <tr>
             <td class="text-left w-20">Unidad de Negocio</td>
@@ -12,12 +12,6 @@
             <td class="text-left w-20">PO Cliente:</td>
             <td class="text-center w-20"><?= verificarEmpty($data['pocliente'], 3) ?></td>
         </tr>
-        <!-- <tr>
-            <td class="text-left w-20">Centro de Costo:</td>
-            <td class="text-center w-20"><?= verificarEmpty($data['centrosCosto'], 3) ?></td>
-            <td class="text-left w-20">Fecha:</td>
-            <td class="text-center w-20"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
-        </tr> -->
         <tr>
             <td class="text-left" colspan="4">Datos del proveedor:</td>
         </tr>
@@ -59,11 +53,10 @@
         <tbody style="border:1px solid black;">
             <? foreach ($detalle as $k => $row) {
                 $total = (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']);
-                $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */));
+                $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0 /*IGV */));
             ?>
                 <tr style="border-bottom: none;">
                     <td class="text-center"><?= ($k + 1) ?>
-
                         <input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
                     </td>
                     <td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>

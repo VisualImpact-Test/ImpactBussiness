@@ -412,6 +412,7 @@
 							<div class="sixteen wide field">
 								<div class="ui sub header">
 									Cantidad <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>
+									<div class="ui btn-info-custom text-primary btn-info-descripcion"><i class="info circle icon"></i></div>
 								</div>
 								<div class="ui-widget">
 									<div class="ui right action input w-100">

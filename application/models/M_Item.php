@@ -172,7 +172,7 @@ class M_Item extends MY_Model
 	public function obtenerItemServicio($params = [])
 	{
 		$filtros = "";
-		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica,0) <> 0" : "";
+		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica, 0 ) <> 0" : "";
 
 
 		$sql = "
@@ -208,12 +208,11 @@ class M_Item extends MY_Model
 			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna
 
 		from compras.item i
-		LEFT JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
+		JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
 		LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor
 		WHERE i.estado = 1
 		order by 2
 		";
-
 		$result = $this->db->query($sql)->result_array();
 
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];

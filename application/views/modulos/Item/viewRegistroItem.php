@@ -1,8 +1,3 @@
-<!-- <div class="ui attached  message">
-  <div class="header">
-    Registrar Cotización
-  </div>
-</div> -->
 <style>
     .img-lsck-capturas{
         height: 150px !important;
@@ -144,13 +139,18 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="fields">
-                        <div class="sixteen wide field">
+                            <div class="sixteen wide field itemLogisticaDiv">
                                 <div class="ui sub header">Equivalente en logistica</div>
-                                <input class="form-control" id="equivalente" name="equivalente" placeholder="Buscar ">
-                                <input class="d-none" id="idItemLogistica" name="idItemLogistica">
-                            </div>
-                        </div>
+                                <div class="ui action input">
+                                    <input class="form-control itemLogistica" id="equivalente" name="equivalente" placeholder="Buscar ">
+                                    <a class="ui button" onclick="Cotizacion.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></a>
+                                </div>
+                                <input class="d-none codItemLogistica" name="idItemLogistica">
+							</div>
+						</div>
+
                     </div>
                 </div>
             </div>
@@ -178,3 +178,4 @@
 
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($informacionItem) ?>'>
+<textarea class="d-none" id="itemsLogistica"><?= json_encode($itemsLogistica) ?></textarea>

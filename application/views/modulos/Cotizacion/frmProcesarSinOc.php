@@ -15,6 +15,12 @@
             </div>
             <div class="fields">
                 <div class="sixteen wide field">
+                    <label>Monto de OC:</label>
+                    <input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>">
+                </div>
+            </div>
+            <div class="fields">
+                <div class="sixteen wide field">
                     <div class="ui labeled button" tabindex="0">
                         <div class="ui blue button" onclick="$('.file-lsck-capturas').click();">
                             <i class="paperclip icon"></i> Adjuntar

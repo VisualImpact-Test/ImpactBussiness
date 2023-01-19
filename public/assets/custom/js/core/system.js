@@ -251,7 +251,7 @@ var View = {
 				}
 			}
 
-			if (!$.isNumeric(e.key) && e.key != '.') {
+			if (!$.isNumeric(e.key) && e.key != '.' && e.key != 'Backspace') {
 				e.preventDefault();
 				$(this).val('');
 			} else {
@@ -282,7 +282,8 @@ var View = {
 			let nmin = Number(control.data('min'));
 			if(nmin !== typeof undefined){
 				if(control.val() < nmin){
-					$(this).val(nmin);
+					// $(this).val(nmin); // Comentado para que no escriba automaticamente el valor minimo.
+					$(this).val('');
 				}
 			}
 

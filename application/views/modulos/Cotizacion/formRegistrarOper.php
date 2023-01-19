@@ -39,7 +39,7 @@
         </div>
         <div class="fields">
             <div class="eight wide field">
-                <div class="ui sub header">Concepto PO / CR Cliente</div>
+                <div class="ui sub header">Concepto OC / CR Cliente</div>
                 <input type="text" name="concepto" placeholder="Concepto PO / CR Cliente" value="<?= $cotizaciones[0]['codOrdenCompra']; ?>">
             </div>
             <div class="four wide field">

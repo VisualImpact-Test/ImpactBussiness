@@ -265,6 +265,7 @@ class Cotizacion extends MY_Controller
 				$data['update'] = [
 					'idCotizacionEstado' => ESTADO_COTIZACION_APROBADA,
 					'codOrdenCompra' => !empty($post['codigo_oc']) ? $post['codigo_oc'] : NULL,
+					'montoOrdenCompra' => !empty($post['monto_oc']) ? $post['monto_oc'] : NULL,
 					'motivoAprobacion' => !empty($post['motivo']) ? $post['motivo'] : NULL,
 				];
 				$data['where'] = [
@@ -559,7 +560,7 @@ class Cotizacion extends MY_Controller
 					'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 					'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 					'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
+					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 
 				];
 			}
@@ -1468,9 +1469,11 @@ class Cotizacion extends MY_Controller
 
 		$ids = [];
 		foreach ($ordenCompra as $v) {
+			$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+			$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
 			$ids[] = $v['idCotizacion'];
 		}
-
+		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$idCotizacion = implode(",", $ids);
 		// $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
 		// $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
