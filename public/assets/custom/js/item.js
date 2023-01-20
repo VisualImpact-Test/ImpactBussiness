@@ -51,7 +51,17 @@ var Item = {
 				Item.actualizarAutocomplete();
 			});
 		});
-
+		$(document).on('focusout', '.itemLogistica', function () {
+			let control = $(this);
+			let val = control.val();
+			if(val != '' && val != undefined && val != null){
+				control.attr('readonly', 'readonly');
+			}
+			id = control.closest('.divItemLogistica').find('.codItemLogistica').val();
+			if( id == '' || id == undefined || id == null){
+				control.closest('.divItemLogistica').find('.codItemLogistica').val('0');
+			}
+		});
 		$(document).on('click', '.btn-actualizarItem', function () {
 			++modalId;
 
@@ -62,9 +72,10 @@ var Item = {
 			let config = { 'url': Item.url + 'formularioActualizacionItem', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				//if (a.data.existe == 0) {
-					//Item.itemsLogistica = a.data.itemsLogistica;
-				//}
+				if (a.data.existe == 0) {
+					Item.itemsLogistica = a.data.itemsLogistica;
+					console.log(Item.itemsLogistica);
+				}
 
 				let btn = [];
 				let fn = [];
@@ -280,23 +291,38 @@ var Item = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
+	editItemLogisticaValue: function(t){
+		control = $(t);
+		control.closest('.divItemLogistica').find('.itemLogistica').attr('readonly',false);
+		control.closest('.divItemLogistica').find('.codItemLogistica').val('');
+	},
 	actualizarAutocomplete: function () {
-		$("#equivalente").autocomplete({
-			source: Item.itemsLogistica[1],
-			minLength: 0,
+
+		itemsLogisticaData = Item.itemsLogistica[1];
+		let items = [];
+		let nro = 0;
+		$.each(itemsLogisticaData, function (index, value) {
+			items[nro] = value;
+			// items[nro].label = value.item;
+			// items[nro].value = value.idItem;
+			nro++;
+		});
+		let input = $("#equivalente")[0];
+		$(input).autocomplete({
+			source: items,
 			select: function (event, ui) {
 				event.preventDefault();
-
-				//Llenamos los items con el nombre 
+				let control = $(this).parents(".divItemLogistica");
+				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
-
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
-				$(this).parents(".control-group").find("#idItemLogistica").val(ui.item.value);
+				control.find(".codItemLogistica").val(ui.item.value);
+
+				$(this).focusout();
 			},
 			appendTo: "#modal-page-" + modalId,
 			max: 5,
-			minLength: 5,
+			minLength: 3,
 		});
 	},
 }

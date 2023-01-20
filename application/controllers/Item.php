@@ -120,17 +120,17 @@ class Item extends MY_Controller
         $dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
         $dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
 
-
         $itemsLogistica =  $this->model->obtenerItemsLogistica();
         foreach ($itemsLogistica as $key => $row) {
             $data['items'][1][$row['value']]['value'] = $row['value'];
             $data['items'][1][$row['value']]['label'] = $row['label'];
-            $data['items'][1][$row['value']]['idum'][$row['idum']] = $row['idum'];
-            $data['items'][1][$row['value']]['um'][$row['idum']] = $row['um'];
+            $data['items'][1][$row['value']]['idum'] = $row['idum'];
+            $data['items'][1][$row['value']]['um'] = $row['um'];
         }
         foreach ($data['items'] as $k => $r) {
             $data['items'][$k] = array_values($data['items'][$k]);
         }
+
         $data['items'][0] = array();
         $result['data']['existe'] = 0;
 
@@ -138,9 +138,10 @@ class Item extends MY_Controller
 
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Item';
-        $result['data']['html'] = $this->load->view("modulos/Item/formularioActualizacion", $dataParaVista, true);
-        $result['data']['itemsLogistica'] = $data['items'];
 
+        $result['data']['html'] = $this->load->view("modulos/Item/formularioActualizacion", $dataParaVista, true);
+        
+        $result['data']['itemsLogistica'] = $data['items'];
         echo json_encode($result);
     }
 
@@ -328,7 +329,7 @@ class Item extends MY_Controller
             'idItemMarca' => $post['marca'],
             'idItemCategoria' => $post['categoria'],
             'idItemSubCategoria' => $post['subcategoria'],
-            'idItemtextil' => $post['textil'],
+            // 'idItemtextil' => $post['textil'],
             'idItemLogistica' => $post['idItemLogistica']
         ];
 
@@ -435,7 +436,17 @@ class Item extends MY_Controller
                 ]
             ],
             'headers' => [
-                'TIPO (*)', 'MARCA (*)', 'CATEGORIA (*)', 'SUBCATEGORIA (*)', 'ITEM (*)', 'CARACTERISTICAS (*)', 'EQUIVALENTE EN LOGISTICA', 'TALLA', 'TELA', 'COLOR', 'MONTO'
+                'TIPO (*)',
+                'MARCA (*)',
+                'CATEGORIA (*)',
+                'SUBCATEGORIA (*)',
+                'ITEM (*)',
+                'CARACTERISTICAS (*)',
+                'EQUIVALENTE EN LOGISTICA',
+                'TALLA',
+                'TELA',
+                'COLOR',
+                'MONTO'
             ],
             'columns' => [
                 ['data' => 'tipo', 'type' => 'myDropdown', 'placeholder' => 'tipo', 'width' => 200, 'source' => $tipoItem],
@@ -444,7 +455,7 @@ class Item extends MY_Controller
                 ['data' => 'subcategoria', 'type' => 'myDropdown', 'placeholder' => 'subCategoria', 'width' => 200, 'source' => $subcategoriaItem],
                 ['data' => 'item', 'type' => 'text', 'placeholder' => 'item', 'width' => 200, 'source'],
                 ['data' => 'caracteristicas', 'type' => 'text', 'placeholder' => 'caracteristicas', 'width' => 200],
-                ['data' => 'logistica', 'type' => 'text', 'placeholder' => 'logistica', 'width' => 200, 'source' => $logisticaItem],
+                ['data' => 'logistica', 'type' => 'myDropdown', 'placeholder' => 'logistica', 'width' => 200, 'source' => $logisticaItem],
                 ['data' => 'talla', 'type' => 'text', 'placeholder' => 'talla', 'width' => 200, 'source'],
                 ['data' => 'tela', 'type' => 'text', 'placeholder' => 'tela', 'width' => 200, 'source'],
                 ['data' => 'color', 'type' => 'text', 'placeholder' => 'color', 'width' => 200, 'source'],
@@ -598,7 +609,6 @@ class Item extends MY_Controller
         $itemDetalle = $this->model->insertarMasivo('compras.itemDetalle', $dataDetalle['insert']);
 
         if (!$itemDetalle || !$insertItem) {
-            respuesta:
             $result['result'] = 0;
             $result['msg']['title'] = 'Alerta!';
             $result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -608,7 +618,8 @@ class Item extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
             $this->db->trans_commit();
         }
-
+        
+        respuesta:
         echo json_encode($result);
     }
 }

@@ -10,11 +10,23 @@
                 <label class="form-control col-md-5" for="nombre" style="border:0px;">Caracteristicas :</label>
                 <input class="form-control col-md-7" id="caracteristicas" name="caracteristicas" patron="requerido" value="<?= $informacionItem['caracteristicas'] ?>">
             </div>
+            <div class="form-group child-divcenter row w-100 pb-2 divItemLogistica">
+                <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
+                <input class="d-none codItemLogistica" id="idItemLogistica" name="idItemLogistica" value="<?= $informacionItem['idItemLogistica'] ?>">
+                <div class="input-group col-md-7 px-0">
+                    <!-- <input class="form-control items ui-autocomplete-input" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off" style="height: 40.5px;"> -->
+                    <input class="form-control itemLogistica ui-autocomplete-input" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>" placeholder="Buscar" style="height: 40.5px;" autocomplete="off" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="Item.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></button>
+                    </div>
+                </div>
+            </div>
+            <!--             
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
-                <input class="form-control col-md-7" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>" placeholder="Buscar ">
+                <input class="form-control col-md-7" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>" placeholder="Buscar">
                 <input class="d-none" id="idItemLogistica" name="idItemLogistica" value="<?= $informacionItem['idItemLogistica'] ?>">
-            </div>
+            </div> -->
             <div class="control-group child-divcenter row w-100">
                 <label class="form-control col-md-5" for="tipo" style="border:0px;">Tipo :</label>
                 <select class="form-control col-md-7" id="tipo" name="tipo" patron="requerido">

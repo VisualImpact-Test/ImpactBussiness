@@ -234,6 +234,7 @@ class M_Item extends MY_Model
 			--LEFT JOIN visualimpact.logistica.articulo_marca am on a.idMarca = am.idMarca
 			--LEFT JOIN visualimpact.logistica.articulo_marca_cuenta amc ON am.idMarca = amc.idMarca
 			--LEFT JOIN visualimpact.logistica.cuenta c ON amc.idCuenta = c.idCuenta
+			ORDER BY 2,1
 		";
 
 		$result = $this->db->query($sql)->result_array();
