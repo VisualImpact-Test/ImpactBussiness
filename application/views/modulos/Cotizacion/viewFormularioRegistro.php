@@ -315,7 +315,7 @@
 									</select>
 								</div>
 								<div class="four wide field">
-									<div class="ui sub header">Peso / Cantidad</div>
+									<div class="ui sub header">Peso</div>
 									<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
 								</div>
 								<div class="four wide field">
@@ -331,13 +331,13 @@
 									</select>
 								</div>
 								<div class="four wide field">
-									<div class="ui sub header">Real: Peso / Cantidad </div>
+									<div class="ui sub header">Peso Real </div>
 									<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Cantidad REAL">
 								</div>
-								<div class="four wide field">
+								<!-- <div class="four wide field">
 									<div class="ui sub header">Observación Adicional</div>
 									<input class="observacionSubItemForm" name="observacion-NoGuarda[0]" placeholder="Observación">
-								</div>
+								</div> -->
 							</div>
 							
 							<div class="tbDistribucionTachado d-none">
@@ -411,7 +411,7 @@
 						<div class="fields">
 							<div class="sixteen wide field">
 								<div class="ui sub header">
-									Cantidad <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>
+									Cantidad de Elementos <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>
 									<div class="ui btn-info-custom text-primary btn-info-descripcion"><i class="info circle icon"></i></div>
 								</div>
 								<div class="ui-widget">

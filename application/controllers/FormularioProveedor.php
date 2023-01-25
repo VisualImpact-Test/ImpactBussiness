@@ -314,6 +314,7 @@ class FormularioProveedor extends MY_Controller
 			$rpta['continuar'] = true;
 		} else {
 			$rpta['continuar'] = false;
+			$rpta['data'] = $data;
 		}
 		echo json_encode($rpta);
 	}
@@ -336,6 +337,31 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function contraofertaRegistrado()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		// $idPropuestaItem = $post['idPropuestaItem'];
+
+		$dataParaVista = [
+			'categoria' => $this->model->obtenerCategorias()->result_array(),
+			'marca' => $this->model->obtenerMarcas()->result_array(),
+			'motivo' => $this->model->obtenerMotivos()->result_array(),
+			'id' => $post['id']
+		];
+		$dataParaVista['propuestaItem'] = $this->model->validarPropuestaExistencia(['idCotizacionDetalleProveedorDetalle' => $post['id']])->result_array();
+		if (!empty($dataParaVista['propuestaItem'])) {
+			foreach ($dataParaVista['propuestaItem'] as $key => $value) {
+				$dataParaVista['propuestaItemArchivo'][$value['idPropuestaItem']] = $this->model->getPropuestaArchivos(['idPropuestaItem' => $value['idPropuestaItem']])->result_array();
+			};
+		}
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Consultar Propuesta';
+		$result['data']['html'] = $this->load->view("formularioProveedores/viewRegistroContraoferta", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function registrarPropuesta()
 	{
 		$result = $this->result;
@@ -348,9 +374,9 @@ class FormularioProveedor extends MY_Controller
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['cantidadImagenes'] = checkAndConvertToArray($post['cantidadImagenes']);
-		$post['f_base64'] = checkAndConvertToArray($post['f_base64']);
-		$post['f_name'] = checkAndConvertToArray($post['f_name']);
-		$post['f_type'] = checkAndConvertToArray($post['f_type']);
+		if(isset($post['f_base64'])) $post['f_base64'] = checkAndConvertToArray($post['f_base64']);
+		if(isset($post['f_name'])) $post['f_name'] = checkAndConvertToArray($post['f_name']);
+		if(isset($post['f_type'])) $post['f_type'] = checkAndConvertToArray($post['f_type']);
 
 		$orden = 0;
 		$insertArchivos = [];
@@ -358,8 +384,8 @@ class FormularioProveedor extends MY_Controller
 			$insertData = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$key],
 				'nombre' => $post['nombre'][$key],
-				'idItemMarca' => $post['idItemMarca'][$key],
-				'idItemCategoria' => $post['idItemCategoria'][$key],
+				'idItemMarca' => !empty($post['idItemMarca'][$key]) ? $post['idItemMarca'][$key] : NULL,
+				'idItemCategoria' => !empty($post['idItemCategoria'][$key]) ? $post['idItemCategoria'][$key] : NULL,
 				'idPropuestaMotivo' => $post['idPropuestaMotivo'][$key],
 				'cantidad' => $post['cantidad'][$key],
 				'costo' => $post['costo'][$key]
@@ -380,7 +406,7 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos[] = [
 					'idPropuestaItem' => $id,
-					'idTipoArchivo' => '5',
+					'idTipoArchivo' => $archivo['type']=='pdf' ? '5' : '2',
 					'nombre_inicial' => $archivo['name'],
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],

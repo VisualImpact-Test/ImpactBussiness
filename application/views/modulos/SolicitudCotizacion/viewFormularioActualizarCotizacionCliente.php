@@ -341,7 +341,7 @@
                                                 </select>
                                             </div>
                                             <div class="four wide field">
-                                                <div class="ui sub header">Peso / Cantidad</div>
+                                                <div class="ui sub header">Peso</div>
                                                 <input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
                                             </div>
                                             <div class="four wide field">
@@ -357,13 +357,13 @@
                                                 </select>
                                             </div>
                                             <div class="four wide field">
-                                                <div class="ui sub header">Real: Peso / Cantidad </div>
+                                                <div class="ui sub header">Peso Real</div>
                                                 <input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad REAL" value="<?= $dataSubItem['cantidadReal']?>">
                                             </div>
-                                            <div class="four wide field">
+                                            <!-- <div class="four wide field">
                                                 <div class="ui sub header">Observación Adicional</div>
                                                 <input class="observacionSubItemForm" name="observacion-NoGuarda[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Observación">
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="tbDistribucionTachado <?= !empty($detalleTachado[$dataSubItem['idItem']]) ? '' : 'd-none' ?>">
                                             <h4 class="ui dividing header">TACHADO</h4>
@@ -490,7 +490,7 @@
                         <div class="sixteen wide tablet four wide computer column">
                             <div class="fields">
                                 <div class="sixteen wide field">
-                                    <div class="ui sub header">Cantidad</div>
+                                    <div class="ui sub header">Cantidad de Elementos</div>
                                     <input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" patron="requerido,numerico" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
                                 </div>
                             </div>

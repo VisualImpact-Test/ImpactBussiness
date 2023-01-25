@@ -25,6 +25,7 @@ class Item extends MY_Controller
             'assets/libs/handsontable@7.4.2/dist/languages/all',
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/libs/fileDownload/jquery.fileDownload',
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/core/gestion',
             'assets/custom/js/item'
@@ -140,7 +141,7 @@ class Item extends MY_Controller
         $result['msg']['title'] = 'Actualizar Item';
 
         $result['data']['html'] = $this->load->view("modulos/Item/formularioActualizacion", $dataParaVista, true);
-        
+
         $result['data']['itemsLogistica'] = $data['items'];
         echo json_encode($result);
     }
@@ -367,6 +368,60 @@ class Item extends MY_Controller
         echo json_encode($result);
     }
 
+    public function descargarTarifarioPDF()
+    {
+        require_once('../mpdf/mpdf.php');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        // $post = json_decode($this->input->post('data'), true);
+        // $oper = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])['query']->result_array();
+        // $dataParaVista['dataOper'] = $oper[0];
+        // $ids = [];
+        // foreach ($oper as $v) {
+        // 	$ids[] = $v['idCotizacion'];
+        // 	$config['data']['oper'][$v['idOper']] = $v;
+        // }
+
+        // $idCotizacion = implode(",", $ids);
+        // $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+        // $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+
+        $dataParaVista['itemTarifario'] = $this->model->obtenerTarifario()->result_array();
+
+        require APPPATH . '/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'setAutoTopMargin' => 'stretch',
+            'orientation' => 'L',
+            'autoMarginPadding' => 0,
+            'bleedMargin' => 0,
+            'crossMarkMargin' => 0,
+            'cropMarkMargin' => 0,
+            'nonPrintMargin' => 0,
+            'margBuffer' => 0,
+            'collapseBlockMargins' => false,
+        ]);
+
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ITEM TARIFARIO'], true);
+        $contenido['footer'] = ''; //$this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+        $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+        $contenido['body'] = $this->load->view("modulos/Item/itemTarifarioPdf", $dataParaVista, true);
+
+        $mpdf->SetHTMLHeader($contenido['header']);
+        $mpdf->SetHTMLFooter($contenido['footer']);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($contenido['style']);
+        $mpdf->WriteHTML($contenido['body']);
+
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        // $mpdf->Output('OPER.pdf', 'D');
+        $mpdf->Output("prueba.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+
+        return true;
+    }
     public function actualizarEstadoItem()
     {
         $result = $this->result;
@@ -618,7 +673,7 @@ class Item extends MY_Controller
             $result['msg']['content'] = getMensajeGestion('registroExitoso');
             $this->db->trans_commit();
         }
-        
+
         respuesta:
         echo json_encode($result);
     }

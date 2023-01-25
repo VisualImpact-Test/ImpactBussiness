@@ -169,9 +169,9 @@
             <span class="float-element tooltip-left btn-send-item" data-message="Registrar" onclick='Fn.showConfirm({ idForm: "formRegistroItems", fn: "Item.registrarItem()", content: "¿Esta seguro de registrar este item?" });'>
                 <i class="send icon"></i>
             </span>
-            <span class="float-element tooltip-left btn-add-detalle-item btn-add-row" onclick="" data-message="Agregar Item">
+            <!-- <span class="float-element tooltip-left btn-add-detalle-item btn-add-row" onclick="" data-message="Agregar Item">
                 <i class="plus icon"></i>
-            </span>
+            </span> -->
         </a>
     </div>
 </div>

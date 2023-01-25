@@ -62,6 +62,15 @@ var Item = {
 				control.closest('.divItemLogistica').find('.codItemLogistica').val('0');
 			}
 		});
+		$(document).on('click', '.btn-descargarTarifario', function () {
+			// let idOper = $(this).closest('tr').data('idoper');
+			// if (idOper==undefined) {
+			// 	idOper = $(this).data('idoper');
+			// }
+			// let data = { idOper };
+			let jsonString = { 'data': JSON.stringify({}) };
+			Fn.download(site_url + Item.url + 'descargarTarifarioPDF', jsonString);
+		});
 		$(document).on('click', '.btn-actualizarItem', function () {
 			++modalId;
 

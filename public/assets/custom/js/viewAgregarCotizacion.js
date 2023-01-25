@@ -618,7 +618,6 @@ var Cotizacion = {
 
 			let precio = Number(precioForm.val());
 			let subTotal = Fn.multiply(cantidad, precio);
-
 			let costoDistribucion = 0;
 			let costoTotalDistribucionPDV = 0;
 			let costoTachadoDistribucion = 0;
@@ -634,7 +633,6 @@ var Cotizacion = {
 
 				subTotal = Number(subTotal + costoTotalDistribucionPDV + costoTachadoDistribucion);
 			}
-
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 
@@ -2100,7 +2098,7 @@ var Cotizacion = {
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
 		let generarOC = parent.find('.generarOCSubItem');
-		let proveedorDistribucion = parent.find('.proveedorDistribucionSubItem');
+		let proveedorDistribucion = parent.find('.proveedorDistribucionSubItem').find('select');
 		let cantidadReal = parent.find('.cantidadRealSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
 

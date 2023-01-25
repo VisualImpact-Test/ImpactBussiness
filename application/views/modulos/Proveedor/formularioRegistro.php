@@ -23,16 +23,22 @@
 						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $metodoPago, 'class' => 'text-titlecase']); ?>
 					</select>
 				</div>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control col-md-4" for="tipoServicio" style="border:0px;">Tipo de Servicio :</label>
+					<select class="form-control col-md-8 my_select2" name="tipoServicio" patron="requerido" multiple data-live-search="true">
+						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipoServicio, 'class' => 'text-titlecase', 'id' => 'idProveedorTipoServicio', 'value' => 'nombre'] ); ?>
+					</select>
+				</div>
 			</fieldset>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
-				<legend class="scheduler-border">Direccion</legend>
+				<legend class="scheduler-border">Dirección</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="region" style="border:0px;">Region :</label>
-					<select class="form-control col-md-8" id="region" name="region" patron="requerido">
+					<label class="form-control col-md-4" for="region" style="border:0px;">Región :</label>
+					<select class="form-control col-md-8" id="region" name="region">
 						<option value="">Seleccione</option>
 						<?
 						foreach ($departamento as $k_dp => $v_dp) {
@@ -56,8 +62,8 @@
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="direccion" style="border:0px;">Direccion :</label>
-					<input class="form-control col-md-8" id="direccion" name="direccion" patron="requerido">
+					<label class="form-control col-md-4" for="direccion" style="border:0px;">Dirección :</label>
+					<input class="form-control col-md-8" id="direccion" name="direccion">
 				</div>
 			</fieldset>
 		</div>
@@ -156,11 +162,18 @@
 						<button class="btn btn-outline-success btnAddCorreo" type="button"><i class="fa fa-plus"></i></button>
 					</div>
 				</div>
-				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" style="border:0px;">Costo (S/) :</label>
-					<input class="form-control col-md-8" id="costo" name="costo" patron="numeros">
-				</div>
 				<div id="extraCorreo"></div>
+			</fieldset>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Costo</legend>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control col-md-4" style="border:0px;">Costo (S/) :</label>
+					<input class="form-control col-md-8" id="costo" name="costo" patron="numeros" value="0">
+				</div>
 			</fieldset>
 		</div>
 	</div>

@@ -35,6 +35,15 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerProveedorTipoServicio($params = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.proveedorTipoServicio');
+
+		return $this->db->get();
+	}
+
 	public function obtenerMetodoPago($params = [])
 	{
 		$sql = "
@@ -179,18 +188,22 @@ class M_Proveedor extends MY_Model
 				, ep.icono AS estadoIcono
 				, ep.toggle AS estadotoggle
 				, p.costo
+				, pts.idProveedorTipoServicio
+				, ts.nombre as tipoServicio
 			FROM compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
 			JOIN compras.rubro r ON pr.idRubro = r.idRubro
 			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
+			LEFT JOIN compras.proveedorProveedorTipoServicio pts ON pts.idproveedor = p.idProveedor and pts.estado=1
+			LEFT JOIN compras.proveedorTipoServicio ts ON ts.idProveedorTipoServicio = pts.idProveedorTipoServicio
 			JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
 			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
 			JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento
 			AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 			AND ISNULL(zc.cod_distrito, 1) = (CASE WHEN zc.cod_distrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 			JOIN compras.proveedorEstado ep ON p.idProveedorEstado = ep.idProveedorEstado
-			AND ubi_zc.estado = 1
+			-- AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY p.idProveedor DESC
@@ -296,6 +309,27 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function proveedorProveedorTipoServicioActualizarSinDuplicar($params)
+	{
+		// La intension de esta funcion es evitar la duplicidad de datos en la tabla proveedorProveedorTipoServicio.
+
+		// Todo a estado 0
+		$this->db->update('compras.proveedorProveedorTipoServicio', ['estado' => 0], ['idProveedor' => $params[0]['idProveedor']]);
+
+		
+		foreach ($params as $key => $value) {
+			$query = $this->db->get_where('compras.proveedorProveedorTipoServicio', $value);
+			$data = $query->row_array();
+
+			if (empty($data)) { // Registramos los faltantes.
+				$this->db->insert('compras.proveedorProveedorTipoServicio', $value);
+			}else{ // Activamos con 1 los ya registrados.
+				$this->db->update('compras.proveedorProveedorTipoServicio', ['estado' => 1], ['idProveedorProveedorTipoServicio' => $data['idProveedorProveedorTipoServicio']]);
+			}
+		}
+
+		return true;
+	}
 	public function obtenerZonaCoberturaProveedor($params = [])
 	{
 		$filtros = "";

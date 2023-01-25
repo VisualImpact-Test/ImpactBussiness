@@ -65,6 +65,15 @@ class M_FormularioProveedor extends MY_Model
 		return $this->db->get();
 	}
 
+	public function getPropuestaArchivos($params = [])
+	{
+		$this->db
+		->select('pia.*')
+		->from('compras.propuestaItemArchivo pia')
+		->where('pia.idPropuestaItem', $params['idPropuestaItem'])
+		->where('pia.estado','1');
+		return $this->db->get();
+	}
 	public function obtenerCategorias($params = [])
 	{
 		$this->db

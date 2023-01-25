@@ -70,8 +70,13 @@ var FormularioProveedores = {
 						FormularioProveedores.divPropuesta = $('#divBase' + id).html();
 					});
 				} else {
-					let mensaje = Fn.message({ type: 2, message: 'Ya se registro una Propuesta para articulo seleccionado.' });
-					Fn.showModal({ id: modalId, show: true, title: 'Error', content: mensaje, btn: btn, width: '500px' });
+					let config = { 'url': FormularioProveedores.url + 'contraofertaRegistrado', 'data': jsonString };
+					$.when(Fn.ajax(config)).then((a) => {
+						console.log(a);
+						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+						FormularioProveedores.divPropuesta = $('#divBase' + id).html();
+
+					});
 				}
 			});
 

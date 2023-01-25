@@ -45,7 +45,7 @@ class MY_Controller extends CI_Controller{
 
 	public function __construct(){
 		parent::__construct();
-		$this->version = '1.1.5';
+		$this->version = '1.1.6';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');

@@ -3,7 +3,7 @@
         <div class="col-md-10 child-divcenter loading">
             <div class="control-group child-divcenter row w-100 ">
                 <label class="form-control col-md-5" for="nombre" style="border:0px;">Item :</label>
-                <input class="form-control col-md-7" id="nombre" name="nombre" placeholder="Search ">
+                <input class="form-control col-md-7" id="nombre" name="nombre" placeholder="Buscar ">
                 <!-- <div class="fa-1x col-md-1 align-items-center pb-1 icoSearchItem d-none">
                     <i class="fas fa-circle-notch fa-spin"></i>
                 </div> -->
@@ -21,7 +21,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">S/</span>
                     </div>
-                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros" id="costo" value="" patron="requerido, numeros">
+                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros" id="costo" value="" patron="requerido, numeros" autocomplete="off">
                 </div>
             </div>
             <div class="control-group child-divcenter row w-100">

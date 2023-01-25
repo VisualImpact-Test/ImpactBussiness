@@ -119,6 +119,7 @@ class Proveedor extends MY_Controller
 
         $dataParaVista['rubro'] = $this->model->obtenerRubro()['query']->result_array();
         $dataParaVista['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+        $dataParaVista['tipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
         $ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
         $dataParaVista['departamento'] = [];
@@ -176,7 +177,9 @@ class Proveedor extends MY_Controller
                 'estado' => $row['estado'],
                 'estadoIcono' => $row['estadoIcono'],
                 'estadoToggle' => $row['estadotoggle'],
-                'costo' => $row['costo']
+                'costo' => $row['costo'],
+				'idProveedorTipoServicio' => $row['idProveedorTipoServicio'],
+				'tipoServicio' => $row['tipoServicio']
             ];
 
             if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
@@ -184,7 +187,7 @@ class Proveedor extends MY_Controller
             if (!empty($row['zc_distrito'])) $distritosCobertura[trim($row['zc_cod_departamento']).'-'.trim($row['zc_cod_provincia']).'-'.trim($row['zc_cod_distrito'])] = $row['zc_distrito'];
             if (!empty($row['idMetodoPago'])) $dataParaVisitaMetodoPago[trim($row['idMetodoPago'])] = $row['metodoPago'];
             if (!empty($row['idRubro'])) $dataParaVistaRubro[trim($row['idRubro'])] = $row['rubro'];
-
+            if (!empty($row['idProveedorTipoServicio'])) $dataParaVistaTipoServicio[trim($row['idProveedorTipoServicio'])] = $row['tipoServicio'];
         }
 
         $dataParaVista['departamentosCobertura'] = $departamentosCobertura;
@@ -197,6 +200,8 @@ class Proveedor extends MY_Controller
         $dataParaVista['listadoDistritosUbigeo'] = [];
         $dataParaVista['proveedorMetodoPago'] =  $dataParaVisitaMetodoPago;
         $dataParaVista['proveedorRubro'] =  $dataParaVistaRubro;
+        if (!empty($row['idProveedorTipoServicio'])) $dataParaVista['proveedorTipoServicio'] =  $dataParaVistaTipoServicio;
+        $dataParaVista['listTipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 
         $ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
@@ -485,11 +490,13 @@ class Proveedor extends MY_Controller
         $html = $this->load->view($post['idProveedorEstado'] == 2?'email/aprobacion':'email/rechazo', $dataParaVista, true);
     		$correo = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);
 
+        $to = $this->idUsuario == '1' ? MAIL_DESARROLLO: MAIL_COORDINADORA_COMPRAS;
         $data = [
-          'to' => 'jean.alarcon@visualimpact.com.pe',
+          'to' => $to,
           'asunto' => 'IMPACTBUSSINESS - '.($post['idProveedorEstado'] == 2?'APROBACION':'RECHAZO').' DE PROVEEDOR',
           'contenido' => $correo
         ];
+        
         $rptaCorreo = email($data);
         if (!$update['estado'] || !$insert['estado'] || !$rptaCorreo) {
             $result['result'] = 0;

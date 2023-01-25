@@ -117,6 +117,7 @@ class Proveedor extends MY_Controller
 
 		$dataParaVista['rubro'] = $this->model->obtenerRubro()['query']->result_array();
 		$dataParaVista['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$dataParaVista['tipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
 		$dataParaVista['departamento'] = [];
@@ -171,7 +172,9 @@ class Proveedor extends MY_Controller
 				'estado' => $row['estado'],
 				'estadoIcono' => $row['estadoIcono'],
 				'estadoToggle' => $row['estadotoggle'],
-				'costo' => $row['costo']
+				'costo' => $row['costo'],
+				'idProveedorTipoServicio' => $row['idProveedorTipoServicio'],
+				'tipoServicio' => $row['tipoServicio']
 			];
 
 			if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
@@ -179,6 +182,7 @@ class Proveedor extends MY_Controller
 			if (!empty($row['zc_distrito'])) $distritosCobertura[trim($row['zc_cod_departamento']) . '-' . trim($row['zc_cod_provincia']) . '-' . trim($row['zc_cod_distrito'])] = $row['zc_distrito'];
 			if (!empty($row['idMetodoPago'])) $dataParaVisitaMetodoPago[trim($row['idMetodoPago'])] = $row['metodoPago'];
 			if (!empty($row['idRubro'])) $dataParaVistaRubro[trim($row['idRubro'])] = $row['rubro'];
+			if (!empty($row['idProveedorTipoServicio'])) $dataParaVistaTipoServicio[trim($row['idProveedorTipoServicio'])] = $row['tipoServicio'];
 		}
 
 		$dataParaVista['departamentosCobertura'] = $departamentosCobertura;
@@ -191,6 +195,8 @@ class Proveedor extends MY_Controller
 		$dataParaVista['listadoDistritosUbigeo'] = [];
 		$dataParaVista['proveedorMetodoPago'] =  $dataParaVisitaMetodoPago;
 		$dataParaVista['proveedorRubro'] =  $dataParaVistaRubro;
+		if (!empty($row['idProveedorTipoServicio'])) $dataParaVista['proveedorTipoServicio'] =  $dataParaVistaTipoServicio;
+		$dataParaVista['listTipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 
 
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
@@ -246,6 +252,7 @@ class Proveedor extends MY_Controller
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto'],
 			'costo' => $post['costo'],
+			// 'idProveedorTipoServicio' => $post['tipoServicio'],
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
@@ -318,6 +325,17 @@ class Proveedor extends MY_Controller
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
 		$data = [];
 
+		// tipoServicio
+		foreach (checkAndConvertToArray($post['tipoServicio']) as $key => $value) {
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idProveedorTipoServicio' => $value,
+			];
+		}
+
+		$tipoServicio_insert = $this->model->insertarMasivo("compras.proveedorProveedorTipoServicio", $data['insert']);
+		$data = [];
+
 		$fifth_insert = true;
 		if (isset($post['correoAdicional'])) {
 			foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
@@ -330,7 +348,7 @@ class Proveedor extends MY_Controller
 		}
 
 
-		if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$fifth_insert) {
+		if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$fifth_insert || !$tipoServicio_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
@@ -344,6 +362,7 @@ class Proveedor extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
+		
 		echo json_encode($result);
 	}
 
@@ -469,6 +488,20 @@ class Proveedor extends MY_Controller
 
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
 
+		$data = [];
+
+		foreach (checkAndConvertToArray($post['tipoServicio']) as $key => $value) {
+			$data['update'][] = [
+				'idProveedor' => $post['idProveedor'],
+				'idProveedorTipoServicio' => $value,
+
+			];
+		}
+
+		$tipoServicio_insert = $this->model->proveedorProveedorTipoServicioActualizarSinDuplicar($data['update']);
+
+		$data = [];
+
 		if ($enviarCorreo) {
 			$data = [];
 
@@ -491,7 +524,6 @@ class Proveedor extends MY_Controller
 
 		$this->db->update('compras.proveedorCorreo', ['estado' => 0], ['idProveedor' => $post['idProveedor']]);
 
-		$data = [];
 		$sixth_insert = true;
 		if (isset($post['correoAdicional'])) {
 			foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
@@ -588,6 +620,7 @@ class Proveedor extends MY_Controller
 
 	public function enviarCorreo($idProveedor)
 	{
+		
 		$config = array(
 			'protocol' => 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
@@ -602,7 +635,9 @@ class Proveedor extends MY_Controller
 		$this->email->set_newline("\r\n");
 
 		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to('eder.alata@visualimpact.com.pe');
+
+		$to = $this->idUsuario == '1' ? MAIL_DESARROLLO: MAIL_COORDINADORA_COMPRAS;
+		$this->email->to($to);
 
 		$data = [];
 		$dataParaVista = [];

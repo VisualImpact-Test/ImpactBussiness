@@ -116,7 +116,9 @@ class M_Home extends MY_Model
 				, DATEDIFF(dd, fechaEmision, ISNULL(fechaTermino, GETDATE())) dias
 				, ce.idCotizacionEstado idEstado
 				, replace(ce.icono,'large','x-small') icono
+				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
 			FROM compras.cotizacion c
+			LEFT JOIN sistema.usuario u ON u.idUsuario=c.idUsuarioReg
 			JOIN compras.cotizacionEstado ce ON c.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON cc.idCuenta = c.idCuenta AND cc.idCuentaCentroCosto = c.idCentroCosto
 			WHERE

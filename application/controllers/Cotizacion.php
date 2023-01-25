@@ -230,13 +230,16 @@ class Cotizacion extends MY_Controller
 			];
 			$insertCotizacionHistorico = $this->model->insertar(['tabla' => TABLA_HISTORICO_ESTADO_COTIZACION, 'insert' => $insertCotizacionHistorico]);
 
-			$usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_OPERACIONES])['query']->result_array();
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_OPERACIONES);
+
+			$usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toOperaciones = [];
 			foreach ($usuariosOperaciones as $usuario) {
 				$toOperaciones[] = $usuario['email'];
 			}
 
-			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => ['eder.alata@visualimpact.com.pe', 'jean.alarcon@visualimpact.com.pe']]);
+			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
 		}
 
 		if ($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE) {
@@ -506,10 +509,10 @@ class Cotizacion extends MY_Controller
 						'costo' => $post["costoSubItem[$k]"],
 						'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
 						'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
-						'idItemLogistica' => $post["itemLogisticaForm[$k]"],
+						'idItemLogistica' => isset($post["itemLogisticaForm[$k]"])?$post["itemLogisticaForm[$k]"]:null,
 						'idDistribucionTachado' => $post["chkTachado[$k]"],
 						'requiereOrdenCompra' => empty($post["generarOCSubItem[$k]"]) ? 0 : 1,
-						'idProveedorDistribucion' => $post["proveedorDistribucionSubItem[$k]"],
+						'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[$k]"])?$post["proveedorDistribucionSubItem[$k]"]:null,
 						'cantidadReal' => $post["cantidadRealSubItem[$k]"],
 					]);
 					break;
@@ -588,17 +591,17 @@ class Cotizacion extends MY_Controller
 		$insertDetalle = $this->model->insertarCotizacionDetalle($data);
 		$data = [];
 
-		// $estadoEmail = true;
-		if ($post['tipoRegistro'] == 2) {
-			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+		if ($post['tipoRegistro'] == ESTADO_ENVIADO_COMPRAS) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+			
+			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toCompras = [];
 			foreach ($usuariosCompras as $usuario) {
 				$toCompras[] = $usuario['email'];
 			}
 
-			// $estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => $toCompras]);
-			//Verificamos si es necesario enviar a compras para cotizar con el proveedor
-
+			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => $toCompras]);
 			$necesitaCotizacionIntera = false;
 			foreach ($post['cotizacionInternaForm'] as $cotizacionInterna) {
 				if ($cotizacionInterna == 1) {
@@ -1917,19 +1920,21 @@ class Cotizacion extends MY_Controller
 		}
 
 		$itemServicio =  $this->model_item->obtenerItemServicio();
-		foreach ($itemServicio as $key => $row) {
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
-			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
-		}
-		foreach ($data['itemServicio'] as $k => $r) {
-			$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+		if (!empty($itemServicio)) {
+			foreach ($itemServicio as $key => $row) {
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+			}
+			foreach ($data['itemServicio'] as $k => $r) {
+				$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+			}
 		}
 		$data['itemServicio'][0] = array();
 		$config['data']['itemServicio'] = $data['itemServicio'];

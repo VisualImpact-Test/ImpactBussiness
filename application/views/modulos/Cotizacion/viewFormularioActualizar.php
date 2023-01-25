@@ -131,7 +131,7 @@
 			<div class="eight wide field">
 				<div class="ui sub header">Ver precio PDF</div>
 				<div class="ui basic floating dropdown button simpleDropdown w-100">
-					<input type="hidden" name="flagMostrarPrecio" value="1" patron="requerido">
+					<input type="hidden" name="flagMostrarPrecio" value="<?= $cotizacion['flagMostrarPrecio']?>" patron="requerido">
 					<div class="text">Ver Precio PDF</div>
 					<i class="dropdown icon"></i>
 					<div class="menu">
@@ -254,7 +254,8 @@
 									<i class="plus icon"></i>
 									Agregar
 								</button>
-							</div <!-- Monto S/ -->
+							</div>
+							<!-- Monto -->
 							<div class="fields <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
 								<?
 								if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
@@ -304,38 +305,39 @@
 								</button>
 							</div>
 							<!-- Distribucion -->
-							<div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
+							<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id']?'':'d-none'?>">
+							<?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
 								<div class="fields">
 									<div class="eight wide field">
 										<div class="ui sub header">Tipo Servicio</div>
 										<select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
-											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $distribucion['idTipoServicio'], 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
 										</select>
 									</div>
 									<div class="four wide field">
 										<div class="ui sub header">Unidad de medida</div>
-										<input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($data['unidadMedidaTipoServicio']) ? $data['unidadMedidaTipoServicio'] : '' ?>" readonly>
-										<input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($data['idUnidadMedidaTipoServicio']) ? $data['idUnidadMedidaTipoServicio'] : '' ?>" readonly>
+										<input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($distribucion['unidadMedida']) ? $distribucion['unidadMedida'] : '' ?>" readonly>
+										<input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($distribucion['idUnidadMedida']) ? $distribucion['idUnidadMedida'] : '' ?>" readonly>
 									</div>
 									<div class="four wide field">
 										<div class="ui sub header">Costo S/</div>
-										<input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($data['costoTipoServicio']) ? $data['costoTipoServicio'] : '' ?>" readonly>
+										<input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($distribucion['costo']) ? $distribucion['costo'] : '' ?>" readonly>
 									</div>
 								</div>
 								<div class="fields">
 									<div class="eight wide field">
 										<div class="ui sub header">Item Logística</div>
 										<select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
-											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $distribucion['idItem'], 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
 										</select>
 									</div>
 									<div class="four wide field">
-										<div class="ui sub header">Peso / Cantidad</div>
-										<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+										<div class="ui sub header">Peso</div>
+										<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($distribucion['cantidad']) ? $distribucion['cantidad'] : '' ?>">
 									</div>
 									<div class="four wide field">
 										<div class="ui sub header">Cantidad PDV</div>
-										<input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($data['cantidadPdvSubItem']) ? $data['cantidadPdvSubItem'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+										<input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($distribucion['cantidadPdv']) ? $distribucion['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
 									</div>
 								</div>
 								<div class="tbDistribucionTachado d-none">
@@ -441,7 +443,7 @@
 						<div class="sixteen wide tablet four wide computer column">
 							<div class="fields">
 								<div class="sixteen wide field">
-									<div class="ui sub header">Cantidad</div>
+									<div class="ui sub header">Cantidad de Elementos</div>
 									<input class="form-control cantidadForm" type="number" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
 								</div>
 							</div>
@@ -479,7 +481,7 @@
 									<div class="ui sub header">Precio</div>
 									<div class="ui right labeled input">
 										<label for="amount" class="ui label">S/</label>
-										<input class=" precioFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['precio']) ? moneda($row['precio']) : '' ?>">
+										<input class=" precioFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['precio']) ? $row['precio'] : '' ?>">
 										<input class=" precioForm" type="hidden" name="precioForm" placeholder="0.00" value="<?= !empty($row['precio']) ? ($row['precio']) : '' ?>">
 									</div>
 								</div>
@@ -489,7 +491,7 @@
 									<div class="ui sub header">Subtotal</div>
 									<div class="ui right labeled input">
 										<label for="amount" class="ui label teal">S/</label>
-										<input class="subtotalFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>">
+										<input class="subtotalFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['subtotal']) ? $row['subtotal'] : '' ?>">
 										<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>">
 									</div>
 								</div>
@@ -519,7 +521,7 @@
 			<div class="column">
 				<div class="ui right labeled input">
 					<label for="totalForm" class="ui label green">Total: </label>
-					<input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>">
+					<input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? $cotizacion['total'] : '0.00' ?>">
 					<input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>">
 					<input class=" totalFormFee" type="hidden" name="totalFormFee" placeholder="0.00">
 					<input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00">

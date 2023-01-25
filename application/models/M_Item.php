@@ -117,6 +117,19 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerTarifario()
+	{
+		$this->db
+			->select('it.*, i.nombre as item, p.razonSocial as proveedor, DATEDIFF (DAY, GETDATE(), it.fechaVigencia ) as diasRestantes')
+			->from('compras.itemTarifario it')
+			->join('compras.item i', 'i.idItem=it.idItem', 'LEFT')
+			->join('compras.proveedor p', 'p.idProveedor=it.idProveedor', 'LEFT')
+			->where('it.flag_actual', 1)
+			->where('i.estado', 1)
+			->order_by('i.nombre');
+
+		return $this->db->get();
+	}
 	public function obtenerInformacionItems($params = [])
 	{
 		$filtros = "";
@@ -268,7 +281,7 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
-	
+
 	public function validarExistenciaItemMasivo($params = array())
 	{
 		$filtros = "";
@@ -278,7 +291,6 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
 
 		foreach ($params as $key => $value) {
-			
 		}
 
 		$sql = "

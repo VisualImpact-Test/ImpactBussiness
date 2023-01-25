@@ -175,8 +175,9 @@ defined("USER_COORDINADOR_COMPRAS") OR define("USER_COORDINADOR_COMPRAS",3);
 defined("USER_GERENTE_OPERACIONES") OR define("USER_GERENTE_OPERACIONES",4);
 
 //CORREOS 
+defined("MAIL_DESARROLLO") OR define("MAIL_DESARROLLO",['eder.alata@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_OPERACIONES") OR define("MAIL_COORDINADORA_OPERACIONES",['andrivette.tavara@visualimpact.com.pe','margarita.bailon@visualimpact.com.pe','tamar.roque@visualimpact.com.pe']);
-defined("MAIL_COORDINADORA_COMPRAS") OR define("MAIL_COORDINADORA_COMPRAS",['anghy.vega@visualimpact.com.pe','aaron.ccenta@outlook.com']);
+defined("MAIL_COORDINADORA_COMPRAS") OR define("MAIL_COORDINADORA_COMPRAS",['anghy.vega@visualimpact.com.pe','diana.zuniga@visualimpact.com.pe']);
 defined("MAIL_GERENCIA_OPERACIONES") OR define("MAIL_GERENCIA_OPERACIONES",['milenka.gargurevich@visualimpact.com.pe']);
 
 //Acceso

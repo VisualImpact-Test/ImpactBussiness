@@ -163,7 +163,7 @@
                           </select>
               					</div>
               					<div class="form-group col-md-3">
-              						<label class="font-weight-bold">Peso / Cantidad:</label>
+              						<label class="font-weight-bold">Peso:</label>
               						<input class="form-control cantidadSI" name="subItem_cantidad" patron="requerido"
               									onchange="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.costoSubItem').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')"
               									onkeyup="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.costoSubItem').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')"

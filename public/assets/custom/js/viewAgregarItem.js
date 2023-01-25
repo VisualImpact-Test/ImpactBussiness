@@ -24,7 +24,7 @@ var Cotizacion = {
             Cotizacion.htmlG = $('.default-item').html();
 
             Cotizacion.actualizarPopupsTitle();
-            Cotizacion.actualizarAutocomplete();
+            // Cotizacion.actualizarAutocomplete();
 
 			$.each($('.btnPopupCotizacionesProveedor'), function(i,v){    var custom_popup = $(v).parents('.nuevo').find('custom.popup');
 				var id = $(v).data('id');
@@ -59,7 +59,7 @@ var Cotizacion = {
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
             childInserted.transition('glow');
 
-            Cotizacion.actualizarAutocomplete();
+            // Cotizacion.actualizarAutocomplete();
 
             $('.btn-add-file').dimmer({on: 'hover'});
             $('.simpleDropdown').dropdown();
@@ -104,7 +104,7 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#tipo', function (e) {
-			Cotizacion.actualizarAutocomplete();
+			// Cotizacion.actualizarAutocomplete();
 		});
 
 		$(document).on('change','input[name=upload_orden_compra]', function(e){

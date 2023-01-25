@@ -122,7 +122,7 @@
 										<?=!empty($row['fechaTermino'])? date_format(new DateTime($row['fechaTermino']),"d/m/Y") : '-'?>
 									</td>
 									<td><?=$row['centro_costo']?></td>
-									<td>Usuario, Demo TI</td>
+									<td><?= $row['usuario']; ?></td>
 									<td><?=$row['titulo']?></td>
 									<td class="text-right"><?=number_format($row['total'], 2)?></td>
 									<td class="text-center"><strong><?=$row['dias']?></strong></td>

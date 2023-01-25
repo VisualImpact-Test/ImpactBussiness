@@ -7,7 +7,7 @@
                 <p>COD: <?=!empty($codigo)? $codigo : '-' ?></p>
             <?}?>
             <p>REVISIÓN: 00</p>
-            <p>PÁGINA 1 de 1</p>
+            <p>PÁGINA <?= '{PAGENO}'; ?> de <?= '{nbpg}'; ?></p>
         </td>
     </tr>
 </table>
