@@ -730,20 +730,11 @@ class SolicitudCotizacion extends MY_Controller
 			]
 		)['query']->result_array();
 
-		// $cotizacionProveedorPropuesta =  $this->model->getPropuestasItem(
-		//     [
-		//     'idCotizacion'=> $idCotizacion,
-		//     ]
-		// )['query']->result_array();
-
 
 		foreach ($cotizacionDetalleSub as $sub) {
 			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
+			$config['data']['cotizacionDetalleArchivosDelProveedor'][$sub['idCotizacionDetalle']] = $this->model->getCotizacionProveedorArchivosSeleccionados(['idCotizacionDetalle' => $sub['idCotizacionDetalle']])->result_array();
 		}
-		// foreach($cotizacionProveedorPropuesta as $cpp){
-		//     $config['data']['cotizacionPropuesta'][$cpp['idCotizacionDetalle']][$cpp['idPropuestaItem']] = $cpp;
-		//     $config['data']['cotizacionPropuestaArchivos'][$cpp['idCotizacionDetalle']][$cpp['idPropuestaItem']][$cpp['idPropuestaItemArchivo']] = $cpp;
-		// }
 
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => true])['query']->result_array();
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => true])['query']->result_array();
@@ -761,6 +752,8 @@ class SolicitudCotizacion extends MY_Controller
 			$config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
 
 			$cotizacionProveedorSubDetalle[]  = $this->db->get_where('compras.cotizacionDetalleProveedorDetalleSub', ['idCotizacionDetalleProveedorDetalle' => $cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']])->result_array();
+
+			$config['data']['cotizacionProveedorArchivos'][$cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']] = $this->model->obtenerArchivoCotizacionDetalleProveedors(['idCotizacionDetalleProveedorDetalle' => $cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']])->result_array();
 		}
 
 		foreach ($cotizacionProveedorSubDetalle as $subProveedor) {

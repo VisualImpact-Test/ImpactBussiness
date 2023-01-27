@@ -315,38 +315,35 @@ class Cotizacion extends MY_Controller
 			goto respuesta;
 		}
 
-
-		$whereSolicitante = [];
-		$whereSolicitante[] = [
-			'estado' => 1
-		];
-		$tablaSolicitantes = 'compras.solicitante';
-
-		$solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes, $whereSolicitante)->result_array();
-		$dataSolicitante = [];
-		foreach ($solicitantes as $solicitante) {
-			$dataSolicitante[$solicitante['nombre']] = $solicitante['idSolicitante'];
-		}
-
+		// SOLICITANTE MEJORADO
 		$idSolicitante = NULL;
-		if (empty($dataSolicitante[$post['solicitante']])) {
-			$insertSolicitante = [
-				'nombre' => $post['solicitante'],
-				'fechaRegistro' => getActualDateTime(),
-				'estado' => true,
+		if(!is_numeric($post['solicitante'])){
+			$whereSolicitante = [];
+			$whereSolicitante[] = [
+				'estado' => 1
 			];
-			$insertSolicitante = $this->model->insertar(['tabla' => $tablaSolicitantes, 'insert' => $insertSolicitante]);
-			$idSolicitante = $insertSolicitante['id'];
-		}
+			$tablaSolicitantes = 'compras.solicitante';
 
-		if (!empty($dataSolicitante[$post['solicitante']])) {
-			if (!is_numeric($post['solicitante'])) {
+			$solicitantes = $this->model->getWhereJoinMultiple($tablaSolicitantes, $whereSolicitante)->result_array();
+			$dataSolicitante = [];
+			foreach ($solicitantes as $solicitante) {
+				$dataSolicitante[$solicitante['nombre']] = $solicitante['idSolicitante'];
+			}
+			if (empty($dataSolicitante[$post['solicitante']])){
+				$insertSolicitante = [
+					'nombre' => $post['solicitante'],
+					'fechaRegistro' => getActualDateTime(),
+					'estado' => true,
+				];
+				$insertSolicitante = $this->model->insertar(['tabla' => $tablaSolicitantes, 'insert' => $insertSolicitante]);
+				$idSolicitante = $insertSolicitante['id'];
+			}else{
 				$idSolicitante = $dataSolicitante[$post['solicitante']];
 			}
-			if (is_numeric($post['solicitante'])) {
-				$idSolicitante = $post['solicitante'];
-			}
+		}else{
+			$idSolicitante = $post['solicitante'];
 		}
+		// FIN: SOLICITANTE MEJORADO
 
 		$data['insert'] = [
 			'nombre' => $post['nombre'],
@@ -523,9 +520,7 @@ class Cotizacion extends MY_Controller
 						'tela' => $post["telaSubItem[$k]"],
 						'color' => $post["colorSubItem[$k]"],
 						'cantidad' => $post["cantidadTextil[$k]"],
-						'genero' => $post["genero[$k]"]
-
-
+						'genero' => $post["generoSubItem[$k]"]
 					]);
 
 
@@ -826,7 +821,7 @@ class Cotizacion extends MY_Controller
 			}
 
 			$dataParaVista['cabecera']['mostrarPrecio'] = false;
-			//
+			
 			if (count($dataParaVista) == 0) exit();
 
 			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
@@ -1132,7 +1127,8 @@ class Cotizacion extends MY_Controller
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
-		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSub(
+
+		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion
 			]
@@ -1142,9 +1138,15 @@ class Cotizacion extends MY_Controller
 			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
 		}
 
+		foreach ($config['data']['cotizacionDetalle'] as $sub) {
+			$config['data']['cotizacionDetalleArchivosDelProveedor'][$sub['idCotizacionDetalle']] = $this->model->getCotizacionProveedorArchivosSeleccionados(['idCotizacionDetalle' => $sub['idCotizacionDetalle']])->result_array();
+			log_message('error', $this->db->last_query());
+		}
+
 		foreach ($archivos as $archivo) {
 			$config['data']['cotizacionDetalleArchivos'][$archivo['idCotizacionDetalle']][] = $archivo;
 		}
+
 		foreach ($cotizacionProveedores as $cotizacionProveedor) {
 			$config['data']['cotizacionProveedor'][$cotizacionProveedor['idCotizacionDetalle']] = $cotizacionProveedor;
 		}
@@ -1594,7 +1596,7 @@ class Cotizacion extends MY_Controller
 	{
 		$this->db->trans_start();
 		$result = $this->result;
-
+		
 		$data['tabla'] = 'compras.cotizacion';
 
 		$data = [];
@@ -1648,29 +1650,33 @@ class Cotizacion extends MY_Controller
 		$data['where'] = [
 			'idCotizacion' => $post['idCotizacion']
 		];
+
 		$update = $this->model->actualizarCotizacion($data);
 
 		$data['anexos_arreglo'] = [];
 		$data['anexos'] = [];
 
 
-		$data['anexos_arreglo'] = !empty($post['anexo-file']) ?  getDataRefactorizada([
-			'base64' => $post['anexo-file'],
-			'type' => $post['anexo-type'],
-			'name' => $post['anexo-name'],
+		if (!empty($post['anexo-file'])) {
+			
+			$data['anexos_arreglo'] = getDataRefactorizada([
+				'base64' => $post['anexo-file'],
+				'type' => $post['anexo-type'],
+				'name' => $post['anexo-name'],
+			]);
 
-		]) : [];
-
-		foreach ($data['anexos_arreglo'] as $anexo) {
-			if (empty($anexo['base64'])) continue;
-			$data['anexos'][] = [
-				'base64' => $anexo['base64'],
-				'type' => $anexo['type'],
-				'name' => $anexo['name'],
-				'carpeta' => 'cotizacion',
-				'nombreUnico' => "ANX" . uniqid(),
-			];
+			foreach ($data['anexos_arreglo'] as $anexo) {
+				if (empty($anexo['base64'])) continue;
+				$data['anexos'][] = [
+					'base64' => $anexo['base64'],
+					'type' => $anexo['type'],
+					'name' => $anexo['name'],
+					'carpeta' => 'cotizacion',
+					'nombreUnico' => "ANX" . uniqid(),
+				];
+			}
 		}
+
 		$data['idCotizacion'] = $post['idCotizacion'];
 		$data['anexosEliminados'] = $post['anexosEliminados'];
 		$insertAnexos = $this->model->insertarCotizacionAnexos($data);
@@ -1684,6 +1690,7 @@ class Cotizacion extends MY_Controller
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 		$post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
@@ -1711,9 +1718,12 @@ class Cotizacion extends MY_Controller
 				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 2,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
+				'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+				'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 				'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 			];
+
 
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([
@@ -1781,7 +1791,7 @@ class Cotizacion extends MY_Controller
 				}
 			}
 		}
-		$data['archivoEliminado'] = isset($post['archivoEliminado']) ? $post['archivoEliminado'] : null;
+		$data['archivoEliminado'] = isset($post['archivosEliminados']) ? $post['archivosEliminados'] : null;
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 		$data['where'] = 'idCotizacionDetalle';
@@ -1888,6 +1898,9 @@ class Cotizacion extends MY_Controller
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionTarifario'] = $this->model->obtenerCotizacionDetalleTarifario(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
+		$config['data']['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
+		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		// $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();

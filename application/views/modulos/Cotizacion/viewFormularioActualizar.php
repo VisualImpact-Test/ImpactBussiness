@@ -99,14 +99,14 @@
 						<div class="ui small image text-center btn-add-file">
 							<div class="ui dimmer">
 								<div class="content">
-									<div class="ui small primary button" onclick="$(this).parents('.anexos').find('.file-lsck-capturas').click();">
+									<div class="ui small primary button" onclick="$(this).parents('.anexos').find('.file-lsck-capturas-anexos').click();">
 										Agregar
 									</div>
 								</div>
 							</div>
 							<img class="ui image" src="<?= IMG_WIREFRAME ?>">
 						</div>
-						<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
+						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
 						<? foreach ($anexos as $anexo) { ?>
 							<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?>">
 								<div class="ui dimmer dimmer-file-detalle">
@@ -305,61 +305,85 @@
 								</button>
 							</div>
 							<!-- Distribucion -->
-							<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id']?'':'d-none'?>">
-							<?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
-								<div class="fields">
-									<div class="eight wide field">
-										<div class="ui sub header">Tipo Servicio</div>
-										<select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
-											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $distribucion['idTipoServicio'], 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
-										</select>
+							<?php  if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :  ?>
+								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id']?'':'d-none'?>">
+								<?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
+									<div class="fields">
+										<div class="six wide field">
+											<div class="ui sub header">Tipo Servicio</div>
+											<select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[0]">
+												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $distribucion['idTipoServicio'], 'query' => $tipoServicios, 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+											</select>
+										</div>
+										<div class="two wide field">
+											<div class="ui sub header">Generar OC</div>
+											<div class="ui test toggle checkbox checkValidarOC mt-2">
+												<input class="checkForm generarOCSubItem" name="generarOCSubItem[0]" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $distribucion['requiereOrdenCompra']=='1' ? 'checked' : '' ?>>
+											</div>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Unidad de medida</div>
+											<input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($distribucion['unidadMedida']) ? $distribucion['unidadMedida'] : '' ?>" readonly>
+											<input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($distribucion['idUnidadMedida']) ? $distribucion['idUnidadMedida'] : '' ?>" readonly>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Costo S/</div>
+											<input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($distribucion['costo']) ? $distribucion['costo'] : '' ?>" readonly>
+										</div>
 									</div>
-									<div class="four wide field">
-										<div class="ui sub header">Unidad de medida</div>
-										<input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= !empty($distribucion['unidadMedida']) ? $distribucion['unidadMedida'] : '' ?>" readonly>
-										<input type="hidden" class="unidadMedidaSubItem" name="unidadMedidaSubItem[0]" placeholder="Unidad Medida" value="<?= !empty($distribucion['idUnidadMedida']) ? $distribucion['idUnidadMedida'] : '' ?>" readonly>
+									<div class="fields">
+										<div class="eight wide field">
+											<div class="ui sub header">Item Logística</div>
+											<select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
+												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $distribucion['idItem'], 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+											</select>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Peso</div>
+											<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($distribucion['cantidad']) ? $distribucion['cantidad'] : '' ?>">
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Cantidad PDV</div>
+											<input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($distribucion['cantidadPdv']) ? $distribucion['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
+										</div>
 									</div>
-									<div class="four wide field">
-										<div class="ui sub header">Costo S/</div>
-										<input class="costoTipoServicio costoSubItem" name="costoSubItem[0]" placeholder="Costo" value="<?= !empty($distribucion['costo']) ? $distribucion['costo'] : '' ?>" readonly>
+									<div class="<?= ($distribucion['requiereOrdenCompra']=='0')? 'd-none ':''; ?> fields divAddParaOC">
+										<div class="eight wide field">
+											<div class="ui sub header">Proveedor</div>
+											<select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[0]">
+												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected'=> $distribucion['idProveedorDistribucion'], 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/ ]); ?>
+											</select>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Peso Real </div>
+											<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" value="<?= verificarEmpty($distribucion['cantidadReal']) ?>" placeholder="Cantidad REAL">
+										</div>
+										<!-- <div class="four wide field">
+											<div class="ui sub header">Observación Adicional</div>
+											<input class="observacionSubItemForm" name="observacion-NoGuarda[0]" placeholder="Observación">
+										</div> -->
+									</div>
+									<div class="tbDistribucionTachado d-none">
+										<h4 class="ui dividing header">TACHADO</h4>
+										<input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
+										<table class="ui single line table">
+											<thead>
+												<tr>
+													<th></th>
+													<th class="thCustomNameItem"></th>
+													<th>Tiempo tachado (días)</th>
+													<th>Personas para tachado</th>
+													<th>Costo por día</th>
+													<th>Total de costo</th>
+												</tr>
+											</thead>
+											<tbody>
+	
+											</tbody>
+										</table>
 									</div>
 								</div>
-								<div class="fields">
-									<div class="eight wide field">
-										<div class="ui sub header">Item Logística</div>
-										<select class="ui clearable search dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
-											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $distribucion['idItem'], 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
-										</select>
-									</div>
-									<div class="four wide field">
-										<div class="ui sub header">Peso</div>
-										<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($distribucion['cantidad']) ? $distribucion['cantidad'] : '' ?>">
-									</div>
-									<div class="four wide field">
-										<div class="ui sub header">Cantidad PDV</div>
-										<input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[0]" placeholder="Cantidad" data-min="1" value="<?= !empty($distribucion['cantidadPdv']) ? $distribucion['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
-									</div>
-								</div>
-								<div class="tbDistribucionTachado d-none">
-									<h4 class="ui dividing header">TACHADO</h4>
-									<input value='0' class='chkTachadoDistribucion d-none' type="radio" name="chkTachado[0]" checked>
-									<table class="ui single line table">
-										<thead>
-											<tr>
-												<th></th>
-												<th class="thCustomNameItem"></th>
-												<th>Tiempo tachado (días)</th>
-												<th>Personas para tachado</th>
-												<th>Costo por día</th>
-												<th>Total de costo</th>
-											</tr>
-										</thead>
-										<tbody>
-
-										</tbody>
-									</table>
-								</div>
-							</div>
+							<?php endif; ?>
 
 							<div class="fields">
 								<div class="four wide field">
@@ -394,7 +418,8 @@
 											<? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
 												<? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
 													if ($archivo['idTipoArchivo'] == TIPO_IMAGEN) { ?>
-														<div class="ui fluid image content-lsck-capturas">
+													
+														<div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo']; ?>">
 															<div class="ui dimmer dimmer-file-detalle">
 																<div class="content">
 																	<p class="ui tiny inverted header"><?= $archivo['nombre_inicial'] ?></p>
@@ -452,7 +477,7 @@
 									<div class="ui sub header">Costo</div>
 									<div class="ui right action right labeled input">
 										<label for="amount" class="ui label">S/</label>
-										<input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
+										<input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= verificarEmpty($row['costoCotizacion']); ?>" readonly>
 										<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
 										<input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
 										<div class="ui basic floating dropdown button simpleDropdown read-only">

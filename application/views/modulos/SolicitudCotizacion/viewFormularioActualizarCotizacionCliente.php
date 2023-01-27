@@ -433,6 +433,20 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="content-lsck-capturas divImagenesDeLaCotizacion">
+                                <div class="sixteen wide field">
+                                <?php if (!empty($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']])) :  ?>
+                                    <div class="ui small images">
+                                        <?php foreach ($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']] as $kAE => $vAE) : ?>
+                                            <div class="ui fluid image dimmable" data-id="<?= $kAE ?>">
+                                                <a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+                                                <img height="100" src="<?= $vAE['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                                </div>
+                            </div>
                             <div class="content-lsck-capturas">
                                 <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*,.pdf" multiple="">
                                 <div class="fields ">

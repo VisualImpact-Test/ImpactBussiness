@@ -226,9 +226,9 @@
 										<div class="ui sub header">Cantidad</div>
 										<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
 									</div>
-									<div class="three wide field" id="genero">
+									<div class="three wide field">
 										<div class="ui sub header">Genero</div>
-										<select class="ui dropdown" name="genero[0]">
+										<select class="ui dropdown generoSubItem" name="generoSubItem[0]">
 											<option class="item-4" value="">seleccione</option>
 											<option class="item" value="1">Hombre</option>
 											<option class="item" value="2">Mujer</option>

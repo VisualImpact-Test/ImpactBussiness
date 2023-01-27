@@ -1175,7 +1175,6 @@ var Cotizacion = {
 			var control = $(this);
 			let parent = $(this).closest(".content-lsck-capturas");
 			let idEliminado = parent.data('id');
-
 			if (idEliminado) {
 				Cotizacion.archivoEliminado.push(idEliminado);
 			}
@@ -1229,6 +1228,7 @@ var Cotizacion = {
 			let cantidadForm = $(this).parents('.nuevo').find('.cantidadForm');
 			let gapForm = $(this).parents('.nuevo').find('.gapForm');
 			let proveedorForm = $(this).parents('.nuevo').find('.idProveedor');
+			let imagenesExtraForm = $(this).parents('.nuevo').find('div.extraImages');
 			let proveedoresForm = $(this).parents('.nuevo').find('.proveedoresForm');
 			let diasEntregaItemForm = $(this).parents('.nuevo').find('.diasEntregaItemForm');
 
@@ -1236,6 +1236,7 @@ var Cotizacion = {
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
 			let diasEntregaElegido = $(this).find('.txtDiasEntregaItemProveedor').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
+			let imagenesDeProveedor = $(this).find('.elegirImagenes').html();
 			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
 			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
 
@@ -1259,7 +1260,7 @@ var Cotizacion = {
 			diasEntregaItemForm.val(diasEntregaElegido);
 			proveedorForm.val(proveedorElegido);
 			proveedoresForm.val(proveedorElegidoName);
-
+			imagenesExtraForm.html(imagenesDeProveedor);
 			cantidadForm.keyup();
 			gapForm.keyup();
 

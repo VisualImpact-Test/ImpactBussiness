@@ -55,6 +55,27 @@ class M_Cotizacion extends MY_Model
 		return $this->db->get();
 	}
 
+	public function getCotizacionProveedorArchivosSeleccionados($params = [])
+	{
+		// PARA TRAER LOS ARCHIVOS EN LAS COTIZACIONES DEL PROVEEDOR QUE HAN SIDO "SELECCIONADAS" EN LA COTIZACION
+		// PARA QUE LOGISTICA PUEDA VISUALIZAR  LOS ARCHIVOS QUE ADJUNTA EL PROVEEDOR
+
+		$this->db
+		->select('cdpda.*')
+		->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
+		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'LEFT')
+		->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle=cdpd.idCotizacionDetalle', 'LEFT')
+		->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacion=cd.idCotizacion and cdp.idProveedor=cd.idProveedor and cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor', 'LEFT')
+		->where('cd.idProveedor is not null') //Este where es importante para que funcione, segun la requerido.
+		->where('cdp.estado', '1')
+		->where('cdpda.estado', '1')
+		->where('cdpd.estado', '1')
+		->where('cdpd.estado', '1')
+		->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
+		return $this->db->get();
+		
+	}
+
 	public function obtenerCuentaCentroCosto($params = [])
 	{
 		$filtros = '';
@@ -1270,8 +1291,6 @@ class M_Cotizacion extends MY_Model
 					'idUsuarioReg' => $row['idUsuarioReg'],
 					'flag_anexo' => $row['flag_anexo'],
 					'estado' => true,
-
-
 				];
 			}
 
@@ -1586,7 +1605,8 @@ class M_Cotizacion extends MY_Model
 			cd.enlaces AS enlaces,
 			ci.idProveedor AS idProveedor,
 			p.razonSocial AS razonSocial,
-			ci.flag_actual AS flag_actual
+			ci.flag_actual AS flag_actual,
+			cd.costo as costoCotizacion
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1619,6 +1639,7 @@ class M_Cotizacion extends MY_Model
 			lt.idProveedor ,
 			lt.razonSocial ,
 			lt.flag_actual ,
+			lt.costoCotizacion ,
 			CASE
 				WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
 				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
@@ -1678,7 +1699,10 @@ class M_Cotizacion extends MY_Model
 				cds.idDistribucionTachado,
 				UPPER(ts.nombre) tipoServicio,
 				um.nombre unidadMedida,
-				cds.genero
+				cds.genero,
+				cds.idProveedorDistribucion,
+				cds.cantidadReal,
+				cds.requiereOrdenCompra
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
