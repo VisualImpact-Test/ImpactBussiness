@@ -25,9 +25,13 @@
         <input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
         <h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
         <div class="fields disabled disabled-visible ">
-            <div class="eleven wide field">
+            <div class="six wide field">
                 <div class="ui sub header">Título</div>
                 <input id="nombre" name="nombre" patron="requerido" placeholder="Título de la cotizacion" value="<?= !empty($cotizacion['cotizacion']) ? $cotizacion['cotizacion'] : '' ?>">
+            </div>
+            <div class="five wide field">
+                <div class="ui sub header">Usuario Reg.</div>
+                <input value="<?= verificarEmpty($cotizacion['usuario']) ?>" readonly>
             </div>
             <div class="five wide field">
                 <div class="ui sub header">Deadline compras</div>

@@ -182,7 +182,7 @@
               <? if($row['tipoItem'] == 'Servicio'){ ?>
               <div class="col-sm-auto">
                 <div class="form-group">
-                  <label>Nombre</label>
+                  <label>Descripción</label>
                   <input type="text" class="form-control" value="<?= $value['nombre'] ?>" readonly>
                 </div>
               </div>
@@ -207,7 +207,7 @@
         <div class="col-md-12">
           <div class="form-group nuevo">
             <a href="javascript:;" class="btn btn-lg btn-outline-secondary col-md-2" title="Agregar Captura" onclick="$(this).parents('.nuevo').find('.file-lsck-capturas').click();">
-              Agregar Imágen <i class="fa fa-lg fa-camera-retro"></i>
+              Agregar Archivos <i class="fa fa-lg fa-camera-retro"></i>
             </a>
             <div class="content-lsck-capturas pt-2">
               <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen"

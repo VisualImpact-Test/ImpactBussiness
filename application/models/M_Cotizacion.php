@@ -43,6 +43,18 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function getPropuestaItemArchivos($params = [])
+	{
+		$this->db
+		->select('*')
+		->from('compras.propuestaItemArchivo pia')
+		->join('compras.propuestaItem pi', 'pia.idPropuestaItem = pi.idPropuestaItem', 'LEFT')
+		->join('compras.cotizacionDetalleProveedorDetalle pd', 'pd.idCotizacionDetalleProveedorDetalle = pi.idCotizacionDetalleProveedorDetalle', 'LEFT')
+		->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = pd.idCotizacionDetalle', 'LEFT')
+		->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
+		return $this->db->get();
+	}
+
 	public function obtenerCuentaCentroCosto($params = [])
 	{
 		$filtros = '';
@@ -172,13 +184,14 @@ class M_Cotizacion extends MY_Model
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
+				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
 			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = p.idCentroCosto
 			LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 				AND od.estado = 1
-
+			LEFT JOIN sistema.usuario u ON u.idUsuario=p.idUsuarioReg
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
@@ -1748,9 +1761,9 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 			SELECT
 				cd.idCotizacionDetalle,
-				pia.idPropuestaItemArchivo,
-				pia.nombre_inicial archivo,
-				pia.nombre_archivo archivoWasabi,
+				--pia.idPropuestaItemArchivo,
+				--pia.nombre_inicial archivo,
+				--pia.nombre_archivo archivoWasabi,
 				m.nombre motivo,
 				UPPER(p.razonSocial) proveedor,
 				p.idProveedor,
@@ -1763,7 +1776,7 @@ class M_Cotizacion extends MY_Model
 			JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = pd.idCotizacionDetalle
 			JOIN compras.cotizacionDetalleProveedor pp ON pp.idCotizacionDetalleProveedor = pd.idCotizacionDetalleProveedor
 			JOIN compras.proveedor p ON p.idProveedor = pp.idProveedor
-			JOIN compras.propuestaItemArchivo pia ON pia.idPropuestaItem = pi.idPropuestaItem
+			-- JOIN compras.propuestaItemArchivo pia ON pia.idPropuestaItem = pi.idPropuestaItem
 			WHERE 
 			1 = 1
 			{$filtros} 

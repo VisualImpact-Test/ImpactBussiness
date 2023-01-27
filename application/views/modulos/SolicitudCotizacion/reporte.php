@@ -6,6 +6,7 @@
                 <th class="td-center">OPCIONES</th>
                 <th>FECHA EMISION</th>
                 <th>NOMBRE</th>
+                <th>USUARIO REG</th>
                 <th>CUENTA</th>
                 <th>CENTRO COSTO</th>
                 <th>NRO COTIZACION</th>
@@ -51,6 +52,7 @@
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cotizacion'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['usuario'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuenta'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'], 3); ?></td>

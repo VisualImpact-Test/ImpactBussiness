@@ -1405,9 +1405,14 @@ class SolicitudCotizacion extends MY_Controller
 			]
 		)['query']->result_array();
 
+		$propuestaArchivos = $this->model->getPropuestaItemArchivos(['idCotizacionDetalle' => $post['idCotizacionDetalle']])->result_array();
+		
 		foreach ($cotizacionProveedorPropuesta as $cpp) {
 			$dataParaVista['cotizacionPropuesta'][$cpp['idPropuestaItem']] = $cpp;
-			$dataParaVista['cotizacionPropuestaArchivos'][$cpp['idPropuestaItem']][$cpp['idPropuestaItemArchivo']] = $cpp;
+		}
+
+		foreach ($propuestaArchivos as $cpa) {
+			$dataParaVista['cotizacionPropuestaArchivos'][$cpa['idPropuestaItem']][$cpa['idPropuestaItemArchivo']] = $cpa;
 		}
 
 		$html = getMensajeGestion('noRegistros');
