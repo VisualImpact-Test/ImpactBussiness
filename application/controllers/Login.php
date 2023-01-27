@@ -23,13 +23,13 @@ class Login extends MY_Controller
 		$data = json_decode($this->input->post('data'));
 
 		// $captcha = $this->validar_captcha_v2($data->{'g-recaptcha-response'});
-		$captcha = $this->validar_captcha_v3($data);
+		/* $captcha = $this->validar_captcha_v3($data);
 		if(!$captcha){
 			$result['result'] = 0;
 			$config_ = array( 'type' => 2, 'message' => "Captcha inválido");
 			$result['msg']['content'] = createMessage($config_);
 			goto responder;
-		}
+		} */
 
 		$input = array(
 			'usuario' => $data->user,

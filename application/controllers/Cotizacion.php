@@ -1083,7 +1083,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 		$config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
-		$config['data']['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
+		$config['data']['itemLogistica'] = $this->model_item->obtenerItemsLogistica();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
