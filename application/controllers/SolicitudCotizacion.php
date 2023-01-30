@@ -374,6 +374,7 @@ class SolicitudCotizacion extends MY_Controller
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
 		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
@@ -402,7 +403,8 @@ class SolicitudCotizacion extends MY_Controller
 				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 2,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
-				'caracteristicasCompras' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
+				'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+				'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 				'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 				'diasEntrega' => !empty($post['diasEntregaItem'][$k]) ? $post['diasEntregaItem'][$k] : NULL,
@@ -469,6 +471,20 @@ class SolicitudCotizacion extends MY_Controller
 						break;
 				}
 			}
+
+			if ($post['tipoItemForm'][$k] == COD_SERVICIO['id'] ) {
+				if(!empty($post["newNombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"])){
+					$this->db->delete('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $post['idCotizacionDetalle'][$k]]);
+					$data['insertSubItem'][$k] = getDataRefactorizada([
+						'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+						'nombre' => $post["newNombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'cantidad' => $post["newCantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'costo' => $post["newCostoSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'subtotal' => $post["newSubtotalSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+					]);
+				}
+			}
+			
 		}
 		$data['archivoEliminado'] = $post['archivoEliminado'];
 
@@ -515,6 +531,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
+		
 		echo json_encode($result);
 	}
 

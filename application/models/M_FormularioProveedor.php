@@ -238,7 +238,7 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerInformacionCotizacionDetalleSub($params=[])
 	{
 		$this->db
-		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad')
+		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad as cantidadItem')
 		->from('compras.cotizacionDetalleProveedorDetalleSub cdpds')
 		->join('compras.cotizacionDetalleSub cds', 'cds.idCotizacionDetalleSub = cdpds.idCotizacionDetalleSub', 'left');
 		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';
@@ -283,7 +283,8 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.diasEntrega,
 			cdpd.fechaEntrega,
 			cde.nombre AS cotizacionDetalleEstado,
-			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion
+			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion,
+			cd.caracteristicasProveedor
 		FROM
 		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor

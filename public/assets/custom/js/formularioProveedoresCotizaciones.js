@@ -279,6 +279,60 @@ var FormularioProveedores = {
 		$('#costo_' + id).attr('readonly', true);
 		$('#costoredondo_' + id).attr('readonly', true);
 	},
+	agregarDetalleServicio: function(t, idCDPD){
+		control = $(t).parents('.divDetalle').find('.dataDetalle');
+
+		$(control).append(`
+			<div class="col-md-12 row filaDetalle">
+				<div class="col-md-6">
+					<div class="form-group">
+						<h4 class="mb-1">Descripción</h4>
+						<input type="hidden" class="form-control" name="idCDPD[0]" value="${idCDPD}">
+						<input type="hidden" class="form-control" name="idCDPDS[0]" value="0">
+						<input class="form-control" name="descripcion[0]">
+					</div>
+				</div>
+				
+				<div class="col-md-2">
+					<div class="form-group">
+						<h4 class="mb-1">Cantidad</h4>
+						<input class="form-control cantidad" name="cantidad[0]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)">
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<h4 class="mb-1">Prec. Unit.</h4>
+						<input class="form-control costo" name="costo[0]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)">
+					</div>
+				</div>
+				<div class="col-md-2">
+					<div class="form-group">
+						<h4 class="mb-1">STotal</h4>
+						<input class="form-control subtotal" name="subtotal[0]"  readonly data-tiposervicio="Servicio" onchange="FormularioProveedores.calcularSubTotal(${idCDPD}, this)">
+					</div>
+				</div>
+			</div>
+		`);
+	},
+	calcularSubItemTotal: function(t){
+		control = $(t).parents('.filaDetalle');
+		cantidad = $(control).find('input.cantidad').val();
+		costo = $(control).find('input.costo').val();
+		var tot = (cantidad * costo).toFixed(2);
+		$(control).find('input.subtotal').val(tot).trigger('change');
+
+	},
+	calcularSubTotal: function(idCDPD, t){
+		var subSubtotal = 0;
+		var control = $(t).parents('.dataDetalle');
+		for (let index = 0; index < $(control).find('.subtotal').length; index++) {
+			input = $(control).find('.subtotal')[index];
+			valor = $(input).val();
+			subSubtotal += parseFloat(valor);		
+		}
+		$('#costo_'+idCDPD).val(subSubtotal);
+		$('#costoredondo_'+idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
+	},
 	calcularTotal: function (i, cantidad, val) {
 		var tot = cantidad * val;
 		var tot_ = tot.toFixed(2);

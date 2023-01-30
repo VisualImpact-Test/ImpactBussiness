@@ -492,12 +492,14 @@ class Cotizacion extends MY_Controller
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
-				case COD_SERVICIO['id']:
-					$data['subDetalle'][$k] = getDataRefactorizada([
-						'nombre' => $post["nombreSubItemServicio[$k]"],
-						'cantidad' => $post["cantidadSubItemServicio[$k]"],
-					]);
-					break;
+				// case COD_SERVICIO['id']:
+				// 	$data['subDetalle'][$k] = getDataRefactorizada([
+				// 		'nombre' => $post["nombreSubItemServicio[$k]"],
+				// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
+				// 		'costo' => $post["costoSubItemServicio[$k]"],
+				// 		'subTotal' => $post["subtotalSubItemServicio[$k]"],
+				// 	]);
+				// 	break;
 
 				case COD_DISTRIBUCION['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
@@ -637,6 +639,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		respuesta:
+		
 		echo json_encode($result);
 	}
 

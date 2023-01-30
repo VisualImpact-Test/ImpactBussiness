@@ -272,7 +272,7 @@
 
 
 							<!-- Servicios -->
-							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
+							<!-- <div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
 								<div class="content-body-sub-item">
 									<?
@@ -303,7 +303,7 @@
 									<i class="plus icon"></i>
 									Agregar
 								</button>
-							</div>
+							</div> -->
 							<!-- Distribucion -->
 							<?php  if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :  ?>
 								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id']?'':'d-none'?>">

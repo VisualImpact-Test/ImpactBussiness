@@ -663,11 +663,11 @@ class FormularioProveedor extends MY_Controller
 		$post['idItem'] = checkAndConvertToArray($post['idItem']);
 
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
+			// Para actualizar el detalle
 			$subTotal = (!empty($post['costo'][$k])) ? $post['costo'][$k] : 0;
 			$cantidad = (!empty($post['cantidad'][$k])) ? $post['cantidad'][$k] : 0;
 			$data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
-				// 'costo' => costoUnitario($cantidad,$subTotal),
 				'costo' => $subTotal,
 				'flag_activo' => 0,
 				'diasValidez' => $post['diasValidez'][$k],
@@ -676,6 +676,8 @@ class FormularioProveedor extends MY_Controller
 				'diasEntrega' => $post['diasEntrega'][$k],
 				'fechaEntrega' => $post['fechaEntrega'][$k]
 			];
+
+			// Para archivos
 			if (isset($post['file-type[' . $r . ']'])) {
 				if (is_array($post['file-type[' . $r . ']'])) {
 					foreach ($post['file-type[' . $r . ']'] as $key => $value) {
@@ -721,29 +723,82 @@ class FormularioProveedor extends MY_Controller
 					];
 				}
 			}
+
+			// Para actualizar el SubDetalle
+			if (isset($post['idCDPD['.$r.']']) && $r != '0') {
+				$post['idCDPD['.$r.']'] = checkAndConvertToArray($post['idCDPD['.$r.']']);
+				$post['idCDPDS['.$r.']'] = checkAndConvertToArray($post['idCDPDS['.$r.']']);
+				$post['costo['.$r.']'] = checkAndConvertToArray($post['costo['.$r.']']);
+				$post['subtotal['.$r.']'] = checkAndConvertToArray($post['subtotal['.$r.']']);
+				$post['descripcion['.$r.']'] = checkAndConvertToArray($post['descripcion['.$r.']']);
+				$post['cantidad['.$r.']'] = checkAndConvertToArray($post['cantidad['.$r.']']);
+
+				foreach ($post['idCDPDS['.$r.']'] as $key => $value) {
+					$updateDetalleSub['update'][] = [
+						'idCotizacionDetalleProveedorDetalleSub' => $value,
+						'costo' => $post['costo['.$r.']'][$key],
+						'subtotal' => $post['subtotal['.$r.']'][$key],
+						'descripcion' => $post['descripcion['.$r.']'][$key],
+						'cantidad' => $post['cantidad['.$r.']'][$key],
+					];
+				}
+
+				$updateDetalleSub['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
+				$updateDetalleSub['where'] = 'idCotizacionDetalleProveedorDetalleSub';
+				
+				$this->m_cotizacion->actualizarCotizacionDetalle($updateDetalleSub);
+				$updateDetalleSub = [];
+			}
+			
 		}
+
 		if (!empty($insertArchivos)) {
 			$this->db->insert_batch('compras.cotizacionDetalleProveedorDetalleArchivos', $insertArchivos);
 		}
+
 		$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalle';
 		$data['where'] = 'idCotizacionDetalleProveedorDetalle';
 		$updateDetalle = $this->m_cotizacion->actualizarCotizacionDetalle($data);
 		$data = [];
-		if (isset($post['idCDPDS'])) {
-			$post['idCDPDS'] = checkAndConvertToArray($post['idCDPDS']);
-			$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
 
-			foreach ($post['idCDPDS'] as $key => $value) {
-				$data['update'][] = [
-					'idCotizacionDetalleProveedorDetalleSub' => $post['idCDPDS'][$key],
-					'costo' => $post['costoSubItem'][$key],
-					'subTotal' => number_format(floatval($post['cantidadSubItem'][$key]) * floatval($post['costoSubItem'][$key]), 2)
+		if (isset($post['idCDPD[0]'])) { // Significa que hay nuevos registros para guardar en "cotizacionDetalleProveedorDetalleSub"
+			$post['idCDPD[0]'] = checkAndConvertToArray($post['idCDPD[0]']);
+			$post['idCDPDS[0]'] = checkAndConvertToArray($post['idCDPDS[0]']);
+			$post['costo[0]'] = checkAndConvertToArray($post['costo[0]']);
+			$post['subtotal[0]'] = checkAndConvertToArray($post['subtotal[0]']);
+			$post['descripcion[0]'] = checkAndConvertToArray($post['descripcion[0]']);
+			$post['cantidad[0]'] = checkAndConvertToArray($post['cantidad[0]']);
+
+			foreach ($post['idCDPD[0]'] as $key => $value) {
+				$insertSub[] = [
+					'idCotizacionDetalleProveedorDetalle' => $value,
+					'idCotizacionDetalleSub' => null,
+					'costo' => $post['costo[0]'][$key],
+					'subtotal' => $post['subtotal[0]'][$key],
+					'descripcion' => $post['descripcion[0]'][$key],
+					'cantidad' => $post['cantidad[0]'][$key]
 				];
 			}
-			$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
-			$data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
-			$updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+
+			$this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalleSub', $insertSub);
 		}
+
+
+		// if (isset($post['idCDPDS'])) {
+		// 	$post['idCDPDS'] = checkAndConvertToArray($post['idCDPDS']);
+		// 	$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
+
+		// 	foreach ($post['idCDPDS'] as $key => $value) {
+		// 		$data['update'][] = [
+		// 			'idCotizacionDetalleProveedorDetalleSub' => $post['idCDPDS'][$key],
+		// 			'costo' => $post['costoSubItem'][$key],
+		// 			'subTotal' => number_format(floatval($post['cantidadSubItem'][$key]) * floatval($post['costoSubItem'][$key]), 2)
+		// 		];
+		// 	}
+		// 	$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
+		// 	$data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
+		// 	$updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
+		// }
 
 		if (!$updateDetalle['estado']) {
 			$result['result'] = 0;

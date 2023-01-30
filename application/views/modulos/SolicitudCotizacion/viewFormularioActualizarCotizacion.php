@@ -160,7 +160,11 @@
 												<input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
 												<input type="hidden" class="txtDiasEntregaItemProveedor" value="<?= $view['diasEntrega'] ?>">
 												<input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
-												<input type="hidden" class="txtSubProveedorCotizacion" value='<?= !empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) ? json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) : "" ?>'>
+												<input type="hidden" class="txtSubProveedorCotizacion" value='<?= (!empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) && $row['idItemTipo'] != COD_SERVICIO['id']) ? json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) : "" ?>'>
+												<?php  if (!empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) && $row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+													<label class="d-none txtDetalleTipoServicio"><?= json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) ?></label> <!-- Lo pongo en un label para evitar que una comilla dentro del contenido pueda causar errores. -->
+													<input type="hidden" class="txtIdCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
+												<?php endif; ?>
 												<div class="d-none col-md-12 elegirImagenes">
 													<?php if (!empty($cotizacionProveedorArchivos[$view['idCotizacionDetalleProveedorDetalle']])) : ?>
 														<div class="ui small images">
@@ -251,9 +255,13 @@
 								</div>
 							</div>
 							<div class="fields">
-								<div class="sixteen wide field">
+								<div class="eight wide field">
+									<div class="ui sub header">Características para Compras</div>
+									<input name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>" autocomplete="off">
+								</div>
+								<div class="eight wide field">
 									<div class="ui sub header">Características para el proveedor</div>
-									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
+									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>" autocomplete="off">
 								</div>
 							</div>
 							<!-- Textiles -->
@@ -318,14 +326,14 @@
 							<!-- Servicios -->
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
-								<div class="content-body-sub-item">
+								<div class="content-body-sub-item divItemServicio">
 									<?
 									if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
 
 											<div class="fields body-sub-item body-sub-item-servicio">
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-												<div class="eleven wide field">
+												<div class="five wide field">
 													<div class="ui sub header">Sub item </div>
 													<input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
 												</div>
@@ -333,16 +341,20 @@
 													<div class="ui sub header">Cantidad</div>
 													<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Costo</div>
+													<input readonly="readonly" class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costo'])?>" readonly>
+												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Subtotal</div>
+													<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal'])?>" readonly>
+												</div>
 											</div>
 									<?
 										endforeach;
 									endif;
 									?>
 								</div>
-								<!-- <button type="button" class="ui basic button btn-add-sub-item">
-                                    <i class="plus icon"></i>
-                                    Agregar
-                                </button> -->
 							</div>
 
 							<!-- Distribucion -->
