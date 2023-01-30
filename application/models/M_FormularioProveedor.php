@@ -284,7 +284,8 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.fechaEntrega,
 			cde.nombre AS cotizacionDetalleEstado,
 			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion,
-			cd.caracteristicasProveedor
+			cd.caracteristicasProveedor,
+			cdpd.flag_activo
 		FROM
 		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
@@ -292,8 +293,7 @@ class M_FormularioProveedor extends MY_Model
 		JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdpd.idCotizacionDetalle
 		JOIN compras.cotizacionDetalleEstado cde ON cd.idCotizacionDetalleEstado = cde.idCotizacionDetalleEstado
 		LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cd.idUnidadMedida
-		JOIN compras.item i ON i.idItem = cdpd.idItem
-			AND i.estado = 1
+		JOIN compras.item i ON i.idItem = cdpd.idItem AND i.estado = 1
 		JOIN compras.itemTipo it ON it.idItemTipo = cd.idItemTipo
 		JOIN compras.itemEstado ei ON cd.idItemEstado = ei.idItemEstado
 		$filtros

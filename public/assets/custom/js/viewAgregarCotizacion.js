@@ -1234,6 +1234,7 @@ var Cotizacion = {
 			let divItemServicio = $(this).parents('.nuevo').find('.divItemServicio');
 
 			let precio = $(this).find('.txtCostoProveedor').val();
+			let idCotizacionDetalleProveedorDetalle = $(this).find('.txtCodProveedorCotizacion').val();
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
 			let diasEntregaElegido = $(this).find('.txtDiasEntregaItemProveedor').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
@@ -1284,6 +1285,14 @@ var Cotizacion = {
 				}
 
 			});
+
+			$.post(site_url+'SolicitudCotizacion/cerrarCotizacionProveedor',{
+				idCotizacionDetalleProveedorDetalle: idCotizacionDetalleProveedorDetalle
+			},function (data) {
+				console.log('cotizacion cerrada ');
+				console.log(data);
+			});
+
 			costoForm.val(precio);
 			costoFormLabel.val(moneyFormatter.format(precio));
 			diasEntregaItemForm.val(diasEntregaElegido);

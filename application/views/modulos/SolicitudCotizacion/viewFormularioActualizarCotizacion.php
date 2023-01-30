@@ -161,7 +161,7 @@
 												<input type="hidden" class="txtDiasEntregaItemProveedor" value="<?= $view['diasEntrega'] ?>">
 												<input type="hidden" class="txtProveedorElegido" value="<?= $view['idProveedor'] ?>">
 												<input type="hidden" class="txtSubProveedorCotizacion" value='<?= (!empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) && $row['idItemTipo'] != COD_SERVICIO['id']) ? json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) : "" ?>'>
-												<?php  if (!empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) && $row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+												<?php if (!empty($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) && $row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
 													<label class="d-none txtDetalleTipoServicio"><?= json_encode($cotizacionProveedorSub[$view['idCotizacionDetalleProveedorDetalle']]) ?></label> <!-- Lo pongo en un label para evitar que una comilla dentro del contenido pueda causar errores. -->
 													<input type="hidden" class="txtIdCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
 												<?php endif; ?>
@@ -191,14 +191,16 @@
 						<? if (true) { ?>
 							<div class="ui flowing custom popup popup-propuesta-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
 								<div class="ui vertical menu">
-									<? foreach ($cotizacionPropuesta[$row['idCotizacionDetalle']] as $cp) { ?>
-										<a class="item">
-											<h4 class="ui header"><?= !empty($cp['proveedor']) ? $cp['proveedor'] : '' ?></h4>
-											<p><?= !empty($cp['nombre']) ? $cp['nombre'] : '' ?></p>
-											<p><?= !empty($cp['motivo']) ? $cp['motivo'] : '' ?></p>
+									<?php if (!empty($cotizacionPropuesta[$row['idCotizacionDetalle']])) :  ?>
+										<? foreach ($cotizacionPropuesta[$row['idCotizacionDetalle']] as $cp) { ?>
+											<a class="item">
+												<h4 class="ui header"><?= !empty($cp['proveedor']) ? $cp['proveedor'] : '' ?></h4>
+												<p><?= !empty($cp['nombre']) ? $cp['nombre'] : '' ?></p>
+												<p><?= !empty($cp['motivo']) ? $cp['motivo'] : '' ?></p>
 
-										</a>
-									<? } ?>
+											</a>
+										<? } ?>
+									<?php endif; ?>
 								</div>
 							</div>
 						<? } ?>
@@ -221,7 +223,8 @@
 									<div class="ui-widget">
 										<div class="ui right action left icon input w-100">
 											<i class="semaforoForm flag link icon"></i>
-											<input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
+											<input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+											<input type='hidden' name='nameItemOriginal' patron="requerido" value="<?= $row['itemNombre'] ?>">
 											<div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown">
 												<input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagExterno']) ? $row['flagExterno'] : 0 ?>" patron="requerido">
 												<div class="text">Cuenta</div>
@@ -343,11 +346,11 @@
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Costo</div>
-													<input readonly="readonly" class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costo'])?>" readonly>
+													<input readonly="readonly" class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costo']) ?>" readonly>
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Subtotal</div>
-													<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal'])?>" readonly>
+													<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal']) ?>" readonly>
 												</div>
 											</div>
 									<?

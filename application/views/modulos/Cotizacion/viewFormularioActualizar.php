@@ -170,6 +170,7 @@
 									<div class="ui-widget">
 										<div class="ui icon input w-100">
 											<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
+											<input type='text' name='nameItemOriginal' patron="requerido" placeholder="Buscar item" value="<?= $row['itemNombre'] ?>">
 											<i class="semaforoForm flag link icon"></i>
 										</div>
 

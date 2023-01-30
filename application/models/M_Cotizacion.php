@@ -692,6 +692,7 @@ class M_Cotizacion extends MY_Model
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			ISNULL(cd.nombre,'') item,
+			i.nombre as itemNombre,
 			cd.idItem,
 			cd.cantidad,
 			cd.costo,
@@ -707,12 +708,17 @@ class M_Cotizacion extends MY_Model
 			p.idProveedor,
 			p.razonSocial,
 			cd.caracteristicasCompras
+			-- ,
+			-- cuenta.nombre as cuenta,
+			-- centrocosto.subcanal as centrocosto
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			LEFT JOIN ( SELECT idCotizacionDetalle, MAX(idProveedorDistribucion) as idProveedorDistribucion, CAST(MAX(CAST(requiereOrdenCompra as INT)) AS BIT) as requiereOrdenCompra from compras.cotizacionDetalleSub group by idCotizacionDetalle) cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
 			LEFT JOIN compras.proveedor p ON p.idProveedor = ISNULL(cd.idProveedor,cds.idProveedorDistribucion)
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
+			-- LEFT JOIN rrhh.dbo.Empresa cuenta ON c.idCuenta = cuenta.idEmpresa
+			-- LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = c.idCentroCosto
 			WHERE
 			1 = 1
 			{$filtros}
@@ -984,9 +990,9 @@ class M_Cotizacion extends MY_Model
 			cd.idItem,
 			c.idProveedor,
 			cd.costo subTotal,
-			cdl.cantidad,
+			cd.cantidad,
 			p.razonSocial,
-			(cd.costo / cdl.cantidad) costoUnitario,
+			(cd.costo / cd.cantidad) costoUnitario,
 			cd.diasEntrega
 			FROM
 			compras.cotizacionDetalleProveedor c
@@ -1095,18 +1101,25 @@ class M_Cotizacion extends MY_Model
 			od.idCotizacion,
 			o.requerimiento,
 			o.concepto,
-			'' cuentas,
-			'' centrosCosto,
-			'' ordenCompra,
+			-- '' cuentas,
+			-- '' centrosCosto,
+			-- '' ordenCompra,
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
 			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
 			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
-			'Coordinadora de compras' usuarioReceptor
+			'Coordinadora de compras' usuarioReceptor,
+			cuenta.nombre as cuenta,
+			centrocosto.subcanal as centroCosto,
+			ss.nombre as solicitante
 		FROM compras.oper o
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
+		LEFT JOIN compras.cotizacion p ON p.idCotizacion = od.idCotizacion
+		LEFT JOIN compras.solicitante ss ON ss.idSolicitante = p.idSolicitante
 		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
+		LEFT JOIN rrhh.dbo.Empresa cuenta ON p.idCuenta = cuenta.idEmpresa
+		LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = p.idCentroCosto
 		WHERE o.estado = 1
 		{$filtros}";
 
@@ -1592,6 +1605,7 @@ class M_Cotizacion extends MY_Model
 			cd.idCotizacionDetalle AS idCotizacionDetalle,
 			ci.fechaVigencia as Vigencia,
 			ISNULL(cd.nombre,'') item,
+			i.nombre as itemNombre,
 			ABS(DATEDIFF(DAY,@fechaHoy,ISNULL(ci.fechaVigencia,@fechaHoy))) AS diasVigencia,
 			cd.idItem AS idItem,
 			cd.cantidad AS cantidad,
@@ -1626,6 +1640,7 @@ class M_Cotizacion extends MY_Model
 			lt.idCotizacionDetalle ,
 			lt.Vigencia ,
 			lt.item ,
+			lt.itemNombre ,
 			lt.diasVigencia,
 			lt.idItem ,
 			lt.cantidad ,

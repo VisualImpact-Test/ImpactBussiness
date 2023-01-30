@@ -669,7 +669,7 @@ class FormularioProveedor extends MY_Controller
 			$data['update'][] = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
 				'costo' => $subTotal,
-				'flag_activo' => 0,
+				// 'flag_activo' => 1,
 				'diasValidez' => $post['diasValidez'][$k],
 				'fechaValidez' => $post['fechaValidez'][$k],
 				'comentario' => $post['comentario'][$k],

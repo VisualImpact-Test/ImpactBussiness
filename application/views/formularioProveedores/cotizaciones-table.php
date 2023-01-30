@@ -166,7 +166,7 @@
 									<div class="col-md-2">
 										<div class="form-group">
 											<h4 class="mb-1">Cantidad</h4>
-											<input class="form-control cantidad" name="cantidad[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $servicio ? $value['cantidad'] : $value['cantidadItem']; ?>" <?= $textil?'readonly':''; ?>>
+											<input class="form-control cantidad" name="cantidad[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $servicio ? $value['cantidad'] : $value['cantidadItem']; ?>" <?= $textil ? 'readonly' : ''; ?>>
 										</div>
 									</div>
 									<div class="col-md-2">
@@ -231,8 +231,8 @@
 							<div class="fields ">
 								<div class="sixteen wide field">
 									<div class="ui images content-lsck-files"> <? if (!empty($archivos)) { ?> <? foreach ($archivos as $archivo) {
-																																			if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']) {
-																																				if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?> <div class="content-lsck-capturas">
+																													if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']) {
+																														if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?> <div class="content-lsck-capturas">
 															<div class="ui dimmer dimmer-file-detalle">
 																<div class="content">
 																	<p class="ui tiny inverted header"> <?= $archivo['nombre_inicial'] ?> </p>
@@ -256,8 +256,8 @@
 															<img height="100" src="
         																	<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 														</div> <? }
-																																			}
-																																		} ?> <? } ?> </div>
+																													}
+																												} ?> <? } ?> </div>
 								</div>
 							</div>
 						</div>
@@ -266,10 +266,21 @@
 				<hr class="featurette-divider">
 			<?php endforeach; ?>
 		</div>
+
+		<!-- Validar Btn de Guardado -->
+		<?php $mostrarBtnGuardar = true; ?>
+		<?php foreach ($datos as $kp => $vp) : ?>
+			<?php if ($vp['flag_activo'] == '0') :  ?>
+				<?php $mostrarBtnGuardar = false; ?>
+			<?php endif; ?>
+		<?php endforeach; ?>
+
 		<div class="container">
-			<div class="ui right floated small primary labeled icon button btnGuardarCotizacion">
-				<i class="save icon"></i> <span class="">Guardar</span>
-			</div>
+			<?php if ($mostrarBtnGuardar) :  ?>
+				<div class="ui right floated small primary labeled icon button btnGuardarCotizacion">
+					<i class="save icon"></i> <span class="">Guardar</span>
+				</div>
+			<?php endif; ?>
 			<div class="ui small button btnRefreshCotizaciones">
 				<i class="sync icon"></i>
 				Refresh

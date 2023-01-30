@@ -14,17 +14,17 @@ $filas = 10;
             <td class="text-left w-20">De:</td>
             <td class="text-left w-40"><?=verificarEmpty($dataOper['usuarioRegistro'],3)?></td>
             <td class="text-left w-20">OC del Cliente:</td>
-            <td class="text-center w-20"><?=verificarEmpty($dataOper['ordenCompra'],3)?></td>
+            <td class="text-center w-20"><?=verificarEmpty($dataOper['concepto'],3)?></td>
         </tr>
         <tr>
             <td class="text-left">Concepto PO / CR Cliente:</td>
-            <td class="text-left" colspan="3"><?=verificarEmpty($dataOper['concepto'],3)?></td>
+            <td class="text-left" colspan="3"><?=verificarEmpty($dataOper['solicitante'],3)?></td>
         </tr>
         <tr>
             <td class="text-left w-20">Unidad de Negocio</td>
-            <td class="text-left w-40"><?=verificarEmpty($dataOper['cuentas'],3)?></td>
+            <td class="text-left w-40"><?=verificarEmpty($dataOper['cuenta'],3)?></td>
             <td class="text-left w-20">Centro de Costo:</td>
-            <td class="text-center w-20"><?=verificarEmpty($dataOper['centrosCosto'],3)?></td>
+            <td class="text-center w-20"><?=verificarEmpty($dataOper['centroCosto'],3)?></td>
         </tr>
         <tr>
             <td class="text-left w-20">Fecha de requerimiento</td>
