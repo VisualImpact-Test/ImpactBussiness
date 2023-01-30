@@ -99,7 +99,9 @@
                     <td><?= generar_espacios(1, 1) ?></td>
                     <td></td>
                     <td colspan="2" style="font-weight: bold;">
+                        <? if($data['mostrar_observacion']==1){ ?>
                         <?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
+                        <? } ?>
                     </td>
                     <td></td>
                     <td></td>
@@ -136,30 +138,30 @@
                 </tr>
             <? endif; ?>
             <tr style="border-bottom: none;">
-                <td colspan="2">
+                <td colspan="2" style="border-bottom: none;">
                     <strong>Forma de Pago</strong>
                 </td>
-                <td>
+                <td style="border-bottom: none;">
                     <strong>
                         <?= !empty($data['metodoPago']) ? $data['metodoPago'] : '' ?>
                     </strong>
                 </td>
-                <td>
+                <td style="border-bottom: none;">
                     <strong>
                         Observaciones
                     </strong>
                 </td>
-                <td colspan="2">
+                <td colspan="2" style="border-bottom: none;">
                     <strong>
                         <?= !empty($data['pocliente']) ? $data['pocliente'] : '' ?>
                     </strong>
                 </td>
             </tr>
             <tr style="border-top: none;">
-                <td colspan="2" style="height: 50px;"></td>
-                <td></td>
-                <td></td>
-                <td colspan="2"></td>
+                <td colspan="2" style="height: 50px;border-top: none;"></td>
+                <td style="height:50px;border-top: none;"></td>
+                <td style="height:50px;border-top: none;"></td>
+                <td colspan="2" style="height: 50px;border-top: none;"></td>
             </tr>
         </tfoot>
     </table>

@@ -77,20 +77,20 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	 'hostname' => '192.168.1.254',
+	/* 'hostname' => '192.168.1.254',
 	 'username' => 'administrador.ti',
 	 'password' => 'Wn3*6OrIEg5b',
-	 'database' => 'ImpactBussiness',
+	 'database' => 'ImpactBussiness',*/
 
 	// 'hostname' => '192.168.50.47',
 	// 'username' => 'pruebas.desarrollo',
 	// 'password' => '%&Prueb4asV1',
 	// 'database' => 'impactTrade_bd',
 
-	//'hostname' => '192.168.50.47',
-	//'username' => 'pruebas.desarrollo',
-	//'password' => '%&Prueb4asV1',
-	//'database' => 'ImpactBussiness',
+	'hostname' => '192.168.50.47',
+	'username' => 'pruebas.desarrollo',
+	'password' => '%&Prueb4asV1',
+	'database' => 'ImpactBussiness',
 
 	'dbdriver' => 'sqlsrv',
 	'dbprefix' => '',

@@ -978,6 +978,7 @@ class SolicitudCotizacion extends MY_Controller
 			'pocliente' => $post['pocliente'],
 			'observacion' => $post['observacion'],
 			'comentario' => $post['comentario'],
+			'mostrar_observacion' => isset($post['mostrar_observacion'])?1:0
 		]);
 
 
@@ -1000,6 +1001,7 @@ class SolicitudCotizacion extends MY_Controller
 				'igv' => $row['igvOrden'] ? '18' : null,
 				'entrega' => !empty($row['lugarEntrega']) ? $row['lugarEntrega'] : NULL,
 				'fechaEntrega' => !empty($row['fechaEntrega']) ? $row['fechaEntrega'] : NULL,
+				'mostrar_observacion' => !empty($row['mostrar_observacion']) ? $row['mostrar_observacion'] : NULL,
 				
 			];
 
@@ -1126,7 +1128,8 @@ class SolicitudCotizacion extends MY_Controller
 			'comentario' => $post['comentario'],
 			'metodoPago' => $dataMetodoPago['nombre'],
 			'nombre_archivo' => $dataFirma['nombre_archivo'],
-			'igv' => (isset($post['igvOrden'])?'18':'0')
+			'igv' => (isset($post['igvOrden'])?'18':'0'),
+			'mostrar_observacion' => isset($post['mostrar_observacion'])?'1':'0'
 		];
 
 		$dataParaVista['detalle'] = $detalleCotizacion;

@@ -93,6 +93,14 @@
                             <div class="ui sub header">Observación</div>
                             <input type="text" name="observacion" placeholder="Escriba aquí" value="">
                         </div>
+                        <div class="two wide field">
+                            <div class="ui sub header">Mostrar Observación</div>
+                            <div class="custom-control custom-switch custom-switch-lg">
+                                <input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion">
+                                <label class="custom-control-label" for="mostrar_observacion"></label>
+                            </div>
+                            <!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
+                        </div>
                     </div>
                     <div class="fields">
                         <div class="sixteen wide field">
