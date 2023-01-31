@@ -427,18 +427,6 @@
 								<div class="ui right action right labeled input">
 									<label for="amount" class="ui label">S/</label>
 									<input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
-									<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
-									<input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
-									<div class="ui basic floating dropdown button simpleDropdown read-only">
-										<input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
-										<div class="text">Redondear</div>
-										<i class="dropdown icon"></i>
-										<div class="menu">
-											<div class="item" data-value="1">Redondear arriba</div>
-											<div class="item" data-value="0">No redondear</div>
-
-										</div>
-									</div>
 								</div>
 							</div>
 						</div>
@@ -470,6 +458,18 @@
 									<label for="amount" class="ui label teal">S/</label>
 									<input class="subtotalFormLabel" type="text" placeholder="0.00" readonly>
 									<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" readonly>
+									<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+									<input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+									<div class="ui basic floating dropdown button simpleDropdown">
+										<input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="0" patron="requerido">
+										<div class="text">Redondear</div>
+										<i class="dropdown icon"></i>
+										<div class="menu">
+											<div class="item" data-value="1">Redondear arriba</div>
+											<div class="item" data-value="0">No redondear</div>
+
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>

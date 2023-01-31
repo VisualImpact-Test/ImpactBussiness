@@ -186,6 +186,7 @@ class M_Cotizacion extends MY_Model
 				, c.razonSocial AS cuenta
 				, cc.subcanal AS cuentaCentroCosto
 				, ce.nombre AS cotizacionEstado
+				, ce.icono
 				, p.estado
 				, p.fechaRequerida
 				, p.diasValidez
@@ -307,10 +308,11 @@ class M_Cotizacion extends MY_Model
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
 			->join('compras.solicitante sol', 'c.idSolicitante = sol.idSolicitante', 'LEFT')
 			->join('compras.itemTipo it', 'it.idItemTipo = cd.idItemTipo', 'LEFT')
-			->join('compras.proveedor', 'proveedor.idProveedor = cd.idProveedor', 'LEFT');
+			->join('compras.cotizacionDetalleSub cds', 'cd.idItemTipo = 7 AND cds.idCotizacionDetalle = cd.idCotizacionDetalle', 'LEFT')
+			->join('compras.proveedor', 'proveedor.idProveedor = isNull(cd.idProveedor, cds.idProveedorDistribucion)', 'LEFT');
 
 		if (isset($params['idCotizacion'])) $this->db->where('c.idCotizacion', $params['idCotizacion']);
-		if (isset($params['idProveedor'])) $this->db->where('cd.idProveedor', $params['idProveedor']);
+		if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
 		return $this->db->get();
 	}
 
@@ -707,7 +709,8 @@ class M_Cotizacion extends MY_Model
 			cd.enlaces,
 			p.idProveedor,
 			p.razonSocial,
-			cd.caracteristicasCompras
+			cd.caracteristicasCompras,
+			cd.flagRedondear
 			-- ,
 			-- cuenta.nombre as cuenta,
 			-- centrocosto.subcanal as centrocosto
@@ -1124,7 +1127,6 @@ class M_Cotizacion extends MY_Model
 		{$filtros}";
 
 		$query = $this->db->query($sql);
-
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
@@ -1365,6 +1367,10 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+						// 'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 					];
 				}
 			}
@@ -1388,6 +1394,9 @@ class M_Cotizacion extends MY_Model
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 
 					];
 				}
@@ -1622,7 +1631,8 @@ class M_Cotizacion extends MY_Model
 			ci.idProveedor AS idProveedor,
 			p.razonSocial AS razonSocial,
 			ci.flag_actual AS flag_actual,
-			cd.costo as costoCotizacion
+			cd.costo as costoCotizacion,
+			cd.flagRedondear
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1658,6 +1668,7 @@ class M_Cotizacion extends MY_Model
 			lt.razonSocial ,
 			lt.flag_actual ,
 			lt.costoCotizacion ,
+			lt.flagRedondear,
 			CASE
 				WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
 				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'

@@ -76,8 +76,8 @@ class M_Home extends MY_Model
 				idCotizacionEstado, nombre
 			FROM
 				compras.cotizacionEstado ce
-			WHERE 
-				ce.idCotizacionEstado <> 7
+			-- WHERE 
+				-- ce.idCotizacionEstado <> 7
 				
 			ORDER BY ce.orden
 		";
@@ -92,8 +92,8 @@ class M_Home extends MY_Model
 			FROM 
 				compras.cotizacion c
 				JOIN compras.cotizacionEstado ce ON c.idCotizacionEstado = ce.idCotizacionEstado
-			WHERE
-				ce.idCotizacionEstado <> 7
+			-- WHERE
+				-- ce.idCotizacionEstado <> 7
 			GROUP BY ce.idCotizacionEstado
 		";
 		return $this->db->query($sql);
@@ -122,7 +122,8 @@ class M_Home extends MY_Model
 			JOIN compras.cotizacionEstado ce ON c.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON cc.idCuenta = c.idCuenta AND cc.idCuentaCentroCosto = c.idCentroCosto
 			WHERE
-				ce.idCotizacionEstado <> 7 AND (fechaEmision BETWEEN @fecIni AND @fecFin
+				-- ce.idCotizacionEstado <> 7 AND 
+				(fechaEmision BETWEEN @fecIni AND @fecFin
 				OR fechaTermino IS NULL
 				OR fechaTermino BETWEEN @fecIni AND @fecFin)
 		";

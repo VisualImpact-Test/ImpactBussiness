@@ -1706,30 +1706,32 @@ class Cotizacion extends MY_Controller
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 
 		foreach ($post['nameItem'] as $k => $r) {
-			$data['update'][] = [
-				'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
-				'idCotizacion' => $post['idCotizacion'],
-				'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
-				'idItemTipo' => $post['tipoItemForm'][$k],
-				'nombre' => $post['nameItem'][$k],
-				'cantidad' => $post['cantidadForm'][$k],
-				'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
-				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
-				'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
-				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
-				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
-				'idItemEstado' => $post['idEstadoItemForm'][$k],
-				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
-				'idCotizacionDetalleEstado' => 2,
-				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
-				'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
-				'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
-				'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
-				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
-			];
+			if ($post['idCotizacionDetalle'][$k] != '0') {
+				$data['update'][] = [
+					'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+					'idCotizacion' => $post['idCotizacion'],
+					'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
+					'idItemTipo' => $post['tipoItemForm'][$k],
+					'nombre' => $post['nameItem'][$k],
+					'cantidad' => $post['cantidadForm'][$k],
+					'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+					'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+					'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+					'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
+					'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
+					'idItemEstado' => $post['idEstadoItemForm'][$k],
+					'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+					'idCotizacionDetalleEstado' => 2,
+					'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
+					'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+					'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
+					'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
+					'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
+				];
+			}
 
 			// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
-			if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k]) {
+			if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k] && !empty($post['nameItemOriginal'][$k])) {
 				$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
 			}
 			// FIN
@@ -1772,6 +1774,9 @@ class Cotizacion extends MY_Controller
 							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
 							'idItem' => $post["itemLogisticaForm[{$post['idCotizacionDetalle'][$k]}]"],
 							'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"],
+							'requiereOrdenCompra' => empty($post["generarOCSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? 0 : 1,
+							'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"])?$post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"]:null,
+							'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 						]);
 						break;
 
@@ -1908,6 +1913,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['cotizacionTarifario'] = $this->model->obtenerCotizacionDetalleTarifario(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
+		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
 		$config['data']['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
