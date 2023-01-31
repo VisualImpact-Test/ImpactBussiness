@@ -112,127 +112,6 @@
 								Valor redondeado
 							</small>
 
-<<<<<<< HEAD
-            </div>
-            <div class="form-group">
-              <h4 class="mb-1">Total</h4>
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">S/ </span>
-                </div>
-                <input class="form-control" name="costo" value="<?= number_format(verificarEmpty($row['cantidad'], 2) * verificarEmpty($row['costoUnitario'], 2),2,'.','') ?>" id="valorTotal<?=($k + 1) ?>" readonly>
-              </div>
-            </div>
-          </div>
-        </div>
-        <?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value): ?>
-          <div class="container">
-            <div class="row justify-content-start">
-              <? if($row['tipoItem'] == 'Textiles'){ ?>
-                <div class="col-sm-auto">
-                  <div class="form-group">
-                    <label>Talla</label>
-                    <input type="hidden" class="form-control" name="idCDPDS" value="<?= $value['idCotizacionDetalleProveedorDetalleSub'] ?>" readonly>
-                    <input type="text" class="form-control" value="<?= $value['talla'] ?>" readonly>
-                  </div>
-                </div>
-                <div class="col-sm-auto">
-                  <div class="form-group">
-                    <label>Tela</label>
-                    <input type="text" class="form-control" value="<?= $value['tela'] ?>" readonly>
-                  </div>
-                </div>
-                <div class="col-sm-auto">
-                  <div class="form-group">
-                    <label>Color</label>
-                    <input type="text" class="form-control" value="<?= $value['color'] ?>" readonly>
-                  </div>
-                </div>
-              <? } ?>
-              <? if($row['tipoItem'] == 'Servicio'){ ?>
-              <div class="col-sm-auto">
-                <div class="form-group">
-                  <label>Descripción</label>
-                  <input type="text" class="form-control" value="<?= $value['nombre'] ?>" readonly>
-                </div>
-              </div>
-              <? } ?>
-              <div class="col-sm-auto">
-                <div class="form-group">
-                  <label>Cantidad</label>
-                  <input type="text" class="form-control" name="cantidadSubItem" value="<?= $value['cantidad'] ?>" findCantidad="<?= $value['idCotizacionDetalleProveedorDetalle']?>" readonly>
-                </div>
-              </div>
-              <? if($row['tipoItem'] == 'Textiles'){ ?>
-              <div class="col-sm-auto">
-                <div class="form-group">
-                  <label>Costo Unit.</label>
-                  <input type="text" class="form-control onlyNumbers" name="costoSubItem" value="<?= $value['costo'] ?>" findCosto="<?= $value['idCotizacionDetalleProveedorDetalle']?>" patron="requerido" onkeyup="FormularioProveedores.calcularTotalSub(<?=$value['idCotizacionDetalleProveedorDetalle'] ?>);">
-                </div>
-              </div>
-              <? } ?>
-            </div>
-          </div>
-        <?php endforeach; ?>
-        <div class="col-md-12">
-          <div class="form-group nuevo">
-            <a href="javascript:;" class="btn btn-lg btn-outline-secondary col-md-2" title="Agregar Captura" onclick="$(this).parents('.nuevo').find('.file-lsck-capturas').click();">
-              Agregar Archivos <i class="fa fa-lg fa-camera-retro"></i>
-            </a>
-            <div class="content-lsck-capturas pt-2">
-              <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen"
-                      data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf,.xlsx" multiple="">
-              <div class="fields ">
-                <div class="container sixteen wide field">
-                  <div class="row content-lsck-galeria content-lsck-capturas">
-                    <?php if (!empty($archivos)): ?>
-                      <?php foreach ($archivos as $k => $archivo): ?>
-                        <?php if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']): ?>
-                            <div class="col-md-2 text-center">
-                              <div class="ui dimmer dimmer-file-detalle">
-                                <div class="content">
-                                  <p class="ui tiny inverted header"> <?= $archivo['nombre_inicial'] ?> </p>
-                                </div>
-                              </div>
-                              <a class="ui red right corner label img-lsck-capturas-delete">
-                                <i class="trash icon"></i>
-                              </a>
-                              <a target="_blank"
-                                  href="<?= RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}" ?>"
-                                  class="ui blue left corner label">
-                                <i class="eye icon"></i>
-                              </a>
-                              <input type="hidden" name="file-item[0]" value="">
-                              <input type="hidden" name="file-type[0]" value="image/<?= $archivo['extension'] ?>">
-                              <input type="hidden" name="file-name[0]" value="<?= $archivo['nombre_inicial'] ?>">
-                              <?php if ($archivo['extension'] == 'pdf') {
-                                $ruta = RUTA_WIREFRAME . "pdf.png";
-                              }else{
-                                $ruta = RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}";
-                              }?>
-                              <img src="<?= $ruta ?>" class="rounded img-lsck-capturas img-responsive img-thumbnail">
-                            </div>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </div>
-                </div>
-              </div>
-              <div class="fields ">
-                <div class="sixteen wide field">
-                  <div class="ui images content-lsck-files"> <? if (!empty($archivos)) { ?> <? foreach ($archivos as $archivo) {
-                        if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']) {
-                        if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?> <div class="content-lsck-capturas">
-                      <div class="ui dimmer dimmer-file-detalle">
-                        <div class="content">
-                          <p class="ui tiny inverted header"> <?= $archivo['nombre_inicial'] ?> </p>
-                        </div>
-                      </div>
-                      <a class="ui red right corner label img-lsck-capturas-delete">
-                        <i class="trash icon"></i>
-                      </a>
-                      <a target="_blank" href="
-=======
 						</div>
 						<div class="form-group">
 							<h4 class="mb-1">Total</h4>
@@ -363,7 +242,6 @@
 																<i class="trash icon"></i>
 															</a>
 															<a target="_blank" href="
->>>>>>> 527d78c1f632d7b5e0c615aa3bc26da1adc8a43e
         														<?= RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label">
 																<i class="eye icon"></i>
 															</a>
@@ -377,38 +255,6 @@
         																<?= $archivo['nombre_inicial'] ?>">
 															<img height="100" src="
         																	<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-<<<<<<< HEAD
-                    </div> <? }
-                        }
-                        } ?> <? } ?> </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr class="featurette-divider">
-      <?php endforeach; ?>
-    </div>
-    <div class="container">
-      <?php ///if (empty($datos[0]['fechaValidez']) ): ?>
-        <div class="ui right floated small primary labeled icon button btnGuardarCotizacion">
-          <i class="save icon"></i> <span class="">Guardar</span>
-        </div>
-      <?php //endif; ?>
-      <div class="ui small button btnRefreshCotizaciones">
-        <i class="sync icon"></i>
-        Refresh
-      </div>
-      <div class="ui small red button btnVolverProveedor">
-        <i class="fas fa-solid fa-caret-left icon"></i>
-        <span class="">Volver</span>
-      </div>
-    </div>
-    <hr class="featurette-divider">
-    <div class="ui bottom attached warning message">
-      <i class="icon warning"></i>Los costos indicados NO incluyen el IGV.
-    </div>
-=======
 														</div> <? }
 																													}
 																												} ?> <? } ?> </div>
@@ -420,7 +266,6 @@
 				<hr class="featurette-divider">
 			<?php endforeach; ?>
 		</div>
->>>>>>> 527d78c1f632d7b5e0c615aa3bc26da1adc8a43e
 
 		<!-- Validar Btn de Guardado -->
 		<?php $mostrarBtnGuardar = true; ?>

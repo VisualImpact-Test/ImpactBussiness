@@ -650,11 +650,6 @@ class FormularioProveedor extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		print_r($post['file-name[0]']);
-		foreach($post['file-name[0]'] as $row){
-			print_r($_FILES[$row]);
-		}
-		exit;
 
 		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
