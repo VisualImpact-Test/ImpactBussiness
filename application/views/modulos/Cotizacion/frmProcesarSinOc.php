@@ -10,13 +10,13 @@
             <div class="fields">
                 <div class="sixteen wide field">
                     <label>Código OC:</label>
-                    <input id="motivo" name="codigo_oc" patron="" placeholder="Código Orden de compra" value="<?= !empty($cotizacion['codOrdenCompra']) ? $cotizacion['codOrdenCompra'] : '' ?>">
+                    <input id="motivo" name="codigo_oc" patron="" placeholder="Código Orden de compra" value="<?= !empty($cotizacion['codOrdenCompra']) ? $cotizacion['codOrdenCompra'] : '' ?>" autocomplete="off">
                 </div>
             </div>
             <div class="fields">
                 <div class="sixteen wide field">
                     <label>Monto de OC:</label>
-                    <input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>">
+                    <input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>" autocomplete="off">
                 </div>
             </div>
             <div class="fields">
@@ -55,7 +55,7 @@
             <div class="fields">
                 <div class="sixteen wide field">
                     <label>Motivo:</label>
-                    <input id="motivo" name="motivo" patron="" placeholder="Motivo" value="<?= !empty($cotizacion['motivoAprobacion']) ? $cotizacion['motivoAprobacion'] : '' ?>">
+                    <input id="motivo" name="motivo" patron="" placeholder="Motivo" value="<?= !empty($cotizacion['motivoAprobacion']) ? $cotizacion['motivoAprobacion'] : '' ?>"  autocomplete="off">
                 </div>
             </div>
         </div>

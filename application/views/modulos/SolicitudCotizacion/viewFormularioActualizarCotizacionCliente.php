@@ -179,6 +179,7 @@
                                         <div class="ui right action left icon input w-100">
                                             <i class="semaforoForm flag link icon"></i>
                                             <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
+                                            <input type='hidden' name='nameItemOriginal' patron="requerido" placeholder="Buscar item" value="<?= $row['itemNombre'] ?>">
                                             <div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
                                                 <input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagCuenta']) ? $row['flagCuenta'] : 0 ?>" patron="requerido">
                                                 <div class="text">Cuenta</div>
@@ -320,7 +321,7 @@
                                             <div class="two wide field">
                                                 <div class="ui sub header">Generar OC</div>
                                                 <div class="ui test toggle checkbox checkValidarOC mt-2">
-                                                    <input class="checkForm generarOCSubItem" name="generarOCSubItem[<?= $row['idCotizacionDetalle'] ?>]" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $dataSubItem['requiereOrdenCompra']=='1' ? 'checked' : '' ?>>
+                                                    <input class="checkForm generarOCSubItem" name="generarOCSubItem[<?= $row['idCotizacionDetalle'] ?>]" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $dataSubItem['requiereOrdenCompra'] == '1' ? 'checked' : '' ?>>
                                                 </div>
                                             </div>
                                             <div class="four wide field">
@@ -349,16 +350,16 @@
                                                 <input class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadPdvSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" data-min="1" value="<?= !empty($dataSubItem['cantidadPdv']) ? $dataSubItem['cantidadPdv'] : '' ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
                                             </div>
                                         </div>
-                                        <div class="<?= ($dataSubItem['requiereOrdenCompra']=='0')? 'd-none ':''; ?> fields divAddParaOC">
+                                        <div class="<?= ($dataSubItem['requiereOrdenCompra'] == '0') ? 'd-none ' : ''; ?> fields divAddParaOC">
                                             <div class="eight wide field">
                                                 <div class="ui sub header">Proveedor</div>
                                                 <select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'selected' => $dataSubItem['idProveedorDistribucion'], 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/ ]); ?>
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'selected' => $dataSubItem['idProveedorDistribucion'], 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/]); ?>
                                                 </select>
                                             </div>
                                             <div class="four wide field">
                                                 <div class="ui sub header">Peso Real</div>
-                                                <input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad REAL" value="<?= $dataSubItem['cantidadReal']?>">
+                                                <input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad REAL" value="<?= $dataSubItem['cantidadReal'] ?>">
                                             </div>
                                             <!-- <div class="four wide field">
                                                 <div class="ui sub header">Observación Adicional</div>
@@ -435,16 +436,16 @@
                             </div>
                             <div class="content-lsck-capturas divImagenesDeLaCotizacion">
                                 <div class="sixteen wide field">
-                                <?php if (!empty($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']])) :  ?>
-                                    <div class="ui small images">
-                                        <?php foreach ($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']] as $kAE => $vAE) : ?>
-                                            <div class="ui fluid image dimmable" data-id="<?= $kAE ?>">
-                                                <a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                                                <img height="100" src="<?= $vAE['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
-                                            </div>
-                                        <?php endforeach; ?>
-                                    </div>
-                                <?php endif; ?>
+                                    <?php if (!empty($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']])) :  ?>
+                                        <div class="ui small images">
+                                            <?php foreach ($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']] as $kAE => $vAE) : ?>
+                                                <div class="ui fluid image dimmable" data-id="<?= $kAE ?>">
+                                                    <a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+                                                    <img height="100" src="<?= $vAE['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+                                                </div>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                             <div class="content-lsck-capturas">
@@ -520,19 +521,6 @@
                                         <label for="amount" class="ui label">S/</label>
                                         <input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
                                         <input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
-
-                                        <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
-                                        <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
-
-                                        <div class="ui basic floating dropdown button simpleDropdown ">
-                                            <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="<?= !empty($row['flagRedondear']) ? $row['flagRedondear'] : 0 ?>" patron="requerido">
-                                            <div class="text">Redondear</div>
-                                            <i class="dropdown icon"></i>
-                                            <div class="menu">
-                                                <div class="item" data-value="1">Redondear arriba</div>
-                                                <div class="item" data-value="0">No redondear</div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -562,6 +550,19 @@
                                         <label for="amount" class="ui label teal">S/</label>
                                         <input class=" subtotalFormLabel" type="text" placeholder="0.00" patron="requerido" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>" readonly>
                                         <input class=" subtotalForm" type="hidden" patron="requerido" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>" readonly>
+
+                                        <input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
+                                        <input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
+                                        <div class="ui basic floating dropdown button simpleDropdown ">
+                                            <input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="<?= !empty($row['flagRedondear']) ? $row['flagRedondear'] : 0 ?>" patron="requerido">
+                                            <div class="text">Redondear</div>
+                                            <i class="dropdown icon"></i>
+                                            <div class="menu">
+                                                <div class="item" data-value="1">Redondear arriba</div>
+                                                <div class="item" data-value="0">No redondear</div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

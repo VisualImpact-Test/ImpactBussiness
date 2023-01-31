@@ -338,6 +338,7 @@ var Cotizacion = {
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
 			let defaultItem = $('.default-item');
+			
 			defaultItem.append(Cotizacion.htmlG);
 
 			let childInserted = defaultItem.children().last();
@@ -563,29 +564,28 @@ var Cotizacion = {
 
 		$(document).on('change', '.flagRedondearForm', function (e) {
 			e.preventDefault();
-
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let thisPrecioForm = thisControlParents.find('.precioForm');
 			let thisCostoForm = thisControlParents.find('.costoForm');
+			let thisSubTotalForm = thisControlParents.find('.subtotalForm');
 			let thisCantidadForm = thisControlParents.find('.cantidadForm');
 
-			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm');
-			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm');
+			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm'); // sirve Para el subtotal
+			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm'); // Sirve para el subtotal
 			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
 
-			let costo = Number(thisCostoForm.val());
+			let costo = Number(thisSubTotalForm.val());
 			let enteroSuperior = Math.ceil(costo);
 			let flagRedondear = flagRedondearForm.val();
-
+			
 			if (costoRedondeadoForm.val() == 0 && costoNoRedondeadoForm.val() == 0) {
 				costoRedondeadoForm.val(enteroSuperior);
 				costoNoRedondeadoForm.val(costo);
 			}
-
+			
 			let costoRedondeado = Number(costoRedondeadoForm.val());
 			let costoNoRedondeado = Number(costoNoRedondeadoForm.val());
-
 			thisCantidadForm.keyup();
 
 		});
@@ -633,6 +633,13 @@ var Cotizacion = {
 
 				subTotal = Number(subTotal + costoTotalDistribucionPDV + costoTachadoDistribucion);
 			}
+			////////////
+			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
+			let enteroSuperior = Math.ceil(subTotal);
+			let flagRedondear = flagRedondearForm.val();
+
+			if (flagRedondear == 1) subTotal = enteroSuperior;
+			////////////
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 
@@ -763,25 +770,28 @@ var Cotizacion = {
 			let cantidad = Number(cantidadForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			let enteroSuperior = Math.ceil(costo);
-			let flagRedondear = flagRedondearForm.val();
+			// let enteroSuperior = Math.ceil(costo);
+			// let flagRedondear = flagRedondearForm.val();
 
-			if (flagRedondear == 1) costo = enteroSuperior;
+			// if (flagRedondear == 1) costo = enteroSuperior;
 
 			let gap = Number(thisControl.val());
 			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
 
 
-
 			precioForm.val(precio);
 			precioFormLabel.val(moneyFormatter.format(precio));
 
+			let enteroSuperior = Math.ceil(subTotal);
+			let flagRedondear = flagRedondearForm.val();
+
+			if (flagRedondear == 1) subTotal = enteroSuperior;
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 			Cotizacion.actualizarTotal();
 		});
-		$(document).on('focusout', '.gapFormOperaciones', function (e) {
+		$(document).on('keyup', '.gapFormOperaciones', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
@@ -792,6 +802,7 @@ var Cotizacion = {
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
 			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
+			let flagRedondearForm = thisControlParents.find('.flagRedondearForm');
 
 			let precioForm = thisControlParents.find('.precioForm');
 			let precioFormLabel = thisControlParents.find('.precioFormLabel');
@@ -829,6 +840,11 @@ var Cotizacion = {
 
 			precioForm.val(precio);
 			precioFormLabel.val(moneyFormatter.format(precio));
+
+			let enteroSuperior = Math.ceil(subTotal);
+			let flagRedondear = flagRedondearForm.val();
+
+			if (flagRedondear == 1) subTotal = enteroSuperior;
 
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));

@@ -62,9 +62,13 @@
                     <td class="td-left"><?= verificarEmpty($row['cuentaCentroCosto'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'], 3); ?></td>
                     <td class="text-center style-icons">
-                        <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>">
+                        <?php $row['icono'] = str_replace("<a", "<span", $row['icono']); ?>
+                        <?php $row['icono'] = str_replace("/a", "/span", $row['icono']); ?>
+                        <?php $row['icono'] = str_replace(" tag ", " ", $row['icono']); ?>
+                        <?= $row['icono']; ?>
+                        <!-- <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>">
                             <?= $row['cotizacionEstado']; ?>
-                        </span>
+                        </span> -->
                         <? if (!$row['cotizacionValidaCliente']) { ?>
                             <br>
                             <div class="ui pointing red basic label">
