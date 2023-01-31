@@ -89,10 +89,9 @@ var FormularioProveedores = {
 		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
 			var data = control.data();
-			console.log(data);
 			var id = '';
 			var nameImg = '';
-			console.log(data['row']);
+
 			if (data['row']) {
 				id = data['row'];
 				name = 'file-item';
@@ -125,6 +124,7 @@ var FormularioProveedores = {
 					}
 
 					for (var i = 0; i < num; ++i) {
+						console.log(control.get(0).files);
 						var size = control.get(0).files[i].size;
 						size = Math.round((size / 1024));
 

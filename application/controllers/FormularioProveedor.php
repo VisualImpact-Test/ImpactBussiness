@@ -650,6 +650,11 @@ class FormularioProveedor extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		print_r($post['file-name[0]']);
+		foreach($post['file-name[0]'] as $row){
+			print_r($_FILES[$row]);
+		}
+		exit;
 
 		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
@@ -682,7 +687,7 @@ class FormularioProveedor extends MY_Controller
 						$archivo = [
 							'base64' => $post['file-item[' . $r . ']'][$key],
 							'name' => $post['file-name[' . $r . ']'][$key],
-							'type' => $post['file-type[' . $r . ']'][$key],
+							'type' => ($post['file-type[' . $r . ']'][$key]=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'xlsx':$post['file-type[' . $r . ']'][$key],
 							'carpeta' => 'cotizacionProveedor',
 							'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_' . $key . 'CP',
 						];
@@ -703,7 +708,7 @@ class FormularioProveedor extends MY_Controller
 					$archivo = [
 						'base64' => $post['file-item[' . $r . ']'],
 						'name' => $post['file-name[' . $r . ']'],
-						'type' => $post['file-type[' . $r . ']'],
+						'type' => ($post['file-type[' . $r . ']']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'application/xlsx':$post['file-type[' . $r . ']'],
 						'carpeta' => 'cotizacionProveedor',
 						'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_0' . 'CP',
 					];
@@ -715,7 +720,7 @@ class FormularioProveedor extends MY_Controller
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => $tipoArchivo[1],
+						'extension' =>$tipoArchivo[1],
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];

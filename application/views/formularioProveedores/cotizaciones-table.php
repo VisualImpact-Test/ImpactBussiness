@@ -211,7 +211,7 @@
             </a>
             <div class="content-lsck-capturas pt-2">
               <input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen"
-                      data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf" multiple="">
+                      data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf,.xlsx" multiple="">
               <div class="fields ">
                 <div class="container sixteen wide field">
                   <div class="row content-lsck-galeria content-lsck-capturas">
@@ -287,11 +287,11 @@
       <?php endforeach; ?>
     </div>
     <div class="container">
-      <?php if (empty($datos[0]['fechaValidez']) ): ?>
+      <?php ///if (empty($datos[0]['fechaValidez']) ): ?>
         <div class="ui right floated small primary labeled icon button btnGuardarCotizacion">
           <i class="save icon"></i> <span class="">Guardar</span>
         </div>
-      <?php endif; ?>
+      <?php //endif; ?>
       <div class="ui small button btnRefreshCotizaciones">
         <i class="sync icon"></i>
         Refresh
