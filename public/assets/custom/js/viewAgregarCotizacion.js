@@ -1231,17 +1231,45 @@ var Cotizacion = {
 			let imagenesExtraForm = $(this).parents('.nuevo').find('div.extraImages');
 			let proveedoresForm = $(this).parents('.nuevo').find('.proveedoresForm');
 			let diasEntregaItemForm = $(this).parents('.nuevo').find('.diasEntregaItemForm');
+			let divItemServicio = $(this).parents('.nuevo').find('.divItemServicio');
 
 			let precio = $(this).find('.txtCostoProveedor').val();
+			let idCotizacionDetalleProveedorDetalle = $(this).find('.txtCodProveedorCotizacion').val();
 			let proveedorElegido = $(this).find('.txtProveedorElegido').val();
 			let diasEntregaElegido = $(this).find('.txtDiasEntregaItemProveedor').val();
 			let proveedorElegidoName = $(this).find('.txtProveedorElegidoName').val();
 			let imagenesDeProveedor = $(this).find('.elegirImagenes').html();
 			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
 			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
+			
+			let subDetalleServicio = $(this).find('.txtDetalleTipoServicio').length > 0 ? JSON.parse($(this).find('.txtDetalleTipoServicio').html()) : [];
+			let idCotizacionDetalle = $(this).parents('.nuevo').find('.txtIdCotizacionDetalle').val();
+			var html = '';
+			$.each(subDetalleServicio, function (k, v) {
+				html += `
+				<div class="fields body-sub-item body-sub-item-servicio">
+					<div class="five wide field">
+						<div class="ui sub header">Sub item </div>
+						<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}">
+					</div>
+					<div class="five wide field">
+						<div class="ui sub header">Cantidad</div>
+						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
+					</div>
+					<div class="three wide field">
+						<div class="ui sub header">Costo</div>
+						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
+					</div>
+					<div class="three wide field">
+						<div class="ui sub header">Subtotal</div>
+						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
+					</div>
+				</div>
+				`;
+			});
+			divItemServicio.html(html);
 
 			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');
-
 			$.each(bodySubItem, function (k, v) {
 				let idCotizacionDetalleSub = $(v).find('.idCotizacionDetalleSubForm');
 				let costoSubItem = $(v).find('.costoSubItem');
@@ -1251,10 +1279,20 @@ var Cotizacion = {
 					return (detalle.idCotizacionDetalleSub == idCotizacionDetalleSub.val())
 				})
 
-				costoSubItem.val(detalleSubItem.costo);
-				subtotalSubItem.val(detalleSubItem.subTotal);
+				if (detalleSubItem !== void 0){ // !== undefined
+					costoSubItem.val(detalleSubItem.costo);
+					subtotalSubItem.val(detalleSubItem.subTotal);
+				}
 
 			});
+
+			$.post(site_url+'SolicitudCotizacion/cerrarCotizacionProveedor',{
+				idCotizacionDetalleProveedorDetalle: idCotizacionDetalleProveedorDetalle
+			},function (data) {
+				console.log('cotizacion cerrada ');
+				console.log(data);
+			});
+
 			costoForm.val(precio);
 			costoFormLabel.val(moneyFormatter.format(precio));
 			diasEntregaItemForm.val(diasEntregaElegido);

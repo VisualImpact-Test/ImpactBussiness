@@ -257,7 +257,7 @@
 						</div>
 
 						<!-- Servicios -->
-						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
+						<!-- <div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 							<h4 class="ui dividing header">SUB ITEMS</h4>
 							<div class="content-body-sub-item">
 								<div class="fields body-sub-item body-sub-item-servicio">
@@ -281,7 +281,7 @@
 								<i class="plus icon"></i>
 								Agregar
 							</button>
-						</div>
+						</div> -->
 						<!-- Distribucion -->
 						<div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
 							<div class="fields">

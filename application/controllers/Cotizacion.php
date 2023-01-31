@@ -492,12 +492,14 @@ class Cotizacion extends MY_Controller
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
-				case COD_SERVICIO['id']:
-					$data['subDetalle'][$k] = getDataRefactorizada([
-						'nombre' => $post["nombreSubItemServicio[$k]"],
-						'cantidad' => $post["cantidadSubItemServicio[$k]"],
-					]);
-					break;
+				// case COD_SERVICIO['id']:
+				// 	$data['subDetalle'][$k] = getDataRefactorizada([
+				// 		'nombre' => $post["nombreSubItemServicio[$k]"],
+				// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
+				// 		'costo' => $post["costoSubItemServicio[$k]"],
+				// 		'subTotal' => $post["subtotalSubItemServicio[$k]"],
+				// 	]);
+				// 	break;
 
 				case COD_DISTRIBUCION['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
@@ -637,6 +639,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		respuesta:
+		
 		echo json_encode($result);
 	}
 
@@ -1685,6 +1688,7 @@ class Cotizacion extends MY_Controller
 
 		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
 		$post['nameItem'] = checkAndConvertToArray($post['nameItem']);
+		$post['nameItemOriginal'] = checkAndConvertToArray($post['nameItemOriginal']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
@@ -1724,6 +1728,11 @@ class Cotizacion extends MY_Controller
 				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 			];
 
+			// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
+			if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k]) {
+				$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
+			}
+			// FIN
 
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([

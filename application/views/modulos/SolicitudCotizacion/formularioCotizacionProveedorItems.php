@@ -30,7 +30,7 @@
                           <b>Tela</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['tela'], 3) ?>&nbsp&nbsp
                           <b>Color</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['color'], 3) ?>&nbsp&nbsp
                         <?php endif; ?>
-                        <b>Cantidad</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['cantidad'], 3) ?>&nbsp&nbsp
+                        <b>Cantidad</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['cantidadItem'], 3) ?>&nbsp&nbsp
                         <?php if ($dato['tipoItem'] == 'Textiles'): ?>
                           <b>Cost. Unit</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['costo'], 3) ?>
                         <?php endif; ?>
