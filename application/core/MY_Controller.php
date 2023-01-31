@@ -502,9 +502,7 @@ class MY_Controller extends CI_Controller{
 
         $carpeta = $config['carpeta'];
         $nombreUnico = $config['nombreUnico'];
-
-		print_r($config); exit;
-
+		
         $file =
         [
             'base64' => $config['base64'],

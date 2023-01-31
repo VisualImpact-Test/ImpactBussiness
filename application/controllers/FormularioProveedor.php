@@ -684,7 +684,7 @@ class FormularioProveedor extends MY_Controller
 						$archivo = [
 							'base64' => $post['file-item[' . $r . ']'][$key],
 							'name' => $post['file-name[' . $r . ']'][$key],
-							'type' => ($post['file-type[' . $r . ']'][$key]=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'xlsx':$post['file-type[' . $r . ']'][$key],
+							'type' => ($post['file-type[' . $r . ']'][$key]=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'application/xlsx':$post['file-type[' . $r . ']'][$key],
 							'carpeta' => 'cotizacionProveedor',
 							'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_' . $key . 'CP',
 						];
