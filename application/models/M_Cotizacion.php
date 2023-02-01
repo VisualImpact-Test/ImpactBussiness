@@ -449,6 +449,14 @@ class M_Cotizacion extends MY_Model
 		$data = $query->row_array();
 		return $data['idCuenta'];
 	}
+
+	public function obtenerCentroCostoDeLaCotizacionDetalle($param = NULL)
+	{
+		$this->db->select('*')->from('compras.cotizacion')->where('idCotizacion', $param);
+		$query = $this->db->get();
+		$data = $query->row_array();
+		return $data['idCentroCosto'];
+	}
 	public function insertarCotizacion($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);

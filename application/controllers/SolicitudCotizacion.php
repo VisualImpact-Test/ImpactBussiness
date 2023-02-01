@@ -1015,10 +1015,9 @@ class SolicitudCotizacion extends MY_Controller
 			'pocliente' => $post['pocliente'],
 			'observacion' => $post['observacion'],
 			'comentario' => $post['comentario'],
-			'mostrar_observacion' => isset($post['mostrar_observacion']) ? 1 : 0
+			'mostrar_observacion' => isset($post['mostrar_observacion']) ? 1 : 0,
+			'idAlmacen' => $post['idAlmacen']
 		]);
-
-
 
 		$oper = $this->db->get_where("compras.oper", ['idOper' => $post['idOper']])->row_array();
 		$correosProveedor = [];
@@ -1039,7 +1038,7 @@ class SolicitudCotizacion extends MY_Controller
 				'entrega' => !empty($row['lugarEntrega']) ? $row['lugarEntrega'] : NULL,
 				'fechaEntrega' => !empty($row['fechaEntrega']) ? $row['fechaEntrega'] : NULL,
 				'mostrar_observacion' => !empty($row['mostrar_observacion']) ? $row['mostrar_observacion'] : NULL,
-
+				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
 			];
 
 			$rs_oc = $this->model->insertar(['tabla' => 'compras.ordenCompra', 'insert' => $insert_oc]);
@@ -1173,9 +1172,13 @@ class SolicitudCotizacion extends MY_Controller
 
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($post['idCotizacion']);
+		$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle($post['idCotizacion']);
+
 		$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+		$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
 
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
+		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
 
@@ -1410,7 +1413,7 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['dataOrdenDet'][$row['idProveedorForm']][] = $row;
 		}
 
-
+		$dataParaVista['almacenes'] = $this->db->where('estado','1')->get('visualImpact.logistica.almacen')->result_array();
 		$html = getMensajeGestion('noRegistros');
 
 		if (!empty($dataParaVista)) {

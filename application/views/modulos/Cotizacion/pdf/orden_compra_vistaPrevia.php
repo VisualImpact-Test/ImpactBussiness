@@ -13,6 +13,12 @@
             <td class="text-center w-20"><?= verificarEmpty($data['pocliente'], 3) ?></td>
         </tr>
         <tr>
+            <td class="text-left w-20">Centro Costo</td>
+            <td class="text-left w-40"><?= verificarEmpty($centrosCosto, 3) ?></td>
+            <td class="text-left w-20">Fecha:</td>
+            <td class="text-left w-20"><?= getFechaActual() ?></td>
+        </tr>
+        <tr>
             <td class="text-left" colspan="4">Datos del proveedor:</td>
         </tr>
         <tr>
@@ -37,7 +43,7 @@
             <td class="text-left w-20">Email</td>
             <td class="text-left w-40"><?= verificarEmpty($data['correoContacto'], 3) ?></td>
             <td class="text-left w-20">Fecha entrega</td>
-            <td class="text-left w-20"><?= verificarEmpty($data['fechaEntrega'], 3) ?></td>
+            <td class="text-left w-20"><?= verificarEmpty(date_change_format($data['fechaEntrega']), 3) ?></td>
         </tr>
     </table>
     <table border="1" style="width: 100%;">

@@ -205,9 +205,13 @@
 							</div>
 						</div>
 						<div class="fields">
-							<div class="sixteen wide field">
+							<div class="eight wide field">
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características" value="">
+							</div>
+							<div class="eight wide field">
+								<div class="ui sub header">Características para proveedor</div>
+								<input name="caracteristicasProveedor" placeholder="Características" value="">
 							</div>
 						</div>
 						<!-- Textiles -->
@@ -534,9 +538,13 @@
 								</div>
 							</div>
 							<div class="fields">
-								<div class="sixteen wide field">
+								<div class="eight wide field">
 									<div class="ui sub header">Características para compras</div>
 									<input name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
+								</div>
+								<div class="eight wide field">
+									<div class="ui sub header">Características para proveedor</div>
+									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
 								</div>
 							</div>
 							<!-- Textiles -->

@@ -484,6 +484,7 @@ class Cotizacion extends MY_Controller
 				'idCotizacionDetalleEstado' => 1,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 				'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+				'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 				'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 				'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
 				'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
@@ -1478,10 +1479,14 @@ class Cotizacion extends MY_Controller
 		$ids = [];
 		foreach ($ordenCompra as $v) {
 			$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+			$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle($v['idCotizacion']);
+
 			$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+			$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
 			$ids[] = $v['idCotizacion'];
 		}
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
+		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
 		// $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
 		// $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
@@ -1695,6 +1700,7 @@ class Cotizacion extends MY_Controller
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
 		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
+		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 		$post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
@@ -1724,6 +1730,7 @@ class Cotizacion extends MY_Controller
 					'idCotizacionDetalleEstado' => 2,
 					'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 					'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
+					'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 					'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 					'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 					'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,

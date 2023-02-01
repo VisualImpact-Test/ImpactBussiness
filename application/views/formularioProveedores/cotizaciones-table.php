@@ -193,7 +193,7 @@
 							Agregar Archivos <i class="fa fa-lg fa-camera-retro"></i>
 						</a>
 						<div class="content-lsck-capturas pt-2">
-							<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf" multiple="">
+							<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf,.xlsx" multiple="">
 							<div class="fields ">
 								<div class="container sixteen wide field">
 									<div class="row content-lsck-galeria content-lsck-capturas">
@@ -217,6 +217,8 @@
 														<input type="hidden" name="file-name[0]" value="<?= $archivo['nombre_inicial'] ?>">
 														<?php if ($archivo['extension'] == 'pdf') {
 															$ruta = RUTA_WIREFRAME . "pdf.png";
+														} else if ($archivo['extension'] == 'xlsx') {
+															$ruta = RUTA_WIREFRAME . "xlsx.png";
 														} else {
 															$ruta = RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}";
 														} ?>

@@ -12,12 +12,12 @@
             <td class="text-left w-20">PO Cliente:</td>
             <td class="text-center w-20"><?= verificarEmpty($data['pocliente'], 3) ?></td>
         </tr>
-        <!-- <tr>
+        <tr>
             <td class="text-left w-20">Centro de Costo:</td>
-            <td class="text-center w-20"><?= verificarEmpty($data['centrosCosto'], 3) ?></td>
+            <td class="text-left w-20"><?= verificarEmpty($centrosCosto, 3) ?></td>
             <td class="text-left w-20">Fecha:</td>
-            <td class="text-center w-20"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
-        </tr> -->
+            <td class="text-left w-20"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
+        </tr>
         <tr>
             <td class="text-left" colspan="4">Datos del proveedor:</td>
         </tr>

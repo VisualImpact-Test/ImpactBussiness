@@ -135,6 +135,12 @@ var SolicitudCotizacion = {
 		console.log(jsonString);
 		console.log(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf');
 		Fn.download(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf', jsonString);
+	},
+	mostrarLugarEntrega: function (t) {
+		control = $(t).parents('.fields');
+		lugarEntrega = control.find('input.lugarEntrega');
+		direccion = $(t).find('option:selected').data('direccion');
+		lugarEntrega.val(direccion); 
 	}
 	
 }

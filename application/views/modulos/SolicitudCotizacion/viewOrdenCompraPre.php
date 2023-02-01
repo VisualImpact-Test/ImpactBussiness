@@ -82,13 +82,21 @@
                             <input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="<?= date('Y-m-d') ?>" patron="requerido">
                         </div>
                         <div class="three wide field">
-                            <div class="ui sub header">Lugar de entrega</div>
-                            <input type="text" name="lugarEntrega" placeholder="Escriba aquí" value="">
-                        </div>
-                        <div class="three wide field">
                             <div class="ui sub header">OC Cliente</div>
                             <input type="text" name="pocliente" placeholder="Escriba aquí" value="">
                         </div>
+                        <div class="three wide field">
+                            <div class="ui sub header">Lugar de entrega</div>
+                            <select class="ui dropdown simpleDropdown almacen" name="idAlmacen" onchange="SolicitudCotizacion.mostrarLugarEntrega(this)">
+                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $almacenes, 'id' => 'idAlmacen', 'value' => 'nombre', 'class' => 'text-titlecase', 'data-option' => ['direccion']]); ?>
+                            </select>
+                        </div>
+                        <div class="six wide field">
+                            <div class="ui sub header">.</div>
+                            <input class="lugarEntrega" type="text" name="lugarEntrega" placeholder="Escriba aquí" value="">
+                        </div>
+                    </div>
+                    <div class="fields">
                         <div class="six wide field">
                             <div class="ui sub header">Observación</div>
                             <input type="text" name="observacion" placeholder="Escriba aquí" value="">

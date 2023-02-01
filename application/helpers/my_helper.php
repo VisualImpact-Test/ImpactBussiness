@@ -1252,13 +1252,13 @@ function htmlSelectOptionArray2($params = [])
 			$fix = '';
 		}
 
-		$idDependiente = "";$data_option =  '';
+		$idDependiente = ""; $data_option =  '';
 		if (!empty($f['idDependiente'])) {
 			$idDependiente = " data-parentDependiente='" . $f['idDependiente'] . "' style='display: none;'";
 		}
 		if(!empty($params['data-option'])){
 			foreach($params['data-option'] as $row){
-				!empty($f[$row]) ? $data_option .= " data-{$row} = {$f[$row]}": '';
+				!empty($f[$row]) ? $data_option .= " data-".$row." = \"".$f[$row]."\"": '';
 			}
 		}
 
