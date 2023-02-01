@@ -679,7 +679,7 @@ class Item extends MY_Controller
     }
 
     public function descargar_formato_excel(){
-        require_once '../Classes/PHPExcel.php';
+        require_once '../PHPExcel/Classes/PHPExcel.php';
         $objPHPExcel = new PHPExcel();
 
         $objPHPExcel->
@@ -693,18 +693,23 @@ class Item extends MY_Controller
         ->setCategory("FORMATO");
 
         $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue('A1', 'Nombre')
-        ->setCellValue('B1', 'E-mail')
-        ->setCellValue('C1', 'Twitter')
-        ->setCellValue('A2', 'David')
-        ->setCellValue('B2', 'dvd@gmail.com')
-        ->setCellValue('C2', '@davidvd');
+        ->setCellValue('A1', 'TIPO (*)')
+        ->setCellValue('B1', 'MARCA (*)')
+        ->setCellValue('C1', 'CATEGORIA (*)')
+        ->setCellValue('D1', 'SUBCATEGORIA (*)')
+        ->setCellValue('E1', 'ITEM (*)')
+        ->setCellValue('F1', 'CARACTERISTICAS (*)')
+        ->setCellValue('G1', 'EQUIVALENTE EN LOGISTICA')
+        ->setCellValue('H1', 'TALLA')
+        ->setCellValue('I1', 'TELA')
+        ->setCellValue('J1', 'COLOR')
+        ->setCellValue('K1', 'MONTO');
 
         $objPHPExcel->getActiveSheet()->setTitle('FORMATO');
         $objPHPExcel->setActiveSheetIndex(0);
 
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment;filename="01simple.xls"');
+        header('Content-Disposition: attachment;filename="Formato.xls"');
         header('Cache-Control: max-age=0');
         $objWriter=PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel5');
         $objWriter->save('php://output');

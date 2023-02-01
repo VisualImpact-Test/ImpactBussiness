@@ -8,9 +8,11 @@
                         <a class="tabCargaMasiva nav-link <?= ($key == 0) ? 'active' : '' ?>" id="hoja<?= $key ?>-tab" data-nrohoja="<?= $key ?>" data-toggle="tab" href="#hoja<?= $key ?>" role="tab" aria-controls="hoja<?= $key ?>" aria-selected="true"><?= $row ?></a>
                     </li>
                 <?php } ?>
+                <li class="nav-item">
+                <a href="<?=base_url()?>item/descargar_formato_excel" target="_blank" class="btn btn-trade-visual">DESCARGAR FORMATO</a>
+                </li>
             </ul>
-            <!--<a href="item/descargar_formato_excel">DESCARGAR FORMATO</a>-->
-
+            
             <div class="tab-content mt-4 text-white">
                 <?php foreach ($hojas as $key => $row) { ?>
                     <div class="tab-pane <?= ($key == 0) ? 'show active' : '' ?>" id="hoja<?= $key ?>" role="tabpanel" aria-labelledby="hoja<?= $key ?>-tab">
