@@ -1065,6 +1065,7 @@ class Cotizacion extends MY_Controller
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['flagCuenta'] = $row['flagCuenta'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['caracteristicas'] = $row['caracteristicas'];
 			}
 			foreach ($data['itemServicio'] as $k => $r) {
 				$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);

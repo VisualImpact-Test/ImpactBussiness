@@ -1780,6 +1780,9 @@ var Cotizacion = {
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected', ui.item.tipo);
+				console.log(ui.item);
+				console.log(control.find(".caracteristicasCliente"));
+				control.find(".caracteristicasCliente").val(ui.item.caracteristicas);
 				control.find(".flagCuentaSelect").dropdown('set selected', ui.item.flagCuenta);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
 

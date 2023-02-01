@@ -218,8 +218,8 @@ class M_Item extends MY_Model
 			i.idItemLogistica,
 			it.pesoLogistica,
 			ISNULL(i.flagCuenta,0) flagCuenta,
-			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna
-
+			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna,
+			i.caracteristicas
 		from compras.item i
 		JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
 		LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor

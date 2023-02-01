@@ -195,7 +195,7 @@
 							<div class="four wide field">
 								<div class="ui sub header">Características para el cliente</div>
 								<div class="ui right labeled input w-100">
-									<input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
+									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
 								</div>
 							</div>
 						</div>
