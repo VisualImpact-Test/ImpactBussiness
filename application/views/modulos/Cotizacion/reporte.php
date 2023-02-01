@@ -28,11 +28,11 @@
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
-
+                        <!--
                         <a href="../Cotizacion/viewFormularioDuplicar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
                             <i class="fa fa-lg  fa-copy"></i> <span class="txt_filtro"></span>
                         </a>
-
+                        -->
                         <div class="<?= (!$row['cotizacionValidaCliente']) ? 'disabled' : '' ?>">
 
                             <a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
