@@ -14,11 +14,11 @@ $filas = 10;
             <td class="text-left w-20">De:</td>
             <td class="text-left w-40"><?=verificarEmpty($dataOper['usuarioRegistro'],3)?></td>
             <td class="text-left w-20">OC del Cliente:</td>
-            <td class="text-center w-20"><?=verificarEmpty($dataOper['concepto'],3)?></td>
+            <td class="text-center w-20"><?=verificarEmpty($dataOper['codOrdenCompra'],3)?></td>
         </tr>
         <tr>
             <td class="text-left">Concepto PO / CR Cliente:</td>
-            <td class="text-left" colspan="3"><?=verificarEmpty($dataOper['solicitante'],3)?></td>
+            <td class="text-left" colspan="3"><?=verificarEmpty($dataOper['concepto'],3)?></td>
         </tr>
         <tr>
             <td class="text-left w-20">Unidad de Negocio</td>
