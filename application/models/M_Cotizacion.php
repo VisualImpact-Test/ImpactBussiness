@@ -718,10 +718,11 @@ class M_Cotizacion extends MY_Model
 			p.idProveedor,
 			p.razonSocial,
 			cd.caracteristicasCompras,
-			cd.flagRedondear
+			cd.flagRedondear,
 			-- ,
 			-- cuenta.nombre as cuenta,
 			-- centrocosto.subcanal as centrocosto
+			c.codOrdenCompra
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -780,7 +781,8 @@ class M_Cotizacion extends MY_Model
 				um.nombre unidadMedida,
 				cds.idProveedorDistribucion,
 				cds.cantidadReal,
-				cds.requiereOrdenCompra
+				cds.requiereOrdenCompra,
+				c.codOrdenCompra
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1123,6 +1125,7 @@ class M_Cotizacion extends MY_Model
 			cuenta.nombre as cuenta,
 			centrocosto.subcanal as centroCosto,
 			ss.nombre as solicitante
+			,p.codOrdenCompra
 		FROM compras.oper o
 		JOIN compras.operDetalle od ON od.idOper = o.idOper
 		LEFT JOIN compras.cotizacion p ON p.idCotizacion = od.idCotizacion
