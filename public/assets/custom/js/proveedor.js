@@ -219,9 +219,10 @@ var Proveedor = {
 			let tr = $(this).closest("tr");
 
 			if($(".trChildren").length <= 1){
+				$('.btn-agregar-zona').click();
 				// $(".trChildren").first().find(".regionCobertura").css("border","solid 1px red");
 				// setTimeout($(".trChildren").first().find(".regionCobertura").css("border","solid 1px black"), 5000);
-				return false
+				//return false
 			}
 			tr.remove();
 		});
