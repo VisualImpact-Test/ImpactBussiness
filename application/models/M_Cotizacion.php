@@ -709,6 +709,7 @@ class M_Cotizacion extends MY_Model
 			cd.caracteristicasCompras,
 			cd.caracteristicasProveedor,
 			cd.subtotal,
+			ROUND (cd.subtotal/((ISNULL(CONVERT(float,cd.gap),0)/100)+1),2) subtotalSinGap,
 			c.total,
 			cd.idItemTipo,
 			cd.caracteristicas,

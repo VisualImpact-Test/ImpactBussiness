@@ -52,8 +52,8 @@ $filas = 10;
                 <td style="text-align: center;"><?= ($key + 1) ?></td>
                 <td style="text-align: left;"><?= verificarEmpty($row['item'], 3) ?></td>
                 <td style="text-align: center;"><?= verificarEmpty($row['cantidad'], 3) ?></td>
-                <td style="text-align: right;"><?= empty($row['precio']) ? "-" : moneda($row['precio']); ?></td>
-                <td style="text-align: right;"><?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '-' ?></td>
+                <td style="text-align: right;"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
+                <td style="text-align: right;"><?= !empty($row['subtotalSinGap']) ? moneda($row['subtotalSinGap']) : '-' ?></td>
                 <td style="text-align: center;"><?= !empty($row['observaciones']) ? moneda($row['observaciones']) : '-' ?></td>
             </tr>
         <? } ?>
