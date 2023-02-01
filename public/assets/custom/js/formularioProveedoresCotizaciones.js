@@ -62,10 +62,12 @@ var FormularioProveedores = {
 				if (rpta.continuar) {
 					let config = { 'url': FormularioProveedores.url + 'viewRegistroContraoferta', 'data': jsonString };
 					$.when(Fn.ajax(config)).then((a) => {
-						fn[1] = 'FormularioProveedores.agregarPropuesta(' + id + ');';
-						btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-						fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta(' + modalId + ')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
-						btn[2] = { title: 'Guardar', fn: fn[2] };
+						// fn[1] = 'FormularioProveedores.agregarPropuesta(' + id + ');';
+						// btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
+						// fn[2] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta(' + modalId + ')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
+						// btn[2] = { title: 'Guardar', fn: fn[2] };
+						fn[1] = 'Fn.showConfirm({ idForm: "formRegistroTipos", fn: "FormularioProveedores.registrarPropuesta(' + modalId + ')", content: "Su propuesta podra ser tratada por las personas encargadas." });';
+						btn[1] = { title: 'Guardar', fn: fn[1] };
 						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 						FormularioProveedores.divPropuesta = $('#divBase' + id).html();
 					});
@@ -151,8 +153,11 @@ var FormularioProveedores = {
 							if (fileBase.type.split('/')[0] == 'image') {
 								imgFile = fileBase.base64;
 								contenedor = content;
-							} else {
+							} else if (fileBase.type.split('/')[0] == 'pdf') {
 								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}file.png`;
 								contenedor = content_files;
 							}
 
