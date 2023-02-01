@@ -20,7 +20,7 @@ class M_SubCategoria extends MY_Model
 		$filtros = "";
 		$filtros .= !empty($params['SubCategoria']) ? " AND a.nombre LIKE '%{$params['SubCategoria']}%' " :'';
 		//$filtros .= !empty($params['categoria']) ? ' AND a.nombre LIKE % ' . $params['categoria'] . '' : '';
-		$filtros .= !empty($params['idCategoriaArticulo']) ? ' AND a.idItemSubCategoria = ' . $params['idCategoriaArticulo'] : '';
+		$filtros .= !empty($params['idItemSubCategoria']) ? ' AND a.idItemSubCategoria = ' . $params['idItemSubCategoria'] : '';
 
 		$sql = "
 			SELECT

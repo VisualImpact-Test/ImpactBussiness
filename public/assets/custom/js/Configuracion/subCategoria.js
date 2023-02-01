@@ -49,7 +49,7 @@ var SubCategoria = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idSubCategoria': id, 'formularioValidar': false };
+			let data = { 'idItemSubCategoria': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SubCategoria.url + 'formularioActualizacionSubCategoria', 'data': jsonString };
