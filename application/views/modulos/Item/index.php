@@ -41,9 +41,12 @@
 				<button data-form="Item/getFormCargaMasivaItemHT" data-save="Item/guardarListaItemHT" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva items">
                     <i class="fa fa-lg fa-comment-medical"></i> <span class="txt_filtro"></span>
                 </button>
-				<button type="button" class="btn btn-outline-trade-visual border-0 btn-descargarTarifario" id="" title="Descargar Tarifario">
+				<button type="button" class="btn btn-outline-trade-visual border-0 btn-descargarListaDeItem" id="" title="Descargar Items">
                     <i class="fa fa-lg fa-file"></i> <span class="txt_filtro"></span>
                 </button>
+				<!-- <button type="button" class="btn btn-outline-trade-visual border-0 btn-descargarTarifario" id="" title="Descargar Tarifario">
+                    <i class="fa fa-lg fa-file"></i> <span class="txt_filtro"></span>
+                </button> -->
 			</div>
 			<hr>
 			<div class="customizer-content-filter">

@@ -422,6 +422,46 @@ class Item extends MY_Controller
 
         return true;
     }
+    public function descargarListaDeItem()
+    {
+        require_once('../mpdf/mpdf.php');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        $dataParaVista['items'] = $this->db->where('estado', 1)->get('compras.item')->result_array();
+
+        require APPPATH . '/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'setAutoTopMargin' => 'stretch',
+            'orientation' => 'L',
+            'autoMarginPadding' => 0,
+            'bleedMargin' => 0,
+            'crossMarkMargin' => 0,
+            'cropMarkMargin' => 0,
+            'nonPrintMargin' => 0,
+            'margBuffer' => 0,
+            'collapseBlockMargins' => false,
+        ]);
+
+        $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ITEM TARIFARIO'], true);
+
+        $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+        $contenido['body'] = $this->load->view("modulos/Item/listaItemPdf", $dataParaVista, true);
+
+        $mpdf->SetHTMLHeader($contenido['header']);
+        $mpdf->SetHTMLFooter($contenido['footer']);
+        $mpdf->AddPage();
+        $mpdf->WriteHTML($contenido['style']);
+        $mpdf->WriteHTML($contenido['body']);
+
+        header('Set-Cookie: fileDownload=true; path=/');
+        header('Cache-Control: max-age=60, must-revalidate');
+        // $mpdf->Output('OPER.pdf', 'D');
+        $mpdf->Output("prueba.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+
+        return true;
+    }
     public function actualizarEstadoItem()
     {
         $result = $this->result;
@@ -678,32 +718,32 @@ class Item extends MY_Controller
         echo json_encode($result);
     }
 
-    public function descargar_formato_excel(){
+    public function descargar_formato_excel()
+    {
         require_once '../PHPExcel/Classes/PHPExcel.php';
         $objPHPExcel = new PHPExcel();
 
-        $objPHPExcel->
-        getProperties()
-        ->setCreator("Visual Impact")
-        ->setLastModifiedBy("Visual Impact")
-        ->setTitle("FORMATO")
-        ->setSubject("FORMATO")
-        ->setDescription("Visual Impact")
-        ->setKeywords("usuarios phpexcel")
-        ->setCategory("FORMATO");
+        $objPHPExcel->getProperties()
+            ->setCreator("Visual Impact")
+            ->setLastModifiedBy("Visual Impact")
+            ->setTitle("FORMATO")
+            ->setSubject("FORMATO")
+            ->setDescription("Visual Impact")
+            ->setKeywords("usuarios phpexcel")
+            ->setCategory("FORMATO");
 
         $objPHPExcel->setActiveSheetIndex(0)
-        ->setCellValue('A1', 'TIPO (*)')
-        ->setCellValue('B1', 'MARCA (*)')
-        ->setCellValue('C1', 'CATEGORIA (*)')
-        ->setCellValue('D1', 'SUBCATEGORIA (*)')
-        ->setCellValue('E1', 'ITEM (*)')
-        ->setCellValue('F1', 'CARACTERISTICAS (*)')
-        ->setCellValue('G1', 'EQUIVALENTE EN LOGISTICA')
-        ->setCellValue('H1', 'TALLA')
-        ->setCellValue('I1', 'TELA')
-        ->setCellValue('J1', 'COLOR')
-        ->setCellValue('K1', 'MONTO');
+            ->setCellValue('A1', 'TIPO (*)')
+            ->setCellValue('B1', 'MARCA (*)')
+            ->setCellValue('C1', 'CATEGORIA (*)')
+            ->setCellValue('D1', 'SUBCATEGORIA (*)')
+            ->setCellValue('E1', 'ITEM (*)')
+            ->setCellValue('F1', 'CARACTERISTICAS (*)')
+            ->setCellValue('G1', 'EQUIVALENTE EN LOGISTICA')
+            ->setCellValue('H1', 'TALLA')
+            ->setCellValue('I1', 'TELA')
+            ->setCellValue('J1', 'COLOR')
+            ->setCellValue('K1', 'MONTO');
 
         $objPHPExcel->getActiveSheet()->setTitle('FORMATO');
         $objPHPExcel->setActiveSheetIndex(0);
@@ -711,9 +751,8 @@ class Item extends MY_Controller
         header('Content-Type: application/vnd.ms-excel');
         header('Content-Disposition: attachment;filename="Formato.xls"');
         header('Cache-Control: max-age=0');
-        $objWriter=PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel5');
+        $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
         $objWriter->save('php://output');
         exit;
-
     }
 }
