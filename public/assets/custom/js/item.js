@@ -71,6 +71,10 @@ var Item = {
 			let jsonString = { 'data': JSON.stringify({}) };
 			Fn.download(site_url + Item.url + 'descargarTarifarioPDF', jsonString);
 		});
+		$(document).on('click', '.btn-descargarListaDeItem', function () {
+			let jsonString = { 'data': JSON.stringify({}) };
+			Fn.download(site_url + Item.url + 'descargarListaDeItem', jsonString);
+		});
 		$(document).on('click', '.btn-actualizarItem', function () {
 			++modalId;
 
