@@ -45,29 +45,30 @@
                     <td class="td-left"><?= verificarEmpty($row['itemCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemSubCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['item']); ?></td>
+                    <?php $idProveedor = 0; ?>
                     <?
                     foreach ($dataProveedor as $key => $rProveedor) {
 
                     ?>
-
-                        <? if ($rProveedor['idProveedor'] == $row['idProveedor'] && $row['flag_actual'] == 1) { ?>
+                        <?php $idProveedor = (!empty($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]) ? $rProveedor['idProveedor'] : $row['idProveedor']) ?>
+                        <?php $flag = !empty($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['flag_actual']) ? $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['flag_actual'] : 0; ?>
+                        <? if ($rProveedor['idProveedor'] == $idProveedor && $flag == '1') { ?>
                             <th nowrap class="text-center" style="color: green">
 
-                                <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo'] : '-'; ?>
+                                <?= isset($dataItemProveedor[$row['idItem']][$idProveedor]['costo']) ? $dataItemProveedor[$row['idItem']][$idProveedor]['costo'] : '-'; ?>
                                 <br>
                                 <br>
-                                <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-'; ?>
+                                <?= isset($dataItemProveedor[$row['idItem']][$idProveedor]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$idProveedor]['fechaVigencia']) : '-'; ?>
 
                             </th>
 
                         <? } else { ?>
 
                             <th nowrap class="text-center" style="color: red">
-
                                 <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo'] : '-'; ?>
                                 <br>
                                 <br>
-                              <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-'; ?>
+                                <?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-'; ?>
 
                             </th>
                         <? } ?>

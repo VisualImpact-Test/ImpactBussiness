@@ -156,6 +156,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['idItemTarifario']) ? ' AND tfa.idItemTarifario = ' . $params['idItemTarifario'] : '';
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
+		$filtros .= ($this->idTipoUsuario != '1') ? ' AND p.demo != 1 ' : '';
 
 		$sql = "
 			SELECT 
@@ -186,6 +187,7 @@ class M_Item extends MY_Model
 			WHERE 1 = 1
 			{$filtros}
 		";
+		log_message('error', $sql);
 
 		$query = $this->db->query($sql);
 
@@ -199,15 +201,15 @@ class M_Item extends MY_Model
 	}
 
 
-//Obtener proveedor no repetido - agregado
+	//Obtener proveedor no repetido - agregado
 
 	public function obtenerProveedorNoRepetido($paramas = [])
 	{
 
 		$filtros = "";
-		
+
 		$filtros .= !empty($paramas['proveedor']) ? ' AND p.idProveedor = ' . $paramas['proveedor'] : '';
-		
+
 
 		$sql = "
 		SELECT DISTINCT
@@ -235,13 +237,11 @@ class M_Item extends MY_Model
 		}
 
 		return $this->resultado;
-
-
 	}
 
-//Obtener flag no repetido - agregado
+	//Obtener flag no repetido - agregado
 
-public function obteneFlagNoRepetido()
+	public function obteneFlagNoRepetido()
 	{
 
 
@@ -269,8 +269,6 @@ public function obteneFlagNoRepetido()
 		}
 
 		return $this->resultado;
-
-
 	}
 
 
@@ -326,7 +324,6 @@ public function obteneFlagNoRepetido()
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
 
 		foreach ($params as $key => $value) {
-			
 		}
 
 
