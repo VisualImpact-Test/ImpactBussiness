@@ -9,6 +9,7 @@
                     </li>
                 <?php } ?>
             </ul>
+            <!--<a href="item/descargar_formato_excel">DESCARGAR FORMATO</a>-->
 
             <div class="tab-content mt-4 text-white">
                 <?php foreach ($hojas as $key => $row) { ?>

@@ -677,4 +677,38 @@ class Item extends MY_Controller
         respuesta:
         echo json_encode($result);
     }
+
+    public function descargar_formato_excel(){
+        require_once '../Classes/PHPExcel.php';
+        $objPHPExcel = new PHPExcel();
+
+        $objPHPExcel->
+        getProperties()
+        ->setCreator("Visual Impact")
+        ->setLastModifiedBy("Visual Impact")
+        ->setTitle("FORMATO")
+        ->setSubject("FORMATO")
+        ->setDescription("Visual Impact")
+        ->setKeywords("usuarios phpexcel")
+        ->setCategory("FORMATO");
+
+        $objPHPExcel->setActiveSheetIndex(0)
+        ->setCellValue('A1', 'Nombre')
+        ->setCellValue('B1', 'E-mail')
+        ->setCellValue('C1', 'Twitter')
+        ->setCellValue('A2', 'David')
+        ->setCellValue('B2', 'dvd@gmail.com')
+        ->setCellValue('C2', '@davidvd');
+
+        $objPHPExcel->getActiveSheet()->setTitle('FORMATO');
+        $objPHPExcel->setActiveSheetIndex(0);
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="01simple.xls"');
+        header('Cache-Control: max-age=0');
+        $objWriter=PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel5');
+        $objWriter->save('php://output');
+        exit;
+
+    }
 }
