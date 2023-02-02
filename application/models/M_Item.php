@@ -160,6 +160,7 @@ class M_Item extends MY_Model
 				, a_l.idArticulo AS idItemLogistica
 				, a_l.nombre AS equivalenteLogistica
 				, a.estado
+				, a.idUnidadMedida
 			FROM compras.item a
 			JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
@@ -248,6 +249,19 @@ class M_Item extends MY_Model
 			--LEFT JOIN visualimpact.logistica.articulo_marca_cuenta amc ON am.idMarca = amc.idMarca
 			--LEFT JOIN visualimpact.logistica.cuenta c ON amc.idCuenta = c.idCuenta
 			ORDER BY 2,1
+		";
+
+		$result = $this->db->query($sql)->result_array();
+
+		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.articulo', 'id' => null];
+		return $result;
+	}
+
+	public function obtenerUnidadMedida(){
+		$sql = "
+			SELECT
+				idUnidadMedida id, nombre value
+			FROM ImpactBussiness.compras.unidadMedida WHERE estado=1
 		";
 
 		$result = $this->db->query($sql)->result_array();

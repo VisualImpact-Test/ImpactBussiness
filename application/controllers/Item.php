@@ -120,6 +120,7 @@ class Item extends MY_Controller
         $dataParaVista['marcaItem'] = $this->model->obtenerMarcaItem()['query']->result_array();
         $dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
         $dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
+        $dataParaVista['unidadMedida'] = $this->model->obtenerUnidadMedida();
 
         $itemsLogistica =  $this->model->obtenerItemsLogistica();
         foreach ($itemsLogistica as $key => $row) {
@@ -181,8 +182,9 @@ class Item extends MY_Controller
         $dataParaVista['data']['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
         $dataParaVista['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
 
-
+        
         $itemsLogistica =  $this->model->obtenerItemsLogistica();
+        $dataParaVista['unidadMedida'] =  $this->model->obtenerUnidadMedida();
         foreach ($itemsLogistica as $key => $row) {
             $data['items'][1][$row['value']]['value'] = $row['value'];
             $data['items'][1][$row['value']]['label'] = $row['label'];
@@ -224,6 +226,7 @@ class Item extends MY_Controller
         $post['categoria'] = checkAndConvertToArray($post['categoria']);
         $post['subcategoria'] = checkAndConvertToArray($post['subcategoria']);
         $post['idItemLogistica'] = checkAndConvertToArray($post['idItemLogistica']);
+        $post['unidadMedida'] = checkAndConvertToArray($post['unidadMedida']);
 
         $data = [];
 
@@ -240,7 +243,8 @@ class Item extends MY_Controller
                 'idItemCategoria' => $post['categoria'][$k],
                 'idItemSubCategoria' => $post['subcategoria'][$k],
                 //El de la izquierda es el nombre de la columna en la bd
-                'idItemLogistica' => $post['idItemLogistica'][$k]
+                'idItemLogistica' => $post['idItemLogistica'][$k],
+                'idUnidadMedida'=> $post['unidadMedida'][$k]
             ];
 
             $validacionExistencia = $this->model->validarExistenciaItem($data['insert']);
@@ -331,7 +335,8 @@ class Item extends MY_Controller
             'idItemCategoria' => $post['categoria'],
             'idItemSubCategoria' => $post['subcategoria'],
             // 'idItemtextil' => $post['textil'],
-            'idItemLogistica' => $post['idItemLogistica']
+            'idItemLogistica' => $post['idItemLogistica'],
+            'idUnidadMedida' => $post['unidadMedida']
         ];
 
         $validacionExistencia = $this->model->validarExistenciaItem($data['update']);

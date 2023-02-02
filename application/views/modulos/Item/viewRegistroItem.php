@@ -151,6 +151,14 @@
 							</div>
 						</div>
 
+                        <div class="sixteen wide field">
+                                <div class="ui sub header">Unidad Medida</div>
+                                <select class="form-control" name="unidadMedida" id="unidadMedida" >
+                                   <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase']); ?>
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
