@@ -1145,7 +1145,6 @@ class Cotizacion extends MY_Controller
 
 		foreach ($config['data']['cotizacionDetalle'] as $sub) {
 			$config['data']['cotizacionDetalleArchivosDelProveedor'][$sub['idCotizacionDetalle']] = $this->model->getCotizacionProveedorArchivosSeleccionados(['idCotizacionDetalle' => $sub['idCotizacionDetalle']])->result_array();
-			log_message('error', $this->db->last_query());
 		}
 
 		foreach ($archivos as $archivo) {

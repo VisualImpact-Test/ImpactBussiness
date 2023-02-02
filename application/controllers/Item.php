@@ -148,18 +148,15 @@ class Item extends MY_Controller
 
     public function viewRegistroItem()
     {
+        $result = $this->result;
 
-        //formularioview
-        $dataParaVista = [];
-        $dataParaVista['nav']['menu_active'] = '131';
-        $dataParaVista['css']['style'] = array(
+        $result['nav']['menu_active'] = '131';
+        $result['css']['style'] = array(
             'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
             'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
             'assets/custom/css/floating-action-button'
         );
-        $dataParaVista['js']['script'] = array(
-            // 'assets/libs/datatables/responsive.bootstrap4.min',
-            // 'assets/custom/js/core/datatables-defaults',
+        $result['js']['script'] = array(
             'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
             'assets/libs/handsontable@7.4.2/dist/languages/all',
             'assets/libs/handsontable@7.4.2/dist/moment/moment',
@@ -167,22 +164,17 @@ class Item extends MY_Controller
             'assets/custom/js/core/HTCustom',
             'assets/custom/js/item',
             'assets/custom/js/viewAgregarItem'
-
-            //'assets/custom/js/viewAgregarCotizacion'
         );
 
-
-        $result = $this->result;
-        $post = json_decode($this->input->post('data'), true);
-
-
-        $dataParaVista['data']['tipoItem'] = $this->model->obtenerTipoItem()['query']->result_array();
-        $dataParaVista['data']['marcaItem'] = $this->model->obtenerMarcaItem()['query']->result_array();
-        $dataParaVista['data']['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
-        $dataParaVista['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
-
+        $dataParaVista['tipoItem'] = $this->model->obtenerTipoItem()['query']->result_array();
+        $dataParaVista['marcaItem'] = $this->model->obtenerMarcaItem()['query']->result_array();
+        $dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
+        $dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
+        $dataParaVista['informacionItem'] = $this->model->obtenerInformacionItems()['query']->row_array();
+        $dataParaVista['existe'] = 0;
 
         $itemsLogistica =  $this->model->obtenerItemsLogistica();
+        
         foreach ($itemsLogistica as $key => $row) {
             $data['items'][1][$row['value']]['value'] = $row['value'];
             $data['items'][1][$row['value']]['label'] = $row['label'];
@@ -194,20 +186,20 @@ class Item extends MY_Controller
         }
 
         $data['items'][0] = array();
-        $result['data']['existe'] = 0;
+        
+        $dataParaVista['itemsLogistica'] = $data['items'][1];
 
-        $dataParaVista['data']['informacionItem'] = $this->model->obtenerInformacionItems($post)['query']->row_array();
+        
 
-        $dataParaVista['single'] = true;
+        $result['single'] = true;
         $result['result'] = 1;
         $result['msg']['title'] = 'Actualizar Item';
 
-        $dataParaVista['data']['itemsLogistica'] = $data['items'][1];
-        $result['data']['html'] = $this->load->view("modulos/Item/viewRegistroItem", $dataParaVista, true);
-        // $result['data']['itemsLogistica'] = $data['items'];
-        $dataParaVista['view'] = 'modulos/Item/viewRegistroItem';
 
-        $this->view($dataParaVista);
+        $result['data'] = $dataParaVista;
+        $result['view'] = 'modulos/Item/viewRegistroItem';
+
+        $this->view($result);
     }
 
 

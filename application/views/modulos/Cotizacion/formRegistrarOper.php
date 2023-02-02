@@ -38,9 +38,13 @@
             </div>
         </div>
         <div class="fields">
-            <div class="eight wide field">
+            <div class="five wide field">
                 <div class="ui sub header">Concepto OC / CR Cliente</div>
-                <input type="text" name="concepto" placeholder="Concepto PO / CR Cliente" value="<?= $cotizaciones[0]['codOrdenCompra']; ?>">
+                <input type="text" name="concepto" placeholder="Concepto OC / CR Cliente">
+            </div>
+            <div class="three wide field">
+                <div class="ui sub header">Nro OC</div>
+                <input type="text" placeholder="OC" value="<?= $cotizaciones[0]['codOrdenCompra']; ?>" readonly>
             </div>
             <div class="four wide field">
                 <div class="ui sub header">Fecha requerimiento</div>

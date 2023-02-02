@@ -187,7 +187,6 @@ class M_Item extends MY_Model
 			WHERE 1 = 1
 			{$filtros}
 		";
-		log_message('error', $sql);
 
 		$query = $this->db->query($sql);
 

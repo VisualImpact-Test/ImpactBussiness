@@ -690,7 +690,6 @@ class SolicitudCotizacion extends MY_Controller
 	{
 		$post = $this->input->post();
 		$this->db->update('compras.cotizacionDetalleProveedorDetalle', ['flag_activo' => 0], ['idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle']]);
-		log_message('error', json_encode($post));
 		return 'x';
 	}
 	public function verCotizacionesProveedor()

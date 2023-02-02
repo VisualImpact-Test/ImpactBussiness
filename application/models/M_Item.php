@@ -240,14 +240,9 @@ class M_Item extends MY_Model
 				, ISNULL(a.codigo + ' - ','') + a.nombre AS label
 				, um.idUnidadMedida AS idum
 				, um.nombre AS um
-				--, c.idCuenta
-				--, c.nombre
 			FROM visualimpact.logistica.articulo a
 			LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 			LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
-			--LEFT JOIN visualimpact.logistica.articulo_marca am on a.idMarca = am.idMarca
-			--LEFT JOIN visualimpact.logistica.articulo_marca_cuenta amc ON am.idMarca = amc.idMarca
-			--LEFT JOIN visualimpact.logistica.cuenta c ON amc.idCuenta = c.idCuenta
 			ORDER BY 2,1
 		";
 

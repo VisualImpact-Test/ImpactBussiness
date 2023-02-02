@@ -195,18 +195,18 @@
 							<div class="four wide field">
 								<div class="ui sub header">Características para el cliente</div>
 								<div class="ui right labeled input w-100">
-									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
+									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item" autocomplete="off">
 								</div>
 							</div>
 						</div>
 						<div class="fields">
 							<div class="eight wide field">
 								<div class="ui sub header">Características para compras</div>
-								<input name="caracteristicasCompras" placeholder="Características" value="">
+								<input name="caracteristicasCompras" placeholder="Características" autocomplete="off">
 							</div>
 							<div class="eight wide field">
 								<div class="ui sub header">Características para proveedor</div>
-								<input name="caracteristicasProveedor" placeholder="Características" value="">
+								<input name="caracteristicasProveedor" placeholder="Características" autocomplete="off">
 							</div>
 						</div>
 						<!-- Textiles -->
