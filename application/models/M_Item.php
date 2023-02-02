@@ -193,7 +193,8 @@ class M_Item extends MY_Model
 		WITH listTarifario AS (
 			SELECT
 				ta.*
-				, ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem,ta.flag_actual) ntarifario
+				/* , ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem,ta.flag_actual) ntarifario */
+				, ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem, CASE WHEN ta.flag_actual IS NULL THEN 2 ELSE ta.flag_actual END) ntarifario
 				, art.peso pesoLogistica
 			FROM compras.item a
 			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem

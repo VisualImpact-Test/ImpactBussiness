@@ -134,8 +134,8 @@
 					<div class="text">Ver Precio PDF</div>
 					<i class="dropdown icon"></i>
 					<div class="menu">
-						<div class="item" data-value="1">Ver precio</div>
-						<div class="item" data-value="0">Ocultar Precio</div>
+						<div data-value="1">Ver precio</div>
+						<div data-value="0">Ocultar Precio</div>
 					</div>
 				</div>
 			</div>
