@@ -144,7 +144,7 @@
                             <div class="sixteen wide field itemLogisticaDiv">
                                 <div class="ui sub header">Equivalente en logistica</div>
                                 <div class="ui action input">
-                                    <input class="form-control itemLogistica" id="equivalente" name="equivalente" placeholder="Buscar ">
+                                    <input class="form-control itemLogistica" id="equivalente" name="equivalente" placeholder="Buscar " autocomplete="off">
                                     <a class="ui button" onclick="Cotizacion.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></a>
                                 </div>
                                 <input class="d-none codItemLogistica" name="idItemLogistica">
@@ -185,5 +185,6 @@
 </div>
 
 <!-- Items -->
+
 <input id="itemsServicio" type="hidden" value='<?= json_encode($informacionItem) ?>'>
 <textarea class="d-none" id="itemsLogistica"><?= json_encode($itemsLogistica) ?></textarea>

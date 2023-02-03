@@ -4,6 +4,10 @@ var Item = {
 	contentDetalle: 'idContentItem',
 	url: 'Item/',
 	itemsLogistica: [],
+	idImagenesAnular: [],
+	base64: [],
+	type: [],
+	name: [],
 
 	load: function () {
 
@@ -54,11 +58,11 @@ var Item = {
 		$(document).on('focusout', '.itemLogistica', function () {
 			let control = $(this);
 			let val = control.val();
-			if(val != '' && val != undefined && val != null){
+			if (val != '' && val != undefined && val != null) {
 				control.attr('readonly', 'readonly');
 			}
 			id = control.closest('.divItemLogistica').find('.codItemLogistica').val();
-			if( id == '' || id == undefined || id == null){
+			if (id == '' || id == undefined || id == null) {
 				control.closest('.divItemLogistica').find('.codItemLogistica').val('0');
 			}
 		});
@@ -87,7 +91,6 @@ var Item = {
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
 					Item.itemsLogistica = a.data.itemsLogistica;
-					console.log(Item.itemsLogistica);
 				}
 
 				let btn = [];
@@ -122,17 +125,17 @@ var Item = {
 		//textiles y monto
 
 		$(document).on('change', '#tipo', function () {
-				let idtipo = $(this).val();
-				let control = $(this).closest(".body-item");
-				control.find('.campos_dinamicos').addClass('d-none');
-				control.find(`.div-feature-${idtipo}`).removeClass('d-none');
-			});
-	
+			let idtipo = $(this).val();
+			let control = $(this).closest(".body-item");
+			control.find('.campos_dinamicos').addClass('d-none');
+			control.find(`.div-feature-${idtipo}`).removeClass('d-none');
+		});
+
 
 		//de la imagen
 
-		
-		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
+
+		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
 
 			var data = control.data();
@@ -140,26 +143,26 @@ var Item = {
 
 			var id = '';
 			var nameImg = '';
-			if( data['row'] ){
+			if (data['row']) {
 				id = data['row'];
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
-			}else{
+			} else {
 				id = 0;
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
 			}
-			
-			if( control.val() ){
+
+			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
 				var num = control.get(0).files.length;
 
 				list: {
 					var total = $('input[name="' + name + '[' + id + ']"]').length;
-					if( (num + total) > control.data('fileMax') ){
+					if ((num + total) > control.data('fileMax')) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${control.data('fileMax')} archivo como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -172,11 +175,11 @@ var Item = {
 						break list;
 					}
 
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024)); 
+						size = Math.round((size / 1024));
 
-						if( size > 2048 ){
+						if (size > 2048) {
 							var message = Fn.message({ type: 2, message: 'Solo se permite como máximo 1MB por archivo' });
 							Fn.showModal({
 								'id': ++modalId,
@@ -189,43 +192,43 @@ var Item = {
 							break list;
 						}
 					}
-                    let file = '';
-                    let imgFile = '';
-                    let contenedor = '';
-					for(var i = 0; i < num; ++i){
-                        file = control.get(0).files[i];
-                            Fn.getBase64(file).then(function(fileBase){
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-                                if(fileBase.type.split('/')[0] == 'image'){
-                                    imgFile = fileBase.base64;
-                                    contenedor = content;
-                                }else{
-                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
-                                    contenedor = content_files;
-                                }
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							}
 
-                                var fileApp = '';
-                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
-									fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
-                                        fileApp += `
+							var fileApp = '';
+							fileApp += '<div class="ui fluid image content-lsck-capturas">';
+							fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
+							fileApp += `
                                         <div class="ui dimmer dimmer-file-detalle">
                                             <div class="content">
                                                 <p class="ui tiny inverted header">${fileBase.name}</p>
                                             </div>
                                         </div>`;
-                                        fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-                                        fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
-                                        fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
-                                        fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
-                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
-                                    fileApp += '</div>';
-                                    
-                                    contenedor.append(fileApp);
-                                    control.parents('.nuevo').find('.dimmer-file-detalle')
-                                    .dimmer({
-                                        on: 'click'
-                                    });
-                            });
+							fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
+							fileApp += '<input type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+							fileApp += '</div>';
+
+							contenedor.append(fileApp);
+							control.parents('.nuevo').find('.dimmer-file-detalle')
+								.dimmer({
+									on: 'click'
+								});
+						});
 
 					}
 				}
@@ -234,16 +237,84 @@ var Item = {
 			}
 		});
 
-		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function(e){
+		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function (e) {
 			e.preventDefault();
 		});
 
-		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
+		$(document).off('change', '.file-upload').on('change', '.file-upload', function (e) {
+			var control = $(this);
+			if (control.val()) {
+				var num = control.get(0).files.length;
+
+				list: {
+					if ((num) > MAX_ARCHIVOS) {
+						var message = Fn.message({ type: 2, message: 'Solo se permite ' + MAX_ARCHIVOS + ' archivos como máximo' });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+						break list;
+					}
+
+					for (var i = 0; i < num; ++i) {
+						var size = control.get(0).files[i].size;
+						size = Math.round((size / 1024));
+
+						if (size > KB_MAXIMO_ARCHIVO) {
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO}KB por captura` });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+
+							break list;
+						}
+					}
+
+
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+
+					
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+
+						Item.base64 = [];
+						Item.type = [];
+						Item.name = [];
+						
+						Fn.getBase64(file).then(function (fileBase) {
+							$('.labelImagen').html(num+ ' Imagen(es) cargada(s)');
+
+							Item.base64.push(fileBase.base64);
+							Item.type.push(fileBase.type);
+							Item.name.push(fileBase.name);
+
+							// $('#f_item').val(fileBase.base64);
+							// $('#f_type').val(fileBase.type);
+							// $('#f_name').val(fileBase.name);
+							// $('#imagenFirma').attr('src', fileBase.base64);
+							// $('#imagenFirma').removeClass('d-none');
+						});
+					}
+
+				}
+			}
+		});
+
+		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		
+
 
 
 		//de la imagen
@@ -251,7 +322,7 @@ var Item = {
 
 
 		//$(document).on('change', '.tipoArticulo', function () {
-			//++modalId;
+		//++modalId;
 
 		//	let idItem = $(this).parents('tr:first').data('id');
 		//	let estado = $(this).data('estado');
@@ -263,7 +334,7 @@ var Item = {
 		//	$.when(Fn.ajax(config)).then((a) => {
 		//		$("#btn-filtrarItem").click();
 		//	});
-	//	});
+		//	});
 	},
 
 	registrarItem: function () {
@@ -287,8 +358,16 @@ var Item = {
 
 	actualizarItem: function () {
 		++modalId;
+		// Almacenamos los datos del formulario en una variable por que vamos a incluir:
+		// * Las imagenes eliminadas almacenadas en la variable Item.idImagenesAnular.
+		// * Los archivos adjuntados en Item.base64, Item.type, Item.name.
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionItems')) };
+		var dataForm = Fn.formSerializeObject('formActualizacionItems');
+		dataForm.idImagenAnularItem = Item.idImagenesAnular;
+		dataForm.base64Adjunto = Item.base64;
+		dataForm.typeAdjunto = Item.type;
+		dataForm.nameAdjunto = Item.name;
+		let jsonString = { 'data': JSON.stringify(dataForm), 'idImagenesAnular': Item.idImagenesAnular };
 		let config = { 'url': Item.url + 'actualizarItem', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
@@ -304,10 +383,16 @@ var Item = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	editItemLogisticaValue: function(t){
+	editItemLogisticaValue: function (t) {
 		control = $(t);
-		control.closest('.divItemLogistica').find('.itemLogistica').attr('readonly',false);
+		control.closest('.divItemLogistica').find('.itemLogistica').attr('readonly', false);
 		control.closest('.divItemLogistica').find('.codItemLogistica').val('');
+	},
+	anularImagen: function (id, t) {
+		Item.idImagenesAnular.push(id);
+		var control = $(t).parents('.figure');
+		control.remove();
+		console.log(Item.idImagenesAnular);
 	},
 	actualizarAutocomplete: function () {
 

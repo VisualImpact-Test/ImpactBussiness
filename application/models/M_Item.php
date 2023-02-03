@@ -361,7 +361,10 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
-
+	public function obtenerItemImagenes($params = [])
+	{
+		return $this->db->where('estado', 1)->where('idItem', $params['idItem'])->get('compras.itemImagen');
+	}
 
 	public function insertarItem($params = [])
 	{
