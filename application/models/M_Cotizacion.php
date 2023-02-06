@@ -1425,6 +1425,7 @@ class M_Cotizacion extends MY_Model
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
 
 					];
 				}
@@ -1456,9 +1457,9 @@ class M_Cotizacion extends MY_Model
 				}
 	
 				//Sub Items
-				if (!empty($params['insertSubItem'][$k])) {
+				if (!empty($params['newInsertSubItem'][$k])) {
 
-					foreach ($params['insertSubItem'][$k] as $subItem) {
+					foreach ($params['newInsertSubItem'][$k] as $subItem) {
 						$insertSubItem[] = [
 							'idCotizacionDetalle' => $idCotizacionDetalle,
 							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
@@ -1480,32 +1481,32 @@ class M_Cotizacion extends MY_Model
 
 				}
 				//Sub Items Actualizar
-				if (!empty($params['subDetalle'][$k])) {
-					foreach ($params['subDetalle'][$k] as $subItem) {
-						$updateSubItem[] = [
-							'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
-							'idCotizacionDetalle' => $idCotizacionDetalle,
-							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
-							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
-							'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
-							'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
-							'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
-							'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
-							'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
-							'color' => !empty($subItem['color']) ? $subItem['color'] : '',
-							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
-							'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
-							'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
-							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
-							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
-							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
-							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
-						];
-					}
+				// if (!empty($params['subDetalle'][$k])) {
+				// 	foreach ($params['subDetalle'][$k] as $subItem) {
+				// 		$updateSubItem[] = [
+				// 			'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
+				// 			'idCotizacionDetalle' => $idCotizacionDetalle,
+				// 			'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+				// 			'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+				// 			'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+				// 			'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+				// 			'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+				// 			'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+				// 			'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+				// 			'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+				// 			'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+				// 			'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+				// 			'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+				// 			'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+				// 			'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+				// 			'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+				// 			'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+				// 			'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+				// 			'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+				// 		];
+				// 	}
 
-				}
+				// }
 			}
 		}
 
@@ -1524,6 +1525,7 @@ class M_Cotizacion extends MY_Model
 
 				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
 			}
+
 			if (!empty($updateSubItem)) {
 				$this->db->update_batch('compras.cotizacionDetalleSub', $updateSubItem, 'idCotizacionDetalleSub');
 			}

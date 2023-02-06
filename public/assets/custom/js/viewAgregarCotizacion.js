@@ -2307,7 +2307,8 @@ var Cotizacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+				// fn = 'Fn.closeModals(' + modalId + ');$(".btn-dp-' + idCotizacion + '").click();';
+				fn = `window.location.href = "${site_url}Cotizacion";`
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };

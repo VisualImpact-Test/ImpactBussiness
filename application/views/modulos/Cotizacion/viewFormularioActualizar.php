@@ -552,11 +552,10 @@
 							<div class="ui form attached div-features fluid segment my-3 <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
 								<div class="content-body-sub-item">
-
-
 									<?
 									if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']])) :
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
+											<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 											<div class="fields body-sub-item ">
 												<div class="three wide field">
 													<div class="ui sub header">Talla</div>
@@ -570,15 +569,15 @@
 													<div class="ui sub header">Color</div>
 													<input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
 												</div>
-												<div class="three wide field">
-													<div class="ui sub header">Genero</div>
-													<select class="ui" name="generoSubItem[0]">
-														<?= htmlSelectOptionArray2(['query' => LIST_GENERO, 'class' => 'text-titlecase', 'simple' => true, 'title' => 'Sin seleccionar', 'selected' => verificarEmpty($dataSubItem['genero'])]); ?>
-													</select>
-												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Cantidad</div>
 													<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Genero</div>
+													<select class="ui" name="generoSubItem[<?= $row['idCotizacionDetalle'] ?>]">
+														<?= htmlSelectOptionArray2(['query' => LIST_GENERO, 'class' => 'text-titlecase', 'simple' => true, 'title' => 'Sin seleccionar', 'selected' => verificarEmpty($dataSubItem['genero'])]); ?>
+													</select>
 												</div>
 												<div class="one wide field">
 													<div class="ui sub header">Eliminar</div>
@@ -586,18 +585,11 @@
 														<i class="trash icon"></i>
 													</button>
 												</div>
-
 											</div>
 									<?
 										endforeach;
-
-
 									endif;
 									?>
-
-
-
-
 								</div>
 								<button type="button" class="ui basic button btn-add-sub-item">
 									<i class="plus icon"></i>
@@ -618,8 +610,6 @@
 								endif;
 								?>
 							</div>
-
-
 							<!-- Servicios -->
 							<!-- <div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>

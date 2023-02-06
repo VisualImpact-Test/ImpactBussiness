@@ -428,6 +428,8 @@ class Cotizacion extends MY_Controller
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
+		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
+		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 		$post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
@@ -1750,6 +1752,64 @@ class Cotizacion extends MY_Controller
 					'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 					'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 				];
+
+				if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
+					switch ($post['tipoItemForm'][$k]) {
+						case COD_SERVICIO['id']:
+							$data['subDetalle'][$k] = getDataRefactorizada([
+								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+								'nombre' => $post["nombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+							]);
+							break;
+	
+						case COD_DISTRIBUCION['id']:
+							$data['subDetalle'][$k] = getDataRefactorizada([
+								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+								'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidad' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+								'idItem' => $post["itemLogisticaForm[{$post['idCotizacionDetalle'][$k]}]"],
+								'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"],
+								'requiereOrdenCompra' => empty($post["generarOCSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? 0 : 1,
+								'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"] : null,
+								'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+							]);
+							break;
+	
+						case COD_TEXTILES['id']:
+							$data['subDetalle'][$k] = getDataRefactorizada([
+								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+								'talla' => $post["tallaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'tela' => $post["telaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
+								'genero' => $post["generoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
+							]);
+							if(isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])){
+								$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							}
+							if(isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])){
+								$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							}
+							break;
+	
+						case COD_TARJETAS_VALES['id']:
+							$data['subDetalle'][$k] = getDataRefactorizada([
+								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+								'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+							]);
+							break;
+	
+						default:
+							$data['subDetalle'][$k] = [];
+							break;
+					}
+				}
 			} else {
 				$data['insert'][] = [
 					'idCotizacion' => $post['idCotizacion'],
@@ -1777,14 +1837,14 @@ class Cotizacion extends MY_Controller
 
 				switch ($post['tipoItemForm'][$k]) {
 					case COD_SERVICIO['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
+						$subDetalleInsert[$k] = getDataRefactorizada([
 							'nombre' => $post["nombreSubItemServicio[$k]"],
 							'cantidad' => $post["cantidadSubItemServicio[$k]"],
 						]);
 						break;
 
 					case COD_DISTRIBUCION['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
+						$subDetalleInsert[$k] = getDataRefactorizada([
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
 							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
 							'costo' => $post["costoSubItem[$k]"],
@@ -1793,7 +1853,7 @@ class Cotizacion extends MY_Controller
 						break;
 
 					case COD_TEXTILES['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
+						$subDetalleInsert[$k] = getDataRefactorizada([
 							'talla' => $post["tallaSubItem[$k]"],
 							'tela' => $post["telaSubItem[$k]"],
 							'color' => $post["colorSubItem[$k]"],
@@ -1803,19 +1863,19 @@ class Cotizacion extends MY_Controller
 						break;
 
 					case COD_TARJETAS_VALES['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
+						$subDetalleInsert[$k] = getDataRefactorizada([
 							'monto' => $post["montoSubItem[$k]"],
 						]);
 						break;
 
 					default:
-						$data['subDetalle'][$k] = [];
+						$subDetalleInsert[$k] = [];
 						break;
 				}
 
-				if (!empty($data['subDetalle'])) {
-					foreach ($data['subDetalle'][$k] as $subItem) {
-						$data['insertSubItem'][$cont][] = [
+				if (!empty($subDetalleInsert)) {
+					foreach ($subDetalleInsert[$k] as $subItem) {
+						$data['newInsertSubItem'][$cont][] = [
 							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
 							'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
@@ -1857,61 +1917,13 @@ class Cotizacion extends MY_Controller
 				}
 			}
 
-			if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
-				switch ($post['tipoItemForm'][$k]) {
-					case COD_SERVICIO['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
-							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-							'nombre' => $post["nombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
-							'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
-						]);
-						break;
-
-					case COD_DISTRIBUCION['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
-							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-							'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'cantidad' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
-							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
-							'idItem' => $post["itemLogisticaForm[{$post['idCotizacionDetalle'][$k]}]"],
-							'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"],
-							'requiereOrdenCompra' => empty($post["generarOCSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? 0 : 1,
-							'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"] : null,
-							'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-						]);
-						break;
-
-					case COD_TEXTILES['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
-							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-							'talla' => $post["tallaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'tela' => $post["telaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-							'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
-							'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
-							'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
-						]);
-						break;
-
-					case COD_TARJETAS_VALES['id']:
-						$data['subDetalle'][$k] = getDataRefactorizada([
-							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-							'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-						]);
-						break;
-
-					default:
-						$data['subDetalle'][$k] = [];
-						break;
-				}
-			}
+			
 		}
 		$data['archivoEliminado'] = isset($post['archivosEliminados']) ? $post['archivosEliminados'] : null;
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 		$data['where'] = 'idCotizacionDetalle';
+
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
 		$data = [];
 
