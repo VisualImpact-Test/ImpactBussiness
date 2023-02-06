@@ -586,7 +586,7 @@ class Cotizacion extends MY_Controller
 			}
 
 			if (isset($post['imagenDeItem[' . $idItem . ']'])) {
-				foreach ($post['imagenDeItem[' . $idItem . ']'] as $imagenes) {
+				foreach (checkAndConvertToArray($post['imagenDeItem[' . $idItem . ']']) as $imagenes) {
 					$itemImagen = $this->db->where('idItemImagen', $imagenes)->get('compras.itemImagen')->row_array();
 					$data['archivosDeImagen'][$k][] = $this->db->where('idItemImagen', $imagenes)->get('compras.itemImagen')->row_array();
 				}
