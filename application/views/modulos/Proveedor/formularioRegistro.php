@@ -29,6 +29,12 @@
 						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipoServicio, 'class' => 'text-titlecase', 'id' => 'idProveedorTipoServicio', 'value' => 'nombre'] ); ?>
 					</select>
 				</div>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control col-md-4" for="rubro" style="border:0px;">Tipo de comprobante :</label>
+					<select class="form-control col-md-8 my_select2" id="comprobante" name="comprobante" patron="requerido" multiple data-live-search="true">
+						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $comprobante, 'class' => 'text-titlecase', 'data-option' => ['idComprobante']] ); ?>
+					</select>
+				</div>
 			</fieldset>
 		</div>
 	</div>

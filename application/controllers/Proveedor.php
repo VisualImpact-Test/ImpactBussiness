@@ -116,6 +116,7 @@ class Proveedor extends MY_Controller
 		$dataParaVista = [];
 
 		$dataParaVista['rubro'] = $this->model->obtenerRubro()['query']->result_array();
+		$dataParaVista['comprobante'] = $this->model->obtenerComprobante()['query']->result_array();
 		$dataParaVista['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
 		$dataParaVista['tipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
@@ -174,7 +175,9 @@ class Proveedor extends MY_Controller
 				'estadoToggle' => $row['estadotoggle'],
 				'costo' => $row['costo'],
 				'idProveedorTipoServicio' => $row['idProveedorTipoServicio'],
-				'tipoServicio' => $row['tipoServicio']
+				'tipoServicio' => $row['tipoServicio'],
+				'idComprobante' => $row['idComprobante'],
+				'comprobante' => $row['comprobante']
 			];
 
 			if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
@@ -182,6 +185,7 @@ class Proveedor extends MY_Controller
 			if (!empty($row['zc_distrito'])) $distritosCobertura[trim($row['zc_cod_departamento']) . '-' . trim($row['zc_cod_provincia']) . '-' . trim($row['zc_cod_distrito'])] = $row['zc_distrito'];
 			if (!empty($row['idMetodoPago'])) $dataParaVisitaMetodoPago[trim($row['idMetodoPago'])] = $row['metodoPago'];
 			if (!empty($row['idRubro'])) $dataParaVistaRubro[trim($row['idRubro'])] = $row['rubro'];
+			if (!empty($row['idRubro'])) $dataParaVistaComprobante[trim($row['idComprobante'])] = $row['comprobante'];
 			if (!empty($row['idProveedorTipoServicio'])) $dataParaVistaTipoServicio[trim($row['idProveedorTipoServicio'])] = $row['tipoServicio'];
 		}
 
@@ -195,6 +199,7 @@ class Proveedor extends MY_Controller
 		$dataParaVista['listadoDistritosUbigeo'] = [];
 		$dataParaVista['proveedorMetodoPago'] =  $dataParaVisitaMetodoPago;
 		$dataParaVista['proveedorRubro'] =  $dataParaVistaRubro;
+		$dataParaVista['proveedorComprobante'] =  $dataParaVistaComprobante;
 		if (!empty($row['idProveedorTipoServicio'])) $dataParaVista['proveedorTipoServicio'] =  $dataParaVistaTipoServicio;
 		$dataParaVista['listTipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 
@@ -210,6 +215,7 @@ class Proveedor extends MY_Controller
 		}
 
 		$dataParaVista['listadoRubros'] = $this->model->obtenerRubro()['query']->result_array();
+		$dataParaVista['listadoComprobante'] = $this->model->obtenerComprobante()['query']->result_array();
 		$dataParaVista['listadoMetodosPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
 		$dataParaVista['zonasProveedor'] = $this->model->obtenerZonaCoberturaProveedor(['idProveedor' => $post['idProveedor']])['query']->result_array();
 		$dataParaVista['correosAdicionales'] = $this->model->obtenerCorreosAdicionales(['idProveedor' => $post['idProveedor'], 'estado' => '1'])->result_array();
@@ -323,6 +329,16 @@ class Proveedor extends MY_Controller
 		}
 
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
+		$data = [];
+
+		foreach (checkAndConvertToArray($post['comprobante']) as $key => $value) {
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idComprobante' => $value,
+			];
+		}
+
+		$fourth_insert = $this->model->insertarMasivo("compras.proveedorComprobante", $data['insert']);
 		$data = [];
 
 		// tipoServicio
@@ -502,6 +518,22 @@ class Proveedor extends MY_Controller
 
 		$data = [];
 
+		foreach (checkAndConvertToArray($post['comprobante']) as $key => $value) {
+			$data['insert'][] = [
+				'idProveedor' => $post['idProveedor'],
+				'idComprobante' => $value,
+			];
+		}
+
+		$data['where'] = ['idProveedor' => $post['idProveedor']];
+
+		// Seria bueno cambiar el nombre de la funcion, pero lo evite desconociendo si hay otra consulta que haga uso de esta funcion
+		$this->model->BorrarProveedorMetodoPago(['tabla' => "compras.proveedorComprobante", 'where' => $data['where']]);
+
+		$fourth_insert = $this->model->insertarMasivo("compras.proveedorComprobante", $data['insert']);
+
+		$data = [];
+		
 		if ($enviarCorreo) {
 			$data = [];
 

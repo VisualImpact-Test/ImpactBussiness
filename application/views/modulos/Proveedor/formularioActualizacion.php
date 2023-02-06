@@ -50,6 +50,20 @@
 							<?php endforeach; ?>
 						</select>
 					</div>
+
+					<div class="control-group child-divcenter row" style="width:85%">
+						<label class="form-control col-md-4" for="comprobante" style="border:0px;">Tipo Comprobante :</label>
+						<select class="form-control col-md-8 my_select2" id="comprobante" name="comprobante" multiple data-live-search="true" patron="requerido">
+							<?
+							foreach ($listadoComprobante as $comprobante) {
+							?>
+								<option value="<?= $comprobante['id']  ?>" <?= isset($proveedorComprobante[$comprobante['id']]) ? "selected" : ""  ?>> <?= $comprobante['value'] ?></option>
+							<?
+							}
+
+							?>
+						</select>
+					</div>
 				</div>
 			</fieldset>
 		</div>

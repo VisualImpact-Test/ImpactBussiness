@@ -35,6 +35,26 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerComprobante($params = [])
+	{
+		$sql = "
+			SELECT
+				  idComprobante AS id
+				, nombre AS value
+			FROM compras.comprobante
+			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerProveedorTipoServicio($params = [])
 	{
 		$this->db
@@ -190,10 +210,14 @@ class M_Proveedor extends MY_Model
 				, p.costo
 				, pts.idProveedorTipoServicio
 				, ts.nombre as tipoServicio
-			FROM compras.proveedor p
+				, cp.idComprobante
+				, cp.nombre as comprobante
+			FROM  compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
+			LEFT JOIN compras.proveedorComprobante pc ON pc.idProveedor = p.idProveedor
 			JOIN compras.rubro r ON pr.idRubro = r.idRubro
+			LEFT JOIN compras.comprobante cp ON cp.idComprobante = pc.idComprobante
 			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
 			LEFT JOIN compras.proveedorProveedorTipoServicio pts ON pts.idproveedor = p.idProveedor and pts.estado=1
 			LEFT JOIN compras.proveedorTipoServicio ts ON ts.idProveedorTipoServicio = pts.idProveedorTipoServicio
