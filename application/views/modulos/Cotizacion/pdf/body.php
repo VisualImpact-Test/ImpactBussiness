@@ -225,7 +225,7 @@
 					</td>
 					<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id']) :  ?>
+				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TRANSPORTE['id']) :  ?>
 					<td style="text-align: center;"><?= $key + 1 ?></td>
 					<td style="text-align: left;">
 						<?= verificarEmpty($row['item'], 1) ?>

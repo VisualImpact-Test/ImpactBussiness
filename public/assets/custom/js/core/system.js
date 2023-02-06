@@ -97,6 +97,7 @@ const COD_EVENTO = {'id' : 6, 'nombre' : 'EVENTO'};
 const COD_DISTRIBUCION = {'id' : 7, 'nombre' : 'DISTRIBUCION'};
 const COD_TEXTILES = {'id' : 9, 'nombre' : 'TEXTILES'};
 const COD_TARJETAS_VALES = {'id' : 10, 'nombre' : 'TARJETAS_VALES'};
+const COD_TRANSPORTE = {'id' : 12, 'nombre' : 'TRANSPORTE'};
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',

@@ -5,11 +5,11 @@
             <tr>
                 <th class="td-center text-center">#</th>
                 <th class="td-center text-center">OPCIONES</th>
-                <th class="text-center">TIPO</th>
                 <th class="text-center">MARCA</th>
                 <th class="text-center">CATEGORIA</th>
                 <th class="text-center">SUBCATEGORIA</th>
                 <th class="text-center">ITEM</th>
+                <th class="text-center">CARACTERISTICAS</th>
                 <?
                 foreach ($dataProveedor as $key => $row) {
 
@@ -40,11 +40,11 @@
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>
                     </td>
-                    <td class="td-left"><?= verificarEmpty($row['itemTipo'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemMarca'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['itemSubCategoria'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['item']); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['caracteristicas'], 3); ?></td>
                     <?php $idProveedor = 0; ?>
                     <?
                     foreach ($dataProveedor as $key => $rProveedor) {

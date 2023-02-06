@@ -119,6 +119,7 @@ defined('COD_EVENTO')         OR define('COD_EVENTO',['id' => 6, 'nombre' => 'EV
 defined('COD_DISTRIBUCION')   OR define('COD_DISTRIBUCION',['id' => 7, 'nombre' => 'DISTRIBUCION']);
 defined('COD_TEXTILES')       OR define('COD_TEXTILES',['id' => 9, 'nombre' => 'TEXTILES']);
 defined('COD_TARJETAS_VALES') OR define('COD_TARJETAS_VALES',['id' => 10, 'nombre' => 'TARJETAS_VALES']);
+defined('COD_TRANSPORTE')     OR define('COD_TRANSPORTE',['id' => 12, 'nombre' => 'TRANSPORTE']);
 
 //Wireframe
 
