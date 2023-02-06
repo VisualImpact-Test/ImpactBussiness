@@ -146,8 +146,8 @@
 		</h4>
 		<!-- Para tomar el input Original y eliminarlo -->
 		<div class="body-item-vacio">
-			<input type="hidden" name="idCotizacionDetalle" value="0" id="">
 			<div class="ui segment body-item nuevo">
+				<input type="hidden" name="idCotizacionDetalle" value="0">
 				<div class="ui right floated header">
 					<div class="ui icon menu">
 						<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
@@ -293,6 +293,7 @@
 						</div> -->
 						<!-- Distribucion -->
 						<div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
+							<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[0]" value="0">
 							<div class="fields">
 								<div class="six wide field">
 									<div class="ui sub header">Tipo Servicio</div>
@@ -488,8 +489,8 @@
 		</div>
 		<div class="default-item">
 			<? foreach ($cotizacionTarifario as $key => $row) : ?>
-				<input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
 				<div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
+					<input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
 					<div class="ui right floated header">
 						<div class="ui icon menu">
 							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
@@ -513,7 +514,7 @@
 									<div class="ui-widget">
 										<div class="ui icon input w-100">
 											<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
-											<input type='hidden' name='nameItemOriginal' patron="requerido" placeholder="Buscar item" value="<?= $row['itemNombre'] ?>">
+											<input type='hidden' name='nameItemOriginal' placeholder="Buscar item" value="<?= verificarEmpty($row['itemNombre']) ?>">
 											<i class="semaforoForm flag link icon"></i>
 										</div>
 
@@ -760,7 +761,7 @@
 								</div>
 							</div>
 							<div class="content-lsck-capturas">
-								<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="<?= ARCHIVOS_PERMITIDOS ?>" multiple="">
+								<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="<?= $row['idCotizacionDetalle'] ?>" accept="<?= ARCHIVOS_PERMITIDOS ?>" multiple="">
 								<div class="fields ">
 									<div class="sixteen wide field">
 										<div class="ui small images content-lsck-galeria">

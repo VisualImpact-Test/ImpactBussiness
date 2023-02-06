@@ -202,6 +202,11 @@ class M_Item extends MY_Model
 			LEFT JOIN visualimpact.logistica.articulo art ON art.idArticulo = a.idItemLogistica
 			WHERE (ta.flag_actual = 1 OR ta.flag_actual IS NULL)
 			{$filtros}
+		), listImagenes AS (
+			SELECT idItem, COUNT(*) as cantidadImagenes
+			FROM compras.itemImagen
+			WHERE estado = 1
+			GROUP BY idItem
 		)
 		select 
 			i.idItem as value,
@@ -221,10 +226,12 @@ class M_Item extends MY_Model
 			it.pesoLogistica,
 			ISNULL(i.flagCuenta,0) flagCuenta,
 			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna,
-			i.caracteristicas
+			i.caracteristicas,
+			ISNULL(img.cantidadImagenes, 0) as cantidadImagenes
 		from compras.item i
 		JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
 		LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor
+		LEFT JOIN listImagenes img ON img.idItem = i.idItem
 		WHERE i.estado = 1
 		order by 2
 		";

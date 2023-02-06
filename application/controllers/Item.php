@@ -274,7 +274,10 @@ class Item extends MY_Controller
 			}
 		}
 
-		$insertDetalle = $this->model->insertarMasivo('compras.itemDetalle', $dataDetallle['insert']);
+		$insertDetalle = true;
+		if(!empty( $dataDetallle['insert'])){
+			$insertDetalle = $this->model->insertarMasivo('compras.itemDetalle', $dataDetallle['insert']);
+		}
 
 		$insertImagen['estado'] = true;
 

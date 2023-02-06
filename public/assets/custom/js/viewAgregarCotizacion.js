@@ -140,9 +140,9 @@ var SolicitudCotizacion = {
 		control = $(t).parents('.fields');
 		lugarEntrega = control.find('input.lugarEntrega');
 		direccion = $(t).find('option:selected').data('direccion');
-		lugarEntrega.val(direccion); 
+		lugarEntrega.val(direccion);
 	}
-	
+
 }
 var Cotizacion = {
 
@@ -165,6 +165,7 @@ var Cotizacion = {
 	gapEmpresas: [],
 	controlesOC: [],
 	nuevo_item: [],
+	objetoParaAgregarImagen: null,
 	// solicitanteData: [],
 
 	load: function () {
@@ -344,24 +345,24 @@ var Cotizacion = {
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
 			let defaultItem = $('.default-item');
-			
+
 			defaultItem.append(Cotizacion.htmlG);
 
 			let childInserted = defaultItem.children().last();
 			let childInsertedNumber = (++Cotizacion.nDetalle);
-			childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5))
-			childInserted.find('.file-lsck-capturas').attr('data-row', childInserted.index())
+			childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5));
+			childInserted.find('.file-lsck-capturas').attr('data-row', childInserted.index());
+			console.log(childInserted.find('.file-lsck-capturas'));
 			// let $filas = $('#listaItemsCotizacion tbody tr').length;
 			// $filas = $filas + 1;
 			// let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
 			// $html += Cotizacion.htmlG;
 			// $html += "</tr>";
-
-
+			
+			
 			//Para ordenar los select2 que se descuadran
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
 			childInserted.transition('glow');
-
 			Cotizacion.actualizarAutocomplete();
 			Cotizacion.actualizarOnAddRow(childInserted);
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
@@ -584,12 +585,12 @@ var Cotizacion = {
 			let costo = Number(thisSubTotalForm.val());
 			let enteroSuperior = Math.ceil(costo);
 			let flagRedondear = flagRedondearForm.val();
-			
+
 			if (costoRedondeadoForm.val() == 0 && costoNoRedondeadoForm.val() == 0) {
 				costoRedondeadoForm.val(enteroSuperior);
 				costoNoRedondeadoForm.val(costo);
 			}
-			
+
 			let costoRedondeado = Number(costoRedondeadoForm.val());
 			let costoNoRedondeado = Number(costoNoRedondeadoForm.val());
 			thisCantidadForm.keyup();
@@ -1263,7 +1264,7 @@ var Cotizacion = {
 			let imagenesDeProveedor = $(this).find('.elegirImagenes').html();
 			let jsonProveedorSubCotizacion = $(this).find('.txtSubProveedorCotizacion').length >= 1 ? $(this).find('.txtSubProveedorCotizacion').val() : '';
 			let proveedorSubCotizacion = jsonProveedorSubCotizacion != '' ? JSON.parse(jsonProveedorSubCotizacion) : [];
-			
+
 			let subDetalleServicio = $(this).find('.txtDetalleTipoServicio').length > 0 ? JSON.parse($(this).find('.txtDetalleTipoServicio').html()) : [];
 			let idCotizacionDetalle = $(this).parents('.nuevo').find('.txtIdCotizacionDetalle').val();
 			var html = '';
@@ -1301,16 +1302,16 @@ var Cotizacion = {
 					return (detalle.idCotizacionDetalleSub == idCotizacionDetalleSub.val())
 				})
 
-				if (detalleSubItem !== void 0){ // !== undefined
+				if (detalleSubItem !== void 0) { // !== undefined
 					costoSubItem.val(detalleSubItem.costo);
 					subtotalSubItem.val(detalleSubItem.subTotal);
 				}
 
 			});
 
-			$.post(site_url+'SolicitudCotizacion/cerrarCotizacionProveedor',{
+			$.post(site_url + 'SolicitudCotizacion/cerrarCotizacionProveedor', {
 				idCotizacionDetalleProveedorDetalle: idCotizacionDetalleProveedorDetalle
-			},function (data) {
+			}, function (data) {
 				console.log('cotizacion cerrada ');
 				console.log(data);
 			});
@@ -1462,19 +1463,19 @@ var Cotizacion = {
 			let unidadMedidaForm = parent.find('.unidadMedidaTipoServicio');
 			let idUnidadMedidaForm = parent.find('.unidadMedidaSubItem');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
-			
+
 			costoForm.val(costo);
 			unidadMedidaForm.val(unidadMedida);
 			idUnidadMedidaForm.val(idUnidadMedida);
 
 			// Para el Check
 			let check = parent.find('.checkForm');
-			if( idTipoServicioUbigeo == '1'){ // Si es Urbano
-				if(check.is(":checked")){ // Si esta marcado
+			if (idTipoServicioUbigeo == '1') { // Si es Urbano
+				if (check.is(":checked")) { // Si esta marcado
 					check.click(); // Para desmarcar
 				}
-			}else{ // Si es NO Urbano
-				if(!check.is(":checked")){ // Si NO esta marcado
+			} else { // Si es NO Urbano
+				if (!check.is(":checked")) { // Si NO esta marcado
 					check.click(); // Para marcar
 				}
 			}
@@ -1635,21 +1636,21 @@ var Cotizacion = {
 
 			cantidadForm.keyup();
 		});
-		$(document).on('click', '.checkValidarOC', function() {
+		$(document).on('click', '.checkValidarOC', function () {
 			// Input Check
 			let check = $(this).find('.checkForm');
 
 			// Div donde se tiene los campos adicionales
 			let div = $(this).parents('.div-features').find('.divAddParaOC');
-			
+
 			// Si(IF) el check esta activo mostrar los campos necesario. En caso contrario (ELSE) ocultarlo.
 			// La clase "d-none" sirve para ocultar.
-			if(check.is(":checked")){
+			if (check.is(":checked")) {
 				div.removeClass('d-none');
-			}else{
+			} else {
 				div.addClass('d-none');
 			}
-			
+
 		});
 
 
@@ -1780,12 +1781,10 @@ var Cotizacion = {
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected', ui.item.tipo);
-				console.log(ui.item);
-				console.log(control.find(".caracteristicasCliente"));
+
 				control.find(".caracteristicasCliente").val(ui.item.caracteristicas);
 				control.find(".flagCuentaSelect").dropdown('set selected', ui.item.flagCuenta);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
-
 				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
@@ -1793,6 +1792,9 @@ var Cotizacion = {
 				//Llenamos el precio actual
 				if (ui.item.costo == null || ui.item.semaforoVigencia == "red") {
 					ui.item.costo = 0;
+				}
+				if (ui.item.cantidadImagenes > 0) {
+					Cotizacion.alertaParaAgregarItems(control, ui.item);
 				}
 
 
@@ -1838,7 +1840,57 @@ var Cotizacion = {
 			minLength: 3,
 		});
 	},
+	alertaParaAgregarItems: function (control, item) {
+		console.log(item);
 
+		++modalId;
+		var btn = [];
+		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		Cotizacion.objetoParaAgregarImagen = control;
+		let fn1 = `Fn.showModal({ id: ${modalId} ,show:false }); Cotizacion.agregarImagenes(${item.value});`;
+
+		btn[0] = { title: 'No en este momento', fn: fn, class: 'btn-outline-danger' };
+		btn[1] = { title: 'Aceptar', fn: fn1 };
+		Fn.showModal({ id: modalId, show: true, title: 'Agregar Imagenes del Item a la cotización', content: "Desea utilizar las imagenes del Item", btn: btn, width: '33%' });
+
+		$('.simpleDropdown').dropdown();
+		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+	},
+	agregarImagenes: function (id) {
+		$.post(site_url + Cotizacion.url + 'getImagenes', {
+			idItem: id
+		}, function (data) {
+			data = jQuery.parseJSON(data);
+			divItem = Cotizacion.objetoParaAgregarImagen;
+			control = divItem.find('.file-lsck-capturas');
+
+			var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
+			var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
+			var num = data.length;
+			var fileApp = '';
+			for (var i in data) {
+				fileApp += `
+				<div class="ui fluid image content-lsck-capturas dimmable">
+					<div class="ui dimmer dimmer-file-detalle">
+						<div class="content">
+							<p class="ui tiny inverted header">${data[i].nombre_inicial}</p>
+						</div>
+					</div>
+					<input type="hidden" name="imagenDeItem[${data[i].idItem}]" value="${data[i].idItemImagen}">
+					<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
+					<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data[i].nombre_archivo}" class="img-responsive img-thumbnail">
+				</div>
+				`;
+				// control.parents('.nuevo').find('.dimmer-file-detalle')
+				// 	.dimmer({
+					// 		on: 'click'
+					// 	});
+					
+			}
+			content.html(fileApp);
+
+		});
+	},
 	actualizarAutocompleteItemsLogistica: function () {
 		$("#equivalente").autocomplete({
 			source: Cotizacion.itemsLogistica[1],
@@ -2079,12 +2131,12 @@ var Cotizacion = {
 				}
 			);
 		$('.btn-info-descripcion')
-		.popup(
-			{
-				title: `Cantidad de elementos`,
-				content: `Esta cantidad es referente al Item`
-			}
-		);
+			.popup(
+				{
+					title: `Cantidad de elementos`,
+					content: `Esta cantidad es referente al Item`
+				}
+			);
 		$('.btn-info-gap')
 			.popup(
 				{
@@ -2166,6 +2218,7 @@ var Cotizacion = {
 		let cantidadReal = parent.find('.cantidadRealSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
 
+		let idCotizacionDetalle = parent.find('.idCotizacionDetalleSubForm');
 
 		fileItem.attr('name', `file-item[${number}]`);
 		fileType.attr('name', `file-type[${number}]`);
@@ -2194,6 +2247,7 @@ var Cotizacion = {
 		proveedorDistribucion.attr('name', `proveedorDistribucionSubItem[${number}]`);
 		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
+		idCotizacionDetalle.attr('name', `idCotizacionDetalleSub[${number}]`);
 
 	},
 

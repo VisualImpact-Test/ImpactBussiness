@@ -46,12 +46,12 @@ class M_Cotizacion extends MY_Model
 	public function getPropuestaItemArchivos($params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.propuestaItemArchivo pia')
-		->join('compras.propuestaItem pi', 'pia.idPropuestaItem = pi.idPropuestaItem', 'LEFT')
-		->join('compras.cotizacionDetalleProveedorDetalle pd', 'pd.idCotizacionDetalleProveedorDetalle = pi.idCotizacionDetalleProveedorDetalle', 'LEFT')
-		->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = pd.idCotizacionDetalle', 'LEFT')
-		->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
+			->select('*')
+			->from('compras.propuestaItemArchivo pia')
+			->join('compras.propuestaItem pi', 'pia.idPropuestaItem = pi.idPropuestaItem', 'LEFT')
+			->join('compras.cotizacionDetalleProveedorDetalle pd', 'pd.idCotizacionDetalleProveedorDetalle = pi.idCotizacionDetalleProveedorDetalle', 'LEFT')
+			->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = pd.idCotizacionDetalle', 'LEFT')
+			->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
 	}
 
@@ -61,19 +61,18 @@ class M_Cotizacion extends MY_Model
 		// PARA QUE LOGISTICA PUEDA VISUALIZAR  LOS ARCHIVOS QUE ADJUNTA EL PROVEEDOR
 
 		$this->db
-		->select('cdpda.*')
-		->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
-		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'LEFT')
-		->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle=cdpd.idCotizacionDetalle', 'LEFT')
-		->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacion=cd.idCotizacion and cdp.idProveedor=cd.idProveedor and cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor', 'LEFT')
-		->where('cd.idProveedor is not null') //Este where es importante para que funcione, segun la requerido.
-		->where('cdp.estado', '1')
-		->where('cdpda.estado', '1')
-		->where('cdpd.estado', '1')
-		->where('cdpd.estado', '1')
-		->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
+			->select('cdpda.*')
+			->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
+			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'LEFT')
+			->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle=cdpd.idCotizacionDetalle', 'LEFT')
+			->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacion=cd.idCotizacion and cdp.idProveedor=cd.idProveedor and cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor', 'LEFT')
+			->where('cd.idProveedor is not null') //Este where es importante para que funcione, segun la requerido.
+			->where('cdp.estado', '1')
+			->where('cdpda.estado', '1')
+			->where('cdpd.estado', '1')
+			->where('cdpd.estado', '1')
+			->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
-		
 	}
 
 	public function obtenerCuentaCentroCosto($params = [])
@@ -479,6 +478,22 @@ class M_Cotizacion extends MY_Model
 			$queryCotizacionDetalle = $this->db->insert($params['tabla'], $insert);
 			$idCotizacionDetalle = $this->db->insert_id();
 
+			if (!empty($params['archivosDeImagen'][$k])) {
+				foreach ($params['archivosDeImagen'][$k] as $archivo) {
+					$insertArchivos[] = [
+						'idCotizacion' => $insert['idCotizacion'],
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idTipoArchivo' => $archivo['idTipoArchivo'],
+						'nombre_inicial' => $archivo['nombre_inicial'],
+						'nombre_archivo' => '../item/' . $archivo['nombre_archivo'],
+						'nombre_unico' => $archivo['nombre_unico'],
+						'extension' => $archivo['extension'],
+						'estado' => true,
+						'idUsuarioReg' => $this->idUsuario
+					];
+				}
+			}
+
 			if (!empty($params['archivos'][$k])) {
 				foreach ($params['archivos'][$k] as $archivo) {
 					$tipoArchivo = explode('/', $archivo['type']);
@@ -736,7 +751,7 @@ class M_Cotizacion extends MY_Model
 			1 = 1
 			{$filtros}
 		";
-		
+
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -1379,6 +1394,7 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : '',
 						// 'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
@@ -1414,7 +1430,86 @@ class M_Cotizacion extends MY_Model
 				}
 			}
 		}
+		if (!empty($params['insert'])) {
+			foreach ($params['insert'] as $k => $insert) {
 
+				$this->db->insert($params['tabla'], $insert);
+	
+				$idCotizacionDetalle = $this->db->insert_id();
+	
+				if (!empty($params['archivos'][$k])) {
+					foreach ($params['archivos'][$k] as $archivo) {
+						$archivoName = $this->saveFileWasabi($archivo);
+						$tipoArchivo = explode('/', $archivo['type']);
+						$insertArchivos[] = [
+							'idCotizacion' => $insert['idCotizacion'],
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+							'nombre_inicial' => $archivo['name'],
+							'nombre_archivo' => $archivoName,
+							'nombre_unico' => $archivo['nombreUnico'],
+							'extension' => $tipoArchivo[1],
+							'estado' => true,
+							'idUsuarioReg' => $this->idUsuario
+						];
+					}
+				}
+	
+				//Sub Items
+				if (!empty($params['insertSubItem'][$k])) {
+
+					foreach ($params['insertSubItem'][$k] as $subItem) {
+						$insertSubItem[] = [
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+							'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+							'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+							'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+							'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+							'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+							'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : '',
+							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+							'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+						];
+					}
+
+				}
+				//Sub Items Actualizar
+				if (!empty($params['subDetalle'][$k])) {
+					foreach ($params['subDetalle'][$k] as $subItem) {
+						$updateSubItem[] = [
+							'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+							'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+							'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+							'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+							'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+							'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+							'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+							'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+							'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+						];
+					}
+
+				}
+			}
+		}
+
+		
 
 
 		if ($queryCotizacionDetalle) {
@@ -1426,6 +1521,7 @@ class M_Cotizacion extends MY_Model
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
 			}
 			if (!empty($insertSubItem)) {
+
 				$this->db->insert_batch('compras.cotizacionDetalleSub', $insertSubItem);
 			}
 			if (!empty($updateSubItem)) {
@@ -1618,87 +1714,85 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " (" . $params['idCotizacion'] . ")" : "";
 
 		$sql = "
-
 			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
 			WITH listItem AS (
-			SELECT
-			cd.idCotizacion AS idCotizacion,
-			cd.idCotizacionDetalle AS idCotizacionDetalle,
-			ci.fechaVigencia as Vigencia,
-			ISNULL(cd.nombre,'') item,
-			i.nombre as itemNombre,
-			ABS(DATEDIFF(DAY,@fechaHoy,ISNULL(ci.fechaVigencia,@fechaHoy))) AS diasVigencia,
-			cd.idItem AS idItem,
-			cd.cantidad AS cantidad,
-			ci.costo AS costo,
-			cd.caracteristicasCompras AS caracteristicasCompras,
-			cd.caracteristicasProveedor AS caracteristicasProveedor,
-			cd.subtotal AS subtotal,
-			c.total AS total,
-			cd.idItemTipo AS idItemTipo,
-			cd.caracteristicas AS caracteristicas,
-			cd.gap AS gap,
-			cd.precio AS precio,
-			cd.enlaces AS enlaces,
-			ci.idProveedor AS idProveedor,
-			p.razonSocial AS razonSocial,
-			ci.flag_actual AS flag_actual,
-			cd.costo as costoCotizacion,
-			cd.flagRedondear
-			FROM
-			compras.cotizacion c
-			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
-			LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
-			LEFT JOIN compras.item i ON i.idItem = cd.idItem
-			LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem
-			AND flag_actual = 1
-			WHERE
-			1 = 1
-			and cd.idCotizacion in {$filtros}
+				SELECT
+					cd.idCotizacion AS idCotizacion,
+					cd.idCotizacionDetalle AS idCotizacionDetalle,
+					ci.fechaVigencia as Vigencia,
+					ISNULL(cd.nombre,'') item,
+					i.nombre as itemNombre,
+					ABS(DATEDIFF(DAY,@fechaHoy,ISNULL(ci.fechaVigencia,@fechaHoy))) AS diasVigencia,
+					cd.idItem AS idItem,
+					cd.cantidad AS cantidad,
+					ci.costo AS costo,
+					cd.caracteristicasCompras AS caracteristicasCompras,
+					cd.caracteristicasProveedor AS caracteristicasProveedor,
+					cd.subtotal AS subtotal,
+					c.total AS total,
+					cd.idItemTipo AS idItemTipo,
+					cd.caracteristicas AS caracteristicas,
+					cd.gap AS gap,
+					cd.precio AS precio,
+					cd.enlaces AS enlaces,
+					ci.idProveedor AS idProveedor,
+					p.razonSocial AS razonSocial,
+					ci.flag_actual AS flag_actual,
+					cd.costo as costoCotizacion,
+					cd.flagRedondear
+				FROM
+					compras.cotizacion c
+				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
+				LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
+				LEFT JOIN compras.item i ON i.idItem = cd.idItem
+				LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem AND flag_actual = 1
+				WHERE
+				1 = 1
+				and cd.idCotizacion in {$filtros}
 
-			 ), lst_tarifario_det AS(
-			 SELECT
-			lt.idCotizacion ,
-			lt.idCotizacionDetalle ,
-			lt.Vigencia ,
-			lt.item ,
-			lt.itemNombre ,
-			lt.diasVigencia,
-			lt.idItem ,
-			lt.cantidad ,
-			lt.costo ,
-			lt.caracteristicasCompras ,
-			lt.caracteristicasProveedor ,
-			lt.subtotal ,
-			lt.total ,
-			lt.idItemTipo ,
-			lt.caracteristicas ,
-			lt.gap ,
-			lt.precio ,
-			lt.enlaces ,
-			lt.idProveedor ,
-			lt.razonSocial ,
-			lt.flag_actual ,
-			lt.costoCotizacion ,
-			lt.flagRedondear,
-			CASE
+			), lst_tarifario_det AS(
+				SELECT
+				lt.idCotizacion ,
+				lt.idCotizacionDetalle ,
+				lt.Vigencia ,
+				lt.item ,
+				lt.itemNombre ,
+				lt.diasVigencia,
+				lt.idItem ,
+				lt.cantidad ,
+				lt.costo ,
+				lt.caracteristicasCompras ,
+				lt.caracteristicasProveedor ,
+				lt.subtotal ,
+				lt.total ,
+				lt.idItemTipo ,
+				lt.caracteristicas ,
+				lt.gap ,
+				lt.precio ,
+				lt.enlaces ,
+				lt.idProveedor ,
+				lt.razonSocial ,
+				lt.flag_actual ,
+				lt.costoCotizacion ,
+				lt.flagRedondear,
+				CASE
 				WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
 				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
 				ELSE 'red' END
 				AS semaforoVigencia
 
-		FROM listItem lt
-	)
-	 SELECT
-	 ls.*,
-	CASE
-	 WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
-	 ELSE 0
-	END cotizacionInterna
-	FROM
-	lst_tarifario_det ls
-
+				FROM listItem lt
+			)
+			SELECT
+			ls.*,
+			CASE
+			WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
+			ELSE 0
+			END cotizacionInterna
+			FROM
+			lst_tarifario_det ls
 		";
+		log_message('error', $sql);
 
 		$query = $this->db->query($sql);
 		if ($query) {
