@@ -200,9 +200,5 @@ class CotizacionEfectiva extends MY_Controller
          
          echo json_encode($result);
      }
- 
- 
-     
-     //filtroReporte
 
 }
