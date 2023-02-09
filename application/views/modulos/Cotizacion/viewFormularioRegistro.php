@@ -19,7 +19,7 @@
 	}
 
 	.floating-container {
-		height: 200px !important;
+		height: 275px !important;
 	}
 
 	.plomo {
@@ -260,18 +260,18 @@
 							</div>
 						</div>
 
-						<!-- Servicios -->
-						<!-- <div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
+						<!-- Transporte -->
+						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TRANSPORTE['id'] ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
 							<h4 class="ui dividing header">SUB ITEMS</h4>
 							<div class="content-body-sub-item">
 								<div class="fields body-sub-item body-sub-item-servicio">
 									<div class="ten wide field">
 										<div class="ui sub header">Sub item </div>
-										<input class="nombreSubItem" name="nombreSubItemServicio[0]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
+										<input class="nombreSubItem" name="nombreSubItemForm[0]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
 									</div>
 									<div class="five wide field">
-										<div class="ui sub header">Cantidad</div>
-										<input class="onlyNumbers cantidadSubItem cantidadSubItemAcumulativo" name="cantidadSubItemServicio[0]" placeholder="0" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+										<div class="ui sub header">Costo</div>
+										<input class="onlyNumbers costoSubItem costoTransporte" name="costoSubItemForm[0]" placeholder="0" value="<?= !empty($data['costoSubItem']) ? $data['costoSubItem'] : '' ?>">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>
@@ -285,7 +285,7 @@
 								<i class="plus icon"></i>
 								Agregar
 							</button>
-						</div> -->
+						</div>
 						<!-- Distribucion -->
 						<div class="d-none div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
 							<div class="fields">
@@ -338,10 +338,6 @@
 									<div class="ui sub header">Peso Real </div>
 									<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Cantidad REAL">
 								</div>
-								<!-- <div class="four wide field">
-									<div class="ui sub header">Observación Adicional</div>
-									<input class="observacionSubItemForm" name="observacion-NoGuarda[0]" placeholder="Observación">
-								</div> -->
 							</div>
 							
 							<div class="tbDistribucionTachado d-none">
@@ -514,7 +510,7 @@
 <!-- FAB -->
 <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 <div class="floating-container">
-	<div class="floating-button ">
+	<div class="floating-button">
 		<i class="cog icon"></i>
 	</div>
 	<div class="element-container">
@@ -522,10 +518,10 @@
 			<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
 				<i class="send icon"></i>
 			</span>
-			<!-- <span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+			<span class="float-element btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
                 <i class="save icon"></i>
-            </span> -->
-			<span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
+            </span>
+			<span class="float-element btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
 				<i class="plus icon"></i>
 			</span>
 		</a>

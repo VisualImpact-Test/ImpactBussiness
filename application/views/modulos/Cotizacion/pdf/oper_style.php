@@ -1,4 +1,10 @@
 <style>
+    body {
+		font-family: Arial, Helvetica, sans-serif;
+	}
+    td.bold{
+        font-weight: bold;
+    }
     .text-left {
         text-align: left;
     }

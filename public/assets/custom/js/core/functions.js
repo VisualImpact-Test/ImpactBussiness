@@ -1435,7 +1435,6 @@ var Fn = {
 					$.each($('#' + childDependiente + ' option'), function (index, value) {
 						let myoption = $('#' + childDependiente).dropdown('get item', $(value).val());
 						if (myoption != false) {
-							console.log(myoption);
 							if ($(value).data('parentdependiente') == idParent) {
 								myoption.removeClass('d-none');
 								myoption.removeClass('active selected');

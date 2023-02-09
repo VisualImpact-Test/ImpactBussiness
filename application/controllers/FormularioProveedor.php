@@ -550,7 +550,7 @@ class FormularioProveedor extends MY_Controller
 			exit();
 		}
 
-		$config['css']['style'] = array();
+		$config['css']['style'] = array('assets/custom/css/floating-labels');
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizaciones');
 
 		$config['view'] = 'formularioProveedores/cotizaciones';

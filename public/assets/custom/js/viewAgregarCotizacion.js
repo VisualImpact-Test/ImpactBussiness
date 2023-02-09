@@ -358,8 +358,8 @@ var Cotizacion = {
 			// let $html = "<tr class='nuevo nuevoItem'><td class='n_fila' ><label class='nfila'>" + $filas + "</label><i class='estadoItemForm fa fa-sparkles' style='color: teal;'></i></td>";
 			// $html += Cotizacion.htmlG;
 			// $html += "</tr>";
-			
-			
+
+
 			//Para ordenar los select2 que se descuadran
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
 			childInserted.transition('glow');
@@ -661,10 +661,8 @@ var Cotizacion = {
 			let costoFormLabel = thisControlParents.find('.costoFormLabel');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
-			console.log(costoTipoServicioForm);
 			let cantidadTipoServicio = Number(thisControl.val());
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
-			console.log(costoTipoServicio);
 
 			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio, costoTipoServicio);
 
@@ -674,6 +672,32 @@ var Cotizacion = {
 			cantidadForm.keyup();
 
 		});
+
+		$(document).on('keyup', '.costoTransporte', function (e) {
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			// input con funcion para el calculo del subtotal
+			let cantidadForm = thisControlParents.find('.cantidadForm');
+			// Los valores a sumarse
+			let costosForm = thisControlParents.find('.costoTransporte');
+			// Los campos donde se escribira la nueva información
+			let costoForm = thisControlParents.find('.costoForm');
+			let costoFormLabel = thisControlParents.find('.costoFormLabel');
+
+			costoAcumulado = 0;
+			calcularCosto = true;
+			$.each(costosForm, (i, v) => {
+				if (Number($(v).val()) == 0) calcularCosto = false;
+				costoAcumulado += Number($(v).val());
+			});
+
+			if (calcularCosto) {
+				costoForm.val(costoAcumulado);
+				costoFormLabel.val(moneyFormatter.format(costoAcumulado));
+				cantidadForm.keyup();
+			}
+		});
+
 		$(document).on('keyup', '.cantidadSubItemAcumulativo', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
@@ -1398,7 +1422,19 @@ var Cotizacion = {
 			let element = control.closest('.body-sub-item');
 			let idEliminado = element.data('id');
 
-			// console.log(element);
+			// Validar si es transporte
+			let thisControlParents = control.parents('.nuevo');
+			let costosForm = thisControlParents.find('.costoTransporte');
+			let costoForm = thisControlParents.find('.costoForm');
+			let costoFormLabel = thisControlParents.find('.costoFormLabel');
+
+			calcularCosto = true;
+			esTransporte = false;
+			if (costosForm.length > 0) {
+				esTransporte = true;
+			}
+			// Fin: Validar si es transporte --> Continua: despues de eliminar la fila para volver a calcular el costo total.
+
 
 			if (idEliminado) {
 				Cotizacion.subItemEliminado.push(idEliminado);
@@ -1407,48 +1443,38 @@ var Cotizacion = {
 			if (parent.find('.body-sub-item').length <= 1) {
 
 				element.find(':input').val('');
-				// let hola = element.find('#genero .menu .item');
-				// let hola2 = element.find('#genero .text');
-				// let hola4 = element.find('#genero .menu');
 				let gen = element.find('#genero');
 
 				let gen_nuevo_item = gen.find('.dropdown')
-				// hola3 = hola.remove('option');
-				// gen3 = gen.find('.item-4').remove('option');
 				gen_nuevo_item.html(
-
 					'<option class="item-4" value="">seleccione</option>' +
 					'<option class="item" value="1">Hombre</option>' +
 					'<option class="item" value="2">Mujer</option>' +
 					'<option class="item" value="3">Unisex</option>'
-
 				);
-
-
-
-
-
-
-				// hola2.addClass('select');
-
-				// hola.removeClass('active');
-				// hola.removeClass('selected');
-
-				// hola3 = hola2.remove('div');
-
-				// hola.first().addClass('selected active');
-
-				// console.log(hola);
-				// console.log(hola2);
-				// console.log(hola4);
-
-				// hola4.before('<div class="text">seleccione<div/>');
-
 
 				return false;
 			}
 
 			element.remove();
+			// Validar Transporte
+			if (esTransporte) {
+				let newCostosForm = thisControlParents.find('.costoTransporte');
+				let cantidadForm = thisControlParents.find('.cantidadForm');
+				costoAcumulado = 0;
+
+				$.each(newCostosForm, (i, v) => {
+					console.log(Number($(v).val()));
+					if (Number($(v).val()) == 0) calcularCosto = false;
+					costoAcumulado += Number($(v).val());
+				});
+
+				if (calcularCosto) {
+					costoForm.val(costoAcumulado);
+					costoFormLabel.val(moneyFormatter.format(costoAcumulado));
+				}
+				cantidadForm.keyup();
+			}
 
 		});
 		$(document).on('change', '.tipoServicioForm', function () {
@@ -1883,9 +1909,9 @@ var Cotizacion = {
 				`;
 				// control.parents('.nuevo').find('.dimmer-file-detalle')
 				// 	.dimmer({
-					// 		on: 'click'
-					// 	});
-					
+				// 		on: 'click'
+				// 	});
+
 			}
 			content.html(fileApp);
 
@@ -2289,13 +2315,16 @@ var Cotizacion = {
 		// tachadoDistribucion.addClass('d-none');
 	},
 
-	actualizarCotizacionView: function (idCotizacion) {
+	actualizarCotizacionView: function (updateEstado) {
 		let formValues = Fn.formSerializeObject('formActualizarCotizacion');
 		formValues.archivosEliminados = Cotizacion.archivoEliminado;
 		formValues.anexosEliminados = Cotizacion.anexoEliminado;
 		formValues.subItemEliminado = Cotizacion.subItemEliminado;
 		formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
 		formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
+		if(updateEstado == 2){
+			formValues.actualizarEstado = 2;
+		}
 
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "actualizaCotizacionData";

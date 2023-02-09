@@ -1,3 +1,11 @@
+<style>
+	.form-control:disabled,
+	.form-control[readonly] {
+		background-color: white;
+		opacity: 1;
+	}
+</style>
+
 <div class="card-datatable">
 	<!-- ///////////////////////////////////// -->
 	<form id="frmCotizacionesProveedor">
@@ -14,20 +22,28 @@
 			<?php foreach ($datos as $k => $row) : ?>
 				<?php $i = 0; ?>
 				<input type="hidden" name="idCotizacionDetalleProveedorDetalle" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
+				<input type="hidden" class="form-control" name="idItem" readonly value="<?= $row['idItem'] ?>">
+
+				<h4><?= verificarEmpty($row['item'], 3) . empty($row['unidadMedida'] ? '' : (' ( ' . $row['unidadMedida'] . ' )')) ?></h4>
 				<div class="row">
 					<div class="col-md-10 row justify-content-start">
-						<div class="col-md-10">
-							<div class="form-group">
-								<h4 class="mb-1">ITEM</h4>
-								<input class="form-control" readonly value="<?= verificarEmpty($row['item'], 3) . empty($row['unidadMedida'] ? '' : (' ( ' . $row['unidadMedida'] . ' )')) ?>">
+						<div class="col-md-2">
+							<div class="form-label-group">
+								<input type="text" class="form-control" autofocus value="<?= verificarEmpty($row['tipoItem'], 3) ?>" readonly>
+								<label>TIPO ITEM</label>
+							</div>
+						</div>
+						<div class="col-md-8">
+							<div class="form-label-group">
+								<input type="text" class="form-control" autofocus value="<?= $row['caracteristicasProveedor'] ?>" readonly>
+								<label>COMENTARIO DE COMPRAS</label>
 							</div>
 						</div>
 						<div class="col-md-2">
-							<h4 class="mb-1" style="color:white;">IMG</h4>
-							<div class="btn-group" role="group" aria-label="Basic example">
-								<button class="form-control imgShow btnContraoferta" type="button" name="button" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>"><i class="handshake outline icon"></i></button>
-								<button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')"><i class="folder open outline icon"></i></button>
-								<button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');"><i class="folder closed outline icon"></i></button>
+							<div class="btn-group" role="group">
+								<button class="form-control imgShow btnContraoferta" type="button" name="button" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" title="Agregar Contraoferta"><i class="handshake outline icon"></i></button>
+								<button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')" title="Mostrar Archivos"><i class="folder open outline icon"></i></button>
+								<button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');" title="Ocultar Archivos"><i class="folder closed outline icon"></i></button>
 							</div>
 						</div>
 						<div class="col-md-12 imgCotizacion d-none">
@@ -51,13 +67,13 @@
 								</div>
 							<?php endif; ?>
 						</div>
-						<div class="col-sm-2">
+						<!-- <div class="col-sm-2">
 							<div class="form-group">
 								<h4 class="mb-1">TIPO ITEM</h4>
 								<input type="hidden" class="form-control" name="idItem" readonly value="<?= verificarEmpty($row['idItem'], 3) ?>">
 								<input class="form-control" readonly value="<?= verificarEmpty($row['tipoItem'], 3) ?>">
 							</div>
-						</div>
+						</div> -->
 						<div class="col-sm-2">
 							<div class="form-group">
 								<div class="form-group">
@@ -86,17 +102,17 @@
 								<input type="date" class="form-control" name="fechaEntrega" value="<?= empty($row['fechaEntrega']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : $row['fechaEntrega'] ?>" id="fechaEntrega<?= ($k + 1) ?>" <?= (!empty($row['fechaEntrega'])) ? 'readonly' : ''; ?> onkeyup="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')">
 							</div>
 						</div>
-						<div class="col-md-3">
+						<div class="col-md-5">
 							<div class="form-group">
-								<h4 class="mb-1">COMENTARIO</h4>
-								<input class="form-control" name="comentario" value="<?= $row['caracteristicasProveedor'] ?>" id="comentario<?= ($k + 1) ?>" readonly>
+								<h4 class="mb-1">RESPUESTA</h4>
+								<input class="form-control" name="comentario" value="<?= verificarEmpty($row['comentario']); ?>">
 							</div>
 						</div>
 					</div>
 					<div class="col-md-2">
 						<div class="form-group">
 							<h4 class="mb-1">Cantidad</h4>
-							<input class="form-control" name="cantidad" value="<?= $row['cantidad'] ?>" readonly>
+							<input class="form-control" name="cantidad" id="cantidad_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" value="<?= $row['cantidad'] ?>" readonly>
 						</div>
 						<div class="form-group">
 							<h4 class="mb-1">Costo Unitario (S/)</h4>
@@ -137,7 +153,7 @@
 								<div class="col-md-12 row filaDetalle">
 									<?php $servicio = ($row['tipoItem'] == 'Servicio'); ?>
 									<?php $textil = ($row['tipoItem'] == 'Textiles'); ?>
-									<div class="col-md-6 <?= $servicio ? '' : 'd-none' ?>">
+									<div class="col-md-8 pr-0 <?= $servicio ? '' : 'd-none' ?>">
 										<div class="form-group">
 											<h4 class="mb-1">Descripción</h4>
 											<input class="form-control" type="hidden" name="idCDPD[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
@@ -163,21 +179,21 @@
 											<input class="form-control" value="<?= $value['color'] ?>" readonly>
 										</div>
 									</div>
-									<div class="col-md-2">
+									<div class="col-md-1 px-0">
 										<div class="form-group">
-											<h4 class="mb-1">Cantidad</h4>
+											<h4 class="mb-1">Cant</h4>
 											<input class="form-control cantidad" name="cantidad[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $servicio ? $value['cantidad'] : $value['cantidadItem']; ?>" <?= $textil ? 'readonly' : ''; ?>>
 										</div>
 									</div>
-									<div class="col-md-2">
+									<div class="col-md-1 px-0">
 										<div class="form-group">
-											<h4 class="mb-1">Prec. Unit.</h4>
+											<h4 class="mb-1">P.U.</h4>
 											<input class="form-control costo" name="costo[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $value['costo'] ?>">
 										</div>
 									</div>
-									<div class="col-md-2">
+									<div class="col-md-2 pl-0">
 										<div class="form-group">
-											<h4 class="mb-1">STotal</h4>
+											<h4 class="mb-1">STot</h4>
 											<input class="form-control subtotal" name="subtotal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" readonly value="<?= $value['subTotal'] ?>" data-tiposervicio="<?= $row['tipoItem'] ?>" onchange="FormularioProveedores.calcularSubTotal(<?= $row['idCotizacionDetalleProveedorDetalle'] ?>, this)">
 										</div>
 									</div>

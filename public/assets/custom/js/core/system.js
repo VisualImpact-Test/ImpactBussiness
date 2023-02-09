@@ -1352,8 +1352,8 @@ var View = {
 		View.filtrosGrupoCanal();
 
 		//BARRA DE BUSQUEDA		
-		if ($('.ui.search').length > 0) {
-			$('.ui.search').search({
+		if ($('div.ui.search').length > 0) {
+			$('div.ui.search').search({
 				type: 'category',
 				source: (JSON.parse(menu_opciones)),
 				error: {

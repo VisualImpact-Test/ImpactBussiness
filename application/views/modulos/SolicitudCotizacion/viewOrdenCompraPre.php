@@ -83,7 +83,7 @@
                         </div>
                         <div class="three wide field">
                             <div class="ui sub header">OC Cliente</div>
-                            <input type="text" name="pocliente" placeholder="Escriba aquí" value="">
+                            <input type="text" name="pocliente" placeholder="Escriba aquí" value="<?= $orden['ocDelCliente'] ?>">
                         </div>
                         <div class="three wide field">
                             <div class="ui sub header">Lugar de entrega</div>
@@ -99,7 +99,7 @@
                     <div class="fields">
                         <div class="six wide field">
                             <div class="ui sub header">Observación</div>
-                            <input type="text" name="observacion" placeholder="Escriba aquí" value="">
+                            <input type="text" name="observacion" placeholder="Escriba aquí" value="En caso de incumplimiento en fecha de entrega, se estará ejecutando penalidad del 1% por cada día de retraso.">
                         </div>
                         <div class="two wide field">
                             <div class="ui sub header">Mostrar Observación</div>
@@ -126,9 +126,13 @@
                             <input type="hidden" name="idCotizacionDetalle[<?= $k ?>]" value="<?= $rowDetalle['idCotizacionDetalle'] ?>">
                             <div class="sixteen wide column">
                                 <div class="fields">
-                                    <div class="sixteen wide field">
+                                    <div class="eight wide field">
                                         <div class="ui sub header">Item</div>
                                         <input class="items" type='text' name='nameItem[<?= $k ?>]' value="<?= $rowDetalle['nameItem'] ?>" patron="requerido" placeholder="" readonly patron="requerido">
+                                    </div>
+                                    <div class="eight wide field">
+                                        <div class="ui sub header">Item</div>
+                                        <input class="cc" type='text' name='caracteristicasItem[<?= $k ?>]' value="<?= $rowDetalle['caracteristicasItem'] ?>" patron="requerido" placeholder="" readonly patron="requerido">
                                     </div>
                                 </div>
                                 <!-- Textiles -->

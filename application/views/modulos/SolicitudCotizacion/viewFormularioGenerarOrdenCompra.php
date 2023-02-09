@@ -104,20 +104,26 @@
                                         <input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
                                     </div>
                                 </div>
-                                <div class="six wide field">
+                                <div class="five wide field">
                                     <div class="ui sub header">Proveedor</div>
                                     <input class="proveedoresForm" type='text' value="<?= $row['razonSocial'] ?>" readonly>
                                 </div>
-                                <div class="five wide field">
+                                <div class="four wide field">
                                     <div class="ui sub header">Tipo Item</div>
                                     <select class="ui dropdown simpleDropdown read-only idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
                                         <?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
                                     </select>
                                 </div>
-                                <div class="five wide field">
+                                <div class="four wide field">
                                     <div class="ui sub header">Características</div>
                                     <div class="ui right labeled input w-100">
                                         <input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
+                                    </div>
+                                </div>
+                                <div class="three wide field">
+                                    <div class="ui sub header">Nro OC</div>
+                                    <div class="ui right labeled input w-100">
+                                        <input class="" type='text' name='ocDelCliente' value="<?= !empty($row['codOrdenCompra']) ? $row['codOrdenCompra'] : '' ?>" placeholder="Caracteristicas del item">
                                     </div>
                                 </div>
                             </div>
@@ -290,6 +296,11 @@
                                         <input class="subtotalFormLabel" type="text" placeholder="0.00" patron="requerido" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>" readonly>
                                         <input class="subtotalForm" type="hidden" patron="requerido" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>" readonly>
                                     </div>
+                                    <?php  if ($row['flagRedondear'] == '1') :  ?>
+                                        <div class="ui pointing blue basic label">
+                                                Valor redondeado
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
 

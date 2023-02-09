@@ -17,6 +17,7 @@
 <div class="ui form attached fluid segment p-4">
 	<form class="ui form" role="form" id="formActualizarCotizacion" method="post">
 		<input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
+		<input type="hidden" name="idCotizacionEstado" value="<?= !empty($cotizacion['idCotizacionEstado']) ? $cotizacion['idCotizacionEstado'] : '' ?>">
 		<input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
 		<h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
 		<div class="fields">
@@ -610,6 +611,36 @@
 								endif;
 								?>
 							</div>
+							<!-- TRANSPORTE -->
+							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) :  ?>
+								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>">
+									<div class="content-body-sub-item">
+										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']] as $dataSubItem) : ?>
+											<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+											<div class="fields body-sub-item body-sub-item-servicio" data-id="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+												<div class="ten wide field">
+													<div class="ui sub header">Descripción</div>
+													<input class="nombreSubItem" name="nombreSubItemForm[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= verificarEmpty($dataSubItem['nombre']) ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Costo</div>
+													<input class="costoTransporte" name="costoSubItemForm[<?= $row['idCotizacionDetalle'] ?>]" placeholder="costo" value="<?= verificarEmpty($dataSubItem['costoSubItem']) ?>">
+												</div>
+												<div class="one wide field">
+													<div class="ui sub header">Eliminar</div>
+													<button type="button" class="ui basic button btn-eliminar-sub-item">
+														<i class="trash icon"></i>
+													</button>
+												</div>
+											</div>
+										<?php endforeach; ?>
+									</div>
+									<button type="button" class="ui basic button btn-add-sub-item">
+										<i class="plus icon"></i>
+										Agregar
+									</button>
+								</div>
+							<?php endif; ?>
 							<!-- Servicios -->
 							<!-- <div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
@@ -906,7 +937,11 @@
 	</div>
 	<div class="element-container">
 		<a href="javascript:;">
-
+			<?php if ($btnEnviar) :  ?>
+				<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.actualizarCotizacionView(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+					<i class="send icon"></i>
+				</span>
+			<?php endif; ?>
 			<span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "Cotizacion.actualizarCotizacionView()", content: "¿Esta seguro de guardar esta cotizacion?" });'>
 				<i class="save icon"></i>
 			</span>

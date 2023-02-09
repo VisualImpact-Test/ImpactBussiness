@@ -1350,6 +1350,8 @@ class SolicitudCotizacion extends MY_Controller
 			'gapForm' => $post['gapForm'],
 			'precioForm' => $post['precioForm'],
 			'subtotalForm' => $post['subtotalForm'],
+			'ocDelCliente' => $post['ocDelCliente'],
+			'caracteristicasItem' => $post['caracteristicasItem'],
 		]);
 
 

@@ -495,14 +495,13 @@ class Cotizacion extends MY_Controller
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
-					// case COD_SERVICIO['id']:
-					// 	$data['subDetalle'][$k] = getDataRefactorizada([
-					// 		'nombre' => $post["nombreSubItemServicio[$k]"],
-					// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
-					// 		'costo' => $post["costoSubItemServicio[$k]"],
-					// 		'subTotal' => $post["subtotalSubItemServicio[$k]"],
-					// 	]);
-					// 	break;
+				case COD_TRANSPORTE['id']:
+					$data['subDetalle'][$k] = getDataRefactorizada([
+						'nombre' => $post["nombreSubItemForm[$k]"],
+						'costo' => $post["costoSubItemForm[$k]"],
+						'subTotal' => $post["costoSubItemForm[$k]"],
+					]);
+					break;
 
 				case COD_DISTRIBUCION['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
@@ -778,7 +777,8 @@ class Cotizacion extends MY_Controller
 		if (!empty($idCotizacion)) {
 			$data = [];
 			$dataParaVista = [];
-			$dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
+			$dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion /*, 'anexo' => true */])['query']->result_array();
+			// $dataParaVista['imagenDeItem'] = $this->model->obtenerImagenesDeCotizacion(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 			$data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 			$dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
 			foreach ($data as $key => $row) {
@@ -786,6 +786,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
 				$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 				$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+				$dataParaVista['cabecera']['comentario'] = $row['comentario'];
 				// $dataParaVista['cabecera']['tipoCotizacion'] = $row['tipoCotizacion'];
 				$dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
@@ -803,6 +804,8 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['subtotal'] = $row['subtotal'];
 				$dataParaVista['detalle'][$key]['caracteristicas'] = $row['caracteristicas'];
 				$dataParaVista['detalle'][$key]['idItemTipo'] = $row['idItemTipo'];
+				$dataParaVista['detalle'][$key]['proveedor'] = $row['proveedor'];
+				$dataParaVista['detalle'][$key]['itemMarca'] = $row['itemMarca'];
 
 				$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 			}
@@ -1641,6 +1644,9 @@ class Cotizacion extends MY_Controller
 			'diasValidez' => $post['diasValidez'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
+		if($post['actualizarEstado'] == '2'){
+			$data['update']['idCotizacionEstado'] = 2;
+		}
 
 		if (isset($post['solicitante'])) {
 			// Validar Existencia de Solicitante
@@ -1761,7 +1767,7 @@ class Cotizacion extends MY_Controller
 								'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
-	
+
 						case COD_DISTRIBUCION['id']:
 							$data['subDetalle'][$k] = getDataRefactorizada([
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
@@ -1777,7 +1783,7 @@ class Cotizacion extends MY_Controller
 								'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
-	
+
 						case COD_TEXTILES['id']:
 							$data['subDetalle'][$k] = getDataRefactorizada([
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
@@ -1789,21 +1795,28 @@ class Cotizacion extends MY_Controller
 								// 'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
 								// 'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
-							if(isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])){
+							if (isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
 								$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
 							}
-							if(isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])){
+							if (isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
 								$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
 							}
 							break;
-	
+
 						case COD_TARJETAS_VALES['id']:
 							$data['subDetalle'][$k] = getDataRefactorizada([
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
 								'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
-	
+
+						case COD_TRANSPORTE['id']:
+							$data['subDetalle'][$k] = getDataRefactorizada([
+								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+								'nombre' => $post["nombreSubItemForm[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => $post["costoSubItemForm[{$post['idCotizacionDetalle'][$k]}]"],
+							]);
+							break;
 						default:
 							$data['subDetalle'][$k] = [];
 							break;
@@ -1867,6 +1880,12 @@ class Cotizacion extends MY_Controller
 						]);
 						break;
 
+					case COD_TRANSPORTE['id']:
+						$subDetalleInsert[$k] = getDataRefactorizada([
+							'nombre' => $post["nombreSubItemForm[$k]"],
+							'costo' => $post["costoSubItemForm[$k]"],
+						]);
+						break;
 					default:
 						$subDetalleInsert[$k] = [];
 						break;
@@ -1915,8 +1934,6 @@ class Cotizacion extends MY_Controller
 					];
 				}
 			}
-
-			
 		}
 		$data['archivoEliminado'] = isset($post['archivosEliminados']) ? $post['archivosEliminados'] : null;
 
@@ -1924,9 +1941,25 @@ class Cotizacion extends MY_Controller
 		$data['where'] = 'idCotizacionDetalle';
 
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
+		if(!empty($post['subItemEliminado'])){
+			foreach ($post['subItemEliminado'] as $key => $value) {
+				$this->db->delete('compras.cotizacionDetalleSub', ['idCotizacionDetalleSub' => $value]);
+			}
+		}
 		$data = [];
 
 		$estadoEmail = true;
+		if($post['actualizarEstado'] == '2'){
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$toCompras = [];
+			foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}
+
+			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toCompras]);
+		}
 
 		if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
 			$result['result'] = 0;
@@ -2019,8 +2052,11 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/viewAgregarCotizacion'
 		);
 
-
+		$config['data']['btnEnviar'] = false;
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+		if ($config['data']['cotizacion']['idCotizacionEstado'] == '1') {
+			$config['data']['btnEnviar'] = true;
+		}
 		$config['data']['costo'] = $this->model->obtenerCosto(['id' => $idCotizacion])['query']->row_array();
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores

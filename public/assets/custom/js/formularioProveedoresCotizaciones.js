@@ -289,7 +289,7 @@ var FormularioProveedores = {
 
 		$(control).append(`
 			<div class="col-md-12 row filaDetalle">
-				<div class="col-md-6">
+				<div class="col-md-8 pr-0">
 					<div class="form-group">
 						<h4 class="mb-1">Descripción</h4>
 						<input type="hidden" class="form-control" name="idCDPD[0]" value="${idCDPD}">
@@ -298,33 +298,42 @@ var FormularioProveedores = {
 					</div>
 				</div>
 				
-				<div class="col-md-2">
+				<div class="col-md-1 px-0">
 					<div class="form-group">
-						<h4 class="mb-1">Cantidad</h4>
+						<h4 class="mb-1">Cant</h4>
 						<input class="form-control cantidad" name="cantidad[0]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)">
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-1 px-0">
 					<div class="form-group">
-						<h4 class="mb-1">Prec. Unit.</h4>
+						<h4 class="mb-1">P.U.</h4>
 						<input class="form-control costo" name="costo[0]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)">
 					</div>
 				</div>
-				<div class="col-md-2">
+				<div class="col-md-2 pl-0">
 					<div class="form-group">
-						<h4 class="mb-1">STotal</h4>
-						<input class="form-control subtotal" name="subtotal[0]"  readonly data-tiposervicio="Servicio" onchange="FormularioProveedores.calcularSubTotal(${idCDPD}, this)">
+						<h4 class="mb-1">STot</h4>
+						<input class="form-control subtotal" name="subtotal[0]" data-tiposervicio="Servicio" readonly onchange="FormularioProveedores.calcularSubTotal(${idCDPD}, this)">
 					</div>
 				</div>
 			</div>
 		`);
 	},
 	calcularSubItemTotal: function(t){
-		control = $(t).parents('.filaDetalle');
-		cantidad = $(control).find('input.cantidad').val();
-		costo = $(control).find('input.costo').val();
-		var tot = (cantidad * costo).toFixed(2);
-		$(control).find('input.subtotal').val(tot).trigger('change');
+		// if($(t).data('tiposervicio') == 'Servicio'){
+		// 	control = $(t).parents('.filaDetalle');
+		// 	cantidad = $(control).find('input.cantidad').val();
+		// 	costo = $(control).find('input.costo').val();
+		// 	var tot = (cantidad * costo).toFixed(2);
+		// 	$(control).find('input.subtotal').val(tot).trigger('change');
+		// }
+		// if($(t).data('tiposervicio') == 'Servicio'){
+			control = $(t).parents('.filaDetalle');
+			cantidad = $(control).find('input.cantidad').val();
+			costo = $(control).find('input.costo').val();
+			var tot = (cantidad * costo).toFixed(2);
+			$(control).find('input.subtotal').val(tot).trigger('change');
+		// }
 
 	},
 	calcularSubTotal: function(idCDPD, t){
@@ -335,8 +344,16 @@ var FormularioProveedores = {
 			valor = $(input).val();
 			subSubtotal += parseFloat(valor);		
 		}
-		$('#costo_'+idCDPD).val(subSubtotal);
-		$('#costoredondo_'+idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
+		if($(t).data('tiposervicio') == 'Servicio'){
+			$('#costo_'+idCDPD).val(subSubtotal);
+			$('#costoredondo_'+idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
+		}else{
+			cantidad = $('#cantidad_'+idCDPD).val();
+			newST = subSubtotal / cantidad;
+			
+			$('#costo_'+idCDPD).val(newST);
+			$('#costoredondo_'+idCDPD).val(newST.toFixed(2)).trigger('keyup');
+		}
 	},
 	calcularTotal: function (i, cantidad, val) {
 		var tot = cantidad * val;

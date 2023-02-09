@@ -194,9 +194,9 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.fee
 				, p.idCotizacionEstado
-        , p.idPrioridad
+        		, p.idPrioridad
 				, p.motivo
-        , p.comentario
+        		, p.comentario
 				, p.total
 				, p.codOrdenCompra
 				, p.motivoAprobacion
@@ -390,9 +390,13 @@ class M_Cotizacion extends MY_Model
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 				, pd.caracteristicas
 				, pd.caracteristicasCompras
+				, im.nombre as itemMarca
+				, REPLACE(p.comentario, CHAR(10), '<br>') comentario
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
+			LEFT JOIN compras.item i ON pd.idItem = i.idItem
+			LEFT JOIN compras.itemMarca im ON im.idItemMarca = i.idItemMarca
 			JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			JOIN compras.cotizacionDetalleEstado cde ON pd.idCotizacionDetalleEstado = cde.idCotizacionDetalleEstado
 			LEFT JOIN visualImpact.logistica.cuenta c ON p.idCuenta = c.idCuenta
@@ -727,7 +731,8 @@ class M_Cotizacion extends MY_Model
 			ROUND (cd.subtotal/((ISNULL(CONVERT(float,cd.gap),0)/100)+1),2) subtotalSinGap,
 			c.total,
 			cd.idItemTipo,
-			cd.caracteristicas,
+			-- cd.caracteristicas,
+			i.caracteristicas,
 			cd.gap,
 			cd.precio,
 			cd.enlaces,
@@ -1405,29 +1410,53 @@ class M_Cotizacion extends MY_Model
 			//Sub Items Actualizar
 			if (!empty($params['subDetalle'][$k])) {
 				foreach ($params['subDetalle'][$k] as $subItem) {
-					$updateSubItem[] = [
-						'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
-						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
-						'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
-						'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
-						'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
-						'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
-						'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
-						'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
-						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
-						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
-						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
-						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
-						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
-						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
-						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
-						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
-						'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
-
-					];
+					if(isset($subItem['idCotizacionDetalleSub'])){
+						$updateSubItem[] = [
+							'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+							'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+							'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+							'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+							'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+							'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+							'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+							'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+							'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
+	
+						];
+					}else{
+						$insertSubItem[] = [
+							'idCotizacionDetalle' => $idCotizacionDetalle,
+							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
+							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
+							'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
+							'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
+							'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
+							'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
+							'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
+							'color' => !empty($subItem['color']) ? $subItem['color'] : '',
+							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
+							'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
+							'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
+						];
+					}
 				}
 			}
 		}
@@ -1828,6 +1857,7 @@ class M_Cotizacion extends MY_Model
 				cds.tela,
 				cds.color,
 				cds.cantidad,
+				cds.costo costoSubItem,
 				ts.costo,
 				cds.subtotal,
 				cds.monto,
