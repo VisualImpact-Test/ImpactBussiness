@@ -491,7 +491,7 @@
 		<div class="default-item">
 			<? foreach ($cotizacionTarifario as $key => $row) : ?>
 				<div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
-					<input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
+					<input type="hidden" class="idCotizacionDetalle" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
 					<div class="ui right floated header">
 						<div class="ui icon menu">
 							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
@@ -812,9 +812,13 @@
 								<div class="fields ">
 									<div class="sixteen wide field">
 										<div class="ui small images content-lsck-files">
-											<? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
-												<? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-													if ($archivo['idTipoArchivo'] == TIPO_PDF) { ?>
+											<?php if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) :  ?>
+												<?php foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) : ?>
+													<?php if ($archivo['idTipoArchivo'] != TIPO_IMAGEN) :  ?>
+														<?php $icon = 'file';  ?>
+														<?php $icon = $archivo['idTipoArchivo'] == TIPO_PDF ? 'pdf' : $icon;  ?>
+														<?php $icon = $archivo['idTipoArchivo'] == TIPO_EXCEL ? 'xlsx' : $icon;  ?>
+														<?php $rutaFile = RUTA_WIREFRAME . $icon . ".png"; ?>
 														<div class="ui fluid image content-lsck-capturas">
 															<div class="ui dimmer dimmer-file-detalle">
 																<div class="content">
@@ -826,11 +830,11 @@
 															<input type="hidden" name="file-item[<?= $row['idCotizacionDetalle'] ?>]" value="">
 															<input type="hidden" name="file-type[<?= $row['idCotizacionDetalle'] ?>]" value="application/<?= $archivo['extension'] ?>">
 															<input type="hidden" name="file-name[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $archivo['nombre_inicial'] ?>">
-															<img height="100" src="<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+															<img height="100" src="<?= $rutaFile ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 														</div>
-												<? }
-												} ?>
-											<? } ?>
+													<?php endif; ?>
+												<?php endforeach; ?>
+											<?php endif; ?>
 										</div>
 									</div>
 								</div>

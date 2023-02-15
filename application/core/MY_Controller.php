@@ -1,7 +1,8 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class MY_Controller extends CI_Controller{
+class MY_Controller extends CI_Controller
+{
 	var $titulo;
 	var $carpetaHtml;
 	var $carpetaArchivos;
@@ -23,11 +24,11 @@ class MY_Controller extends CI_Controller{
 
 	var $permisos = array();
 
-	var $fotos_url='http://movil.visualimpact.com.pe/fotos/impactTrade_Android/';
+	var $fotos_url = 'http://movil.visualimpact.com.pe/fotos/impactTrade_Android/';
 	var $aWebUrl = [];
 
 	var $carpeta;
-	var $estrellas = [ 1 => 20, 2 => 40, 3 => 60, 4 => 80, 5 => 100 ]; //livestorecheck
+	var $estrellas = [1 => 20, 2 => 40, 3 => 60, 4 => 80, 5 => 100]; //livestorecheck
 
 	var $sessId = null;
 	var $sessIdCuenta = '';
@@ -43,13 +44,14 @@ class MY_Controller extends CI_Controller{
 
 	var $flagactualizarListas;
 
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
-		$this->version = '1.1.16';
+		$this->version = '1.1.17';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
-		$this->hora= date('H:i:s');
+		$this->hora = date('H:i:s');
 		$this->sessId = $this->session->userdata('sessionId');
 		$this->namespace = $this->router->fetch_class();
 		$this->idUsuario = $this->session->userdata('idUsuario');
@@ -77,78 +79,80 @@ class MY_Controller extends CI_Controller{
 
 		$is_ajax = $this->input->is_ajax_request();
 
-		if( !empty($this->idUsuario) && $this->namespace == 'login') redirect('home','refresh');
+		if (!empty($this->idUsuario) && $this->namespace == 'login') redirect('home', 'refresh');
 		else {
-			if( empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') {// && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
-				if( $is_ajax ){
-					$result=array();
-					$result['result']=0;
-					$result['data']='';
-					$result['msg']['title']="Sesión";
-					$result['msg']['content']="Su sesi&oacute;n ha caducado. Identifiquese nuevamente <a href='".base_url()."'>aqu&iacute;</a>";
-					$result['url']='';
-					$result['session']=false;
+			if (empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') { // && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
+				if ($is_ajax) {
+					$result = array();
+					$result['result'] = 0;
+					$result['data'] = '';
+					$result['msg']['title'] = "Sesión";
+					$result['msg']['content'] = "Su sesi&oacute;n ha caducado. Identifiquese nuevamente <a href='" . base_url() . "'>aqu&iacute;</a>";
+					$result['url'] = '';
+					$result['session'] = false;
 					echo json_encode($result);
 					exit;
-				}
-				else redirect('login','refresh');
+				} else redirect('login', 'refresh');
 			}
 		}
 
 		$this->result = array(
-				'status' => 0,
-				'url' => '',
-				'data' => array(),
-				'msg' => array( 'title' => 'Alerta', 'content' => '' ),
-				'session' => true,
-				'result' => 0,
-				'errormemoria' => false
-			);
+			'status' => 0,
+			'url' => '',
+			'data' => array(),
+			'msg' => array('title' => 'Alerta', 'content' => ''),
+			'session' => true,
+			'result' => 0,
+			'errormemoria' => false
+		);
 
 		$aDirectorio = explode('\\', FCPATH);
-			$aDirectorio = array_filter($aDirectorio);
-			array_pop($aDirectorio);
+		$aDirectorio = array_filter($aDirectorio);
+		array_pop($aDirectorio);
 
-		$directorio = implode('\\', $aDirectorio).'\\';
+		$directorio = implode('\\', $aDirectorio) . '\\';
 
 		$this->carpeta = array(
-				'raiz' => $directorio,
-				'livestorecheck' => '_archivos\pg\livestorecheck\\'
-			);
+			'raiz' => $directorio,
+			'livestorecheck' => '_archivos\pg\livestorecheck\\'
+		);
 
 		$this->aWebUrl = [
-				'fotos' => [ 'movil' => 'http://movil.visualimpact.com.pe/fotos/impactTrade_Android/' ]
-			];
-
+			'fotos' => ['movil' => 'http://movil.visualimpact.com.pe/fotos/impactTrade_Android/']
+		];
 	}
 
-	public function expulsar(){
+	public function expulsar()
+	{
 		$this->session->sess_destroy();
-		header("Location: ".site_url());
+		header("Location: " . site_url());
 	}
 
-	public function logout(){
-		$this->aSessTrack[] = [ 'idAccion' => 3 ];
+	public function logout()
+	{
+		$this->aSessTrack[] = ['idAccion' => 3];
 		$this->session->sess_destroy();
 
-		$result=array();
-			$result['result']=1;
-			$result['url']='login/';
-			$result['data']='';
-			$result['msg']['title']='';
-			$result['msg']['content']='';
+		$result = array();
+		$result['result'] = 1;
+		$result['url'] = 'login/';
+		$result['data'] = '';
+		$result['msg']['title'] = '';
+		$result['msg']['content'] = '';
 
 		echo json_encode($result);
 	}
 
-	public function fn_404(){
-		$config['css']['style']=array();
+	public function fn_404()
+	{
+		$config['css']['style'] = array();
 		$config['single'] = true;
 		$config['view'] = 'templates/404';
 		$this->view($config);
 	}
 
-	public function get_dni($dni){
+	public function get_dni($dni)
+	{
 		$result = $this->result;
 
 		/*
@@ -157,15 +161,14 @@ class MY_Controller extends CI_Controller{
 				elmwNY+?Ck8U
 		*/
 
-		$site = 'http://dniruc.apisperu.com/api/v1/dni/'.$dni.'?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndlYm1hc3RlckB0dXJuby5tYWNjdGVjLmNvbSJ9.ANgmBhcpvztFEZB9hMpr4Bk1nd-OVEmtgZX5T-Sky74';
+		$site = 'http://dniruc.apisperu.com/api/v1/dni/' . $dni . '?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6IndlYm1hc3RlckB0dXJuby5tYWNjdGVjLmNvbSJ9.ANgmBhcpvztFEZB9hMpr4Bk1nd-OVEmtgZX5T-Sky74';
 
 		$data = @file_get_contents($site);
-		if(!empty($data)){
+		if (!empty($data)) {
 			$result['status'] = 1;
-		}
-		else{
+		} else {
 			$result['data'] = 0;
-			$config = array( 'type' => 2, 'message' => 'El servicio para verificar el número de DNI no esta disponible' );
+			$config = array('type' => 2, 'message' => 'El servicio para verificar el número de DNI no esta disponible');
 			$result['msg']['content'] = createMessage($config);
 		}
 
@@ -173,48 +176,51 @@ class MY_Controller extends CI_Controller{
 		echo json_encode($result);
 	}
 
-	public function mysql_last_id(){
+	public function mysql_last_id()
+	{
 		return $this->db->query('SELECT LAST_INSERT_ID() id')->row()->id;
 	}
 
-	public function view( $config = array() ){
+	public function view($config = array())
+	{
 
-		if( !isset($config['header']['header_foto']) ) $config['header']['header_foto']=$this->foto;
-		if( !isset($config['header']['header_usuario']) ) $config['header']['header_usuario']=$this->usuario;
+		if (!isset($config['header']['header_foto'])) $config['header']['header_foto'] = $this->foto;
+		if (!isset($config['header']['header_usuario'])) $config['header']['header_usuario'] = $this->usuario;
 
-		if( !isset($config['js']['script']) ) $config['js']['script']=array();
-		if( !isset($config['css']['style']) ) $config['css']['style']=array();
-		$this->load->view('core/01_head',$config['css']);
+		if (!isset($config['js']['script'])) $config['js']['script'] = array();
+		if (!isset($config['css']['style'])) $config['css']['style'] = array();
+		$this->load->view('core/01_head', $config['css']);
 
-		$single = isset($config['single'])? $config['single'] : false;
-		$noTitle = isset($config['noTitle'])? $config['noTitle'] : false;
-		$data = isset($config['data'])? $config['data'] : false;
+		$single = isset($config['single']) ? $config['single'] : false;
+		$noTitle = isset($config['noTitle']) ? $config['noTitle'] : false;
+		$data = isset($config['data']) ? $config['data'] : false;
 
-		$this->load->view('core/02_body', array('single'=> $single));
+		$this->load->view('core/02_body', array('single' => $single));
 
-		if(!$single){
+		if (!$single) {
 			$this->load->view('core/03_header', $config['header']);
 			$this->load->view('core/04_container', array());
-			$this->load->view('core/05_nav',(isset($config['nav'])? $config['nav'] : array()));
+			$this->load->view('core/05_nav', (isset($config['nav']) ? $config['nav'] : array()));
 			$this->load->view('core/06_content', array());
-			if(!$noTitle) $this->load->view('core/07_content_title', $data);
+			if (!$noTitle) $this->load->view('core/07_content_title', $data);
 		}
 
-		$view = isset($config['view'])? $config['view'] : $this->namespace;
-		$this->load->view($view,$data);
-		if(!$single){
+		$view = isset($config['view']) ? $config['view'] : $this->namespace;
+		$this->load->view($view, $data);
+		if (!$single) {
 			$this->load->view('core/08_content_end', array());
 			$this->load->view('core/09_container_end');
 		}
 		//
 		$this->load->view('core/11_container_end');
-		$this->load->view('core/10_body_js',$config['js']);
+		$this->load->view('core/10_body_js', $config['js']);
 
 		$this->load->view('core/12_body_end');
 		$this->load->view('core/13_html_end');
 	}
 
-	public function setDefaultTCPDF($config){
+	public function setDefaultTCPDF($config)
+	{
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
@@ -232,13 +238,13 @@ class MY_Controller extends CI_Controller{
 		$pdf->SetSubject($config['subject']);
 
 		// Estableciendo Header de Pdf
-		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE.' 001', PDF_HEADER_STRING, array(0,64,255), array(0,64,128));
-		$pdf->SetHeaderData($config['logo'], $config['logoWidth'], $config['title'], $config['headerDescription'], array(0,0,0), array(0,0,0));
-		$pdf->setFooterData(array(0,0,0), array(0,0,0));
+		$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE . ' 001', PDF_HEADER_STRING, array(0, 64, 255), array(0, 64, 128));
+		$pdf->SetHeaderData($config['logo'], $config['logoWidth'], $config['title'], $config['headerDescription'], array(0, 0, 0), array(0, 0, 0));
+		$pdf->setFooterData(array(0, 0, 0), array(0, 0, 0));
 
 		// Estableciendo fuentes para header y footer
-		$pdf->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-		$pdf->setFooterFont(Array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
+		$pdf->setHeaderFont(array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
+		$pdf->setFooterFont(array(PDF_FONT_NAME_DATA, '', PDF_FONT_SIZE_DATA));
 
 		// Estableciendo la fuente de monoespaciado por defecto
 		$pdf->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
@@ -255,8 +261,8 @@ class MY_Controller extends CI_Controller{
 		$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
 
 		// Estableciendo strings que dependen del lenguaje (sobretodo para imprimir el mismo pdf en diferentes idiomas)
-		if (@file_exists(dirname(__FILE__).'/lang/spa.php')) {
-			require_once(dirname(__FILE__).'/lang/spa.php');
+		if (@file_exists(dirname(__FILE__) . '/lang/spa.php')) {
+			require_once(dirname(__FILE__) . '/lang/spa.php');
 			$pdf->setLanguageArray($l);
 		}
 
@@ -267,7 +273,7 @@ class MY_Controller extends CI_Controller{
 		$pdf->SetFont('dejavusans', '', 14, '', true);
 
 		// Estableciendo efecto de sombra para el texto
-		$pdf->setTextShadow(array('enabled'=>true, 'depth_w'=>0.2, 'depth_h'=>0.2, 'color'=>array(196,196,196), 'opacity'=>1, 'blend_mode'=>'Normal'));
+		$pdf->setTextShadow(array('enabled' => true, 'depth_w' => 0.2, 'depth_h' => 0.2, 'color' => array(196, 196, 196), 'opacity' => 1, 'blend_mode' => 'Normal'));
 
 		return $pdf;
 	}
@@ -351,17 +357,17 @@ class MY_Controller extends CI_Controller{
 	// se retornara un array que contendra en su primer elemento 'matched'
 	// los indices de los grupos que se han encontrado con el indice en su interior,
 	// y 'unmatched' con los indices de los grupos no encontrados y un null en su interior.
-	protected function getIdsTablaHT($tabla = '', $coincidencias = [], $idColumn = '', $validacionesExtra, $test = false )
+	protected function getIdsTablaHT($tabla = '', $coincidencias = [], $idColumn = '', $validacionesExtra, $test = false)
 	{
 		$keys = array_keys($coincidencias[0]);
 
 		foreach ($coincidencias as $key => $row) {
 			//si valor apuntado es null no considerar
-			$val=true;
-			foreach($row as $row_index => $row_value ){
-				if( empty($row_value) ) $val=false;
+			$val = true;
+			foreach ($row as $row_index => $row_value) {
+				if (empty($row_value)) $val = false;
 			}
-			if($val){
+			if ($val) {
 				reset($coincidencias);
 				if ($key === key($coincidencias)) $this->db->group_start();
 				else $this->db->or_group_start();
@@ -407,7 +413,7 @@ class MY_Controller extends CI_Controller{
 		$tablasGrupos = [];
 
 		foreach ($grupos as $key => $grupo) {
-			$validacionesExtra=isset( $grupo['extra']) ? $grupo['extra'] :array();
+			$validacionesExtra = isset($grupo['extra']) ? $grupo['extra'] : array();
 
 			$tablaHTColumnasFiltradas = colsFromArray($tablaHT, $grupo['columnas']);
 
@@ -422,7 +428,7 @@ class MY_Controller extends CI_Controller{
 				$tablaConColumnasReales = array_replace_recursive($tablaConColumnasReales, $value);
 			}
 
-			$tablasConIds = $this->getIdsTablaHT($grupo['tabla'], $tablaConColumnasReales, $grupo['idTabla'],$validacionesExtra)['matched'];
+			$tablasConIds = $this->getIdsTablaHT($grupo['tabla'], $tablaConColumnasReales, $grupo['idTabla'], $validacionesExtra)['matched'];
 			$str = $this->db->last_query();
 			$tablaConIdsRefactorizada = [];
 			foreach ($tablasConIds as $key => $value) {
@@ -444,7 +450,8 @@ class MY_Controller extends CI_Controller{
 		return $tablaFinal;
 	}
 
-	public function sendEmail( $email = array() ){
+	public function sendEmail($email = array())
+	{
 		$result = false;
 		$defaults = array(
 			'to' => '',
@@ -456,7 +463,7 @@ class MY_Controller extends CI_Controller{
 
 		$email += $defaults;
 
-		if( !empty($email['to']) && !empty($email['asunto']) ){
+		if (!empty($email['to']) && !empty($email['asunto'])) {
 
 			$this->load->library('email');
 
@@ -478,17 +485,17 @@ class MY_Controller extends CI_Controller{
 			$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - Intranet');
 			$this->email->to($email['to']);
 
-			if( !empty($email['cc']) ){
+			if (!empty($email['cc'])) {
 				$this->email->cc($email['cc']);
 			}
 
 			$this->email->subject($email['asunto']);
 			$this->email->message($email['contenido']);
-			if( !empty($email['adjunto']) ){
+			if (!empty($email['adjunto'])) {
 				$this->email->attach($email['adjunto']);
 			}
 
-			if( $this->email->send() ){
+			if ($this->email->send()) {
 				$result = true;
 			}
 		}
@@ -498,18 +505,29 @@ class MY_Controller extends CI_Controller{
 
 	public function saveFileWasabi($config = [])
 	{
-        if (empty($config['base64'])) return "";
+		if (empty($config['base64'])) return "";
 
-        $carpeta = $config['carpeta'];
-        $nombreUnico = $config['nombreUnico'];
-		
-        $file =
-        [
-            'base64' => $config['base64'],
-            'name' => $config['name'],
-            'type' => $config['type'],
-            'extension' => explode('/',$config['type'])[1]
-        ];
+		$carpeta = $config['carpeta'];
+		$nombreUnico = $config['nombreUnico'];
+
+		$file =
+			[
+				'base64' => $config['base64'],
+				'name' => $config['name'],
+				'type' => $config['type'],
+				'extension' => explode('/', $config['type'])[1],
+			];
+
+		// REVISION DEL TIPO DE ARCHIVO
+		$tipoArchivo = explode('/', $config['type']);
+
+		$extensionForName = '';
+		if ($tipoArchivo[0] == 'image') {
+			$extensionForName = $tipoArchivo[1];
+		} else { // AGREGADO EN constants.php PARA HACER MAS FACIL LA BUSQUEDA
+			$extensionForName = FILES_WASABI[$tipoArchivo[1]];
+		}
+		///// FIN: REVISION DEL TIPO DE ARCHIVO
 
 		$this->load->library('s3');
 
@@ -521,21 +539,21 @@ class MY_Controller extends CI_Controller{
 
 		$s3Client->setRegion('us-central-1');
 		// $file_url = '';
-		$file_url = FCPATH . $nombreUnico."_WASABI.{$file['extension']}";
-        $base64 = str_replace("data:{$file['type']};base64,", '', $file['base64']);
-        $base64 = str_replace(' ', '+', $base64);
-        $content = base64_decode($base64);
+		$file_url = FCPATH . $nombreUnico . "_WASABI.{$extensionForName}";
+		$base64 = str_replace("data:{$file['type']};base64,", '', $file['base64']);
+		$base64 = str_replace(' ', '+', $base64);
+		$content = base64_decode($base64);
 
 		file_put_contents($file_url, $content);
 
-		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/'.$carpeta, $nombreUnico."_WASABI.{$file['extension']}", S3::ACL_PUBLIC_READ);
+		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/' . $carpeta, $nombreUnico . "_WASABI.{$extensionForName}", S3::ACL_PUBLIC_READ);
 		unlink($file_url);
-		return $nombreUnico."_WASABI.{$file['extension']}";
+		return $nombreUnico . "_WASABI.{$extensionForName}";
 	}
-
 }
 
-class MY_Login extends CI_Controller{
+class MY_Login extends CI_Controller
+{
 
 	var $version;
 	var $result;
@@ -550,70 +568,73 @@ class MY_Login extends CI_Controller{
 
 	var $sessIdCuenta = '';
 	var $sessIdProyecto = '';
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 
-		$this->usuario=$this->session->userdata('nombres');
-		$this->foto=$this->session->userdata('foto');
+		$this->usuario = $this->session->userdata('nombres');
+		$this->foto = $this->session->userdata('foto');
 		$this->sessIdCuenta = $this->session->userdata('idCuenta');
 		$this->sessNomCuenta = $this->session->userdata('cuenta');
 		$this->sessIdProyecto = $this->session->userdata('idProyecto');
 		$this->sessNomProyecto = $this->session->userdata('proyecto');
-		$this->load->model('MY_Model','model');
+		$this->load->model('MY_Model', 'model');
 
 		$this->result = array(
 			'status' => 0,
 			'url' => '',
 			'data' => array(),
-			'msg' => array( 'title' => 'Alerta', 'content' => '' ),
+			'msg' => array('title' => 'Alerta', 'content' => ''),
 			'session' => true,
 			'result' => 0,
 		);
 	}
 
-	public function view($config=array()){
+	public function view($config = array())
+	{
 
-		if( !isset($config['header']['header_foto']) ) $config['header']['header_foto']=$this->foto;
-		if( !isset($config['header']['header_usuario']) ) $config['header']['header_usuario']=$this->usuario;
+		if (!isset($config['header']['header_foto'])) $config['header']['header_foto'] = $this->foto;
+		if (!isset($config['header']['header_usuario'])) $config['header']['header_usuario'] = $this->usuario;
 
-		if( !isset($config['js']['script']) ) $config['js']['script']=array();
-		if( !isset($config['css']['style']) ) $config['css']['style']=array();
-		$this->load->view('core/01_head',$config['css']);
+		if (!isset($config['js']['script'])) $config['js']['script'] = array();
+		if (!isset($config['css']['style'])) $config['css']['style'] = array();
+		$this->load->view('core/01_head', $config['css']);
 
-		$single = isset($config['single'])? $config['single'] : false;
-		$data = isset($config['data'])? $config['data'] : false;
+		$single = isset($config['single']) ? $config['single'] : false;
+		$data = isset($config['data']) ? $config['data'] : false;
 
 		$data['title'] = "Restablecer Clave";
 		$data['message'] = "Inserte su nueva clave";
 		$data['icon'] = "fas fa-key";
 
-		$this->load->view('core/02_body', array('single'=> $single));
+		$this->load->view('core/02_body', array('single' => $single));
 
-		if(!$single){
+		if (!$single) {
 			$this->load->view('core/03_header', $config['header']);
 			$this->load->view('core/04_container', array());
-			$this->load->view('core/05_nav',(isset($config['nav'])? $config['nav'] : array()));
+			$this->load->view('core/05_nav', (isset($config['nav']) ? $config['nav'] : array()));
 			$this->load->view('core/06_content', array());
 			$this->load->view('core/07_content_title', $data);
 		}
 
-		$view = isset($config['view'])? $config['view'] : $this->namespace;
-		$this->load->view($view,$data);
-		if(!$single){
+		$view = isset($config['view']) ? $config['view'] : $this->namespace;
+		$this->load->view($view, $data);
+		if (!$single) {
 			$this->load->view('core/08_content_end', array());
 			$this->load->view('core/09_container_end');
 		}
 
 		$this->load->view('core/11_container_end');
-		$this->load->view('core/10_body_js',$config['js']);
+		$this->load->view('core/10_body_js', $config['js']);
 
 		$this->load->view('core/12_body_end');
 		$this->load->view('core/13_html_end');
 	}
 
-	public function sendJS($data){
-		$inputbox=stripslashes($data);
-		parse_str($inputbox,$array);
+	public function sendJS($data)
+	{
+		$inputbox = stripslashes($data);
+		parse_str($inputbox, $array);
 		return $array;
 	}
 

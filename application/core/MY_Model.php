@@ -71,7 +71,7 @@ class MY_Model extends CI_Model
 	{
 		//Fecha debe estar en formato YYYY-MM-DD, de ser necesario agregar un conversor en el codigo.
 		$fecha = !empty($data['fecha']) ? date("Ymd", strtotime($data['fecha'])) : date('Ymd');
-		$dias = ($data['dias']>0) ? $data['dias'] : 0;
+		$dias = ($data['dias'] > 0) ? $data['dias'] : 0;
 
 		$sql = "
 			DECLARE @fecha INT = " . $fecha . ";
@@ -81,7 +81,7 @@ class MY_Model extends CI_Model
 				SELECT TOP " . ($dias ? $dias : 1) . " -- No lo pude aplicar con el DECLARE asi que lo puse asi...
 					*, ROW_NUMBER() OVER(ORDER BY idTiempo) as row
 				FROM General.dbo.tiempo 
-				where idTiempo >".($dias ? '' : '=')." @fecha
+				where idTiempo >" . ($dias ? '' : '=') . " @fecha
 
 				-- EXCLUIR SAB Y DOM
 				AND idDia not in (6,7)
@@ -92,7 +92,7 @@ class MY_Model extends CI_Model
 				ORDER BY idTiempo
 			)
 
-			select * from lst_fechasHabiles where row = ".($dias ? '@row' : '1')."
+			select * from lst_fechasHabiles where row = " . ($dias ? '@row' : '1') . "
 		";
 
 		$query = $this->db->query($sql);
@@ -169,6 +169,16 @@ class MY_Model extends CI_Model
 				'extension' => explode('/', $config['type'])[1],
 				'extensionVisible' => !empty($config['extensionVisible']) ? $config['extensionVisible'] : '',
 			];
+		// REVISION DEL TIPO DE ARCHIVO
+		$tipoArchivo = explode('/', $config['type']);
+
+		$extensionForName = '';
+		if ($tipoArchivo[0] == 'image') {
+			$extensionForName = $tipoArchivo[1];
+		} else { // AGREGADO EN constants.php PARA HACER MAS FACIL LA BUSQUEDA
+			$extensionForName = FILES_WASABI[$tipoArchivo[1]];
+		}
+		///// FIN: REVISION DEL TIPO DE ARCHIVO
 
 		$this->load->library('s3');
 
@@ -180,17 +190,12 @@ class MY_Model extends CI_Model
 
 		$s3Client->setRegion('us-central-1');
 		// $file_url = '';
-		$file_url = FCPATH . $nombreUnico . "_WASABI.{$file['extension']}";
+		$file_url = FCPATH . $nombreUnico . "_WASABI.{$extensionForName}";
 		$base64 = str_replace("data:{$file['type']};base64,", '', $file['base64']);
 		$base64 = str_replace(' ', '+', $base64);
 		$content = base64_decode($base64);
 
 		file_put_contents($file_url, $content);
-
-		$extensionForName = '';
-
-		if (!empty($file['extensionVisible'])) $extensionForName = $file['extensionVisible'];
-		else $extensionForName = $file['extension'];
 
 		$response = S3::putObject(S3::inputFile($file_url, false), 'impact.business/' . $carpeta, $nombreUnico . "_WASABI.{$extensionForName}", S3::ACL_PUBLIC_READ);
 		unlink($file_url);

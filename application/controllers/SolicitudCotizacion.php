@@ -305,6 +305,7 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['item'][$row['idItem']]['tipoItem'] = $row['tipoItem'];
 			$dataParaVista['item'][$row['idItem']]['cantidad'] = $row['cantidad'];
 			$dataParaVista['item'][$row['idItem']]['unidadMedida'] = $row['unidadMedida'];
+			$dataParaVista['item'][$row['idItem']]['idItemTipo'] = $row['idItemTipo'];
 
 			$dataParaVista['proveedor'][$row['idProveedor']]['proveedor'] = $row['proveedor'];
 
@@ -313,6 +314,10 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['fechaValidez'] = $row['fechaValidez'];
 			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['diasEntrega'] = $row['diasEntrega'];
 			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['comentario'] = $row['comentario'];
+			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['sucursal'] = $row['sucursal'];
+			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['razonSocial'] = $row['razonSocial'];
+			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['tipoElemento'] = $row['tipoElemento'];
+			$dataParaVista['itemProveedor'][$row['idItem']][$row['idProveedor']]['marca'] = $row['marca'];
 
 			$dataParaVista['images'][$row['idItem']][$row['idProveedor']] = $this->model->obtenerArchivoCotizacionDetalleProveedors(['idCotizacionDetalleProveedorDetalle' => $row['idCotizacionDetalleProveedorDetalle']])->result_array();
 			$dataParaVista['subItems'][$row['idItem']][$row['idProveedor']] = $this->model_formulario_proveedor->obtenerInformacionCotizacionDetalleSub(['idCotizacionDetalleProveedorDetalle' => $row['idCotizacionDetalleProveedorDetalle']])->result_array();
@@ -1015,6 +1020,7 @@ class SolicitudCotizacion extends MY_Controller
 			'observacion' => $post['observacion'],
 			'comentario' => $post['comentario'],
 			'mostrar_observacion' => isset($post['mostrar_observacion']) ? 1 : 0,
+			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? 1 : 0,
 			'idAlmacen' => $post['idAlmacen']
 		]);
 
@@ -1037,6 +1043,7 @@ class SolicitudCotizacion extends MY_Controller
 				'entrega' => !empty($row['lugarEntrega']) ? $row['lugarEntrega'] : NULL,
 				'fechaEntrega' => !empty($row['fechaEntrega']) ? $row['fechaEntrega'] : NULL,
 				'mostrar_observacion' => !empty($row['mostrar_observacion']) ? $row['mostrar_observacion'] : NULL,
+				'mostrar_imagenes' => !empty($row['mostrar_imagenes']) ? $row['mostrar_imagenes'] : NULL,
 				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
 			];
 
@@ -1128,6 +1135,7 @@ class SolicitudCotizacion extends MY_Controller
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
+
 		$dataParaVista = [];
 
 		// Data de Cabecera
@@ -1145,28 +1153,34 @@ class SolicitudCotizacion extends MY_Controller
 			$detalleCotizacion[$key]['subTotalOrdenCompra'] = $value['subtotal'];
 		}
 
-		$dataParaVista['data'] =
-			[
-				'requerimiento' => $dataOper[0]['requerimiento'],
-				'pocliente' => $post['pocliente'],
-				'razonSocial' => $dataProveedor['razonSocial'],
-				'rucProveedor' => $dataProveedor['nroDocumento'],
-				'nombreContacto' => $dataProveedor['nombreContacto'],
-				'direccion' => $dataProveedor['direccion'],
-				'numeroContacto' => $dataProveedor['numeroContacto'],
-				'correoContacto' => $dataProveedor['correoContacto'],
-				'fechaEntrega' => $post['fechaEntrega'],
-				'simboloMoneda' => $dataMoneda['simbolo'],
-				'entrega' => $post['lugarEntrega'],
-				'observacion' => $post['observacion'],
-				'monedaPlural' => $dataMoneda['nombreMoneda'],
-				'comentario' => $post['comentario'],
-				'metodoPago' => $dataMetodoPago['nombre'],
-				'nombre_archivo' => $dataFirma['nombre_archivo'],
-				'igv' => (isset($post['igvOrden']) ? '18' : '0'),
-				'mostrar_observacion' => isset($post['mostrar_observacion']) ? '1' : '0'
-			];
+		$dataParaVista['data'] = [
+			'requerimiento' => $dataOper[0]['requerimiento'],
+			'pocliente' => $post['pocliente'],
+			'razonSocial' => $dataProveedor['razonSocial'],
+			'rucProveedor' => $dataProveedor['nroDocumento'],
+			'nombreContacto' => $dataProveedor['nombreContacto'],
+			'direccion' => $dataProveedor['direccion'],
+			'numeroContacto' => $dataProveedor['numeroContacto'],
+			'correoContacto' => $dataProveedor['correoContacto'],
+			'fechaEntrega' => $post['fechaEntrega'],
+			'simboloMoneda' => $dataMoneda['simbolo'],
+			'entrega' => $post['lugarEntrega'],
+			'observacion' => $post['observacion'],
+			'monedaPlural' => $dataMoneda['nombreMoneda'],
+			'comentario' => $post['comentario'],
+			'metodoPago' => $dataMetodoPago['nombre'],
+			'nombre_archivo' => $dataFirma['nombre_archivo'],
+			'igv' => (isset($post['igvOrden']) ? '18' : '0'),
+			'mostrar_observacion' => isset($post['mostrar_observacion']) ? '1' : '0',
+			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? '1' : '0',
+		];
 
+		$dataParaVista['imagenesDeItem'] = [];
+		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
+			foreach ($detalleCotizacion as $key => $value) {
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
+			}
+		}
 		$dataParaVista['detalle'] = $detalleCotizacion;
 
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
@@ -1180,20 +1194,6 @@ class SolicitudCotizacion extends MY_Controller
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
-
-		// $ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
-
-		// $dataParaVista['data'] = $ordenCompra[0];
-		// $dataParaVista['detalle'] = $ordenCompra;
-
-		// $ids = [];
-		// foreach ($ordenCompra as $v) {
-		// $cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
-		// $cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
-		// $ids[] = $v['idCotizacion'];
-		// }
-		// $dataParaVista['cuentas'] = implode(', ', $cuentas);
-		// $idCotizacion = implode(",", $ids);
 
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
@@ -1414,7 +1414,7 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['dataOrdenDet'][$row['idProveedorForm']][] = $row;
 		}
 
-		$dataParaVista['almacenes'] = $this->db->where('estado','1')->get('visualImpact.logistica.almacen')->result_array();
+		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 		$html = getMensajeGestion('noRegistros');
 
 		if (!empty($dataParaVista)) {

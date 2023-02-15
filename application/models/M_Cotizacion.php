@@ -51,7 +51,8 @@ class M_Cotizacion extends MY_Model
 			->join('compras.propuestaItem pi', 'pia.idPropuestaItem = pi.idPropuestaItem', 'LEFT')
 			->join('compras.cotizacionDetalleProveedorDetalle pd', 'pd.idCotizacionDetalleProveedorDetalle = pi.idCotizacionDetalleProveedorDetalle', 'LEFT')
 			->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = pd.idCotizacionDetalle', 'LEFT')
-			->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
+			->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle'])
+			->where('cd.estado', '1');
 		return $this->db->get();
 	}
 
@@ -70,7 +71,7 @@ class M_Cotizacion extends MY_Model
 			->where('cdp.estado', '1')
 			->where('cdpda.estado', '1')
 			->where('cdpd.estado', '1')
-			->where('cdpd.estado', '1')
+			->where('cd.estado', '1')
 			->where('cd.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
 	}
@@ -502,33 +503,33 @@ class M_Cotizacion extends MY_Model
 				foreach ($params['archivos'][$k] as $archivo) {
 					$tipoArchivo = explode('/', $archivo['type']);
 
-					$extension = '';
+					// $extension = '';
 
-					if ($tipoArchivo[0] == 'image') {
-						$extension = $tipoArchivo[1];
-					} else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-						$extension = 'xlsx';
-					} else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
-						$extension = 'pptx';
-					} else if ($tipoArchivo[1] == 'vnd.ms-excel') {
-						$extension = 'xls';
-					} else if ($tipoArchivo[1] == 'vnd.ms-powerpoint') {
-						$extension = 'ppt';
-					} else if ($tipoArchivo[1] == 'pdf') {
-						$extension = 'pdf';
-					}
+					// if ($tipoArchivo[0] == 'image') {
+					// 	$extension = $tipoArchivo[1];
+					// } else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+					// 	$extension = 'xlsx';
+					// } else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
+					// 	$extension = 'pptx';
+					// } else if ($tipoArchivo[1] == 'vnd.ms-excel') {
+					// 	$extension = 'xls';
+					// } else if ($tipoArchivo[1] == 'vnd.ms-powerpoint') {
+					// 	$extension = 'ppt';
+					// } else if ($tipoArchivo[1] == 'pdf') {
+					// 	$extension = 'pdf';
+					// }
 
-					$archivo['extensionVisible'] = $extension;
+					// $archivo['extensionVisible'] = $extension;
 					$archivoName = $this->saveFileWasabi($archivo);
 
 					$insertArchivos[] = [
 						'idCotizacion' => $insert['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo' => ($tipoArchivo[0] == 'image' ? TIPO_IMAGEN : ($extension == 'pdf' ? TIPO_PDF : TIPO_OTROS)),
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]], // ($tipoArchivo[0] == 'image' ? TIPO_IMAGEN : ($extension == 'pdf' ? TIPO_PDF : TIPO_OTROS)),
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => $extension,
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];
@@ -752,8 +753,8 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			-- LEFT JOIN rrhh.dbo.Empresa cuenta ON c.idCuenta = cuenta.idEmpresa
 			-- LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = c.idCentroCosto
-			WHERE
-			1 = 1
+			WHERE 
+			1 = 1 and cd.estado=1
 			{$filtros}
 		";
 
@@ -919,7 +920,7 @@ class M_Cotizacion extends MY_Model
 			cd.nombre,
 			it.idProveedor,
 			p.razonSocial,
-			CASE WHEN ith.idItemTarifarioHistorico IS NOT NULL THEN 1 ELSE 0 END  respuestasProveedor
+			CASE WHEN ith.idItemTarifarioHistorico IS NOT NULL THEN 1 ELSE 0 END respuestasProveedor
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON cd.idCotizacion = c.idCotizacion
@@ -1309,19 +1310,19 @@ class M_Cotizacion extends MY_Model
 			$id = implode(',', $data['anexoExistente']);
 
 			$sql = "
-			SELECT
-				da.idCotizacionDetalleArchivo,
-				da.idCotizacion,
-				da.idTipoArchivo,
-				da.nombre_inicial,
-				da.nombre_archivo,
-				da.nombre_unico,
-				da.extension,
-				da.idUsuarioReg,
-				da.flag_anexo
-			FROM compras.cotizacionDetalleArchivos da
-			WHERE idCotizacionDetalleArchivo in ($id);
-		";
+				SELECT
+					da.idCotizacionDetalleArchivo,
+					da.idCotizacion,
+					da.idTipoArchivo,
+					da.nombre_inicial,
+					da.nombre_archivo,
+					da.nombre_unico,
+					da.extension,
+					da.idUsuarioReg,
+					da.flag_anexo
+				FROM compras.cotizacionDetalleArchivos da
+				WHERE idCotizacionDetalleArchivo in ($id);
+			";
 
 			$query = $this->db->query($sql)->result_array();
 
@@ -1360,6 +1361,7 @@ class M_Cotizacion extends MY_Model
 
 	public function actualizarCotizacionDetalleArchivos($params = [])
 	{
+
 		$insertArchivos = [];
 		foreach ($params['update'] as $k => $update) {
 			$idCotizacionDetalle = $update['idCotizacionDetalle'];
@@ -1367,17 +1369,21 @@ class M_Cotizacion extends MY_Model
 			$queryCotizacionDetalle = $this->db->update($params['tabla'], $update, ['idCotizacionDetalle' => $idCotizacionDetalle]);
 
 			if (!empty($params['archivos'][$k])) {
+
 				foreach ($params['archivos'][$k] as $archivo) {
 					$archivoName = $this->saveFileWasabi($archivo);
 					$tipoArchivo = explode('/', $archivo['type']);
+					// PARA EL CODIGO DE ARCHIVO
+					$codArchivo = FILES_TIPO_WASABI[$tipoArchivo[1]];
+					// FIN: PARA EL CODIGO DE ARCHIVO
 					$insertArchivos[] = [
 						'idCotizacion' => $update['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+						'idTipoArchivo' => $codArchivo, //$tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_OTROS, // FILES_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => $tipoArchivo[1],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];
@@ -1471,14 +1477,15 @@ class M_Cotizacion extends MY_Model
 					foreach ($params['archivos'][$k] as $archivo) {
 						$archivoName = $this->saveFileWasabi($archivo);
 						$tipoArchivo = explode('/', $archivo['type']);
+						$codArchivo = FILES_TIPO_WASABI[$tipoArchivo[1]];
 						$insertArchivos[] = [
 							'idCotizacion' => $insert['idCotizacion'],
 							'idCotizacionDetalle' => $idCotizacionDetalle,
-							'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+							'idTipoArchivo' => $codArchivo, //$tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
 							'nombre_inicial' => $archivo['name'],
 							'nombre_archivo' => $archivoName,
 							'nombre_unico' => $archivo['nombreUnico'],
-							'extension' => $tipoArchivo[1],
+							'extension' => FILES_WASABI[$tipoArchivo[1]], //$tipoArchivo[1],
 							'estado' => true,
 							'idUsuarioReg' => $this->idUsuario
 						];
@@ -1509,33 +1516,6 @@ class M_Cotizacion extends MY_Model
 					}
 
 				}
-				//Sub Items Actualizar
-				// if (!empty($params['subDetalle'][$k])) {
-				// 	foreach ($params['subDetalle'][$k] as $subItem) {
-				// 		$updateSubItem[] = [
-				// 			'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
-				// 			'idCotizacionDetalle' => $idCotizacionDetalle,
-				// 			'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
-				// 			'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : '',
-				// 			'idUnidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : '',
-				// 			'idTipoServicio' => !empty($subItem['tipoServicio']) ? $subItem['tipoServicio'] : '',
-				// 			'costo' => !empty($subItem['costo']) ? $subItem['costo'] : '',
-				// 			'talla' => !empty($subItem['talla']) ? $subItem['talla'] : '',
-				// 			'tela' => !empty($subItem['tela']) ? $subItem['tela'] : '',
-				// 			'color' => !empty($subItem['color']) ? $subItem['color'] : '',
-				// 			'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
-				// 			'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
-				// 			'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
-				// 			'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
-				// 			'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
-				// 			'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
-				// 			'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
-				// 			'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-				// 			'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
-				// 		];
-				// 	}
-
-				// }
 			}
 		}
 
@@ -1546,6 +1526,7 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['query'] = $queryCotizacionDetalle;
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
+
 
 			if (!empty($insertArchivos)) {
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
@@ -1778,7 +1759,7 @@ class M_Cotizacion extends MY_Model
 				LEFT JOIN compras.item i ON i.idItem = cd.idItem
 				LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem AND flag_actual = 1
 				WHERE
-				1 = 1
+				1 = 1 and cd.estado=1
 				and cd.idCotizacion in {$filtros}
 
 			), lst_tarifario_det AS(
@@ -1823,7 +1804,6 @@ class M_Cotizacion extends MY_Model
 			FROM
 			lst_tarifario_det ls
 		";
-		log_message('error', $sql);
 
 		$query = $this->db->query($sql);
 		if ($query) {

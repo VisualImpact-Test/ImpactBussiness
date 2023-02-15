@@ -67,47 +67,77 @@
 								</div>
 							<?php endif; ?>
 						</div>
-						<!-- <div class="col-sm-2">
-							<div class="form-group">
-								<h4 class="mb-1">TIPO ITEM</h4>
-								<input type="hidden" class="form-control" name="idItem" readonly value="<?= verificarEmpty($row['idItem'], 3) ?>">
-								<input class="form-control" readonly value="<?= verificarEmpty($row['tipoItem'], 3) ?>">
-							</div>
-						</div> -->
-						<div class="col-sm-2">
-							<div class="form-group">
+						<div class="col-sm-12 row">
+							<div class="col-sm-2">
 								<div class="form-group">
-									<h4 class="mb-1">DIAS DE VALIDEZ</h4>
-									<input class="form-control" placeholder="días" name="diasValidez" patron="requerido,numerico" id="dv_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="<?= !isset($row['diasValidez']) ? '10' : $row['diasValidez']; ?>" <?= (!empty($row['diasValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['diasValidez'])) :  ?> onkeyup="FormularioProveedores.calcularFecha(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+									<div class="form-group">
+										<h4 class="mb-1">DIAS DE VALIDEZ</h4>
+										<input class="form-control" placeholder="días" name="diasValidez" patron="requerido,numerico" id="dv_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="<?= !isset($row['diasValidez']) ? '10' : $row['diasValidez']; ?>" <?= (!empty($row['diasValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['diasValidez'])) :  ?> onkeyup="FormularioProveedores.calcularFecha(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="form-group">
+									<h4 class="mb-1">FECHA VALIDEZ</h4>
+									<input type="date" class="form-control" name="fechaValidez" value="<?= !isset($row['diasValidez']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : date_change_format_bd($row['fechaValidez'])  ?>" id="fechaValidez<?= ($k + 1) ?>" <?= (!empty($row['fechaValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['fechaValidez'])) :  ?> onkeyup="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" <?php endif; ?>>
+								</div>
+							</div>
+							<div class="col-sm-2">
+								<div class="form-group">
+									<div class="form-group">
+										<h4 class="mb-1">DIAS DE ENTREGA</h4>
+										<input class="form-control" placeholder="días" name="diasEntrega" patron="requerido,numerico" id="de_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' <?= (!empty($row['diasEntrega'])) ? 'readonly' : ''; ?> value="<?= !isset($row['diasEntrega']) ? '10' : $row['diasEntrega']; ?>" <?php if (empty($row['diasEntrega'])) :  ?> onkeyup="FormularioProveedores.calcularFechaEntrega(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-2 d-none">
+								<div class="form-group">
+									<h4 class="mb-1">FECHA ENTREGA</h4>
+									<input type="date" class="form-control" name="fechaEntrega" value="<?= empty($row['fechaEntrega']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : $row['fechaEntrega'] ?>" id="fechaEntrega<?= ($k + 1) ?>" <?= (!empty($row['fechaEntrega'])) ? 'readonly' : ''; ?> onkeyup="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<h4 class="mb-1">RESPUESTA</h4>
+									<input class="form-control" name="comentario" value="<?= verificarEmpty($row['comentario']); ?>">
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-2">
-							<div class="form-group">
-								<h4 class="mb-1">FECHA VALIDEZ</h4>
-								<input type="date" class="form-control" name="fechaValidez" value="<?= !isset($row['diasValidez']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : date_change_format_bd($row['fechaValidez'])  ?>" id="fechaValidez<?= ($k + 1) ?>" <?= (!empty($row['fechaValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['fechaValidez'])) :  ?> onkeyup="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" <?php endif; ?>>
-							</div>
-						</div>
-						<div class="col-sm-2">
-							<div class="form-group">
+						<div class="col-sm-12 row <?= $row['idItemTipo'] != COD_SERVICIO['id'] ? 'd-none' : ''; ?>">
+							<div class="col-sm-2">
 								<div class="form-group">
-									<h4 class="mb-1">DIAS DE ENTREGA</h4>
-									<input class="form-control" placeholder="días" name="diasEntrega" patron="requerido,numerico" id="de_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' <?= (!empty($row['diasEntrega'])) ? 'readonly' : ''; ?> value="<?= !isset($row['diasEntrega']) ? '10' : $row['diasEntrega']; ?>" <?php if (empty($row['diasEntrega'])) :  ?> onkeyup="FormularioProveedores.calcularFechaEntrega(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+									<div class="form-group">
+										<h4 class="mb-1">SUCURSAL</h4>
+										<input class="form-control" placeholder="Sucursal" name="sucursal" id="dv_sucursal<?= ($k + 1) ?>" value="<?= verificarEmpty($row['sucursal']); ?>">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-4">
+								<div class="form-group">
+									<div class="form-group">
+										<h4 class="mb-1">RAZON SOCIAL</h4>
+										<input class="form-control" placeholder="Razón Social" name="razonSocial" id="dv_razonSocial<?= ($k + 1) ?>" value="<?= verificarEmpty($row['razonSocial']); ?>">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<div class="form-group">
+										<h4 class="mb-1">TIPO DE ELEMENTO</h4>
+										<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento" id="dv_tipoElemento<?= ($k + 1) ?>" value="<?= verificarEmpty($row['tipoElemento']); ?>">
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<div class="form-group">
+										<h4 class="mb-1">MARCA</h4>
+										<input class="form-control" placeholder="Marca" name="marca" id="dv_marca<?= ($k + 1) ?>" value="<?= verificarEmpty($row['marca']); ?>">
+									</div>
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-2 d-none">
-							<div class="form-group">
-								<h4 class="mb-1">FECHA ENTREGA</h4>
-								<input type="date" class="form-control" name="fechaEntrega" value="<?= empty($row['fechaEntrega']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : $row['fechaEntrega'] ?>" id="fechaEntrega<?= ($k + 1) ?>" <?= (!empty($row['fechaEntrega'])) ? 'readonly' : ''; ?> onkeyup="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')">
-							</div>
-						</div>
-						<div class="col-md-5">
-							<div class="form-group">
-								<h4 class="mb-1">RESPUESTA</h4>
-								<input class="form-control" name="comentario" value="<?= verificarEmpty($row['comentario']); ?>">
-							</div>
-						</div>
+
 					</div>
 					<div class="col-md-2">
 						<div class="form-group">
@@ -143,7 +173,7 @@
 
 				<div class="row justify-content-start">
 					<div class="col-md-10 divDetalle">
-						<?php if ($row['tipoItem'] == 'Servicio') :  ?>
+						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
 							<div class="col-md-12 row">
 								<a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a>
 							</div>
@@ -151,7 +181,7 @@
 						<div class="col-md-12 pl-0 py-2 row dataDetalle">
 							<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
 								<div class="col-md-12 row filaDetalle">
-									<?php $servicio = ($row['tipoItem'] == 'Servicio'); ?>
+									<?php $servicio = ($row['idItemTipo'] == COD_SERVICIO['id']); ?>
 									<?php $textil = ($row['tipoItem'] == 'Textiles'); ?>
 									<div class="col-md-8 pr-0 <?= $servicio ? '' : 'd-none' ?>">
 										<div class="form-group">

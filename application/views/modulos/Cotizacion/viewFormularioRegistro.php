@@ -121,7 +121,7 @@
 							</div>
 							<img class="ui image" src="<?= IMG_WIREFRAME ?>">
 						</div>
-						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
+						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*, .xlsx, .pdf" multiple="">
 					</div>
 				</div>
 			</div>

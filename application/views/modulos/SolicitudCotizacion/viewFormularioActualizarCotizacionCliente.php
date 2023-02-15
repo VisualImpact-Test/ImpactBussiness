@@ -473,8 +473,14 @@
 										<div class="ui small images">
 											<?php foreach ($cotizacionDetalleArchivosDelProveedor[$row['idCotizacionDetalle']] as $kAE => $vAE) : ?>
 												<div class="ui fluid image dimmable" data-id="<?= $kAE ?>">
+													<?php $src = RUTA_WIREFRAME . "file.png"; ?>
+
+													<?php $src = $vAE['idTipoArchivo'] == TIPO_PDF ? RUTA_WIREFRAME . "pdf.png" : $src; ?>
+													<?php $src = $vAE['idTipoArchivo'] == TIPO_EXCEL ? RUTA_WIREFRAME . "xlsx.png" : $src; ?>
+													<?php $src = $vAE['idTipoArchivo'] == TIPO_IMAGEN ? (RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo']) : $src; ?>
+
 													<a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-													<img height="100" src="<?= $vAE['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $vAE['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+													<img height="100" src="<?= $src; ?>" class="img-responsive img-thumbnail">
 												</div>
 											<?php endforeach; ?>
 										</div>

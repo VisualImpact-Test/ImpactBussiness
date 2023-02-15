@@ -75,6 +75,16 @@
                         <?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
                     </td>
                 </tr>
+                <?php if ($data['mostrar_imagenes'] == '1') :  ?>
+                    <tr>
+                        <td colspan="4">
+                            <?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+                                <img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 120px; height: 120px;">
+                            <?php endforeach; ?>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                <?php endif; ?>
             <? } ?>
             <tr>
                 <td><?= generar_espacios(1, 1) ?></td>

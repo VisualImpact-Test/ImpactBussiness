@@ -109,6 +109,14 @@
                             </div>
                             <!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
                         </div>
+                        <div class="two wide field">
+                            <div class="ui sub header">Mostrar Imagenes</div>
+                            <div class="custom-control custom-switch custom-switch-lg">
+                                <input type="checkbox" class="custom-control-input" id="mostrar_imagenes" name="mostrar_imagenes">
+                                <label class="custom-control-label" for="mostrar_imagenes"></label>
+                            </div>
+                            <!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
+                        </div>
                     </div>
                     <div class="fields">
                         <div class="sixteen wide field">

@@ -285,7 +285,12 @@ class M_FormularioProveedor extends MY_Model
 			cde.nombre AS cotizacionDetalleEstado,
 			CONVERT( VARCHAR, cd.fechaCreacion, 103)  AS fechaCreacion,
 			cd.caracteristicasProveedor,
-			cdpd.flag_activo
+			cdpd.flag_activo,
+			cdpd.sucursal,
+			cdpd.razonSocial,
+			cdpd.tipoElemento,
+			cdpd.marca,
+			it.idItemTipo
 		FROM
 		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
@@ -293,7 +298,7 @@ class M_FormularioProveedor extends MY_Model
 		JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdpd.idCotizacionDetalle
 		JOIN compras.cotizacionDetalleEstado cde ON cd.idCotizacionDetalleEstado = cde.idCotizacionDetalleEstado
 		LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cd.idUnidadMedida
-		JOIN compras.item i ON i.idItem = cdpd.idItem AND i.estado = 1
+		LEFT JOIN compras.item i ON i.idItem = cdpd.idItem AND i.estado = 1
 		JOIN compras.itemTipo it ON it.idItemTipo = cd.idItemTipo
 		JOIN compras.itemEstado ei ON cd.idItemEstado = ei.idItemEstado
 		$filtros
@@ -413,6 +418,7 @@ class M_FormularioProveedor extends MY_Model
 				o.pocliente,
 				o.igv,
 				o.comentario,
+				o.mostrar_imagenes,
 				m.nombre moneda,
 				md.valor valorMoneda,
 				mp.nombre metodoPago,
@@ -426,7 +432,8 @@ class M_FormularioProveedor extends MY_Model
 				--(cp.costo * cp.cantidad) subtotal,
 				((cp.costo / md.valor) * cp.cantidad) subtotal,
 				cp.idItemTipo,
-				cp.subtotal as cotizacionSubTotal
+				cp.subtotal as cotizacionSubTotal,
+				cp.idItem
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra

@@ -13,7 +13,7 @@
             <td class="text-center w-20"><?= verificarEmpty($data['pocliente'], 3) ?></td>
         </tr>
         <tr>
-            <td class="text-left w-20">Centro Costo</td>
+            <td class="text-left w-20">Centro de Costo</td>
             <td class="text-left w-40"><?= verificarEmpty($centrosCosto, 3) ?></td>
             <td class="text-left w-20">Fecha:</td>
             <td class="text-left w-20"><?= getFechaActual() ?></td>
@@ -74,6 +74,16 @@
                         <?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
                     </td>
                 </tr>
+                <?php if ($data['mostrar_imagenes'] == '1') :  ?>
+                    <tr>
+                        <td colspan="4">
+                            <?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+                                <img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 120px; height: 120px;">
+                            <?php endforeach; ?>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                <?php endif; ?>
             <? } ?>
             <tr>
                 <td><?= generar_espacios(1, 1) ?></td>
@@ -105,8 +115,8 @@
                     <td><?= generar_espacios(1, 1) ?></td>
                     <td></td>
                     <td colspan="2" style="font-weight: bold;">
-                        <? if($data['mostrar_observacion']==1){ ?>
-                        <?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
+                        <? if ($data['mostrar_observacion'] == 1) { ?>
+                            <?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
                         <? } ?>
                     </td>
                     <td></td>

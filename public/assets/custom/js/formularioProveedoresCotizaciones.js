@@ -284,7 +284,7 @@ var FormularioProveedores = {
 		$('#costo_' + id).attr('readonly', true);
 		$('#costoredondo_' + id).attr('readonly', true);
 	},
-	agregarDetalleServicio: function(t, idCDPD){
+	agregarDetalleServicio: function (t, idCDPD) {
 		control = $(t).parents('.divDetalle').find('.dataDetalle');
 
 		$(control).append(`
@@ -319,40 +319,32 @@ var FormularioProveedores = {
 			</div>
 		`);
 	},
-	calcularSubItemTotal: function(t){
-		// if($(t).data('tiposervicio') == 'Servicio'){
-		// 	control = $(t).parents('.filaDetalle');
-		// 	cantidad = $(control).find('input.cantidad').val();
-		// 	costo = $(control).find('input.costo').val();
-		// 	var tot = (cantidad * costo).toFixed(2);
-		// 	$(control).find('input.subtotal').val(tot).trigger('change');
-		// }
-		// if($(t).data('tiposervicio') == 'Servicio'){
-			control = $(t).parents('.filaDetalle');
-			cantidad = $(control).find('input.cantidad').val();
-			costo = $(control).find('input.costo').val();
-			var tot = (cantidad * costo).toFixed(2);
-			$(control).find('input.subtotal').val(tot).trigger('change');
+	calcularSubItemTotal: function (t) {
+		control = $(t).parents('.filaDetalle');
+		cantidad = $(control).find('input.cantidad').val();
+		costo = $(control).find('input.costo').val();
+		var tot = (cantidad * costo).toFixed(2);
+		$(control).find('input.subtotal').val(tot).trigger('change');
 		// }
 
 	},
-	calcularSubTotal: function(idCDPD, t){
+	calcularSubTotal: function (idCDPD, t) {
 		var subSubtotal = 0;
 		var control = $(t).parents('.dataDetalle');
 		for (let index = 0; index < $(control).find('.subtotal').length; index++) {
 			input = $(control).find('.subtotal')[index];
 			valor = $(input).val();
-			subSubtotal += parseFloat(valor);		
+			subSubtotal += parseFloat(valor);
 		}
-		if($(t).data('tiposervicio') == 'Servicio'){
-			$('#costo_'+idCDPD).val(subSubtotal);
-			$('#costoredondo_'+idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
-		}else{
-			cantidad = $('#cantidad_'+idCDPD).val();
+		if ($(t).data('tiposervicio') == 'Servicio') {
+			$('#costo_' + idCDPD).val(subSubtotal);
+			$('#costoredondo_' + idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
+		} else {
+			cantidad = $('#cantidad_' + idCDPD).val();
 			newST = subSubtotal / cantidad;
-			
-			$('#costo_'+idCDPD).val(newST);
-			$('#costoredondo_'+idCDPD).val(newST.toFixed(2)).trigger('keyup');
+
+			$('#costo_' + idCDPD).val(newST);
+			$('#costoredondo_' + idCDPD).val(newST.toFixed(2)).trigger('keyup');
 		}
 	},
 	calcularTotal: function (i, cantidad, val) {

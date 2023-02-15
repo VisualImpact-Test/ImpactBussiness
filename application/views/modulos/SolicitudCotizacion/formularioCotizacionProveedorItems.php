@@ -20,11 +20,22 @@
                     <li class="list-group-item"><b>Costo Unitario</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['costoUnitario'], 3) ?></li>
                     <li class="list-group-item"><b>Fecha Validez</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['fechaValidez'], 3) ?></li>
                     <li class="list-group-item"><b>Días Entrega</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['diasEntrega'], 3) ?></li>
-                    <li class="list-group-item"><b>Comentario</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['comentario'], 3) ?></li>
-
+                    <li class="list-group-item"><b>Respuesta Proveedor</b>&nbsp&nbsp&nbsp <?= verificarEmpty($itemProveedor[$keyItem][$keyProveedor]['comentario'], 3) ?></li>
+                    <?php if (!empty($itemProveedor[$keyItem][$keyProveedor]['sucursal'])) :  ?>
+                      <li class="list-group-item"><b>Sucursal</b>&nbsp&nbsp&nbsp <?= $itemProveedor[$keyItem][$keyProveedor]['sucursal'] ?></li>
+                    <?php endif; ?>
+                    <?php if (!empty($itemProveedor[$keyItem][$keyProveedor]['razonSocial'])) :  ?>
+                      <li class="list-group-item"><b>Razón Social</b>&nbsp&nbsp&nbsp <?= $itemProveedor[$keyItem][$keyProveedor]['razonSocial'] ?></li>
+                    <?php endif; ?>
+                    <?php if (!empty($itemProveedor[$keyItem][$keyProveedor]['tipoElemento'])) :  ?>
+                      <li class="list-group-item"><b>Tipo Elemento</b>&nbsp&nbsp&nbsp <?= $itemProveedor[$keyItem][$keyProveedor]['tipoElemento'] ?></li>
+                    <?php endif; ?>
+                    <?php if (!empty($itemProveedor[$keyItem][$keyProveedor]['marca'])) :  ?>
+                      <li class="list-group-item"><b>Marca</b>&nbsp&nbsp&nbsp <?= $itemProveedor[$keyItem][$keyProveedor]['marca'] ?></li>
+                    <?php endif; ?>
                     <?php foreach ($subItems[$keyItem][$keyProveedor] as $keySI => $valueSI) : ?>
                       <li class="list-group-item">
-                        <?php if ($dato['tipoItem'] == 'Servicio') : ?>
+                        <?php if ($dato['idItemTipo'] == COD_SERVICIO['id']) : ?>
                           <b>Descripción</b>&nbsp&nbsp&nbsp <?= verificarEmpty($valueSI['descripcion'], 3); ?></b><br>
                         <?php endif; ?>
                         <?php if ($dato['tipoItem'] == 'Textiles') : ?>
@@ -52,7 +63,11 @@
                             </div>
                           </div>
                           <a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $img['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-                          <img height="100" src="<?= $img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $img['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+                          <?php $src = RUTA_WIREFRAME . "file.png" ?>
+                          <?php $src = $img['idTipoArchivo'] == TIPO_PDF ? (RUTA_WIREFRAME . "pdf.png") : $src; ?>
+                          <?php $src = $img['idTipoArchivo'] == TIPO_EXCEL ? (RUTA_WIREFRAME . "xlsx.png") : $src; ?>
+                          <?php $src = $img['idTipoArchivo'] == TIPO_IMAGEN ? (RUTA_WASABI . 'cotizacionProveedor/' . $img['nombre_archivo']) : $src; ?>
+                          <img height="100" src="<?= $src ?>" class="img-responsive img-thumbnail">
                         </div>
                       <?php endforeach; ?>
                     </div>

@@ -1494,6 +1494,13 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
 
+		$dataParaVista['imagenesDeItem'] = [];
+		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
+			foreach ($dataParaVista['detalle'] as $key => $value) {
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
+			}
+		}
+
 		$ids = [];
 		foreach ($ordenCompra as $v) {
 			$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
@@ -1619,7 +1626,8 @@ class Cotizacion extends MY_Controller
 		echo json_encode($this->actualizarCotizacion($post));
 	}
 	public function actualizarCotizacion($post)
-	{
+	{	
+
 		$this->db->trans_start();
 		$result = $this->result;
 
@@ -1644,8 +1652,11 @@ class Cotizacion extends MY_Controller
 			'diasValidez' => $post['diasValidez'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
-		if($post['actualizarEstado'] == '2'){
-			$data['update']['idCotizacionEstado'] = 2;
+		
+		if (isset($post['actualizarEstado'])) {
+			if ($post['actualizarEstado'] == '2') {
+				$data['update']['idCotizacionEstado'] = 2;
+			}
 		}
 
 		if (isset($post['solicitante'])) {
@@ -1667,6 +1678,12 @@ class Cotizacion extends MY_Controller
 			}
 		}
 
+		if (isset($post['detalleEliminado'])) {
+			$post['detalleEliminado'] = checkAndConvertToArray($post['detalleEliminado']);
+			foreach ($post['detalleEliminado'] as $key => $value) {
+				$this->db->update('compras.cotizacionDetalle',['estado' => 0], ['idCotizacionDetalle' => $value]);
+			}
+		}
 		$validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
 		if (!empty($validacionExistencia['query']->row_array())) {
 			$result['result'] = 0;
@@ -1732,10 +1749,10 @@ class Cotizacion extends MY_Controller
 
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 
-		$cont = 0;
 		foreach ($post['nameItem'] as $k => $r) {
+			$idCot = $post['idCotizacionDetalle'][$k];
 			if ($post['idCotizacionDetalle'][$k] != '0') {
-				$data['update'][] = [
+				$data['update'][$k] = [
 					'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
 					'idCotizacion' => $post['idCotizacion'],
 					'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
@@ -1822,8 +1839,31 @@ class Cotizacion extends MY_Controller
 							break;
 					}
 				}
+
+				// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
+				if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k] && !empty($post['nameItemOriginal'][$k])) {
+					$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
+				}
+				// FIN
+				if (!empty($post["file-name[$idCot]"])) {
+					$data['archivos_arreglo'][$k] = getDataRefactorizada([
+						'base64' => $post["file-item[$idCot]"],
+						'type' => $post["file-type[$idCot]"],
+						'name' => $post["file-name[$idCot]"],
+					]);
+					foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
+						if (empty($archivo['base64'])) continue;
+						$data['archivos'][$k][] = [
+							'base64' => $archivo['base64'],
+							'type' => $archivo['type'],
+							'name' => $archivo['name'],
+							'carpeta' => 'cotizacion',
+							'nombreUnico' => uniqid(),
+						];
+					}
+				}
 			} else {
-				$data['insert'][] = [
+				$data['insert'][$k] = [
 					'idCotizacion' => $post['idCotizacion'],
 					'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
 					'idItemTipo' => $post['tipoItemForm'][$k],
@@ -1848,19 +1888,24 @@ class Cotizacion extends MY_Controller
 				];
 
 				switch ($post['tipoItemForm'][$k]) {
-					case COD_SERVICIO['id']:
-						$subDetalleInsert[$k] = getDataRefactorizada([
-							'nombre' => $post["nombreSubItemServicio[$k]"],
-							'cantidad' => $post["cantidadSubItemServicio[$k]"],
-						]);
-						break;
-
+					// case COD_SERVICIO['id']:
+					// 	$subDetalleInsert[$k] = getDataRefactorizada([
+					// 		'nombre' => $post["nombreSubItemServicio[$k]"],
+					// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
+					// 	]);
+					// 	break;
 					case COD_DISTRIBUCION['id']:
 						$subDetalleInsert[$k] = getDataRefactorizada([
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
 							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
 							'costo' => $post["costoSubItem[$k]"],
-							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
+							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],	
+							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
+							'idItem' => $post["itemLogisticaForm[$k]"],
+							'idDistribucionTachado' => $post["chkTachado[$k]"],
+							'requiereOrdenCompra' => empty($post["generarOCSubItem[$k]"]) ? 0 : 1,
+							'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[$k]"]) ? $post["proveedorDistribucionSubItem[$k]"] : null,
+							'cantidadReal' => $post["cantidadRealSubItem[$k]"],
 						]);
 						break;
 
@@ -1893,7 +1938,7 @@ class Cotizacion extends MY_Controller
 
 				if (!empty($subDetalleInsert)) {
 					foreach ($subDetalleInsert[$k] as $subItem) {
-						$data['newInsertSubItem'][$cont][] = [
+						$data['newInsertSubItem'][$k][] = [
 							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 							'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
 							'unidadMedida' => !empty($subItem['unidadMedida']) ? $subItem['unidadMedida'] : NULL,
@@ -1905,33 +1950,32 @@ class Cotizacion extends MY_Controller
 							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
 							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
 							'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
+							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
+							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
+							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						];
 					}
 				}
-				$cont++;
-			}
 
-			// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
-			if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k] && !empty($post['nameItemOriginal'][$k])) {
-				$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
-			}
-			// FIN
-
-			if (!empty($post["file-name[$k]"])) {
-				$data['archivos_arreglo'][$k] = getDataRefactorizada([
-					'base64' => $post["file-item[$k]"],
-					'type' => $post["file-type[$k]"],
-					'name' => $post["file-name[$k]"],
-				]);
-				foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
-					if (empty($archivo['base64'])) continue;
-					$data['archivos'][$k][] = [
-						'base64' => $archivo['base64'],
-						'type' => $archivo['type'],
-						'name' => $archivo['name'],
-						'carpeta' => 'cotizacion',
-						'nombreUnico' => uniqid(),
-					];
+				if (!empty($post["file-name[$k]"])) {
+					$data['archivos_arreglo'][$k] = getDataRefactorizada([
+						'base64' => $post["file-item[$k]"],
+						'type' => $post["file-type[$k]"],
+						'name' => $post["file-name[$k]"],
+					]);
+					foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
+						if (empty($archivo['base64'])) continue;
+						$data['archivos'][$k][] = [
+							'base64' => $archivo['base64'],
+							'type' => $archivo['type'],
+							'name' => $archivo['name'],
+							'carpeta' => 'cotizacion',
+							'nombreUnico' => uniqid(),
+						];
+					}
 				}
 			}
 		}
@@ -1941,7 +1985,7 @@ class Cotizacion extends MY_Controller
 		$data['where'] = 'idCotizacionDetalle';
 
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
-		if(!empty($post['subItemEliminado'])){
+		if (!empty($post['subItemEliminado'])) {
 			foreach ($post['subItemEliminado'] as $key => $value) {
 				$this->db->delete('compras.cotizacionDetalleSub', ['idCotizacionDetalleSub' => $value]);
 			}
@@ -1949,16 +1993,18 @@ class Cotizacion extends MY_Controller
 		$data = [];
 
 		$estadoEmail = true;
-		if($post['actualizarEstado'] == '2'){
-			// Para no enviar Correos en modo prueba.
-			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
-			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
-			$toCompras = [];
-			foreach ($usuariosCompras as $usuario) {
-				$toCompras[] = $usuario['email'];
-			}
+		if (isset($post['actualizarEstado'])) {
+			if ($post['actualizarEstado'] == '2') {
+				// Para no enviar Correos en modo prueba.
+				$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+				$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+				$toCompras = [];
+				foreach ($usuariosCompras as $usuario) {
+					$toCompras[] = $usuario['email'];
+				}
 
-			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toCompras]);
+				$estadoEmail = $this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toCompras]);
+			}
 		}
 
 		if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
@@ -2128,6 +2174,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['disabled'] = true;
 		$config['data']['siguienteEstado'] = ESTADO_ENVIADO_CLIENTE;
 		$config['data']['controller'] = 'Cotizacion';
+
 		$config['view'] = 'modulos/Cotizacion/viewFormularioActualizar';
 
 		$this->view($config);

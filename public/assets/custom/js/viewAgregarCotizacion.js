@@ -132,8 +132,8 @@ var SolicitudCotizacion = {
 	visualizarOrdenCompraPdf: function () {
 		let formValues = Fn.formSerializeObject('formRegistroOperValidado');
 		let jsonString = { 'data': JSON.stringify(formValues) };
-		console.log(jsonString);
-		console.log(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf');
+		// console.log(jsonString);
+		// console.log(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf');
 		Fn.download(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf', jsonString);
 	},
 	mostrarLugarEntrega: function (t) {
@@ -162,6 +162,7 @@ var Cotizacion = {
 	subItemEliminado: [],
 	repetidoSubItem: [],
 	repetidoSubItem2: [],
+	detalleEliminado: [],
 	gapEmpresas: [],
 	controlesOC: [],
 	nuevo_item: [],
@@ -183,7 +184,7 @@ var Cotizacion = {
 			Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());
 			// Cotizacion.tachadoDistribucion = $.parseJSON($('#tachadoDistribucion').val());
 
-			Cotizacion.htmlG = $('.default-item').html();
+			// Cotizacion.htmlG = $('.default-item').html();
 
 			if ($('#gapEmpresas').val()) {
 				Cotizacion.gapEmpresas = JSON.parse($('#gapEmpresas').val());
@@ -468,6 +469,9 @@ var Cotizacion = {
 				$(this).parents('.body-item').find('.btn-bloquear-detalle').transition('shake');
 				return false;
 			}
+			let idEliminado = body.find('.idCotizacionDetalle').val();
+			Cotizacion.detalleEliminado.push(idEliminado);
+
 			body.transition({
 				animation: 'slide left',
 				duration: '0.4s',
@@ -2322,9 +2326,12 @@ var Cotizacion = {
 		formValues.subItemEliminado = Cotizacion.subItemEliminado;
 		formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
 		formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
+		formValues.detalleEliminado = Cotizacion.detalleEliminado;
 		if(updateEstado == 2){
 			formValues.actualizarEstado = 2;
 		}
+
+		console.log(formValues);
 
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "actualizaCotizacionData";

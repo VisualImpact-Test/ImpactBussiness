@@ -374,9 +374,9 @@ class FormularioProveedor extends MY_Controller
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['cantidadImagenes'] = checkAndConvertToArray($post['cantidadImagenes']);
-		if(isset($post['f_base64'])) $post['f_base64'] = checkAndConvertToArray($post['f_base64']);
-		if(isset($post['f_name'])) $post['f_name'] = checkAndConvertToArray($post['f_name']);
-		if(isset($post['f_type'])) $post['f_type'] = checkAndConvertToArray($post['f_type']);
+		if (isset($post['f_base64'])) $post['f_base64'] = checkAndConvertToArray($post['f_base64']);
+		if (isset($post['f_name'])) $post['f_name'] = checkAndConvertToArray($post['f_name']);
+		if (isset($post['f_type'])) $post['f_type'] = checkAndConvertToArray($post['f_type']);
 
 		$orden = 0;
 		$insertArchivos = [];
@@ -406,7 +406,7 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos[] = [
 					'idPropuestaItem' => $id,
-					'idTipoArchivo' => $archivo['type']=='pdf' ? '5' : '2',
+					'idTipoArchivo' => $archivo['type'] == 'pdf' ? '5' : '2',
 					'nombre_inicial' => $archivo['name'],
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
@@ -519,7 +519,7 @@ class FormularioProveedor extends MY_Controller
 		// echo json_encode($this->model->obtenerListaCotizaciones($post)->result_array());
 
 	}
-	
+
 	public function cotizaciones($idCotizacion = '0')
 	{
 		$get = [];
@@ -614,12 +614,13 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function calcularFechaDiasHabiles(){
+	public function calcularFechaDiasHabiles()
+	{
 		$post = $this->input->post();
-		if(isset($post['diasHabiles'])){
-			if($post['diasHabiles'] == 'false'){
+		if (isset($post['diasHabiles'])) {
+			if ($post['diasHabiles'] == 'false') {
 				$fecha = !empty($post['fecha']) ? date("Ymd", strtotime($post['fecha'])) : date('Ymd');
-				$fechaNueva = strtotime($post['dias'].' day', strtotime($fecha));
+				$fechaNueva = strtotime($post['dias'] . ' day', strtotime($fecha));
 				$result = date('Y-m-d', $fechaNueva);
 				goto resultado;
 			}
@@ -628,10 +629,11 @@ class FormularioProveedor extends MY_Controller
 		resultado:
 		echo $result;
 	}
-	public function contarDiasHabiles(){
+	public function contarDiasHabiles()
+	{
 		$post = $this->input->post();
-		if(isset($post['diasHabiles'])){
-			if($post['diasHabiles'] == 'false'){
+		if (isset($post['diasHabiles'])) {
+			if ($post['diasHabiles'] == 'false') {
 				$fechaIni = !empty($post['fechaIni']) ? date("Ymd", strtotime($post['fechaIni'])) : date('Ymd');
 				$fechaFin = !empty($post['fechaFin']) ? date("Ymd", strtotime($post['fechaFin'])) : date('Ymd');
 
@@ -647,6 +649,7 @@ class FormularioProveedor extends MY_Controller
 
 	public function actualizarCotizacionProveedor()
 	{
+
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
@@ -661,6 +664,10 @@ class FormularioProveedor extends MY_Controller
 		$post['diasEntrega'] = checkAndConvertToArray($post['diasEntrega']);
 		$post['fechaEntrega'] = checkAndConvertToArray($post['fechaEntrega']);
 		$post['idItem'] = checkAndConvertToArray($post['idItem']);
+		$post['sucursal'] = checkAndConvertToArray($post['sucursal']);
+		$post['razonSocial'] = checkAndConvertToArray($post['razonSocial']);
+		$post['tipoElemento'] = checkAndConvertToArray($post['tipoElemento']);
+		$post['marca'] = checkAndConvertToArray($post['marca']);
 
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			// Para actualizar el detalle
@@ -674,50 +681,38 @@ class FormularioProveedor extends MY_Controller
 				'fechaValidez' => $post['fechaValidez'][$k],
 				'comentario' => $post['comentario'][$k],
 				'diasEntrega' => $post['diasEntrega'][$k],
-				'fechaEntrega' => $post['fechaEntrega'][$k]
+				'fechaEntrega' => $post['fechaEntrega'][$k],
+				'sucursal' => $post['sucursal'][$k],
+				'razonSocial' => $post['razonSocial'][$k],
+				'tipoElemento' => $post['tipoElemento'][$k],
+				'marca' => $post['marca'][$k],
 			];
 
+			
 			// Para archivos
 			if (isset($post['file-type[' . $r . ']'])) {
-				if (is_array($post['file-type[' . $r . ']'])) {
-					foreach ($post['file-type[' . $r . ']'] as $key => $value) {
-						$archivo = [
-							'base64' => $post['file-item[' . $r . ']'][$key],
-							'name' => $post['file-name[' . $r . ']'][$key],
-							'type' => ($post['file-type[' . $r . ']'][$key]=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'application/xlsx':$post['file-type[' . $r . ']'][$key],
-							'carpeta' => 'cotizacionProveedor',
-							'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_' . $key . 'CP',
-						];
-						$archivoName = $this->saveFileWasabi($archivo);
-						$tipoArchivo = explode('/', $archivo['type']);
-						$insertArchivos[] = [
-							'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
-							'idTipoArchivo' => TIPO_ORDEN_COMPRA,
-							'nombre_inicial' => $archivo['name'],
-							'nombre_archivo' => $archivoName,
-							'nombre_unico' => $archivo['nombreUnico'],
-							'extension' => $tipoArchivo[1],
-							'estado' => true,
-							'idUsuarioReg' => $this->idUsuario
-						];
-					}
-				} else {
+				$post['file-type[' . $r . ']'] = checkAndConvertToArray($post['file-type[' . $r . ']']);
+				$post['file-item[' . $r . ']'] = checkAndConvertToArray($post['file-item[' . $r . ']']);
+				$post['file-name[' . $r . ']'] = checkAndConvertToArray($post['file-name[' . $r . ']']);
+				foreach ($post['file-type[' . $r . ']'] as $key => $value) {
 					$archivo = [
-						'base64' => $post['file-item[' . $r . ']'],
-						'name' => $post['file-name[' . $r . ']'],
-						'type' => ($post['file-type[' . $r . ']']=='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')?'application/xlsx':$post['file-type[' . $r . ']'],
+						'base64' => $post['file-item[' . $r . ']'][$key],
+						'name' => $post['file-name[' . $r . ']'][$key],
+						'type' => $post['file-type[' . $r . ']'][$key],
 						'carpeta' => 'cotizacionProveedor',
-						'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_0' . 'CP',
+						'nombreUnico' => 'COTIPRO' . $post['idCotizacionDetalleProveedorDetalle'][$k] . str_replace(':', '', $this->hora) . '_' . $key . 'CP',
 					];
+
 					$archivoName = $this->saveFileWasabi($archivo);
+
 					$tipoArchivo = explode('/', $archivo['type']);
 					$insertArchivos[] = [
 						'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$k],
-						'idTipoArchivo' => TIPO_ORDEN_COMPRA,
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' =>$tipoArchivo[1],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];
@@ -725,31 +720,30 @@ class FormularioProveedor extends MY_Controller
 			}
 
 			// Para actualizar el SubDetalle
-			if (isset($post['idCDPD['.$r.']']) && $r != '0') {
-				$post['idCDPD['.$r.']'] = checkAndConvertToArray($post['idCDPD['.$r.']']);
-				$post['idCDPDS['.$r.']'] = checkAndConvertToArray($post['idCDPDS['.$r.']']);
-				$post['costo['.$r.']'] = checkAndConvertToArray($post['costo['.$r.']']);
-				$post['subtotal['.$r.']'] = checkAndConvertToArray($post['subtotal['.$r.']']);
-				$post['descripcion['.$r.']'] = checkAndConvertToArray($post['descripcion['.$r.']']);
-				$post['cantidad['.$r.']'] = checkAndConvertToArray($post['cantidad['.$r.']']);
+			if (isset($post['idCDPD[' . $r . ']']) && $r != '0') {
+				$post['idCDPD[' . $r . ']'] = checkAndConvertToArray($post['idCDPD[' . $r . ']']);
+				$post['idCDPDS[' . $r . ']'] = checkAndConvertToArray($post['idCDPDS[' . $r . ']']);
+				$post['costo[' . $r . ']'] = checkAndConvertToArray($post['costo[' . $r . ']']);
+				$post['subtotal[' . $r . ']'] = checkAndConvertToArray($post['subtotal[' . $r . ']']);
+				$post['descripcion[' . $r . ']'] = checkAndConvertToArray($post['descripcion[' . $r . ']']);
+				$post['cantidad[' . $r . ']'] = checkAndConvertToArray($post['cantidad[' . $r . ']']);
 
-				foreach ($post['idCDPDS['.$r.']'] as $key => $value) {
+				foreach ($post['idCDPDS[' . $r . ']'] as $key => $value) {
 					$updateDetalleSub['update'][] = [
 						'idCotizacionDetalleProveedorDetalleSub' => $value,
-						'costo' => $post['costo['.$r.']'][$key],
-						'subtotal' => $post['subtotal['.$r.']'][$key],
-						'descripcion' => $post['descripcion['.$r.']'][$key],
-						'cantidad' => $post['cantidad['.$r.']'][$key],
+						'costo' => $post['costo[' . $r . ']'][$key],
+						'subtotal' => $post['subtotal[' . $r . ']'][$key],
+						'descripcion' => $post['descripcion[' . $r . ']'][$key],
+						'cantidad' => $post['cantidad[' . $r . ']'][$key],
 					];
 				}
 
 				$updateDetalleSub['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
 				$updateDetalleSub['where'] = 'idCotizacionDetalleProveedorDetalleSub';
-				
+
 				$this->m_cotizacion->actualizarCotizacionDetalle($updateDetalleSub);
 				$updateDetalleSub = [];
 			}
-			
 		}
 
 		if (!empty($insertArchivos)) {
@@ -783,23 +777,6 @@ class FormularioProveedor extends MY_Controller
 			$this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalleSub', $insertSub);
 		}
 
-
-		// if (isset($post['idCDPDS'])) {
-		// 	$post['idCDPDS'] = checkAndConvertToArray($post['idCDPDS']);
-		// 	$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
-
-		// 	foreach ($post['idCDPDS'] as $key => $value) {
-		// 		$data['update'][] = [
-		// 			'idCotizacionDetalleProveedorDetalleSub' => $post['idCDPDS'][$key],
-		// 			'costo' => $post['costoSubItem'][$key],
-		// 			'subTotal' => number_format(floatval($post['cantidadSubItem'][$key]) * floatval($post['costoSubItem'][$key]), 2)
-		// 		];
-		// 	}
-		// 	$data['tabla'] = 'compras.cotizacionDetalleProveedorDetalleSub';
-		// 	$data['where'] = 'idCotizacionDetalleProveedorDetalleSub';
-		// 	$updateDetalleSub = $this->m_cotizacion->actualizarCotizacionDetalle($data);
-		// }
-
 		if (!$updateDetalle['estado']) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
@@ -832,41 +809,44 @@ class FormularioProveedor extends MY_Controller
 			$insertCotizacionHistorico = $this->model->insertarProveedor(['tabla' => 'compras.cotizacionEstadoHistorico', 'insert' => $insertCotizacionHistorico]);
 
 			$insertItemTarifario = [];
+
 			foreach ($post['idItem'] as $key => $value) {
-				$datos = [
-					'idItem' => $post['idItem'][$key],
-					'idProveedor' => $post['idProveedor']
-				];
-				$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
-
-				if (!empty($consulta)) {
-					$update[0] = [
-						'idItemTarifario' => $consulta['idItemTarifario'],
-						'costo' => $post['costo'][$key],
-						'fechaVigencia' => $post['fechaValidez'][$key]
-					];
-					$rpta = $this->model->actualizarMasivo('compras.itemTarifario', $update, 'idItemTarifario');
-					$idItemTarifario = $consulta['idItemTarifario'];
-				} else {
-					$insertar = [
+				if (!empty($post['idItem'][$key])) {
+					$datos = [
 						'idItem' => $post['idItem'][$key],
-						'idProveedor' => $post['idProveedor'],
-						'costo' => $post['costo'][$key],
-						'flag_actual' => 0,
-						'estado' => 1,
-						'fechaVigencia' => $post['fechaValidez'][$key]
+						'idProveedor' => $post['idProveedor']
 					];
-					$rpta = $this->db->insert('compras.itemTarifario', $insertar);
-					$idItemTarifario = $this->db->insert_id();
+					$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
+	
+					if (!empty($consulta)) {
+						$update[0] = [
+							'idItemTarifario' => $consulta['idItemTarifario'],
+							'costo' => $post['costo'][$key],
+							'fechaVigencia' => $post['fechaValidez'][$key]
+						];
+						$rpta = $this->model->actualizarMasivo('compras.itemTarifario', $update, 'idItemTarifario');
+						$idItemTarifario = $consulta['idItemTarifario'];
+					} else {
+						$insertar = [
+							'idItem' => $post['idItem'][$key],
+							'idProveedor' => $post['idProveedor'],
+							'costo' => $post['costo'][$key],
+							'flag_actual' => 0,
+							'estado' => 1,
+							'fechaVigencia' => $post['fechaValidez'][$key]
+						];
+						$rpta = $this->db->insert('compras.itemTarifario', $insertar);
+						$idItemTarifario = $this->db->insert_id();
+					}
+	
+					$historicoInsert = [
+						'idItemTarifario' => $idItemTarifario,
+						'fecIni' => getFechaActual(),
+						'fecFin' => $post['fechaValidez'][$key],
+						'costo' => $post['costo'][$key]
+					];
+					$rpta = $this->db->insert('compras.itemTarifarioHistorico', $historicoInsert);
 				}
-
-				$historicoInsert = [
-					'idItemTarifario' => $idItemTarifario,
-					'fecIni' => getFechaActual(),
-					'fecFin' => $post['fechaValidez'][$key],
-					'costo' => $post['costo'][$key]
-				];
-				$rpta = $this->db->insert('compras.itemTarifarioHistorico', $historicoInsert);
 			}
 		}
 

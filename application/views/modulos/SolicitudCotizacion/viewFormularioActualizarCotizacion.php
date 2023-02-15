@@ -129,6 +129,9 @@
 							<a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
 								<i class="hand holding usd icon"></i>
 								<? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']])) { ?>
+									<?php if ($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] == '') :  ?>
+										<?php $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] = 1 ?>
+									<?php endif; ?>
 									<div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
 								<? } ?>
 							</a>
@@ -170,8 +173,13 @@
 														<div class="ui small images">
 															<?php foreach ($cotizacionProveedorArchivos[$view['idCotizacionDetalleProveedorDetalle']] as $keyCPA => $imgCPA) : ?>
 																<div class="ui fluid image dimmable" data-id="<?= $keyCPA ?>">
+																	<!-- TODO : Hacer una funcion en helper $src = src(tipoArchivo, rutaWasabi, nombreArchivo)  -->
+																	<?php $src = RUTA_WIREFRAME . "file.png" ?>
+																	<?php $src = ($imgCPA['idTipoArchivo'] == TIPO_PDF) ? (RUTA_WIREFRAME . "pdf.png") : $src; ?>
+																	<?php $src = ($imgCPA['idTipoArchivo'] == TIPO_EXCEL) ? (RUTA_WIREFRAME . "xlsx.png") : $src; ?>
+																	<?php $src = ($imgCPA['idTipoArchivo'] == TIPO_IMAGEN) ? (RUTA_WASABI . 'cotizacionProveedor/' . $imgCPA['nombre_archivo']) : $src; ?>
 																	<a target="_blank" href="<?= RUTA_WASABI . 'cotizacionProveedor/' . $imgCPA['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-																	<img height="100" src="<?= $imgCPA['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacionProveedor/' . $imgCPA['nombre_archivo']) ?>" class="img-responsive img-thumbnail">
+																	<img height="100" src="<?= $src ?>" class="img-responsive img-thumbnail">
 																</div>
 															<?php endforeach; ?>
 														</div>
@@ -224,7 +232,7 @@
 										<div class="ui right action left icon input w-100">
 											<i class="semaforoForm flag link icon"></i>
 											<input class="nameItemForm" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>">
-											<input type='hidden' name='nameItemOriginal' patron="requerido" value="<?= $row['itemNombre'] ?>">
+											<input type='hidden' name='nameItemOriginal' patron="" value="<?= $row['itemNombre'] ?>">
 											<div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown">
 												<input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagExterno']) ? $row['flagExterno'] : 0 ?>" patron="requerido">
 												<div class="text">Cuenta</div>
