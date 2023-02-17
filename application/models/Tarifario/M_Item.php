@@ -103,6 +103,7 @@ class M_Item extends MY_Model
 				, razonSocial AS value
 			FROM compras.proveedor
 			WHERE idProveedorEstado = 2
+			order by 2
 		";
 
 		$query = $this->db->query($sql);
@@ -127,7 +128,7 @@ class M_Item extends MY_Model
 			FROM compras.itemTarifario ta
 			JOIN compras.itemTarifarioHistorico tah ON ta.idItemTarifario = tah.idItemTarifario
 			JOIN compras.proveedor p ON ta.idProveedor = p.idProveedor
-			WHERE ta.idItemTarifario = {$params['idItemTarifario']}
+			WHERE ta.idItem = {$params['idItem']}
 			ORDER BY tah.idItemTarifarioHistorico DESC
 		";
 
@@ -357,7 +358,7 @@ class M_Item extends MY_Model
 				idItemTarifario
 			FROM compras.itemTarifario ta
 			WHERE
-			ta.idItem = {$params['idItem']} AND flag_actual = 1
+			ta.idItem = {$params['idItem']} AND flag_actual = 1 AND ta.idProveedor != {$params['idProveedor']}
 			{$filtros}
 		";
 

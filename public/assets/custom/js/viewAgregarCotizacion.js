@@ -849,7 +849,7 @@ var Cotizacion = {
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 			//Si el monto es mayor a 1500, el gap no puede ser menor al 15%
 			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
-				thisControl.val(GAP_MINIMO);
+				thisControl.val(GAP_MINIMO).trigger('keyup');
 				$("#nagGapValidacion").nag({
 					persist: true
 				});

@@ -4,6 +4,7 @@ var Item = {
 	contentDetalle: 'idContentItem',
 	url: 'Tarifario/Item/',
 	items: [],
+	tarifario: [],
 
 	load: function () {
 
@@ -47,8 +48,9 @@ var Item = {
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-
+				Item.tarifario = a.data.tarifario;
 				Item.actualizarAutocomplete();
+				// $("input").prop('disabled', false);
 			});
 		});
 
@@ -123,6 +125,78 @@ var Item = {
 				$(this).val('');
 			} else {
 				$(this).attr('readonly', 'readonly');
+			}
+		});
+
+		$(document).on('change', '.proveedorTarifario', function (e) {
+			var idItem = $("#idItem").val();
+			var idProveedor = $(this).val();
+
+			var tarifa = Item.tarifario[idItem];
+
+			var data = tarifa[idProveedor];
+			if (jQuery.type(data) !== "undefined") {
+				if(data.flag_actual == 1){
+					$('.checkActual').prop('checked', true);
+				}else{
+					$('.checkActual').prop('checked', false);
+				}
+
+				if (parseInt(data['diasTranscurridos']) < 0) {
+					div = $(".tipoDiv");
+					div.removeClass();
+					div.addClass( "tipoDiv ui bottom attached success message w-100" );
+	
+					icono = $(".tipoIcon");
+					icono.removeClass();
+					icono.addClass( "tipoIcon icon check" );
+	
+					$('#label_fecha').html(data.fechaVigencia);
+				}else{
+					div = $(".tipoDiv");
+					div.removeClass();
+					div.addClass( "tipoDiv ui bottom attached warning message w-100" );
+	
+					icono = $(".tipoIcon");
+					icono.removeClass();
+					icono.addClass( "tipoIcon icon warning" );
+	
+					$('#label_fecha').html(data.fechaVigencia);
+				}
+			}else{
+				$('.checkActual').prop('checked', false);
+
+				div = $(".tipoDiv");
+					div.removeClass();
+					div.addClass( "tipoDiv ui bottom attached success message w-100" );
+	
+					icono = $(".tipoIcon");
+					icono.removeClass();
+					icono.addClass( "tipoIcon icon check" );
+	
+					$('#label_fecha').html('SIN REGISTRAR');
+
+			}
+
+			
+		});
+
+		$(document).on('change', '.proveedorTarifarioActualizar', function (e) {
+			var costo = $(this).find(':selected').data('costo');
+			var fechaVigencia = $(this).find(':selected').data('fechavigencia');
+			var flag_actual = $(this).find(':selected').data('flag_actual');
+			var idItemTarifario = $(this).find(':selected').data('iditemtarifario');
+
+			control = $(this).parents('.divDatos');
+
+			control.find('#costoAnterior').val(costo);
+			control.find('#costo').val(costo);
+			control.find('#fechaVigencia').val(fechaVigencia);
+			control.find('#idItemTarifario').val(idItemTarifario);
+			if (flag_actual == '1') {
+				control.find('#actual').prop('checked', true);
+			}else{
+				control.find('#actual').prop('checked', false);
 			}
 		});
 	},
@@ -205,11 +279,11 @@ var Item = {
 	actualizarAutocomplete: function () {
 		$("#nombre").autocomplete({
 			source: Item.items[1],
-			search: function( event, ui ) {
+			search: function (event, ui) {
 
 			},
-			response: function( event, ui ) {
-				
+			response: function (event, ui) {
+
 			},
 			select: function (event, ui) {
 				event.preventDefault();
@@ -219,6 +293,7 @@ var Item = {
 
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
 				$(this).parents(".control-group").find("#idItem").val(ui.item.value);
+				$('.proveedorTarifario').removeClass('disabled');
 			},
 			appendTo: "#modal-page-" + modalId,
 			max: 10,

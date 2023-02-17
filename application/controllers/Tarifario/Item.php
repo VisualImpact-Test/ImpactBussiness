@@ -352,6 +352,11 @@ class Item extends MY_Controller
 		foreach ($data['items'] as $k => $r) {
 			$data['items'][$k] = array_values($data['items'][$k]);
 		}
+
+		$tarifario = $this->db->select('*, ISNULL(DATEDIFF(DAY,GETDATE(),fechaVigencia),999) as diasTranscurridos')->where(['estado' => 1])->get('compras.itemTarifario')->result_array();
+		foreach ($tarifario as $key => $value) {
+			$dataTarifario[$value['idItem']][$value['idProveedor']] = $value;
+		}
 		$data['items'][0] = array();
 		$result['data']['existe'] = 0;
 
@@ -359,6 +364,7 @@ class Item extends MY_Controller
 		$result['msg']['title'] = 'Registrar Tarifario de Item';
 		$result['data']['html'] = $this->load->view("modulos/Tarifario/Item/formularioRegistro", $dataParaVista, true);
 		$result['data']['items'] = $data['items'];
+		$result['data']['tarifario'] = $dataTarifario;
 
 		echo json_encode($result);
 	}
@@ -368,9 +374,17 @@ class Item extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$dataParaVista = [];
+		$tarifario = $this->db->where(['idItemTarifario' => $post['idItemTarifario']])->get('compras.itemTarifario')->row_array();
+		$idItem = $tarifario['idItem'];
 
-		$dataParaVista['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
+		// $listTarifas = $this->db->select('itemTarifario.*, proveedor.razonSocial')->where(['idItem' => $idItem])->join('compras.proveedor', 'proveedor.idProveedor = itemTarifario.idProveedor')->get('compras.itemTarifario')->result_array();
+
+		$dataParaVista = [];
+		$dataParaVista['proveedor'] = $this->db
+			->select('itemTarifario.*, proveedor.razonSocial')
+			->join('compras.proveedor', 'proveedor.idProveedor = itemTarifario.idProveedor')
+			->where(['idItem' => $idItem])
+			->get('compras.itemTarifario')->result_array();
 
 		$items =  $this->model->obtenerItems();
 		foreach ($items as $key => $row) {
@@ -400,7 +414,10 @@ class Item extends MY_Controller
 
 		$dataParaVista = [];
 
-		$dataParaVista['datos'] = $this->model->obtenerInformacionTAHistorico($post)['query']->result_array();
+		$tarifario = $this->db->where(['idItemTarifario' => $post['idItemTarifario']])->get('compras.itemTarifario')->row_array();
+		$idItem = $tarifario['idItem'];
+
+		$dataParaVista['datos'] = $this->model->obtenerInformacionTAHistorico(['idItem' => $idItem])['query']->result_array();
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Historial Tarifario de Item';
@@ -424,6 +441,7 @@ class Item extends MY_Controller
 			'flag_actual' => empty($post['actual']) ? 0 : 1,
 			'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
 		];
+		$fechaFin = $data['insert']['fechaVigencia'];
 
 		if (!empty($post['actual'])) {
 			$validacionActual = $this->model->validarItemTarifarioActual($data['insert']);
@@ -433,24 +451,36 @@ class Item extends MY_Controller
 			}
 		}
 
-		$validacionExistencia = $this->model->validarExistenciaItemTarifario($data['insert']);
+		$validacionExistencia = $this->model->validarExistenciaItemTarifario($data['insert'])['query']->row_array();
 
-		if (!empty($validacionExistencia['query']->row_array())) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = getMensajeGestion('registroRepetido');
-			goto respuesta;
+		if (!empty($validacionExistencia)) {
+			$idItemTarifario = $validacionExistencia['idItemTarifario'];
+			$dataHistorico = $this->db->where(['idItemTarifario' => $idItemTarifario])->order_by('idItemTarifarioHistorico desc')->get('compras.itemTarifarioHistorico')->row_array();
+
+			$this->db->update(
+				'compras.itemTarifario',
+				[
+					'costo' => $post['costo'],
+					'flag_actual' => $data['insert']['flag_actual'],
+					'fechaVigencia' => $data['insert']['fechaVigencia']
+				],
+				['idItemTarifario' => $idItemTarifario]
+			);
+
+			$nFF = empty($dataHistorico['fecFin']) ? getFechaActual(-1) : $dataHistorico['fecFin'];
+			$this->db->update('compras.itemTarifarioHistorico', ['fecFin' => $nFF], ['idItemTarifarioHistorico' => $dataHistorico['idItemTarifarioHistorico']]);
+			$insert['estado'] = true;
+		} else {
+			$data['tabla'] = 'compras.itemTarifario';
+			$insert = $this->model->insertarItemTarifario($data);
+			$idItemTarifario =  $insert['id'];
 		}
 
-		$data['tabla'] = 'compras.itemTarifario';
-
-		$insert = $this->model->insertarItemTarifario($data);
 		$data = [];
-
 		$data['insert'] = [
-			'idItemTarifario' => $insert['id'],
+			'idItemTarifario' => $idItemTarifario,
 			'fecIni' => getFechaActual(),
-			'fecFin' => NULL,
+			'fecFin' => $fechaFin,
 			'costo' => $post['costo'],
 		];
 
@@ -474,7 +504,7 @@ class Item extends MY_Controller
 			$result['result'] = 2;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Ya existe un item que se encuentra como actual, ¿Deseas reemplazarlo?']);
-			$result['data']['idItemTarifario'] = $insert['id'];
+			$result['data']['idItemTarifario'] = $idItemTarifario;
 			$result['data']['idItem'] = $post['idItem'];
 		}
 
@@ -492,7 +522,6 @@ class Item extends MY_Controller
 
 		$data['update'] = [
 			'idItemTarifario' => $post['idItemTarifario'],
-
 			'idItem' => $post['idItem'],
 			'idProveedor' => $post['proveedor'],
 			'costo' => $post['costo'],
@@ -500,6 +529,7 @@ class Item extends MY_Controller
 			'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
 
 		];
+		$fechaVigencia = $data['update']['fechaVigencia'];
 
 		if (!empty($post['actual'])) {
 			$validacionActual = $this->model->validarItemTarifarioActual($data['update']);
@@ -536,7 +566,7 @@ class Item extends MY_Controller
 			$data['tabla'] = 'compras.itemTarifarioHistorico';
 			$data['where'] = [
 				'idItemTarifario' => $post['idItemTarifario'],
-				'fecFin' => NULL
+				'fecFin' => $fechaVigencia
 			];
 
 			$subUpdate = $this->model->actualizarItemTarifario($data);
@@ -545,7 +575,7 @@ class Item extends MY_Controller
 			$data['insert'] = [
 				'idItemTarifario' => $post['idItemTarifario'],
 				'fecIni' => getFechaActual(),
-				'fecFin' => NULL,
+				'fecFin' => $fechaVigencia,
 				'costo' => $post['costo'],
 			];
 
