@@ -963,19 +963,19 @@
 		<div class="item">
 			<i class="flag icon teal"></i>
 			<div class="content">
-				7 días
+				+ 2 días
 			</div>
 		</div>
 		<div class="item">
 			<i class="flag icon yellow"></i>
 			<div class="content">
-				8 a 15 días
+				1 a 2 días
 			</div>
 		</div>
 		<div class="item">
 			<i class="flag icon red"></i>
 			<div class="content">
-				+15 días
+				Tarifario expiró.
 			</div>
 		</div>
 	</div>

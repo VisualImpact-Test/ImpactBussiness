@@ -433,7 +433,8 @@ class M_FormularioProveedor extends MY_Model
 				((cp.costo / md.valor) * cp.cantidad) subtotal,
 				cp.idItemTipo,
 				cp.subtotal as cotizacionSubTotal,
-				cp.idItem
+				cp.idItem,
+				i.caracteristicas as caracteristicaItem
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
@@ -444,6 +445,7 @@ class M_FormularioProveedor extends MY_Model
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
 				AND General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,o.fechaReg,o.fechaReg)=1
 			JOIN compras.metodoPago mp ON mp.idMetodoPago = o.idMetodoPago
+			LEFT JOIN compras.item i ON i.idItem = cp.idItem
 			LEFT JOIN sistema.usuario us ON us.idUsuario=o.idUsuarioReg
 			LEFT JOIN sistema.usuarioFirma uf ON uf.idUsuarioFirma=us.idUsuarioFirma
 

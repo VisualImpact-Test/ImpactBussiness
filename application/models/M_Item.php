@@ -217,11 +217,11 @@ class M_Item extends MY_Model
 			i.idItemTipo as tipo,
 			CASE
 			WHEN it.fechaVigencia IS NULL THEN 'gray'
-			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) <= 7 THEN 'green'
-			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 7 AND ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) < 15 THEN 'yellow'
+			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) <= -2 THEN 'green'
+			WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > -2 AND ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) <= 0 THEN 'yellow'
 			ELSE 'red' END
 			AS semaforoVigencia,
-			ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) AS diasVigencia,
+			ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0)*-1 AS diasVigencia,
 			i.idItemLogistica,
 			it.pesoLogistica,
 			ISNULL(i.flagCuenta,0) flagCuenta,

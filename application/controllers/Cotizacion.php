@@ -743,7 +743,7 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['link'] = base_url() . index_page() . 'Cotizacion';
 
 		$bcc = array(
-			'aaron.ccenta@visualimpact.com.pe',
+			'eder.alata@visualimpact.com.pe',
 			'luis.durand@visualimpact.com.pe'
 		);
 		$this->email->bcc($bcc);

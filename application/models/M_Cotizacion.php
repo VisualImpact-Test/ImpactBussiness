@@ -300,10 +300,12 @@ class M_Cotizacion extends MY_Model
 							cc.nombre AS centroCosto,
 							sol.nombre AS solicitante,
 							it.nombre AS itemTipo,
-							proveedor.razonSocial AS proveedor')
+							proveedor.razonSocial AS proveedor,
+							i.caracteristicas AS caracteristicaItem')
 			->from('compras.cotizacionDetalle cd')
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'LEFT')
 			->join('compras.cotizacionPrioridad prioridad', 'prioridad.idPrioridad = c.idPrioridad', 'LEFT')
+			->join('compras.item i', 'i.idItem = cd.idItem', 'LEFT')
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'LEFT')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
 			->join('compras.solicitante sol', 'c.idSolicitante = sol.idSolicitante', 'LEFT')
@@ -1694,8 +1696,8 @@ class M_Cotizacion extends MY_Model
 			lt.idItem,
 			lt.idProveedor,
 				CASE
-					WHEN diasVigencia <= 7 THEN 'green'
-					WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+					WHEN diasVigencia <= -2 THEN 'green'
+					WHEN diasVigencia > -2 AND diasVigencia <= 0 THEN 'yellow'
 					ELSE 'red' END
 					AS semaforoVigencia
 				, diasVigencia
@@ -1703,7 +1705,7 @@ class M_Cotizacion extends MY_Model
 		)
 	     SELECT
 	     ls.*,
-		CASE WHEN ls.diasVigencia > 15 THEN 1 ELSE 0 END cotizacionInterna
+		CASE WHEN ls.diasVigencia > 0 THEN 1 ELSE 0 END cotizacionInterna
 		FROM
 		lst_tarifario_det ls
 		";
@@ -1788,8 +1790,10 @@ class M_Cotizacion extends MY_Model
 				lt.costoCotizacion ,
 				lt.flagRedondear,
 				CASE
-				WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
-				WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+				-- WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
+				WHEN diasVigencia <= -2 AND lt.idProveedor is not null THEN 'green'
+				-- WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
+				WHEN diasVigencia > -2 AND diasVigencia <= 0 THEN 'yellow'
 				ELSE 'red' END
 				AS semaforoVigencia
 
@@ -1798,7 +1802,8 @@ class M_Cotizacion extends MY_Model
 			SELECT
 			ls.*,
 			CASE
-			WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
+			-- WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
+			WHEN ls.diasVigencia > 0 or idProveedor is null THEN 1
 			ELSE 0
 			END cotizacionInterna
 			FROM

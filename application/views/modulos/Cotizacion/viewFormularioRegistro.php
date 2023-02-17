@@ -331,7 +331,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">Proveedor</div>
 									<select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[0]">
-										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/ ]); ?>
+										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/]); ?>
 									</select>
 								</div>
 								<div class="four wide field">
@@ -339,7 +339,7 @@
 									<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Cantidad REAL">
 								</div>
 							</div>
-							
+
 							<div class="tbDistribucionTachado d-none">
 								<h4 class="ui dividing header">TACHADO</h4>
 								<!-- <input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]" type="radio" checked> -->
@@ -519,8 +519,8 @@
 				<i class="send icon"></i>
 			</span>
 			<span class="float-element btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
-                <i class="save icon"></i>
-            </span>
+				<i class="save icon"></i>
+			</span>
 			<span class="float-element btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
 				<i class="plus icon"></i>
 			</span>
@@ -535,19 +535,19 @@
 		<div class="item">
 			<i class="flag icon teal"></i>
 			<div class="content">
-				7 días
+				+ 2 días
 			</div>
 		</div>
 		<div class="item">
 			<i class="flag icon yellow"></i>
 			<div class="content">
-				8 a 15 días
+				1 a 2 días
 			</div>
 		</div>
 		<div class="item">
 			<i class="flag icon red"></i>
 			<div class="content">
-				+15 días
+				Tarifario expiró.
 			</div>
 		</div>
 	</div>

@@ -67,7 +67,7 @@
                         <input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
                     </td>
                     <td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
-                    <td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'], 3) ?></td>
+                    <td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'].' '. $row['caracteristicaItem'], 3) ?></td>
                     <td class="text-right">
                         <?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
                     </td>
@@ -153,31 +153,31 @@
                 </tr>
             <? endif; ?>
             <tr style="border-bottom: none;">
-                <td colspan="2">
+                <td colspan="2" style="border-bottom: none; height: 65px; vertical-align: middle;">
                     <strong>Forma de Pago</strong>
                 </td>
-                <td>
+                <td style="border-bottom: none; height: 65px; vertical-align: middle;">
                     <strong>
                         <?= !empty($data['metodoPago']) ? $data['metodoPago'] : '' ?>
                     </strong>
                 </td>
-                <td>
+                <td style="border-bottom: none; height: 65px; vertical-align: middle;">
                     <strong>
                         Observaciones
                     </strong>
                 </td>
-                <td colspan="2">
+                <td colspan="2" style="border-bottom: none; height: 65px; vertical-align: middle;">
                     <strong>
                         <?= !empty($data['pocliente']) ? $data['pocliente'] : '' ?>
                     </strong>
                 </td>
             </tr>
-            <tr style="border-top: none;">
+            <!-- <tr style="border-top: none;">
                 <td colspan="2" style="height: 50px;"></td>
                 <td></td>
                 <td></td>
                 <td colspan="2"></td>
-            </tr>
+            </tr> -->
         </tfoot>
     </table>
 </div>

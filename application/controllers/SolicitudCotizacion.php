@@ -505,10 +505,21 @@ class SolicitudCotizacion extends MY_Controller
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
 		$data = [];
 
-		$estadoEmail = true;
-		// if($post['tipoRegistro'] == 2){
-		//     $estadoEmail = $this->enviarCorreo($insert['id']);
-		// }
+		// $estadoEmail = true;
+		if ($post['tipoRegistro'] == 2) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : MAIL_COORDINADORA_COMPRAS);
+
+			$usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$toOperaciones = [];
+			foreach ($usuariosOperaciones as $usuario) {
+				$toOperaciones[] = $usuario['email'];
+			}
+
+			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
+
+			// $estadoEmail = $this->enviarCorreo(['idCotizacion' => $post['idCotizacion']]);
+		}
 
 		if (!$update['estado'] || !$updateDetalle['estado'] || !$estadoEmail) {
 			$result['result'] = 0;
@@ -546,7 +557,67 @@ class SolicitudCotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function enviarCorreo($params = [])
+	{
+		$config = array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'teamsystem@visualimpact.com.pe',
+			'smtp_pass' => '#nVi=0sN0ti$',
+			'mailtype' => 'html'
+		);
 
+		$this->load->library('email', $config);
+		$this->email->clear(true);
+		$this->email->set_newline("\r\n");
+
+		$data = [];
+		$dataParaVista = [];
+		$cc = !empty($params['cc']) ? $params['cc'] : [];
+
+		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+		$this->email->to($params['to']);
+		$this->email->cc($cc);
+
+		$data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
+
+
+
+		foreach ($data as $key => $row) {
+			$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
+			$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
+			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
+			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+			$dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
+			$dataParaVista['detalle'][$key]['item'] = $row['item'];
+			$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
+			$dataParaVista['detalle'][$key]['costo'] = $row['costo'];
+			$dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
+		}
+
+		$dataParaVista['link'] = base_url() . index_page() . 'Cotizacion';
+
+		$bcc = array(
+			'eder.alata@visualimpact.com.pe',
+			'luis.durand@visualimpact.com.pe'
+		);
+		$this->email->bcc($bcc);
+
+		$this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
+		$html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
+		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
+		$this->email->message($correo);
+
+		$estadoEmail = $this->email->send();
+
+		if (!$estadoEmail) {
+
+			$mensaje = $this->email->print_debugger();
+		}
+
+		return $estadoEmail;
+	}
 	public function enviarSolicitudProveedor()
 	{
 		$this->db->trans_start();
@@ -1349,7 +1420,7 @@ class SolicitudCotizacion extends MY_Controller
 			'costoForm' => $post['costoForm'],
 			'gapForm' => $post['gapForm'],
 			'precioForm' => $post['precioForm'],
-			'subtotalForm' => $post['subtotalForm'],
+			'subtotalForm' => number_format($post['cantidadForm'] * $post['costoForm'], 2), //$post['subtotalForm'],
 			'ocDelCliente' => $post['ocDelCliente'],
 			'caracteristicasItem' => $post['caracteristicasItem'],
 		]);
