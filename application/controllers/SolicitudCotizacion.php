@@ -727,7 +727,9 @@ class SolicitudCotizacion extends MY_Controller
 
 			$urlAcceso = "?doc={$accesoDocumento}&email={$accesoEmail}&date={$fechaActual}&cod={$accesoCodProveedor}";
 
-			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+			
+			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toComprasProveedor = [];
 			foreach ($usuariosCompras as $usuario) {
 				$toComprasProveedor[] = $usuario['email'];

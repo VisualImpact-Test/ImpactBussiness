@@ -289,6 +289,38 @@ var FormularioProveedores = {
 
 		$(control).append(`
 			<div class="col-md-12 row filaDetalle">
+				<div class="col-sm-2">
+					<div class="form-group">
+						<div class="form-group">
+							<h4 class="mb-1">SUCURSAL</h4>
+							<input class="form-control" placeholder="Sucursal" name="sucursal[0]">
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="form-group">
+						<div class="form-group">
+							<h4 class="mb-1">RAZON SOCIAL</h4>
+							<input class="form-control" placeholder="Razón Social" name="razonSocial[0]">
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group">
+						<div class="form-group">
+							<h4 class="mb-1">TIPO DE ELEMENTO</h4>
+							<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento[0]">
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="form-group">
+						<div class="form-group">
+							<h4 class="mb-1">MARCA</h4>
+							<input class="form-control" placeholder="Marca" name="marca[0]">
+						</div>
+					</div>
+				</div>
 				<div class="col-md-8 pr-0">
 					<div class="form-group">
 						<h4 class="mb-1">Descripción</h4>
@@ -336,16 +368,16 @@ var FormularioProveedores = {
 			valor = $(input).val();
 			subSubtotal += parseFloat(valor);
 		}
-		if ($(t).data('tiposervicio') == 'Servicio') {
-			$('#costo_' + idCDPD).val(subSubtotal);
-			$('#costoredondo_' + idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
-		} else {
-			cantidad = $('#cantidad_' + idCDPD).val();
-			newST = subSubtotal / cantidad;
+		// if ($(t).data('tiposervicio') == 'Servicio') {
+		// 	$('#costo_' + idCDPD).val(subSubtotal);
+		// 	$('#costoredondo_' + idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
+		// } else {
+		cantidad = $('#cantidad_' + idCDPD).val();
+		newST = subSubtotal / cantidad;
 
-			$('#costo_' + idCDPD).val(newST);
-			$('#costoredondo_' + idCDPD).val(newST.toFixed(2)).trigger('keyup');
-		}
+		$('#costo_' + idCDPD).val(newST);
+		$('#costoredondo_' + idCDPD).val(newST.toFixed(2)).trigger('keyup');
+		// }
 	},
 	calcularTotal: function (i, cantidad, val) {
 		var tot = cantidad * val;

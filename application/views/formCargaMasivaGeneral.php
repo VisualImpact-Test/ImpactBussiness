@@ -9,7 +9,7 @@
                     </li>
                 <?php } ?>
                 <li class="nav-item">
-                <a href="<?=base_url()?>item/descargar_formato_excel" target="_blank" class="btn btn-trade-visual">DESCARGAR FORMATO</a>
+                <!-- <a href="<?=base_url()?>item/descargar_formato_excel" target="_blank" class="btn btn-trade-visual">DESCARGAR FORMATO</a> -->
                 </li>
             </ul>
             
