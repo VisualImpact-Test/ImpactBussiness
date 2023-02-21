@@ -62,6 +62,7 @@ var Gestion = {
 
 			let url = $(this).data("form");
 			let urlSave = $(this).data("save");
+			let id = $(this).data("id");
 
 			var config = { 'url': Gestion.urlActivo + url };
 			$.when(Fn.ajax(config)).then(function (a) {
@@ -72,7 +73,8 @@ var Gestion = {
 				Gestion.idModalPrincipal = modalId;
 
 				let configSaveHT = {
-					'url' : urlSave
+					'url' : urlSave,
+					'id' : id
 				};
 
 				let configHT = {
@@ -459,6 +461,7 @@ var Gestion = {
 			if (typeof v !== 'undefined') HT.push(v.getSourceData());
 		});
 		data['HT'] = HT;
+		data['id'] = config.id;
 
 		var jsonString = { 'data': JSON.stringify(data) };
 		var config = { 'url': Gestion.urlActivo + config.url, 'data': jsonString };

@@ -550,8 +550,20 @@ class FormularioProveedor extends MY_Controller
 			exit();
 		}
 
-		$config['css']['style'] = array('assets/custom/css/floating-labels');
-		$config['js']['script'] = array('assets/custom/js/FormularioProveedoresCotizaciones');
+		$config['css']['style'] = array(
+			'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
+			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/custom/css/floating-labels',
+		);
+		$config['js']['script'] = array(
+			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
+			'assets/libs/handsontable@7.4.2/dist/languages/all',
+			'assets/libs/handsontable@7.4.2/dist/moment/moment',
+			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/custom/js/core/HTCustom',
+			'assets/custom/js/core/gestion',
+			'assets/custom/js/FormularioProveedoresCotizaciones',
+		);
 
 		$config['view'] = 'formularioProveedores/cotizaciones';
 		$config['data']['idCotizacion'] = $idCotizacion;
@@ -664,10 +676,6 @@ class FormularioProveedor extends MY_Controller
 		$post['diasEntrega'] = checkAndConvertToArray($post['diasEntrega']);
 		$post['fechaEntrega'] = checkAndConvertToArray($post['fechaEntrega']);
 		$post['idItem'] = checkAndConvertToArray($post['idItem']);
-		$post['sucursal'] = checkAndConvertToArray($post['sucursal']);
-		$post['razonSocial'] = checkAndConvertToArray($post['razonSocial']);
-		$post['tipoElemento'] = checkAndConvertToArray($post['tipoElemento']);
-		$post['marca'] = checkAndConvertToArray($post['marca']);
 
 		foreach ($post['idCotizacionDetalleProveedorDetalle'] as $k => $r) {
 			// Para actualizar el detalle
@@ -682,13 +690,9 @@ class FormularioProveedor extends MY_Controller
 				'comentario' => $post['comentario'][$k],
 				'diasEntrega' => $post['diasEntrega'][$k],
 				'fechaEntrega' => $post['fechaEntrega'][$k],
-				'sucursal' => $post['sucursal'][$k],
-				'razonSocial' => $post['razonSocial'][$k],
-				'tipoElemento' => $post['tipoElemento'][$k],
-				'marca' => $post['marca'][$k],
 			];
 
-			
+
 			// Para archivos
 			if (isset($post['file-type[' . $r . ']'])) {
 				$post['file-type[' . $r . ']'] = checkAndConvertToArray($post['file-type[' . $r . ']']);
@@ -762,6 +766,10 @@ class FormularioProveedor extends MY_Controller
 			$post['subtotal[0]'] = checkAndConvertToArray($post['subtotal[0]']);
 			$post['descripcion[0]'] = checkAndConvertToArray($post['descripcion[0]']);
 			$post['cantidad[0]'] = checkAndConvertToArray($post['cantidad[0]']);
+			$post['sucursal[0]'] = checkAndConvertToArray($post['sucursal[0]']);
+			$post['razonSocial[0]'] = checkAndConvertToArray($post['razonSocial[0]']);
+			$post['tipoElemento[0]'] = checkAndConvertToArray($post['tipoElemento[0]']);
+			$post['marca[0]'] = checkAndConvertToArray($post['marca[0]']);
 
 			foreach ($post['idCDPD[0]'] as $key => $value) {
 				$insertSub[] = [
@@ -770,7 +778,11 @@ class FormularioProveedor extends MY_Controller
 					'costo' => $post['costo[0]'][$key],
 					'subtotal' => $post['subtotal[0]'][$key],
 					'descripcion' => $post['descripcion[0]'][$key],
-					'cantidad' => $post['cantidad[0]'][$key]
+					'cantidad' => $post['cantidad[0]'][$key],
+					'sucursal' => $post['sucursal[0]'][$key],
+					'razonSocial' => $post['razonSocial[0]'][$key],
+					'tipoElemento' => $post['tipoElemento[0]'][$key],
+					'marca' => $post['marca[0]'][$key]
 				];
 			}
 
@@ -817,7 +829,7 @@ class FormularioProveedor extends MY_Controller
 						'idProveedor' => $post['idProveedor']
 					];
 					$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
-	
+
 					if (!empty($consulta)) {
 						$update[0] = [
 							'idItemTarifario' => $consulta['idItemTarifario'],
@@ -838,7 +850,7 @@ class FormularioProveedor extends MY_Controller
 						$rpta = $this->db->insert('compras.itemTarifario', $insertar);
 						$idItemTarifario = $this->db->insert_id();
 					}
-	
+
 					$historicoInsert = [
 						'idItemTarifario' => $idItemTarifario,
 						'fecIni' => getFechaActual(),
@@ -968,6 +980,143 @@ class FormularioProveedor extends MY_Controller
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
 		}
 
+		echo json_encode($result);
+	}
+
+	public function getFormCargaMasivaCotizacionProveedorDetalleSub()
+	{
+		$result = $this->result;
+		$result['msg']['title'] = "Carga masiva de servicio";
+
+		$proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]], '*', [], 'razonSocial')->result_array();
+		$proveedores = refactorizarDataHT(["data" => $proveedores, "value" => "razonSocial"]);
+
+		$item['item'] = []; // $this->model->obtenerItems();
+		$itemNombre = refactorizarDataHT(["data" => $item['item'], "value" => "label"]);
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Servicio Detalle',
+			'data' => [
+				[
+					'sucursal' => null,
+					'razonSocial' => null,
+					'tipoElemento' => null,
+					'marca' => null,
+					'descripcion' => null,
+					'cantidad' => null,
+					'precUnitario' => null,
+				]
+			],
+			'headers' => [
+				'SUCURSAL (*)',
+				'RAZON SOCIAL (*)',
+				'TIPO ELEMENTO (*)',
+				'MARCA (*)',
+				'DESCRIPCION (*)',
+				'CANTIDAD (*)',
+				'PREC UNITARIO (*)',
+
+
+			],
+			'columns' => [
+				['data' => 'sucursal', 'type' => 'text', 'placeholder' => 'Sucursal', 'width' => 200],
+				['data' => 'razonSocial', 'type' => 'text', 'placeholder' => 'Razon Social', 'width' => 200],
+				['data' => 'tipoElemento', 'type' => 'text', 'placeholder' => 'Tipo Elemento', 'width' => 200],
+				['data' => 'marca', 'type' => 'text', 'placeholder' => 'Marca', 'width' => 200],
+				['data' => 'descripcion', 'type' => 'text', 'placeholder' => 'Descripción', 'width' => 400],
+				['data' => 'cantidad', 'type' => 'numeric', 'placeholder' => 'Cantidad', 'width' => 200],
+				['data' => 'precUnitario', 'type' => 'numeric', 'placeholder' => 'Prec. Unitario', 'width' => 200],
+
+			],
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+
+		echo json_encode($result);
+	}
+
+	public function guardarCargaMasivaCotizacionProveedorDetalleSub()
+	{
+
+		ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		set_time_limit(0);
+
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$result['msg']['title'] = "Carga masiva de servicio";
+
+		$post = json_decode($this->input->post('data'), true);
+
+		//Eliminar la fila en blanco
+		array_pop($post['HT'][0]);
+
+		foreach ($post['HT'][0] as $tablaHT) {
+
+			if (
+				empty($tablaHT['sucursal']) ||
+				empty($tablaHT['razonSocial']) ||
+				empty($tablaHT['tipoElemento']) ||
+				empty($tablaHT['marca']) ||
+				empty($tablaHT['descripcion']) ||
+				empty($tablaHT['cantidad']) ||
+				empty($tablaHT['precUnitario'])
+			) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
+
+			$dataServicio['insert'][] = [
+				'idCotizacionDetalleProveedorDetalle' => $post['id'],
+				'sucursal' => $tablaHT['sucursal'],
+				'razonSocial' => $tablaHT['razonSocial'],
+				'tipoElemento' => $tablaHT['tipoElemento'],
+				'marca' => $tablaHT['marca'],
+				'descripcion' => $tablaHT['descripcion'],
+				'cantidad' => $tablaHT['cantidad'],
+				'costo' => $tablaHT['precUnitario'],
+				'subTotal' => floatval($tablaHT['cantidad']) * floatval($tablaHT['precUnitario'])
+			];
+		}
+		if(empty($dataServicio['insert'])){
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			goto respuesta;
+		}
+		$insertarServicios = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalleSub', $dataServicio['insert']);
+
+		$cdpds = $this->db->where('estado', 1)->where('idCotizacionDetalleProveedorDetalle', $post['id'])->get('compras.cotizacionDetalleProveedorDetalleSub')->result_array();
+		$montoTotal = 0;
+		foreach ($cdpds as $key => $value) {
+			$montoTotal += floatval($value['subTotal']);
+		};
+
+		$update = $this->db->update('compras.cotizacionDetalleProveedorDetalle', ['costo' => $montoTotal], ['idCotizacionDetalleProveedorDetalle' => $post['id']]);
+
+		if (!$insertarServicios) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$this->db->trans_commit();
+		}
+
+		respuesta:
 		echo json_encode($result);
 	}
 }
