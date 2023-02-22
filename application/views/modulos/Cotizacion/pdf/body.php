@@ -77,6 +77,7 @@
 						<th style="color:black">MARCA</th>
 						<th style="color:black">DETALLES DE SERVICIO</th>
 						<th style="color:black">CANTIDAD</th>
+						<th style="color:black">COSTO</th>
 						<th style="color:black">TOTAL</th>
 					</tr>
 				<?php endif; ?>
@@ -102,26 +103,36 @@
 			<?php endif; ?>
 			<tr style="background-color: #F6FAFD;">
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
-					<td style="text-align: center;"><?= $key + 1 ?></td>
-					<td style="text-align: center;"> - </td>
-					<td style="text-align: center;"> <?= $row['proveedor']; ?></td>
-					<td style="text-align: center;"> <?= $row['item']; ?> </td>
-					<td style="text-align: center;"> <?= $row['itemMarca']; ?> </td>
-					<td style="text-align: left;">
-						<?php if (!empty($row['idCotizacionDetalle'])) :  ?>
-							<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
-								<p> <?= verificarEmpty($value['nombre'], 1) ?> </p>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</td>
-					<td style="text-align: center;">
-						<?php if (!empty($row['idCotizacionDetalle'])) :  ?>
-							<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
-								<p> <?= verificarEmpty($value['cantidad'], 1) ?> </p>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</td>
-					<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+					<?php
+						$cont = 0;
+						$datos = [];
+					?>
+					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
+						<?php $datos[$value['sucursal'].$value['razonSocial'].$value['tipoElemento'].$value['marca']][] = $value; ?>
+					<?php endforeach; ?>
+					<?php foreach ($datos as $key => $value): ?>
+						<?php $cont++ ?>
+						<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $cont; ?></td>
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['sucursal']; ?></td>
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
+							<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
+							<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
+							<td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $row['costo']; ?></td>
+						</tr>
+						<?php foreach ($value as $k => $v): ?>
+							<?php  if ($k != 0) :  ?>
+								<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+									<td style='text-align: center;' rowspan="1"><?= $v['nombre']; ?></td>
+									<td style='text-align: center;' rowspan="1"><?= $v['cantidad']; ?></td>
+									<td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
+								</tr>
+							<?php endif; ?>
+						<?php endforeach; ?>
+					<?php endforeach; ?>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
 					<td style="text-align: center;"><?= $key + 1 ?></td>
@@ -203,6 +214,7 @@
 
 		<? if (!empty($anexos)) { ?>
 			<h3>Anexos</h3>
+			<h3><?= json_encode($anexos); ?></h3>
 			<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
 				<? foreach ($anexos as $anexo) { ?>
 					<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>">

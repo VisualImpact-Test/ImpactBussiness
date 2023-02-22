@@ -103,41 +103,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 row <?= $row['idItemTipo'] != COD_SERVICIO['id'] ? 'd-none' : ''; ?>">
-							<div class="col-sm-2">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">SUCURSAL</h4>
-										<input class="form-control" placeholder="Sucursal" name="sucursal" id="dv_sucursal<?= ($k + 1) ?>" value="<?= verificarEmpty($row['sucursal']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-4">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">RAZON SOCIAL</h4>
-										<input class="form-control" placeholder="Razón Social" name="razonSocial" id="dv_razonSocial<?= ($k + 1) ?>" value="<?= verificarEmpty($row['razonSocial']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">TIPO DE ELEMENTO</h4>
-										<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento" id="dv_tipoElemento<?= ($k + 1) ?>" value="<?= verificarEmpty($row['tipoElemento']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">MARCA</h4>
-										<input class="form-control" placeholder="Marca" name="marca" id="dv_marca<?= ($k + 1) ?>" value="<?= verificarEmpty($row['marca']); ?>">
-									</div>
-								</div>
-							</div>
-						</div>
-
 					</div>
 					<div class="col-md-2">
 						<div class="form-group">

@@ -840,7 +840,7 @@ class Cotizacion extends MY_Controller
 
 			if (count($dataParaVista) == 0) exit();
 
-			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
+			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN', 'codigo' => 'COD: SIG-OPE-FOR-003'], true);
 			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
 			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
 			$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
@@ -1761,7 +1761,7 @@ class Cotizacion extends MY_Controller
 					'cantidad' => $post['cantidadForm'][$k],
 					'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
 					'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
-					'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+					'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : 0,
 					'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 					'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
 					'idItemEstado' => $post['idEstadoItemForm'][$k],
@@ -1782,6 +1782,12 @@ class Cotizacion extends MY_Controller
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
 								'nombre' => $post["nombreSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 								'cantidad' => $post["cantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => $post["costoSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'subtotal' => $post["subtotalSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'sucursal' => $post["sucursalSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'tipoElemento' => $post["tipoElementoSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'marca' => $post["marcaSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+								'razonSocial' => $post["razonSocialSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
 
