@@ -796,6 +796,7 @@ var Cotizacion = {
 			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
+
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
 		});
 		

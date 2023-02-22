@@ -774,6 +774,7 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$idCotizacion = $post['id'];
+
 		if (!empty($idCotizacion)) {
 			$data = [];
 			$dataParaVista = [];
@@ -872,6 +873,68 @@ class Cotizacion extends MY_Controller
 
 		$this->aSessTrack[] = ['idAccion' => 9];
 	}
+
+    public function generarVistaPreviaCotizacionPDF() //VistaPrevia
+    {
+        $data = [];
+        require_once('../mpdf/mpdf.php');
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
+
+        $result = $this->result;
+        $post = json_decode($this->input->post('data'), true);
+
+        //$idCotizacion = $post['id'];
+
+        if (!empty($post)) {
+           // $dataParaVista = $post;
+            $dataParaVista['cabecera']['idCotizacion'] = $post['idCotizacion'];
+            $dataParaVista['cabecera']['cotizacion'] = $post['cotizacion'];
+            $dataParaVista['cabecera']['cuenta'] = $post['cuenta'];
+            $dataParaVista['cabecera']['cuentaCentroCosto'] = $post['cuentaCentroCosto'];
+            $dataParaVista['cabecera']['comentario'] = $post['comentario'];
+            // $dataParaVista['cabecera']['tipoCotizacion'] = $post['tipoCotizacion'];
+            $dataParaVista['cabecera']['fecha'] = $post['fechaCreacion'];
+            $dataParaVista['cabecera']['cotizacionEstado'] = $post['cotizacionEstado'];
+            $dataParaVista['cabecera']['fee'] = $post['fee'];
+            $dataParaVista['cabecera']['igv'] = $post['flagIgv'];
+            $dataParaVista['cabecera']['total'] = $total = $post['total'];
+            $dataParaVista['cabecera']['total_fee'] = $post['total_fee'];
+            $dataParaVista['cabecera']['total_fee_igv'] = $post['total_fee_igv'];
+
+
+            $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
+            $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+            $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
+            $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+
+            require APPPATH . '/vendor/autoload.php';
+            $mpdf = new \Mpdf\Mpdf([
+                'mode' => 'utf-8',
+                'setAutoTopMargin' => 'stretch',
+                'orientation' => 'L',
+                'autoMarginPadding' => 0,
+                'bleedMargin' => 0,
+                'crossMarkMargin' => 0,
+                'cropMarkMargin' => 0,
+                'nonPrintMargin' => 0,
+                'margBuffer' => 0,
+                'collapseBlockMargins' => false,
+            ]);
+            $mpdf->SetDisplayMode('fullpage');
+            $mpdf->SetHTMLHeader($contenido['header']);
+            $mpdf->SetHTMLFooter($contenido['footer']);
+            $mpdf->AddPage();
+            $mpdf->WriteHTML($contenido['style']);
+            $mpdf->WriteHTML($contenido['body']);
+
+            header('Set-Cookie: fileDownload=true; path=/');
+            header('Cache-Control: max-age=60, must-revalidate');
+            $mpdf->Output('Cotizacion.pdf', 'D');
+        }
+
+        $this->aSessTrack[] = ['idAccion' => 9];
+    }
 
 	public function guardarArchivo()
 	{
@@ -1138,6 +1201,7 @@ class Cotizacion extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+            'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
