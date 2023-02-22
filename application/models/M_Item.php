@@ -243,9 +243,10 @@ class M_Item extends MY_Model
 	public function obtenerItemsLogistica()
 	{
 		$sql = "
-			SELECT
-				a.idArticulo AS value
+			SELECT DISTINCT
+				  a.idArticulo AS value
 				, ISNULL(a.codigo + ' - ','') + a.nombre AS label
+				, ISNULL(a.peso,0) as pesoLogistica
 				, um.idUnidadMedida AS idum
 				, um.nombre AS um
 			FROM visualimpact.logistica.articulo a
