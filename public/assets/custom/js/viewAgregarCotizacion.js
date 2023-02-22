@@ -1,5 +1,6 @@
 var Autorizacion = {
 
+
 	frm: 'frm-autorizacion',
 	contentDetalle: 'idContentAutorizaciones',
 	btnFiltrar: '#btn-filtrarAutorizacion',
@@ -1706,6 +1707,16 @@ var Cotizacion = {
 
 		});
 
+		$(document).on('click','.btnPreview', function (){
+
+
+			let data = Fn.formSerializeObject('formRegistroCotizacion');
+			console.log(data)
+			let jsonString = { 'data': JSON.stringify(data)};
+
+
+			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF' ,jsonString);
+		});
 
 
 
@@ -1893,6 +1904,9 @@ var Cotizacion = {
 			minLength: 3,
 		});
 	},
+	preview: function() {
+
+	},
 	alertaParaAgregarItems: function (control, item) {
 		console.log(item);
 
@@ -2020,10 +2034,14 @@ var Cotizacion = {
 
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
+			console.log(b)
 			var btn = [];
+
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			let fn1 = `Fn.showConfirm({ idForm: "formSendToCliente", fn: "Cotizacion.sendToCliente()", content: "¿Esta seguro de enviar esta cotizacion?" });`;
+			let fn2 = '';
 
+			btn[2] = { title: 'Vista Previa', class: 'd-none btn-success btnPreview',fn: fn2 };
 			btn[0] = { title: 'Cerrar', fn: fn };
 			btn[1] = { title: 'Aceptar', fn: fn1 };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: b.data.width });

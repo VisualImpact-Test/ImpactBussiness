@@ -201,4 +201,26 @@ class MY_Model extends CI_Model
 		unlink($file_url);
 		return $nombreUnico . "_WASABI.{$extensionForName}";
 	}
+
+    /**Gestión Confiruación Comprobante**/
+    public function getDatos($tabla,$id){
+        $this->db->select('*');
+        $this->db->from($tabla);
+        $this->db->order_by($id, 'DESC');
+        return $this->db->get()->result_array();
+    }
+
+
+    public function insert($table = '', $values = ''){
+
+        if(empty($table) || empty($values)) return false;
+        return $this->db->insert($table,$values);
+    }
+
+    public function actualizarSimple($tabla, $where, $datos)
+    {
+        $this->db->update($tabla, $datos, $where);
+        return $this->db->affected_rows();
+    }
+
 }
