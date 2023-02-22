@@ -24,8 +24,8 @@
             ?>
                 <tr data-id="<?= $row['idItem'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
-                    <td class="td-center style-icons">
-                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarItem"><i class="fa fa-lg fa-edit" title="Actualizar Item"></i></a>
+                    <td class="td-center">
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarItem"><i class="fa fa-lg fa-edit" title="Actualizar Item"></i></a> <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-fotosItem"><i class="fa fa-lg fa-image" title="Ver fotos de Item"></i></a>
                         <a id="hrefEstado-<?= $row['idItem']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoItem" data-id="<?= $row['idItem']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>

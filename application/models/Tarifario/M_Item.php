@@ -400,4 +400,23 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+	public function obtenerItemsFotos($params = [])
+	{
+		$sql = "
+			SELECT 
+				it.idItemTarifario, ii.idTipoArchivo,ii.nombre_archivo,ii.extension,ii.nombre_inicial
+			FROM compras.itemTarifario it
+			JOIN compras.itemImagen ii ON ii.idItem=it.idItem
+			WHERE 
+				it.estado=1 AND ii.idTipoArchivo=2 AND ii.estado=1 AND it.idItemTarifario={$params['idItemTarifario']}
+		";
+
+		$result = $this->db->query($sql)->result_array();
+
+		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
+		return $result;
+	}
+
 }
