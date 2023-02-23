@@ -20,7 +20,7 @@
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'read-only' : '' ?>">
 	<form class="ui form" role="form" id="formRegistroCotizacion" method="post">
-		<input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
+		<input type="hidden" id="idCotizacion" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
 		<input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
 		<h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
 		<div class="fields">
@@ -33,7 +33,7 @@
 				<div class="ui calendar date-semantic">
 					<div class="ui input left icon">
 						<i class="calendar icon"></i>
-						<input type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
+						<input id="deadLineCompra" type="text" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
 					</div>
 				</div>
 				<input type="hidden" class="date-semantic-value" name="deadline" placeholder="Deadline compras" value="<?= !empty($cotizacion['fechaDeadline']) ? $cotizacion['fechaDeadline'] : '' ?>">
@@ -43,7 +43,7 @@
 				<div class="ui calendar date-semantic">
 					<div class="ui input left icon">
 						<i class="calendar icon"></i>
-						<input type="text" placeholder="Fecha Requerida" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
+						<input id="fechaRequerida" type="text" placeholder="Fecha Requerida" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
 					</div>
 				</div>
 				<input type="hidden" class="date-semantic-value" name="fechaRequerida" placeholder="Fecha de Requerimiento" value="<?= !empty($cotizacion['fechaRequerida']) ? $cotizacion['fechaRequerida'] : '' ?>">
@@ -58,7 +58,7 @@
 		<div class="fields">
 			<div class="five wide field">
 				<div class="ui sub header">Solicitante</div>
-				<select name="solicitante" class="ui fluid search clearable dropdown dropdownSingleAditions read-only" patron="requerido">
+				<select id="solicitante" name="solicitante" class="ui fluid search clearable dropdown dropdownSingleAditions read-only" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $solicitantes, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idSolicitante']) ? $cotizacion['idSolicitante'] : '']); ?>
 				</select>
 			</div>
@@ -132,7 +132,7 @@
 			<div class="eight wide field">
 				<div class="ui sub header">Ver precio PDF</div>
 				<div class="ui basic floating dropdown button simpleDropdown w-100">
-					<input type="hidden" name="flagMostrarPrecio" value="<?= !empty($cotizacion['flagMostrarPrecio']) ? $cotizacion['flagMostrarPrecio'] : 0 ?>" patron="requerido">
+					<input type="hidden" id="flagMostrarPrecio" name="flagMostrarPrecio" value="<?= !empty($cotizacion['flagMostrarPrecio']) ? $cotizacion['flagMostrarPrecio'] : 0 ?>" patron="requerido">
 					<div class="text">Ver Precio PDF</div>
 					<i class="dropdown icon"></i>
 					<div class="menu">
@@ -178,7 +178,7 @@
 
 										<div class="ui right action left icon input w-100">
 											<i class="semaforoForm flag link icon"></i>
-											<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
+											<input class="items" type='text' id="nameItem" name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
 											<input type='hidden' name='nameItemOriginal' patron="requerido" placeholder="Buscar item" value="<?= $row['itemNombre'] ?>">
 											<div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
 												<input type="hidden" class="flagCuentaForm" name="flagCuenta" value="<?= !empty($row['flagCuenta']) ? $row['flagCuenta'] : 0 ?>" patron="requerido">
@@ -214,11 +214,11 @@
 							<div class="fields">
 								<div class="eight wide field">
 									<div class="ui sub header">Características para compras</div>
-									<input name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
+									<input id="caracteristicasCompras" name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
 								</div>
 								<div class="eight wide field">
 									<div class="ui sub header">Características para proveedor</div>
-									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
+									<input id="caracteristicasProveedor" name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
 								</div>
 							</div>
 							<!-- Textiles -->
@@ -291,14 +291,37 @@
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
 											<div class="fields body-sub-item body-sub-item-servicio">
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-
 												<div class="eleven wide field">
-													<div class="ui sub header">Sub item </div>
+													<div class="ui sub header">Sucursal </div>
+													<input class="sucursalSubItem" name="sucursalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Sucursal" value="<?= !empty($dataSubItem['sucursal']) ? $dataSubItem['sucursal'] : '' ?>">
+												</div>
+												<div class="eleven wide field">
+													<div class="ui sub header">Razón Social </div>
+													<input class="razonSocialSubItem" name="razonSocialSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Razón Social" value="<?= !empty($dataSubItem['razonSocial']) ? $dataSubItem['razonSocial'] : '' ?>">
+												</div>
+												<div class="eleven wide field">
+													<div class="ui sub header">Marca </div>
+													<input class="marcaSubItem" name="marcaSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Marca" value="<?= !empty($dataSubItem['marca']) ? $dataSubItem['marca'] : '' ?>">
+												</div>
+												<div class="eleven wide field">
+													<div class="ui sub header">Tipo Elemento </div>
+													<input class="tipoElementoSubItem" name="tipoElementoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tipo Elemento" value="<?= !empty($dataSubItem['tipoElemento']) ? $dataSubItem['tipoElemento'] : '' ?>">
+												</div>
+												<div class="eleven wide field">
+													<div class="ui sub header">Descripción </div>
 													<input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
 												</div>
 												<div class="five wide field">
 													<div class="ui sub header">Cantidad</div>
 													<input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Costo</div>
+													<input class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['costoSubItem']) ? $dataSubItem['costoSubItem'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Sub Total</div>
+													<input class="onlyNumbers subtotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '' ?>">
 												</div>
 											</div>
 									<?
@@ -545,7 +568,7 @@
 							<div class="fields">
 								<div class="sixteen wide field">
 									<div class="ui sub header">Cantidad de Elementos</div>
-									<input class="form-control cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" patron="requerido,numerico" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+									<input class="form-control cantidadForm" id="cantidadForm" type="number" name="cantidadForm" placeholder="0" value="<?= !empty($row['cantidad']) ? $row['cantidad'] : '' ?>" patron="requerido,numerico" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
 								</div>
 							</div>
 							<div class="fields">
@@ -567,7 +590,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">GAP %</div>
 									<div class="ui right labeled input">
-										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($row['gap']) ? $row['gap'] : '' ?>">
+										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= $row['gap'] ?>">
 										<div class="ui basic label">
 											%
 										</div>

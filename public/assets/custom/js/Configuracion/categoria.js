@@ -22,7 +22,6 @@ var Categoria = {
 				, 'url': Categoria.url + ruta
 				, 'contentDetalle': Categoria.contentDetalle
 			};
-
 			Fn.loadReporte_new(config);
 		});
 

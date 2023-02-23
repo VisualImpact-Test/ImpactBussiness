@@ -3,7 +3,7 @@
 		<i class="fas fa-lg fa-bars"></i>
 	</button>
 	<div>
-		<a class="navbar-brand col-md-3" href="javascript:;" page="home">
+		<a class="navbar-brand col-md-3 a-href" href="javascript:;" page="home">
 			<div class="logo-src"></div>
 		</a>
 	</div>

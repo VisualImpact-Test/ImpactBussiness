@@ -12,10 +12,13 @@ class Home extends MY_Controller
 
 	public function index()
 	{
+
 		$estado = '';
 		if (!empty($query)) $estado = $query[0]['estado'];
 
 		$usuario = array();
+        $key = Encriptar::codificar($this->session->userdata('idTipoUsuario'));
+        $config['data']['key'] = $key;
 		$usuario['idUsuario'] = $this->session->userdata('idUsuario');
 		$usuario['usuario'] = $this->session->userdata('apeNom');
 		$usuario['idTipoUsuario'] = $this->session->userdata('idTipoUsuario');
@@ -100,7 +103,6 @@ class Home extends MY_Controller
 	public function get_cotizacion()
 	{
 		$input = json_decode($this->input->post('data'), true);
-
 		$result = [];
 		$data = [];
 		$result['result'] = 0;

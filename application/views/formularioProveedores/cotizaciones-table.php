@@ -103,41 +103,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-12 row <?= $row['idItemTipo'] != COD_SERVICIO['id'] ? 'd-none' : ''; ?>">
-							<div class="col-sm-2">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">SUCURSAL</h4>
-										<input class="form-control" placeholder="Sucursal" name="sucursal" id="dv_sucursal<?= ($k + 1) ?>" value="<?= verificarEmpty($row['sucursal']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-4">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">RAZON SOCIAL</h4>
-										<input class="form-control" placeholder="Razón Social" name="razonSocial" id="dv_razonSocial<?= ($k + 1) ?>" value="<?= verificarEmpty($row['razonSocial']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">TIPO DE ELEMENTO</h4>
-										<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento" id="dv_tipoElemento<?= ($k + 1) ?>" value="<?= verificarEmpty($row['tipoElemento']); ?>">
-									</div>
-								</div>
-							</div>
-							<div class="col-sm-3">
-								<div class="form-group">
-									<div class="form-group">
-										<h4 class="mb-1">MARCA</h4>
-										<input class="form-control" placeholder="Marca" name="marca" id="dv_marca<?= ($k + 1) ?>" value="<?= verificarEmpty($row['marca']); ?>">
-									</div>
-								</div>
-							</div>
-						</div>
-
 					</div>
 					<div class="col-md-2">
 						<div class="form-group">
@@ -176,6 +141,9 @@
 						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
 							<div class="col-md-12 row">
 								<a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a>
+								<button data-form="FormularioProveedor/getFormCargaMasivaCotizacionProveedorDetalleSub" data-save="FormularioProveedor/guardarCargaMasivaCotizacionProveedorDetalleSub" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" type="button" class="btn btn-lg btn-outline-success btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
+									<i class="fa fa-file"></i> Detalle Multiple
+								</button>
 							</div>
 						<?php endif; ?>
 						<div class="col-md-12 pl-0 py-2 row dataDetalle">
@@ -183,6 +151,38 @@
 								<div class="col-md-12 row filaDetalle">
 									<?php $servicio = ($row['idItemTipo'] == COD_SERVICIO['id']); ?>
 									<?php $textil = ($row['tipoItem'] == 'Textiles'); ?>
+									<div class="col-sm-2 <?= $servicio ? '' : 'd-none' ?>">
+										<div class="form-group">
+											<div class="form-group">
+												<h4 class="mb-1">SUCURSAL</h4>
+												<input class="form-control" placeholder="Sucursal" name="sucursal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['sucursal'] ?>">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4 <?= $servicio ? '' : 'd-none' ?>">
+										<div class="form-group">
+											<div class="form-group">
+												<h4 class="mb-1">RAZON SOCIAL</h4>
+												<input class="form-control" placeholder="Razón Social" name="razonSocial[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['razonSocial']; ?>">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
+										<div class="form-group">
+											<div class="form-group">
+												<h4 class="mb-1">TIPO DE ELEMENTO</h4>
+												<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['tipoElemento']; ?>">
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
+										<div class="form-group">
+											<div class="form-group">
+												<h4 class="mb-1">MARCA</h4>
+												<input class="form-control" placeholder="Marca" name="marca[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['marca']; ?>">
+											</div>
+										</div>
+									</div>
 									<div class="col-md-8 pr-0 <?= $servicio ? '' : 'd-none' ?>">
 										<div class="form-group">
 											<h4 class="mb-1">Descripción</h4>
@@ -329,7 +329,7 @@
 					<i class="save icon"></i> <span class="">Guardar</span>
 				</div>
 			<?php endif; ?>
-			<div class="ui small button btnRefreshCotizaciones">
+			<div class="ui small button btnRefreshCotizaciones btn-Consultar">
 				<i class="sync icon"></i>
 				Refresh
 			</div>

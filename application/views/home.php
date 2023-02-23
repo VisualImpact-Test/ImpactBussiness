@@ -10,7 +10,7 @@
 			<div class="card-body p-0">
 				<div class="m-2">
 					<span class="ui gris image label" >
-					Importante: <i class="far fa-clock fa-lg"></i> TimeLine, aqui se mostraran las cotizaciones en proceso actualmente, ademas de agrupadas por la etapa en la que se encuentran. <i class="fas fa-tasks fa-lg"></i> Resumen de <?=strtoupper(strftime("%B del %Y"));?>, se toma en cuenta todas la solicitudes realizadas en el mes.
+					Importante:<i class="far fa-clock fa-lg"></i> TimeLine, aqui se mostraran las cotizaciones en proceso actualmente, ademas de agrupadas por la etapa en la que se encuentran. <i class="fas fa-tasks fa-lg"></i> Resumen de <?=strtoupper(strftime("%B del %Y"));?>, se toma en cuenta todas la solicitudes realizadas en el mes.
 					</span>
 				</div>
 			</div>
@@ -94,8 +94,8 @@
 				</div>
 				<br/><span class="ui gris image label float-right"><a href="javascript:;" class="ver-lista-todo" >Ver Todo</a></span><br/>
 				<div id="dv-lista-solicitudes">
-					
-					<table class="table resposive tb-reporte ">
+                    <input type="hidden" id="key" value="<?=$key ;?>">
+					<table class="table resposive tb-reporte " id="tableHome">
 						<thead>
 							<tr>
 								<th>#</th>
@@ -127,7 +127,7 @@
 									<td class="text-right"><?=number_format($row['total'], 2)?></td>
 									<td class="text-center"><strong><?=$row['dias']?></strong></td>
 									<td class="text-right">
-										<?=$row['icono']?>
+										<button class="btn btn-link btnEtapaActual " data-id="<?=$row['idCotizacion']?>"><?=$row['icono']?></button>
 									</td>
 								</tr>
 							<?}?>

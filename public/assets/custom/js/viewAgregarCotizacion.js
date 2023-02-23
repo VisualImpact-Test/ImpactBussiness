@@ -1,5 +1,6 @@
 var Autorizacion = {
 
+
 	frm: 'frm-autorizacion',
 	contentDetalle: 'idContentAutorizaciones',
 	btnFiltrar: '#btn-filtrarAutorizacion',
@@ -621,12 +622,15 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if (subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
+			if (gapForm.val() == '' && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
 				gapForm.val(GAP_MINIMO);
 			}
 
 			gapForm.keyup();
 
+			// if (tipoItem.val() == COD_SERVICIO.id) {
+			// 	gapForm.attr('readonly', false);
+			// }
 			let precio = Number(precioForm.val());
 			let subTotal = Fn.multiply(cantidad, precio);
 			let costoDistribucion = 0;
@@ -1299,21 +1303,41 @@ var Cotizacion = {
 			$.each(subDetalleServicio, function (k, v) {
 				html += `
 				<div class="fields body-sub-item body-sub-item-servicio">
-					<div class="five wide field">
-						<div class="ui sub header">Sub item </div>
-						<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}">
+					<div class="fields field sixteen">
+						<div class="four wide field">
+							<div class="ui sub header">Sucursal</div>
+							<input class="nombreSubItem" name="newSucursaleSubItemServicio[${idCotizacionDetalle}]" placeholder="Sucursal" value="${v.sucursal}">
+						</div>
+						<div class="four wide field">
+							<div class="ui sub header">Razon Social</div>
+							<input class="nombreSubItem" name="newRazonSocialSubItemServicio[${idCotizacionDetalle}]" placeholder="Razon Social" value="${v.razonSocial}">
+						</div>
+						<div class="four wide field">
+							<div class="ui sub header">Tipo Elemento</div>
+							<input class="nombreSubItem" name="newTipoElementoSubItemServicio[${idCotizacionDetalle}]" placeholder="Tipo Elemento" value="${v.tipoElemento}">
+						</div>
+						<div class="four wide field">
+							<div class="ui sub header">Marca</div>
+							<input class="nombreSubItem" name="newMarcaSubItemServicio[${idCotizacionDetalle}]" placeholder="Marca" value="${v.marca}">
+						</div>
 					</div>
-					<div class="five wide field">
-						<div class="ui sub header">Cantidad</div>
-						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
-					</div>
-					<div class="three wide field">
-						<div class="ui sub header">Costo</div>
-						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
-					</div>
-					<div class="three wide field">
-						<div class="ui sub header">Subtotal</div>
-						<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
+					<div class="fields field sixteen">
+						<div class="five wide field">
+							<div class="ui sub header">Descripción</div>
+							<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}">
+						</div>
+						<div class="five wide field">
+							<div class="ui sub header">Cantidad</div>
+							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
+						</div>
+						<div class="three wide field">
+							<div class="ui sub header">Costo</div>
+							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
+						</div>
+						<div class="three wide field">
+							<div class="ui sub header">Subtotal</div>
+							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
+						</div>
 					</div>
 				</div>
 				`;
@@ -1340,8 +1364,8 @@ var Cotizacion = {
 			$.post(site_url + 'SolicitudCotizacion/cerrarCotizacionProveedor', {
 				idCotizacionDetalleProveedorDetalle: idCotizacionDetalleProveedorDetalle
 			}, function (data) {
-				console.log('cotizacion cerrada ');
-				console.log(data);
+				// console.log('cotizacion cerrada ');
+				// console.log(data);
 			});
 
 			costoForm.val(precio);
@@ -1683,6 +1707,16 @@ var Cotizacion = {
 
 		});
 
+		$(document).on('click','.btnPreview', function (){
+
+
+			let data = Fn.formSerializeObject('formRegistroCotizacion');
+			console.log(data)
+			let jsonString = { 'data': JSON.stringify(data)};
+
+
+			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF' ,jsonString);
+		});
 
 
 
@@ -1870,6 +1904,9 @@ var Cotizacion = {
 			minLength: 3,
 		});
 	},
+	preview: function() {
+
+	},
 	alertaParaAgregarItems: function (control, item) {
 		console.log(item);
 
@@ -1997,10 +2034,14 @@ var Cotizacion = {
 
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
+			console.log(b)
 			var btn = [];
+
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			let fn1 = `Fn.showConfirm({ idForm: "formSendToCliente", fn: "Cotizacion.sendToCliente()", content: "¿Esta seguro de enviar esta cotizacion?" });`;
+			let fn2 = '';
 
+			btn[2] = { title: 'Vista Previa', class: 'd-none btn-success btnPreview',fn: fn2 };
 			btn[0] = { title: 'Cerrar', fn: fn };
 			btn[1] = { title: 'Aceptar', fn: fn1 };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: b.data.width });

@@ -158,6 +158,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['cotizacion']) ? " AND p.nombre LIKE '%" . $params['cotizacion'] . "%'" : "";
 		$filtros .= !empty($params['estadoCotizacion']) ? " AND p.idCotizacionEstado IN (" . $params['estadoCotizacion'] . ")" : "";
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
+		$filtros .= !empty($params['idDiferente']) ? " AND p.idCotizacion !=" . $params['idDiferente'] : '';
 
 		$sql = "
 			DECLARE @hoy DATE = GETDATE();
@@ -887,7 +888,7 @@ class M_Cotizacion extends MY_Model
 			compras.cotizacion c
 			LEFT JOIN compras.cotizacionDetalleArchivos cda ON cda.idCotizacion = c.idCotizacion
 			WHERE
-			1 = 1
+			1 = 1 AND cda.nombre_archivo is not null
 			{$filtros}
 		";
 
@@ -1412,6 +1413,10 @@ class M_Cotizacion extends MY_Model
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+						'sucursal' => !empty($subItem['sucursal']) ? $subItem['sucursal'] : NULL,
+						'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
+						'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
+						'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 					];
 				}
 			}
@@ -1440,6 +1445,10 @@ class M_Cotizacion extends MY_Model
 							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
+							'sucursal' => !empty($subItem['sucursal']) ? $subItem['sucursal'] : NULL,
+							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
+							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
+							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 	
 						];
 					}else{
@@ -1463,6 +1472,10 @@ class M_Cotizacion extends MY_Model
 							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
+							'sucursal' => !empty($subItem['sucursal']) ? $subItem['sucursal'] : NULL,
+							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
+							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
+							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 						];
 					}
 				}
@@ -1854,7 +1867,11 @@ class M_Cotizacion extends MY_Model
 				cds.genero,
 				cds.idProveedorDistribucion,
 				cds.cantidadReal,
-				cds.requiereOrdenCompra
+				cds.requiereOrdenCompra,
+				cds.sucursal,
+				cds.razonSocial,
+				cds.marca,
+				cds.tipoElemento
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

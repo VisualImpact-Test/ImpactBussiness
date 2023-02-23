@@ -47,7 +47,7 @@ class MY_Controller extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->version = '1.1.19';
+		$this->version = '1.1.21';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
@@ -207,6 +207,7 @@ class MY_Controller extends CI_Controller
 
 		$view = isset($config['view']) ? $config['view'] : $this->namespace;
 		$this->load->view($view, $data);
+
 		if (!$single) {
 			$this->load->view('core/08_content_end', array());
 			$this->load->view('core/09_container_end');
