@@ -220,4 +220,30 @@ class Servicio extends MY_Controller
         respuesta:
         echo json_encode($result);
     }
+
+    public function consulta(){
+        $input = $this->input->post();
+        $key = Encriptar::decodificar($input['tipo']);
+        $id = $input['id'];
+        $estado = true;
+        $url = '';
+        switch ($key){
+            case 2:
+                $url = site_url() .'Cotizacion';
+                $this->session->set_tempdata('item', $id, 300);
+                break;
+            case 3:
+                $url = site_url() .'SolicitudCotizacion';
+                $this->session->set_tempdata('item', $id, 300);
+                break;
+            default:
+                $estado = false;
+        }
+        $response = [
+            'url' => $url,
+            'estado' => $estado
+        ];
+
+        echo json_encode($response);
+    }
 }
