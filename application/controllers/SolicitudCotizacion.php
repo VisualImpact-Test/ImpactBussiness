@@ -504,6 +504,10 @@ class SolicitudCotizacion extends MY_Controller
 						'cantidad' => $post["newCantidadSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 						'costo' => $post["newCostoSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 						'subtotal' => $post["newSubtotalSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'sucursal' => $post["newSucursaleSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'razonSocial' => $post["newRazonSocialSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'tipoElemento' => $post["newTipoElementoSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
+						'marca' => $post["newMarcaSubItemServicio[{$post['idCotizacionDetalle'][$k]}]"],
 					]);
 				}
 			}
@@ -516,7 +520,7 @@ class SolicitudCotizacion extends MY_Controller
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
 		$data = [];
 
-		// $estadoEmail = true;
+		$estadoEmail = true;
 		if ($post['tipoRegistro'] == 2) {
 			// Para no enviar Correos en modo prueba.
 			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : MAIL_COORDINADORA_COMPRAS);
@@ -739,7 +743,7 @@ class SolicitudCotizacion extends MY_Controller
 			$urlAcceso = "?doc={$accesoDocumento}&email={$accesoEmail}&date={$fechaActual}&cod={$accesoCodProveedor}";
 
 			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
-			
+
 			$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toComprasProveedor = [];
 			foreach ($usuariosCompras as $usuario) {
