@@ -207,6 +207,7 @@ class MY_Controller extends CI_Controller
 
 		$view = isset($config['view']) ? $config['view'] : $this->namespace;
 		$this->load->view($view, $data);
+
 		if (!$single) {
 			$this->load->view('core/08_content_end', array());
 			$this->load->view('core/09_container_end');

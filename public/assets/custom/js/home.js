@@ -132,6 +132,35 @@ var Home = {
 				$('html, body').animate({ scrollTop: div.offset().top }, 500);
 			});
 		})
+
+		$('#tableHome').on('click','.btnEtapaActual',function (){
+			let tipo = $('#key').val();
+			let id = $(this).data('id');
+			let datos = {
+				'tipo' : tipo,
+				'id' : id
+			}
+			$.ajax({
+				dataType: "json",
+				url: site_url + 'index.php/' + 'Servicio/consulta',
+				data: datos,
+				type: 'post',
+				beforeSend: function () { Fn.showLoading(true) },
+				success: function (response) {
+					if (response.estado){
+						$(location).attr('href',response.url);
+					}
+				},
+				error: function (){
+					Fn.showLoading(false)
+				},
+				complete: function (){
+					Fn.showLoading(false)
+				}
+			});
+
+		});
+
 	},
 
 	mostrar_cartera: function () {

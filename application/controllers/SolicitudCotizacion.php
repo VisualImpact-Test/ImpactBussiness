@@ -52,10 +52,21 @@ class SolicitudCotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+        $dataParaVista = [];
+        if (isset($_SESSION['item'])){
+            $item = $_SESSION['item'];
 
+            $post['id'] = $item;
+            $datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+            unset($post['id']);
+            $post['idDiferente'] = $item;
+            $datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+            $dataParaVista = array_merge($datoDeseado,$datoRestante);
 
-		$dataParaVista = [];
-		$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+        }else{
+            $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+        }
+
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
