@@ -230,7 +230,7 @@
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
 											<div class="fields body-sub-item ">
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-												<div class="three wide field">
+												<div class="one wide field">
 													<div class="ui sub header">Talla</div>
 													<input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
 												</div>
@@ -242,13 +242,18 @@
 													<div class="ui sub header">Color</div>
 													<input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
 												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Genero</div>
+													<input type="hidden" class="generoSubItem " name="generoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Genero" value="<?= !empty($dataSubItem['genero']) ? $dataSubItem['genero'] : '' ?>" readonly>
+													<input class="colorSubItem " placeholder="Genero" value="<?= !empty($dataSubItem['genero']) ? RESULT_GENERO[$dataSubItem['genero']] : '' ?>" readonly>
+												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Cantidad</div>
 													<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Costo</div>
-													<input class="onlyNumbers  costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
+													<input class="onlyNumbers  costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0.00" value="<?= !empty($dataSubItem['costoSubItem']) ? $dataSubItem['costoSubItem'] : '' ?>">
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Subtotal</div>
@@ -590,7 +595,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">GAP %</div>
 									<div class="ui right labeled input">
-										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= $row['gap'] ?>">
+										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= empty($row['gap']) ? '0' : $row['gap']; ?>">
 										<div class="ui basic label">
 											%
 										</div>

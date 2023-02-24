@@ -35,7 +35,9 @@
 <?php $col1 = 0; ?>
 <?php $montoSub = 0; ?>
 <?php foreach ($detalle as $key => $row) : ?>
-	<?php if ($idItemTipo != $row['idItemTipo']) : ?>
+	<?php if ($idItemTipo != $row['idItemTipo']
+		// && (($idItemTipo == COD_ARTICULO['id'] && $row['idItemTipo'] != COD_TEXTILES['id']) || ($idItemTipo == COD_TEXTILES['id'] && $row['idItemTipo'] != COD_ARTICULO['id']))
+		) : ?>
 		<?php if ($key != 0) :  ?>
 			</tbody>
 			<tfoot class="full-widtd">
@@ -89,7 +91,7 @@
 						<th style="color:black; width:15%;">TOTAL</th>
 					</tr>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id']) :  ?>
+				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id']) :  ?>
 					<?php $col1 = 3; ?>
 					<tr style="background-color: #FFE598;">
 						<th style="color:black; width:5%;">ITEM</th>
@@ -104,69 +106,69 @@
 			<tr style="background-color: #F6FAFD;">
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
 					<?php
-						$cont = 0;
-						$datos = [];
+					$cont = 0;
+					$datos = [];
 					?>
 					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
-						<?php $datos[$value['sucursal'].$value['razonSocial'].$value['tipoElemento'].$value['marca']][] = $value; ?>
+						<?php $datos[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']][] = $value; ?>
 					<?php endforeach; ?>
-					<?php foreach ($datos as $key => $value): ?>
+					<?php foreach ($datos as $key => $value) : ?>
 						<?php $cont++ ?>
-						<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $cont; ?></td>
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['sucursal']; ?></td>
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
-							<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
-							<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
-							<!-- <td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
-							<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($row['costo']* ($row['gap'] + 100) / 100); ?></td>
-						</tr>
-						<?php foreach ($value as $k => $v): ?>
-							<?php  if ($k != 0) :  ?>
-								<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-									<td style='text-align: center;' rowspan="1"><?= $v['nombre']; ?></td>
-									<td style='text-align: center;' rowspan="1"><?= $v['cantidad']; ?></td>
-									<!-- <td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
-								</tr>
-							<?php endif; ?>
-						<?php endforeach; ?>
-					<?php endforeach; ?>
-				<?php endif; ?>
-				<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
-					<?php $rowspan = 1; ?>
+			<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $cont; ?></td>
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['sucursal']; ?></td>
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
+				<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
+				<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
+				<!-- <td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
+				<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($row['costo'] * ($row['gap'] + 100) / 100); ?></td>
+			</tr>
+			<?php foreach ($value as $k => $v) : ?>
+				<?php if ($k != 0) :  ?>
 					<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-						<td style="text-align: center;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
-						<td class="bold" style="text-align: left; text-right bold;" rowspan="1"> <?= $row['item']; ?> </td>
-						<td style="text-align: right;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+						<td style='text-align: center;' rowspan="1"><?= $v['nombre']; ?></td>
+						<td style='text-align: center;' rowspan="1"><?= $v['cantidad']; ?></td>
+						<!-- <td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
 					</tr>
-					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $k => $v): ?>
-						<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-							<td style="text-align: left; text-right bold" rowspan="1"> <?= $v['nombre']; ?> </td>
-						</tr>
-					<?php endforeach; ?>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_DISTRIBUCION['id']) :  ?>
-					<td style="text-align: center;"><?= $key + 1 ?></td>
-					<td style="text-align: left;">
-						<?= verificarEmpty($row['item'], 1) ?>
-					</td>
-					<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
-				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id']) :  ?>
-					<td style="text-align: center;"><?= $key + 1 ?></td>
-					<td style="text-align: left;">
-						<?= verificarEmpty($row['item'], 1) ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
-					</td>
-					<td style="text-align: left;">
-						<?= verificarEmpty($row['cantidad'], 1) ?>
-					</td>
-					<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
-				<?php endif; ?>
-				<?php $montoSub += floatval($row['subtotal']); ?>
+			<?php endforeach; ?>
+		<?php endforeach; ?>
+	<?php endif; ?>
+	<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
+		<?php $rowspan = 1; ?>
+		<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+			<td style="text-align: center;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
+			<td class="bold" style="text-align: left; text-right bold;" rowspan="1"> <?= $row['item']; ?> </td>
+			<td style="text-align: right;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+		</tr>
+		<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $k => $v) : ?>
+			<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+				<td style="text-align: left; text-right bold" rowspan="1"> <?= $v['nombre']; ?> </td>
 			</tr>
 		<?php endforeach; ?>
+	<?php endif; ?>
+	<?php if ($idItemTipo == COD_DISTRIBUCION['id']) :  ?>
+		<td style="text-align: center;"><?= $key + 1 ?></td>
+		<td style="text-align: left;">
+			<?= verificarEmpty($row['item'], 1) ?>
+		</td>
+		<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+	<?php endif; ?>
+	<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id']) :  ?>
+		<td style="text-align: center;"><?= $key + 1 ?></td>
+		<td style="text-align: left;">
+			<?= verificarEmpty($row['item'], 1) ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
+		</td>
+		<td style="text-align: left;">
+			<?= verificarEmpty($row['cantidad'], 1) ?>
+		</td>
+		<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+	<?php endif; ?>
+	<?php $montoSub += floatval($row['subtotal']); ?>
+	</tr>
+<?php endforeach; ?>
 			</tbody>
 			<tfoot class="full-widtd">
 				<tr class="height:100px" style="background-color: #FFE598;">

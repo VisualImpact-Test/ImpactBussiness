@@ -27,6 +27,7 @@
                 <tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
                     <td class="td-center"><?= $ix; ?></td>
                     <td class="td-center style-icons">
+                        <? if ($row['estado'] == 1) {?>
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
                         <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_COMPRAS) { ?>
                             <a href="../SolicitudCotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 btn-dp-<?= $row['idCotizacion']; ?> <?= $row['nuevos'] <= 0 ? "disabled" : "" ?>"><i class="fa fa-lg fa-badge-dollar" title="Cotizar items sin precio"></i></a>
@@ -49,6 +50,10 @@
                             <!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-demofechacierre btn-dp-<?= $row['idCotizacion']; ?> <?= $row['nuevos'] <= 0 ? "disabled" : "" ?>"><i class="fa fa-briefcase"></i></a> -->
                         <? } ?>
                         <!---->
+                        <? if ($row['idCotizacionEstado'] == 1|| $row['idCotizacionEstado'] == 2 ||$row['idCotizacionEstado'] == 3) {?>
+                            <button class=" btn btn-outline-danger border-0 btnAnularCotizacion"  data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
+
+                        <?}}?>
                     </td>
                     <td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['cotizacion'], 3); ?></td>
@@ -58,11 +63,17 @@
                     <td class="td-left"><?= verificarEmpty($row['codCotizacion'], 3); ?></td>
                     <!-- <td class="td-left"><?= verificarEmpty($row['cotizacionEstado'], 3); ?></td> -->
                     <td class="text-center style-icons">
+
                         <?php $row['icono'] = str_replace("<a", "<span", $row['icono']); ?>
                         <?php $row['icono'] = str_replace("/a", "/span", $row['icono']); ?>
                         <?php $row['icono'] = str_replace(" tag ", " ", $row['icono']); ?>
-                        <?= $row['icono']; ?>
+                        <? if ($row['estado'] == 0) {?>
+                            <button class="btn btn-link " data-id="<?= $row['idCotizacion'] ?>" ><?= $row['icono']; ?></button>
+                        <?}else{?>
+                            <?= $row['icono']; ?>
+                        <?}?>
                         <!-- <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>"><?= $row['cotizacionEstado']; ?></span> -->
+
                     </td>
                     <!-- <td class="text-center style-icons">
                         <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['idCotizacion']; ?>"><?= $mensajeEstado; ?></span>

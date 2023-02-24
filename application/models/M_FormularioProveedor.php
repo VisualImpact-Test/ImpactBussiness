@@ -238,7 +238,7 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerInformacionCotizacionDetalleSub($params=[])
 	{
 		$this->db
-		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad as cantidadItem')
+		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad as cantidadItem, cds.genero')
 		->from('compras.cotizacionDetalleProveedorDetalleSub cdpds')
 		->join('compras.cotizacionDetalleSub cds', 'cds.idCotizacionDetalleSub = cdpds.idCotizacionDetalleSub', 'left');
 		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';

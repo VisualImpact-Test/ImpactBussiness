@@ -209,4 +209,5 @@ defined("DIAS_MAX_ACCESO") or define("DIAS_MAX_ACCESO", 30);
 defined("URL_WASABI_ITEM_PROPUESTA") or define("URL_WASABI_ITEM_PROPUESTA", 'https://s3.us-central-1.wasabisys.com/impact.business/itemPropuesta/');
 
 // Genero
-defined('LIST_GENERO') or define('LIST_GENERO', [['id' => 1, 'value' => 'Hombre'], ['id' => 2, 'value' => 'Mujer'], ['id' => 3, 'value' => 'Unisex']]);
+defined('LIST_GENERO') or define('LIST_GENERO', [['id' => 1, 'value' => 'VARON'], ['id' => 2, 'value' => 'DAMA'], ['id' => 3, 'value' => 'UNISEX']]);
+defined('RESULT_GENERO') or define('RESULT_GENERO', ['1' => 'VARON', '2'=> 'DAMA', '3' =>'UNISEX']);

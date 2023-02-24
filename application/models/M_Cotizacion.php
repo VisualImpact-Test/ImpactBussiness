@@ -13,6 +13,7 @@ class M_Cotizacion extends MY_Model
 	public function __construct()
 	{
 		parent::__construct();
+
 	}
 
 	public function obtenerCuenta($params = [])
@@ -760,7 +761,6 @@ class M_Cotizacion extends MY_Model
 			1 = 1 and cd.estado=1
 			{$filtros}
 		";
-
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -807,7 +807,8 @@ class M_Cotizacion extends MY_Model
 				cds.idProveedorDistribucion,
 				cds.cantidadReal,
 				cds.requiereOrdenCompra,
-				c.codOrdenCompra
+				c.codOrdenCompra,
+				cds.genero
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2009,4 +2010,23 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+    public function infoHistorialCotizacionDescende($id){
+        $sql = 'select top (1) 
+                    auth.fechaReg as fechaRegistro,
+                    auth.horaReg as horaRegistro,
+                    cot.nombre as nombreCotizacion,
+                    cot.codCotizacion as codigoCotizacion,
+                    cot.fechaEmision as fechaCreacion,
+                    us.nombres as nombreUsuario,
+                    us.apePaterno as apellidoUsuario,
+                    est.nombre as nombreEstado
+                    from ImpactBussiness.compras.cotizacionEstadoHistorico auth
+                    inner join ImpactBussiness.compras.cotizacion cot on auth.idCotizacion = cot.idCotizacion
+                    inner join ImpactBussiness.compras.cotizacionEstado est on cot.idCotizacionEstado= est.idCotizacionEstado
+                    inner join ImpactBussiness.sistema.usuario us on auth.idUsuarioReg = us.idUsuario 
+                    where auth.idCotizacion = 586 order by idCotizacionEstadoHistorico DESC';
+
+        return $this->db->query($sql)->result_array();
+    }
 }

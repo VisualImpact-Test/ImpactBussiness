@@ -14,6 +14,8 @@ class Cotizacion extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'model_formulario_proveedor');
 		$this->load->model('M_login', 'model_login');
 		header('Access-Control-Allow-Origin: *');
+        $this->database = 'ImpactBussiness.compras.cotizacion';
+        $this->databaseAuditoria = 'ImpactBussiness.compras.cotizacionEstadoHistorico';
 	}
 
 	public function index()
@@ -556,7 +558,7 @@ class Cotizacion extends MY_Controller
 
 			foreach ($data['subDetalle'][$k] as $subItem) {
 
-				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']); 
+				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']);
 				$data['insertSubItem'][$k][] = [
 					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
@@ -1703,7 +1705,7 @@ class Cotizacion extends MY_Controller
 		echo json_encode($this->actualizarCotizacion($post));
 	}
 	public function actualizarCotizacion($post)
-	{	
+	{
 
 		$this->db->trans_start();
 		$result = $this->result;
@@ -1729,7 +1731,7 @@ class Cotizacion extends MY_Controller
 			'diasValidez' => $post['diasValidez'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
-		
+
 		if (isset($post['actualizarEstado'])) {
 			if ($post['actualizarEstado'] == '2') {
 				$data['update']['idCotizacionEstado'] = 2;
@@ -1892,15 +1894,15 @@ class Cotizacion extends MY_Controller
 								'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 								'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
 								'genero' => $post["generoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								// 'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
-								// 'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => !empty($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"] : NULL,
+								'subtotal' => !empty($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"] : NULL,
 							]);
-							if (isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
-								$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
-							}
-							if (isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
-								$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
-							}
+							// if (isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
+							// 	$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							// }
+							// if (isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
+							// 	$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							// }
 							break;
 
 						case COD_TARJETAS_VALES['id']:
@@ -1982,7 +1984,7 @@ class Cotizacion extends MY_Controller
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
 							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
 							'costo' => $post["costoSubItem[$k]"],
-							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],	
+							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
 							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
 							'idItem' => $post["itemLogisticaForm[$k]"],
 							'idDistribucionTachado' => $post["chkTachado[$k]"],
@@ -2889,5 +2891,91 @@ class Cotizacion extends MY_Controller
 
 		respuesta:
 		echo json_encode($result);
+	}
+
+    public function anularCotizacion (){
+        $result = $this->result;
+        $json = json_decode($this->input->post('data'));
+        $estadoAnulado = 12;
+        $datos = [
+            'estado' => 0,
+            'idCotizacionEstado' => $estadoAnulado
+        ];
+        $where = "idCotizacion = ".$json;
+        $res = $this->model->actualizarSimple($this->database, $where,$datos);
+        if ($res){
+            $dataAuditoria = [
+                'idCotizacionEstado' => $estadoAnulado,
+                'idCotizacion' => $json,
+                'fechaReg' => date('Y-m-d'),
+                'horaReg' => date('H:i:s'),
+                'idUsuarioReg' => $this->idUsuario,
+                'estado' => 1,
+            ];
+            $this->model->insert($this->databaseAuditoria, $dataAuditoria);
+            $result['result'] = 1;
+            $result['msg']['content'] = getMensajeGestion('anulacionExitosa');
+        }else{
+            $result['result'] = 0;
+            $result['msg']['content'] = getMensajeGestion('anulacionErronea');
+        }
+
+
+        echo json_encode($result);
+    }
+
+    public function anulacionInfo(){
+        $result = $this->result;
+        $idCotizacion = json_decode($this->input->post('data'));
+        $item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
+        if (!empty($item)){
+
+            $dataParaVista['data']  = [
+                'nombreCotizacion' => $item[0]['nombreCotizacion'],
+                'codigoCotizacion' => $item[0]['codigoCotizacion'],
+                'fechaCreacion' => $item[0]['fechaCreacion'],
+                'nombreEstado' => $item[0]['nombreEstado'],
+                'nombreUsuario' => $item[0]['nombreUsuario'],
+                'apellidoUsuario' => $item[0]['apellidoUsuario'],
+                'fechaRegistro' => $item[0]['fechaRegistro'],
+                'horaRegistro' => $item[0]['horaRegistro'],
+            ];
+
+            $html = $this->load->view("modulos/Cotizacion/viewAnulacionInfo", $dataParaVista, true);
+            $result['result'] = 1;
+            $result['msg']['content'] = $html;
+            $result['msg']['title'] = 'Información de anulación';
+
+        }else{
+            $result['msg']['title'] = 'Información de anulación';
+            $result['result'] = 1;
+            $result['msg']['content'] = 'No se ha podido encontrar información sobre esta anulación';
+        }
+
+        echo json_encode($result);
+
+    }
+
+	public function obtenerItemsLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idCentroCosto=$this->input->post('centroCosto');
+
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html.='<option value="'.$row['value'].'" data-option ="'.$row['pesoLogistica'].'">'.$row['label'].'</option>';
+		}
+		echo $html;
+	}
+
+	public function obtenerPesoLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idArticulo=$this->input->post('idArticulo');
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta,$idArticulo)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html=$row['pesoLogistica'];
+		}
+		echo $html;
 	}
 }
