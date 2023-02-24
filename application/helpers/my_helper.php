@@ -875,7 +875,9 @@ function getMensajeGestion($tipoMensaje, $input = [])
 				</div>',
 		'alertaPersonalizada' => createMessage(array("type" => 2, "message" => (!empty($input['message']) ? $input['message'] : ''))),
 		'exitosoPersonalizado' => createMessage(array("type" => 1, "message" => (!empty($input['message']) ? $input['message'] : ''))),
-	];
+        'anulacionExitosa' => createMessage(array("type" => 1, "message" => 'Se ha anulado la cotización correctamente')),
+        'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
+        ];
 
 	return $mensaje[$tipoMensaje];
 }
@@ -1669,6 +1671,11 @@ function getPermisosUsuario($params = [])
 
 
 	return $string;
+}
+
+function horaFormato($fecha){ //24 horas
+    $str = strtotime($fecha);
+    return date('H:i:s', $str);
 }
 
 function getColumnasAdicionales($params)

@@ -527,10 +527,31 @@ var Cotizacion = {
 			let idRepetido2 = parent.find("#distribucion");
 			let buscado2 = idRepetido2.find("#distribucion2");
 			let elementoBuscado2 = buscado2.data('id');
-
+			
 			if (idTipo == COD_DISTRIBUCION.id) {
 				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
+
+				var parametros = {
+					"cuenta" :$('#centroCosto_visible .selected').attr('data-value'),
+					"centroCosto" : $('#centroCosto_oculto .selected').attr('data-value')
+				};
+				$.ajax({
+						data:  parametros,
+						url:   '../Cotizacion/obtenerItemsLogistica',
+						type:  'post',
+						beforeSend: function () {
+								//$("#resultado").html("Procesando, espere por favor...");
+						},
+						success:  function (response) { 
+							var html ='';
+							html+='<select class="ui clearable dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">';
+							html+='<option></option>';
+							html+=response;
+							html+='</select>';
+							$('.SelectitemLogisticaForm').html(html);
+						}
+				});				
 			} else {
 				let codItem = parent.find('.codItems');
 
@@ -572,6 +593,26 @@ var Cotizacion = {
 			let $idCotizacion = $(this).parents('tr').data('id');
 
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
+		});
+
+		$(document).on('change', '.itemLogisticaForm', function (e) {
+			var idArticulo=$(this).val();
+			var parametros = {
+				"cuenta" :$('#centroCosto_visible .selected').attr('data-value'),
+				"idArticulo" : idArticulo
+			};
+			$.ajax({
+					data:  parametros,
+					url:   '../Cotizacion/obtenerPesoLogistica',
+					type:  'post',
+					beforeSend: function () {
+							//$("#resultado").html("Procesando, espere por favor...");
+					},
+					success:  function (response) { 
+						$('#peso').val(response);
+					}
+			});		
+			
 		});
 
 		$(document).on('change', '.flagRedondearForm', function (e) {

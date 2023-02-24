@@ -314,13 +314,11 @@
 							<div class="fields">
 								<div class="eight wide field">
 									<div class="ui sub header">Item Logística</div>
-									<select class="ui clearable dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">
-										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
-									</select>
+									<div class="SelectitemLogisticaForm"></div>
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Peso</div>
-									<input class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+									<input id="peso" class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Cantidad PDV</div>

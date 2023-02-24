@@ -14,6 +14,8 @@ class Cotizacion extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'model_formulario_proveedor');
 		$this->load->model('M_login', 'model_login');
 		header('Access-Control-Allow-Origin: *');
+        $this->database = 'ImpactBussiness.compras.cotizacion';
+        $this->databaseAuditoria = 'ImpactBussiness.compras.cotizacionEstadoHistorico';
 	}
 
 	public function index()
@@ -2889,5 +2891,91 @@ class Cotizacion extends MY_Controller
 
 		respuesta:
 		echo json_encode($result);
+	}
+
+    public function anularCotizacion (){
+        $result = $this->result;
+        $json = json_decode($this->input->post('data'));
+        $estadoAnulado = 12;
+        $datos = [
+            'estado' => 0,
+            'idCotizacionEstado' => $estadoAnulado
+        ];
+        $where = "idCotizacion = ".$json;
+        $res = $this->model->actualizarSimple($this->database, $where,$datos);
+        if ($res){
+            $dataAuditoria = [
+                'idCotizacionEstado' => $estadoAnulado,
+                'idCotizacion' => $json,
+                'fechaReg' => date('Y-m-d'),
+                'horaReg' => date('H:i:s'),
+                'idUsuarioReg' => $this->idUsuario,
+                'estado' => 1,
+            ];
+            $this->model->insert($this->databaseAuditoria, $dataAuditoria);
+            $result['result'] = 1;
+            $result['msg']['content'] = getMensajeGestion('anulacionExitosa');
+        }else{
+            $result['result'] = 0;
+            $result['msg']['content'] = getMensajeGestion('anulacionErronea');
+        }
+
+
+        echo json_encode($result);
+    }
+
+    public function anulacionInfo(){
+        $result = $this->result;
+        $idCotizacion = json_decode($this->input->post('data'));
+        $item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
+        if (!empty($item)){
+
+            $dataParaVista['data']  = [
+                'nombreCotizacion' => $item[0]['nombreCotizacion'],
+                'codigoCotizacion' => $item[0]['codigoCotizacion'],
+                'fechaCreacion' => $item[0]['fechaCreacion'],
+                'nombreEstado' => $item[0]['nombreEstado'],
+                'nombreUsuario' => $item[0]['nombreUsuario'],
+                'apellidoUsuario' => $item[0]['apellidoUsuario'],
+                'fechaRegistro' => $item[0]['fechaRegistro'],
+                'horaRegistro' => $item[0]['horaRegistro'],
+            ];
+
+            $html = $this->load->view("modulos/Cotizacion/viewAnulacionInfo", $dataParaVista, true);
+            $result['result'] = 1;
+            $result['msg']['content'] = $html;
+            $result['msg']['title'] = 'Información de anulación';
+
+        }else{
+            $result['msg']['title'] = 'Información de anulación';
+            $result['result'] = 1;
+            $result['msg']['content'] = 'No se ha podido encontrar información sobre esta anulación';
+        }
+
+        echo json_encode($result);
+
+    }
+
+	public function obtenerItemsLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idCentroCosto=$this->input->post('centroCosto');
+
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html.='<option value="'.$row['value'].'" data-option ="'.$row['pesoLogistica'].'">'.$row['label'].'</option>';
+		}
+		echo $html;
+	}
+
+	public function obtenerPesoLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idArticulo=$this->input->post('idArticulo');
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta,$idArticulo)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html=$row['pesoLogistica'];
+		}
+		echo $html;
 	}
 }
