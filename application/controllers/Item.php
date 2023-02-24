@@ -781,4 +781,24 @@ class Item extends MY_Controller
 		$objWriter->save('php://output');
 		exit;
 	}
+
+
+	public function formularioFotosItem()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = [];
+		$data['idItem']=$post['idItem'];
+
+		$dataParaVista = [];
+		$dataParaVista['itemFotos'] = $this->model->obtenerItemImagenes($data)->result_array();;
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fotos de Items';
+		$result['data']['html'] = $this->load->view("modulos/Item/formularioFotos", $dataParaVista, true);
+	 
+
+		echo json_encode($result);
+	}
 }

@@ -687,4 +687,23 @@ class Item extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
+	public function formularioFotosItemTarifario()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = [];
+		$data['idItemTarifario']=$post['idItemTarifario'];
+
+		$dataParaVista = [];
+		$dataParaVista['itemFotos'] = $this->model->obtenerItemsFotos($data);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fotos de Items';
+		$result['data']['html'] = $this->load->view("modulos/Tarifario/Item/formularioFotos", $dataParaVista, true);
+	 
+
+		echo json_encode($result);
+	}
 }

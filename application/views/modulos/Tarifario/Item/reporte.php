@@ -14,7 +14,7 @@
                 foreach ($dataProveedor as $key => $row) {
 
                 ?>
-                    <th nowrap class="text-center"><?= $row['nproveedor']; ?></th>
+                    <th nowrap class="text-center"><?= (strlen($row['nproveedor'])>16) ? substr($row['nproveedor'],0,16): $row['nproveedor'] ; ?></th>
                 <?
                 } ?>
 
@@ -36,6 +36,7 @@
                     <td nowrap class="td-center style-icons">
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-historialItemTarifario"><i class="fa fa-lg fa-history" title="Historial de Tarifario"></i></a>
                         <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarItemTarifario"><i class="fa fa-lg fa-edit" title="Actualizar Tarifario de Item"></i></a>
+                        <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-fotosItemTarifario"><i class="fa fa-lg fa-image" title="Ver fotos de Tarifario de Item"></i></a>
                         <a id="hrefEstado-<?= $row['idItemTarifario']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-estadoItem" data-id="<?= $row['idItem']; ?>" data-estado="<?= $row['estado']; ?>">
                             <i class="fal fa-lg <?= $toggle ?>"></i>
                         </a>

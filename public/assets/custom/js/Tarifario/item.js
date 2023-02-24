@@ -82,6 +82,31 @@ var Item = {
 			});
 		});
 
+		$(document).on('click', '.btn-fotosItemTarifario', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			console.log(id);
+			let data = { 'idItemTarifario': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Item.url + 'formularioFotosItemTarifario', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				if (a.data.existe == 0) {
+					Item.items = a.data.items;
+				}
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
+
+			});
+		});
+
 		$(document).on('click', '.btn-historialItemTarifario', function () {
 			++modalId;
 
