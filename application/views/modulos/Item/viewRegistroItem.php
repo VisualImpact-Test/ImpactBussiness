@@ -118,24 +118,27 @@
                         <div class="fields">
                             <div class="sixteen wide field">
                                 <div class="ui sub header">Marca</div>
-                                <select class="form-control" id="marca" name="marca" patron="requerido">
-                                   <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase']); ?>
+
+                                <select name="marca" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase']); ?>
                                 </select>
                             </div>
                         </div>
                         <div class="fields">
                             <div class="sixteen wide field">
                                 <div class="ui sub header">Categoria</div>
-                                <select class="form-control" id="categoria" name="categoria" patron="requerido">
-                                   <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase']); ?>
+
+                                <select name="categoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase']); ?>
                                 </select>
                             </div>
                         </div>
                         <div class="fields">
                         <div class="sixteen wide field">
                                 <div class="ui sub header">Subcategoria</div>
-                                <select class="form-control" name="subcategoria" id="subcategoria" patron="requerido">
-                                   <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $subcategoriaItem, 'class' => 'text-titlecase']); ?>
+
+                                <select name="subcategoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $subcategoriaItem, 'class' => 'text-titlecase']); ?>
                                 </select>
                             </div>
                         </div>
@@ -188,3 +191,7 @@
 
 <input id="itemsServicio" type="hidden" value='<?= json_encode($informacionItem) ?>'>
 <textarea class="d-none" id="itemsLogistica"><?= json_encode($itemsLogistica) ?></textarea>
+
+<input id="marcas" type="hidden" value='<?= json_encode($marcaItem) ?>'>
+<input id="categorias" type="hidden" value='<?= json_encode($categoriaItem) ?>'>
+<input id="subcategorias" type="hidden" value='<?= json_encode($subcategoriaItem) ?>'>
