@@ -209,6 +209,12 @@
 											<input class="form-control" value="<?= $value['color'] ?>" readonly>
 										</div>
 									</div>
+									<div class="col-md-2 <?= $textil ? '' : 'd-none' ?>">
+										<div class="form-group">
+											<h4 class="mb-1">Genero</h4>
+											<input class="form-control" value="<?= RESULT_GENERO[$value['genero']] ?>" readonly>
+										</div>
+									</div>
 									<div class="col-md-1 px-0">
 										<div class="form-group">
 											<h4 class="mb-1">Cant</h4>

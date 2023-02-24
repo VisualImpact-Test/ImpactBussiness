@@ -49,7 +49,7 @@
                             </div>
                         </div>
                         <!-- Textiles -->
-                        <div class="fields d-none campos_dinamicos div-feature-<?= COD_TEXTILES['id'] ?>">
+                        <!-- <div class="fields d-none campos_dinamicos div-feature-<?= COD_TEXTILES['id'] ?>">
                             <div class="five wide field">
                                 <div class="ui sub header">Talla</div>
                                 <input class="form-control" id="talla" name="talla">
@@ -62,15 +62,15 @@
                                 <div class="ui sub header">Color</div>
                                 <input class="form-control" id="color" name="color">
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Monto S/ -->
-                        <div class="fields d-none campos_dinamicos div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+                        <!-- <div class="fields d-none campos_dinamicos div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
                             <div class="sixteen wide field">
                                 <div class="ui sub header">Monto S/</div>
                                 <input class="form-control" id="monto" name="monto">
                             </div>
-                        </div>
+                        </div> -->
 
                         <div class="fields">
 

@@ -556,7 +556,7 @@ class Cotizacion extends MY_Controller
 
 			foreach ($data['subDetalle'][$k] as $subItem) {
 
-				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']); 
+				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']);
 				$data['insertSubItem'][$k][] = [
 					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
@@ -1703,7 +1703,7 @@ class Cotizacion extends MY_Controller
 		echo json_encode($this->actualizarCotizacion($post));
 	}
 	public function actualizarCotizacion($post)
-	{	
+	{
 
 		$this->db->trans_start();
 		$result = $this->result;
@@ -1729,7 +1729,7 @@ class Cotizacion extends MY_Controller
 			'diasValidez' => $post['diasValidez'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
-		
+
 		if (isset($post['actualizarEstado'])) {
 			if ($post['actualizarEstado'] == '2') {
 				$data['update']['idCotizacionEstado'] = 2;
@@ -1892,15 +1892,15 @@ class Cotizacion extends MY_Controller
 								'color' => $post["colorSubItem[{$post['idCotizacionDetalle'][$k]}]"],
 								'cantidad' => $post["cantidadTextil[{$post['idCotizacionDetalle'][$k]}]"],
 								'genero' => $post["generoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								// 'costo' => $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"],
-								// 'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => !empty($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"] : NULL,
+								'subtotal' => !empty($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"] : NULL,
 							]);
-							if (isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
-								$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
-							}
-							if (isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
-								$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
-							}
+							// if (isset($post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
+							// 	$data['subDetalle'][$k]['costo'] = $post["costoTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							// }
+							// if (isset($post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"])) {
+							// 	$data['subDetalle'][$k]['subtotal'] = $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"];
+							// }
 							break;
 
 						case COD_TARJETAS_VALES['id']:
@@ -1982,7 +1982,7 @@ class Cotizacion extends MY_Controller
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
 							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
 							'costo' => $post["costoSubItem[$k]"],
-							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],	
+							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
 							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
 							'idItem' => $post["itemLogisticaForm[$k]"],
 							'idDistribucionTachado' => $post["chkTachado[$k]"],

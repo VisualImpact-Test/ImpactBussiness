@@ -2034,7 +2034,6 @@ var Cotizacion = {
 
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
-			console.log(b)
 			var btn = [];
 
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';

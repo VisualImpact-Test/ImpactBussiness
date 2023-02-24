@@ -760,7 +760,6 @@ class M_Cotizacion extends MY_Model
 			1 = 1 and cd.estado=1
 			{$filtros}
 		";
-
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -807,7 +806,8 @@ class M_Cotizacion extends MY_Model
 				cds.idProveedorDistribucion,
 				cds.cantidadReal,
 				cds.requiereOrdenCompra,
-				c.codOrdenCompra
+				c.codOrdenCompra,
+				cds.genero
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

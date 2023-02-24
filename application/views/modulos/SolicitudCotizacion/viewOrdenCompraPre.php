@@ -136,11 +136,11 @@
                                 <div class="fields">
                                     <div class="eight wide field">
                                         <div class="ui sub header">Item</div>
-                                        <input class="items" type='text' name='nameItem[<?= $k ?>]' value="<?= $rowDetalle['nameItem'] ?>" patron="requerido" placeholder="" readonly patron="requerido">
+                                        <input class="items" type='text' name='nameItem[<?= $k ?>]' value="<?= $rowDetalle['nameItem'] ?>" patron="requerido" placeholder="" readonly>
                                     </div>
                                     <div class="eight wide field">
                                         <div class="ui sub header">Item</div>
-                                        <input class="cc" type='text' name='caracteristicasItem[<?= $k ?>]' value="<?= $rowDetalle['caracteristicasItem'] ?>" patron="requerido" placeholder="" readonly patron="requerido">
+                                        <input class="cc" type='text' name='caracteristicasItem[<?= $k ?>]' value="<?= $rowDetalle['caracteristicasItem'] ?>" placeholder="" readonly>
                                     </div>
                                 </div>
                                 <!-- Textiles -->

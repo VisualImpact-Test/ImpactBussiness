@@ -285,7 +285,7 @@
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
 											<div class="fields body-sub-item ">
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-												<div class="three wide field">
+												<div class="one wide field">
 													<div class="ui sub header">Talla</div>
 													<input readonly="readonly" class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
 												</div>
@@ -301,11 +301,17 @@
 													<div class="ui sub header">Cantidad</div>
 													<input readonly="readonly" class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Genero</div>
+													<select class="ui search dropdown simpleDropdown" name="generoSubItem[<?= $row['idCotizacionDetalle'] ?>]">
+														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => LIST_GENERO, 'class' => 'text-titlecase' , 'selected' => $dataSubItem['genero']]); ?>
+													</select>
+												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Costo</div>
 													<input patron="requerido" readonly="readonly" class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? moneda($dataSubItem['costo']) : '' ?>">
 												</div>
-												<div class="three wide field">
+												<div class="two wide field">
 													<div class="ui sub header">Subtotal</div>
 													<input patron="requerido" readonly="readonly" class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? moneda($dataSubItem['subtotal']) : '' ?>">
 												</div>
