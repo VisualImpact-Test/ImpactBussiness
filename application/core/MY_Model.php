@@ -202,7 +202,7 @@ class MY_Model extends CI_Model
 		return $nombreUnico . "_WASABI.{$extensionForName}";
 	}
 
-    /**Gestión Confiruación Comprobante**/
+    /**Gestión Configuración Comprobante**/
     public function getDatos($tabla,$id){
         $this->db->select('*');
         $this->db->from($tabla);
@@ -222,5 +222,7 @@ class MY_Model extends CI_Model
         $this->db->update($tabla, $datos, $where);
         return $this->db->affected_rows();
     }
+
+
 
 }
