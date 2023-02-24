@@ -2890,4 +2890,27 @@ class Cotizacion extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
+	public function obtenerItemsLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idCentroCosto=$this->input->post('centroCosto');
+
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html.='<option value="'.$row['value'].'" data-option ="'.$row['pesoLogistica'].'">'.$row['label'].'</option>';
+		}
+		echo $html;
+	}
+
+	public function obtenerPesoLogistica(){
+		$idCuenta=$this->input->post('cuenta');
+		$idArticulo=$this->input->post('idArticulo');
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta,$idArticulo)->result_array();
+		$html='';
+		foreach($data as $row){
+			$html=$row['pesoLogistica'];
+		}
+		echo $html;
+	}
 }
