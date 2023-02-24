@@ -138,6 +138,7 @@ var Cotizacion = {
 
 	load: function () {
 
+
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarCotizacion').click();
 		});
@@ -799,12 +800,48 @@ var Cotizacion = {
 
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
 		});
-		
-	},
 
+		$(document).on('click','.btnAnularCotizacion', function (){
+			let id = $(this).data('id');
+			Fn.showConfirm({ fn:"Cotizacion.anularCotizacion("+id+")",content:" ¿Está seguro de anular esta cotización?" });
+		});
+		$(document).on('click','.btnI', function (){
+			let id = $(this).data('id');
+			var jsonString = { 'data': JSON.stringify(id) };
+			var config = { url:  Cotizacion.url + 'anulacionInfo', data: jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				if (a.result === 2) return false;
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+				if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarCotizacion").click();';
+
+				var btn = [];
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			});
+
+
+		});
+
+	},
+	anularCotizacion: function (id){
+		var jsonString = { 'data': JSON.stringify(id) };
+		var config = { url:  Cotizacion.url + 'anularCotizacion', data: jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result === 2) return false;
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarCotizacion").click();';
+
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+		});
+	},
 	actualizarCotizacion: function () {
 		++modalId;
-
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionCotizacions')) };
 		let config = { 'url': Cotizacion.url + 'actualizarCotizacion2', 'data': jsonString };
 
