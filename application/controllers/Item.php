@@ -208,11 +208,104 @@ class Item extends MY_Controller
 		$post['nombre'] = checkAndConvertToArray($post['nombre']);
 		$post['caracteristicas'] = checkAndConvertToArray($post['caracteristicas']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
-		$post['marca'] = checkAndConvertToArray($post['marca']);
-		$post['categoria'] = checkAndConvertToArray($post['categoria']);
-		$post['subcategoria'] = checkAndConvertToArray($post['subcategoria']);
+		//$post['marca'] = checkAndConvertToArray($post['marca']);
+		//$post['categoria'] = checkAndConvertToArray($post['categoria']);
+		//$post['subcategoria'] = checkAndConvertToArray($post['subcategoria']);
 		$post['idItemLogistica'] = checkAndConvertToArray($post['idItemLogistica']);
 		$post['unidadMedida'] = checkAndConvertToArray($post['unidadMedida']);
+
+
+
+
+		$idMarca = NULL;
+		if (!is_numeric($post['marca'])) {
+			$whereMarca = [];
+			$whereMarca[] = [
+				'estado' => 1
+			];
+			$tablaMarcas = 'compras.itemMarca';
+
+			$Marcas = $this->model->getWhereJoinMultiple($tablaMarcas, $whereMarca)->result_array();
+			$dataMarca = [];
+			foreach ($Marcas as $Marca) {
+				$dataMarca[$Marca['nombre']] = $Marca['idItemMarca'];
+			}
+			if (empty($dataMarca[$post['marca']])) {
+				$insertMarca = [
+					'nombre' => $post['marca'],
+					'estado' => true,
+				];
+				$insertMarca = $this->model->insertar(['tabla' => $tablaMarcas, 'insert' => $insertMarca]);
+				$idMarca = $insertMarca['id'];
+			} else {
+				$idMarca = $dataMarca[$post['marca']];
+			}
+		} else {
+			$idMarca = $post['marca'];
+		}
+
+
+
+
+		$idItemCategoria = NULL;
+		if (!is_numeric($post['categoria'])) {
+			$whereCategoria = [];
+			$whereCategoria[] = [
+				'estado' => 1
+			];
+			$tablaCategorias = 'compras.itemCategoria';
+
+			$Categorias = $this->model->getWhereJoinMultiple($tablaCategorias, $whereCategoria)->result_array();
+			$dataCategoria = [];
+			foreach ($Categorias as $Categoria) {
+				$dataCategoria[$Categoria['nombre']] = $Categoria['idItemCategoria'];
+			}
+			
+			if (empty($dataCategoria[$post['categoria']])) {
+				$insertCategoria = [
+					'nombre' => $post['categoria'],
+					'estado' => true,
+				];
+				$insertCategoria = $this->model->insertar(['tabla' => $tablaCategorias, 'insert' => $insertCategoria]);
+				$idItemCategoria = $insertCategoria['id'];
+			} else {
+				$idItemCategoria = $dataCategoria[$post['categoria']];
+			}
+		} else {
+			$idItemCategoria = $post['categoria'];
+		}
+
+
+		$idItemSubcategoria = NULL;
+		if (!is_numeric($post['subcategoria'])) {
+			$whereSubcategoria = [];
+			$whereSubcategoria[] = [
+				'estado' => 1
+			];
+			$tablaSubcategorias = 'compras.itemSubCategoria';
+
+			$subcategorias = $this->model->getWhereJoinMultiple($tablaSubcategorias, $whereSubcategoria)->result_array();
+			$dataSubcategoria = [];
+			foreach ($subcategorias as $subcategoria) {
+				$dataSubcategoria[$subcategoria['nombre']] = $subcategoria['idItemSubCategoria'];
+			}
+			if (empty($dataSubcategoria[$post['subcategoria']])) {
+				$insertSubCategoria = [
+					'nombre' => $post['subcategoria'],
+					'estado' => true,
+				];
+				$insertSubCategoria = $this->model->insertar(['tabla' => $tablaSubcategorias, 'insert' => $insertSubCategoria]);
+				$idItemSubcategoria = $insertSubCategoria['id'];
+			} else {
+				$idItemSubcategoria = $dataSubcategoria[$post['subcategoria']];
+			}
+		} else {
+			$idItemSubcategoria = $post['subcategoria'];
+		}
+
+		
+
+
 
 		$data = [];
 
@@ -223,9 +316,9 @@ class Item extends MY_Controller
 				'nombre' => trim($nombre),
 				'caracteristicas' => $post['caracteristicas'][$k],
 				'idItemTipo' => $post['tipo'][$k],
-				'idItemMarca' => $post['marca'][$k],
-				'idItemCategoria' => $post['categoria'][$k],
-				'idItemSubCategoria' => $post['subcategoria'][$k],
+				'idItemMarca' => $idMarca,
+				'idItemCategoria' => $idItemCategoria,
+				'idItemSubCategoria' => $idItemSubcategoria,
 				'idItemLogistica' => $post['idItemLogistica'][$k],
 				'idUnidadMedida' => $post['unidadMedida'][$k]
 			];
