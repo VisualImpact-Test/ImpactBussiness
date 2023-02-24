@@ -14,7 +14,7 @@
                 foreach ($dataProveedor as $key => $row) {
 
                 ?>
-                    <th nowrap class="text-center"><?= $row['nproveedor']; ?></th>
+                    <th nowrap class="text-center"><?= (strlen($row['nproveedor'])>16) ? substr($row['nproveedor'],0,16): $row['nproveedor'] ; ?></th>
                 <?
                 } ?>
 
