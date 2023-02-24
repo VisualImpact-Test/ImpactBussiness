@@ -315,6 +315,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">Item Logística</div>
 									<div class="SelectitemLogisticaForm"></div>
+									
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Peso</div>

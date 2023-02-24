@@ -31,6 +31,7 @@ class Cotizacion extends MY_Controller
 		$config['js']['script'] = array(
 			// 'assets/libs/datatables/responsive.bootstrap4.min',
 			// 'assets/custom/js/core/datatables-defaults',
+			'assets/libs/select2/4.0.13/js/select2',
 			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',

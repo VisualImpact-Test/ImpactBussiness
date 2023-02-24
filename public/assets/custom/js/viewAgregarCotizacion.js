@@ -545,13 +545,15 @@ var Cotizacion = {
 						},
 						success:  function (response) { 
 							var html ='';
-							html+='<select class="ui clearable dropdown simpleDropdown itemLogisticaForm" name="itemLogisticaForm[0]">';
+							html+='<select class="itemsLogisticaBuscador  itemLogisticaForm" name="itemLogisticaForm[0]">';
 							html+='<option></option>';
 							html+=response;
 							html+='</select>';
 							$('.SelectitemLogisticaForm').html(html);
+							$(".itemsLogisticaBuscador").select2();
 						}
-				});				
+				});		
+				
 			} else {
 				let codItem = parent.find('.codItems');
 
