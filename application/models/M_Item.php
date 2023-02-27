@@ -419,4 +419,22 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
+	
+	public function obtenerItemsCuenta($idCuenta,$idArticulo=null){
+		$filtro='';
+		if(!empty($idArticulo)){ $filtro ='  AND  a.idArticulo='.$idArticulo; }
+		$sql ="
+		SELECT DISTINCT
+				a.idArticulo AS value
+			, ISNULL(a.codigo + ' - ','') + a.nombre AS label
+			, ISNULL(a.peso,0) as pesoLogistica
+		FROM visualimpact.logistica.articulo a
+		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
+		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
+		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
+		WHERE mc.idCuenta='".$idCuenta."'  $filtro
+		";
+		return $query = $this->db->query($sql);
+
+	} 
 }
