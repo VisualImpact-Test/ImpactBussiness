@@ -43,6 +43,10 @@ var SolicitudCotizacion = {
 
 		$(document).on('click', '.btn-preview-orden-compra', function () {
 			++modalId;
+			if (!$('.checkItem').is(' :checked')) {
+				$('.chk-item').transition('glow');
+				return false;
+			}
 
 			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenCompra')) };
 			let config = { 'url': SolicitudCotizacion.url + 'formPreviewOrdenCompra', 'data': jsonString };
@@ -54,12 +58,15 @@ var SolicitudCotizacion = {
 				Fn.loadSemanticFunctions();
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.visualizarOrdenCompraPdf()", content: "Este reporte es solo una vista previa, no se actualizara la información hasta aceptar la operación." });';
-
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				btn[1] = { title: 'Vizualizar OC', fn: fn[2] };
-				btn[2] = { title: 'Aceptar', fn: fn[1] };
+				if (a.result == 1) {
+					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.visualizarOrdenCompraPdf()", content: "Este reporte es solo una vista previa, no se actualizara la información hasta aceptar la operación." });';
+					btn[1] = { title: 'Vizualizar OC', fn: fn[1] };
+					
+					fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
+					btn[2] = { title: 'Aceptar', fn: fn[2] };
+				}
+
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
@@ -1303,7 +1310,6 @@ var Cotizacion = {
 			if (!$('.checkItem').is(' :checked')) {
 				$('.chk-item').transition('glow');
 				return false;
-
 			}
 
 			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };

@@ -1437,15 +1437,19 @@ class SolicitudCotizacion extends MY_Controller
 			'costoForm' => $post['costoForm'],
 			'gapForm' => $post['gapForm'],
 			'precioForm' => $post['precioForm'],
-			'subtotalForm' => number_format($post['cantidadForm'] * $post['costoForm'], 2), //$post['subtotalForm'],
+			'subtotalForm' => empty($post['subtotalForm']) ? number_format($post['cantidadForm'] * $post['costoForm'], 2) : $post['subtotalForm'],
 			'ocDelCliente' => $post['ocDelCliente'],
 			'caracteristicasItem' => $post['caracteristicasItem'],
 		]);
 
 
 
-		foreach ($dataParaVista['detalle'] as $row) {
-
+		$provCompare = [];
+		foreach ($dataParaVista['detalle'] as $dd => $row) {
+			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
+			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;
+			$provCompare[$row['idProveedorForm']] = $row['idProveedorForm'];
+			
 			if (!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])) {
 
 				$k = $row['idCotizacionDetalle'];
@@ -1502,6 +1506,13 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['dataOrdenDet'][$row['idProveedorForm']][] = $row;
 		}
 
+		if(count($provCompare) > 1){
+			$result['result'] = 2;
+			$result['data']['html'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Se indicaron distintos proveedores en la selección']);
+			$result['msg']['title'] = 'OC Vista previa';
+			$result['data']['width'] = '30%';
+			goto resultado;
+		}
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 		$html = getMensajeGestion('noRegistros');
 
@@ -1515,6 +1526,7 @@ class SolicitudCotizacion extends MY_Controller
 		$result['msg']['title'] = 'OC Vista previa';
 		$result['data']['width'] = '95%';
 
+		resultado:
 		echo json_encode($result);
 	}
 
