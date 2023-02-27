@@ -1580,6 +1580,9 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
+		foreach ($dataParaVista['detalle'] as $k => $v) {
+			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
 
 		$ids = [];
 		foreach ($ordenCompra as $v) {

@@ -57,7 +57,7 @@
 			</tr>
 		</thead>
 		<tbody style="border:1px solid black;">
-			<?php $total = 0;?>
+			<?php $total = 0; ?>
 			<? foreach ($detalle as $k => $row) {
 				$row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo'];
 				$total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']);
@@ -86,7 +86,7 @@
 						<td></td>
 					</tr>
 				<?php endif; ?>
-				<?php if (count($subDetalleItem[$row['idItem']])) :  ?>
+				<?php if (count($subDetalleItem[$row['idItem']]) && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
 					<?php $dataTextil = []; ?>
 					<?php $dataTalla = []; ?>
 					<?php $dataGenero = []; ?>
@@ -99,22 +99,22 @@
 					<tr class="subDet">
 						<td colspan="2" class="bn"></td>
 						<td class="bn" style="text-align: right;">Talla</td>
-						<?php  if (count($dataGenero) == 1) :  ?>
+						<?php if (count($dataGenero) == 1) :  ?>
 							<td colspan="3" class="bn" style="text-align: center;">Cantidad</td>
-						<?php else: ?>
-							<?php foreach ($dataGenero as $kg => $vg): ?>
+						<?php else : ?>
+							<?php foreach ($dataGenero as $kg => $vg) : ?>
 								<td class="bn" style="text-align: center;"><?= $vg; ?></td>
 							<?php endforeach; ?>
-							<?php  if (3 - count($dataGenero) > 0) :  ?>
+							<?php if (3 - count($dataGenero) > 0) :  ?>
 								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
 							<?php endif; ?>
-						<?php endif; ?>		
+						<?php endif; ?>
 						<td class="bn"></td>
-						<td class="bn"></td>			
+						<td class="bn"></td>
 					</tr>
 
 					<?php foreach ($dataTalla as $kt => $vt) : ?>
-						<tr class="subDet" >
+						<tr class="subDet">
 							<td colspan="2" class="bn"></td>
 							<td class="bn" style="text-align: right;"><?= $vt; ?></td>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>

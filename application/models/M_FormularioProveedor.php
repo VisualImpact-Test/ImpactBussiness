@@ -423,7 +423,7 @@ class M_FormularioProveedor extends MY_Model
 				md.valor valorMoneda,
 				mp.nombre metodoPago,
 				uf.nombre_archivo,
-				cp.idCotizacion,
+				cp.idCotizacionDetalle,
 				cp.cantidad,
 				cp.nombre,
 				cp.costo,
