@@ -64,6 +64,14 @@
     .d-none{
         display: none;
     }
+    tr.subDet {
+        border: 1px solid #000;
+        border-bottom: none;
+        border-top: none;
+    }
+    .bn{
+        border-style: none;
+    }
     
     
 </style>

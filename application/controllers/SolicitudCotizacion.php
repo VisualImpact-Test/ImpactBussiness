@@ -1236,6 +1236,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		// Data para detalle
 		$detalleCotizacion = $this->model->obternerCotizacionDetalle(['idCotizacion' => $post['idCotizacion'], 'idProveedor' => $post['idProveedor']])->result_array();
+		$dataSub = [];
 		foreach ($detalleCotizacion as $key => $value) {
 			$detalleCotizacion[$key]['cotizacionSubTotal'] = $value['subtotal'];
 			$detalleCotizacion[$key]['subTotalOrdenCompra'] = $value['subtotal'];
@@ -1269,8 +1270,12 @@ class SolicitudCotizacion extends MY_Controller
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
+		foreach ($detalleCotizacion as $k => $v) {
+			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
+		
 		$dataParaVista['detalle'] = $detalleCotizacion;
-
+		
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($post['idCotizacion']);
 		$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle($post['idCotizacion']);
@@ -1301,7 +1306,6 @@ class SolicitudCotizacion extends MY_Controller
 
 		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 		$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra_vistaPrevia", $dataParaVista, true);
-
 		$mpdf->SetHTMLHeader($contenido['header']);
 		$mpdf->SetHTMLFooter($contenido['footer']);
 		$mpdf->AddPage();

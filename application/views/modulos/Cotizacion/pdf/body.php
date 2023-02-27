@@ -196,19 +196,19 @@
 				<td></td>			
 			</tr>
 			<?php foreach ($dataTalla as $kt => $vt): ?>
-					<tr>
-						<td></td>
-						<td  style="text-align: right;"><?= $vt; ?></td>
-						<?php foreach ($dataGenero as $kg => $vg): ?>
-							<td  style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
-						<?php endforeach; ?>
-						<?php  if (3 - count($dataGenero) > 0) :  ?>
-							<td colspan="<?= 3 - count($dataGenero); ?>"></td>
-						<?php endif; ?>
-						<td></td>
-						<td></td>
-					</tr>
-				<?php endforeach; ?>
+				<tr>
+					<td></td>
+					<td  style="text-align: right;"><?= $vt; ?></td>
+					<?php foreach ($dataGenero as $kg => $vg): ?>
+						<td  style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
+					<?php endforeach; ?>
+					<?php  if (3 - count($dataGenero) > 0) :  ?>
+						<td colspan="<?= 3 - count($dataGenero); ?>"></td>
+					<?php endif; ?>
+					<td></td>
+					<td></td>
+				</tr>
+			<?php endforeach; ?>
 		<?php endif; ?>
 	<?php endif; ?>
 	<?php $montoSub += floatval($row['subtotal']); ?>
