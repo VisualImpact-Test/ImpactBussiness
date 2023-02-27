@@ -66,6 +66,25 @@ var Fn = {
 
 	showModal: function (config) {
 		var modal = '';
+		if (typeof config.escape !=='undefined' && config.escape){
+			var escapeKeyPressed = false;
+			$(document).keydown(function(event) {
+				if (event.which == 27) {
+					if (escapeKeyPressed) {
+						$('#modal-page-' + config.id).next('.modal-backdrop').remove();
+						$('#modal-page-' + config.id).remove();
+						$("#lk-modal").attr("data-target", "");
+						Fn.modalVisible();
+						escapeKeyPressed = false;
+					} else {
+						escapeKeyPressed = true;
+						setTimeout(function() {
+							escapeKeyPressed = false;
+						}, 1000);
+					}
+				}
+			});
+		}
 		if (config.show) {
 			var modal_num = $("body .modal").length;
 			modal += "<div id='modal-page-" + config.id + "' class='modal modal-temp fade " + (!$.isNull(config.class) ? config.class : '') + "' tabindex='-1' role='dialog' data-backdrop='static' data-keyboard='false'>";

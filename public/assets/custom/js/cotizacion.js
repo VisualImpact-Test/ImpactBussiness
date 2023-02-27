@@ -818,7 +818,7 @@ var Cotizacion = {
 
 				var btn = [];
 				btn[0] = { title: 'Cerrar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content , escape: true});
 			});
 
 
