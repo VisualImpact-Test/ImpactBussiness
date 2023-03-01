@@ -106,8 +106,6 @@ class Cotizacion extends MY_Controller
             $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
         }
 
-		// $post['estadoCotizacion'] = '1,2,3,4';
-
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/Cotizacion/reporte", ['datos' => $dataParaVista], true);

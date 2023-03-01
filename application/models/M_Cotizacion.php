@@ -13,7 +13,6 @@ class M_Cotizacion extends MY_Model
 	public function __construct()
 	{
 		parent::__construct();
-
 	}
 
 	public function obtenerCuenta($params = [])
@@ -160,6 +159,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['estadoCotizacion']) ? " AND p.idCotizacionEstado IN (" . $params['estadoCotizacion'] . ")" : "";
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 		$filtros .= !empty($params['idDiferente']) ? " AND p.idCotizacion !=" . $params['idDiferente'] : '';
+		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
 		$sql = "
 			DECLARE @hoy DATE = GETDATE();
@@ -1424,7 +1424,7 @@ class M_Cotizacion extends MY_Model
 			//Sub Items Actualizar
 			if (!empty($params['subDetalle'][$k])) {
 				foreach ($params['subDetalle'][$k] as $subItem) {
-					if(isset($subItem['idCotizacionDetalleSub'])){
+					if (isset($subItem['idCotizacionDetalleSub'])) {
 						$updateSubItem[] = [
 							'idCotizacionDetalleSub' => $subItem['idCotizacionDetalleSub'],
 							'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -1450,9 +1450,9 @@ class M_Cotizacion extends MY_Model
 							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
 							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
 							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
-	
+
 						];
-					}else{
+					} else {
 						$insertSubItem[] = [
 							'idCotizacionDetalle' => $idCotizacionDetalle,
 							'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : '',
@@ -1486,9 +1486,9 @@ class M_Cotizacion extends MY_Model
 			foreach ($params['insert'] as $k => $insert) {
 
 				$this->db->insert($params['tabla'], $insert);
-	
+
 				$idCotizacionDetalle = $this->db->insert_id();
-	
+
 				if (!empty($params['archivos'][$k])) {
 					foreach ($params['archivos'][$k] as $archivo) {
 						$archivoName = $this->saveFileWasabi($archivo);
@@ -1507,7 +1507,7 @@ class M_Cotizacion extends MY_Model
 						];
 					}
 				}
-	
+
 				//Sub Items
 				if (!empty($params['newInsertSubItem'][$k])) {
 
@@ -1530,12 +1530,11 @@ class M_Cotizacion extends MY_Model
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 						];
 					}
-
 				}
 			}
 		}
 
-		
+
 
 
 		if ($queryCotizacionDetalle) {
@@ -2011,8 +2010,9 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-    public function infoHistorialCotizacionDescende($id){
-        $sql = 'select top (1) 
+	public function infoHistorialCotizacionDescende($id)
+	{
+		$sql = 'select top (1) 
                     auth.fechaReg as fechaRegistro,
                     auth.horaReg as horaRegistro,
                     cot.nombre as nombreCotizacion,
@@ -2027,6 +2027,6 @@ class M_Cotizacion extends MY_Model
                     inner join ImpactBussiness.sistema.usuario us on auth.idUsuarioReg = us.idUsuario 
                     where auth.idCotizacion = 586 order by idCotizacionEstadoHistorico DESC';
 
-        return $this->db->query($sql)->result_array();
-    }
+		return $this->db->query($sql)->result_array();
+	}
 }
