@@ -14,8 +14,8 @@ class Cotizacion extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'model_formulario_proveedor');
 		$this->load->model('M_login', 'model_login');
 		header('Access-Control-Allow-Origin: *');
-        $this->database = 'ImpactBussiness.compras.cotizacion';
-        $this->databaseAuditoria = 'ImpactBussiness.compras.cotizacionEstadoHistorico';
+		$this->database = 'ImpactBussiness.compras.cotizacion';
+		$this->databaseAuditoria = 'ImpactBussiness.compras.cotizacionEstadoHistorico';
 	}
 
 	public function index()
@@ -91,20 +91,19 @@ class Cotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-        $dataParaVista = [];
-        if (isset($_SESSION['item'])){
-            $item = $_SESSION['item'];
+		$dataParaVista = [];
+		if (isset($_SESSION['item'])) {
+			$item = $_SESSION['item'];
 
-            $post['id'] = $item;
-            $datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-            unset($post['id']);
-            $post['idDiferente'] = $item;
-            $datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-            $dataParaVista = array_merge($datoDeseado,$datoRestante);
-
-        }else{
-            $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-        }
+			$post['id'] = $item;
+			$datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			unset($post['id']);
+			$post['idDiferente'] = $item;
+			$datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			$dataParaVista = array_merge($datoDeseado, $datoRestante);
+		} else {
+			$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+		}
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -453,6 +452,7 @@ class Cotizacion extends MY_Controller
 		$post['cotizacionInternaForm'] = checkAndConvertToArray($post['cotizacionInternaForm']);
 		$post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
+		$post['itemTextoPdf'] = checkAndConvertToArray($post['itemTextoPdf']);
 
 		foreach ($post['nameItem'] as $k => $r) {
 			$dataItem = [];
@@ -505,7 +505,9 @@ class Cotizacion extends MY_Controller
 				'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
 				'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
-				'fechaCreacion' => getActualDateTime()
+				'fechaCreacion' => getActualDateTime(),
+				'flagAlternativo' => !empty($post['itemTextoPdf'][$k]) ? '1' : '0',
+				'nombreAlternativo' => !empty($post['itemTextoPdf'][$k]) ? $post['itemTextoPdf'][$k] : NULL,
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
@@ -810,6 +812,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['total'] = $total = $row['total'];
 				$dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
 				$dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
+				$dataParaVista['cabecera']['solicitante'] = $row['solicitante'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -821,6 +824,8 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['idItemTipo'] = $row['idItemTipo'];
 				$dataParaVista['detalle'][$key]['proveedor'] = $row['proveedor'];
 				$dataParaVista['detalle'][$key]['itemMarca'] = $row['itemMarca'];
+				$dataParaVista['detalle'][$key]['flagAlternativo'] = $row['flagAlternativo'];
+				$dataParaVista['detalle'][$key]['nombreAlternativo'] = $row['nombreAlternativo'];
 
 				$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 			}
@@ -888,67 +893,67 @@ class Cotizacion extends MY_Controller
 		$this->aSessTrack[] = ['idAccion' => 9];
 	}
 
-    public function generarVistaPreviaCotizacionPDF() //VistaPrevia
-    {
-        $data = [];
-        require_once('../mpdf/mpdf.php');
-        ini_set('memory_limit', '1024M');
-        set_time_limit(0);
+	public function generarVistaPreviaCotizacionPDF() //VistaPrevia
+	{
+		$data = [];
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
 
-        $result = $this->result;
-        $post = json_decode($this->input->post('data'), true);
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
-        //$idCotizacion = $post['id'];
+		//$idCotizacion = $post['id'];
 
-        if (!empty($post)) {
-           // $dataParaVista = $post;
-            $dataParaVista['cabecera']['idCotizacion'] = $post['idCotizacion'];
-            $dataParaVista['cabecera']['cotizacion'] = $post['cotizacion'];
-            $dataParaVista['cabecera']['cuenta'] = $post['cuenta'];
-            $dataParaVista['cabecera']['cuentaCentroCosto'] = $post['cuentaCentroCosto'];
-            $dataParaVista['cabecera']['comentario'] = $post['comentario'];
-            // $dataParaVista['cabecera']['tipoCotizacion'] = $post['tipoCotizacion'];
-            $dataParaVista['cabecera']['fecha'] = $post['fechaCreacion'];
-            $dataParaVista['cabecera']['cotizacionEstado'] = $post['cotizacionEstado'];
-            $dataParaVista['cabecera']['fee'] = $post['fee'];
-            $dataParaVista['cabecera']['igv'] = $post['flagIgv'];
-            $dataParaVista['cabecera']['total'] = $total = $post['total'];
-            $dataParaVista['cabecera']['total_fee'] = $post['total_fee'];
-            $dataParaVista['cabecera']['total_fee_igv'] = $post['total_fee_igv'];
+		if (!empty($post)) {
+			// $dataParaVista = $post;
+			$dataParaVista['cabecera']['idCotizacion'] = $post['idCotizacion'];
+			$dataParaVista['cabecera']['cotizacion'] = $post['cotizacion'];
+			$dataParaVista['cabecera']['cuenta'] = $post['cuenta'];
+			$dataParaVista['cabecera']['cuentaCentroCosto'] = $post['cuentaCentroCosto'];
+			$dataParaVista['cabecera']['comentario'] = $post['comentario'];
+			// $dataParaVista['cabecera']['tipoCotizacion'] = $post['tipoCotizacion'];
+			$dataParaVista['cabecera']['fecha'] = $post['fechaCreacion'];
+			$dataParaVista['cabecera']['cotizacionEstado'] = $post['cotizacionEstado'];
+			$dataParaVista['cabecera']['fee'] = $post['fee'];
+			$dataParaVista['cabecera']['igv'] = $post['flagIgv'];
+			$dataParaVista['cabecera']['total'] = $total = $post['total'];
+			$dataParaVista['cabecera']['total_fee'] = $post['total_fee'];
+			$dataParaVista['cabecera']['total_fee_igv'] = $post['total_fee_igv'];
 
 
-            $contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
-            $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
-            $contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
-            $contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
+			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
+			$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 
-            require APPPATH . '/vendor/autoload.php';
-            $mpdf = new \Mpdf\Mpdf([
-                'mode' => 'utf-8',
-                'setAutoTopMargin' => 'stretch',
-                'orientation' => 'L',
-                'autoMarginPadding' => 0,
-                'bleedMargin' => 0,
-                'crossMarkMargin' => 0,
-                'cropMarkMargin' => 0,
-                'nonPrintMargin' => 0,
-                'margBuffer' => 0,
-                'collapseBlockMargins' => false,
-            ]);
-            $mpdf->SetDisplayMode('fullpage');
-            $mpdf->SetHTMLHeader($contenido['header']);
-            $mpdf->SetHTMLFooter($contenido['footer']);
-            $mpdf->AddPage();
-            $mpdf->WriteHTML($contenido['style']);
-            $mpdf->WriteHTML($contenido['body']);
+			require APPPATH . '/vendor/autoload.php';
+			$mpdf = new \Mpdf\Mpdf([
+				'mode' => 'utf-8',
+				'setAutoTopMargin' => 'stretch',
+				'orientation' => 'L',
+				'autoMarginPadding' => 0,
+				'bleedMargin' => 0,
+				'crossMarkMargin' => 0,
+				'cropMarkMargin' => 0,
+				'nonPrintMargin' => 0,
+				'margBuffer' => 0,
+				'collapseBlockMargins' => false,
+			]);
+			$mpdf->SetDisplayMode('fullpage');
+			$mpdf->SetHTMLHeader($contenido['header']);
+			$mpdf->SetHTMLFooter($contenido['footer']);
+			$mpdf->AddPage();
+			$mpdf->WriteHTML($contenido['style']);
+			$mpdf->WriteHTML($contenido['body']);
 
-            header('Set-Cookie: fileDownload=true; path=/');
-            header('Cache-Control: max-age=60, must-revalidate');
-            $mpdf->Output('Cotizacion.pdf', 'D');
-        }
+			header('Set-Cookie: fileDownload=true; path=/');
+			header('Cache-Control: max-age=60, must-revalidate');
+			$mpdf->Output('Cotizacion.pdf', 'D');
+		}
 
-        $this->aSessTrack[] = ['idAccion' => 9];
-    }
+		$this->aSessTrack[] = ['idAccion' => 9];
+	}
 
 	public function guardarArchivo()
 	{
@@ -1215,7 +1220,7 @@ class Cotizacion extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
-            'assets/libs/fileDownload/jquery.fileDownload',
+			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
@@ -1762,7 +1767,7 @@ class Cotizacion extends MY_Controller
 		if (isset($post['detalleEliminado'])) {
 			$post['detalleEliminado'] = checkAndConvertToArray($post['detalleEliminado']);
 			foreach ($post['detalleEliminado'] as $key => $value) {
-				$this->db->update('compras.cotizacionDetalle',['estado' => 0], ['idCotizacionDetalle' => $value]);
+				$this->db->update('compras.cotizacionDetalle', ['estado' => 0], ['idCotizacionDetalle' => $value]);
 			}
 		}
 		$validacionExistencia = $this->model->validarExistenciaCotizacion(['nombre' => $post['nombre'], 'idCotizacion' => $post['idCotizacion']]);
@@ -1975,12 +1980,12 @@ class Cotizacion extends MY_Controller
 				];
 
 				switch ($post['tipoItemForm'][$k]) {
-					// case COD_SERVICIO['id']:
-					// 	$subDetalleInsert[$k] = getDataRefactorizada([
-					// 		'nombre' => $post["nombreSubItemServicio[$k]"],
-					// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
-					// 	]);
-					// 	break;
+						// case COD_SERVICIO['id']:
+						// 	$subDetalleInsert[$k] = getDataRefactorizada([
+						// 		'nombre' => $post["nombreSubItemServicio[$k]"],
+						// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
+						// 	]);
+						// 	break;
 					case COD_DISTRIBUCION['id']:
 						$subDetalleInsert[$k] = getDataRefactorizada([
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
@@ -2895,88 +2900,90 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-    public function anularCotizacion (){
-        $result = $this->result;
-        $json = json_decode($this->input->post('data'));
-        $estadoAnulado = 12;
-        $datos = [
-            'estado' => 0,
-            'idCotizacionEstado' => $estadoAnulado
-        ];
-        $where = "idCotizacion = ".$json;
-        $res = $this->model->actualizarSimple($this->database, $where,$datos);
-        if ($res){
-            $dataAuditoria = [
-                'idCotizacionEstado' => $estadoAnulado,
-                'idCotizacion' => $json,
-                'fechaReg' => date('Y-m-d'),
-                'horaReg' => date('H:i:s'),
-                'idUsuarioReg' => $this->idUsuario,
-                'estado' => 1,
-            ];
-            $this->model->insert($this->databaseAuditoria, $dataAuditoria);
-            $result['result'] = 1;
-            $result['msg']['content'] = getMensajeGestion('anulacionExitosa');
-        }else{
-            $result['result'] = 0;
-            $result['msg']['content'] = getMensajeGestion('anulacionErronea');
-        }
+	public function anularCotizacion()
+	{
+		$result = $this->result;
+		$json = json_decode($this->input->post('data'));
+		$estadoAnulado = 12;
+		$datos = [
+			'estado' => 0,
+			'idCotizacionEstado' => $estadoAnulado
+		];
+		$where = "idCotizacion = " . $json;
+		$res = $this->model->actualizarSimple($this->database, $where, $datos);
+		if ($res) {
+			$dataAuditoria = [
+				'idCotizacionEstado' => $estadoAnulado,
+				'idCotizacion' => $json,
+				'fechaReg' => date('Y-m-d'),
+				'horaReg' => date('H:i:s'),
+				'idUsuarioReg' => $this->idUsuario,
+				'estado' => 1,
+			];
+			$this->model->insert($this->databaseAuditoria, $dataAuditoria);
+			$result['result'] = 1;
+			$result['msg']['content'] = getMensajeGestion('anulacionExitosa');
+		} else {
+			$result['result'] = 0;
+			$result['msg']['content'] = getMensajeGestion('anulacionErronea');
+		}
 
 
-        echo json_encode($result);
-    }
+		echo json_encode($result);
+	}
 
-    public function anulacionInfo(){
-        $result = $this->result;
-        $idCotizacion = json_decode($this->input->post('data'));
-        $item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
-        if (!empty($item)){
+	public function anulacionInfo()
+	{
+		$result = $this->result;
+		$idCotizacion = json_decode($this->input->post('data'));
+		$item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
+		if (!empty($item)) {
 
-            $dataParaVista['data']  = [
-                'nombreCotizacion' => $item[0]['nombreCotizacion'],
-                'codigoCotizacion' => $item[0]['codigoCotizacion'],
-                'fechaCreacion' => $item[0]['fechaCreacion'],
-                'nombreEstado' => $item[0]['nombreEstado'],
-                'nombreUsuario' => $item[0]['nombreUsuario'],
-                'apellidoUsuario' => $item[0]['apellidoUsuario'],
-                'fechaRegistro' => $item[0]['fechaRegistro'],
-                'horaRegistro' => $item[0]['horaRegistro'],
-            ];
+			$dataParaVista['data']  = [
+				'nombreCotizacion' => $item[0]['nombreCotizacion'],
+				'codigoCotizacion' => $item[0]['codigoCotizacion'],
+				'fechaCreacion' => $item[0]['fechaCreacion'],
+				'nombreEstado' => $item[0]['nombreEstado'],
+				'nombreUsuario' => $item[0]['nombreUsuario'],
+				'apellidoUsuario' => $item[0]['apellidoUsuario'],
+				'fechaRegistro' => $item[0]['fechaRegistro'],
+				'horaRegistro' => $item[0]['horaRegistro'],
+			];
 
-            $html = $this->load->view("modulos/Cotizacion/viewAnulacionInfo", $dataParaVista, true);
-            $result['result'] = 1;
-            $result['msg']['content'] = $html;
-            $result['msg']['title'] = 'Información de anulación';
+			$html = $this->load->view("modulos/Cotizacion/viewAnulacionInfo", $dataParaVista, true);
+			$result['result'] = 1;
+			$result['msg']['content'] = $html;
+			$result['msg']['title'] = 'Información de anulación';
+		} else {
+			$result['msg']['title'] = 'Información de anulación';
+			$result['result'] = 1;
+			$result['msg']['content'] = 'No se ha podido encontrar información sobre esta anulación';
+		}
 
-        }else{
-            $result['msg']['title'] = 'Información de anulación';
-            $result['result'] = 1;
-            $result['msg']['content'] = 'No se ha podido encontrar información sobre esta anulación';
-        }
+		echo json_encode($result);
+	}
 
-        echo json_encode($result);
-
-    }
-
-	public function obtenerItemsLogistica(){
-		$idCuenta=$this->input->post('cuenta');
-		$idCentroCosto=$this->input->post('centroCosto');
+	public function obtenerItemsLogistica()
+	{
+		$idCuenta = $this->input->post('cuenta');
+		$idCentroCosto = $this->input->post('centroCosto');
 
 		$data = $this->model_item->obtenerItemsCuenta($idCuenta)->result_array();
-		$html='';
-		foreach($data as $row){
-			$html.='<option value="'.$row['value'].'" data-option ="'.$row['pesoLogistica'].'">'.$row['label'].'</option>';
+		$html = '';
+		foreach ($data as $row) {
+			$html .= '<option value="' . $row['value'] . '" data-option ="' . $row['pesoLogistica'] . '">' . $row['label'] . '</option>';
 		}
 		echo $html;
 	}
 
-	public function obtenerPesoLogistica(){
-		$idCuenta=$this->input->post('cuenta');
-		$idArticulo=$this->input->post('idArticulo');
-		$data = $this->model_item->obtenerItemsCuenta($idCuenta,$idArticulo)->result_array();
-		$html='';
-		foreach($data as $row){
-			$html=$row['pesoLogistica'];
+	public function obtenerPesoLogistica()
+	{
+		$idCuenta = $this->input->post('cuenta');
+		$idArticulo = $this->input->post('idArticulo');
+		$data = $this->model_item->obtenerItemsCuenta($idCuenta, $idArticulo)->result_array();
+		$html = '';
+		foreach ($data as $row) {
+			$html = $row['pesoLogistica'];
 		}
 		echo $html;
 	}

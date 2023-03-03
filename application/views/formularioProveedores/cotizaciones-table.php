@@ -137,106 +137,111 @@
 				</div>
 
 				<div class="row justify-content-start">
-					<div class="col-md-10 divDetalle">
+					<div class="col-md-10 row divDetalle">
 						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
-							<div class="col-md-12 row">
+							<!-- <div class="col-md-12"> -->
 								<a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a>
 								<button data-form="FormularioProveedor/getFormCargaMasivaCotizacionProveedorDetalleSub" data-save="FormularioProveedor/guardarCargaMasivaCotizacionProveedorDetalleSub" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" type="button" class="btn btn-lg btn-outline-success btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
 									<i class="fa fa-file"></i> Detalle Multiple
 								</button>
-							</div>
+							<!-- </div> -->
 						<?php endif; ?>
 						<div class="col-md-12 pl-0 py-2 row dataDetalle">
 							<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
 								<div class="col-md-12 row filaDetalle">
 									<?php $servicio = ($row['idItemTipo'] == COD_SERVICIO['id']); ?>
 									<?php $textil = ($row['tipoItem'] == 'Textiles'); ?>
-									<div class="col-sm-2 <?= $servicio ? '' : 'd-none' ?>">
-										<div class="form-group">
+									<div class="row col-md-12">
+										<div class="col-sm-2 <?= $servicio ? '' : 'd-none' ?>">
 											<div class="form-group">
-												<h4 class="mb-1">SUCURSAL</h4>
-												<input class="form-control" placeholder="Sucursal" name="sucursal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['sucursal'] ?>">
+												<div class="form-group">
+													<h4 class="mb-1">SUCURSAL</h4>
+													<input class="form-control" placeholder="Sucursal" name="sucursal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['sucursal'] ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-4 <?= $servicio ? '' : 'd-none' ?>">
+											<div class="form-group">
+												<div class="form-group">
+													<h4 class="mb-1">RAZON SOCIAL</h4>
+													<input class="form-control" placeholder="Razón Social" name="razonSocial[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['razonSocial']; ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
+											<div class="form-group">
+												<div class="form-group">
+													<h4 class="mb-1">TIPO DE ELEMENTO</h4>
+													<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['tipoElemento']; ?>">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
+											<div class="form-group">
+												<div class="form-group">
+													<h4 class="mb-1">MARCA</h4>
+													<input class="form-control" placeholder="Marca" name="marca[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['marca']; ?>">
+												</div>
 											</div>
 										</div>
 									</div>
-									<div class="col-sm-4 <?= $servicio ? '' : 'd-none' ?>">
-										<div class="form-group">
+									<div class="row col-md-12">
+										<div class="col-sm-8 pr-0 <?= $servicio ? '' : 'd-none' ?>">
 											<div class="form-group">
-												<h4 class="mb-1">RAZON SOCIAL</h4>
-												<input class="form-control" placeholder="Razón Social" name="razonSocial[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['razonSocial']; ?>">
+												<h4 class="mb-1">Descripción</h4>
+												<input class="form-control" type="hidden" name="idCDPD[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
+												<input class="form-control" type="hidden" name="idCDPDS[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['idCotizacionDetalleProveedorDetalleSub'] ?>">
+												<input class="form-control" name="descripcion[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['descripcion'] ?>">
 											</div>
 										</div>
-									</div>
-									<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
-										<div class="form-group">
+										<div class="col-sm-2 <?= $textil ? '' : 'd-none' ?>">
 											<div class="form-group">
-												<h4 class="mb-1">TIPO DE ELEMENTO</h4>
-												<input class="form-control" placeholder="Tipo de elemento" name="tipoElemento[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['tipoElemento']; ?>">
+												<h4 class="mb-1">Talla</h4>
+												<input class="form-control" value="<?= $value['talla'] ?>" readonly>
 											</div>
 										</div>
-									</div>
-									<div class="col-sm-3 <?= $servicio ? '' : 'd-none' ?>">
-										<div class="form-group">
+										<div class="col-sm-2 <?= $textil ? '' : 'd-none' ?>">
 											<div class="form-group">
-												<h4 class="mb-1">MARCA</h4>
-												<input class="form-control" placeholder="Marca" name="marca[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['marca']; ?>">
+												<h4 class="mb-1">Tela</h4>
+												<input class="form-control" value="<?= $value['tela'] ?>" readonly>
 											</div>
 										</div>
-									</div>
-									<div class="col-md-8 pr-0 <?= $servicio ? '' : 'd-none' ?>">
-										<div class="form-group">
-											<h4 class="mb-1">Descripción</h4>
-											<input class="form-control" type="hidden" name="idCDPD[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
-											<input class="form-control" type="hidden" name="idCDPDS[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['idCotizacionDetalleProveedorDetalleSub'] ?>">
-											<input class="form-control" name="descripcion[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="<?= $value['descripcion'] ?>">
+										<div class="col-sm-2 <?= $textil ? '' : 'd-none' ?>">
+											<div class="form-group">
+												<h4 class="mb-1">Color</h4>
+												<input class="form-control" value="<?= $value['color'] ?>" readonly>
+											</div>
 										</div>
-									</div>
-									<div class="col-md-2 <?= $textil ? '' : 'd-none' ?>">
-										<div class="form-group">
-											<h4 class="mb-1">Talla</h4>
-											<input class="form-control" value="<?= $value['talla'] ?>" readonly>
+										<div class="col-sm-2 <?= $textil ? '' : 'd-none' ?>">
+											<div class="form-group">
+												<h4 class="mb-1">Genero</h4>
+												<input class="form-control" value="<?= !empty($value['genero']) ? RESULT_GENERO[$value['genero']] : '' ?>" readonly>
+											</div>
 										</div>
-									</div>
-									<div class="col-md-2 <?= $textil ? '' : 'd-none' ?>">
-										<div class="form-group">
-											<h4 class="mb-1">Tela</h4>
-											<input class="form-control" value="<?= $value['tela'] ?>" readonly>
+										<div class="col-sm-1">
+											<div class="form-group">
+												<h4 class="mb-1">Cant</h4>
+												<input class="form-control cantidad" name="cantidad[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $servicio ? $value['cantidad'] : $value['cantidadItem']; ?>" <?= $textil ? 'readonly' : ''; ?>>
+											</div>
 										</div>
-									</div>
-									<div class="col-md-2 <?= $textil ? '' : 'd-none' ?>">
-										<div class="form-group">
-											<h4 class="mb-1">Color</h4>
-											<input class="form-control" value="<?= $value['color'] ?>" readonly>
+										<div class="col-sm-1">
+											<div class="form-group">
+												<h4 class="mb-1">P.U.</h4>
+												<input class="form-control costo" name="costo[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $value['costo'] ?>">
+											</div>
 										</div>
-									</div>
-									<div class="col-md-2 <?= $textil ? '' : 'd-none' ?>">
-										<div class="form-group">
-											<h4 class="mb-1">Genero</h4>
-											<input class="form-control" value="<?= RESULT_GENERO[$value['genero']] ?>" readonly>
-										</div>
-									</div>
-									<div class="col-md-1 px-0">
-										<div class="form-group">
-											<h4 class="mb-1">Cant</h4>
-											<input class="form-control cantidad" name="cantidad[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $servicio ? $value['cantidad'] : $value['cantidadItem']; ?>" <?= $textil ? 'readonly' : ''; ?>>
-										</div>
-									</div>
-									<div class="col-md-1 px-0">
-										<div class="form-group">
-											<h4 class="mb-1">P.U.</h4>
-											<input class="form-control costo" name="costo[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" onkeyup="FormularioProveedores.calcularSubItemTotal(this)" value="<?= $value['costo'] ?>">
-										</div>
-									</div>
-									<div class="col-md-2 pl-0">
-										<div class="form-group">
-											<h4 class="mb-1">STot</h4>
-											<input class="form-control subtotal" name="subtotal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" readonly value="<?= $value['subTotal'] ?>" data-tiposervicio="<?= $row['tipoItem'] ?>" onchange="FormularioProveedores.calcularSubTotal(<?= $row['idCotizacionDetalleProveedorDetalle'] ?>, this)">
+										<div class="col-sm-2">
+											<div class="form-group">
+												<h4 class="mb-1">STot</h4>
+												<input class="form-control subtotal" name="subtotal[<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" readonly value="<?= $value['subTotal'] ?>" data-tiposervicio="<?= $row['tipoItem'] ?>" onchange="FormularioProveedores.calcularSubTotal(<?= $row['idCotizacionDetalleProveedorDetalle'] ?>, this)">
+											</div>
 										</div>
 									</div>
 								</div>
 							<?php endforeach; ?>
 						</div>
 					</div>
+					<div class="col-md-2"></div>
 				</div>
 
 				<div class="col-md-12">

@@ -146,6 +146,10 @@
 			<div class="ui segment body-item nuevo">
 				<div class="ui right floated header">
 					<div class="ui icon menu">
+						<a class="item chk-itemTextoPdf" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); $(this).find('i').hasClass('check square') ? $(this).closest('.body-item').find('.itemTextoPdf').removeClass('d-none') : $(this).closest('.body-item').find('.itemTextoPdf').addClass('d-none');">
+							<i class="icon square outline"></i>
+							<input type="checkbox" name="chkItemTextoPdf" class="checkItemTextoPdf d-none">
+						</a>
 						<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 							<i class="unlock icon"></i>
 						</a>
@@ -161,7 +165,6 @@
 				<div class="ui grid">
 					<div class="sixteen wide tablet twelve wide computer column">
 						<div class="fields">
-
 							<div class="eight wide field">
 								<div class="ui sub header">Item</div>
 								<div class="ui-widget">
@@ -180,10 +183,12 @@
 									</div>
 
 									<input class="codItems" type='hidden' name='idItemForm'>
-
 									<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
 									<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
+								</div>
+								<div class="ui-widget">
+									<input class="itemTextoPdf d-none" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización">
 								</div>
 							</div>
 							<div class="four wide field">
@@ -194,7 +199,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Características para el cliente</div>
-								<div class="ui right labeled input w-100">
+								<div class="ui labeled input w-100">
 									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item" autocomplete="off">
 								</div>
 							</div>
@@ -315,7 +320,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">Item Logística</div>
 									<div class="SelectitemLogisticaForm"></div>
-									
+
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Peso</div>

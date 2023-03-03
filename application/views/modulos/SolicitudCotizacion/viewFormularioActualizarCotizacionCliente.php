@@ -151,6 +151,10 @@
 					<div class="ui right floated header">
 
 						<div class="ui icon menu">
+							<a class="item chk-itemTextoPdf" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); $(this).find('i').hasClass('check square') ? $(this).closest('.body-item').find('.itemTextoPdf').removeClass('d-none') : $(this).closest('.body-item').find('.itemTextoPdf').addClass('d-none');">
+								<i class="icon square <?= $row['flagAlternativo'] ? 'check' : 'outline'; ?>"></i>
+								<input type="checkbox" name="chkItemTextoPdf" class="d-none checkItemTextoPdf" <?= $row['flagAlternativo'] ? 'checked' : ''; ?>>
+							</a>
 							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 								<i class="lock icon"></i>
 							</a>
@@ -171,11 +175,6 @@
 								<div class="six wide field">
 									<div class="ui sub header">Item</div>
 									<div class="ui-widget">
-										<!-- <div class="ui icon input w-100">
-                                            <input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
-                                            <i class="semaforoForm flag link icon"></i>
-                                        </div> -->
-
 										<div class="ui right action left icon input w-100">
 											<i class="semaforoForm flag link icon"></i>
 											<input class="items" type='text' id="nameItem" name='nameItem' patron="requerido" placeholder="Buscar item" value="<?= $row['item'] ?>" readonly>
@@ -196,6 +195,9 @@
 										<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 										<input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : ""; ?>">
 										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
+									</div>
+									<div class="ui-widget">
+										<input class="itemTextoPdf <?= !$row['flagAlternativo'] ? 'd-none' : ''; ?>" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización" value="<?= $row['nombreAlternativo']; ?>">
 									</div>
 								</div>
 								<div class="five wide field">

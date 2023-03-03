@@ -55,6 +55,23 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerTarifarioItemProveedorParaActualizacionMasiva($params = [])
+	{
+		$this->db
+		->select('p.razonSocial as proveedor, i.nombre as item, it.costo, it.fechaVigencia as fecha')
+		->from('compras.itemTarifario it')
+		->join('compras.item i', 'i.idItem = it.idItem', 'LEFT')
+		->join('compras.proveedor p', 'p.idProveedor = it.idProveedor', 'LEFT')
+		->where('it.estado', 1)
+		->where('i.estado', 1)
+		->where('p.idProveedorEstado', 2) // Activo
+		->where('it.fechaVigencia < GETDATE()')
+		// ->limit('5')
+		->order_by('2, 1');
+
+		return $this->db->get();
+		
+	}
 	public function obtenerItemCategoria($params = [])
 	{
 		$sql = "
@@ -213,19 +230,16 @@ class M_Item extends MY_Model
 
 
 		$sql = "
-		SELECT DISTINCT
-				
-		p.idProveedor
-	   , p.razonSocial AS proveedor
-	   
-	   
-   FROM compras.itemTarifario tfa
-   JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
-   JOIN compras.item a ON tfa.idItem = a.idItem
-   LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
-   LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
-   LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
-   WHERE 1 = 1
+			SELECT DISTINCT	
+			p.idProveedor
+			, p.razonSocial AS proveedor
+			FROM compras.itemTarifario tfa
+			JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
+			JOIN compras.item a ON tfa.idItem = a.idItem
+			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
+			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
+			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
+			WHERE 1 = 1
 			{$filtros}
 		";
 
@@ -418,5 +432,4 @@ class M_Item extends MY_Model
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
 		return $result;
 	}
-
 }

@@ -41,6 +41,9 @@
 				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario" data-id="0">
                     <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
                 </button>
+				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario" data-id="0">
+                    <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
+                </button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">

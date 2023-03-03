@@ -47,7 +47,7 @@
 			</div>
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" for="unidadMedida" style="border:0px;">Unidad Medida :</label>
-				<select class="form-control col-md-7" id="unidadMedida" name="unidadMedida" patron="requerido">
+				<select class="form-control col-md-7" id="unidadMedida" name="unidadMedida">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase', 'selected' => $informacionItem['idUnidadMedida']]); ?>
 				</select>
 			</div>

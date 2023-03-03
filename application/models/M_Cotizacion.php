@@ -397,6 +397,9 @@ class M_Cotizacion extends MY_Model
 				, pd.caracteristicasCompras
 				, im.nombre as itemMarca
 				, REPLACE(p.comentario, CHAR(10), '<br>') comentario
+				, pd.flagAlternativo
+				, pd.nombreAlternativo
+				, ss.nombre as solicitante
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -408,6 +411,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON p.idCentroCosto = cc.idCuentaCentroCosto
 			JOIN compras.itemEstado ei ON pd.idItemEstado = ei.idItemEstado
 			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
+			LEFT JOIN compras.solicitante ss ON ss.idSolicitante = p.idSolicitante
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY itemTipo, pd.idCotizacionDetalle
@@ -748,7 +752,9 @@ class M_Cotizacion extends MY_Model
 			-- ,
 			-- cuenta.nombre as cuenta,
 			-- centrocosto.subcanal as centrocosto
-			c.codOrdenCompra
+			c.codOrdenCompra,
+			cd.flagAlternativo,
+			cd.nombreAlternativo
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

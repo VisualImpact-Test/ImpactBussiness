@@ -152,6 +152,59 @@ class Item extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function getFormActualizarMasivoTarifario()
+	{
+		$result = $this->result;
+		$result['msg']['title'] = "Actualización masiva de tarifario";
+
+		$params = array();
+		$params['idUsuario'] = $this->session->userdata('idUsuario');
+
+		$proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]], '*', [], 'razonSocial')->result_array();
+		$proveedores = refactorizarDataHT(["data" => $proveedores, "value" => "razonSocial"]);
+		$item['item'] = $this->model->obtenerItems();
+		$itemNombre = refactorizarDataHT(["data" => $item['item'], "value" => "label"]);
+
+		$data = $this->model->obtenerTarifarioItemProveedorParaActualizacionMasiva()->result_array();
+
+		foreach ($data as $key => $value) {
+			$data[$key]['fecha'] = date_change_format($value['fecha']);
+			// $data[$key]['itemActual'] = ($value['itemActual'] == '1' ? true : false);
+		}
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Tarifario',
+			'data' => $data,
+			'headers' => [
+				'ITEM (*)',
+				'PROVEEDOR (*)',
+				'COSTO (*)',
+				'FECHA (*)',
+				// 'ESTE ITEM ES EL ACTUAL (*)',
+			],
+			'columns' => [
+				['data' => 'item', 'type' => 'myDropdown', 'placeholder' => 'item', 'width' => 200, 'source' => $itemNombre],
+				['data' => 'proveedor', 'type' => 'myDropdown', 'placeholder' => 'proveedor', 'width' => 200, 'source' => $proveedores],
+				['data' => 'costo', 'type' => 'numeric', 'placeholder' => 'costo', 'width' => 200],
+				['data' => 'fecha', 'type' => 'myDate', 'placeholder' => 'fecha', 'width' => 200],
+				// ['data' => 'itemActual', 'type' => 'checkbox', 'placeholder' => 'itemActual', 'width' => 200],
+
+			],
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+
+		echo json_encode($result);
+	}
+
 	public function guardarCargaMasivaTarifario()
 	{
 
@@ -302,7 +355,154 @@ class Item extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function actualizarCargaMasivaTarifario()
+	{
 
+		ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		set_time_limit(0);
+
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$result['msg']['title'] = "Actualización masiva de tarifario";
+
+		$post = json_decode($this->input->post('data'), true);
+
+		$itemProveedores = [];
+		$itemNombre = [];
+		$conteoFlag = [];
+		$conteoProv = [];
+
+		$proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]])->result_array();
+		$item['item'] = $this->model->obtenerItems();
+
+		foreach ($proveedores as $key => $row) {
+			$itemProveedores[$row['razonSocial']] = $row['idProveedor'];
+		}
+
+		foreach ($item['item'] as $key => $row) {
+			$itemNombre[$row['label']] = $row['value'];
+		}
+
+		//Eliminar la fila en blanco
+		array_pop($post['HT'][0]);
+
+		$updateData = []; // Datos que se van a actualizar en compras.itemTarifario
+		$insertTarifarioHistorico = [];
+		foreach ($post['HT'][0] as $tablaHT) {
+
+			if (empty($tablaHT['item']) || empty($tablaHT['proveedor']) || empty($tablaHT['costo']) || empty($tablaHT['fecha'])) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
+
+			$idProveedor = !empty($itemProveedores[$tablaHT['proveedor']]) ? $itemProveedores[$tablaHT['proveedor']] : NULL;
+			$idItem = !empty($itemNombre[$tablaHT['item']]) ? $itemNombre[$tablaHT['item']] : NULL;
+
+			if (empty($idProveedor || $idItem)) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Error con Item o Proveedor']);
+				goto respuesta;
+			}
+
+			$hoy = new DateTime();
+			$fecha = new DateTime(date_change_format_bd($tablaHT['fecha']));
+
+			if ($fecha >= $hoy) {
+				$dataTarifarioItem = $this->model->obtenerInformacionItemTarifario(
+					[
+						'idItem' => $idItem,
+						'idProveedor' => $idProveedor
+					]
+				)['query']->row_array();
+
+				$updateData[] = [
+					'idItemTarifario' => $dataTarifarioItem['idItemTarifario'],
+					'idItem' => $idItem,
+					'idProveedor' => $idProveedor,
+					'costo' => $tablaHT['costo'],
+					'fechaVigencia' => $tablaHT['fecha']
+				];
+
+				$insertTarifarioHistorico[] = [
+					'idItemTarifario' => $dataTarifarioItem['idItemTarifario'],
+					'fecIni' => getFechaActual(),
+					'fecFin' => $tablaHT['fecha'],
+					'costo' => $tablaHT['costo'],
+				];
+
+			}
+
+			// Validar que el flag y/o proveedor no se indique varias veces sobre el mismo item.
+			/**
+			if (!isset($conteoFlag[$idItem])) $conteoFlag[$idItem] = 0;
+			if (!isset($conteoProv[$idItem][$idProveedor])) $conteoProv[$idItem][$idProveedor] = 0;
+
+
+			if ($tablaHT['itemActual']) {
+				$conteoFlag[$idItem]++;
+				// Aprovechando la condicion se busca el "Item Actual" guardado en la BDs para quitarle el activo. pt.1
+				$itemActual = $this->model->obtenerInformacionItemTarifario(
+					[
+						'idItem' => $idItem,
+						'chMostrar' => '1'
+					]
+				)['query']->result_array();
+			};
+			$conteoProv[$idItem][$idProveedor]++;
+
+			if ($conteoFlag[$idItem] > 1) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'La opción de <b>ACTUAL</b> debe ser indicado solo 1 vez como maximo por <b>ITEM</b>']);
+				goto respuesta;
+			}
+
+			if ($conteoProv[$idItem][$idProveedor] > 1) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Se ha encontrado duplicidad de <b>ITEM - PROVEEDOR</b> entre los datos indicados']);
+				goto respuesta;
+			}
+			*/
+		}
+
+		// Aprovechando la condicion se busca el "Item Actual" guardado en la BDs para quitarle el activo. pt.2
+		/**
+		if (isset($itemActual)) {
+			foreach ($itemActual as $datos) {
+				$this->db->update('compras.itemTarifario', ['flag_actual' => '0'], ['idItemTarifario' => $datos['idItemTarifario']]);
+			}
+		}
+		*/
+
+		if (empty($updateData)) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se encontraron registros para actualizar.']);
+			goto respuesta;
+		}
+		$update = $this->model->actualizarMasivo('compras.itemTarifario', $updateData, 'idItemTarifario');
+		$insertarTarifarioHistorico = $this->model->insertarMasivo('compras.itemTarifarioHistorico', $insertTarifarioHistorico);
+
+		if (!$insertarTarifarioHistorico || !$update) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$this->db->trans_commit();
+		}
+
+		respuesta:
+		echo json_encode($result);
+	}
 
 	//proveedor no repetido
 	public function proveedorNoRepetido()

@@ -58,48 +58,48 @@ class M_FormularioProveedor extends MY_Model
 	public function validarPropuestaExistencia($params = [])
 	{
 		$this->db
-		->select('pi.*')
-		->from('compras.propuestaItem pi')
-		->where('pi.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle'])
-		->where('pi.estado','1');
+			->select('pi.*')
+			->from('compras.propuestaItem pi')
+			->where('pi.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle'])
+			->where('pi.estado', '1');
 		return $this->db->get();
 	}
 
 	public function getPropuestaArchivos($params = [])
 	{
 		$this->db
-		->select('pia.*')
-		->from('compras.propuestaItemArchivo pia')
-		->where('pia.idPropuestaItem', $params['idPropuestaItem'])
-		->where('pia.estado','1');
+			->select('pia.*')
+			->from('compras.propuestaItemArchivo pia')
+			->where('pia.idPropuestaItem', $params['idPropuestaItem'])
+			->where('pia.estado', '1');
 		return $this->db->get();
 	}
 	public function obtenerCategorias($params = [])
 	{
 		$this->db
-		->select('ic.*')
-		->from('compras.itemCategoria ic')
-		->where('ic.estado', '1')
-		->order_by('nombre');
+			->select('ic.*')
+			->from('compras.itemCategoria ic')
+			->where('ic.estado', '1')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
 	public function obtenerMarcas($params = [])
 	{
 		$this->db
-		->select('im.*')
-		->from('compras.itemMarca im')
-		->where('im.estado', '1')
-		->order_by('nombre');
+			->select('im.*')
+			->from('compras.itemMarca im')
+			->where('im.estado', '1')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
 	public function obtenerMotivos($params = [])
 	{
 		$this->db
-		->select('pm.*')
-		->from('compras.propuestaMotivo pm')
-		->where('pm.estado', '1');
+			->select('pm.*')
+			->from('compras.propuestaMotivo pm')
+			->where('pm.estado', '1');
 		return $this->db->get();
 	}
 
@@ -228,28 +228,30 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerCotizacionDetalleProveedorDetalleArchivos($params = [])
 	{
 		$this->db->select('cdpda.*')
-		->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
-		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'left')
-		->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor', 'left');
-		$this->db->where('cdp.idProveedor',$params['idProveedor']);
-		$this->db->where('cdp.idCotizacion',$params['idCotizacion']);
+			->from('compras.cotizacionDetalleProveedorDetalleArchivos cdpda')
+			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle', 'left')
+			->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor', 'left')
+			->where('cdpda.estado', '1');
+		$this->db->where('cdp.idProveedor', $params['idProveedor']);
+		$this->db->where('cdp.idCotizacion', $params['idCotizacion']);
 		return $this->db->get();
 	}
-	public function obtenerInformacionCotizacionDetalleSub($params=[])
+	public function obtenerInformacionCotizacionDetalleSub($params = [])
 	{
 		$this->db
-		->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad as cantidadItem, cds.genero')
-		->from('compras.cotizacionDetalleProveedorDetalleSub cdpds')
-		->join('compras.cotizacionDetalleSub cds', 'cds.idCotizacionDetalleSub = cdpds.idCotizacionDetalleSub', 'left');
+			->select('cdpds.*, cds.nombre, cds.talla, cds.tela, cds.color, cds.cantidad as cantidadItem, cds.genero')
+			->from('compras.cotizacionDetalleProveedorDetalleSub cdpds')
+			->join('compras.cotizacionDetalleSub cds', 'cds.idCotizacionDetalleSub = cdpds.idCotizacionDetalleSub', 'left')
+			->where('cdpds.estado', 1);
 		isset($params['idCotizacionDetalleProveedorDetalle']) ? $this->db->where('cdpds.idCotizacionDetalleProveedorDetalle', $params['idCotizacionDetalleProveedorDetalle']) : '';
 		return $this->db->get();
 	}
 	public function obtenerNombreArchivo(array $param = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.cotizacionDetalleArchivos')
-		->where('idCotizacionDetalle',$param['idCotizacionDetalle']);
+			->select('*')
+			->from('compras.cotizacionDetalleArchivos')
+			->where('idCotizacionDetalle', $param['idCotizacionDetalle']);
 		return $this->db->get();
 	}
 	public function obtenerInformacionCotizacionProveedor($params = [])
@@ -337,7 +339,7 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerListaCotizaciones($params)
 	{
 		$this->db
-		->select('DISTINCT
+			->select('DISTINCT
 							min(cdpd.fechaEntrega) AS fechaEntrega,
 							cp.idCotizacion,
 							cp.idCotizacionDetalleProveedor,
@@ -347,15 +349,15 @@ class M_FormularioProveedor extends MY_Model
 							c.total,
 							cc.nombre AS cuentaCentroCosto,
 							cu.nombre AS cuenta')
-		->from('compras.cotizacionDetalleProveedor cp')
-		->join('compras.cotizacion c','c.idCotizacion=cp.idCotizacion','left')
-		->join('visualImpact.logistica.cuentaCentroCosto cc','c.idCentroCosto = cc.idCuentaCentroCosto','left')
-		->join('visualImpact.logistica.cuenta cu','c.idCuenta = cu.idCuenta','left')
-		->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
-		->where('cp.estado','1')
-		->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre')
-		->order_by('cp.idCotizacionDetalleProveedor desc');
-		isset(	$params['idProveedor']	) ? $this->db->where('cp.idProveedor', $params['idProveedor']):'';
+			->from('compras.cotizacionDetalleProveedor cp')
+			->join('compras.cotizacion c', 'c.idCotizacion=cp.idCotizacion', 'left')
+			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'left')
+			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'left')
+			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
+			->where('cp.estado', '1')
+			->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre')
+			->order_by('cp.idCotizacionDetalleProveedor desc');
+		isset($params['idProveedor']) ? $this->db->where('cp.idProveedor', $params['idProveedor']) : '';
 		return $this->db->get();
 	}
 
@@ -386,7 +388,6 @@ class M_FormularioProveedor extends MY_Model
 		}
 
 		return $this->resultado;
-
 	}
 	public function obtenerOrdenCompraDetalleProveedor($params)
 	{
@@ -461,20 +462,20 @@ class M_FormularioProveedor extends MY_Model
 		}
 
 		return $this->resultado;
-
 	}
 
-	public function insertarMasivoDetalleProveedor($params){
+	public function insertarMasivoDetalleProveedor($params)
+	{
 
 		$post = !empty($params['post']) ? $params['post'] : [];
-		foreach($params['insert'] as $row){
+		foreach ($params['insert'] as $row) {
 			$query = $this->db->insert($params['tabla'], $row);
 			$idCotizacionDetalleProveedorDetalle = $this->db->insert_id();
 
-			if(!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])){
+			if (!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])) {
 				$cotizacionesSub = checkAndConvertToArray($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"]);
 
-				foreach($cotizacionesSub as $idSub){
+				foreach ($cotizacionesSub as $idSub) {
 					$params['insertSub'][] = [
 						'idCotizacionDetalleProveedorDetalle' => $idCotizacionDetalleProveedorDetalle,
 						'idCotizacionDetalleSub' => $idSub,
@@ -491,8 +492,8 @@ class M_FormularioProveedor extends MY_Model
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
-			if(!empty($params['insertSub'])){
-				$this->db->insert_batch("compras.cotizacionDetalleProveedorDetalleSub",$params['insertSub']);
+			if (!empty($params['insertSub'])) {
+				$this->db->insert_batch("compras.cotizacionDetalleProveedorDetalleSub", $params['insertSub']);
 			}
 		}
 

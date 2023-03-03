@@ -36,11 +36,14 @@
 <?php $montoSub = 0; ?>
 <?php foreach ($detalle as $key => $row) : ?>
 	<!-- PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
-	<?php  if ($idItemTipo == COD_ARTICULO['id'] && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
-		<?php $idItemTipo = COD_TEXTILES['id'] ?>	
+	<?php if (($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
+		<?php $idItemTipo = COD_TEXTILES['id'] ?>
 	<?php endif; ?>
-	<?php  if ($idItemTipo == COD_TEXTILES['id'] && $row['idItemTipo'] == COD_ARTICULO['id']) :  ?>
-		<?php $idItemTipo = COD_ARTICULO['id'] ?>	
+	<?php if (($idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_ARTICULO['id']) :  ?>
+		<?php $idItemTipo = COD_ARTICULO['id'] ?>
+	<?php endif; ?>
+	<?php if (($idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_ARTICULO['id']) && $row['idItemTipo'] == COD_MOVIL['id']) :  ?>
+		<?php $idItemTipo = COD_MOVIL['id'] ?>
 	<?php endif; ?>
 	<!-- FIN: PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
 	<?php if ($idItemTipo != $row['idItemTipo']) : ?>
@@ -92,7 +95,7 @@
 						<th style="color:black; width:15%;">TOTAL</th>
 					</tr>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id']) :  ?>
+				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) :  ?>
 					<?php $col1 = 6; ?>
 					<tr style="background-color: #FFE598;">
 						<th style="color:black; width:5%;">ITEM</th>
@@ -141,7 +144,7 @@
 		<?php $rowspan = 1; ?>
 		<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 			<td style="text-align: center;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
-			<td class="bold" style="text-align: left; text-right bold;" rowspan="1"> <?= $row['item']; ?> </td>
+			<td class="bold" style="text-align: left; text-right bold;" rowspan="1"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
 			<td style="text-align: right;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 		</tr>
 		<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $k => $v) : ?>
@@ -153,15 +156,15 @@
 	<?php if ($idItemTipo == COD_DISTRIBUCION['id']) :  ?>
 		<td style="text-align: center;"><?= $key + 1 ?></td>
 		<td style="text-align: left;">
-			<?= verificarEmpty($row['item'], 1) ?>
+			<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?>
 		</td>
 		<td style="text-align: right;"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 	<?php endif; ?>
-	<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id']) :  ?>
+	<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) :  ?>
 		<tr style="background-color: #F6FAFD;">
 			<td style="text-align: center;"><?= $key + 1 ?></td>
 			<td style="text-align: left;" colspan="4">
-				<?= verificarEmpty($row['item'], 1) ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
+				<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 			</td>
 			<td style="text-align: left;">
 				<?= verificarEmpty($row['cantidad'], 1) ?>
@@ -170,39 +173,39 @@
 				<?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?>
 			</td>
 		</tr>
-		<?php  if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) :  ?>
-			<?php  $dataTextil = []; ?>
-			<?php  $dataTalla = []; ?>
-			<?php  $dataGenero = []; ?>
-			<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $kt => $vt): ?>
-				<?php  $dataTextil[$vt['talla']][$vt['genero']] = $vt; ?>
-				<?php  $dataGenero[$vt['genero']] = RESULT_GENERO[$vt['genero']]; ?>
-				<?php  $dataTalla[$vt['talla']] = $vt['talla']; ?>
+		<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) :  ?>
+			<?php $dataTextil = []; ?>
+			<?php $dataTalla = []; ?>
+			<?php $dataGenero = []; ?>
+			<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $kt => $vt) : ?>
+				<?php $dataTextil[$vt['talla']][$vt['genero']] = $vt; ?>
+				<?php $dataGenero[$vt['genero']] = RESULT_GENERO[$vt['genero']]; ?>
+				<?php $dataTalla[$vt['talla']] = $vt['talla']; ?>
 			<?php endforeach; ?>
 			<tr style="background-color: #F6FAFD;">
 				<td></td>
-				<td  style="text-align: right;">Talla</td>
-				<?php  if (count($dataGenero) == 1) :  ?>
-					<td colspan="3"  style="text-align: center;">Cantidad</td>
-				<?php else: ?>
-					<?php foreach ($dataGenero as $kg => $vg): ?>
-						<td  style="text-align: center;"><?= $vg; ?></td>
+				<td style="text-align: right;">Talla</td>
+				<?php if (count($dataGenero) == 1) :  ?>
+					<td colspan="3" style="text-align: center;">Cantidad</td>
+				<?php else : ?>
+					<?php foreach ($dataGenero as $kg => $vg) : ?>
+						<td style="text-align: center;"><?= $vg; ?></td>
 					<?php endforeach; ?>
-					<?php  if (3 - count($dataGenero) > 0) :  ?>
+					<?php if (3 - count($dataGenero) > 0) :  ?>
 						<td colspan="<?= 3 - count($dataGenero); ?>"></td>
 					<?php endif; ?>
-				<?php endif; ?>		
+				<?php endif; ?>
 				<td></td>
-				<td></td>			
+				<td></td>
 			</tr>
-			<?php foreach ($dataTalla as $kt => $vt): ?>
+			<?php foreach ($dataTalla as $kt => $vt) : ?>
 				<tr>
 					<td></td>
-					<td  style="text-align: right;"><?= $vt; ?></td>
-					<?php foreach ($dataGenero as $kg => $vg): ?>
-						<td  style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
+					<td style="text-align: right;"><?= $vt; ?></td>
+					<?php foreach ($dataGenero as $kg => $vg) : ?>
+						<td style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
 					<?php endforeach; ?>
-					<?php  if (3 - count($dataGenero) > 0) :  ?>
+					<?php if (3 - count($dataGenero) > 0) :  ?>
 						<td colspan="<?= 3 - count($dataGenero); ?>"></td>
 					<?php endif; ?>
 					<td></td>
@@ -245,6 +248,11 @@
 		<div>
 			<label>
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
+			</label>
+		</div>
+		<div>
+			<label>
+				<b>Solicitante: </b> <?= isset($cabecera['solicitante']) ? $cabecera['solicitante'] : ''; ?>
 			</label>
 		</div>
 

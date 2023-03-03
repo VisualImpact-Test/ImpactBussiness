@@ -2067,7 +2067,7 @@ var Cotizacion = {
 			if (b.result == 1) {
 
 				if (tipoRegistro == 3) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
-				if (tipoRegistro == 2) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
+				if (tipoRegistro == 2 || tipoRegistro == 1) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
