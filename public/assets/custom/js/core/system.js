@@ -296,7 +296,7 @@ var View = {
 
 		$(document).on('keypress', '.onlyNumbers', function (e) {
 			let control = $(this);
-			if (!$.isNumeric(e.key) && e.key != '.') {
+			if (!$.isNumeric(e.key) && e.key != '.' && e.keyCode != 13) {
 				e.preventDefault();
 			}
 		});

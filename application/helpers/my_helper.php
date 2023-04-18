@@ -7,7 +7,8 @@ function numRandom($digits = 4)
 }
 
 //handsotable
-function refactorizarDataHT($data = []){
+function refactorizarDataHT($data = [])
+{
 	$dataRefactorizada = [];
 	foreach ($data["data"] as $row) {
 		if (!in_array($row[$data["value"]], $dataRefactorizada)) $dataRefactorizada[] = $row[$data["value"]];
@@ -181,10 +182,10 @@ function getFechaDias($fecha, $dias = 0)
 {
 	$pos = strpos($fecha, '/');
 	if ($pos !== false) {
-    $fecha = date_change_format_bd($fecha);
+		$fecha = date_change_format_bd($fecha);
 	}
 	$fecha = date($fecha);
-	return date('d/m/Y', strtotime($fecha." {$dias} days"));
+	return date('d/m/Y', strtotime($fecha . " {$dias} days"));
 }
 
 function getFechaActual($dias = 0)
@@ -875,9 +876,9 @@ function getMensajeGestion($tipoMensaje, $input = [])
 				</div>',
 		'alertaPersonalizada' => createMessage(array("type" => 2, "message" => (!empty($input['message']) ? $input['message'] : ''))),
 		'exitosoPersonalizado' => createMessage(array("type" => 1, "message" => (!empty($input['message']) ? $input['message'] : ''))),
-        'anulacionExitosa' => createMessage(array("type" => 1, "message" => 'Se ha anulado la cotización correctamente')),
-        'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
-        ];
+		'anulacionExitosa' => createMessage(array("type" => 1, "message" => 'Se ha anulado la cotización correctamente')),
+		'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
+	];
 
 	return $mensaje[$tipoMensaje];
 }
@@ -1242,35 +1243,46 @@ function htmlSelectOptionArray2($params = [])
 	!empty($params['value']) ? $v = $params['value'] : $v = 'value';
 	!empty($params['id']) ? $id = $params['id'] : $id = 'id';
 	!empty($params['class']) ? $class = $params['class'] : $class = 'text-uppercase';
+	!empty($params['idDependiente']) ? $idDependienteTermino = $params['idDependiente'] : $idDependienteTermino = 'idDependiente';
 
 	foreach ($query as $f) {
-		if (!empty($idSelected) || !empty($params['selectAll'])) {
-			if ($f[$id] == $idSelected || !empty($params['selectAll'])) {
-				$fix = 'selected';
+		if (is_array($idSelected)) {
+			$fix = '';
+			foreach ($idSelected as $v) {
+				if ($v == $f[$id]) {
+					$fix = 'selected';
+				}
+			}
+		} else {
+			if (!empty($idSelected) || !empty($params['selectAll'])) {
+				if ($f[$id] == $idSelected || !empty($params['selectAll'])) {
+					$fix = 'selected';
+				} else {
+					$fix = '';
+				}
 			} else {
 				$fix = '';
 			}
-		} else {
-			$fix = '';
 		}
 
-		$idDependiente = ""; $data_option =  '';
-		if (!empty($f['idDependiente'])) {
-			$idDependiente = " data-parentDependiente='" . $f['idDependiente'] . "' style='display: none;'";
+		$idDependiente = "";
+		$data_option =  '';
+		if (!empty($f[$idDependienteTermino])) {
+			$idDependiente = ' data-parentDependiente="' . $f[$idDependienteTermino] . '" style="display: none;"';
 		}
-		if(!empty($params['data-option'])){
-			foreach($params['data-option'] as $row){
-				!empty($f[$row]) ? $data_option .= " data-".$row." = \"".$f[$row]."\"": '';
+		if (!empty($params['data-option'])) {
+			foreach ($params['data-option'] as $row) {
+				!empty($f[$row]) ? $data_option .= " data-" . $row . " = \"" . $f[$row] . "\"" : '';
 			}
 		}
 
-		if(!empty($f['icono'])){
+		if (!empty($f['icono'])) {
 			$icono = "<i class='{$f['icono']}'></i>";
-		}else{
+		} else {
 			$icono = '';
 		}
 
-		$html .= "<option $data_option class='" . $class . "' $fix value='" . $f[$id] . "'" . $idDependiente . ">" .$icono. strtoupper($f[$v]) . "</option>";
+		$html .= '<option ' . $data_option . ' class="' . $class . '" ' . $fix . ' value="' . $f[$id] . '"' . $idDependiente . '>' . $icono . strtoupper($f[$v]) . "</option>";
 	}
 
 	return $html;
@@ -1673,9 +1685,10 @@ function getPermisosUsuario($params = [])
 	return $string;
 }
 
-function horaFormato($fecha){ //24 horas
-    $str = strtotime($fecha);
-    return date('H:i:s', $str);
+function horaFormato($fecha)
+{ //24 horas
+	$str = strtotime($fecha);
+	return date('H:i:s', $str);
 }
 
 function getColumnasAdicionales($params)
@@ -1919,11 +1932,12 @@ function validarTiempoLimite($tiempoInicio, $tiempoFinal)
 
 function costoUnitario($cantidad, $importe, $decimales = 2)
 {
-    $costo = round(($importe / $cantidad), 2);
-    return $costo;
+	$costo = round(($importe / $cantidad), 2);
+	return $costo;
 }
 
-function moneyToText($params = []){
+function moneyToText($params = [])
+{
 
 	$moneda = !empty($params['moneda']) ? $params['moneda'] : '';
 
@@ -1935,10 +1949,10 @@ function moneyToText($params = []){
 	$numero = $params['numero'];
 	// return $formatter->toMoney(10.10, 2, 'SOLES', 'CENTIMOS');
 	return $formatter->toInvoice($numero, 2, $moneda);
-
 }
 
-function completarFilasPdf($params){
+function completarFilasPdf($params)
+{
 
 	$filas = count($params['data']);
 	$filasRequeridas = $params['filas'];
@@ -1946,78 +1960,82 @@ function completarFilasPdf($params){
 	$columnas = $params['columnas'];
 
 	$table = '';
-	for($i = $filas; $i < $filasRequeridas ; $i++){
+	for ($i = $filas; $i < $filasRequeridas; $i++) {
 		$table .= '<tr>';
-			for ($j=0; $j < $columnas ; $j++) {
-				$table .= '<td class="text-center">';
-					if($j == 0 ){
-						//Solo ponemos el numero de fila si es la primera columna
-						$table .= ($i + 1);
-					}
-				$table .= '</td>';
+		for ($j = 0; $j < $columnas; $j++) {
+			$table .= '<td class="text-center">';
+			if ($j == 0) {
+				//Solo ponemos el numero de fila si es la primera columna
+				$table .= ($i + 1);
 			}
+			$table .= '</td>';
+		}
 		$table .= '</tr>';
 	}
-	for($x = $filas; $x < $filasAdicionales ; $x++){
+	for ($x = $filas; $x < $filasAdicionales; $x++) {
 		$table .= '<tr>';
-			for ($y=0; $y < $columnas ; $y++) {
-				$table .= '<td class="text-center">';
-					if($y == 0 ){
-						//Solo ponemos el numero de fila si es la primera columna
-						$table .= ($x + 1);
-					}
-				$table .= '</td>';
+		for ($y = 0; $y < $columnas; $y++) {
+			$table .= '<td class="text-center">';
+			if ($y == 0) {
+				//Solo ponemos el numero de fila si es la primera columna
+				$table .= ($x + 1);
 			}
+			$table .= '</td>';
+		}
 		$table .= '</tr>';
 	}
 
 	return $table;
 }
 
-function encrypt($string) {
+function encrypt($string)
+{
 	$method = 'aes-256-cbc';
 	$iv = base64_decode("C8fBxl1g7EWtYTL1/M8jfstw==");
-	
+
 	return openssl_encrypt($string, $method, SECRET_KEY_GET, false, $iv);
- }
+}
 
-function decrypt($string) {
+function decrypt($string)
+{
 	$method = 'aes-256-cbc';
 	$iv = base64_decode("C8fBxl1g7EWtYTL1/M8jfstw==");
-	
+
 	return openssl_decrypt($string, $method, SECRET_KEY_GET, false, $iv);
- }
+}
 
-class Encriptar {
+class Encriptar
+{
 
-    static $key = 'EnCRypT10nK#Y!RiSRNn';
+	static $key = 'EnCRypT10nK#Y!RiSRNn';
 
-    static function codificar($dato) {
-        $resultado = $dato;
-        $arrayLetras = self::$key;
-        $limite = strlen($arrayLetras) - 1;
-        $num = mt_rand(3,5);
-        for ($i = 1; $i <= $num; $i++) {
-            $resultado = base64_encode($resultado);
-        }
-        $resultado = $resultado . '+' . $arrayLetras[$num];
-        $resultado = base64_encode($resultado);
-        return $resultado;
-    }
+	static function codificar($dato)
+	{
+		$resultado = $dato;
+		$arrayLetras = self::$key;
+		$limite = strlen($arrayLetras) - 1;
+		$num = mt_rand(3, 5);
+		for ($i = 1; $i <= $num; $i++) {
+			$resultado = base64_encode($resultado);
+		}
+		$resultado = $resultado . '+' . $arrayLetras[$num];
+		$resultado = base64_encode($resultado);
+		return $resultado;
+	}
 
-    static function decodificar($dato) {
-        $resultado = base64_decode($dato);
-        list($resultado, $letra) = explode('+', $resultado);
-        $arrayLetras = self::$key;
-        for ($i = 0; $i < strlen($arrayLetras); $i++) {
-            if ($arrayLetras[$i] == $letra) {
-                for ($j = 1; $j <= $i; $j++) {
-                    $resultado = base64_decode($resultado);
-                }
-                break;
-            }
-        }
-        return $resultado;
-    }
-
+	static function decodificar($dato)
+	{
+		$resultado = base64_decode($dato);
+		list($resultado, $letra) = explode('+', $resultado);
+		$arrayLetras = self::$key;
+		for ($i = 0; $i < strlen($arrayLetras); $i++) {
+			if ($arrayLetras[$i] == $letra) {
+				for ($j = 1; $j <= $i; $j++) {
+					$resultado = base64_decode($resultado);
+				}
+				break;
+			}
+		}
+		return $resultado;
+	}
 }

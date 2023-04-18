@@ -66,9 +66,9 @@ var Fn = {
 
 	showModal: function (config) {
 		var modal = '';
-		if (typeof config.escape !=='undefined' && config.escape){
+		if (typeof config.escape !== 'undefined' && config.escape) {
 			var escapeKeyPressed = false;
-			$(document).keydown(function(event) {
+			$(document).keydown(function (event) {
 				if (event.which == 27) {
 					if (escapeKeyPressed) {
 						$('#modal-page-' + config.id).next('.modal-backdrop').remove();
@@ -78,7 +78,7 @@ var Fn = {
 						escapeKeyPressed = false;
 					} else {
 						escapeKeyPressed = true;
-						setTimeout(function() {
+						setTimeout(function () {
 							escapeKeyPressed = false;
 						}, 1000);
 					}
@@ -1435,6 +1435,11 @@ var Fn = {
 	loadSemanticFunctions: function () {
 		$('select.semantic-dropdown').dropdown();
 		$('div.semantic-dropdown').dropdown();
+		$('div.boton-dropdown').dropdown({
+			onChange: function (valor) {
+				$(this).siblings('.date-semantic-value').val(valor).trigger('change');
+			}
+		});
 
 
 		$('select.dropdown.parentDependiente').dropdown({
@@ -1444,7 +1449,7 @@ var Fn = {
 
 				if (idParent.length > 0) {
 					$("#" + childDependiente).children('option').hide();
-					$("#" + childDependiente).children("option[data-parentdependiente^=" + idParent + "]").show()
+					$("#" + childDependiente).children("option[data-parentdependiente=" + idParent + "]").show();
 					$('#' + childDependiente).dropdown({
 						forceSelection: false
 					});
@@ -1476,13 +1481,16 @@ var Fn = {
 			// minDate: $(this).data('disablepast') ? new Date() : false,
 			type: 'date',
 			text: {
-				days: ['S', 'L', 'M', 'MM', 'J', 'V', 'S'],
+				days: ['D', 'L', 'M', 'MM', 'J', 'V', 'S'],
 				months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
 				monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
 				today: 'Hoy',
 				now: 'Ahora',
 				am: 'AM',
 				pm: 'PM'
+			},
+			popupOptions: {
+				observeChanges: false
 			},
 			onChange: function (date) {
 				var year = date.getFullYear();
@@ -1494,8 +1502,7 @@ var Fn = {
 				if (day < 10) {
 					day = '0' + day;
 				}
-
-				$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day);
+				$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
 			}
 		});
 		$('.ui.checkbox').checkbox();

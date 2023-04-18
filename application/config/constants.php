@@ -210,4 +210,10 @@ defined("URL_WASABI_ITEM_PROPUESTA") or define("URL_WASABI_ITEM_PROPUESTA", 'htt
 
 // Genero
 defined('LIST_GENERO') or define('LIST_GENERO', [['id' => 1, 'value' => 'VARON'], ['id' => 2, 'value' => 'DAMA'], ['id' => 3, 'value' => 'UNISEX']]);
-defined('RESULT_GENERO') or define('RESULT_GENERO', ['1' => 'VARON', '2'=> 'DAMA', '3' =>'UNISEX']);
+defined('RESULT_GENERO') or define('RESULT_GENERO', ['1' => 'VARON', '2' => 'DAMA', '3' => 'UNISEX']);
+
+defined('COD_SUELDO') or define('COD_SUELDO', '1'); // ImpactBussiness.compras.tipoPresupuesto
+defined('COD_SUELDOMINIMO') or define('COD_SUELDOMINIMO', '1'); // ImpactBussiness.compras.tipoPresupuestoDetalle
+defined('COD_ASIGNACIONFAMILIAR') or define('COD_ASIGNACIONFAMILIAR', '2'); // ImpactBussiness.compras.tipoPresupuestoDetalle
+
+defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', ['1' => 'MENSUAL', '2' => 'BIMENSUAL', '3' => 'SEMESTRAL', '4' => 'ANUAL', '5' => 'UNICO']);
