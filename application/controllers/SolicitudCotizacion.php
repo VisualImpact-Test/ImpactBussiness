@@ -1449,6 +1449,7 @@ class SolicitudCotizacion extends MY_Controller
 
 
 		$provCompare = [];
+		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
 		foreach ($dataParaVista['detalle'] as $dd => $row) {
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;

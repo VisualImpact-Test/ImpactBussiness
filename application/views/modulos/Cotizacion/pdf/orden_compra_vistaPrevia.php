@@ -78,7 +78,7 @@
 				</tr>
 				<?php if ($data['mostrar_imagenes'] == '1' && count($imagenesDeItem[$row['idItem']])) :  ?>
 					<tr>
-						<td colspan="4">
+						<td colspan="6">
 							<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
 								<img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 120px; height: 120px;">
 							<?php endforeach; ?>
@@ -151,8 +151,6 @@
 					<td colspan="6" style="font-weight: bold;">
 						<?= !empty($data['entrega']) ? "Entrega: {$data['entrega']}" : '' ?>
 					</td>
-					<td></td>
-					<td></td>
 				</tr>
 			<? } ?>
 			<? if (!empty($data['observacion'])) { ?>

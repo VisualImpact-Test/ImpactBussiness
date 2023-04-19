@@ -625,8 +625,8 @@ class Cotizacion extends MY_Controller
 
 			$estadoEmail = $this->enviarCorreo(['idCotizacion' => $insert['id'], 'to' => $toCompras]);
 			$necesitaCotizacionIntera = false;
-			foreach ($post['cotizacionInternaForm'] as $cotizacionInterna) {
-				if ($cotizacionInterna == 1) {
+			foreach (checkAndConvertToArray($post['cotizacionInternaForm']) as $cotizacionInterna) {
+				if ($cotizacionInterna == '1') {
 					$necesitaCotizacionIntera = true;
 					break;
 				}
@@ -863,6 +863,7 @@ class Cotizacion extends MY_Controller
 			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN', 'codigo' => 'COD: SIG-OPE-FOR-003'], true);
 			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
 			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
+			log_message('error', $contenido['body']);
 			$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 
 			require APPPATH . '/vendor/autoload.php';

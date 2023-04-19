@@ -231,7 +231,7 @@
                                             <div class="four wide field">
                                                 <div class="ui sub header">Tipo Servicio</div>
                                                 <select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $rowDetalle['idCotizacionDetalle'] ?>]">
-                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'] ,'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
+                                                    <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
                                                 </select>
                                             </div>
                                             <div class="three wide field">
@@ -273,8 +273,10 @@
                                         <div class="ui sub header">Subtotal</div>
                                         <div class="ui right labeled input">
                                             <label for="amount" class="ui label teal">S/</label>
-                                            <input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda($rowDetalle['subtotalForm']) ?>" readonly>
-                                            <input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= $rowDetalle['subtotalForm'] ?>" placeholder="0.00" readonly patron="requerido">
+                                            <!-- <input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda($rowDetalle['subtotalForm']) ?>" readonly>
+                                            <input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= $rowDetalle['subtotalForm'] ?>" placeholder="0.00" readonly patron="requerido"> -->
+                                            <input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda(floatval($rowDetalle['cantidadForm']) * floatval($rowDetalle['costoForm'])) ?>" readonly>
+                                            <input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= floatval($rowDetalle['cantidadForm']) * floatval($rowDetalle['costoForm']) ?>" placeholder="0.00" readonly patron="requerido">
                                         </div>
                                     </div>
                                 </div>

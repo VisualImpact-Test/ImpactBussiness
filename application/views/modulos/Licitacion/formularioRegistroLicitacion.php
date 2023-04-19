@@ -18,7 +18,7 @@
 		</div>
 		<div class="eight wide field">
 			<div class="ui sub header">Moneda</div>
-			<select class="ui dropdown semantic-dropdown" name="moneda" patron="requerido">
+			<select class="ui dropdown semantic-dropdown" name="moneda">
 				<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $licitacion['idMoneda'], 'query' => $moneda, 'id' => 'idMoneda', 'value' => 'nombreMoneda', 'class' => 'text-titlecase']); ?>
 			</select>
 		</div>

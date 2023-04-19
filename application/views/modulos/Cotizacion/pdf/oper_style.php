@@ -1,10 +1,12 @@
 <style>
     body {
-		font-family: Arial, Helvetica, sans-serif;
-	}
-    td.bold{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    td.bold {
         font-weight: bold;
     }
+
     .text-left {
         text-align: left;
     }
@@ -20,6 +22,7 @@
     .w-5 {
         width: 5%;
     }
+
     .w-10 {
         width: 10%;
     }
@@ -61,17 +64,21 @@
         font-size: 12px;
     }
 
-    .d-none{
+    .d-none {
         display: none;
     }
+
     tr.subDet {
         border: 1px solid #000;
         border-bottom: none;
         border-top: none;
     }
-    .bn{
+
+    .bn {
         border-style: none;
     }
-    
-    
+
+    .bg-gray {
+        background-color: #F6FAFD;
+    }
 </style>
