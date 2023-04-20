@@ -366,8 +366,6 @@
 								</table>
 							</div>
 						</div>
-
-
 						<div class="fields">
 							<div class="four wide field">
 								<div class="ui sub header">Archivos <div class="ui btn-info-custom text-primary btn-info-archivo"><i class="info circle icon"></i></div>

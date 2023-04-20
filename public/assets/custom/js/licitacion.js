@@ -326,17 +326,23 @@ var Licitacion = {
 		});
 	},
 	addRow: function (t) {
-		let tipo = $(t).data('tipo');
+		let detalle = $(t).data('detalle');
+		let contador = $("#tb_LD" + detalle + "> tbody > tr").length;
 		let html = '';
 		html += `
 		<tr>
 			<td>
-				<select class="ui fluid search dropdown toast semantic-dropdown">
+				<select class="ui fluid search dropdown dropdownSingleAditions" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
 					<option value=""></option>`;
-		for (let i = 0; i < Licitacion.arrayTipoPresupuestoDetalle[tipo].length; i++) {
-			let tpd = Licitacion.arrayTipoPresupuestoDetalle[tipo][i];
+		for (let i = 0; i < Licitacion.arrayTipoPresupuestoDetalle[detalle].length; i++) {
+			let tpd = Licitacion.arrayTipoPresupuestoDetalle[detalle][i];
 			html += `<option value="${tpd.idTipoPresupuestoDetalle}">${tpd.nombre}</option>`;
 
+		}
+		let totalCargo = 0;
+		for (let i = 0; i < Licitacion.arrayCargo.length; i++) {
+			let lCx = Licitacion.arrayCargo[i];
+			totalCargo += parseInt(lCx.cantidad);
 		}
 		html += `
 				</select>
@@ -348,42 +354,74 @@ var Licitacion = {
 			</td>
 			<td class="precioUnitarioDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right" name="precioUnitarioDS" value="">
+					<input type="text" class="text-right" name="precioUnitarioDS" value="0">
 				</div>
 			</td>
 			<td class="cantidadDeTabla">
 				<div class="ui action input" style="width: 80px;">
-					<input type="text" value="0" readonly name="cantidadDS" onchange="Licitacion.calcularSTotal(this);" data-detallesub="${tipo}" data-detalle="${tipo}">
+					<input type="text" value="${totalCargo}" readonly name="cantidadDS" onchange="Licitacion.calcularSTotal(this);" data-detallesub="${contador}" data-detalle="${detalle}">
 					<a class="ui button" onclick="$(this).closest('td.cantidadDeTabla').find('div.listCheck').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
 				</div>
 				<div class="listCheck mt-3 d-none">`
 
 		for (let i = 0; i < Licitacion.arrayCargo.length; i++) {
 			let lC = Licitacion.arrayCargo[i];
-			console.log(lC);
 			html += `
 					<div class="fields">
 						<div class="ui checkbox">
-							<input type="checkbox" name="chkPD[${lC.idLicitacionCargo}]; ?>]" data-cargo="${i}" checked onchange="Licitacion.cantidadSplitCargo(this);">
+							<input type="checkbox" name="chkPD[${lC.idLicitacionCargo}]" data-cargo="${i}" checked onchange="Licitacion.cantidadSplitCargo(this);">
 							<label style="font-size: 1.5em;">${lC.cargo}</label>
 						</div>
 					</div>
 			`;
 		}
-		// <? php foreach($licitacionCargo as $kLc => $vLc) : ?>
-		// 	<div class="fields">
-		// 		<div class="ui checkbox">
-		// 			<input type="checkbox" name="chkPD[<?= $vLc['idLicitacionCargo']; ?>]" data-cargo="<?= $kLc ?>" checked onchange="Licitacion.cantidadSplitCargo(this);">
-		// 			<label style="font-size: 1.5em;"><?= $vLc['cargo'] ?></label>
-		// 		</div>
-		// 	</div>
-		// <?php endforeach; ?>
 		html += `
 				</div>
 			</td >
+			<td>
+				<div class="ui input transparent totalCantidadSplit" style="width: 80px;">
+					<input type="text" class="text-right" value="0" readonly name="montoDS">
+				</div>
+			</td>
+			<td class="frecuenciaDetalle">
+				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="Licitacion.cantidadSplitCargo(this);">
+					<option value="">Frecuencia</option>
+					<option value="1" selected>MENSUAL</option>
+					<option value="2">BIMENSUAL</option>
+					<option value="3">SEMESTRAL</option>
+					<option value="4">ANUAL</option>
+					<option value="5">UNICO</option>
+				</select>
+			</td>
 		</tr > `;
-		$('#tabla' + tipo).find('tbody').append(html);
+		$('#tabla' + detalle).find('tbody').append(html);
+
+		let nhtml = '';
+		nhtml += `
+		<tr>
+			<td id="textDescripcionDetalle_${detalle}_${contador}"></td>`;
+		for (let i = 0; i < Licitacion.arrayFechas.length; i++) {
+			let lF = Licitacion.arrayFechas[i];
+			nhtml += `
+			<td>
+				<div class="ui input transparent" style="width: 80px;">
+					<input class="text-right" type="text" value="0" readonly id="montoLDS_${detalle}_${contador}_${i}">
+				</div>
+			</td>
+			`;
+		}
+		nhtml += `
+			<td>
+				<div class="ui input transparent" style="width: 80px;">
+					<input class="text-right" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="Licitacion.calcularTotalColumna(this);">
+				</div>
+			</td>
+		</tr>`;
+
+		$('#tb_LD' + detalle).find('tbody').append(nhtml);
+
 		Fn.loadSemanticFunctions();
+		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 	},
 	addDocumento: function () {
 		Fn.showLoading(true);
@@ -410,7 +448,7 @@ var Licitacion = {
 	addCargo: function () {
 		html = '';
 		html +=
-			`< div class="fields" >
+			`<div class="fields">
 				<div class="eight wide field">
 					<div class="ui sub header">Cargo</div>
 					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido">`;
@@ -548,16 +586,31 @@ var Licitacion = {
 		for (let f = 0; f < Licitacion.arrayFechas.length; f++) {
 			totalFinalAcumulado += parseFloat(totalFinal);
 			if (frecuencia == 1) { // MENSUAL
-				f = f + 0;
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
+				f = f + 0;
 			} else if (frecuencia == 2) { // BIMENSUAL
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 				f = f + 1;
 			} else if (frecuencia == 3) { // SEMESTRAL
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
 				f = f + 5;
 			} else if (frecuencia == 4) { // ANUAL
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 5)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 6)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 7)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 8)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 9)).val('0.00').trigger('change');
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 10)).val('0.00').trigger('change');
 				f = f + 11;
 			} else if (frecuencia == 5) { // UNICO
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + 0).val(totalFinal).trigger('change');

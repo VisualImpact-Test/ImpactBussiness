@@ -42,7 +42,7 @@
 									<?php foreach ($licitacionFecha as $kf => $vf) : ?>
 										<td>
 											<div class="ui input transparent" style="width: 80px;">
-												<input type="text" value="<?= $vp['cantidad']; ?>" readonly class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
+												<input type="text" value="<?= $vp['cantidad']; ?>" class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 											<input type="hidden" name="idLicitacionCargo" value="<?= $vp['idLicitacionCargo']; ?>">
 										</td>
@@ -55,14 +55,14 @@
 				<?php foreach ($licitacionDetalle as $kd => $vd) : ?>
 					<input type="hidden" name="idLicitacionDetalle" value="<?= $vd['idLicitacionDetalle']; ?>">
 					<div class="ui table">
-						<table class="ui table">
+						<table class="ui table" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
 							<thead>
 								<tr>
 									<th><?= $vd['tipoPresupuesto']; ?></th>
 									<?php foreach ($licitacionFecha as $kf => $vf) : ?>
 										<th>
 											<div class="ui input transparent" style="width: 80px;">
-												<input class="text-right" type="text" value="STotal <?= $kf ?>" readonly id="totalColumna_<?= $kd ?>_<?= $kf ?>">
+												<input class="text-right" type="text" value=" - " readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
 											</div>
 										</th>
 									<?php endforeach; ?>
@@ -99,7 +99,7 @@
 										<?php endforeach; ?>
 										<td>
 											<div class="ui input transparent" style="width: 80px;">
-												<input class="text-right" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $kd ?>" onchange="Licitacion.calcularTotalColumnaSueldo(this);">
+												<input class="text-right" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="Licitacion.calcularTotalColumnaSueldo(this);">
 											</div>
 										</td>
 									</tr>
@@ -107,18 +107,17 @@
 									<?php if (!empty($licitacionDetalleSub[$vd['idTipoPresupuesto']])) :  ?>
 										<?php foreach ($licitacionDetalleSub[$vd['idTipoPresupuesto']] as $kLDS => $vLDS) : ?>
 											<tr>
-												<td> <?= $vLDS['nombre']; ?>
-												</td>
+												<td> <?= $vLDS['nombre']; ?> </td>
 												<?php foreach ($licitacionFecha as $kf => $vf) : ?>
 													<td>
 														<div class="ui input transparent" style="width: 80px;">
-															<input class="text-right" type="text" value="0" readonly id="montoLDS_<?= $kd ?>_<?= $kLDS ?>_<?= $kf ?>">
+															<input class="text-right" type="text" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
 														</div>
 													</td>
 												<?php endforeach; ?>
 												<td>
 													<div class="ui input transparent" style="width: 80px;">
-														<input class="text-right" type="text" value="0" readonly id="totalLineaDS_<?= $kd ?>_<?= $kLDS ?>" data-detalle="<?= $kd ?>" onchange="Licitacion.calcularTotalColumna(this);">
+														<input class="text-right" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="Licitacion.calcularTotalColumna(this);">
 													</div>
 												</td>
 											</tr>
@@ -311,7 +310,7 @@
 						<div class="control-group child-divcenter col-md-11 divTipoDetalle" style="width:100%">
 							<div class="field">
 								<?php if ($vd['mostrarDetalle'] != '1') :  ?>
-									<a class="ui blue button" data-tipo="<?= $vd['idTipoPresupuesto']; ?>" onclick="Licitacion.addRow(this)">Agregar</a>
+									<a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="Licitacion.addRow(this)">Agregar</a>
 								<?php endif; ?>
 								<a class="ui green button" onclick="$(this).closest('.divTipoDetalle').find('th.cantidadDeTabla').toggleClass('d-none'); $(this).closest('.divTipoDetalle').find('td.cantidadDeTabla').toggleClass('d-none');$(this).find('i').toggleClass('slash');"><i class="icon eye"></i>Cantidad por cargo</a>
 							</div>
@@ -333,7 +332,7 @@
 												<td>
 													<select class="ui fluid search dropdown toast semantic-dropdown">
 														<option value="">Sueldo</option>
-														<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $kTPD => $vPD) : ?>
+														<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $vPD) : ?>
 															<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
 														<?php endforeach; ?>
 													</select>
@@ -350,7 +349,7 @@
 												</td>
 												<td class="cantidadDeTabla">
 													<div class="ui action input" style="width: 80px;">
-														<input type="text" value="<?= $cantidadCargo * floatval($value['split']); ?>" readonly name="cantidadDS" onchange="Licitacion.calcularSTotal(this);" data-detallesub="<?= $key ?>" data-detalle="<?= $kd ?>">
+														<input type="text" value="<?= $cantidadCargo * floatval($value['split']); ?>" readonly name="cantidadDS" onchange="Licitacion.calcularSTotal(this);" data-detallesub="<?= $key ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>">
 														<a class="ui button" onclick="$(this).closest('td.cantidadDeTabla').find('div.listCheck').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
 													</div>
 													<div class="listCheck mt-3 d-none">

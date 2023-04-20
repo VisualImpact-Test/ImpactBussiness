@@ -155,9 +155,7 @@
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
 					<td style="text-align: left;">
-						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) :  ?>
-							<?= verificarEmpty($row['cantidad'], 1) ?>
-						<?php endif; ?>
+						<?= verificarEmpty($row['cantidad'], 1) ?>
 					</td>
 					<td style="text-align: right;">
 						<?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?>
@@ -237,11 +235,6 @@
 		<div>
 			<label>
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
-			</label>
-		</div>
-		<div>
-			<label>
-				<b>Solicitante: </b> <?= isset($cabecera['solicitante']) ? $cabecera['solicitante'] : ''; ?>
 			</label>
 		</div>
 		<?php if (!empty($anexos)) :  ?>
