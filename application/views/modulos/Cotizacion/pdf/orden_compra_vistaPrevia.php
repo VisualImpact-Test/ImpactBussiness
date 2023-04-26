@@ -78,9 +78,11 @@
 				</tr>
 				<?php if ($data['mostrar_imagenes'] == '1' && count($imagenesDeItem[$row['idItem']])) :  ?>
 					<tr>
-						<td colspan="6">
+						<td></td>
+						<td></td>
+						<td colspan="4">
 							<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
-								<img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 120px; height: 120px;">
+								<img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 100px; height: 100px;">
 							<?php endforeach; ?>
 						<td></td>
 						<td></td>

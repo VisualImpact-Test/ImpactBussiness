@@ -2,7 +2,7 @@
 
 </style>
 <div class="card-datatable">
-	<table id="tb-licitacion" class="ui celled table" width="100%">
+	<table id="tb-ordenServicio" class="ui celled table" width="100%">
 		<thead>
 			<tr>
 				<th class="td-center">#</th>
@@ -20,15 +20,15 @@
 		</thead>
 		<tbody>
 			<? $ix = 1; ?>
-			<?php foreach ($licitacion as $key => $row) : ?>
-				<tr data-id="<?= $key ?>">
+			<?php foreach ($ordenServicio as $key => $row) : ?>
+				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
-						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar Licitación"><i class="fa fa-lg fa-edit"></i></a>
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar Orden de Servicio"><i class="fa fa-lg fa-edit"></i></a>
 						<?php if ($row['chkAprobado']) :  ?>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto" title="Generar Presupuesto"><i class="fa fa-lg fa-user"></i></a>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
 						<?php else : ?>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnAprobar" title="Aprobar Licitación"><i class="fa fa-lg fa-check"></i></a>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnAprobar" title="Aprobar Orden de Servicio"><i class="fa fa-lg fa-check"></i></a>
 						<?php endif; ?>
 					</td>
 					<td class="td-center">

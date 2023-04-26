@@ -99,7 +99,6 @@ var Cotizacion = {
 			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra', jsonString);
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
-			alert();
 			let id = $(this).closest('tr').data('id');
 			if (id==undefined) {
 				id = $(this).data('id');

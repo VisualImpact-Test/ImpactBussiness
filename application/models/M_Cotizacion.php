@@ -1208,11 +1208,15 @@ class M_Cotizacion extends MY_Model
 				, m.nombreMoneda monedaPlural
 				, m.simbolo simboloMoneda
 				, o.igv
+				, pr.razonSocial
+				, pr.nroDocumento as ruc
+				, o.mostrar_imagenes
 			FROM compras.ordenCompra o
 			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
 				AND General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,o.fechaReg,o.fechaReg)=1
 			JOIN compras.metodoPago mp ON mp.idMetodoPago = o.idMetodoPago
+			LEFT JOIN compras.proveedor pr ON pr.idProveedor = o.idProveedor
 			LEFT JOIN visualImpact.logistica.cuenta c ON o.idCuenta = c.idCuenta
 			LEFT JOIN visualImpact.logistica.cuentaCentroCosto cc ON o.idCentroCosto = cc.idCuentaCentroCosto
 			LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg

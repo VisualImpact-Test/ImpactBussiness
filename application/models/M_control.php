@@ -51,7 +51,7 @@ class M_control extends MY_Model{
 		JOIN sistema.usuarioHistorico uh ON u.idUsuario = uh.idUsuario
 		JOIN sistema.usuarioTipo ut ON uh.idTipoUsuario = ut.idTipoUsuario
 		WHERE 
-		General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@hoy,@hoy) = 1
+		General.dbo.fn_fechaVigente(uh.fecIni,uh.fecFin,@hoy,@hoy) = 1 and u.estado =1
 		{$filtros}
 		";
 

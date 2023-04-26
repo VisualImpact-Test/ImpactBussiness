@@ -917,6 +917,7 @@ class FormularioProveedor extends MY_Controller
 		$config['js']['script'] = array(
 			'assets/custom/js/FormularioProveedoresCotizaciones',
 			'assets/custom/js/FormularioProveedoresOC',
+			'assets/libs/fileDownload/jquery.fileDownload',
 
 		);
 
@@ -928,10 +929,26 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		$config['data']['detalle'] = $ordenCompraProveedor;
 
+		$config['data']['imagen'] = [];
+
+		if (!empty($config['data']['cabecera']['mostrar_imagenes'])) {
+			foreach ($ordenCompraProveedor as $k => $v) {
+				foreach ($this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleArchivos')->result_array() as $vq1) {
+					$vq1['carpeta'] = 'cotizacion/';
+					$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
+				}
+				foreach ($this->db->where('idItem', $v['idItem'])->get('compras.itemImagen')->result_array() as $vq1) {
+					$vq1['carpeta'] = 'item/';
+					$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
+				}
+			}
+		}
+
 		$config['single'] = true;
 		if (empty($idOrdenCompra) || empty($ordenCompraProveedor)) {
 			$config['view'] = 'formularioProveedores/validacionEmail';
 		}
+
 		$this->view($config);
 	}
 
@@ -1027,7 +1044,6 @@ class FormularioProveedor extends MY_Controller
 				['data' => 'descripcion', 'type' => 'text', 'placeholder' => 'Descripción', 'width' => 400],
 				['data' => 'cantidad', 'type' => 'numeric', 'placeholder' => 'Cantidad', 'width' => 200],
 				['data' => 'precUnitario', 'type' => 'numeric', 'placeholder' => 'Prec. Unitario', 'width' => 200],
-
 			],
 			'colWidths' => 200,
 		];
@@ -1089,7 +1105,7 @@ class FormularioProveedor extends MY_Controller
 				'subTotal' => floatval($tablaHT['cantidad']) * floatval($tablaHT['precUnitario'])
 			];
 		}
-		if(empty($dataServicio['insert'])){
+		if (empty($dataServicio['insert'])) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');

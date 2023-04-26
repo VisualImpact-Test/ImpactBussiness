@@ -1599,9 +1599,7 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
-		// $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
-		// $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
-
+		
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',

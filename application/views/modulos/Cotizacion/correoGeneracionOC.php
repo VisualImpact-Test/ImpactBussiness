@@ -34,6 +34,6 @@
         background-color: rgba(229, 247, 147, 0.46);
     }
 </style>
-<h3 style="margin: 0px;">Estimados, se le informa que se ha generado una nueva ORDEN DE COMPRA con la siguiente información:</h3>
+<h3 style="margin: 0px;">Estimados, se le informa que se ha generado una nueva ORDEN DE COMPRA:</h3>
 <br>
-<h4 style="margin: 0px;">Se pide a los implicados rellenar los costos de cada item para completar la cotización.</h4>
+<!-- <h4 style="margin: 0px;">Se pide a los implicados rellenar los costos de cada item para completar la cotización.</h4> -->

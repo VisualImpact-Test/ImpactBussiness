@@ -1,8 +1,8 @@
-var Licitacion = {
+var OrdenServicio = {
 
-	frm: 'frm-licitacion',
-	contentDetalle: 'idContentLicitacion',
-	url: 'Licitacion/',
+	frm: 'frm-ordenServicio',
+	contentDetalle: 'idContentOrdenServicio',
+	url: 'OrdenServicio/',
 	sueldoConteo: 0,
 	arrayPersona: {},
 	arrayCargo: {},
@@ -15,28 +15,48 @@ var Licitacion = {
 	load: function () {
 
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
-			$('#btn-filtrarLicitacion').click();
+			$('#btn-filtrarOrdenServicio').click();
 		});
 
 		$(document).ready(function () {
-			$('#btn-filtrarLicitacion').click();
+			$('#btn-filtrarOrdenServicio').click();
 		});
 
-		$(document).on('click', '#btn-filtrarLicitacion', function () {
+		$(document).on('click', '#btn-filtrarOrdenServicio', function () {
 			var ruta = 'reporte';
 			var config = {
-				'idFrm': Licitacion.frm
-				, 'url': Licitacion.url + ruta
-				, 'contentDetalle': Licitacion.contentDetalle
+				'idFrm': OrdenServicio.frm
+				, 'url': OrdenServicio.url + ruta
+				, 'contentDetalle': OrdenServicio.contentDetalle
 			};
 			Fn.loadReporte_new(config);
 		});
 
-		$(document).on('click', '#btn-registrarLicitacion', function () {
+		$(document).on('change', '.cboDocumento', function () {
+			control = $(this);
+			let idArea = control.find('option:selected').data('idarea');
+			let idPersonal = control.find('option:selected').data('idpersonal');
+			let direccion = control.find('option:selected').data('nombre_archivo');
+			let text = control.find('option:selected').text();
+
+			txtDocumento = control.closest('.fields').find('div.divDocumento').find('input');
+			$(txtDocumento).val(text).trigger('change');
+
+			cboArea = control.closest('.fields').find('div.divArea').find('select');
+			$(cboArea).val(idArea).trigger('change');
+
+			cboPersonal = control.closest('.fields').find('div.divPersonal').find('select');
+			$(cboPersonal).val(idPersonal).trigger('change');
+
+			a = control.closest('.fields').find('.botonDescarga');
+			$(a).attr('href', 'https://s3.us-central-1.wasabisys.com/impact.business/documentos/' + direccion);
+		})
+
+		$(document).on('click', '#btn-registrarOrdenServicio', function () {
 			++modalId;
 
 			let jsonString = { 'data': '' };
-			let config = { 'url': Licitacion.url + 'formularioRegistroLicitacion', 'data': jsonString };
+			let config = { 'url': OrdenServicio.url + 'formularioRegistroOrdenServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -44,17 +64,17 @@ var Licitacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroLicitacion", fn: "Licitacion.registrarLicitacion()", content: "¿Esta seguro de registrar la licitación?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOrdenServicio", fn: "OrdenServicio.registrarOrdenServicio()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 
-				Licitacion.provincia = a.data.provincia;
-				Licitacion.distrito = a.data.distrito;
-				Licitacion.arrayCargo = a.data.cargo;
+				OrdenServicio.provincia = a.data.provincia;
+				OrdenServicio.distrito = a.data.distrito;
+				OrdenServicio.arrayCargo = a.data.cargo;
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-				Licitacion.addFechas();
+				OrdenServicio.addFechas();
 				Fn.loadSemanticFunctions();
-				Licitacion.validarCheckbox();
+				OrdenServicio.validarCheckbox();
 			});
 		});
 
@@ -95,10 +115,10 @@ var Licitacion = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idLicitacion': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': Licitacion.url + 'formularioActualizacionLicitacion', 'data': jsonString };
+			let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -106,27 +126,41 @@ var Licitacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionLicitacion", fn: "Licitacion.actualizarLicitacion()", content: "¿Esta seguro de actualizar la licitación?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionOrdenServicio", fn: "OrdenServicio.actualizarOrdenServicio()", content: "¿Esta seguro de actualizar la Orden de Servicio?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
-				Licitacion.provincia = a.data.provincia;
-				Licitacion.distrito = a.data.distrito;
+				OrdenServicio.provincia = a.data.provincia;
+				OrdenServicio.distrito = a.data.distrito;
+				OrdenServicio.arrayCargo = a.data.cargo;
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				Fn.loadSemanticFunctions();
-				Licitacion.validarCheckbox();
-
+				OrdenServicio.validarCheckbox();
 			});
 		});
 
+		$(document).on('change', '.cboTPD', function () {
+			let control = $(this);
+			let precio = control.find('option:selected').data('preciounitario');
+			let split = control.find('option:selected').data('split');
+			let frecuencia = control.find('option:selected').data('frecuencia');
+			
+			txtPrecio = control.closest('tr').find('td.precioUnitarioDetalle').find('input');
+			txtSplit = control.closest('tr').find('td.splitDetalle').find('input');
+			cboFrecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('select');
+
+			$(txtPrecio).val(precio).trigger('change');
+			$(txtSplit).val(split).trigger('change');
+			$(cboFrecuencia).val(frecuencia).trigger('change');
+		})
 		$(document).on('click', '.btnPresupuesto', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idLicitacion': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': Licitacion.url + 'formularioRegistroPresupuesto', 'data': jsonString };
+			let config = { 'url': OrdenServicio.url + 'formularioRegistroPresupuesto', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -134,13 +168,13 @@ var Licitacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroPresupuesto", fn: "Licitacion.registrarPresupuesto()", content: "¿Esta seguro de registrar el resupuesto?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroPresupuesto", fn: "OrdenServicio.registrarPresupuesto()", content: "¿Esta seguro de registrar el resupuesto?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
 
-				Licitacion.arrayFechas = a.data.fechas;
-				Licitacion.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
-				Licitacion.arrayCargo = a.data.cargo;
+				OrdenServicio.arrayFechas = a.data.fechas;
+				OrdenServicio.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
+				OrdenServicio.arrayCargo = a.data.cargo;
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				$('.menu .item').tab();
 				Fn.loadSemanticFunctions();
@@ -150,6 +184,42 @@ var Licitacion = {
 					$(td[i]).find('.ui.action.input').find('input').trigger('change');
 				}
 				$('.tabTiposPresupuestos').removeClass('disabled');
+				$("#calculateTablaSueldo").click();
+			});
+		});
+
+		$(document).on('click', '.btnPresupuestoEdit', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('presupuesto');
+			let data = { 'idPresupuesto': id, 'formularioValidar': false };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'formularioEditarPresupuesto', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formEditarPresupuesto", fn: "OrdenServicio.editarPresupuesto()", content: "¿Esta seguro de modificar el resupuesto?" });';
+				btn[1] = { title: 'Modificar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
+
+				OrdenServicio.arrayFechas = a.data.fechas;
+				OrdenServicio.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
+				OrdenServicio.arrayCargo = a.data.cargo;
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				$('.menu .item').tab();
+				Fn.loadSemanticFunctions();
+
+				td = $('td.cantidadDeTabla');
+				for (let i = 0; i < td.length; i++) {
+					$(td[i]).find('.ui.action.input').find('input').trigger('change');
+				}
+				$('.tabTiposPresupuestos').removeClass('disabled');
+				$("#calculateTablaSueldo").click();
 			});
 		});
 
@@ -157,13 +227,13 @@ var Licitacion = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idLicitacion': id };
+			let data = { 'idOrdenServicio': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': Licitacion.url + 'aprobarLicitacion', 'data': jsonString };
+			let config = { 'url': OrdenServicio.url + 'aprobarOrdenServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				$("#btn-filtrarLicitacion").click();
+				$("#btn-filtrarOrdenServicio").click();
 			});
 		});
 
@@ -181,8 +251,8 @@ var Licitacion = {
 
 			$('#cboDistrito').html(html);
 
-			if (typeof (Licitacion.provincia[idDepartamento]) == 'object') {
-				$.each(Licitacion.provincia[idDepartamento], function (i, v) {
+			if (typeof (OrdenServicio.provincia[idDepartamento]) == 'object') {
+				$.each(OrdenServicio.provincia[idDepartamento], function (i, v) {
 					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
 				});
 			}
@@ -197,8 +267,8 @@ var Licitacion = {
 			var idProvincia = $(this).val();
 			var html = '<option value="">Seleccionar</option>';
 
-			if (typeof (Licitacion.distrito[idDepartamento][idProvincia]) == 'object') {
-				$.each(Licitacion.distrito[idDepartamento][idProvincia], function (i, v) {
+			if (typeof (OrdenServicio.distrito[idDepartamento][idProvincia]) == 'object') {
+				$.each(OrdenServicio.distrito[idDepartamento][idProvincia], function (i, v) {
 					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
 				});
 			}
@@ -209,20 +279,20 @@ var Licitacion = {
 
 		$(document).on('click', '#btnCrearTabla', function () {
 			let jsonString = { 'nroFecha': $('#nroFecha').val(), 'nroPersona': $('#nroPersona').val() };
-			let config = { 'url': Licitacion.url + 'formTablaParaLlenado', 'data': jsonString };
+			let config = { 'url': OrdenServicio.url + 'formTablaParaLlenado', 'data': jsonString };
 			$.when(Fn.ajax(config)).then((a) => {
 				$('#divTabla').html(a.data.html);
 				$('#divSueldo').html(a.data.htmlSueldo);
 				$('.menu .item').tab();
 				Fn.loadSemanticFunctions();
-				Licitacion.sueldoConteo = 0;
-				Licitacion.arrayPersona = a.data.personal;
+				OrdenServicio.sueldoConteo = 0;
+				OrdenServicio.arrayPersona = a.data.personal;
 			});
 		})
 
 		$(document).on('click', '#btnSueldo', function () {
 			var rowCount = $('#tablaFechaPersona >tbody >tr').length;
-			Licitacion.sueldoConteo++;
+			OrdenServicio.sueldoConteo++;
 			let html = `
 			<tr>
 				<td><input class="form-control tipoSueldo" value=""></td>
@@ -239,7 +309,7 @@ var Licitacion = {
 				`;
 
 			for (let i = 0; i < rowCount; i++) {
-				html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + Licitacion.sueldoConteo + '" value="0"></td>';
+				html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + OrdenServicio.sueldoConteo + '" value="0"></td>';
 			}
 			html += '</tr>';
 			$('#bodySueldo').append(html);
@@ -247,7 +317,7 @@ var Licitacion = {
 		})
 		$(document).on('click', '#btnBeneficio', function () {
 			var rowCount = $('#tablaFechaPersona >tbody >tr').length;
-			Licitacion.sueldoConteo++;
+			OrdenServicio.sueldoConteo++;
 			let html = `
 			<tr>
 				<td><input class="form-control tipoSueldo" value="4"></td>
@@ -265,7 +335,7 @@ var Licitacion = {
 				`;
 
 			for (let i = 0; i < rowCount; i++) {
-				html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + Licitacion.sueldoConteo + '" value="0"></td>';
+				html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + OrdenServicio.sueldoConteo + '" value="0"></td>';
 			}
 			html += '</tr>';
 			$('#bodyBeneficio').append(html);
@@ -289,9 +359,9 @@ var Licitacion = {
 
 	},
 
-	registrarLicitacion: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroLicitacion')) };
-		let url = Licitacion.url + "registrarLicitacion";
+	registrarOrdenServicio: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenServicio')) };
+		let url = OrdenServicio.url + "registrarOrdenServicio";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -300,7 +370,7 @@ var Licitacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarLicitacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarOrdenServicio").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -309,7 +379,7 @@ var Licitacion = {
 	},
 	registrarPresupuesto: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroPresupuesto')) };
-		let url = Licitacion.url + "registrarPresupuesto";
+		let url = OrdenServicio.url + "registrarPresupuesto";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -318,7 +388,25 @@ var Licitacion = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarLicitacion").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarOrdenServicio").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	editarPresupuesto: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarPresupuesto')) };
+		let url = OrdenServicio.url + "editarPresupuesto";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarOrdenServicio").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -332,16 +420,17 @@ var Licitacion = {
 		html += `
 		<tr>
 			<td>
-				<select class="ui fluid search dropdown dropdownSingleAditions" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
+				<select class="ui fluid search dropdown dropdownSingleAditions cboTPD" name="tipoPresupuestoDetalleSub[${detalle}]" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
 					<option value=""></option>`;
-		for (let i = 0; i < Licitacion.arrayTipoPresupuestoDetalle[detalle].length; i++) {
-			let tpd = Licitacion.arrayTipoPresupuestoDetalle[detalle][i];
-			html += `<option value="${tpd.idTipoPresupuestoDetalle}">${tpd.nombre}</option>`;
+		for (let i = 0; i < OrdenServicio.arrayTipoPresupuestoDetalle[detalle].length; i++) {
+			let tpd = OrdenServicio.arrayTipoPresupuestoDetalle[detalle][i];
+			console.log(tpd);
+			html += `<option value="${tpd.idTipoPresupuestoDetalle}" data-preciounitario="${tpd.precioUnitario}" data-split="${tpd.split}" data-frecuencia="${tpd.frecuencia}">${tpd.nombre}</option>`;
 
 		}
 		let totalCargo = 0;
-		for (let i = 0; i < Licitacion.arrayCargo.length; i++) {
-			let lCx = Licitacion.arrayCargo[i];
+		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
+			let lCx = OrdenServicio.arrayCargo[i];
 			totalCargo += parseInt(lCx.cantidad);
 		}
 		html += `
@@ -349,27 +438,27 @@ var Licitacion = {
 			</td>
 			<td class="splitDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="onlyNumbers" name="splitDS" value="1" onchange="Licitacion.cantidadSplitCargo(this);">
+					<input type="text" class="onlyNumbers" name="splitDS[${detalle}]" value="1" onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="precioUnitarioDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right" name="precioUnitarioDS" value="0">
+					<input type="text" class="text-right" name="precioUnitarioDS[${detalle}]" value="0"  onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="cantidadDeTabla">
 				<div class="ui action input" style="width: 80px;">
-					<input type="text" value="${totalCargo}" readonly name="cantidadDS" onchange="Licitacion.calcularSTotal(this);" data-detallesub="${contador}" data-detalle="${detalle}">
+					<input type="text" value="${totalCargo}" readonly name="cantidadDS[${detalle}]" onchange="OrdenServicio.calcularSTotal(this);" data-detallesub="${contador}" data-detalle="${detalle}">
 					<a class="ui button" onclick="$(this).closest('td.cantidadDeTabla').find('div.listCheck').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
 				</div>
 				<div class="listCheck mt-3 d-none">`
 
-		for (let i = 0; i < Licitacion.arrayCargo.length; i++) {
-			let lC = Licitacion.arrayCargo[i];
+		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
+			let lC = OrdenServicio.arrayCargo[i];
 			html += `
 					<div class="fields">
 						<div class="ui checkbox">
-							<input type="checkbox" name="chkPD[${lC.idLicitacionCargo}]" data-cargo="${i}" checked onchange="Licitacion.cantidadSplitCargo(this);">
+							<input type="checkbox" name="chkDS[${lC.idCargo}][${detalle}][${contador}]" data-cargo="${i}" checked onchange="OrdenServicio.cantidadSplitCargo(this);">
 							<label style="font-size: 1.5em;">${lC.cargo}</label>
 						</div>
 					</div>
@@ -380,11 +469,11 @@ var Licitacion = {
 			</td >
 			<td>
 				<div class="ui input transparent totalCantidadSplit" style="width: 80px;">
-					<input type="text" class="text-right" value="0" readonly name="montoDS">
+					<input type="text" class="text-right" value="0" readonly name="montoDS[${detalle}]">
 				</div>
 			</td>
 			<td class="frecuenciaDetalle">
-				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="Licitacion.cantidadSplitCargo(this);">
+				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[${detalle}]">
 					<option value="">Frecuencia</option>
 					<option value="1" selected>MENSUAL</option>
 					<option value="2">BIMENSUAL</option>
@@ -400,8 +489,8 @@ var Licitacion = {
 		nhtml += `
 		<tr>
 			<td id="textDescripcionDetalle_${detalle}_${contador}"></td>`;
-		for (let i = 0; i < Licitacion.arrayFechas.length; i++) {
-			let lF = Licitacion.arrayFechas[i];
+		for (let i = 0; i < OrdenServicio.arrayFechas.length; i++) {
+			let lF = OrdenServicio.arrayFechas[i];
 			nhtml += `
 			<td>
 				<div class="ui input transparent" style="width: 80px;">
@@ -413,7 +502,7 @@ var Licitacion = {
 		nhtml += `
 			<td>
 				<div class="ui input transparent" style="width: 80px;">
-					<input class="text-right" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="Licitacion.calcularTotalColumna(this);">
+					<input class="text-right" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="OrdenServicio.calcularTotalColumna(this);">
 				</div>
 			</td>
 		</tr>`;
@@ -423,18 +512,21 @@ var Licitacion = {
 		Fn.loadSemanticFunctions();
 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 	},
-	addDocumento: function () {
+	addDocumento: function (tipo = 1) {
 		Fn.showLoading(true);
-		post = $.post(site_url + Licitacion.url + 'addDocumento', {
-			'id': Licitacion.documentoCont
+		documentoGenerado = tipo == 1 ? 0 : 1;
+		console.log(documentoGenerado);
+		post = $.post(site_url + OrdenServicio.url + 'addDocumento', {
+			'id': OrdenServicio.documentoCont,
+			'documentoGenerado': documentoGenerado
 		});
 		post.done(function (html) {
 			$('#divDocumentos').append(html);
-			Licitacion.documentoCont++;
+			OrdenServicio.documentoCont++;
 			Fn.loadSemanticFunctions();
 			Fn.showLoading(false);
 			// Por algún motivo se desactivan la funcionalidad de los check asi que se necesita la siguiente linea:
-			Licitacion.validarCheckbox();
+			OrdenServicio.validarCheckbox();
 		});
 	},
 	buscarCheckDependiente: function (t) {
@@ -444,24 +536,40 @@ var Licitacion = {
 		} else {
 			$(t).closest('.list').find('.idDependiente' + tpdDpendiente).addClass('d-none');
 		}
+
+		// $parentCheckbox.find('input').trigger('change');
+		let chk = $(t).closest('.list').closest('.item').find('.master.checkbox').checkbox('is checked');
+		let $checkBoxDflt = $(t).closest('.list').find('.chkDefault .child.checkbox');
+		$checkBoxDflt.each(function () {
+			if (chk || $(t).prop('checked')) {
+				$(this).checkbox('set checked');
+			} else {
+				$(this).checkbox('set unchecked');
+			}
+		});
 	},
 	addCargo: function () {
 		html = '';
 		html +=
 			`<div class="fields">
-				<div class="eight wide field">
+				<div class="six wide field">
 					<div class="ui sub header">Cargo</div>
 					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido">`;
-		for (let i = 0; i < Licitacion.arrayCargo.length; i++) {
-			let cargo = Licitacion.arrayCargo[i];
+		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
+			let cargo = OrdenServicio.arrayCargo[i];
+			console.log(cargo);
 			html += `<option value="${cargo.idCargo}">${cargo.nombre}</option>`;
 		}
 		html +=
 			`		</select>
 				</div>
-				<div class="seven wide field">
+				<div class="six wide field">
 					<div class="ui sub header">Cantidad</div>
 					<input type="text" class="ui onlyNumbers" name="cantidadCargo" placeholder="Cantidad" value="" patron="requerido">
+				</div>
+				<div class="three wide field">
+					<div class="ui sub header">Sueldo</div>
+					<input type="text" class="ui onlyNumbers" name="sueldoCargo" placeholder="Sueldo" value="1025" patron="requerido">
 				</div>
 				<div class="one wide field">
 					<div class="ui sub header text-white">.</div>
@@ -471,6 +579,7 @@ var Licitacion = {
 
 		$('#divCargo').append(html);
 		Fn.loadSemanticFunctions();
+		OrdenServicio.validarCheckbox();
 	},
 	addFechas: function () {
 		let cantidad = $('#periodoFechas').val();
@@ -494,11 +603,11 @@ var Licitacion = {
 		html += `</div > `;
 		$('#divFechas').html(html);
 	},
-	actualizarLicitacion: function () {
+	actualizarOrdenServicio: function () {
 		++modalId;
 
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroLicitacion')) };
-		let config = { 'url': Licitacion.url + 'actualizarLicitacion', 'data': jsonString };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenServicio')) };
+		let config = { 'url': OrdenServicio.url + 'actualizarOrdenServicio', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
@@ -506,7 +615,7 @@ var Licitacion = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarLicitacion").click();';
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarOrdenServicio").click();';
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
@@ -549,7 +658,6 @@ var Licitacion = {
 					$parentCheckbox.checkbox('set unchecked');
 				}
 				else {
-					// $parentCheckbox.checkbox('set indeterminate');
 					$parentCheckbox.checkbox('set checked');
 				}
 			}
@@ -581,9 +689,8 @@ var Licitacion = {
 		totalFinal = (valorCalc * parseFloat(precioUnitario)).toFixed(2);
 		control.closest('tr').find('.totalCantidadSplit').find('input').val(totalFinal);
 		frecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('.frecuenciaID').dropdown('get value');
-		console.log(frecuencia);
 		totalFinalAcumulado = 0;
-		for (let f = 0; f < Licitacion.arrayFechas.length; f++) {
+		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			totalFinalAcumulado += parseFloat(totalFinal);
 			if (frecuencia == 1) { // MENSUAL
 				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
@@ -624,7 +731,7 @@ var Licitacion = {
 		let control = $(t).closest('table').find('tbody').find('tr');
 		// let columna = $(t).data('columna');
 		let detalle = $(t).data('detalle');
-		for (let f = 0; f < Licitacion.arrayFechas.length; f++) {
+		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
 				cn += parseFloat($('#montoLDS_' + detalle + '_' + i + '_' + f).val());
@@ -636,7 +743,7 @@ var Licitacion = {
 		let control = $(t).closest('table').find('tbody').find('tr');
 		// let columna = $(t).data('columna');
 		let detalle = $(t).data('detalle');
-		for (let f = 0; f < Licitacion.arrayFechas.length; f++) {
+		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
 				let td = $(control[i]).find('td')[f + 1];
@@ -727,7 +834,7 @@ var Licitacion = {
 			$('#txtSueldoCantidad_' + i).val(sueldoPorCantidad);
 			totalTotalSueldo = 0;
 			totalTotalIncentivo = 0;
-			for (let f = 0; f < (Licitacion.arrayFechas).length; f++) {
+			for (let f = 0; f < (OrdenServicio.arrayFechas).length; f++) {
 				$("#montoSueldo_" + i + "_" + f).val(sueldoPorCantidad).trigger('change');
 				$('#montoIncentivo_' + f).val(totalIncentivo.toFixed(2)).trigger('change');
 				totalTotalSueldo += parseFloat(sueldoPorCantidad);
@@ -740,4 +847,4 @@ var Licitacion = {
 	}
 }
 
-Licitacion.load();
+OrdenServicio.load();

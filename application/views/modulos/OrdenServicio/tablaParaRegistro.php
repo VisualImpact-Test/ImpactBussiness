@@ -29,7 +29,7 @@
                             <?php endforeach; ?>
                         </div>
                     </div>
-                    <input type="hidden" onchange="Licitacion.changePersona(this, <?= $personaContador; ?>);" class="date-semantic-value" name="persona[<?= $personaContador; ?>]" value="" patron="requerido">
+                    <input type="hidden" onchange="OrdenServicio.changePersona(this, <?= $personaContador; ?>);" class="date-semantic-value" name="persona[<?= $personaContador; ?>]" value="" patron="requerido">
                 </td>
                 <?php for ($fechaContador = 0; $fechaContador < $nroFecha; $fechaContador++) : ?>
                     <td> <input type="text" class="form-control" patron="requerido" name="cantidad[<?= $personaContador; ?>][<?= $fechaContador; ?>]"> </td>

@@ -1,10 +1,10 @@
-<form class="ui form" role="form" id="formRegistroLicitacion" method="post" autoComplete="off">
-	<?php if (!empty($idLicitacion)) :  ?>
+<form class="ui form" role="form" id="formRegistroOrdenServicio" method="post" autoComplete="off">
+	<?php if (!empty($idOrdenServicio)) :  ?>
 		<div class="fields d-none">
 			<div class="five wide field">
-				<div class="ui sub header">IdLicitacion</div>
+				<div class="ui sub header">IdOrdenServicio</div>
 				<div class="ui input">
-					<input type="text" class="ui" name="idLicitacion" value="<?= $idLicitacion; ?>">
+					<input type="text" class="ui" name="idOrdenServicio" value="<?= $idOrdenServicio; ?>">
 				</div>
 			</div>
 		</div>
@@ -13,13 +13,13 @@
 		<div class="eight wide field">
 			<div class="ui sub header">Cliente</div>
 			<select class="ui fluid search dropdown dropdownSingleAditions" id="clienteForm" name="clienteForm" patron="requerido">
-				<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $licitacion['idCliente'], 'id' => 'idCliente', 'value' => 'nombre', 'query' => $cliente, 'simple' => true, 'class' => 'text-titlecase']); ?>
+				<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $ordenServicio['idCliente'], 'id' => 'idCliente', 'value' => 'nombre', 'query' => $cliente, 'simple' => true, 'class' => 'text-titlecase']); ?>
 			</select>
 		</div>
 		<div class="eight wide field">
 			<div class="ui sub header">Moneda</div>
-			<select class="ui dropdown semantic-dropdown" name="moneda">
-				<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $licitacion['idMoneda'], 'query' => $moneda, 'id' => 'idMoneda', 'value' => 'nombreMoneda', 'class' => 'text-titlecase']); ?>
+			<select class="ui dropdown clearable semantic-dropdown" name="moneda">
+				<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $ordenServicio['idMoneda'], 'query' => $moneda, 'id' => 'idMoneda', 'value' => 'nombreMoneda', 'class' => 'text-titlecase']); ?>
 			</select>
 		</div>
 	</div>
@@ -29,7 +29,7 @@
 			<select class="ui dropdown" id="cboRegion" name="departamento">
 				<option value="">Seleccione</option>
 				<?php foreach ($departamento as $k => $v) : ?>
-					<option value="<?= $v['id'] ?>" <?= !empty($licitacion) ? ($v['id'] == $licitacion['idDepartamento'] ? 'selected' : '') : ''; ?>><?= $v['nombre'] ?></option>;
+					<option value="<?= $v['id'] ?>" <?= !empty($ordenServicio) ? ($v['id'] == $ordenServicio['idDepartamento'] ? 'selected' : '') : ''; ?>><?= $v['nombre'] ?></option>;
 				<?php endforeach; ?>
 			</select>
 		</div>
@@ -37,8 +37,8 @@
 			<div class="ui sub header">Provincia</div>
 			<select class="ui dropdown" id="cboProvincia" name="provincia">
 				<option value="">Seleccione</option>
-				<?php if (!empty($licitacion['idProvincia'])) :  ?>
-					<option value="<?= $licitacion['idProvincia']; ?>" selected><?= $licitacion['provincia']; ?></option>
+				<?php if (!empty($ordenServicio['idProvincia'])) :  ?>
+					<option value="<?= $ordenServicio['idProvincia']; ?>" selected><?= $ordenServicio['provincia']; ?></option>
 				<?php endif; ?>
 			</select>
 		</div>
@@ -46,8 +46,8 @@
 			<div class="ui sub header">Distrito</div>
 			<select class="ui dropdown" id="cboDistrito" name="distrito">
 				<option value="">Seleccione</option>
-				<?php if (!empty($licitacion['idDistrito'])) :  ?>
-					<option value="<?= $licitacion['idDistrito']; ?>" selected><?= $licitacion['distrito']; ?></option>
+				<?php if (!empty($ordenServicio['idDistrito'])) :  ?>
+					<option value="<?= $ordenServicio['idDistrito']; ?>" selected><?= $ordenServicio['distrito']; ?></option>
 				<?php endif; ?>
 			</select>
 		</div>
@@ -55,51 +55,55 @@
 	<div class="fields">
 		<div class="two wide field">
 			<div class="ui sub header">Periodo</div>
-			<input type="text" class="ui onlyNumbers" name="cantidadMeses" value="<?= isset($licitacionFecha) ? count($licitacionFecha) : '12'; ?>" id="periodoFechas" placeholder="Cantidad de meses" onchange="Licitacion.addFechas()">
+			<input type="text" class="ui onlyNumbers" name="cantidadMeses" value="<?= isset($ordenServicioFecha) ? count($ordenServicioFecha) : '12'; ?>" id="periodoFechas" placeholder="Cantidad de meses" onchange="OrdenServicio.addFechas()">
 		</div>
 		<div class="six wide field">
 			<div class="ui sub header">Fecha Inicio</div>
 			<div class="ui calendar date-semantic" id="fechaInicial">
 				<div class="ui input left icon">
 					<i class="calendar icon"></i>
-					<input type="text" placeholder="Fecha Inicial" value="<?= isset($licitacion['fechaIni']) ? $licitacion['fechaIni'] : ''  ?>">
+					<input type="text" placeholder="Fecha Inicial" value="<?= isset($ordenServicio['fechaIni']) ? $ordenServicio['fechaIni'] : ''  ?>">
 				</div>
 			</div>
-			<input type="hidden" class="date-semantic-value" name="fechaIni" value="<?= isset($licitacion['fechaIni']) ? $licitacion['fechaIni'] : '' ?>">
+			<input type="hidden" class="date-semantic-value" name="fechaIni" value="<?= isset($ordenServicio['fechaIni']) ? $ordenServicio['fechaIni'] : '' ?>">
 		</div>
 		<div class="eight wide field">
 			<div class="ui sub header">Observación</div>
-			<textarea name="observacion" rows="3"><?= isset($licitacion['observacion']) ? verificarEmpty($licitacion['observacion']) : ''; ?></textarea>
+			<textarea name="observacion" rows="3"><?= isset($ordenServicio['observacion']) ? verificarEmpty($ordenServicio['observacion']) : ''; ?></textarea>
 		</div>
 		<div class="eight wide field d-none">
 			<div class="ui sub header">Fecha Final</div>
 			<div class="ui calendar date-semantic" id="fechaFinal">
 				<div class="ui input left icon">
 					<i class="calendar icon"></i>
-					<input type="text" placeholder="Fecha Final" value="<?= isset($licitacion['fechaFin']) ? $licitacion['fechaFin'] : '' ?>">
+					<input type="text" placeholder="Fecha Final" value="<?= isset($ordenServicio['fechaFin']) ? $ordenServicio['fechaFin'] : '' ?>">
 				</div>
 			</div>
-			<input type="hidden" class="date-semantic-value" name="fechaFin" value="<?= isset($licitacion['fechaFin']) ? $licitacion['fechaFin'] : '' ?>">
+			<input type="hidden" class="date-semantic-value" name="fechaFin" value="<?= isset($ordenServicio['fechaFin']) ? $ordenServicio['fechaFin'] : '' ?>">
 		</div>
 	</div>
 	<div class="fields">
 		<div class="field">
 			<div class="ui sub header">Cargo y cantidad</div>
-			<a class="ui btn btn-trade-visual" onclick='Licitacion.addCargo()'>Agregar Cargo</a>
+			<a class="ui btn btn-trade-visual" onclick='OrdenServicio.addCargo()'>Agregar Cargo</a>
 		</div>
 	</div>
 	<div id="divCargo">
-		<?php foreach ($licitacionCargo as $kC => $vC) : ?>
+		<?php foreach ($ordenServicioCargo as $kC => $vC) : ?>
 			<div class="fields">
-				<div class="eight wide field">
+				<div class="six wide field">
 					<div class="ui sub header">Cargo</div>
 					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido">
 						<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $kC, 'query' => $cargo, 'id' => 'idCargo', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
 					</select>
 				</div>
-				<div class="seven wide field">
+				<div class="six wide field">
 					<div class="ui sub header">Cantidad</div>
 					<input type="text" class="ui onlyNumbers" name="cantidadCargo" placeholder="Cantidad" value="<?= $vC['cantidad']; ?>" patron="requerido">
+				</div>
+				<div class="three wide field">
+					<div class="ui sub header">Sueldo</div>
+					<input type="text" class="ui onlyNumbers" name="sueldoCargo" placeholder="Cantidad" value="<?= $vC['sueldo']; ?>" patron="requerido">
 				</div>
 				<div class="one wide field">
 					<div class="ui sub header text-white">.</div>
@@ -111,19 +115,22 @@
 	</div>
 	<div class="fields">
 		<div class="field">
-			<div class="ui sub header">Documento requeridos</div>
-			<a class="ui btn btn-trade-visual" onclick='Licitacion.addDocumento()'>Agregar Documento</a>
+			<a class="ui btn btn-trade-visual" onclick='OrdenServicio.addDocumento()'>Solicitar Documento</a>
+		</div>
+		<div class="field">
+			<a class="ui btn btn-primary" onclick='OrdenServicio.addDocumento(2)'>Seleccionar Documento</a>
 		</div>
 	</div>
 	<div id="divDocumentos">
-		<?php if (!empty($licitacionDocumento)) :  ?>
-			<?php foreach ($licitacionDocumento as $k => $v) : ?>
+		<?php if (!empty($ordenServicioDocumento)) :  ?>
+			<?php foreach ($ordenServicioDocumento as $k => $v) : ?>
 				<div class="fields">
 					<div class="five wide field">
 						<div class="ui sub header">Documento</div>
+						<input type="hidden" name="idDocumento" value="<?= $v['idDocumento'] ?>">
 						<input type="text" class="ui" name="nroDocumento" placeholder="Descripción documento" value="<?= $v['documento']; ?>">
 					</div>
-					<div class="five wide field">
+					<div class="four wide field">
 						<div class="ui sub header">Area</div>
 						<select class="ui dropdown parentDependiente" id="areaForm<?= $k ?>" name="area" patron="requerido" data-childDependiente="personaForm<?= $k ?>">
 							<?= htmlSelectOptionArray2(["title" => "Seleccione", "selected" => $v['idArea'], "id" => "idArea", "value" => "nombre", "query" => $area, "simple" => true, "class" => "text-titlecase"]); ?>
@@ -132,9 +139,15 @@
 					<div class="five wide field">
 						<div class="ui sub header">Persona</div>
 						<select class="ui dropdown clearable semantic-dropdown" id="personaForm<?= $k ?>" name="persona">
-							<?= htmlSelectOptionArray2(["title" => "Seleccione", "selected" => $v['idPersona'], "id" => "idPersonal", "value" => "nombre", "query" => $persona, "class" => "text-titlecase"]); ?>
+							<?= htmlSelectOptionArray2(["title" => "Seleccione", "selected" => $v['idPersonal'], "id" => "idPersonal", "value" => "nombre", "query" => $persona, "class" => "text-titlecase"]); ?>
 						</select>
 					</div>
+					<?php if (!empty($v['nombre_archivo'])) :  ?>
+						<div class="one wide field">
+							<div class="ui sub header text-white">.</div>
+							<a class="ui button" href="https://s3.us-central-1.wasabisys.com/impact.business/documentos/<?= $v['nombre_archivo'] ?>" target="_blank"><i class="download icon"></i></a>
+						</div>
+					<?php endif; ?>
 					<div class="one wide field">
 						<div class="ui sub header text-white">.</div>
 						<a class="ui button red" onclick="$(this).parent('.field').parent('.fields').remove();"><i class="trash icon"></i></a>
@@ -143,28 +156,28 @@
 			<?php endforeach; ?>
 		<?php endif; ?>
 	</div>
-	<div class="fields">
+	<!-- <div class="fields">
 		<div class="field">
-			<a class="ui btn btn-trade-visual" onclick="$('#divDetalleLicitacion').toggleClass('d-none'); $('#iconDetalleTipo').toggleClass('slash');"><i id="iconDetalleTipo" class="icon eye slash"></i>Detalle de Tipos</a>
+			<a class="ui btn btn-trade-visual" onclick="$('#divDetalleOrdenServicio').toggleClass('d-none'); $('#iconDetalleTipo').toggleClass('slash');"><i id="iconDetalleTipo" class="icon eye slash"></i>Detalle de Tipos</a>
 		</div>
-	</div>
-	<div id="divDetalleLicitacion" class="fields">
+	</div> -->
+	<div id="divDetalleOrdenServicio" class="fields">
 		<?php foreach ($tipoPresupuesto as $k => $v) : ?>
 			<input type="hidden" name="chkContadorTipo" value="<?= $v['idTipoPresupuesto']; ?>">
 			<div class="field">
 				<div class="ui celled relaxed list">
 					<div class="item">
 						<div class="ui master checkbox mt-1">
-							<input type="checkbox" name="chkTipoPresupuesto[<?= $v['idTipoPresupuesto']; ?>]" <?= isset($licitacionDetalle[$v['idTipoPresupuesto']]) ? 'checked' : '' ?>>
+							<input type="checkbox" name="chkTipoPresupuesto[<?= $v['idTipoPresupuesto']; ?>]" <?= isset($ordenServicioDetalle[$v['idTipoPresupuesto']]) ? 'checked' : '' ?>>
 							<label style="font-size: 1.5em;"><?= $v['nombre'] ?></label>
 						</div>
 						<?php if (!empty($tipoPresupuestoDetalle[$v['idTipoPresupuesto']]) && $v['mostrarDetalle'] == '1') :  ?>
 							<div class="list">
 								<?php foreach ($tipoPresupuestoDetalle[$v['idTipoPresupuesto']] as $k1 => $v1) : ?>
 									<input type="hidden" name="chkContadorTipoDetalle[<?= $v['idTipoPresupuesto'] ?>]" value="<?= $v1['idTipoPresupuestoDetalle']; ?>">
-									<div class="item <?= !empty($v1['idTipoPresupuestoDetalleDependiente']) ? 'd-none idDependiente' . $v1['idTipoPresupuestoDetalleDependiente'] : '' ?>">
+									<div class="item <?= $v1['chkDefault'] == '1' ? 'disabled chkDefault' : '' ?> <?= !empty($v1['idTipoPresupuestoDetalleDependiente']) ? 'd-none idDependiente' . $v1['idTipoPresupuestoDetalleDependiente'] : '' ?>">
 										<div class="ui child checkbox mt-1">
-											<input type="checkbox" data-buscardependiente="<?= $v1['idTipoPresupuestoDetalle']; ?>" onchange="Licitacion.buscarCheckDependiente(this);" name="chkTipoPresupuestoDet[<?= $v['idTipoPresupuesto']; ?>][<?= $v1['idTipoPresupuestoDetalle']; ?>]" <?= (isset($licitacionDetalleSub[$v['idTipoPresupuesto']][$v1['idTipoPresupuestoDetalle']]) || $v1['chkDefault'] == '1') ? 'checked' : '' ?>>
+											<input class="" type="checkbox" data-buscardependiente="<?= $v1['idTipoPresupuestoDetalle']; ?>" onchange="OrdenServicio.buscarCheckDependiente(this);" name="chkTipoPresupuestoDet[<?= $v['idTipoPresupuesto']; ?>][<?= $v1['idTipoPresupuestoDetalle']; ?>]" <?= (isset($ordenServicioDetalleSub[$v['idTipoPresupuesto']][$v1['idTipoPresupuestoDetalle']]) || $v1['chkDefault'] == '1') ? 'checked' : '' ?>>
 											<label><?= $v1['nombre'] ?></label>
 										</div>
 									</div>
@@ -181,7 +194,7 @@
 	setTimeout(function() {
 		$('.my_select2').select2();
 	}, 500);
-	<?php if (!empty($licitacionDocumento)) :  ?>
-		Licitacion.documentoCont = <?= count($licitacionDocumento) ?>
+	<?php if (!empty($ordenServicioDocumento)) :  ?>
+		OrdenServicio.documentoCont = <?= count($ordenServicioDocumento) ?>
 	<?php endif; ?>
 </script>
