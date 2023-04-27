@@ -417,7 +417,7 @@ class SolicitudCotizacion extends MY_Controller
 				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
 				'idItemEstado' => $post['idEstadoItemForm'][$k],
-				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+				// 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 2,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 				'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
@@ -1069,7 +1069,7 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['disabled'] = false;
 		$config['data']['idOper'] = $idOper;
 		$config['view'] = 'modulos/SolicitudCotizacion/viewFormularioGenerarOrdenCompra';
-
+		log_message('error', json_encode($config['data']));
 		$this->view($config);
 	}
 

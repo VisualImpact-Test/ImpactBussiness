@@ -205,6 +205,13 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->insert('compras.ordenServicioHistorico', $insertOrdenServicioHistorico);
 
+		if(!isset($post['cargo'])){
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Registro Erroneo!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe indicar al menos un cargo']);
+			goto respuesta;
+		}
+
 		$post['cargo'] = checkAndConvertToArray($post['cargo']);
 		$post['chkContadorTipo'] = checkAndConvertToArray($post['chkContadorTipo']);
 		$post['idDocumento'] = isset($post['idDocumento']) ? checkAndConvertToArray($post['idDocumento']) : [];
@@ -246,6 +253,7 @@ class OrdenServicio extends MY_Controller
 						$insertOrdenServicioDetalleSub[] = [
 							'idOrdenServicioDetalle' => $idOrdenServicioDetalle,
 							'idTipoPresupuestoDetalle' => $value,
+							'valorPorcentual' => ($value == COD_ASIGNACIONFAMILIAR) ? $post['asignacionFamiliar'] : NULL,
 							'idUsuario' => $this->idUsuario,
 							'fechaReg' => getActualDateTime()
 						];
@@ -477,6 +485,7 @@ class OrdenServicio extends MY_Controller
 						$insertOrdenServicioDetalleSub[] = [
 							'idOrdenServicioDetalle' => $idOrdenServicioDetalle,
 							'idTipoPresupuestoDetalle' => $value,
+							'valorPorcentual' => ($value == COD_ASIGNACIONFAMILIAR) ? $post['asignacionFamiliar'] : NULL,
 							'idUsuario' => $this->idUsuario,
 							'fechaReg' => getActualDateTime()
 						];
