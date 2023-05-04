@@ -887,7 +887,8 @@ class Cotizacion extends MY_Controller
 
 			header('Set-Cookie: fileDownload=true; path=/');
 			header('Cache-Control: max-age=60, must-revalidate');
-			$mpdf->Output('Cotizacion.pdf', 'D');
+			$title = $dataParaVista['cabecera']['cotizacion'];
+			$mpdf->Output("$title.pdf", 'D');
 		}
 
 		$this->aSessTrack[] = ['idAccion' => 9];
@@ -1577,12 +1578,28 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
 
+		$cotDet = [];
+		foreach ($ordenCompra as $k => $v) {
+			$cotDet[] = $v['idCotizacionDetalle'];
+		}
+		$cotizacionDet = implode(',', $cotDet);
+
 		$dataParaVista['imagenesDeItem'] = [];
 		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
 			foreach ($dataParaVista['detalle'] as $key => $value) {
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
+		
+		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
+			foreach ($ordenCompra as $key => $value) {
+				$dd = $this->model->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $value['idProveedor']])->result_array();
+				foreach ($dd as $kl => $vl) {
+					$dataParaVista['imagenesDeItem'][$value['idItem']][] = $vl;
+				}
+			}
+		}
+
 		foreach ($dataParaVista['detalle'] as $k => $v) {
 			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 		}
@@ -1849,7 +1866,7 @@ class Cotizacion extends MY_Controller
 					'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 					'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
 					'idItemEstado' => $post['idEstadoItemForm'][$k],
-					'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+					// 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 					'idCotizacionDetalleEstado' => 2,
 					'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 					'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,

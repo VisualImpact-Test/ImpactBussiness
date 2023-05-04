@@ -63,8 +63,9 @@ var Gestion = {
 			let url = $(this).data("form");
 			let urlSave = $(this).data("save");
 			let id = $(this).data("id");
-
-			var config = { 'url': Gestion.urlActivo + url };
+			let tdata = $(this).data('tdata');
+			let jsonString = { 'data': tdata };
+			var config = { 'url': Gestion.urlActivo + url, 'data': jsonString };
 			$.when(Fn.ajax(config)).then(function (a) {
 
 				if (a.result === 2) return false;

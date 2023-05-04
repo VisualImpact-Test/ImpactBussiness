@@ -42,7 +42,7 @@
 									<td> <?= $vp['cargo']; ?> </td>
 									<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 										<td>
-											<div class="ui input transparent" style="width: 80px;">
+											<div class="ui input" style="width: 80px;">
 												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 										</td>
@@ -170,7 +170,7 @@
 													</div>
 												</td>
 												<?php foreach ($ordenServicioCargo as $kp => $vp) : ?>
-													<td><input class="form-control text-right" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? floatval($sueldoMinimo) / 10 : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>></td>
+													<td><input class="form-control text-right" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>></td>
 												<?php endforeach; ?>
 												<td>
 													<!-- <a class="ui button red" onclick="$(this).parent('td').parent('tr').remove();"><i class="trash icon"></i></a> -->
@@ -321,6 +321,7 @@
 										<th>Descripción</th>
 										<th>Split</th>
 										<th>Precio Unitario</th>
+										<th>GAP</th>
 										<th class="cantidadDeTabla">Cantidad</th>
 										<th>Total</th>
 										<th>Frecuencia</th>
@@ -331,7 +332,7 @@
 										<?php foreach ($ordenServicioDetalleSub[$vd['idTipoPresupuesto']] as $key => $value) : ?>
 											<tr>
 												<td>
-													<select class="ui fluid search dropdown toast semantic-dropdown" name="tipoPresupuestoDetalleSub[<?= $vd['idTipoPresupuesto'] ?>]">
+													<select class="ui fluid search dropdown toast semantic-dropdown read-only" name="tipoPresupuestoDetalleSub[<?= $vd['idTipoPresupuesto'] ?>]">
 														<option value="">Sueldo</option>
 														<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $vPD) : ?>
 															<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
@@ -345,7 +346,12 @@
 												</td>
 												<td class="precioUnitarioDetalle">
 													<div class="ui input" style="width: 80px;">
-														<input type="text" class="text-right" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['precioUnitario']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<input type="text" class="text-right" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $vd['mostrarDetalle'] == '1' ? verificarEmpty($value['precioUnitario'], 2) : $value['costo']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+													</div>
+												</td>
+												<td class="gapDetalle">
+													<div class="ui input" style="width: 80px;">
+														<input type="number" min="5" class="text-right" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="7" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="cantidadDeTabla">

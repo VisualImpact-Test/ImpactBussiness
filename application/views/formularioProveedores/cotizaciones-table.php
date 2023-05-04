@@ -140,13 +140,13 @@
 					<div class="col-md-10 row divDetalle">
 						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
 							<!-- <div class="col-md-12"> -->
-								<a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a>
-								<button data-form="FormularioProveedor/getFormCargaMasivaCotizacionProveedorDetalleSub" data-save="FormularioProveedor/guardarCargaMasivaCotizacionProveedorDetalleSub" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" type="button" class="btn btn-lg btn-outline-success btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
-									<i class="fa fa-file"></i> Detalle Multiple
-								</button>
+							<a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a>
+							<button data-form="FormularioProveedor/getFormCargaMasivaCotizacionProveedorDetalleSub" data-save="FormularioProveedor/guardarCargaMasivaCotizacionProveedorDetalleSub" data-tdata="<?= $row['idCotizacionDetalleProveedorDetalle']; ?>" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" type="button" class="btn btn-lg btn-outline-success btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
+								<i class="fa fa-file"></i> Detalle Multiple
+							</button>
 							<!-- </div> -->
 						<?php endif; ?>
-						<div class="col-md-12 pl-0 py-2 row dataDetalle">
+						<div class="col-md-12 pl-0 py-2 row dataDetalle <?= ($row['idItemTipo'] == COD_SERVICIO['id']) ? 'd-none' : ''; ?>">
 							<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
 								<div class="col-md-12 row filaDetalle">
 									<?php $servicio = ($row['idItemTipo'] == COD_SERVICIO['id']); ?>
@@ -240,6 +240,36 @@
 								</div>
 							<?php endforeach; ?>
 						</div>
+						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+							<div class="col-md-12 row py-4">
+								<table class="ui table">
+									<thead>
+										<tr>
+											<th>SUCURSAL</th>
+											<th>RAZON SOCIAL</th>
+											<th>TIPO ELEMENTO</th>
+											<th>MARCA</th>
+											<th>DESCRIPCION</th>
+											<th>CANTIDAD</th>
+											<th>PREC UNITARIO</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value): ?>
+											<tr>
+													<td><?= $value['sucursal']; ?></td>
+													<td><?= $value['razonSocial']; ?></td>
+													<td><?= $value['tipoElemento']; ?></td>
+													<td><?= $value['marca']; ?></td>
+													<td><?= $value['descripcion']; ?></td>
+													<td><?= $value['cantidad']; ?></td>
+													<td><?= $value['costo']; ?></td>
+											</tr>
+										<?php endforeach; ?>
+									</tbody>
+								</table>
+							</div>
+						<?php endif; ?>
 					</div>
 					<div class="col-md-2"></div>
 				</div>

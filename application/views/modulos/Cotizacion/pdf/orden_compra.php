@@ -67,7 +67,7 @@
 						<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
 					</td>
 					<td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
-					<td class="text-left" colspan="4"><?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicaItem'], 3) ?></td>
+					<td class="text-left" colspan="4"><?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?></td>
 					<td class="text-right">
 						<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 					</td>
@@ -75,7 +75,7 @@
 						<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 					</td>
 				</tr>
-				<?php if ($data['mostrar_imagenes'] == '1' && count($imagenesDeItem[$row['idItem']])) :  ?>
+				<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) :  ?>
 					<tr>
 						<td></td>
 						<td></td>
@@ -159,9 +159,9 @@
 					<td><?= generar_espacios(1, 1) ?></td>
 					<td></td>
 					<td colspan="4" style="font-weight: bold;">
-					<?php if ($data['mostrar_observacion'] == 1) :  ?>
-						<?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
-					<?php endif; ?>
+						<?php if ($data['mostrar_observacion'] == 1) :  ?>
+							<?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
+						<?php endif; ?>
 					</td>
 					<td></td>
 					<td></td>
@@ -190,13 +190,13 @@
 					Son: <?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
 				</td>
 			</tr>
-			<? if (!empty($data['comentario'])) : ?>
+			<!-- <? if (!empty($data['comentario'])) : ?>
 				<tr>
 					<td colspan="8" class="text-left">
 						<?= !empty($data['comentario']) ? $data['comentario'] : '' ?>
 					</td>
 				</tr>
-			<? endif; ?>
+			<? endif; ?> -->
 			<tr style="border-bottom: none;">
 				<td colspan="4" style="border-bottom: none; height: 65px; vertical-align: middle;">
 					<strong>Forma de Pago</strong>

@@ -475,7 +475,7 @@
 										<div class="ui small images content-lsck-files">
 											<? if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) { ?>
 												<? foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) {
-													if ($archivo['idTipoArchivo'] == TIPO_PDF || $archivo['idTipoArchivo'] == TIPO_OTROS) { ?>
+													if ($archivo['idTipoArchivo'] == TIPO_PDF || $archivo['idTipoArchivo'] == TIPO_OTROS || $archivo['idTipoArchivo'] == TIPO_EXCEL) { ?>
 														<div class="ui fluid image content-lsck-capturas" data-id="<?= $archivo['idCotizacionDetalleArchivo'] ?>">
 															<div class="ui dimmer dimmer-file-detalle">
 																<div class="content">

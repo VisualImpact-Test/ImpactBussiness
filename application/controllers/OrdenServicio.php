@@ -116,7 +116,7 @@ class OrdenServicio extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
-		$dataParaVista['tipoPresupuesto'] = $this->db->get('compras.tipoPresupuesto')->result_array();
+		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
@@ -205,7 +205,7 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->insert('compras.ordenServicioHistorico', $insertOrdenServicioHistorico);
 
-		if(!isset($post['cargo'])){
+		if (!isset($post['cargo'])) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Registro Erroneo!';
 			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe indicar al menos un cargo']);
@@ -341,9 +341,9 @@ class OrdenServicio extends MY_Controller
 		$idOrdenServicio = $post['idOrdenServicio'];
 		$dataParaVista = [];
 		$dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
-		$dataParaVista['tipoPresupuesto'] = $this->db->get('compras.tipoPresupuesto')->result_array();
+		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		$dataParaVista['area'] = $this->db->get('compras.area')->result_array();
-		$dataParaVista['tipoPresupuesto'] = $this->db->get('compras.tipoPresupuesto')->result_array();
+		//$dataParaVista['tipoPresupuesto'] = $this->db->get('compras.tipoPresupuesto')->result_array();
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
@@ -657,13 +657,14 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['ordenServicioFecha'] = $this->db->where('estado', 1)->where('idOrdenServicio', $idOrdenServicio)->order_by('idOrdenServicioFecha')->get('compras.ordenServicioFecha')->result_array();
 		$dataParaVista['ordenServicioCargo'] = $this->model->getOrdenServicioCargo($idOrdenServicio)->result_array();
 		$dataParaVista['ordenServicioDetalle'] = $this->model->getOrdenServicioDetalle($idOrdenServicio)->result_array();
-		// $dataParaVista['cargo'] = 
 		foreach ($this->model->getOrdenServicioDetalleSub($idOrdenServicio)->result_array() as $k => $v) {
 			$dataParaVista['ordenServicioDetalleSub'][$v['idTipoPresupuesto']][] = $v;
 		}
+		foreach ($this->db->where('idTipoPresupuesto', 1)->where('tipo', 4)->get('compras.tipoPresupuestoDetalle')->result_array() as $v) {
+			$dataParaVista['ordenServicioDetalleSub'][$v['idTipoPresupuesto']][] = $v;
+		}
 		$dataParaVista['sueldoMinimo'] = $this->db->where('fechaFin', NULL)->get('compras.sueldoMinimo')->row_array()['monto'];
-
-		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
+		foreach ($this->db->select('tpd.*, it.costo, it.idProveedor')->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')->get('compras.tipoPresupuestoDetalle tpd')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
@@ -789,7 +790,7 @@ class OrdenServicio extends MY_Controller
 			}
 
 			// compras.presupuestoDetalleSub
-			if ($vd != COD_SUELDO) {
+			if ($vd != COD_SUELDO) {	
 				$insertPresupuestoDetalleSub = [];
 				if (isset($post["tipoPresupuestoDetalleSub[$vd]"])) {
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);
@@ -797,6 +798,7 @@ class OrdenServicio extends MY_Controller
 						$post["splitDS[$vd]"] = checkAndConvertToArray($post["splitDS[$vd]"]);
 						$post["precioUnitarioDS[$vd]"] = checkAndConvertToArray($post["precioUnitarioDS[$vd]"]);
 						$post["cantidadDS[$vd]"] = checkAndConvertToArray($post["cantidadDS[$vd]"]);
+						$post["gapDS[$vd]"] = checkAndConvertToArray($post["gapDS[$vd]"]);
 						$post["montoDS[$vd]"] = checkAndConvertToArray($post["montoDS[$vd]"]);
 						$post["frecuenciaDS[$vd]"] = checkAndConvertToArray($post["frecuenciaDS[$vd]"]);
 
@@ -821,6 +823,7 @@ class OrdenServicio extends MY_Controller
 							'split' => $post["splitDS[$vd]"][$kds],
 							'precioUnitario' => $post["precioUnitarioDS[$vd]"][$kds],
 							'cantidad' => $post["cantidadDS[$vd]"][$kds],
+							'gap' => $post["gapDS[$vd]"][$kds],
 							'monto' => $post["montoDS[$vd]"][$kds],
 							'idFrecuencia' => $post["frecuenciaDS[$vd]"][$kds],
 							'idUsuario' => $this->idUsuario,
@@ -992,6 +995,7 @@ class OrdenServicio extends MY_Controller
 						$post["splitDS[$vd]"] = checkAndConvertToArray($post["splitDS[$vd]"]);
 						$post["precioUnitarioDS[$vd]"] = checkAndConvertToArray($post["precioUnitarioDS[$vd]"]);
 						$post["cantidadDS[$vd]"] = checkAndConvertToArray($post["cantidadDS[$vd]"]);
+						$post["gapDS[$vd]"] = checkAndConvertToArray($post["gapDS[$vd]"]);
 						$post["montoDS[$vd]"] = checkAndConvertToArray($post["montoDS[$vd]"]);
 						$post["frecuenciaDS[$vd]"] = checkAndConvertToArray($post["frecuenciaDS[$vd]"]);
 
@@ -1001,6 +1005,7 @@ class OrdenServicio extends MY_Controller
 							'split' => $post["splitDS[$vd]"][$kds],
 							'precioUnitario' => $post["precioUnitarioDS[$vd]"][$kds],
 							'cantidad' => $post["cantidadDS[$vd]"][$kds],
+							'gap' => $post["gapDS[$vd]"][$kds],
 							'monto' => $post["montoDS[$vd]"][$kds],
 							'idFrecuencia' => $post["frecuenciaDS[$vd]"][$kds],
 							'idUsuario' => $this->idUsuario,

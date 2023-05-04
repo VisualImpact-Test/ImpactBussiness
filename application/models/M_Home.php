@@ -126,6 +126,7 @@ class M_Home extends MY_Model
 				(fechaEmision BETWEEN @fecIni AND @fecFin
 				OR fechaTermino IS NULL
 				OR fechaTermino BETWEEN @fecIni AND @fecFin)
+			ORDER BY 1 desc
 		";
 		return $this->db->query($sql);
 	}

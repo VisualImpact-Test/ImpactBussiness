@@ -166,7 +166,7 @@ function moneda($valor, $igv = false, $dec = 2)
 }
 function monedaNew($params = [])
 {
-	$valor = !empty($params['valor']) ? $params['valor'] : '';
+	$valor = !empty($params['valor']) ? $params['valor'] : 'S/ 0.00';
 	$dec = !empty($params['dec']) ? $params['dec'] : 2;
 	$simbolo = !empty($params['simbolo']) ? $params['simbolo'] : 'S/';
 	$cambio = !empty($params['cambio']) ? $params['cambio'] : 1;

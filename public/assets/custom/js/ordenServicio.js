@@ -141,10 +141,10 @@ var OrdenServicio = {
 
 		$(document).on('change', '.cboTPD', function () {
 			let control = $(this);
-			let precio = control.find('option:selected').data('preciounitario');
-			let split = control.find('option:selected').data('split');
+			let precio = control.find('option:selected').data('preciounitario')||0;
+			let split = control.find('option:selected').data('split')||1;
 			let frecuencia = control.find('option:selected').data('frecuencia');
-			
+
 			txtPrecio = control.closest('tr').find('td.precioUnitarioDetalle').find('input');
 			txtSplit = control.closest('tr').find('td.splitDetalle').find('input');
 			cboFrecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('select');
@@ -425,7 +425,7 @@ var OrdenServicio = {
 		for (let i = 0; i < OrdenServicio.arrayTipoPresupuestoDetalle[detalle].length; i++) {
 			let tpd = OrdenServicio.arrayTipoPresupuestoDetalle[detalle][i];
 			console.log(tpd);
-			html += `<option value="${tpd.idTipoPresupuestoDetalle}" data-preciounitario="${tpd.precioUnitario}" data-split="${tpd.split}" data-frecuencia="${tpd.frecuencia}">${tpd.nombre}</option>`;
+			html += `<option value="${tpd.idTipoPresupuestoDetalle}" data-preciounitario="${tpd.costo}" data-split="${tpd.split}" data-frecuencia="${tpd.frecuencia}">${tpd.nombre}</option>`;
 
 		}
 		let totalCargo = 0;
@@ -444,6 +444,11 @@ var OrdenServicio = {
 			<td class="precioUnitarioDetalle">
 				<div class="ui input" style="width: 80px;">
 					<input type="text" class="text-right" name="precioUnitarioDS[${detalle}]" value="0"  onchange="OrdenServicio.cantidadSplitCargo(this);">
+				</div>
+			</td>
+			<td class="gapDetalle">
+				<div class="ui input" style="width: 80px;">
+					<input type="text" class="text-right" name="gapDS[${detalle}]" value="7" onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="cantidadDeTabla">
@@ -473,9 +478,9 @@ var OrdenServicio = {
 				</div>
 			</td>
 			<td class="frecuenciaDetalle">
-				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[${detalle}]">
+				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[${detalle}]" patron="requerido">
 					<option value="">Frecuencia</option>
-					<option value="1" selected>MENSUAL</option>
+					<option value="1">MENSUAL</option>
 					<option value="2">BIMENSUAL</option>
 					<option value="3">SEMESTRAL</option>
 					<option value="4">ANUAL</option>
@@ -509,8 +514,8 @@ var OrdenServicio = {
 
 		$('#tb_LD' + detalle).find('tbody').append(nhtml);
 
-		Fn.loadSemanticFunctions();
 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+		Fn.loadSemanticFunctions();
 	},
 	addDocumento: function (tipo = 1) {
 		Fn.showLoading(true);
@@ -537,7 +542,6 @@ var OrdenServicio = {
 			$(t).closest('.list').find('.idDependiente' + tpdDpendiente).addClass('d-none');
 		}
 
-		// $parentCheckbox.find('input').trigger('change');
 		let chk = $(t).closest('.list').closest('.item').find('.master.checkbox').checkbox('is checked');
 		let $checkBoxDflt = $(t).closest('.list').find('.chkDefault .child.checkbox');
 		$checkBoxDflt.each(function () {
@@ -554,11 +558,11 @@ var OrdenServicio = {
 			`<div class="fields">
 				<div class="six wide field">
 					<div class="ui sub header">Cargo</div>
-					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido">`;
+					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido" onchange="$(this).closest('.fields').find('.inSueldo').val($(this).find('option:selected').data('sueldobase'))">`;
 		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
 			let cargo = OrdenServicio.arrayCargo[i];
 			console.log(cargo);
-			html += `<option value="${cargo.idCargo}">${cargo.nombre}</option>`;
+			html += `<option value="${cargo.idCargo}" data-sueldobase="${cargo.sueldoBase}" >${cargo.nombre}</option>`;
 		}
 		html +=
 			`		</select>
@@ -569,7 +573,7 @@ var OrdenServicio = {
 				</div>
 				<div class="three wide field">
 					<div class="ui sub header">Sueldo</div>
-					<input type="text" class="ui onlyNumbers" name="sueldoCargo" placeholder="Sueldo" value="1025" patron="requerido">
+					<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Sueldo" value="${OrdenServicio.arrayCargo[0].sueldoBase}" patron="requerido">
 				</div>
 				<div class="one wide field">
 					<div class="ui sub header text-white">.</div>
@@ -685,8 +689,10 @@ var OrdenServicio = {
 		var detalle = $(t).data('detalle');
 		var detalleSub = $(t).data('detallesub');
 		var precioUnitario = control.closest('tr').find('.precioUnitarioDetalle').find('input').val();
+		var gapT = control.closest('tr').find('.gapDetalle').find('input').val();
+		var gap = 1 + (parseFloat(gapT) / 100);
 		valorCalc = parseFloat($(t).val());
-		totalFinal = (valorCalc * parseFloat(precioUnitario)).toFixed(2);
+		totalFinal = (valorCalc * gap * parseFloat(precioUnitario)).toFixed(2);
 		control.closest('tr').find('.totalCantidadSplit').find('input').val(totalFinal);
 		frecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('.frecuenciaID').dropdown('get value');
 		totalFinalAcumulado = 0;

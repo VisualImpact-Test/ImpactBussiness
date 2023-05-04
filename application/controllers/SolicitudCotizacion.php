@@ -52,20 +52,19 @@ class SolicitudCotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-        $dataParaVista = [];
-        if (isset($_SESSION['item'])){
-            $item = $_SESSION['item'];
+		$dataParaVista = [];
+		if (isset($_SESSION['item'])) {
+			$item = $_SESSION['item'];
 
-            $post['id'] = $item;
-            $datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-            unset($post['id']);
-            $post['idDiferente'] = $item;
-            $datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-            $dataParaVista = array_merge($datoDeseado,$datoRestante);
-
-        }else{
-            $dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
-        }
+			$post['id'] = $item;
+			$datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			unset($post['id']);
+			$post['idDiferente'] = $item;
+			$datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			$dataParaVista = array_merge($datoDeseado, $datoRestante);
+		} else {
+			$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+		}
 
 
 		$html = getMensajeGestion('noRegistros');
@@ -880,7 +879,7 @@ class SolicitudCotizacion extends MY_Controller
 		foreach ($cotizacionProveedoresVista as $cotizacionProveedorVista) {
 			$config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
 
-			$cotizacionProveedorSubDetalle[]  = $this->db->get_where('compras.cotizacionDetalleProveedorDetalleSub', ['idCotizacionDetalleProveedorDetalle' => $cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']])->result_array();
+			$cotizacionProveedorSubDetalle[]  = $this->db->get_where('compras.cotizacionDetalleProveedorDetalleSub', ['idCotizacionDetalleProveedorDetalle' => $cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle'], 'estado' => 1])->result_array();
 
 			$config['data']['cotizacionProveedorArchivos'][$cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']] = $this->model->obtenerArchivoCotizacionDetalleProveedors(['idCotizacionDetalleProveedorDetalle' => $cotizacionProveedorVista['idCotizacionDetalleProveedorDetalle']])->result_array();
 		}
@@ -1069,7 +1068,6 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['disabled'] = false;
 		$config['data']['idOper'] = $idOper;
 		$config['view'] = 'modulos/SolicitudCotizacion/viewFormularioGenerarOrdenCompra';
-		log_message('error', json_encode($config['data']));
 		$this->view($config);
 	}
 
@@ -1109,6 +1107,7 @@ class SolicitudCotizacion extends MY_Controller
 			'comentario' => $post['comentario'],
 			'mostrar_observacion' => isset($post['mostrar_observacion']) ? 1 : 0,
 			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? 1 : 0,
+			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? 1 : 0,
 			'idAlmacen' => $post['idAlmacen']
 		]);
 
@@ -1132,6 +1131,7 @@ class SolicitudCotizacion extends MY_Controller
 				'fechaEntrega' => !empty($row['fechaEntrega']) ? $row['fechaEntrega'] : NULL,
 				'mostrar_observacion' => !empty($row['mostrar_observacion']) ? $row['mostrar_observacion'] : NULL,
 				'mostrar_imagenes' => !empty($row['mostrar_imagenes']) ? $row['mostrar_imagenes'] : NULL,
+				'mostrar_imagenesCoti' => !empty($row['mostrar_imagenesCoti']) ? $row['mostrar_imagenesCoti'] : NULL,
 				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
 			];
 
@@ -1234,8 +1234,16 @@ class SolicitudCotizacion extends MY_Controller
 		$idUsuarioFirma = $this->db->get_where('sistema.usuario', ['idUsuario' => $this->idUsuario])->row_array()['idUsuarioFirma'];
 		$dataFirma = $this->db->get_where('sistema.usuarioFirma', ['idUsuarioFirma' => $idUsuarioFirma])->row_array();
 
+		$cotDet = [];
+		foreach (checkAndConvertToArray($post["idCotizacionDetalle[{$post['idProveedor']}]"]) as $k => $v) {
+			$xxd = checkAndConvertToArray($post["caracteristicasItem[{$post['idProveedor']}]"]);
+			$this->db->update('compras.cotizacionDetalle', ['caracteristicasCompras' => $xxd[$k]], ['idCotizacionDetalle' => $v]);
+			$cotDet[] = $v;
+		}
+		$cotizacionDet = implode(',', $cotDet);
 		// Data para detalle
-		$detalleCotizacion = $this->model->obternerCotizacionDetalle(['idCotizacion' => $post['idCotizacion'], 'idProveedor' => $post['idProveedor']])->result_array();
+		// $detalleCotizacion = $this->model->obternerCotizacionDetalle(['idCotizacion' => $post['idCotizacion'], 'idProveedor' => $post['idProveedor']])->result_array();
+		$detalleCotizacion = $this->model->obternerCotizacionDetalle(['idCotizacion' => $post['idCotizacion'], 'idProveedor' => $post['idProveedor'], 'idCotizacionDetalle' => $cotizacionDet])->result_array();
 		$dataSub = [];
 		foreach ($detalleCotizacion as $key => $value) {
 			$detalleCotizacion[$key]['cotizacionSubTotal'] = $value['subtotal'];
@@ -1262,6 +1270,7 @@ class SolicitudCotizacion extends MY_Controller
 			'igv' => (isset($post['igvOrden']) ? '18' : '0'),
 			'mostrar_observacion' => isset($post['mostrar_observacion']) ? '1' : '0',
 			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? '1' : '0',
+			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? '1' : '0'
 		];
 
 		$dataParaVista['imagenesDeItem'] = [];
@@ -1270,12 +1279,21 @@ class SolicitudCotizacion extends MY_Controller
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
+		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
+			foreach ($detalleCotizacion as $key => $value) {
+				$dd = $this->model->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $post['idProveedor']])->result_array();
+				foreach ($dd as $kl => $vl) {
+					$dataParaVista['imagenesDeItem'][$value['idItem']][] = $vl;
+				}
+			}
+		}
+
 		foreach ($detalleCotizacion as $k => $v) {
 			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 		}
-		
+
 		$dataParaVista['detalle'] = $detalleCotizacion;
-		
+
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($post['idCotizacion']);
 		$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle($post['idCotizacion']);
@@ -1443,7 +1461,7 @@ class SolicitudCotizacion extends MY_Controller
 			'precioForm' => $post['precioForm'],
 			'subtotalForm' => empty($post['subtotalForm']) ? number_format($post['cantidadForm'] * $post['costoForm'], 2) : $post['subtotalForm'],
 			'ocDelCliente' => $post['ocDelCliente'],
-			'caracteristicasItem' => $post['caracteristicasItem'],
+			// 'caracteristicasCompras' => $post['caracteristicasCompras'],
 		]);
 
 
@@ -1454,7 +1472,7 @@ class SolicitudCotizacion extends MY_Controller
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;
 			$provCompare[$row['idProveedorForm']] = $row['idProveedorForm'];
-			
+
 			if (!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])) {
 
 				$k = $row['idCotizacionDetalle'];
@@ -1464,6 +1482,11 @@ class SolicitudCotizacion extends MY_Controller
 							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[$k]"],
 							'nombre' => $post["nombreSubItemServicio[$k]"],
 							'cantidad' => $post["cantidadSubItemServicio[$k]"],
+							'sucursal' => $post["sucursalSubItemServicio[$k]"],
+							'razonSocial' => $post["razonSocialSubItemServicio[$k]"],
+							'tipoElemento' => $post["tipoElementoSubItemServicio[$k]"],
+							'marca' => $post["marcaSubItemServicio[$k]"],
+							'costo' => $post["precioUnitarioSubItemServicio[$k]"],
 						]);
 						break;
 
@@ -1511,7 +1534,7 @@ class SolicitudCotizacion extends MY_Controller
 			$dataParaVista['dataOrdenDet'][$row['idProveedorForm']][] = $row;
 		}
 
-		if(count($provCompare) > 1){
+		if (count($provCompare) > 1) {
 			$result['result'] = 2;
 			$result['data']['html'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Se indicaron distintos proveedores en la selección']);
 			$result['msg']['title'] = 'OC Vista previa';

@@ -4,7 +4,7 @@
 		<div class="col-md-10 child-divcenter">
 			<div class="control-group child-divcenter row" style="width:85%">
 				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
-				<textarea class="form-control col-md-4" name="observacion" rows="4">- FEE Proyecto 9%&#13;&#10;- Se considera un Split básico de materiales&#13;&#10;- Se considera en comunicación 1GB DATA + RPE ILIMITADO&#13;&#10;- Se considera uniforme dos veces al año (1 Invierno + 1 Verano)&#13;&#10;- Se considera un Kits de bioseguridad + pruebas COVID (20% del personal)&#13;&#10;- No se considera provisión de feriados&#13;&#10;- No se consideran reuniones mensuales de integración&#13;&#10;- No se considera evento de fin de año&#13;&#10;- No se consideran rutas viajeras ni movilidades extraurbanas</textarea>
+				<textarea class="form-control col-md-4" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
 			</div>
 		</div>
 	</div>
@@ -12,7 +12,7 @@
 		<?php $cantidadCargo = 0; ?>
 		<?php foreach ($fechaDelPre as $key => $value) : ?>
 			<?php foreach ($cargoDelPre as $k => $v) : ?>
-				<?php $cantidadCargo += intval($presupuestoCargo[$value['fecha']][$v['idCargo']]); ?>
+				<?php $cantidadCargo += intval($v['cantidad']); ?>
 			<?php endforeach; ?>
 			<?php break; ?>
 		<?php endforeach; ?>
@@ -46,7 +46,7 @@
 									<td> <?= $vp['cargo']; ?> </td>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 										<td>
-											<div class="ui input transparent" style="width: 80px;">
+											<div class="ui input" style="width: 80px;">
 												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 										</td>
@@ -327,6 +327,7 @@
 										<th>Descripción</th>
 										<th>Split</th>
 										<th>Precio Unitario</th>
+										<th>GAP</th>
 										<th class="cantidadDeTabla">Cantidad</th>
 										<th>Total</th>
 										<th>Frecuencia</th>
@@ -352,6 +353,11 @@
 												<td class="precioUnitarioDetalle">
 													<div class="ui input" style="width: 80px;">
 														<input type="text" class="text-right" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['precioUnitario']; ?>">
+													</div>
+												</td>
+												<td class="gapDetalle">
+													<div class="ui input" style="width: 80px;">
+														<input type="text" class="text-right" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['gap']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="cantidadDeTabla">

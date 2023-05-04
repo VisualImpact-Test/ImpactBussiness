@@ -31,7 +31,7 @@ var FormularioProveedoresOC = {
 	descargarOC: function (id) {
 		let data = { id };
 		let jsonString = { 'data': JSON.stringify(data) };
-		Fn.download(site_url + 'Cotizacion/descargarOrdenCompra', jsonString);
+		Fn.download(site_url + FormularioProveedoresOC.url + 'descargarOrdenCompra', jsonString);
 	}
 
 }

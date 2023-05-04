@@ -91,7 +91,7 @@
 				<tbody>
 					<?php foreach ($detalle as $k => $row) : ?>
 						<?php $total = $row['subTotalOrdenCompra']; ?>
-						<?php $igv_total = ($row['subTotalOrdenCompra'] * (!empty($row['igv']) ? ($row['igv'] / 100) : IGV)); ?>
+						<?php $igv_total = ($row['subTotalOrdenCompra'] * (!empty($row['igv']) ? ($row['igv'] / 100) : 0)); ?>
 						<tr>
 							<td class="text-center"><?= ($k + 1) ?>
 								<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
@@ -105,17 +105,17 @@
 								<?= !empty($row['subtotal']) ? monedaNew(['valor' => $row['subtotal'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
 							</td>
 						</tr>
-						<?php foreach ($imagen[$row['idCotizacionDetalle']] as $key => $value) : ?>
+						<?php if (!empty($imagen[$row['idCotizacionDetalle']])) :  ?>
 							<tr>
 								<td></td>
 								<td></td>
-								<td colspan="2" class="text-center">
-									<img src="<?= RUTA_WASABI . $value['carpeta'] . $value['nombre_archivo'] ?>" style="padding-top: -120px; width: 200px; height: 120px;">
+								<td colspan="4" class="text-left">
+									<?php foreach ($imagen[$row['idCotizacionDetalle']] as $key => $value) : ?>
+										<img src="<?= RUTA_WASABI . $value['carpeta'] . $value['nombre_archivo'] ?>" style="padding-top: -120px; width: 200px; height: 120px;">
+									<?php endforeach; ?>
 								</td>
-								<td></td>
-								<td></td>
 							</tr>
-						<?php endforeach; ?>
+						<?php endif; ?>
 					<?php endforeach; ?>
 					<!-- <tr style="height: 100px;"></tr> -->
 				</tbody>
@@ -127,7 +127,7 @@
 							<p>TOTAL</p>
 						</th>
 						<th class="text-center">
-							<p><?= !empty($data['igv']) ? $data['igv'] : (IGV * 100) ?>%</p>
+							<p><?= !empty($data['igv']) ? $data['igv'] : (0 * 100) ?>%</p>
 						</th>
 						<th class="text-right">
 							<p><?= monedaNew(['valor' => $total, 'simbolo' => $cabecera['simboloMoneda']]) ?></p>

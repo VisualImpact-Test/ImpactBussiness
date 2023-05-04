@@ -77,7 +77,7 @@
 					</tr>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
-					<?php $col1 = 7; ?>
+					<?php $col1 = 8; ?>
 					<tr style="background-color: #FFE598;">
 						<th style="color:black">ITEM</th>
 						<th style="color:black">SUCURSAL</th>
@@ -86,7 +86,7 @@
 						<th style="color:black">MARCA</th>
 						<th style="color:black">DETALLES DE SERVICIO</th>
 						<th style="color:black">CANTIDAD</th>
-						<!-- <th style="color:black">COSTO</th> -->
+						<th style="color:black">COSTO</th>
 						<th style="color:black">TOTAL</th>
 					</tr>
 				<?php endif; ?>
@@ -121,8 +121,8 @@
 						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
 						<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
 						<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
-						<!-- <td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($row['costo'] * ($row['gap'] + 100) / 100); ?></td>
+						<td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($value[0]['cantidad'] * $value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
 					</tr>
 					<?php foreach ($value as $k => $v) : ?>
 						<?php if ($k != 0) :  ?>

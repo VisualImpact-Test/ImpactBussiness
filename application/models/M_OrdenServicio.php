@@ -102,11 +102,12 @@ class M_OrdenServicio extends MY_Model
 	public function getOrdenServicioDetalleSub($id)
 	{
 		$query = $this->db
-			->select('lds.*, tpd.*, tp.idTipoPresupuesto')
+			->select('lds.*, tpd.*, tp.idTipoPresupuesto, it.costo, it.idProveedor')
 			->from('compras.ordenServicioDetalleSub lds')
 			->join('compras.ordenServicioDetalle ld', 'ld.idOrdenServicioDetalle = lds.idOrdenServicioDetalle', 'LEFT')
 			->join('compras.tipoPresupuestoDetalle tpd', 'tpd.idTipoPresupuestoDetalle = lds.idTipoPresupuestoDetalle', 'LEFT')
 			->join('compras.tipoPresupuesto tp', 'tp.idTipoPresupuesto = ld.idTipoPresupuesto', 'LEFT')
+			->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')
 			->where('ld.estado', 1)
 			->where('ld.idOrdenServicio', $id)
 			->order_by('lds.idOrdenServicioDetalle')

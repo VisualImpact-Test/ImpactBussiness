@@ -140,8 +140,6 @@ var SolicitudCotizacion = {
 	visualizarOrdenCompraPdf: function () {
 		let formValues = Fn.formSerializeObject('formRegistroOperValidado');
 		let jsonString = { 'data': JSON.stringify(formValues) };
-		// console.log(jsonString);
-		// console.log(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf');
 		Fn.download(site_url + SolicitudCotizacion.url + 'descargarOrdenCompraPdf', jsonString);
 	},
 	mostrarLugarEntrega: function (t) {

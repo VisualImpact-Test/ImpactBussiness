@@ -529,16 +529,6 @@ class FormularioProveedor extends MY_Controller
 			$get[$k] = base64_decode($g);
 		}
 
-		// $hoy = new DateTime(date('Y-m-d'));
-		// $fechaAcceso = new DateTime(!empty($get['date']) ? $get['date'] : date('1999-01-01'));
-		// $diasDiferencia = $fechaAcceso->diff($hoy)->days;
-
-		// if ($diasDiferencia > DIAS_MAX_ACCESO) {
-		// 	echo 'Ha excedido los dias de acceso disponibles';
-		// 	redirect('FormularioProveedor', 'refresh');
-		// 	exit();
-		// }
-
 		if (!empty($get['doc']) && !empty($get['email']) && !empty($get['cod'])) {
 			$proveedor = $this->model->loginProveedor(['ruc' => $get['doc'], 'email' => $get['email'], 'idProveedor' => $get['cod']])->row_array();
 			$this->session->set_userdata('proveedor', $proveedor);
@@ -668,6 +658,7 @@ class FormularioProveedor extends MY_Controller
 
 		$post['idCotizacionDetalleProveedorDetalle'] = checkAndConvertToArray($post['idCotizacionDetalleProveedorDetalle']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
+		$post['costoUnitario'] = checkAndConvertToArray($post['costoUnitario']);
 		$insertArchivos = [];
 
 		$post['diasValidez'] = checkAndConvertToArray($post['diasValidez']);
@@ -798,19 +789,6 @@ class FormularioProveedor extends MY_Controller
 			$result['msg']['title'] = 'Hecho!';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
 
-			// $proveedor = $this->session->userdata('proveedor');
-			// $dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor',['idProveedor' => $proveedor['idProveedor']])->row_array();
-			// $dataParaVista['cotizacion'] = $this->db->get_where('compras.cotizacion',['idCotizacion' => $post['idCotizacion']])->row_array();
-
-			// $html = $this->load->view("formularioProveedores/correoProveedorPrecios", $dataParaVista, true);
-			// $correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/Cotizaciones/{$post['idCotizacion']}"], true);
-			// $config = [
-			//     'to' => 'aaron.ccenta@visualimpact.com.pe',
-			//     'asunto' => 'Solicitud de Cotizacion',
-			//     'contenido' => $correo,
-			// ];
-			// email($config);
-
 			$insertCotizacionHistorico = [
 				'idCotizacionEstado' => ESTADO_ENVIADO_COMPRAS,
 				'idCotizacionInternaEstado' => INTERNA_PRECIO_RECIBIDO,
@@ -824,38 +802,35 @@ class FormularioProveedor extends MY_Controller
 
 			foreach ($post['idItem'] as $key => $value) {
 				if (!empty($post['idItem'][$key])) {
-					$datos = [
-						'idItem' => $post['idItem'][$key],
-						'idProveedor' => $post['idProveedor']
-					];
-					$consulta = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
 
-					if (!empty($consulta)) {
-						$update[0] = [
-							'idItemTarifario' => $consulta['idItemTarifario'],
-							'costo' => $post['costo'][$key],
-							'fechaVigencia' => $post['fechaValidez'][$key]
-						];
-						$rpta = $this->model->actualizarMasivo('compras.itemTarifario', $update, 'idItemTarifario');
-						$idItemTarifario = $consulta['idItemTarifario'];
-					} else {
-						$insertar = [
-							'idItem' => $post['idItem'][$key],
-							'idProveedor' => $post['idProveedor'],
-							'costo' => $post['costo'][$key],
-							'flag_actual' => 0,
-							'estado' => 1,
-							'fechaVigencia' => $post['fechaValidez'][$key]
-						];
-						$rpta = $this->db->insert('compras.itemTarifario', $insertar);
+					$datos[] = [
+						'idItem' => $value,
+						'idProveedor' => $post['idProveedor'],
+						'estado' => '1'
+					];
+					$dataTarifario = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
+					
+					$dataIT = [
+						'idItem' => $value,
+						'idProveedor' => $post['idProveedor'],
+						'costo' => $post['costoUnitario'][$key],
+						'fechaVigencia' => $post['fechaValidez'][$key],
+						'estado' => '1',
+						'flag_actual' => '0'
+					];
+					if (empty($dataTarifario)) { // Si aún no se registra el Item.
+						$rpta = $this->db->insert('compras.itemTarifario', $dataIT);
 						$idItemTarifario = $this->db->insert_id();
+					}else{
+						$idItemTarifario = $dataTarifario['idItemTarifario'];
+						$this->db->update('compras.itemTarifario', $dataIT, ['idItemTarifario' => $idItemTarifario]);
 					}
 
 					$historicoInsert = [
 						'idItemTarifario' => $idItemTarifario,
 						'fecIni' => getFechaActual(),
 						'fecFin' => $post['fechaValidez'][$key],
-						'costo' => $post['costo'][$key]
+						'costo' => $post['costoUnitario'][$key]
 					];
 					$rpta = $this->db->insert('compras.itemTarifarioHistorico', $historicoInsert);
 				}
@@ -933,12 +908,21 @@ class FormularioProveedor extends MY_Controller
 
 		if (!empty($config['data']['cabecera']['mostrar_imagenes'])) {
 			foreach ($ordenCompraProveedor as $k => $v) {
-				foreach ($this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleArchivos')->result_array() as $vq1) {
-					$vq1['carpeta'] = 'cotizacion/';
-					$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
-				}
+				// foreach ($this->db->where('idTipoArchivo', '2')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleArchivos')->result_array() as $vq1) {
+				// 	$vq1['carpeta'] = 'cotizacion/';
+				// 	$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
+				// }
 				foreach ($this->db->where('idItem', $v['idItem'])->get('compras.itemImagen')->result_array() as $vq1) {
 					$vq1['carpeta'] = 'item/';
+					$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
+				}
+			}
+		}
+		if (!empty($config['data']['cabecera']['mostrar_imagenesCoti'])) {
+			foreach ($ordenCompraProveedor as $k => $v) {
+				$xxdd = $this->m_cotizacion->getImagenCotiProv(['idCotizacionDetalle' => $v['idCotizacionDetalle'], 'idProveedor' => $v['idProveedor']])->result_array();
+				foreach ($xxdd as $vq1) {
+					$vq1['carpeta'] = 'cotizacion/';
 					$config['data']['imagen'][$v['idCotizacionDetalle']][] = $vq1;
 				}
 			}
@@ -950,6 +934,92 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		$this->view($config);
+	}
+
+	public function descargarOrdenCompra()
+	{
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		$post = json_decode($this->input->post('data'), true);
+
+		$ordenCompra = $this->model->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+
+		$dataParaVista['data'] = $ordenCompra[0];
+		$dataParaVista['detalle'] = $ordenCompra;
+
+		$cotDet = [];
+		foreach ($ordenCompra as $k => $v) {
+			$cotDet[] = $v['idCotizacionDetalle'];
+		}
+		$cotizacionDet = implode(',', $cotDet);
+
+		$dataParaVista['imagenesDeItem'] = [];
+		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
+			foreach ($dataParaVista['detalle'] as $key => $value) {
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
+			}
+		}
+		
+		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
+			foreach ($ordenCompra as $key => $value) {
+				$dd = $this->m_cotizacion->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $value['idProveedor']])->result_array();
+				foreach ($dd as $kl => $vl) {
+					$dataParaVista['imagenesDeItem'][$value['idItem']][] = $vl;
+				}
+			}
+		}
+
+		foreach ($dataParaVista['detalle'] as $k => $v) {
+			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
+
+		$ids = [];
+		foreach ($ordenCompra as $v) {
+			$cuenta = $this->m_cotizacion->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+			$centroCosto = $this->m_cotizacion->obtenerCentroCostoDeLaCotizacionDetalle($v['idCotizacion']);
+
+			$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+			$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
+			$ids[] = $v['idCotizacion'];
+		}
+		$dataParaVista['cuentas'] = implode(', ', $cuentas);
+		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
+		$idCotizacion = implode(",", $ids);
+		
+		require APPPATH . '/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			// 'orientation' => '',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
+
+		$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-009'], true);
+		$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+		$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra", $dataParaVista, true);
+
+		$mpdf->SetHTMLHeader($contenido['header']);
+		$mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
+
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+
+		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+		// $mpdf->Output('OPER.pdf', 'D');
+		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 
 	public function confirmarOrdenCompra()
@@ -1004,17 +1074,40 @@ class FormularioProveedor extends MY_Controller
 	{
 		$result = $this->result;
 		$result['msg']['title'] = "Carga masiva de servicio";
+		$idCotizacionDetalleProveedorDetalle = $this->input->post('data');
 
 		$proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]], '*', [], 'razonSocial')->result_array();
 		$proveedores = refactorizarDataHT(["data" => $proveedores, "value" => "razonSocial"]);
 
-		$item['item'] = []; // $this->model->obtenerItems();
-		$itemNombre = refactorizarDataHT(["data" => $item['item'], "value" => "label"]);
+		// $item['item'] = []; // $this->model->obtenerItems();
+		// $itemNombre = refactorizarDataHT(["data" => $item['item'], "value" => "label"]);
 
+		$datos = $this->db->where('estado', '1')->where('idCotizacionDetalleProveedorDetalle', $idCotizacionDetalleProveedorDetalle)->get('compras.cotizacionDetalleProveedorDetalleSub')->result_array();
+		$datosHt = [];
+		foreach ($datos as $v) {
+			$datosHt[] = [
+				'sucursal' => $v['sucursal'],
+				'razonSocial' => $v['razonSocial'],
+				'tipoElemento' => $v['tipoElemento'],
+				'marca' => $v['marca'],
+				'descripcion' => $v['descripcion'],
+				'cantidad' => $v['cantidad'],
+				'precUnitario' => $v['costo'],
+			];
+		}
+		$datosHt[] = [
+			'sucursal' => null,
+			'razonSocial' => null,
+			'tipoElemento' => null,
+			'marca' => null,
+			'descripcion' => null,
+			'cantidad' => null,
+			'precUnitario' => null,
+		];
 		//ARMANDO HANDSONTABLE
 		$HT[0] = [
 			'nombre' => 'Servicio Detalle',
-			'data' => [
+			'data' => $datosHt /*[
 				[
 					'sucursal' => null,
 					'razonSocial' => null,
@@ -1024,7 +1117,7 @@ class FormularioProveedor extends MY_Controller
 					'cantidad' => null,
 					'precUnitario' => null,
 				]
-			],
+			]*/,
 			'headers' => [
 				'SUCURSAL (*)',
 				'RAZON SOCIAL (*)',
@@ -1033,8 +1126,6 @@ class FormularioProveedor extends MY_Controller
 				'DESCRIPCION (*)',
 				'CANTIDAD (*)',
 				'PREC UNITARIO (*)',
-
-
 			],
 			'columns' => [
 				['data' => 'sucursal', 'type' => 'text', 'placeholder' => 'Sucursal', 'width' => 200],
@@ -1111,6 +1202,7 @@ class FormularioProveedor extends MY_Controller
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
 			goto respuesta;
 		}
+		$this->db->update('compras.cotizacionDetalleProveedorDetalleSub', ['estado' => 0], ['idCotizacionDetalleProveedorDetalle' => $post['id']]);
 		$insertarServicios = $this->model->insertarMasivo('compras.cotizacionDetalleProveedorDetalleSub', $dataServicio['insert']);
 
 		$cdpds = $this->db->where('estado', 1)->where('idCotizacionDetalleProveedorDetalle', $post['id'])->get('compras.cotizacionDetalleProveedorDetalleSub')->result_array();

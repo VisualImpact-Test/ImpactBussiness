@@ -303,7 +303,8 @@ class M_Cotizacion extends MY_Model
 							sol.nombre AS solicitante,
 							it.nombre AS itemTipo,
 							proveedor.razonSocial AS proveedor,
-							i.caracteristicas AS caracteristicaItem')
+							i.caracteristicas AS caracteristicaItem,
+							itf.costo')
 			->from('compras.cotizacionDetalle cd')
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'LEFT')
 			->join('compras.cotizacionPrioridad prioridad', 'prioridad.idPrioridad = c.idPrioridad', 'LEFT')
@@ -315,8 +316,12 @@ class M_Cotizacion extends MY_Model
 			->join('compras.cotizacionDetalleSub cds', 'cd.idItemTipo = 7 AND cds.idCotizacionDetalle = cd.idCotizacionDetalle', 'LEFT')
 			->join('compras.proveedor', 'proveedor.idProveedor = isNull(cd.idProveedor, cds.idProveedorDistribucion)', 'LEFT');
 
+		if (isset($params['idProveedor'])) $this->db->join('compras.itemTarifario itf', 'itf.idItem = i.idItem AND itf.estado = 1 AND itf.idProveedor = ' . $params['idProveedor'], 'LEFT');
+
 		if (isset($params['idCotizacion'])) $this->db->where('c.idCotizacion', $params['idCotizacion']);
-		if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
+		// if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
+		
+		if (isset($params['idCotizacionDetalle'])) $this->db->where("cd.idCotizacionDetalle in ({$params['idCotizacionDetalle']})");
 		return $this->db->get();
 	}
 
@@ -426,6 +431,17 @@ class M_Cotizacion extends MY_Model
 		}
 
 		return $this->resultado;
+	}
+
+	public function getImagenCotiProv($params = [])
+	{
+		$sql = "SELECT idTipoArchivo, '../cotizacion/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleArchivos WHERE idTipoArchivo = 2 AND idCotizacionDetalle = ".$params['idCotizacionDetalle'];
+		$sql .= " UNION select idTipoArchivo, '../cotizacionProveedor/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleProveedorDetalleArchivos cdpda LEFT JOIN compras.cotizacionDetalleProveedorDetalle cdpd  ON cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle ";
+		$sql .= " LEFT JOIN compras.cotizacionDetalleProveedor cdp ON cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor";
+		$sql .= " WHERE cdpd.idCotizacionDetalle =".$params['idCotizacionDetalle'];
+		$sql .= " AND cdp.idProveedor =".$params['idProveedor'];
+		$sql .= " AND cdpda.idTipoArchivo = 2";
+		return $this->db->query($sql);
 	}
 
 	public function validarExistenciaCotizacion($params = [])
@@ -747,7 +763,7 @@ class M_Cotizacion extends MY_Model
 			cd.enlaces,
 			p.idProveedor,
 			p.razonSocial,
-			cd.caracteristicasCompras,
+			-- cd.caracteristicasCompras,
 			cd.flagRedondear,
 			-- ,
 			-- cuenta.nombre as cuenta,
@@ -814,7 +830,12 @@ class M_Cotizacion extends MY_Model
 				cds.cantidadReal,
 				cds.requiereOrdenCompra,
 				c.codOrdenCompra,
-				cds.genero
+				cds.genero,
+				cds.sucursal,
+				cds.razonSocial,
+				cds.tipoElemento,
+				cds.marca,
+				cds.cantidad
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -999,6 +1020,8 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 
+		$filtroE = !empty($params['idCotizacion']) ? " AND idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
+
 		$sqlUnion = "";
 		if (!empty($params['union'])) {
 			$sqlUnion = "
@@ -1008,7 +1031,7 @@ class M_Cotizacion extends MY_Model
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			cd.idItem,
-			cd.idProveedor,
+			p.idProveedor,
 			(ith.costo * cd.cantidad) subTotal,
 			cd.cantidad,
 			p.razonSocial,
@@ -1022,7 +1045,8 @@ class M_Cotizacion extends MY_Model
 				AND General.dbo.fn_fechaVigente(ith.fecIni,ith.fecFin,cd.fechaCreacion,cd.fechaCreacion) = 1
 			JOIN compras.proveedor p ON it.idProveedor = p.idProveedor
 			WHERE
-			cd.cotizacionInterna = 0
+			p.idProveedor not in (Select idProveedor from compras.cotizacionDetalleProveedor where 1 = 1 {$filtroE}) and
+			it.estado = 1 
 			{$filtros}
 			";
 		}
@@ -1211,6 +1235,7 @@ class M_Cotizacion extends MY_Model
 				, pr.razonSocial
 				, pr.nroDocumento as ruc
 				, o.mostrar_imagenes
+				, o.mostrar_imagenesCoti
 			FROM compras.ordenCompra o
 			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda

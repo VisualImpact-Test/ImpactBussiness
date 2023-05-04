@@ -399,6 +399,7 @@ class M_FormularioProveedor extends MY_Model
 		$sql = "
 			SELECT
 				o.idOrdenCompra,
+				o.idProveedor,
 				--SUM(cp.costo * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
 				SUM((cp.costo / md.valor) * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
 				p.razonSocial,
@@ -420,6 +421,8 @@ class M_FormularioProveedor extends MY_Model
 				o.igv,
 				o.comentario,
 				o.mostrar_imagenes,
+				o.mostrar_imagenesCoti,
+				o.mostrar_observacion,
 				m.nombre moneda,
 				md.valor valorMoneda,
 				mp.nombre metodoPago,
@@ -435,7 +438,8 @@ class M_FormularioProveedor extends MY_Model
 				cp.idItemTipo,
 				cp.subtotal as cotizacionSubTotal,
 				cp.idItem,
-				i.caracteristicas as caracteristicaItem
+				i.caracteristicas as caracteristicaItem,
+				cp.caracteristicasCompras
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra

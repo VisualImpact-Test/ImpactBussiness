@@ -117,8 +117,8 @@
 						<div class="fields">
 							<div class="six wide field">
 								<div class="ui sub header">Cargo</div>
-								<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido">
-									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $kC, 'query' => $cargo, 'id' => 'idCargo', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
+								<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido" onchange="$(this).closest('.fields').find('.inSueldo').val($(this).find('option:selected').data('sueldobase'))">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $kC, 'query' => $cargo, 'id' => 'idCargo', 'value' => 'nombre', 'class' => 'text-titlecase', 'data-option' => ['sueldoBase']]); ?>
 								</select>
 							</div>
 							<div class="six wide field">
@@ -127,7 +127,7 @@
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Sueldo</div>
-								<input type="text" class="ui onlyNumbers" name="sueldoCargo" placeholder="Cantidad" value="<?= $vC['sueldo']; ?>" patron="requerido">
+								<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Cantidad" value="<?= $vC['sueldo']; ?>" patron="requerido">
 							</div>
 							<div class="one wide field">
 								<div class="ui sub header text-white">.</div>
@@ -197,45 +197,51 @@
 			<a class="ui btn btn-trade-visual" onclick="$('#divDetalleOrdenServicio').toggleClass('d-none'); $('#iconDetalleTipo').toggleClass('slash');"><i id="iconDetalleTipo" class="icon eye slash"></i>Detalle de Tipos</a>
 		</div>
 	</div> -->
-	<div id="datosDocs">
+	<div id="datosDetalle">
 		<div class="ui form attached fluid segment p-4">
-			<button type="button" class="btn px-0 py-2" data-toggle="collapse" data-target="#colDatosDocs" aria-expanded="true" aria-controls="colDatosDocs">
+			<button type="button" class="btn px-0 py-2" data-toggle="collapse" data-target="#colDatosDetalle" aria-expanded="true" aria-controls="colDatosDetalle">
 				<h4 class="ui dividing header text-uppercase">Detalle</h4>
 			</button>
-			<div id="colDatosDocs" class="collapse show" aria-labelledby="headingOne" data-parent="#datosDocs">
-				<div id="divDetalleOrdenServicio" class="fields">
+			<div id="colDatosDetalle" class="collapse show" aria-labelledby="headingOne" data-parent="#datosDetalle">
+				<div id="divDetalleOrdenServicio">
 					<?php foreach ($tipoPresupuesto as $k => $v) : ?>
 						<input type="hidden" name="chkContadorTipo" value="<?= $v['idTipoPresupuesto']; ?>">
-						<div class="field">
-							<div class="ui celled relaxed list">
-								<div class="item">
-									<div class="ui master checkbox mt-1" <?= ($v['idTipoPresupuesto'] == COD_SUELDO) ? "id='chkAsgFam'" : "" ?>>
-										<input type="checkbox" name="chkTipoPresupuesto[<?= $v['idTipoPresupuesto']; ?>]" <?= isset($ordenServicioDetalle[$v['idTipoPresupuesto']]) ? 'checked' : '' ?>>
-										<label style="font-size: 1.5em;"><?= $v['nombre'] ?></label>
-									</div>
-									<?php if (!empty($tipoPresupuestoDetalle[$v['idTipoPresupuesto']]) && $v['mostrarDetalle'] == '1') :  ?>
-										<div class="list">
-											<?php foreach ($tipoPresupuestoDetalle[$v['idTipoPresupuesto']] as $k1 => $v1) : ?>
-												<?php if ($v1['tipo'] != '4') :  ?>
-													<input type="hidden" name="chkContadorTipoDetalle[<?= $v['idTipoPresupuesto'] ?>]" value="<?= $v1['idTipoPresupuestoDetalle']; ?>">
-													<div class="item <?= $v1['chkDefault'] == '1' ? 'disabled chkDefault' : '' ?> <?= !empty($v1['idTipoPresupuestoDetalleDependiente']) ? 'd-none idDependiente' . $v1['idTipoPresupuestoDetalleDependiente'] : '' ?>">
-														<div class="ui child checkbox mt-1">
-															<input class="" type="checkbox" data-buscardependiente="<?= $v1['idTipoPresupuestoDetalle']; ?>" onchange="OrdenServicio.buscarCheckDependiente(this);" name="chkTipoPresupuestoDet[<?= $v['idTipoPresupuesto']; ?>][<?= $v1['idTipoPresupuestoDetalle']; ?>]" <?= (isset($ordenServicioDetalleSub[$v['idTipoPresupuesto']][$v1['idTipoPresupuestoDetalle']]) || $v1['chkDefault'] == '1') ? 'checked' : '' ?>>
-															<label><?= $v1['nombre'] ?></label>
-														</div>
-													</div>
-												<?php endif; ?>
-												<?php if ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) :  ?>
-													<div id='asgFam' class="idDependiente<?= COD_ASIGNACIONFAMILIAR ?>'">
-														<input name="asignacionFamiliar" value="<?= isset($ordenServicioDetalleSub[COD_SUELDO][COD_ASIGNACIONFAMILIAR]) ? $ordenServicioDetalleSub[COD_SUELDO][COD_ASIGNACIONFAMILIAR]['valorPorcentual'] : '100' ?>">
-													</div>
-												<?php endif; ?>
-											<?php endforeach; ?>
+						<?php if ($k % 4 == 0) :  ?>
+							<div class="fields">
+							<?php endif; ?>
+							<div class="field">
+								<div class="ui celled relaxed list">
+									<div class="item">
+										<div class="ui master checkbox mt-1" <?= ($v['idTipoPresupuesto'] == COD_SUELDO) ? "id='chkAsgFam'" : "" ?>>
+											<input type="checkbox" name="chkTipoPresupuesto[<?= $v['idTipoPresupuesto']; ?>]" <?= isset($ordenServicioDetalle[$v['idTipoPresupuesto']]) ? 'checked' : '' ?>>
+											<label style="font-size: 1.5em;"><?= $v['nombre'] ?></label>
 										</div>
-									<?php endif; ?>
+										<?php if (!empty($tipoPresupuestoDetalle[$v['idTipoPresupuesto']]) && $v['mostrarDetalle'] == '1') :  ?>
+											<div class="list">
+												<?php foreach ($tipoPresupuestoDetalle[$v['idTipoPresupuesto']] as $k1 => $v1) : ?>
+													<?php if ($v1['tipo'] != '4') :  ?>
+														<input type="hidden" name="chkContadorTipoDetalle[<?= $v['idTipoPresupuesto'] ?>]" value="<?= $v1['idTipoPresupuestoDetalle']; ?>">
+														<div class="item <?= $v1['chkDefault'] == '1' ? 'disabled chkDefault' : '' ?> <?= !empty($v1['idTipoPresupuestoDetalleDependiente']) ? 'd-none idDependiente' . $v1['idTipoPresupuestoDetalleDependiente'] : '' ?>">
+															<div class="ui child checkbox mt-1">
+																<input class="" type="checkbox" data-buscardependiente="<?= $v1['idTipoPresupuestoDetalle']; ?>" onchange="OrdenServicio.buscarCheckDependiente(this);" name="chkTipoPresupuestoDet[<?= $v['idTipoPresupuesto']; ?>][<?= $v1['idTipoPresupuestoDetalle']; ?>]" <?= (isset($ordenServicioDetalleSub[$v['idTipoPresupuesto']][$v1['idTipoPresupuestoDetalle']]) || $v1['chkDefault'] == '1') ? 'checked' : '' ?>>
+																<label><?= $v1['nombre'] ?></label>
+															</div>
+														</div>
+													<?php endif; ?>
+													<?php if ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) :  ?>
+														<div id='asgFam' class="idDependiente<?= COD_ASIGNACIONFAMILIAR ?>'">
+															<input name="asignacionFamiliar" value="<?= isset($ordenServicioDetalleSub[COD_SUELDO][COD_ASIGNACIONFAMILIAR]) ? $ordenServicioDetalleSub[COD_SUELDO][COD_ASIGNACIONFAMILIAR]['valorPorcentual'] : '100' ?>">
+														</div>
+													<?php endif; ?>
+												<?php endforeach; ?>
+											</div>
+										<?php endif; ?>
+									</div>
 								</div>
 							</div>
-						</div>
+							<?php if ($k % 4 == 3) :  ?>
+							</div>
+						<?php endif; ?>
 					<?php endforeach; ?>
 				</div>
 			</div>
