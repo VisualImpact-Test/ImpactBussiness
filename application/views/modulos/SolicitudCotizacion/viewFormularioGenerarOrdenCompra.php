@@ -136,7 +136,7 @@
 										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
 											<input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 											<div class="fields body-sub-item ">
-												<div class="three wide field">
+												<div class="one wide field">
 													<div class="ui sub header">Talla</div>
 													<input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
 												</div>
@@ -151,6 +151,10 @@
 												<div class="two wide field">
 													<div class="ui sub header">Cantidad</div>
 													<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Genero</div>
+													<input class="" name="generoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Genero" value="<?= !empty($dataSubItem['genero']) ? RESULT_GENERO[$dataSubItem['genero']] : '' ?>">
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Costo</div>

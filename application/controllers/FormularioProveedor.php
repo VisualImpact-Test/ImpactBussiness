@@ -819,6 +819,9 @@ class FormularioProveedor extends MY_Controller
 						'flag_actual' => '0'
 					];
 					if (empty($dataTarifario)) { // Si aún no se registra el Item.
+						if (!empty($this->db->get_where('compras.itemTarifario', ['idItem' => $value, 'flag_actual' => '1'])->row_array())) {
+							$dataIT['flag_actual'] = '1';
+						}
 						$rpta = $this->db->insert('compras.itemTarifario', $dataIT);
 						$idItemTarifario = $this->db->insert_id();
 					}else{

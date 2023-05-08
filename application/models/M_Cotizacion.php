@@ -304,7 +304,7 @@ class M_Cotizacion extends MY_Model
 							it.nombre AS itemTipo,
 							proveedor.razonSocial AS proveedor,
 							i.caracteristicas AS caracteristicaItem,
-							itf.costo')
+							case when proveedor.idProveedor is null then itf.costo else cd.costo end as costo', false)
 			->from('compras.cotizacionDetalle cd')
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'LEFT')
 			->join('compras.cotizacionPrioridad prioridad', 'prioridad.idPrioridad = c.idPrioridad', 'LEFT')
@@ -770,7 +770,8 @@ class M_Cotizacion extends MY_Model
 			-- centrocosto.subcanal as centrocosto
 			c.codOrdenCompra,
 			cd.flagAlternativo,
-			cd.nombreAlternativo
+			cd.nombreAlternativo,
+			cd.tituloParaOc
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

@@ -159,7 +159,7 @@
 											foreach ($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_TEXTILES['id']] as $dataSubItem) : ?>
 												<input type="hidden" name="idCotizacionDetalleSub[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 												<div class="fields body-sub-item ">
-													<div class="four wide field">
+													<div class="one wide field">
 														<div class="ui sub header">Talla</div>
 														<input class="tallaSubItem camposTextil" name="tallaSubItem[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
 													</div>
@@ -169,11 +169,15 @@
 													</div>
 													<div class="four wide field">
 														<div class="ui sub header">Color</div>
-														<input class="colorSubItem " name="colorSubItem[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+														<input class="colorSubItem" name="colorSubItem[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
 													</div>
 													<div class="four wide field">
 														<div class="ui sub header">Cantidad</div>
 														<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+													</div>
+													<div class="three wide field">
+														<div class="ui sub header">Genero</div>
+														<input class="" name="generoTextil[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Genero" value="<?= !empty($dataSubItem['genero']) ? $dataSubItem['genero'] : '' ?>">
 													</div>
 												</div>
 										<?

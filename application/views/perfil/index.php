@@ -72,7 +72,7 @@
                           <div class="row">
                             <div class="col">
                               <label for="mobile">
-                                <h4>Telefono</h4>
+                                <h4>Teléfono</h4>
                               </label>
                               <input readonly="readonly" type="text" value="<?= $telefono ?>" class="form-control" name="mobile" id="mobile" placeholder="mobile number" title="enter your mobile number if any.">
                             </div>

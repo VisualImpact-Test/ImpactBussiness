@@ -239,10 +239,10 @@
 									<div class="three wide field">
 										<div class="ui sub header">Genero</div>
 										<select class="ui dropdown generoSubItem" name="generoSubItem[0]">
-											<option class="item-4" value="">seleccione</option>
-											<option class="item" value="1">Hombre</option>
-											<option class="item" value="2">Mujer</option>
-											<option class="item" value="3">Unisex</option>
+											<option class="item-4" value="">SELECCIONE</option>
+											<option class="item" value="1">VARON</option>
+											<option class="item" value="2">DAMA</option>
+											<option class="item" value="3">UNISEX</option>
 										</select>
 									</div>
 									<div class="one wide field">

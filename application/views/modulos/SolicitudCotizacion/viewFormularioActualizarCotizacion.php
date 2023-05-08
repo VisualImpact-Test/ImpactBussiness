@@ -259,19 +259,25 @@
 									</select>
 								</div>
 								<div class="five wide field">
+									<div class="ui sub header">TÍTULO DE COTIZACIÓN - COMPRAS</div>
+									<div class="ui labeled input w-100">
+										<input class="tituloCoti" type='text' name='tituloCoti' placeholder="Título de Cotización - Compras" maxlength="100" value="<?= verificarEmpty($row['tituloParaOc']); ?>">
+									</div>
+								</div>
+							</div>
+							<div class="fields">
+								<div class="six wide field">
 									<div class="ui sub header">Características</div>
 									<div class="ui input w-100">
 										<input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
 										<input class="diasEntregaItemForm" type='hidden' name='diasEntregaItem' value="<?= !empty($row['diasEntrega']) ? $row['diasEntrega'] : '' ?>">
 									</div>
 								</div>
-							</div>
-							<div class="fields">
-								<div class="eight wide field">
+								<div class="five wide field">
 									<div class="ui sub header">Características para Compras</div>
 									<input name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>" autocomplete="off">
 								</div>
-								<div class="eight wide field">
+								<div class="five wide field">
 									<div class="ui sub header">Características para el proveedor</div>
 									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>" autocomplete="off">
 								</div>
@@ -304,16 +310,16 @@
 												<div class="three wide field">
 													<div class="ui sub header">Genero</div>
 													<select class="ui search dropdown simpleDropdown" name="generoSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => LIST_GENERO, 'class' => 'text-titlecase' , 'selected' => $dataSubItem['genero']]); ?>
+														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => LIST_GENERO, 'class' => 'text-titlecase', 'selected' => $dataSubItem['genero']]); ?>
 													</select>
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Costo</div>
-													<input patron="requerido" readonly="readonly" class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? moneda($dataSubItem['costo']) : '' ?>">
+													<input patron="requerido" readonly="readonly" class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Subtotal</div>
-													<input patron="requerido" readonly="readonly" class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? moneda($dataSubItem['subtotal']) : '' ?>">
+													<input patron="requerido" readonly="readonly" class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '' ?>">
 												</div>
 											</div>
 									<?

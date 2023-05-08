@@ -357,8 +357,6 @@ var FormularioProveedores = {
 		costo = $(control).find('input.costo').val();
 		var tot = (cantidad * costo).toFixed(2);
 		$(control).find('input.subtotal').val(tot).trigger('change');
-		// }
-
 	},
 	calcularSubTotal: function (idCDPD, t) {
 		var subSubtotal = 0;
@@ -368,22 +366,33 @@ var FormularioProveedores = {
 			valor = $(input).val();
 			subSubtotal += parseFloat(valor);
 		}
-		// if ($(t).data('tiposervicio') == 'Servicio') {
-		// 	$('#costo_' + idCDPD).val(subSubtotal);
-		// 	$('#costoredondo_' + idCDPD).val(subSubtotal.toFixed(2)).trigger('keyup');
-		// } else {
 		cantidad = $('#cantidad_' + idCDPD).val();
 		newST = subSubtotal / cantidad;
 
-		$('#costo_' + idCDPD).val(newST);
+		$('#costo_' + idCDPD).val(newST).trigger('change');
 		$('#costoredondo_' + idCDPD).val(newST.toFixed(2)).trigger('keyup');
 		// }
 	},
-	calcularTotal: function (i, cantidad, val) {
+	calcularTotal: function (i, cantidad, val, t = null) {
 		var tot = cantidad * val;
 		var tot_ = tot.toFixed(2);
 		$('#valorTotal' + i).val(tot_);
 		$('#lb_valorTotal' + i).html('S/. ' + tot_);
+
+		if (t != null) {
+			let inCosto = $(t).closest('.row').closest('.cotiDet').find('.filaDetalle').find('input.costo');
+			if( $(inCosto[0]).val() == ''){
+				for (let i = 0; i < inCosto.length; i++) {
+					cost = inCosto[i];
+					$(cost).val(val);
+				}
+				// Se pone en otro Form para que primero actualise los input y luego el stotal
+				for (let i = 0; i < inCosto.length; i++) {
+					cost = inCosto[i];
+					$(cost).trigger('keyup');
+				}
+			}
+		}
 	},
 	calcularDiasEntrega: function (i, t, fechaHoy) {
 		// Tratar de poner esta funcion en Function.js

@@ -1,59 +1,78 @@
 <div style="text-align:justify">
-	<table border="1" style="width: 100%; float: left;">
+	<?php $incluirImagen = false; ?>
+	<?php foreach ($imagenesDeItem as $key => $value) : ?>
+		<?php if (!empty($value)) : ?>
+			<?php $incluirImagen = true; ?>
+		<?php endif; ?>
+	<?php endforeach; ?>
+	<table border="1" style="width: 100%;">
+		<?php $w1 = '18%'; ?>
+		<?php $w2 = '44%'; ?>
+		<?php $w3 = '13%'; ?>
+		<?php $w4 = '25%'; ?>
 		<tr>
-			<td class="text-left w-40">RUC: <?= RUC_VISUAL ?> </td>
-			<td class="text-left w-20">N° DE RQ: </td>
-			<td class="text-left w-20"><?= verificarEmpty($data['requerimiento'], 3) ?></td>
-			<td class="text-left w-40">N° DE ORDEN: <span style="margin-left: 50px"> OC<?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
+			<td class="text-left bold" width="<?= $w1 ?>">RUC: <?= RUC_VISUAL ?> </td>
+			<td class="text-right bold" width="<?= $w2 ?>">N° DE RQ </td>
+			<td class="text-center" width="<?= $w3 ?>"><?= verificarEmpty($data['requerimiento'], 3) ?></td>
+			<td class="text-left bold" width="<?= $w4 ?>">N° DE ORDEN: <span style="margin-left: 50px"> OC<?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Unidad de Negocio</td>
-			<td class="text-left w-40"><?= verificarEmpty($cuentas, 3) ?></td>
-			<td class="text-left w-20">PO Cliente:</td>
-			<td class="text-center w-20"><?= verificarEmpty($data['pocliente'], 3) ?></td>
+			<td class="text-left bold" width="<?= $w1 ?>" rowspan="2">Unidad de Negocio</td>
+			<td class="text-center bold" width="<?= $w2 ?>" rowspan="2"><?= verificarEmpty($cuentas, 3) ?></td>
+			<td class="text-left bold" width="<?= $w3 ?>">PO Cliente</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Centro de Costo:</td>
-			<td class="text-left w-20"><?= verificarEmpty($centrosCosto, 3) ?></td>
-			<td class="text-left w-20">Fecha:</td>
-			<td class="text-left w-20"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
+			<td class="text-left bold" width="<?= $w3 ?>">Servicio</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
 		</tr>
 		<tr>
-			<td class="text-left" colspan="4">Datos del proveedor:</td>
+			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
+			<td class="text-center bold" width="<?= $w2 ?>"><?= verificarEmpty($centrosCosto, 3) ?></td>
+			<td class="text-left bold" width="<?= $w3 ?>">Fecha:</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Srs.</td>
-			<td class="text-left w-40"><?= verificarEmpty($data['razonSocial'], 3) ?></td>
-			<td class="text-left w-20">RUC:</td>
-			<td class="text-left w-20"><?= verificarEmpty($data['rucProveedor'], 3) ?></td>
+			<td class="text-left bold" colspan="4">Datos del proveedor</td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Atención</td>
-			<td class="text-left w-40"><?= verificarEmpty($data['nombreContacto'], 3) ?></td>
-			<td class="text-left w-20">Telefono fijo</td>
-			<td class="text-left w-20"><?= '-' ?></td>
+			<td class="text-left" width="<?= $w1 ?>">Srs.</td>
+			<td class="text-left" width="<?= $w2 ?>"><?= verificarEmpty($data['razonSocial'], 3) ?></td>
+			<td class="text-left" width="<?= $w3 ?>">RUC:</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['rucProveedor'], 3) ?></td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Dirección</td>
-			<td class="text-left w-40"><?= verificarEmpty($data['direccion'], 3) ?></td>
-			<td class="text-left w-20">Celular</td>
-			<td class="text-left w-20"><?= verificarEmpty($data['numeroContacto'], 3) ?></td>
+			<td class="text-left" width="<?= $w1 ?>">Atención</td>
+			<td class="text-left" width="<?= $w2 ?>"><?= verificarEmpty($data['nombreContacto'], 3) ?></td>
+			<td class="text-left" width="<?= $w3 ?>">Teléfono fijo</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= '-' ?></td>
 		</tr>
 		<tr>
-			<td class="text-left w-20">Email</td>
-			<td class="text-left w-40"><?= verificarEmpty($data['correoContacto'], 3) ?></td>
-			<td class="text-left w-20">Fecha entrega</td>
-			<td class="text-left w-20"><?= verificarEmpty($data['fechaEntrega'], 3) ?></td>
+			<td class="text-left" width="<?= $w1 ?>">Dirección</td>
+			<td class="text-left" width="<?= $w2 ?>"><?= verificarEmpty($data['direccion'], 3) ?></td>
+			<td class="text-left" width="<?= $w3 ?>">Celular</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['numeroContacto'], 3) ?></td>
+		</tr>
+		<tr>
+			<td class="text-left" width="<?= $w1 ?>">Email</td>
+			<td class="text-left" width="<?= $w2 ?>"><?= verificarEmpty($data['correoContacto'], 3) ?></td>
+			<td class="text-left" width="<?= $w3 ?>">Fecha entrega</td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['fechaEntrega'], 3) ?></td>
 		</tr>
 	</table>
+</div>
+<div style="text-align:justify; padding-top: 3%;">
 	<table border="1" style="width: 100%;">
-		<thead class="full-widtd" style="border:1px solid black;">
+		<thead class="full-width" style="border:1px solid black;">
 			<tr>
-				<td class="text-center">Item</td>
-				<td class="text-center">Cantidad</td>
-				<td class="text-center" colspan="4">Descripción</td>
-				<td class="text-center">Precio Unit.</td>
-				<td class="text-center">Precio Total</td>
+				<td class="text-center bold">Item</td>
+				<td class="text-center bold">Cantidad</td>
+				<?php if ($incluirImagen) : ?>
+					<td class="text-center bold">Imagen</td>
+				<?php endif; ?>
+				<td class="text-center bold" colspan="4">Descripción</td>
+				<td class="text-center bold">Precio Unit.</td>
+				<td class="text-center bold">Precio Total</td>
 			</tr>
 		</thead>
 		<tbody style="border:1px solid black;">
@@ -62,32 +81,60 @@
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo']; ?>
 				<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
 				<?php $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */)); ?>
+				<?php
+
+				$mostrarSubDetalle = false;
+				$rowS = 1;
+				if ($row['idItemTipo'] == COD_TEXTILES['id']) {
+					$mostrarSubDetalle = true;
+					$rowS = count($subDetalleItem[$row['idItem']]) + 1;
+				}
+
+				?>
 				<tr style="border-bottom: none;">
-					<td class="text-center"><?= ($k + 1) ?>
-						<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
-					</td>
-					<td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
-					<td class="text-left" colspan="4"><?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?></td>
-					<td class="text-right">
+					<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
+					<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
+					<?php if ($incluirImagen) : ?>
+						<td rowspan="<?= $rowS ?>">
+							<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
+								<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+									<p style="text-align:center;"><img class="imgCenter" id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						</td>
+					<?php endif; ?>
+					<?php if ($mostrarSubDetalle) :  ?>
+						<td class="text-center bold">CARACTERISTICA</td>
+						<td class="text-center bold">TALLA</td>
+						<td class="text-center bold">SEXO</td>
+						<td class="text-center bold">CANTIDAD</td>
+					<?php else : ?>
+						<td class="text-left" colspan="4">
+							<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+						</td>
+					<?php endif; ?>
+					<td class="text-right" rowspan="<?= $rowS ?>">
 						<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 					</td>
-					<td class="text-right">
+					<td class="text-right" rowspan="<?= $rowS ?>">
 						<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 					</td>
 				</tr>
-				<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) :  ?>
-					<tr>
-						<td></td>
-						<td></td>
-						<td colspan="4">
-							<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
-								<img id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 100px; height: 100px;">
-							<?php endforeach; ?>
-						<td></td>
-						<td></td>
-					</tr>
+				<?php if ($mostrarSubDetalle) :  ?>
+					<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
+						<tr>
+							<?php if ($km == 0) :  ?>
+								<td class="text-left" rowspan="<?= $rowS - 1 ?>">
+									<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+								</td>
+							<?php endif; ?>
+							<td class="text-center"><?= $vm['talla']; ?></td>
+							<td class="text-center"><?= RESULT_GENERO[$vm['genero']]; ?></td>
+							<td class="text-center"><?= $vm['cantidad']; ?></td>
+						</tr>
+					<?php endforeach; ?>
 				<?php endif; ?>
-				<?php if (count($subDetalleItem[$row['idItem']]) && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
+				<!-- <?php if (count($subDetalleItem[$row['idItem']]) && $row['idItemTipo'] == COD_TEXTILES['id']) : ?>
 					<?php $dataTextil = []; ?>
 					<?php $dataTalla = []; ?>
 					<?php $dataGenero = []; ?>
@@ -98,80 +145,41 @@
 					<?php endforeach; ?>
 
 					<tr class="subDet">
-						<td colspan="2" class="bn"></td>
+						<td colspan="<?= $incluirImagen ? 3 : 2; ?>" class="bn"></td>
 						<td class="bn" style="text-align: right;">Talla</td>
-						<?php if (count($dataGenero) == 1) :  ?>
+						<?php if (count($dataGenero) == 1) : ?>
 							<td colspan="3" class="bn" style="text-align: center;">Cantidad</td>
 						<?php else : ?>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
 								<td class="bn" style="text-align: center;"><?= $vg; ?></td>
 							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) :  ?>
+							<?php if (3 - count($dataGenero) > 0) : ?>
 								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
 							<?php endif; ?>
 						<?php endif; ?>
 						<td class="bn"></td>
 						<td class="bn"></td>
 					</tr>
-
 					<?php foreach ($dataTalla as $kt => $vt) : ?>
 						<tr class="subDet">
-							<td colspan="2" class="bn"></td>
+							<td colspan="<?= $incluirImagen ? 3 : 2; ?>" class="bn"></td>
 							<td class="bn" style="text-align: right;"><?= $vt; ?></td>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
 								<td class="bn" style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
 							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) :  ?>
+							<?php if (3 - count($dataGenero) > 0) : ?>
 								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
 							<?php endif; ?>
 							<td class="bn"></td>
 							<td class="bn"></td>
 						</tr>
 					<?php endforeach; ?>
-
-				<?php endif; ?>
+				<?php endif; ?> -->
 			<?php endforeach; ?>
-			<tr>
-				<td><?= generar_espacios(1, 1) ?></td>
-				<td></td>
-				<td colspan="4"></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td><?= generar_espacios(1, 1) ?></td>
-				<td></td>
-				<td colspan="4"></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<? if (!empty($data['entrega'])) { ?>
-				<tr>
-					<td><?= generar_espacios(1, 1) ?></td>
-					<td></td>
-					<td colspan="6" style="font-weight: bold;">
-						<?= !empty($data['entrega']) ? "Entrega: {$data['entrega']}" : '' ?>
-					</td>
-				</tr>
-			<? } ?>
-			<? if (!empty($data['observacion'])) { ?>
-				<tr>
-					<td><?= generar_espacios(1, 1) ?></td>
-					<td></td>
-					<td colspan="4" style="font-weight: bold;">
-						<?php if ($data['mostrar_observacion'] == 1) :  ?>
-							<?= !empty($data['observacion']) ? "Observación: {$data['observacion']}" : '' ?>
-						<?php endif; ?>
-					</td>
-					<td></td>
-					<td></td>
-				</tr>
-			<? } ?>
-
 		</tbody>
-		<tfoot class="full-widtd">
+		<tfoot class="full-width">
 			<tr class="height:100px">
-				<td colspan="6" class="text-right">
+				<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="text-right">
 					<p>Sub Total</p>
 					<p>IGV</p>
 					<p>TOTAL</p>
@@ -182,39 +190,53 @@
 				<td class="text-right">
 					<p><?= monedaNew(['valor' => $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 					<p><?= empty($igv_total) ? 'S/ 0.00' : (monedaNew(['valor' => $igv_total, 'simbolo' => $data['simboloMoneda']])) ?></p>
-					<p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']])  ?></p>
+					<p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="8" class="text-left">
-					Son: <?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
+				<td colspan="2" class="bold">Son :</td>
+				<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="text-left">
+					<?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
 				</td>
 			</tr>
-			<!-- <? if (!empty($data['comentario'])) : ?>
+			<? if (!empty($data['entrega'])) { ?>
 				<tr>
-					<td colspan="8" class="text-left">
+					<td colspan="2" class="bold">Entrega :</td>
+					<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="bold">
+						<?= !empty($data['entrega']) ? "Entrega: {$data['entrega']}" : '' ?>
+					</td>
+				</tr>
+			<? } ?>
+
+			<? if (!empty($data['observacion'])) { ?>
+				<tr>
+					<td colspan="2" class="bold">Observación :</td>
+					<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="bold">
+						<?php if ($data['mostrar_observacion'] == 1) : ?>
+							<?= !empty($data['observacion']) ? "{$data['observacion']}" : '' ?>
+						<?php endif; ?>
+					</td>
+				</tr>
+			<? } ?>
+			<? if (!empty($data['comentario'])) : ?>
+				<tr>
+					<td colspan="<?= $incluirImagen ? 9 : 8; ?>" class="text-left">
 						<?= !empty($data['comentario']) ? $data['comentario'] : '' ?>
 					</td>
 				</tr>
-			<? endif; ?> -->
+			<? endif; ?>
 			<tr style="border-bottom: none;">
-				<td colspan="4" style="border-bottom: none; height: 65px; vertical-align: middle;">
-					<strong>Forma de Pago</strong>
+				<td class="text-center bold" colspan="3" style="border-bottom: none; height: 55px; vertical-align: middle;">
+					Forma de Pago
 				</td>
-				<td style="border-bottom: none; height: 65px; vertical-align: middle;">
-					<strong>
-						<?= !empty($data['metodoPago']) ? $data['metodoPago'] : '' ?>
-					</strong>
+				<td class="text-center bold" colspan="2" style="border-bottom: none; height: 55px; vertical-align: middle;">
+					<?= !empty($data['metodoPago']) ? $data['metodoPago'] : '' ?>
 				</td>
-				<td style="border-bottom: none; height: 65px; vertical-align: middle;">
-					<strong>
-						Observaciones
-					</strong>
+				<td class="text-center bold" style="border-bottom: none; height: 55px; vertical-align: middle;">
+					Observaciones
 				</td>
-				<td colspan="4" style="border-bottom: none; height: 65px; vertical-align: middle;">
-					<strong>
-						<?= !empty($data['pocliente']) ? $data['pocliente'] : '' ?>
-					</strong>
+				<td class="text-center bold" colspan="4" style="border-bottom: none; height: 55px; vertical-align: middle;">
+					<?= !empty($data['pocliente']) ? $data['pocliente'] : '' ?>
 				</td>
 			</tr>
 		</tfoot>

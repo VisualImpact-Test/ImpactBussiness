@@ -62,13 +62,47 @@ var SolicitudCotizacion = {
 				if (a.result == 1) {
 					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.visualizarOrdenCompraPdf()", content: "Este reporte es solo una vista previa, no se actualizara la información hasta aceptar la operación." });';
 					btn[1] = { title: 'Vizualizar OC', fn: fn[1] };
-					
+
 					fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOperValidado", fn: "SolicitudCotizacion.registrarOrdenCompra()", content: "¿Esta seguro de generar ordenes de compra para cada proveedor seleccionado?" });';
 					btn[2] = { title: 'Aceptar', fn: fn[2] };
 				}
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
+			});
+		});
+
+		$(document).on('click', '.downloadFormatProv', function (e) {
+			e.preventDefault();
+			idCotizacionDetalle = $(this).data('id');
+			idProveedor = $(this).data('proveedor');
+			data = { 'idCotizacionDetalle': idCotizacionDetalle, 'idProveedor': idProveedor };
+			var url = SolicitudCotizacion.url + 'descargarExcel';
+			$.when(Fn.download('../../' + url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
+
+		$(document).on('click', '.downloadFormatProv____________', function () {
+			idCotizacionDetalle = $(this).data('id');
+			let jsonString = { 'data': idCotizacionDetalle };
+			let url = SolicitudCotizacion.url + "descargarPDF";
+			let config = { url: url, data: jsonString };
+			$.when(Fn.ajax(config)).then(function (b) {
+				++modalId;
+				var btn = [];
+				let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+				if (b.result == 1) {
+					if (tipoRegistro == 1) {
+						fn = 'Fn.closeModals(' + modalId + ');location.reload();';
+					} else {
+						fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`);$("#btn-filtrarCotizacion").click();';
+					}
+				}
+
+				btn[0] = { title: 'Continuar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 			});
 		});
 	},
@@ -532,33 +566,33 @@ var Cotizacion = {
 			let idRepetido2 = parent.find("#distribucion");
 			let buscado2 = idRepetido2.find("#distribucion2");
 			let elementoBuscado2 = buscado2.data('id');
-			
+
 			if (idTipo == COD_DISTRIBUCION.id) {
 				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
 
 				var parametros = {
-					"cuenta" :$('#centroCosto_visible .selected').attr('data-value'),
-					"centroCosto" : $('#centroCosto_oculto .selected').attr('data-value')
+					"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
+					"centroCosto": $('#centroCosto_oculto .selected').attr('data-value')
 				};
 				$.ajax({
-						data:  parametros,
-						url:   '../Cotizacion/obtenerItemsLogistica',
-						type:  'post',
-						beforeSend: function () {
-								//$("#resultado").html("Procesando, espere por favor...");
-						},
-						success:  function (response) { 
-							var html ='';
-							html+='<select class="itemsLogisticaBuscador  itemLogisticaForm" name="itemLogisticaForm[0]">';
-							html+='<option></option>';
-							html+=response;
-							html+='</select>';
-							$('.SelectitemLogisticaForm').html(html);
-							$(".itemsLogisticaBuscador").select2();
-						}
-				});		
-				
+					data: parametros,
+					url: '../Cotizacion/obtenerItemsLogistica',
+					type: 'post',
+					beforeSend: function () {
+						//$("#resultado").html("Procesando, espere por favor...");
+					},
+					success: function (response) {
+						var html = '';
+						html += '<select class="itemsLogisticaBuscador  itemLogisticaForm" name="itemLogisticaForm[0]">';
+						html += '<option></option>';
+						html += response;
+						html += '</select>';
+						$('.SelectitemLogisticaForm').html(html);
+						$(".itemsLogisticaBuscador").select2();
+					}
+				});
+
 			} else {
 				let codItem = parent.find('.codItems');
 
@@ -603,23 +637,25 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '.itemLogisticaForm', function (e) {
-			var idArticulo=$(this).val();
+			var fPeso = $(this).closest('.fields').find('.pesoForm');
+			var idArticulo = $(this).val();
 			var parametros = {
-				"cuenta" :$('#centroCosto_visible .selected').attr('data-value'),
-				"idArticulo" : idArticulo
+				"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
+				"idArticulo": idArticulo
 			};
 			$.ajax({
-					data:  parametros,
-					url:   '../Cotizacion/obtenerPesoLogistica',
-					type:  'post',
-					beforeSend: function () {
-							//$("#resultado").html("Procesando, espere por favor...");
-					},
-					success:  function (response) { 
-						$('#peso').val(response);
-					}
-			});		
-			
+				data: parametros,
+				url: '../Cotizacion/obtenerPesoLogistica',
+				type: 'post',
+				beforeSend: function () {
+					//$("#resultado").html("Procesando, espere por favor...");
+				},
+				success: function (response) {
+					$(fPeso).val(response);
+					fPeso.keyup();
+				}
+			});
+
 		});
 
 		$(document).on('change', '.flagRedondearForm', function (e) {
@@ -670,15 +706,11 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if (gapForm.val() == '' && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
+			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
 				gapForm.val(GAP_MINIMO);
 			}
 
 			gapForm.keyup();
-
-			// if (tipoItem.val() == COD_SERVICIO.id) {
-			// 	gapForm.attr('readonly', false);
-			// }
 			let precio = Number(precioForm.val());
 			let subTotal = Fn.multiply(cantidad, precio);
 			let costoDistribucion = 0;
@@ -1522,10 +1554,10 @@ var Cotizacion = {
 
 				let gen_nuevo_item = gen.find('.dropdown')
 				gen_nuevo_item.html(
-					'<option class="item-4" value="">seleccione</option>' +
-					'<option class="item" value="1">Hombre</option>' +
-					'<option class="item" value="2">Mujer</option>' +
-					'<option class="item" value="3">Unisex</option>'
+					'<option class="item-4" value="">SELECCIONE</option>' +
+					'<option class="item" value="1">VARON</option>' +
+					'<option class="item" value="2">DAMA</option>' +
+					'<option class="item" value="3">UNISEX</option>'
 				);
 
 				return false;
@@ -1599,6 +1631,7 @@ var Cotizacion = {
 			pesoCantidadForm.val(peso);
 			pesoCantidadRealForm.val(peso);
 			cantidadFormSubItem.keyup();
+			//cantidadFormSubItem.change();
 
 			let idItem = control.find('option:selected').val();
 
@@ -1636,6 +1669,7 @@ var Cotizacion = {
 
 			Cotizacion.actualizarOnAddRowCampos(controlParent);
 			cantidadForm.keyup();
+			cantidadForm.change();
 
 		});
 
@@ -1754,15 +1788,15 @@ var Cotizacion = {
 
 		});
 
-		$(document).on('click','.btnPreview', function (){
+		$(document).on('click', '.btnPreview', function () {
 
 
 			let data = Fn.formSerializeObject('formRegistroCotizacion');
 			console.log(data)
-			let jsonString = { 'data': JSON.stringify(data)};
+			let jsonString = { 'data': JSON.stringify(data) };
 
 
-			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF', jsonString);
 		});
 
 
@@ -1951,7 +1985,7 @@ var Cotizacion = {
 			minLength: 3,
 		});
 	},
-	preview: function() {
+	preview: function () {
 
 	},
 	alertaParaAgregarItems: function (control, item) {
@@ -2087,7 +2121,7 @@ var Cotizacion = {
 			let fn1 = `Fn.showConfirm({ idForm: "formSendToCliente", fn: "Cotizacion.sendToCliente()", content: "¿Esta seguro de enviar esta cotizacion?" });`;
 			let fn2 = '';
 
-			btn[2] = { title: 'Vista Previa', class: 'd-none btn-success btnPreview',fn: fn2 };
+			btn[2] = { title: 'Vista Previa', class: 'd-none btn-success btnPreview', fn: fn2 };
 			btn[0] = { title: 'Cerrar', fn: fn };
 			btn[1] = { title: 'Aceptar', fn: fn1 };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.data.html, btn: btn, width: b.data.width });
@@ -2414,7 +2448,7 @@ var Cotizacion = {
 		formValues.repetidoSubItem = Cotizacion.repetidoSubItem;
 		formValues.repetidoSubItem2 = Cotizacion.repetidoSubItem2;
 		formValues.detalleEliminado = Cotizacion.detalleEliminado;
-		if(updateEstado == 2){
+		if (updateEstado == 2) {
 			formValues.actualizarEstado = 2;
 		}
 

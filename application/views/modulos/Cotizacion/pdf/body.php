@@ -110,6 +110,7 @@
 				?>
 				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
 					<?php $datos[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']][] = $value; ?>
+					<?php $total[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']] += floatval($value['cantidad'] * $value['costo'] * ($row['gap'] + 100) / 100); ?>
 				<?php endforeach; ?>
 				<?php foreach ($datos as $key => $value) : ?>
 					<?php $cont++ ?>
@@ -122,14 +123,14 @@
 						<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
 						<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
 						<td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($value[0]['cantidad'] * $value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
+						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
 					</tr>
 					<?php foreach ($value as $k => $v) : ?>
 						<?php if ($k != 0) :  ?>
 							<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 								<td style='text-align: center;' rowspan="1"><?= $v['nombre']; ?></td>
 								<td style='text-align: center;' rowspan="1"><?= $v['cantidad']; ?></td>
-								<!-- <td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td> -->
+								<td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
 							</tr>
 						<?php endif; ?>
 					<?php endforeach; ?>
@@ -227,7 +228,8 @@
 						<p>TOTAL</p>
 					</td>
 					<td class="text-right bold" style="color:black">
-						<p><?= moneda($cabecera['total_fee_igv'])  ?></p>
+						<!-- <p><?= moneda($cabecera['total_fee_igv'])  ?></p> -->
+						<p><?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc'])); ?></p>
 					</td>
 				</tr>
 			</tfoot>

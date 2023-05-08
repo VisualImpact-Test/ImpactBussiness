@@ -1,84 +1,112 @@
 <style>
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-    }
+	body {
+		font-family: Arial, Helvetica, sans-serif;
+	}
 
-    td.bold {
-        font-weight: bold;
-    }
+	td.bold {
+		font-weight: bold;
+	}
 
-    .text-left {
-        text-align: left;
-    }
+	.text-left {
+		text-align: left;
+	}
 
-    .text-right {
-        text-align: right;
-    }
+	.text-right {
+		text-align: right;
+	}
 
-    .text-center {
-        text-align: center;
-    }
+	.text-center {
+		text-align: center;
+	}
 
-    .w-5 {
-        width: 5%;
-    }
+	.w-05 {
+		width: 5%;
+		max-width: 5%;
+	}
 
-    .w-10 {
-        width: 10%;
-    }
+	.w-10 {
+		width: 10%;
+	}
 
-    .w-20 {
-        width: 20%;
-    }
+	.w-15 {
+		width: 15%;
+	}
 
-    .w-30 {
-        width: 30%;
-    }
+	.w-20 {
+		width: 20%;
+	}
 
-    .w-40 {
-        width: 40%;
-    }
+	.w-30 {
+		width: 30%;
+	}
 
-    .w-50 {
-        width: 50%;
-    }
+	.w-40 {
+		width: 40%;
+	}
 
-    table {
-        border-collapse: collapse;
-    }
+	.w-50 {
+		width: 50%;
+	}
 
-    table.tb-detalle th,
-    table.tb-detalle td {
-        /* border: 1px solid #484848; */
-        padding: 5px;
-        font-size: 12px !important;
-    }
+	.w-60 {
+		width: 60%;
+	}
 
-    .square {
-        margin-right: 15px;
-        border: 1px solid #000;
-        text-align: center;
-    }
+	table {
+		border-collapse: collapse;
+	}
 
-    body {
-        font-size: 12px;
-    }
+	table.tb-detalle th,
+	table.tb-detalle td {
+		/* border: 1px solid #484848; */
+		padding: 5px;
+		font-size: 12px !important;
+	}
 
-    .d-none {
-        display: none;
-    }
+	.square {
+		margin-right: 15px;
+		border: 1px solid #000;
+		text-align: center;
+	}
 
-    tr.subDet {
-        border: 1px solid #000;
-        border-bottom: none;
-        border-top: none;
-    }
+	body {
+		font-size: 12px;
+	}
 
-    .bn {
-        border-style: none;
-    }
+	.d-none {
+		display: none;
+	}
 
-    .bg-gray {
-        background-color: #F6FAFD;
-    }
+	tr.subDet {
+		border: 1px solid #000;
+		border-bottom: none;
+		border-top: none;
+	}
+
+	.bn {
+		border-style: none;
+	}
+
+	.bg-gray {
+		background-color: #F6FAFD;
+	}
+
+	/* .py {
+		height: 20px;
+		padding-top: 5px;
+		padding-bottom: 5px;
+	} */
+
+	td {
+		min-height: 50px;
+		padding-top: 5px;
+		padding: 2.5px;
+	}
+
+	.imgCenter {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		/* width: 50%; */
+	}
 </style>

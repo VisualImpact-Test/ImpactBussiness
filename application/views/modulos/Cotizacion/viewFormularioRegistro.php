@@ -27,7 +27,7 @@
 	}
 </style>
 <div class="ui form attached fluid segment p-4">
-	<form class="ui form" role="form" id="formRegistroCotizacion" method="post">
+	<form class="ui form" role="form" id="formRegistroCotizacion" method="post" autocomplete="off">
 		<h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
 		<input type="hidden" id="gapEmpresas" value='<?= !empty($gapEmpresas) ? json_encode($gapEmpresas) : '' ?>'>
 		<input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
@@ -72,7 +72,7 @@
 			</div>
 			<!-- <div class="five wide field solicitanteData">
 				<div class="ui sub header">Solicitante</div>
-				<input class="solicitantes ui-autocomplete-input" type="text" patron="requerido" placeholder="Buscar solicitante" autocomplete="off">
+				<input class="solicitantes ui-autocomplete-input" type="text" patron="requerido" placeholder="Buscar solicitante">
 				<input class="codSolicitante d-none" type='text' name='solicitante'>
 			</div> -->
 			<div class="five wide field">
@@ -198,20 +198,26 @@
 								</select>
 							</div>
 							<div class="four wide field">
-								<div class="ui sub header">Características para el cliente</div>
+								<div class="ui sub header">TÍTULO DE COTIZACIÓN - COMPRAS</div>
 								<div class="ui labeled input w-100">
-									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item" autocomplete="off">
+									<input class="tituloCoti" type='text' name='tituloCoti' placeholder="Título de Cotización - Compras" maxlength="100">
 								</div>
 							</div>
 						</div>
 						<div class="fields">
-							<div class="eight wide field">
-								<div class="ui sub header">Características para compras</div>
-								<input name="caracteristicasCompras" placeholder="Características" autocomplete="off">
+							<div class="six wide field">
+								<div class="ui sub header">Características para el cliente</div>
+								<div class="ui labeled input w-100">
+									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
+								</div>
 							</div>
-							<div class="eight wide field">
+							<div class="five wide field">
+								<div class="ui sub header">Características para compras</div>
+								<input name="caracteristicasCompras" placeholder="Características">
+							</div>
+							<div class="five wide field">
 								<div class="ui sub header">Características para proveedor</div>
-								<input name="caracteristicasProveedor" placeholder="Características" autocomplete="off">
+								<input name="caracteristicasProveedor" placeholder="Características">
 							</div>
 						</div>
 						<!-- Textiles -->
@@ -238,10 +244,10 @@
 									<div class="three wide field">
 										<div class="ui sub header">Genero</div>
 										<select class="ui dropdown generoSubItem" name="generoSubItem[0]">
-											<option class="item-4" value="">seleccione</option>
-											<option class="item" value="1">Hombre</option>
-											<option class="item" value="2">Mujer</option>
-											<option class="item" value="3">Unisex</option>
+											<option class="item-4" value="">SELECCIONE</option>
+											<option class="item" value="1">VARON</option>
+											<option class="item" value="2">DAMA</option>
+											<option class="item" value="3">UNISEX</option>
 										</select>
 									</div>
 									<div class="one wide field">
@@ -324,7 +330,7 @@
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Peso</div>
-									<input id="peso" class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
+									<input id="peso" class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem pesoForm" name="cantidadSubItemDistribucion[0]" placeholder="Cantidad" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
 								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Cantidad PDV</div>

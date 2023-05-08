@@ -11,7 +11,12 @@
           <div class="col">
             <div class="card mb-4 <?= $itemProveedor[$keyItem][$keyProveedor]['fechaValidez'] == '' ? 'border-danger' : ''; ?>" style="border-width: 2px;">
               <div class="card-header" style="display: unset; background-color: rgba(0,0,0,.03);">
-                <h4><?= verificarEmpty($datoProveedor['proveedor'], 3) ?></h4>
+                <div>
+                  <h4><?= verificarEmpty($datoProveedor['proveedor'], 3) ?></h4>
+                </div>
+                <div>
+                  <a class="btn btn-success downloadFormatProv" data-proveedor="<?= $keyProveedor ?>" data-id="<?= $idCotizacionDetalle ?>">Descargar <i class="fa fa-file-excel"></i></a>
+                </div>
               </div>
               <div class="row card-body">
                 <div class="col-md-12">

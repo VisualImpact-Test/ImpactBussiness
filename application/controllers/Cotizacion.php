@@ -440,6 +440,7 @@ class Cotizacion extends MY_Controller
 		$post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
+		$post['tituloCoti'] = checkAndConvertToArray($post['tituloCoti']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
 		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
 		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
@@ -467,7 +468,7 @@ class Cotizacion extends MY_Controller
 
 					$dataItem['insert'] = [
 						'nombre' => trim($nameItem),
-						'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
+						'caracteristicas' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 						'idItemTipo' => $post['tipoItemForm'][$k],
 					];
 
@@ -508,6 +509,7 @@ class Cotizacion extends MY_Controller
 				'fechaCreacion' => getActualDateTime(),
 				'flagAlternativo' => !empty($post['itemTextoPdf'][$k]) ? '1' : '0',
 				'nombreAlternativo' => !empty($post['itemTextoPdf'][$k]) ? $post['itemTextoPdf'][$k] : NULL,
+				'tituloParaOC' => !empty($post['tituloCoti'][$k]) ? $post['tituloCoti'][$k] : NULL,
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
