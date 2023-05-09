@@ -1211,7 +1211,7 @@ class SolicitudCotizacion extends MY_Controller
 				'idCotizacion' => $idCotizacion,
 				'cotizacionInterna' => false,
 				'noTipoItem' => COD_DISTRIBUCION['id'],
-				// 'noOC' => true
+				'noOC' => true
 			]
 		)['query']->result_array();
 
