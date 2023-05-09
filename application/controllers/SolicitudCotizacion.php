@@ -419,6 +419,17 @@ class SolicitudCotizacion extends MY_Controller
 			]
 		];
 		/**FIN ESTILOS**/
+	
+		$gdImage = imagecreatefromjpeg(APPPATH.'../public/assets/images/visualimpact/logo_full.jpg');
+		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		$objDrawing->setName('Sample image');
+		$objDrawing->setDescription('TEST');
+		$objDrawing->setImageResource($gdImage);
+		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		$objDrawing->setHeight(50);
+		$objDrawing->setCoordinates('A1');
+		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());		
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
 		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
@@ -1200,7 +1211,7 @@ class SolicitudCotizacion extends MY_Controller
 				'idCotizacion' => $idCotizacion,
 				'cotizacionInterna' => false,
 				'noTipoItem' => COD_DISTRIBUCION['id'],
-				'noOC' => true
+				// 'noOC' => true
 			]
 		)['query']->result_array();
 
@@ -1417,7 +1428,7 @@ class SolicitudCotizacion extends MY_Controller
 				$config = [
 					'to' => !empty($dataProveedor['correoContacto']) ? $dataProveedor['correoContacto'] : $toComprasProveedor,
 					'cc' => $toComprasProveedor,
-					'asunto' => 'GENERACIÓN de OC',
+					'asunto' => 'OC ' . $rs_oc['id'] . ' - ' . $post['asunto'],
 					'contenido' => $correo,
 				];
 				email($config);
@@ -1698,6 +1709,18 @@ class SolicitudCotizacion extends MY_Controller
 
 		$provCompare = [];
 		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+		$titulos = [];
+		foreach ($post['idCotizacionDetalle'] as $kc => $vc) {
+			$tt = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $vc])->row_array()['tituloParaOC'];
+			if (!empty($tt)) {
+				$titulos[] = $tt;
+			}
+		}
+		$titulo = '';
+		if (!empty($titulos)) {
+			$titulo = implode(', ', $titulos);
+		}
+		$dataParaVista['dataOper']['tituloAsunto'] = $titulo;
 		foreach ($dataParaVista['detalle'] as $dd => $row) {
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;

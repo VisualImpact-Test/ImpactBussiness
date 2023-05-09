@@ -3,13 +3,17 @@
 		<h4 class="ui dividing header text-uppercase">DATOS OPER </h4>
 		<input type="hidden" name="idOper" value="<?= $dataOper['idOper'] ?>">
 		<div class="fields">
-			<div class="ten wide field">
+			<div class="five wide field">
 				<div class="ui sub header">Requerimiento</div>
 				<input type="text" value="<?= $dataOper['requerimiento'] ?>" readonly patron="requerido">
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Concepto OC</div>
 				<input type="text" name="concepto" value="<?= $dataOper['concepto'] ?>" readonly patron="requerido">
+			</div>
+			<div class="five wide field">
+				<div class="ui sub header">Asunto para Correo</div>
+				<input type="text" name="asunto" value="Cotización <?= $dataOper['tituloAsunto'] ?>" readonly patron="requerido">
 			</div>
 		</div>
 		<? foreach ($data['idCotizacion'] as $idCotizacion) { ?>
