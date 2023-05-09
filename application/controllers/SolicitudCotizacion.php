@@ -18,7 +18,6 @@ class SolicitudCotizacion extends MY_Controller
 
 	public function index()
 	{
-
 		$config = array();
 		$config['nav']['menu_active'] = '131';
 		$config['css']['style'] = array(
@@ -320,6 +319,15 @@ class SolicitudCotizacion extends MY_Controller
 		$cuenta = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cotizacion['idCuenta']])->row_array();
 		$cc = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $cotizacion['idCentroCosto']])->row_array();
 
+		$ids = [];
+		if (!empty($data)) {
+			foreach ($data as $k => $v) {
+				$ids[] = $v['idCotizacionDetalleProveedorDetalle'];
+			}
+		}
+		$idsT = implode(',', $ids);
+		$imgProveedor = $this->db->where('idTipoArchivo', 2)->where("idCotizacionDetalleProveedorDetalle in ($idsT)")->get('compras.cotizacionDetalleProveedorDetalleArchivos')->result_array();
+
 		error_reporting(E_ALL);
 		ini_set('display_errors', TRUE);
 		ini_set('display_startup_errors', TRUE);
@@ -348,6 +356,32 @@ class SolicitudCotizacion extends MY_Controller
 					'name'  => 'Calibri'
 				)
 			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 16,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_subtitulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 11,
+				'name'  => 'Calibri'
+			]
+		];
 		$estilo_data['left'] = [
 			'alignment' => [
 				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
@@ -384,143 +418,6 @@ class SolicitudCotizacion extends MY_Controller
 				'name'  => 'Calibri'
 			]
 		];
-
-		$estilo_cabecera_disponibilidad =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => '558636')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-		$estilo_inactivo =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => 'c7c7c7')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-
-		$estilo_iniciativas =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => 'cc3333')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-		$estilo_adicional =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => '5bb5ea')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-		$estilo_elementos =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => '173366')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-		$style_gris =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => '545152')
-				),
-				'font'  => array(
-					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-		$style_disponibles =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => 'ffffff')
-				),
-				'font'  => array(
-					'color' => array('rgb' => '000000'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
-		$estilo_numeros =
-			array(
-				'alignment' => array(
-					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
-				),
-				'fill' => array(
-					'type' => PHPExcel_Style_Fill::FILL_SOLID,
-					'color' => array('rgb' => 'ffffff')
-				),
-				'font'  => array(
-					'color' => array('rgb' => '000000'),
-					'size'  => 11,
-					'name'  => 'Calibri'
-				)
-			);
-
 		/**FIN ESTILOS**/
 
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
@@ -542,6 +439,12 @@ class SolicitudCotizacion extends MY_Controller
 			->setCellValue('A11', 'FECHA')
 			->setCellValue('B11', getFechaActual());
 
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->applyFromArray($estilo_titulo);
+
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->applyFromArray($estilo_subtitulo);
+
 		$objPHPExcel->setActiveSheetIndex(0)
 			->setCellValue('A13', 'DESCRIPCION')
 			->setCellValue('B13', 'CANTIDAD')
@@ -554,8 +457,8 @@ class SolicitudCotizacion extends MY_Controller
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $nIni, $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array()['nombre'])
 				->setCellValue('B' . $nIni, $v['cantidad'])
-				->setCellValue('C' . $nIni, number_format(floatval($v['costo']) / floatval($v['cantidad']), 2, '.', ''))
-				->setCellValue('D' . $nIni, $v['costo'])
+				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
+				->setCellValue('D' . $nIni, moneda($v['costo']))
 				->setCellValue('E' . $nIni, $v['diasValidez']);
 			$nIni++;
 		}
@@ -567,461 +470,40 @@ class SolicitudCotizacion extends MY_Controller
 		$objPHPExcel->getActiveSheet()->getStyle("E14:E$fin")->applyFromArray($estilo_data['center']);
 
 		$nIni++;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . ++$nIni, '** Precion no incluye IGV');
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . ++$nIni, '** Precio valido por ' . $data[0]['diasValidez']);
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precion no incluye IGV');
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precio valido por ' . $data[0]['diasValidez']);
+		$nIni++;
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, 'IMAGENES ADJUNTAS');
 
-		$gdImage = imagecreatefromjpeg('https://s3.us-central-1.wasabisys.com/impact.business/item/6453d81aabe3d_WASABI.jpeg');
-		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
-		$objDrawing->setName('Sample image');
-		$objDrawing->setDescription('TEST');
-		$objDrawing->setImageResource($gdImage);
-		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-		$objDrawing->setHeight(100);
-		$objDrawing->setCoordinates('A1');
-		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-
-		$gdImage = imagecreatefromjpeg('https://www.walkswithme.net/wp-content/uploads/2014/01/ReadingImagesFromExcelUsingPHPExcel.jpg');
-		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
-		$objDrawing->setName('Sample image');
-		$objDrawing->setDescription('TEST');
-		$objDrawing->setImageResource($gdImage);
-		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-		$objDrawing->setHeight(100);
-		$objDrawing->setCoordinates('A15');
-		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
-
-
-		
-		// $val = 'F';
-
-		// $objPHPExcel->getActiveSheet()->mergeCells('A1:A3');
-		// $objPHPExcel->getActiveSheet()->mergeCells('B1:B3');
-		// $objPHPExcel->getActiveSheet()->mergeCells('C1:C3');
-		// $objPHPExcel->getActiveSheet()->mergeCells('D1:D3');
-		// $objPHPExcel->getActiveSheet()->mergeCells('E1:E3');
-		/*
-		foreach ($segmentacion['headers'] as $k => $v) { 
-			$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', strtoupper($v['header']));
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$val++;
-		}
-		
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'COD VISUAL');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'COD '.$this->sessNomCuentaCorto);
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'COD PDV');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'PDV');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'TIPO CLIENTE');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'DEPARTAMENTO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'PROVINCIA');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'DISTRITO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'PERFIL USUARIO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'NOMBRE USUARIO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'ORDEN DE TRABAJO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'MODULACIÓN CORRECTA');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'FOTOS');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$val++;
-		$r=$val;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'2', 'TIPO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'2:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'2', 'ESTADO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'2:'.$val.'3');
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'2', 'OBSERVACION');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'2:'.$val.'3');
-		$val++;
-		*/
-		// $s=$r;
-		// $s++;
-		// $s++;
-		/*
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($r.'1', 'INCIDENCIA');
-		$objPHPExcel->getActiveSheet()->mergeCells($r.'1:'.$s.'1');
-
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'TOTAL PRESENTES (EO + AD)');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$objPHPExcel->getActiveSheet()->getStyle('A1:'.$val.'1')->applyFromArray($style_gris);
-		$objPHPExcel->getActiveSheet()->getStyle('A2:'.$val.'2')->applyFromArray($style_gris);
-		
-		$val++;
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'TOTAL EO PRESENTES');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_elementos);
-		$val++;
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'TOTAL EO NO PRESENTES');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_elementos);
-		$val++;
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'1', 'TOTAL EO');
-		$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-		$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_elementos);
-		$val++;
-		$obl_2=$val;
-		$obl_1=$val;
-		$obliColumn = 2 + count($visibColumn);
-		if (!empty($obligatorios)) {
-			foreach ($obligatorios as $row) {
-				$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'3', 'PC');
-				$val++;
-				$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'3', 'PL');
-				$val++;
-
-				if (in_array(1, $visibColumn)) { 
-					$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'3', 'CANT');
-					$val++;
-				}
-				if (in_array(2, $visibColumn)) { 
-					$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'3', 'OBS');
-					$val++;
-				}
-				if (in_array(3, $visibColumn)) { 
-					$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.'3', 'FOTO');
-					$val++;
-				}
-			} 
-		}
-		
-		foreach ($obligatorios as $row) {
-			$combina_2 = $obl_2;
-			$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($obl_2.'2', $row['nombre']);
-			$i=0;
-			while($i<($obliColumn-1)){
-				$obl_2++;
-				$i++;
+		$nIni = $nIni + 2;
+		foreach ($imgProveedor as $k => $v) {
+			if ($v['extension'] == 'jpeg') {
+				$gdImage = imagecreatefromjpeg(RUTA_WASABI . 'cotizacionProveedor/' . $v['nombre_archivo']);
 			}
-			$objPHPExcel->getActiveSheet()->mergeCells($combina_2.'2:'.$obl_2.'2');
-			$obl_2++;
-		}
-		
-		if (count($obligatorios) > 0) {
-			$total_obligatorios = count($obligatorios) * $obliColumn;
-			$combina_1 = $obl_1;
-			$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($obl_1.'1', 'ELEMENTOS OBLIGATORIOS');
-			
-			$i=0;
-			while($i<($total_obligatorios-1)){
-				$obl_1++;
-				$i++;
+			if ($v['extension'] == 'png') {
+				$gdImage = imagecreatefrompng(RUTA_WASABI . 'cotizacionProveedor/' . $v['nombre_archivo']);
 			}
-			
-			$objPHPExcel->getActiveSheet()->mergeCells($combina_1.'1:'.$obl_1.'1');
-			$objPHPExcel->getActiveSheet()->getStyle($combina_1.'1:'.$obl_1.'1')->applyFromArray($estilo_elementos);
-			$objPHPExcel->getActiveSheet()->getStyle($combina_1.'2:'.$obl_1.'2')->applyFromArray($estilo_elementos);
-			$objPHPExcel->getActiveSheet()->getStyle($combina_1.'3:'.$obl_1.'3')->applyFromArray($estilo_elementos);
-		
-		}
-		
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', 'TOTAL EO (60%)');
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_elementos);
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', 'TOTAL ADIC. (10%)');
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_adicional);
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', 'TOTAL INIC. (30%)');
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($estilo_iniciativas);
-		$val++;
-		foreach ($clienteTipo as $row) {
-			$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', $row['nombre']);
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($style_gris);
-			$val++;
-		}
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', 'TOTAL VIS.');
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($style_gris);
-		$val++;
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue($val.'1', 'FRECUENCIA');
-			$objPHPExcel->getActiveSheet()->mergeCells($val.'1:'.$val.'3');
-			$objPHPExcel->getActiveSheet()->getStyle($val.'1:'.$val.'3')->applyFromArray($style_gris);
-		$val++;
 
-
-		$i=4;
-		$j=1;
-		foreach ($visitas as $row) {
-			
-			$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue('A'.$i, $j)
-					->setCellValue('B'.$i, verificarEmpty($row['fecha'], 3))
-					->setCellValue('C'.$i, verificarEmpty($row['grupoCanal'], 3))
-					->setCellValue('D'.$i, verificarEmpty($row['canal'], 3))
-					->setCellValue('E'.$i, verificarEmpty($row['subCanal'], 3));
-			$val = 'F';
-
-			foreach ($segmentacion['headers'] as $k => $v) { 
-				$columna = (!empty($row[($v['columna'])]) ? $row[($v['columna'])] : '-');
-				$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $columna);
-				$val++;
+			$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+			$objDrawing->setName('Sample image');
+			$objDrawing->setDescription('TEST');
+			$objDrawing->setImageResource($gdImage);
+			if ($v['extension'] == 'jpeg') {
+				$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
 			}
-			
-			$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.$i, verificarEmpty($row['idCliente'], 3));
-			$val++;
-			$codCliente = isset($row['codCliente']) && strlen($row['codCliente']) > 0 ? $row['codCliente'] : '-';
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $codCliente);
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['codDist'], 3));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['razonSocial'], 3));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['clienteTipo'], 3) );
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['departamento'], 3));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['provincia'], 3) );
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['distrito'], 3));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['tipoUsuario'], 3));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, verificarEmpty($row['usuario'], 3));
-			$val++;
-			$ordenTrabajo = (!empty($row['ordenTrabajo']) ? $row['ordenTrabajo'] : '-');
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $ordenTrabajo);
-			$val++;
-			$modulacion = '';
-			if (!is_null($row['modulacion']))
-				$modulacion = $row['modulacion'] ? 'SI' : 'NO';
-
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $modulacion);
-			$val++;
-			
-			$fotos = '';
-			if (!empty($resultados_foto[$row['idVisita']]['numFotos'])) {
-				$fotos = $resultados_foto[$row['idVisita']]['numFotos']; //$row['fotos'];
+			if ($v['extension'] == 'png') {
+				$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
 			}
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $fotos);
-			$val++;
-				
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, (!empty($row['nombreIncidencia']) ? $row['nombreIncidencia'] : '-') );
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, ($row['estadoIncidencia'] == 1 ? 'ACTIVO' : (!empty($row['nombreIncidencia']) ? 'INACTIVO' : '-')));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, (!empty($row['observacion']) ? $row['observacion'] : '-'));
-			$val++;
-			
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,(  ($row['estadoIncidencia'] == 1) ? "-"  : (!empty($total_eo_ad[$row['idVisita']]) ? count($total_eo_ad[$row['idVisita']]) : 0 )  ));
-			$val++;
-			
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,(  ($row['estadoIncidencia'] == 1) ? "-" :  (!empty($total_eo_si[$row['idVisita']]) ? count($total_eo_si[$row['idVisita']]) : 0)  ));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,(  ($row['estadoIncidencia'] == 1) ? "-" : (!empty($total_eo_no[$row['idVisita']]) ? count($total_eo_no[$row['idVisita']]) : 0) ));
-			$val++;
-			$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,(  ($row['estadoIncidencia'] == 1) ? "-" : (!empty($total_eo[$row['idVisita']]) ? count($total_eo[$row['idVisita']]) : 0) ));
-			$val++;
-			
-			
-			foreach ($obligatorios as $row_e) {
-				if (isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']]))
-					$obliBg = '';
-					$obli_2 = '-';
-					if (isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][2]['presencia'])) {
-						$obli_2 = $resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][2]['presencia'];
-					}
-					
-					$obli_3 = '-';
-					if (isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][3]['presencia'])) {
-						$obli_3 = $resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][3]['presencia'];
-					}
-					$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $obli_2 );
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-
-					if($obli_2=='-'){
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_inactivo);
-					}
-					$val++;
-					$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, $obli_3 );
-					if($obli_3=='-'){
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_inactivo);
-					}else{
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-					}
-					$val++;
-					if (in_array(1, $visibColumn)) { 
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']]['cantidad']) ? $resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']]['cantidad'] : '-' );
-						if(!isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']]['cantidad'])){
-							$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_inactivo);
-						}else{
-							$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						}
-						$val++;
-					}
-					if (in_array(2, $visibColumn)) { 
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][3]['comentario']) ? $resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][3]['comentario'] : '-');
-						if(!isset($resultados_obligatorios[$row['idVisita']][$row_e['idElementoVis']][3]['comentario'])){
-							$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_inactivo);
-						}else{
-							$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						}
-						$val++;
-						
-					}
-
-					if (in_array(3, $visibColumn)) { 
-						$objPHPExcel->setActiveSheetIndex(0)
-					->setCellValue($val.$i,'-');
-					$val++;
-					}
-
-			}
-			
-			$porcentajeObli = 0;
-					
-					if (isset($resultados_obligatorios[$row['idVisita']]['porcentajeEo'])){
-						$porcentajeObli = ($resultados_obligatorios[$row['idVisita']]['porcentajeEo']);
-					}
-					
-					$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i, (  ($row['estadoIncidencia'] == 1)? "-" : $porcentajeObli.'%' ));
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						$val++;
-
-		
-					$porcentajeAdi = 0;
-					if (isset($resultados_adicionales[$row['idVisita']]['porcentajeAd']))
-						$porcentajeAdi = $resultados_adicionales[$row['idVisita']]['porcentajeAd'];
-					
-					$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,$porcentajeAdi.'%');
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						$val++;
-	
-					$porcentajeIni = 0;
-					if (isset($resultados_iniciativas[$row['idVisita']]['porcentajeI']))
-						$porcentajeIni = $resultados_iniciativas[$row['idVisita']]['porcentajeI'];
-					
-					$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,$porcentajeIni.'%');
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						$val++;
-					
-					foreach ($clienteTipo as $row_ct) {
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,'-');
-						$val++;
-					}
-
-						$porcentajeVI = 0;
-						$porcentajeVI = ($porcentajeObli * 60) / 100 + ($porcentajeAdi * 10) / 100 + ($porcentajeIni * 30) / 100;
-						$porcentajeVI = round($porcentajeVI, 0);
-						
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,$porcentajeVI.'%');
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						$val++;
-						
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($val.$i,verificarEmpty($row['frecuencia'], 3));
-						$objPHPExcel->getActiveSheet()->getStyle($val.$i.':'.$val.$i)->applyFromArray($estilo_numeros);
-						$val++; 
-			
-			$i++;
-			$j++;
-
+			$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+			$objDrawing->setHeight(100);
+			$objDrawing->setCoordinates('A' . $nIni);
+			$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+			$nIni = $nIni + 6;
 		}
-		*/
-		// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		// header('Content-Disposition: attachment;filename="Reporte Auditoria.xlsx"');
-		// header('Set-Cookie: fileDownload=true; path=/');
-		// header('Cache-Control: max-age=60, must-revalidate');
-		// header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-		// header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-		// header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-		// header ('Pragma: public'); // HTTP/1.0
+
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="Formato.xls"');
 		header('Cache-Control: max-age=0');
@@ -1717,7 +1199,8 @@ class SolicitudCotizacion extends MY_Controller
 			[
 				'idCotizacion' => $idCotizacion,
 				'cotizacionInterna' => false,
-				'noTipoItem' => COD_DISTRIBUCION['id']
+				'noTipoItem' => COD_DISTRIBUCION['id'],
+				'noOC' => true
 			]
 		)['query']->result_array();
 
@@ -1841,7 +1324,8 @@ class SolicitudCotizacion extends MY_Controller
 			'mostrar_observacion' => isset($post['mostrar_observacion']) ? 1 : 0,
 			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? 1 : 0,
 			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? 1 : 0,
-			'idAlmacen' => $post['idAlmacen']
+			'idAlmacen' => $post['idAlmacen'],
+			'idOper' => isset($post['idOper']) ? $post['idOper'] : null,
 		]);
 
 		$oper = $this->db->get_where("compras.oper", ['idOper' => $post['idOper']])->row_array();
@@ -1944,6 +1428,18 @@ class SolicitudCotizacion extends MY_Controller
 			$result['data']['html'] = getMensajeGestion('registroErroneo');
 		}
 
+		$verificarCierre = $this->model->obtenerInformacionDetalleCotizacion(
+			[
+				'idCotizacion' => $idCotizacion,
+				'cotizacionInterna' => false,
+				'noTipoItem' => COD_DISTRIBUCION['id'],
+				'noOC' => true
+			]
+		)['query']->result_array();
+		if (!empty($verificarCierre)) {
+			$this->db->update('compras.cotizacion', ['idCotizacionEstado' => ESTADO_OC_GENERADA], ['idCotizacion' => $idCotizacion]);
+		}
+
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
@@ -2003,7 +1499,8 @@ class SolicitudCotizacion extends MY_Controller
 			'igv' => (isset($post['igvOrden']) ? '18' : '0'),
 			'mostrar_observacion' => isset($post['mostrar_observacion']) ? '1' : '0',
 			'mostrar_imagenes' => isset($post['mostrar_imagenes']) ? '1' : '0',
-			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? '1' : '0'
+			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? '1' : '0',
+			'concepto' => isset($post['concepto']) ? $post['concepto'] : Null,
 		];
 
 		$dataParaVista['imagenesDeItem'] = [];

@@ -739,6 +739,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
+		$filtros .= !empty($params['noOC']) ? " AND ocd.idOrdenCompraDetalle is null " : "";
 
 
 		$sql = "
@@ -778,6 +779,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN ( SELECT idCotizacionDetalle, MAX(idProveedorDistribucion) as idProveedorDistribucion, CAST(MAX(CAST(requiereOrdenCompra as INT)) AS BIT) as requiereOrdenCompra from compras.cotizacionDetalleSub group by idCotizacionDetalle) cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
 			LEFT JOIN compras.proveedor p ON p.idProveedor = ISNULL(cd.idProveedor,cds.idProveedorDistribucion)
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
+			LEFT JOIN compras.ordenCompraDetalle ocd ON ocd.idCotizacionDetalle = cd.idCotizacionDetalle AND ocd.estado = 1
 			-- LEFT JOIN rrhh.dbo.Empresa cuenta ON c.idCuenta = cuenta.idEmpresa
 			-- LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = c.idCentroCosto
 			WHERE 

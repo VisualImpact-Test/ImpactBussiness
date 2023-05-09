@@ -9,7 +9,7 @@
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Concepto OC</div>
-				<input type="text" value="<?= $dataOper['concepto'] ?>" readonly patron="requerido">
+				<input type="text" name="concepto" value="<?= $dataOper['concepto'] ?>" readonly patron="requerido">
 			</div>
 		</div>
 		<? foreach ($data['idCotizacion'] as $idCotizacion) { ?>

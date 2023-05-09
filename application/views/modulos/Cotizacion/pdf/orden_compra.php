@@ -24,7 +24,7 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w3 ?>">Servicio</td>
-			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['concepto'], 3) ?></td>
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
@@ -65,7 +65,7 @@
 	<table border="1" style="width: 100%;">
 		<thead class="full-width" style="border:1px solid black;">
 			<tr>
-				<td class="text-center bold">Item</td>
+				<td class="text-center bold py">Item</td>
 				<td class="text-center bold">Cantidad</td>
 				<?php if ($incluirImagen) : ?>
 					<td class="text-center bold">Imagen</td>
@@ -77,10 +77,11 @@
 		</thead>
 		<tbody style="border:1px solid black;">
 			<?php $total = 0; ?>
+			<?php $igv_total = 0; ?>
 			<?php foreach ($detalle as $k => $row) : ?>
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo']; ?>
 				<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
-				<?php $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */)); ?>
+				<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */)); ?>
 				<?php
 
 				$mostrarSubDetalle = false;
@@ -98,7 +99,7 @@
 						<td rowspan="<?= $rowS ?>">
 							<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
 								<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
-									<p style="text-align:center;"><img class="imgCenter" id="imagenFirma" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
+									<p style="text-align:center;"><img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
 								<?php endforeach; ?>
 							<?php endif; ?>
 						</td>
@@ -134,47 +135,6 @@
 						</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
-				<!-- <?php if (count($subDetalleItem[$row['idItem']]) && $row['idItemTipo'] == COD_TEXTILES['id']) : ?>
-					<?php $dataTextil = []; ?>
-					<?php $dataTalla = []; ?>
-					<?php $dataGenero = []; ?>
-					<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
-						<?php $dataTextil[$vm['talla']][$vm['genero']] = $vm; ?>
-						<?php $dataGenero[$vm['genero']] = RESULT_GENERO[$vm['genero']]; ?>
-						<?php $dataTalla[$vm['talla']] = $vm['talla']; ?>
-					<?php endforeach; ?>
-
-					<tr class="subDet">
-						<td colspan="<?= $incluirImagen ? 3 : 2; ?>" class="bn"></td>
-						<td class="bn" style="text-align: right;">Talla</td>
-						<?php if (count($dataGenero) == 1) : ?>
-							<td colspan="3" class="bn" style="text-align: center;">Cantidad</td>
-						<?php else : ?>
-							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td class="bn" style="text-align: center;"><?= $vg; ?></td>
-							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) : ?>
-								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
-							<?php endif; ?>
-						<?php endif; ?>
-						<td class="bn"></td>
-						<td class="bn"></td>
-					</tr>
-					<?php foreach ($dataTalla as $kt => $vt) : ?>
-						<tr class="subDet">
-							<td colspan="<?= $incluirImagen ? 3 : 2; ?>" class="bn"></td>
-							<td class="bn" style="text-align: right;"><?= $vt; ?></td>
-							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td class="bn" style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
-							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) : ?>
-								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
-							<?php endif; ?>
-							<td class="bn"></td>
-							<td class="bn"></td>
-						</tr>
-					<?php endforeach; ?>
-				<?php endif; ?> -->
 			<?php endforeach; ?>
 		</tbody>
 		<tfoot class="full-width">
@@ -203,7 +163,7 @@
 				<tr>
 					<td colspan="2" class="bold">Entrega :</td>
 					<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="bold">
-						<?= !empty($data['entrega']) ? "Entrega: {$data['entrega']}" : '' ?>
+						<?= !empty($data['entrega']) ? "{$data['entrega']}" : '' ?>
 					</td>
 				</tr>
 			<? } ?>
@@ -251,7 +211,7 @@
 			<td class="w-30 text-center" style="padding-top:120px;">
 				<div style="text-align:center;">
 					<hr style="height: 3px; color:black">
-					Área de logística
+					Área de Logística
 				</div>
 			</td>
 			<td class="w-20 text-center" style="padding-top:120px;">
@@ -262,7 +222,7 @@
 				<?php endif; ?>
 				<div style="text-align:center">
 					<hr style="height: 3px; color:black; ">
-					Coordinador de compras
+					Coordinador de Compras
 				</div>
 			</td>
 			<td class="w-10">

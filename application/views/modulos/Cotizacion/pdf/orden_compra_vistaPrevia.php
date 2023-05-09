@@ -5,7 +5,7 @@
 			<?php $incluirImagen = true; ?>
 		<?php endif; ?>
 	<?php endforeach; ?>
-	<table border="1" style="width: 100%; float: left;">
+	<table border="1" style="width: 100%;">
 		<?php $w1 = '18%'; ?>
 		<?php $w2 = '44%'; ?>
 		<?php $w3 = '13%'; ?>
@@ -24,7 +24,7 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w3 ?>">Servicio</td>
-			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
+			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['concepto'], 3) ?></td>
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
@@ -77,11 +77,11 @@
 		</thead>
 		<tbody style="border:1px solid black;">
 			<?php $total = 0; ?>
+			<?php $igv_total = 0; ?>
 			<?php foreach ($detalle as $k => $row) : ?>
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo']; ?>
 				<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
-				<?php $igv_total = (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0 /*IGV */)); ?>
-
+				<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0 /*IGV */)); ?>
 				<?php
 
 				$mostrarSubDetalle = false;
@@ -92,11 +92,8 @@
 				}
 
 				?>
-
 				<tr style="border-bottom: none;">
-					<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?>
-						<!-- <input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>"> -->
-					</td>
+					<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
 					<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
 					<?php if ($incluirImagen) : ?>
 						<td rowspan="<?= $rowS ?>">
@@ -117,7 +114,6 @@
 							<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
 						</td>
 					<?php endif; ?>
-					<!-- <td class="text-left" colspan="4"><?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?></td> -->
 					<td class="text-right" rowspan="<?= $rowS ?>">
 						<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 					</td>
@@ -139,50 +135,6 @@
 						</tr>
 					<?php endforeach; ?>
 				<?php endif; ?>
-				
-				<!-- <?php if (count($subDetalleItem[$row['idItem']]) && $row['idItemTipo'] == COD_TEXTILES['id']) : ?>
-					<?php $dataTextil = []; ?>
-					<?php $dataTalla = []; ?>
-					<?php $dataGenero = []; ?>
-					<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
-						<?php $dataTextil[$vm['talla']][$vm['genero']] = $vm; ?>
-						<?php $dataGenero[$vm['genero']] = RESULT_GENERO[$vm['genero']]; ?>
-						<?php $dataTalla[$vm['talla']] = $vm['talla']; ?>
-					<?php endforeach; ?>
-
-					<tr class="subDet">
-						<td colspan="2" class="bn"></td>
-						<td class="bn" style="text-align: right;">Talla</td>
-						<?php if (count($dataGenero) == 1) : ?>
-							<td colspan="3" class="bn" style="text-align: center;">Cantidad</td>
-						<?php else : ?>
-							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td class="bn" style="text-align: center;"><?= $vg; ?></td>
-							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) : ?>
-								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
-							<?php endif; ?>
-						<?php endif; ?>
-						<td class="bn"></td>
-						<td class="bn"></td>
-					</tr>
-
-					<?php foreach ($dataTalla as $kt => $vt) : ?>
-						<tr class="subDet">
-							<td colspan="2" class="bn"></td>
-							<td class="bn" style="text-align: right;"><?= $vt; ?></td>
-							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td class="bn" style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
-							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) : ?>
-								<td class="bn" colspan="<?= 3 - count($dataGenero); ?>"></td>
-							<?php endif; ?>
-							<td class="bn"></td>
-							<td class="bn"></td>
-						</tr>
-					<?php endforeach; ?>
-
-				<?php endif; ?> -->
 			<?php endforeach; ?>
 		</tbody>
 		<tfoot class="full-width">
@@ -207,12 +159,11 @@
 					<?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
 				</td>
 			</tr>
-
 			<? if (!empty($data['entrega'])) { ?>
 				<tr>
 					<td colspan="2" class="bold">Entrega :</td>
 					<td colspan="<?= $incluirImagen ? 7 : 6; ?>" class="bold">
-						<?= !empty($data['entrega']) ? "Entrega: {$data['entrega']}" : '' ?>
+						<?= !empty($data['entrega']) ? "{$data['entrega']}" : '' ?>
 					</td>
 				</tr>
 			<? } ?>

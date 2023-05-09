@@ -1,4 +1,4 @@
-<form class="form px-5" role="form" id="formRegistroPropuesta" method="post">
+<form class="form px-5" role="form" id="formRegistroPropuesta" method="post" autocomplete="off">
 	<div id="divBase<?= $id ?>">
 		<?php if (isset($propuestaItem)) :  ?>
 			<?php $bucle = $propuestaItem; ?>

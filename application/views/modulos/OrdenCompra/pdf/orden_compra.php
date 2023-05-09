@@ -25,7 +25,7 @@
 		<tr>
 			<td class="text-left w-20">Atención</td>
 			<td class="text-left w-40"><?= verificarEmpty($dataOc[0]['nombreContacto'], 3) ?></td>
-			<td class="text-left w-20">Telefono fijo</td>
+			<td class="text-left w-20">Teléfono fijo</td>
 			<td class="text-left w-20"><?= '-' ?></td>
 		</tr>
 		<tr>
