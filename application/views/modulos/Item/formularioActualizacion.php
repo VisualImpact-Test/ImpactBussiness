@@ -14,7 +14,6 @@
 				<label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
 				<input class="d-none codItemLogistica" id="idItemLogistica" name="idItemLogistica" value="<?= $informacionItem['idItemLogistica'] ?>">
 				<div class="input-group col-md-7 px-0">
-					<!-- <input class="form-control items ui-autocomplete-input" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off" style="height: 40.5px;"> -->
 					<input class="form-control itemLogistica ui-autocomplete-input" id="equivalente" name="equivalente" value="<?= $informacionItem['equivalenteLogistica'] ?>" placeholder="Buscar" style="height: 40.5px;" autocomplete="off" readonly>
 					<div class="input-group-append">
 						<button class="btn btn-outline-secondary" type="button" onclick="Item.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></button>
@@ -49,6 +48,12 @@
 				<label class="form-control col-md-5" for="unidadMedida" style="border:0px;">Unidad Medida :</label>
 				<select class="form-control col-md-7" id="unidadMedida" name="unidadMedida">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase', 'selected' => $informacionItem['idUnidadMedida']]); ?>
+				</select>
+			</div>
+			<div class="control-group child-divcenter row w-100">
+				<label class="form-control col-md-5" style="border:0px;">Cuenta :</label>
+				<select class="form-control col-md-7" name="cuenta">
+					<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $informacionItem['idCuenta']]); ?>
 				</select>
 			</div>
 		</div>

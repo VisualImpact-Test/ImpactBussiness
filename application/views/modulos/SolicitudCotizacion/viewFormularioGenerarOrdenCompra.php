@@ -1,8 +1,3 @@
-<!-- <div class="ui attached  message">
-  <div class="header">
-    Registrar Cotización
-  </div>
-</div> -->
 <style>
 	.img-lsck-capturas {
 		height: 150px !important;
@@ -15,19 +10,11 @@
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled' : '' ?>">
 	<form class="ui form" role="form" id="formRegistroOrdenCompra" method="post">
 		<input type="hidden" name="idOper" value="<?= $idOper ?>">
-		<!-- <h4 class="ui dividing header">DETALLE DEL OPER
-        </h4>
-        <div class="fields">
-            <div class="three wide field">
-                <div class="ui sub header">&nbsp;</div>
-
-            </div>
-        </div> -->
-		<? foreach ($cotizaciones as $cotizacion) { ?>
+		<?php foreach ($cotizaciones as $cotizacion) : ?>
 			<input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
-		<? } ?>
+		<?php endforeach; ?>
 
-		<? foreach ($cotizacionDetalle as $row) : ?>
+		<?php foreach ($cotizacionDetalle as $row) : ?>
 			<div class="default-item">
 				<input type="hidden" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>" id="">
 				<div class="ui segment body-item nuevo" data-id="<?= $row['idCotizacionDetalle'] ?>">
@@ -39,12 +26,12 @@
 							</a>
 							<a class="item btnPopupCotizacionesProveedor" data-proveedores='<?= !empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas']) ?>' data-id="<?= $row['idCotizacionDetalle'] ?>">
 								<i class="hand holding usd icon"></i>
-								<? if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'])) { ?>
+								<?php if (!empty($cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'])) :  ?>
 									<div class="floating ui teal label"><?= $cotizacionProveedor[$row['idCotizacionDetalle']]['cotizacionesConfirmadas'] ?></div>
-								<? } ?>
+								<?php endif; ?>
 							</a>
 						</div>
-						<? if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) { ?>
+						<?php if (!empty($cotizacionProveedorVista[$row['idCotizacionDetalle']])) :  ?>
 							<div class="ui flowing custom popup custom-popup-<?= $row['idCotizacionDetalle'] ?> top left transition hidden">
 								<?
 								$wide = 'one';
@@ -63,12 +50,11 @@
 								}
 								?>
 								<div class="ui <?= $wide ?> column divided center aligned grid">
-									<? foreach ($cotizacionProveedorVista[$row['idCotizacionDetalle']] as $view) { ?>
+									<?php foreach ($cotizacionProveedorVista[$row['idCotizacionDetalle']] as $view) : ?>
 										<div class="column">
 											<h4 class="ui header"><?= $view['razonSocial'] ?></h4>
 											<p><b><?= $view['cantidad'] ?></b> cantidad, <?= moneda($view['subTotal']) ?></p>
 											<p><b>Costo Unitario: </b> <?= moneda($view['costoUnitario']) ?></p>
-
 
 											<div class="ui button btnElegirProveedor">Elegir
 												<input type="hidden" class="txtCostoProveedor" value="<?= $view['costoUnitario'] ?>">
@@ -76,10 +62,10 @@
 												<input type="hidden" class="txtProveedorElegidoName" value="<?= $view['razonSocial'] ?>">
 											</div>
 										</div>
-									<? } ?>
+									<?php endforeach; ?>
 								</div>
 							</div>
-						<? } ?>
+						<?php endif; ?>
 
 					</div>
 					<div class="ui left floated header">
@@ -193,12 +179,32 @@
 							<div class="disabled disabled-visible ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
 								<div class="content-body-sub-item">
-									<?
-									if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
-										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+									<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) : ?>
+										<?php $var1 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['sucursal']; ?>
+										<?php $var2 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['razonSocial']; ?>
+										<?php $var3 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['tipoElemento']; ?>
+										<?php $var4 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['marca']; ?>
+										<?php $costoTotal = 0; ?>
+										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+											<?php if (!($var1 == $dataSubItem['sucursal'] && $var2 == $dataSubItem['razonSocial'] && $var3 == $dataSubItem['tipoElemento'] && $var4 == $dataSubItem['marca'])) :  ?>
+												<?php $var1 = $dataSubItem['sucursal']; ?>
+												<?php $var2 = $dataSubItem['razonSocial']; ?>
+												<?php $var3 = $dataSubItem['tipoElemento']; ?>
+												<?php $var4 = $dataSubItem['marca']; ?>
+												<div class="fields">
+													<div class="field thirteen wide">
+														<label class="text-right">SUBTOTAL</label>
+													</div>
+													<div class="field three wide">
+														<label class="text-center"><?= $costoTotal ?></label>
+													</div>
+												</div>
+												<?php $costoTotal = 0; ?>
+											<?php endif; ?>
+											<?php $costoTotal += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
 											<input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 											<div class="fields body-sub-item body-sub-item-servicio">
-											<div class="three wide field">
+												<div class="three wide field">
 													<div class="ui sub header">Sucursal </div>
 													<input class="sucursalSubItem" name="sucursalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['sucursal']) ? $dataSubItem['sucursal'] : '' ?>">
 												</div>
@@ -227,15 +233,17 @@
 													<input class="precioUnitarioSubItem" name="precioUnitarioSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
 												</div>
 											</div>
-									<?
-										endforeach;
-									endif;
-									?>
+										<?php endforeach; ?>
+										<div class="fields">
+											<div class="field thirteen wide">
+												<label class="text-right">SUBTOTAL</label>
+											</div>
+											<div class="field three wide">
+												<label class="text-center"><?= $costoTotal ?></label>
+											</div>
+										</div>
+									<?php endif; ?>
 								</div>
-								<!-- <button type="button" class="ui basic button btn-add-sub-item">
-                                    <i class="plus icon"></i>
-                                    Agregar
-                                </button> -->
 							</div>
 
 							<!-- Distribucion -->
@@ -283,12 +291,12 @@
 								<div class="three wide field">
 									<div class="ui sub header">
 										Costo
-										<? if (!empty($autorizaciones[$row['idCotizacionDetalle']])) { ?>
+										<?php if (!empty($autorizaciones[$row['idCotizacionDetalle']])) :  ?>
 											<input type="hidden" class="idAutorizacion" value="<?= $autorizaciones[$row['idCotizacionDetalle']]['idAutorizacion'] ?>">
 											<?= $autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_PENDIENTE ? '<button type="button" class="btnAutorizarCosto btn-link p-0 border-0"><small class="text-info ">(Solicitud enviada)</small></button>' : '' ?>
 											<?= $autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_ACEPTADO ? '<button type="button" class="btnAutorizarCosto btn-link p-0 border-0"><small class="text-sucess ">(Solicitud aceptada)</small></button>' : '' ?>
 											<?= $autorizaciones[$row['idCotizacionDetalle']]['idAutorizacionEstado'] == AUTH_ESTADO_RECHAZADO ? '<button type="button" class="btnAutorizarCosto btn-link p-0 border-0"><small class="text-danger ">(Solicitud rechazada)</small></button>' : '' ?>
-										<? } ?>
+										<?php endif; ?>
 									</div>
 									<div class="ui right labeled input <?= !empty($autorizaciones[$row['idCotizacionDetalle']]) ? 'disabled disabled-visible' : '' ?>">
 										<label for="amount" class="ui label">S/</label>
@@ -333,32 +341,6 @@
 				</div>
 			</div>
 		<? endforeach; ?>
-		<!-- <div class="ui black three column center aligned stackable divided grid segment">
-            <div class="column">
-                <div class="ui test toggle checkbox ">
-                    <input class="igvForm" name="igv" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $cotizacion['igv'] ? 'checked' : '' ?> readonly>
-                    <label>Incluir IGV</label>
-                </div>
-            </div>
-            <div class="column">
-                <div class="ui right labeled input">
-                    <label for="feeForm" class="ui label">Fee: </label>
-                    <input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();" readonly>
-                    <div class="ui basic label">
-                        %
-                    </div>
-                </div>
-            </div>
-            <div class="column">
-                <div class="ui right labeled input">
-                    <label for="totalForm" class="ui label green">Total: </label>
-                    <input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? moneda($cotizacion['total']) : '0.00' ?>" readonly="">
-                    <input class=" totalForm" type="hidden" name="totalForm" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>" readonly="">
-                    <input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" readonly="">
-                    <input class=" totalFormFee" type="hidden" name="totalFormFee" placeholder="0.00" readonly="">
-                </div>
-            </div>
-        </div> -->
 	</form>
 </div>
 

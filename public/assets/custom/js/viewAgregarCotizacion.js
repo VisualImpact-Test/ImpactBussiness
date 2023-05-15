@@ -1,6 +1,5 @@
 var Autorizacion = {
 
-
 	frm: 'frm-autorizacion',
 	contentDetalle: 'idContentAutorizaciones',
 	btnFiltrar: '#btn-filtrarAutorizacion',
@@ -37,7 +36,6 @@ var SolicitudCotizacion = {
 				});
 			$('.ui.stickyProveedores').sticky();
 
-
 			Cotizacion.actualizarTotal();
 		});
 
@@ -68,7 +66,6 @@ var SolicitudCotizacion = {
 				}
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
-
 			});
 		});
 
@@ -185,7 +182,6 @@ var SolicitudCotizacion = {
 
 }
 var Cotizacion = {
-
 	frm: 'frm-cotizacion',
 	contentDetalle: 'idContentCotizacion',
 	url: 'Cotizacion/',
@@ -210,7 +206,6 @@ var Cotizacion = {
 	// solicitanteData: [],
 
 	load: function () {
-
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarCotizacion').click();
 		});
@@ -237,7 +232,6 @@ var Cotizacion = {
 			} else {
 				Cotizacion.htmlG = $('.default-item').html();
 			}
-
 
 			$.each($('.content-body-sub-item'), (i, v) => {
 				let control = $(v);
@@ -339,7 +333,6 @@ var Cotizacion = {
 			});
 		});
 
-
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
 
@@ -400,7 +393,6 @@ var Cotizacion = {
 			// $html += Cotizacion.htmlG;
 			// $html += "</tr>";
 
-
 			//Para ordenar los select2 que se descuadran
 			$("html").animate({ scrollTop: defaultItem.height() }, 500);
 			childInserted.transition('glow');
@@ -434,9 +426,6 @@ var Cotizacion = {
 
 		});
 
-
-
-
 		// $("#centroCosto_visible .item").click(function(){
 		// 	alert("go");
 		// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
@@ -453,11 +442,6 @@ var Cotizacion = {
 			let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
 			$elementoDiv.prependTo('#centroCosto_oculto');
 		});
-
-
-
-
-
 
 		$(document).on('click', '.editFeatures', function () {
 			++modalId;
@@ -501,7 +485,6 @@ var Cotizacion = {
 			let cantItems = $('.body-item').length;
 
 			if (cantItems <= 1) {
-
 
 			}
 
@@ -686,7 +669,6 @@ var Cotizacion = {
 
 		});
 
-
 		$(document).on('keyup', '.cantidadForm', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
@@ -697,7 +679,6 @@ var Cotizacion = {
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
 			let flagCuentaForm = thisControlParents.find('.flagCuentaForm');
-
 
 			let subTotalForm = thisControlParents.find('.subtotalForm');
 			let subTotalFormLabel = thisControlParents.find('.subtotalFormLabel');
@@ -737,7 +718,6 @@ var Cotizacion = {
 			////////////
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
-
 
 			Cotizacion.actualizarTotal();
 		});
@@ -841,7 +821,6 @@ var Cotizacion = {
 				return false;
 			}
 
-
 			let idCotizacionDetalle = thisControlParents.data('id');
 			let config = {
 				costo,
@@ -897,7 +876,6 @@ var Cotizacion = {
 			let gap = Number(thisControl.val());
 			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
-
 
 			precioForm.val(precio);
 			precioFormLabel.val(moneyFormatter.format(precio));
@@ -1033,7 +1011,6 @@ var Cotizacion = {
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
-
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
 					Cotizacion.itemServicio = a.data.itemServicio;
@@ -1051,7 +1028,6 @@ var Cotizacion = {
 
 				Cotizacion.modalIdForm = modalId;
 
-
 			});
 		});
 
@@ -1061,7 +1037,6 @@ var Cotizacion = {
 			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioProcesarSinOc', 'data': jsonString };
-
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
@@ -1215,7 +1190,6 @@ var Cotizacion = {
 			let name = 'anexo-file';
 			let nameType = 'anexo-type';
 			let nameFile = 'anexo-name';
-
 
 			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
@@ -1379,31 +1353,54 @@ var Cotizacion = {
 			let subDetalleServicio = $(this).find('.txtDetalleTipoServicio').length > 0 ? JSON.parse($(this).find('.txtDetalleTipoServicio').html()) : [];
 			let idCotizacionDetalle = $(this).parents('.nuevo').find('.txtIdCotizacionDetalle').val();
 			var html = '';
+
+			let valor1 = subDetalleServicio[0]['sucursal'];
+			let valor2 = subDetalleServicio[0]['razonSocial'];
+			let valor3 = subDetalleServicio[0]['tipoElemento'];
+			let valor4 = subDetalleServicio[0]['marca'];
+			let costTo = 0;
 			$.each(subDetalleServicio, function (k, v) {
+				if (!(v.sucursal == valor1 && v.razonSocial == valor2 && v.tipoElemento == valor3 && v.marca == valor4)) {
+					valor1 = v.sucursal;
+					valor2 = v.razonSocial;
+					valor3 = v.tipoElemento;
+					valor4 = v.marca;
+					html += `
+						<div class="fields">
+							<div class="field thirteen wide">
+								<label class="text-right">SUBTOTAL</label>
+							</div>
+							<div class="field three wide">
+								<label class="text-center">${costTo}</label>
+							</div>
+						</div>`;
+					costTo = 0;
+				}
+				costTo += parseFloat(v.subTotal);
 				html += `
 				<div class="fields body-sub-item body-sub-item-servicio">
-					<div class="fields field sixteen">
+					<div class="fields field eight">
 						<div class="four wide field">
 							<div class="ui sub header">Sucursal</div>
-							<input class="nombreSubItem" name="newSucursaleSubItemServicio[${idCotizacionDetalle}]" placeholder="Sucursal" value="${v.sucursal}">
+							<input class="nombreSubItem" name="newSucursaleSubItemServicio[${idCotizacionDetalle}]" placeholder="Sucursal" value="${v.sucursal}" readonly>
 						</div>
 						<div class="four wide field">
 							<div class="ui sub header">Razon Social</div>
-							<input class="nombreSubItem" name="newRazonSocialSubItemServicio[${idCotizacionDetalle}]" placeholder="Razon Social" value="${v.razonSocial}">
+							<input class="nombreSubItem" name="newRazonSocialSubItemServicio[${idCotizacionDetalle}]" placeholder="Razon Social" value="${v.razonSocial}" readonly>
 						</div>
 						<div class="four wide field">
 							<div class="ui sub header">Tipo Elemento</div>
-							<input class="nombreSubItem" name="newTipoElementoSubItemServicio[${idCotizacionDetalle}]" placeholder="Tipo Elemento" value="${v.tipoElemento}">
+							<input class="nombreSubItem" name="newTipoElementoSubItemServicio[${idCotizacionDetalle}]" placeholder="Tipo Elemento" value="${v.tipoElemento}" readonly>
 						</div>
 						<div class="four wide field">
 							<div class="ui sub header">Marca</div>
-							<input class="nombreSubItem" name="newMarcaSubItemServicio[${idCotizacionDetalle}]" placeholder="Marca" value="${v.marca}">
+							<input class="nombreSubItem" name="newMarcaSubItemServicio[${idCotizacionDetalle}]" placeholder="Marca" value="${v.marca}" readonly>
 						</div>
 					</div>
-					<div class="fields field sixteen">
+					<div class="fields field eight">
 						<div class="five wide field">
 							<div class="ui sub header">Descripción</div>
-							<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}">
+							<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}" readonly>
 						</div>
 						<div class="five wide field">
 							<div class="ui sub header">Cantidad</div>
@@ -1421,6 +1418,15 @@ var Cotizacion = {
 				</div>
 				`;
 			});
+			html += `
+			<div class="fields">
+				<div class="field thirteen wide">
+					<label class="text-right">SUBTOTAL</label>
+				</div>
+				<div class="field three wide">
+					<label class="text-center">${costTo}</label>
+				</div>
+			</div>`;
 			divItemServicio.html(html);
 
 			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');
@@ -1542,7 +1548,6 @@ var Cotizacion = {
 			}
 			// Fin: Validar si es transporte --> Continua: despues de eliminar la fila para volver a calcular el costo total.
 
-
 			if (idEliminado) {
 				Cotizacion.subItemEliminado.push(idEliminado);
 			}
@@ -1615,7 +1620,6 @@ var Cotizacion = {
 
 			cantidadFormSubItem.keyup();
 
-
 		});
 		$(document).on('change', '.itemLogisticaForm', function () {
 			let control = $(this);
@@ -1670,7 +1674,6 @@ var Cotizacion = {
 			Cotizacion.actualizarOnAddRowCampos(controlParent);
 			cantidadForm.keyup();
 			cantidadForm.change();
-
 		});
 
 		$(document).on('keyup', '.items', function () {
@@ -1720,7 +1723,6 @@ var Cotizacion = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
-
 			});
 
 		});
@@ -1750,7 +1752,6 @@ var Cotizacion = {
 
 		});
 		$(document).on('click', '.rowPropuesta', function () {
-
 			++modalId;
 			let data = {
 				'idPropuestaItem': $(this).data('id'),
@@ -1758,9 +1759,7 @@ var Cotizacion = {
 				'dataPropuesta': JSON.parse($(this).find('.jsonPropuesta').val()),
 			};
 
-
 			Fn.showConfirm({ fn: `Cotizacion.actualizarPropuestaItem(${JSON.stringify(data)})`, content: `¿Desea confirmar esta propuesta para reemplazar el item elegido?` });
-
 		});
 		$(document).on('click', '.dvTachadoDistribucion', function () {
 
@@ -1790,17 +1789,12 @@ var Cotizacion = {
 
 		$(document).on('click', '.btnPreview', function () {
 
-
 			let data = Fn.formSerializeObject('formRegistroCotizacion');
 			console.log(data)
 			let jsonString = { 'data': JSON.stringify(data) };
 
-
 			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF', jsonString);
 		});
-
-
-
 	},
 
 	actualizarPropuestaItem: function (data) {
@@ -1891,7 +1885,6 @@ var Cotizacion = {
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'actualizarCotizacion', 'data': jsonString };
 
-
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
 			let fn = [];
@@ -1911,10 +1904,8 @@ var Cotizacion = {
 		let items = [];
 		let nro = 0;
 		$.each(Cotizacion.itemServicio[1], function (index, value) {
-			// if (tipo == value.tipo || tipo == 3) {
 			items[nro] = value;
 			nro++;
-			// }
 		});
 		$(".items").autocomplete({
 			source: items,
@@ -1926,7 +1917,7 @@ var Cotizacion = {
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
 				control.find(".idTipoItem").dropdown('set selected', ui.item.tipo);
-
+				control.find(".unidadMed").dropdown('set selected', ui.item.idUnidadMedida);
 				control.find(".caracteristicasCliente").val(ui.item.caracteristicas);
 				control.find(".flagCuentaSelect").dropdown('set selected', ui.item.flagCuenta);
 				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
@@ -1941,7 +1932,6 @@ var Cotizacion = {
 				if (ui.item.cantidadImagenes > 0) {
 					Cotizacion.alertaParaAgregarItems(control, ui.item);
 				}
-
 
 				control.find(".costoForm").val(ui.item.costo == 0 ? '' : ui.item.costo);
 				control.find(".costoFormLabel").text((ui.item.costo == 0) ? '' : ui.item.costo);
@@ -1961,13 +1951,10 @@ var Cotizacion = {
 				control.find(".idProveedor").val(ui.item.idProveedor);
 
 				//LLenar semaforo
-
 				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
-
 				control.find('.semaforoForm').popup({ content: `Vigencia: ${ui.item.diasVigencia} días` });
 
 				//Validar boton ver caracteristicas del articulo
-
 				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
@@ -2295,7 +2282,6 @@ var Cotizacion = {
 					content: `Solo podrá completar el GAP cuando se haya confirmado un costo`
 				}
 			);
-
 	},
 
 	actualizarOnAddRow: (childInserted) => {
@@ -2318,7 +2304,6 @@ var Cotizacion = {
 				}
 			);
 		$('.simpleDropdown').dropdown();
-
 
 		//Boton info archivos
 		childInserted.find('.btn-info-archivo')
@@ -2399,9 +2384,7 @@ var Cotizacion = {
 		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
 		idCotizacionDetalle.attr('name', `idCotizacionDetalleSub[${number}]`);
-
 	},
-
 
 	cleanDetalle: (parent) => {
 		let tipoForm = parent.find('#tipoItemForm');

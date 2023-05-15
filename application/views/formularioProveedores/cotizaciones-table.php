@@ -253,20 +253,45 @@
 												<th>DESCRIPCION</th>
 												<th>CANTIDAD</th>
 												<th>PREC UNITARIO</th>
+												<th>TOTAL</th>
 											</tr>
 										</thead>
 										<tbody>
-											<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
-												<tr>
-													<td><?= $value['sucursal']; ?></td>
-													<td><?= $value['razonSocial']; ?></td>
-													<td><?= $value['tipoElemento']; ?></td>
-													<td><?= $value['marca']; ?></td>
-													<td><?= $value['descripcion']; ?></td>
-													<td><?= $value['cantidad']; ?></td>
-													<td><?= $value['costo']; ?></td>
+											<?php if (!empty($subdatos[$row['idCotizacionDetalleProveedorDetalle']])) :  ?>
+												<?php $var1 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['sucursal']; ?>
+												<?php $var2 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['razonSocial']; ?>
+												<?php $var3 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['tipoElemento']; ?>
+												<?php $var4 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['marca']; ?>
+												<?php $costoTotal = 0; ?>
+												<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
+													<?php if (!($var1 == $value['sucursal'] && $var2 == $value['razonSocial'] && $var3 == $value['tipoElemento'] && $var4 == $value['marca'])) :  ?>
+														<?php $var1 = $value['sucursal']; ?>
+														<?php $var2 = $value['razonSocial']; ?>
+														<?php $var3 = $value['tipoElemento']; ?>
+														<?php $var4 = $value['marca']; ?>
+														<tr style="background: #f9fafb;">
+															<td colspan="7" class="text-right" style="font-weight: bold;">SUBTOTAL</td>
+															<td><?= $costoTotal; ?></td>
+														</tr>
+														<?php $costoTotal = 0; ?>
+													<?php endif; ?>
+													<?php $costoTotal += (floatval($value['cantidad']) * floatval($value['costo'])) ?>
+													<tr>
+														<td><?= $value['sucursal']; ?></td>
+														<td><?= $value['razonSocial']; ?></td>
+														<td><?= $value['tipoElemento']; ?></td>
+														<td><?= $value['marca']; ?></td>
+														<td><?= $value['descripcion']; ?></td>
+														<td><?= $value['cantidad']; ?></td>
+														<td><?= $value['costo']; ?></td>
+														<td><?= floatval($value['cantidad']) * floatval($value['costo']); ?></td>
+													</tr>
+												<?php endforeach; ?>
+												<tr style="background: #f9fafb;">
+													<td colspan="7" class="text-right" style="font-weight: bold;">SUBTOTAL</td>
+													<td><?= $costoTotal; ?></td>
 												</tr>
-											<?php endforeach; ?>
+											<?php endif; ?>
 										</tbody>
 									</table>
 								</div>

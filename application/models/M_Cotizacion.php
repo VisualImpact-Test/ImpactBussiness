@@ -159,6 +159,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['estadoCotizacion']) ? " AND p.idCotizacionEstado IN (" . $params['estadoCotizacion'] . ")" : "";
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 		$filtros .= !empty($params['idDiferente']) ? " AND p.idCotizacion !=" . $params['idDiferente'] : '';
+		$filtros .= !empty($params['idUsuarioReg']) ? ' AND p.idUsuarioReg = ' . $params['idUsuarioReg'] : '';
 		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
 		$sql = "
@@ -318,7 +319,7 @@ class M_Cotizacion extends MY_Model
 
 		if (isset($params['idProveedor'])) $this->db->join('compras.itemTarifario itf', 'itf.idItem = i.idItem AND itf.estado = 1 AND itf.idProveedor = ' . $params['idProveedor'], 'LEFT');
 
-		if (isset($params['idCotizacion'])) $this->db->where('c.idCotizacion', $params['idCotizacion']);
+		if (isset($params['idCotizacion'])) $this->db->where("c.idCotizacion in ({$params['idCotizacion']})");
 		// if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
 		
 		if (isset($params['idCotizacionDetalle'])) $this->db->where("cd.idCotizacionDetalle in ({$params['idCotizacionDetalle']})");
@@ -744,6 +745,7 @@ class M_Cotizacion extends MY_Model
 
 		$sql = "
 			SELECT
+			DISTINCT
 			cd.idCotizacion,
 			cd.idCotizacionDetalle,
 			ISNULL(cd.nombre,'') item,
@@ -757,22 +759,19 @@ class M_Cotizacion extends MY_Model
 			ROUND (cd.subtotal/((ISNULL(CONVERT(float,cd.gap),0)/100)+1),2) subtotalSinGap,
 			c.total,
 			cd.idItemTipo,
-			-- cd.caracteristicas,
-			i.caracteristicas,
+			cd.caracteristicas,
 			cd.gap,
 			cd.precio,
-			cd.enlaces,
+			-- cd.enlaces,
+			CAST(cd.enlaces AS VARCHAR(MAX)) as enlaces,
 			p.idProveedor,
 			p.razonSocial,
-			-- cd.caracteristicasCompras,
 			cd.flagRedondear,
-			-- ,
-			-- cuenta.nombre as cuenta,
-			-- centrocosto.subcanal as centrocosto
 			c.codOrdenCompra,
 			cd.flagAlternativo,
 			cd.nombreAlternativo,
-			cd.tituloParaOc
+			cd.tituloParaOc,
+			um.nombre as unidadMedida
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -780,8 +779,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.proveedor p ON p.idProveedor = ISNULL(cd.idProveedor,cds.idProveedorDistribucion)
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			LEFT JOIN compras.ordenCompraDetalle ocd ON ocd.idCotizacionDetalle = cd.idCotizacionDetalle AND ocd.estado = 1
-			-- LEFT JOIN rrhh.dbo.Empresa cuenta ON c.idCuenta = cuenta.idEmpresa
-			-- LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = c.idCentroCosto
+			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = i.idUnidadMedida
 			WHERE 
 			1 = 1 and cd.estado=1
 			{$filtros}

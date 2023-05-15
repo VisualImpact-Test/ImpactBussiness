@@ -1,8 +1,3 @@
-<!-- <div class="ui attached  message">
-  <div class="header">
-    Registrar Cotización
-  </div>
-</div> -->
 <style>
 	.img-lsck-capturas {
 		height: 150px !important;
@@ -70,11 +65,6 @@
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $solicitantes, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idSolicitante']) ? $cotizacion['idSolicitante'] : '']); ?>
 				</select>
 			</div>
-			<!-- <div class="five wide field solicitanteData">
-				<div class="ui sub header">Solicitante</div>
-				<input class="solicitantes ui-autocomplete-input" type="text" patron="requerido" placeholder="Buscar solicitante">
-				<input class="codSolicitante d-none" type='text' name='solicitante'>
-			</div> -->
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
 				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
@@ -181,7 +171,6 @@
 											</div>
 										</div>
 									</div>
-
 									<input class="codItems" type='hidden' name='idItemForm'>
 									<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
@@ -198,10 +187,10 @@
 								</select>
 							</div>
 							<div class="four wide field">
-								<div class="ui sub header">TÍTULO DE COTIZACIÓN - COMPRAS</div>
-								<div class="ui labeled input w-100">
-									<input class="tituloCoti" type='text' name='tituloCoti' placeholder="Título de Cotización - Compras" maxlength="100">
-								</div>
+								<div class="ui sub header">Unidad Medida</div>
+								<select class="ui dropdown simpleDropdown unidadMed" name="unidadMedida">
+									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
+								</select>
 							</div>
 						</div>
 						<div class="fields">

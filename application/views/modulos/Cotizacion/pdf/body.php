@@ -1,31 +1,31 @@
-<div style="text-align:justify">
+<div>
 	<table>
 		<tr>
-			<td style="text-align: justify; height:30px;"><b><?= $cabecera['cotizacion'] ?></b></td>
+			<td style="height:50px;"><b><?= $cabecera['cotizacion'] ?></b></td>
 		</tr>
 		<?php if (empty($cabecera['igv'])) :  ?>
 			<tr>
-				<td style="margin-left: 3px; padding-top: -2px; text-align: justify; height: 15px; color:#CE3A3A;"><b>No Incluye IGV</b></td>
+				<td style="margin-left: 3px; padding-top: -2px; height: 15px; color:#CE3A3A;"><b>No Incluye IGV</b></td>
 			</tr>
 		<?php endif; ?>
 		<tr>
-			<td style="text-align: justify; height: 20px;"><b>RUC: </b></td>
+			<td style="height: 20px;"><b>RUC: </b></td>
 			<td><?= RUC_VISUAL ?></td>
 		</tr>
 		<tr>
-			<td style="text-align: justify; height: 20px;"><b>ELABORADO: </b></td>
+			<td style="height: 20px;"><b>ELABORADO: </b></td>
 			<td>Área de Operaciones</td>
 		</tr>
 		<tr>
-			<td style="text-align: justify; height: 20px;"><b>CUENTA:</b></td>
-			<td style="text-align: justify; height: 20px;"><?= $cabecera['cuenta'] ?></td>
+			<td style="height: 20px;"><b>CUENTA:</b></td>
+			<td style="height: 20px;"><?= $cabecera['cuenta'] ?></td>
 		</tr>
 		<tr>
-			<td style="text-align: left; height: 20px;"><b>CENTRO DE COSTO:</b></td>
-			<td cstyle="text-align: justify; height: 20px;"><?= $cabecera['cuentaCentroCosto'] ?></td>
+			<td class="text-left" style="height: 20px;"><b>CENTRO DE COSTO:</b></td>
+			<td cstyle="height: 20px;"><?= $cabecera['cuentaCentroCosto'] ?></td>
 		</tr>
 		<tr>
-			<td style="text-align: justify; height: 20px;"><b>FECHA: </b></td>
+			<td style="height: 20px;"><b>FECHA: </b></td>
 			<td><?= ($cabecera['fecha']) ?></td>
 		</tr>
 
@@ -71,32 +71,32 @@
 				<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
 					<?php $col1 = 2; ?>
 					<tr style="background-color: #FFE598;">
-						<th style="color:black">ITEM</th>
-						<th style="color:black">DESCRIPCIÓN</th>
-						<th style="color:black">TOTAL</th>
+						<th>ITEM</th>
+						<th>DESCRIPCIÓN</th>
+						<th>TOTAL</th>
 					</tr>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
 					<?php $col1 = 8; ?>
 					<tr style="background-color: #FFE598;">
-						<th style="color:black">ITEM</th>
-						<th style="color:black">SUCURSAL</th>
-						<th style="color:black">RAZON SOCIAL</th>
-						<th style="color:black">TIPO ELEMENTO</th>
-						<th style="color:black">MARCA</th>
-						<th style="color:black">DETALLES DE SERVICIO</th>
-						<th style="color:black">CANTIDAD</th>
-						<th style="color:black">COSTO</th>
-						<th style="color:black">TOTAL</th>
+						<th>ITEM</th>
+						<th>SUCURSAL</th>
+						<th>RAZON SOCIAL</th>
+						<th>TIPO ELEMENTO</th>
+						<th>MARCA</th>
+						<th>DETALLES DE SERVICIO</th>
+						<th>CANTIDAD</th>
+						<th>COSTO</th>
+						<th>TOTAL</th>
 					</tr>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) :  ?>
 					<?php $col1 = 6; ?>
 					<tr style="background-color: #FFE598;">
-						<th style="color:black; width:5%;">ITEM</th>
-						<th style="color:black; width:65%; text-align:left;" colspan="4">DESCRIPCION</th>
-						<th style="color:black; width:15%; text-align:left;">CANTIDAD</th>
-						<th style="color:black; width:15%;">SUBTOTAL</th>
+						<th width="7%">ITEM</th>
+						<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
+						<th width="15%" class="text-center">CANTIDAD</th>
+						<th width="15%">SUBTOTAL</th>
 					</tr>
 				<?php endif; ?>
 			</thead>
@@ -115,22 +115,22 @@
 				<?php foreach ($datos as $key => $value) : ?>
 					<?php $cont++ ?>
 					<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $cont; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['sucursal']; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
-						<td style='text-align: center;' rowspan="1"><?= $value[0]['nombre']; ?></td>
-						<td style='text-align: center;' rowspan="1"><?= $value[0]['cantidad']; ?></td>
-						<td style='text-align: center;' rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
-						<td style='text-align: center;' rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= $cont; ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['sucursal']; ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
+						<td class="text-center" rowspan="1"><?= $value[0]['nombre']; ?></td>
+						<td class="text-center" rowspan="1"><?= $value[0]['cantidad']; ?></td>
+						<td class="text-center" rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+						<td class="text-center" rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
 					</tr>
 					<?php foreach ($value as $k => $v) : ?>
 						<?php if ($k != 0) :  ?>
 							<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-								<td style='text-align: center;' rowspan="1"><?= $v['nombre']; ?></td>
-								<td style='text-align: center;' rowspan="1"><?= $v['cantidad']; ?></td>
-								<td style='text-align: center;' rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
+								<td class="text-center" rowspan="1"><?= $v['nombre']; ?></td>
+								<td class="text-center" rowspan="1"><?= $v['cantidad']; ?></td>
+								<td class="text-center" rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
 							</tr>
 						<?php endif; ?>
 					<?php endforeach; ?>
@@ -139,26 +139,26 @@
 			<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
 				<?php $rowspan = 1; ?>
 				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-					<td style="text-align: center;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
-					<td class="bold" style="text-align: left; text-right bold;" rowspan="1"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
-					<td style="text-align: right;" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+					<td class="text-center" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
+					<td class="text-left bold" rowspan="1"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
+					<td class="text-right" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $k => $v) : ?>
 					<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-						<td style="text-align: left; text-right bold" rowspan="1"> <?= $v['nombre']; ?> </td>
+						<td class="text-left" rowspan="1"> <?= $v['nombre']; ?> </td>
 					</tr>
 				<?php endforeach; ?>
 			<?php endif; ?>
 			<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) :  ?>
 				<tr class="bg-gray">
-					<td style="text-align: center;"><?= $key + 1 ?></td>
-					<td style="text-align: left;" colspan="4">
+					<td class="text-center"><?= $key + 1 ?></td>
+					<td class="text-left" colspan="4">
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
-					<td style="text-align: left;">
+					<td class="text-center">
 						<?= verificarEmpty($row['cantidad'], 1) ?>
 					</td>
-					<td style="text-align: right;">
+					<td class="text-right">
 						<?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?>
 					</td>
 				</tr>
@@ -173,26 +173,26 @@
 					<?php endforeach; ?>
 					<tr style="background-color: #F6FAFD;">
 						<td></td>
-						<td style="text-align: right;">Talla</td>
+						<td class="text-right bold">Talla</td>
 						<?php if (count($dataGenero) == 1) :  ?>
-							<td colspan="3" style="text-align: center;">Cantidad</td>
+							<td colspan="3" class="text-center bold">Cantidad</td>
 						<?php else : ?>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td style="text-align: center;"><?= $vg; ?></td>
+								<td class="text-center bold"><?= $vg; ?></td>
 							<?php endforeach; ?>
 							<?php if (3 - count($dataGenero) > 0) :  ?>
-								<td colspan="<?= 3 - count($dataGenero); ?>"></td>
+								<td colspan="<?= 3 - count($dataGenero); ?>" class="bold"></td>
 							<?php endif; ?>
 						<?php endif; ?>
 						<td></td>
 						<td></td>
 					</tr>
 					<?php foreach ($dataTalla as $kt => $vt) : ?>
-						<tr>
+						<tr style="background-color: #F6FAFD;">
 							<td></td>
-							<td style="text-align: right;"><?= $vt; ?></td>
+							<td class="text-right"><?= $vt; ?></td>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
-								<td style="text-align: center;"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
+								<td class="text-center"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
 							<?php endforeach; ?>
 							<?php if (3 - count($dataGenero) > 0) :  ?>
 								<td colspan="<?= 3 - count($dataGenero); ?>"></td>
@@ -228,7 +228,6 @@
 						<p>TOTAL</p>
 					</td>
 					<td class="text-right bold" style="color:black">
-						<!-- <p><?= moneda($cabecera['total_fee_igv'])  ?></p> -->
 						<p><?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc'])); ?></p>
 					</td>
 				</tr>
@@ -242,10 +241,10 @@
 		<?php if (!empty($anexos)) :  ?>
 			<h3>Anexos</h3>
 			<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
-				<? foreach ($anexos as $anexo) { ?>
+				<?php foreach ($anexos as $anexo) : ?>
 					<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>">
-						<img height="520" src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+						<img height="290" src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 					</a>
-				<? } ?>
+				<?php endforeach; ?>
 			</div>
 		<?php endif; ?>

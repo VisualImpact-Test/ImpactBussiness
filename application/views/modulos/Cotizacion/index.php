@@ -35,7 +35,7 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarCotizacion" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
 				</button>
-				<a href="../Cotizacion/viewRegistroCotizacion"  class="btn btn-outline-trade-visual border-0">
+				<a href="../Cotizacion/viewRegistroCotizacion" class="btn btn-outline-trade-visual border-0">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</a>
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="" id="filtrarReporte" title="Generar oper">
@@ -47,7 +47,6 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0 btn-verOrdenesCompra" data-url="" title="Ver órdenes de compra">
 					<strong>OC</strong>
 				</button>
-
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
@@ -64,6 +63,12 @@
 							<span class="tooltiptext">Centro Costo</span>
 							<select class="form-control form-control-sm ui childDependiente" name="cuentaCentroCosto" id="cuentaCentroCosto">
 								<?= htmlSelectOptionArray2(['query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Usuario Reg</span>
+							<select class="form-control form-control-sm ui childDependiente" name="idUsuarioReg">
+								<?= htmlSelectOptionArray2(['query' => $usuario, 'id' => 'idUsuario', 'value' => 'user_t', 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">

@@ -69,7 +69,6 @@
 								<input type="checkbox" class="custom-control-input" id="igvOrden" name="igvOrden">
 								<label class="custom-control-label" for="igvOrden"></label>
 							</div>
-							<!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
 						</div>
 
 					</div>
@@ -92,6 +91,7 @@
 						<div class="three wide field">
 							<div class="ui sub header">Lugar de entrega</div>
 							<select class="ui dropdown simpleDropdown almacen" name="idAlmacen" onchange="SolicitudCotizacion.mostrarLugarEntrega(this)">
+								<option>-</option>
 								<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $almacenes, 'id' => 'idAlmacen', 'value' => 'nombre', 'class' => 'text-titlecase', 'data-option' => ['direccion']]); ?>
 							</select>
 						</div>
@@ -111,7 +111,6 @@
 								<input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion">
 								<label class="custom-control-label" for="mostrar_observacion"></label>
 							</div>
-							<!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
 						</div>
 						<div class="two wide field">
 							<div class="ui sub header">Mostrar Imagenes</div>
@@ -119,7 +118,6 @@
 								<input type="checkbox" class="custom-control-input" id="mostrar_imagenes" name="mostrar_imagenes">
 								<label class="custom-control-label" for="mostrar_imagenes"></label>
 							</div>
-							<!-- <input name="igvOrden" class="onlyNumbers" data-max='100' data-min='0' type="text" placeholder="Escriba aquí" value="<?= (IGV * 100) ?>" patron="requerido"> -->
 						</div>
 						<div class="two wide field">
 							<div class="ui sub header">Mostrar Imagenes de Cotización</div>
@@ -212,9 +210,29 @@
 								<div class="disabled disabled-visible ui form attached fluid segment my-3 <?= $rowDetalle['tipoItemForm'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 									<h4 class="ui dividing header">SUB ITEMS</h4>
 									<div class="content-body-sub-item">
-										<?
-										if (!empty($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']])) :
-											foreach ($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+										<?php if (!empty($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']])) : ?>
+											<?php $var1 = $subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']][0]['sucursal']; ?>
+											<?php $var2 = $subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']][0]['razonSocial']; ?>
+											<?php $var3 = $subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']][0]['tipoElemento']; ?>
+											<?php $var4 = $subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']][0]['marca']; ?>
+											<?php $costoTotal = 0; ?>
+											<?php foreach ($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+												<?php if (!($var1 == $dataSubItem['sucursal'] && $var2 == $dataSubItem['razonSocial'] && $var3 == $dataSubItem['tipoElemento'] && $var4 == $dataSubItem['marca'])) :  ?>
+													<?php $var1 = $dataSubItem['sucursal']; ?>
+													<?php $var2 = $dataSubItem['razonSocial']; ?>
+													<?php $var3 = $dataSubItem['tipoElemento']; ?>
+													<?php $var4 = $dataSubItem['marca']; ?>
+													<div class="fields">
+														<div class="field thirteen wide">
+															<label class="text-right">SUBTOTAL</label>
+														</div>
+														<div class="field three wide">
+															<label class="text-center"><?= $costoTotal ?></label>
+														</div>
+													</div>
+													<?php $costoTotal = 0; ?>
+												<?php endif; ?>
+												<?php $costoTotal += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
 												<input type="hidden" name="idCotizacionDetalleSub[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 												<div class="fields body-sub-item body-sub-item-servicio">
 													<div class="three wide field">
@@ -245,24 +263,18 @@
 														<div class="ui sub header">Precio Unitario </div>
 														<input class="precioUnitarioSubItem" name="precioUnitarioSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
 													</div>
-													<!-- <div class="eleven wide field">
-														<div class="ui sub header">Sub item </div>
-														<input class="nombreSubItem" name="nombreSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
-													</div>
-													<div class="five wide field">
-														<div class="ui sub header">Cantidad</div>
-														<input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
-													</div> -->
 												</div>
-										<?
-											endforeach;
-										endif;
-										?>
+											<?php endforeach; ?>
+											<div class="fields">
+												<div class="field thirteen wide">
+													<label class="text-right">SUBTOTAL</label>
+												</div>
+												<div class="field three wide">
+													<label class="text-center"><?= $costoTotal ?></label>
+												</div>
+											</div>
+										<?php endif; ?>
 									</div>
-									<!-- <button type="button" class="ui basic button btn-add-sub-item">
-                                    <i class="plus icon"></i>
-                                    Agregar
-                                </button> -->
 								</div>
 
 								<!-- Distribucion -->
@@ -316,8 +328,6 @@
 										<div class="ui sub header">Subtotal</div>
 										<div class="ui right labeled input">
 											<label for="amount" class="ui label teal">S/</label>
-											<!-- <input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda($rowDetalle['subtotalForm']) ?>" readonly>
-                                            <input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= $rowDetalle['subtotalForm'] ?>" placeholder="0.00" readonly patron="requerido"> -->
 											<input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda(floatval($rowDetalle['cantidadForm']) * floatval($rowDetalle['costoForm'])) ?>" readonly>
 											<input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= floatval($rowDetalle['cantidadForm']) * floatval($rowDetalle['costoForm']) ?>" placeholder="0.00" readonly patron="requerido">
 										</div>

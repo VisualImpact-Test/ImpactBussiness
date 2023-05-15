@@ -161,6 +161,7 @@ class M_Item extends MY_Model
 				, a_l.nombre AS equivalenteLogistica
 				, a.estado
 				, a.idUnidadMedida
+				, a.idCuenta
 			FROM compras.item a
 			JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
@@ -210,7 +211,7 @@ class M_Item extends MY_Model
 		)
 		select 
 			i.idItem as value,
-			i.nombre as label,
+			i.nombre + ' ' + i.caracteristicas as label,
 			it.costo,
 			it.idProveedor,
 			pr.razonSocial as proveedor,
@@ -227,7 +228,8 @@ class M_Item extends MY_Model
 			ISNULL(i.flagCuenta,0) flagCuenta,
 			CASE WHEN ISNULL(DATEDIFF(DAY,it.fechaVigencia,@fechaHoy),0) > 15 THEN 1 ELSE 0 END cotizacionInterna,
 			i.caracteristicas,
-			ISNULL(img.cantidadImagenes, 0) as cantidadImagenes
+			ISNULL(img.cantidadImagenes, 0) as cantidadImagenes,
+			i.idUnidadMedida
 		from compras.item i
 		JOIN listTarifario it on it.idItem = i.idItem and it.ntarifario=1
 		LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor

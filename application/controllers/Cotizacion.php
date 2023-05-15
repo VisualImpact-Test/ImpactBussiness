@@ -29,8 +29,6 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/select.dataTables.min'
 		);
 		$config['js']['script'] = array(
-			// 'assets/libs/datatables/responsive.bootstrap4.min',
-			// 'assets/custom/js/core/datatables-defaults',
 			'assets/libs/select2/4.0.13/js/select2',
 			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
@@ -47,6 +45,10 @@ class Cotizacion extends MY_Controller
 		$config['data']['message'] = 'Lista de Cotizacions';
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
+		$config['data']['usuario'] = $this->db->get_where('sistema.usuario')->result_array();
+		foreach ($config['data']['usuario'] as $k => $v) {
+			$config['data']['usuario'][$k]['user_t'] = $v['nombres'] . ' ' . $v['apePaterno'] . ' ' . $v['apeMaterno'];
+		}
 		$config['view'] = 'modulos/Cotizacion/index';
 
 		$this->view($config);
@@ -159,7 +161,6 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-
 
 		$itemServicio =  $this->model_item->obtenerItemServicio();
 		foreach ($itemServicio as $key => $row) {
@@ -440,7 +441,8 @@ class Cotizacion extends MY_Controller
 		$post['tipoItemForm'] = checkAndConvertToArray($post['tipoItemForm']);
 		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
 		$post['idEstadoItemForm'] = checkAndConvertToArray($post['idEstadoItemForm']);
-		$post['tituloCoti'] = checkAndConvertToArray($post['tituloCoti']);
+		// $post['tituloCoti'] = checkAndConvertToArray($post['tituloCoti']);
+		$post['unidadMedida'] = checkAndConvertToArray($post['unidadMedida']);
 		$post['caracteristicasItem'] = checkAndConvertToArray($post['caracteristicasItem']);
 		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
 		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
@@ -470,6 +472,7 @@ class Cotizacion extends MY_Controller
 						'nombre' => trim($nameItem),
 						'caracteristicas' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 						'idItemTipo' => $post['tipoItemForm'][$k],
+						'idUnidadMedida' => $post['unidadMedida'][$k],
 					];
 
 					$dataItem['tabla'] = 'compras.item';
@@ -544,7 +547,6 @@ class Cotizacion extends MY_Controller
 						'cantidad' => $post["cantidadTextil[$k]"],
 						'genero' => $post["generoSubItem[$k]"]
 					]);
-
 
 					break;
 
@@ -682,7 +684,6 @@ class Cotizacion extends MY_Controller
 		]);
 		$detalle = $this->db->get('compras.cotizacionDetalle')->result_array();
 
-
 		return true;
 	}
 
@@ -743,8 +744,6 @@ class Cotizacion extends MY_Controller
 		$this->email->cc($cc);
 
 		$data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
-
-
 
 		foreach ($data as $key => $row) {
 			$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
@@ -868,10 +867,14 @@ class Cotizacion extends MY_Controller
 			$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 
 			require APPPATH . '/vendor/autoload.php';
+			$orientation = '';
+			if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
+				$orientation = 'L';
+			}
 			$mpdf = new \Mpdf\Mpdf([
 				'mode' => 'utf-8',
 				'setAutoTopMargin' => 'stretch',
-				'orientation' => 'L',
+				'orientation' => $orientation,
 				'autoMarginPadding' => 0,
 				'bleedMargin' => 0,
 				'crossMarkMargin' => 0,
@@ -923,7 +926,6 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['cabecera']['total'] = $total = $post['total'];
 			$dataParaVista['cabecera']['total_fee'] = $post['total_fee'];
 			$dataParaVista['cabecera']['total_fee_igv'] = $post['total_fee_igv'];
-
 
 			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN'], true);
 			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
@@ -1136,7 +1138,6 @@ class Cotizacion extends MY_Controller
 			'assets/custom/css/floating-action-button'
 		);
 		$config['js']['script'] = array(
-			// 'assets/custom/js/core/datatables-defaults',
 			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
@@ -1163,6 +1164,7 @@ class Cotizacion extends MY_Controller
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['flagCuenta'] = $row['flagCuenta'];
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['caracteristicas'] = $row['caracteristicas'];
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cantidadImagenes'] = $row['cantidadImagenes'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idUnidadMedida'] = $row['idUnidadMedida'];
 			}
 			foreach ($data['itemServicio'] as $k => $r) {
 				$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
@@ -1184,6 +1186,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
+		$config['data']['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
 		$config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 		$this->view($config);
 	}
@@ -1217,8 +1220,6 @@ class Cotizacion extends MY_Controller
 			'assets/custom/css/floating-action-button'
 		);
 		$config['js']['script'] = array(
-			// 'assets/libs/datatables/responsive.bootstrap4.min',
-			// 'assets/custom/js/core/datatables-defaults',
 			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
@@ -1235,7 +1236,6 @@ class Cotizacion extends MY_Controller
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-
 
 		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
@@ -1363,7 +1363,6 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
 
 		$insertOper = [
 			'requerimiento' => !empty($post['requerimiento']) ? $post['requerimiento'] : NULL,
@@ -1508,6 +1507,14 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
 		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
+		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
+			$dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
+
+			foreach ($dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] as $kd => $vd) {
+				$dataParaVista['detalleSubTalla'][$v['idCotizacionDetalle']][$vd['talla']][$vd['genero']] = $vd;
+			}
+		}
+
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',
@@ -1592,7 +1599,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
-		
+
 		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
 			foreach ($ordenCompra as $key => $value) {
 				$dd = $this->model->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $value['idProveedor']])->result_array();
@@ -1618,7 +1625,7 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
-		
+
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',
@@ -1804,7 +1811,6 @@ class Cotizacion extends MY_Controller
 
 		$data['anexos_arreglo'] = [];
 		$data['anexos'] = [];
-
 
 		if (!empty($post['anexo-file'])) {
 
@@ -2289,16 +2295,11 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
-
 	public function viewFormularioDuplicar($idCotizacion = '')
 	{
-
-
-
 		if (empty($idCotizacion)) {
 			redirect('Cotizacion', 'refresh');
 		}
-
 
 		$config = array();
 		$config['nav']['menu_active'] = '131';
@@ -2462,8 +2463,6 @@ class Cotizacion extends MY_Controller
 		$insert = $this->model->actualizarCotizacion($data);
 
 		$data = [];
-
-
 		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
 		$post['nameItem'] = checkAndConvertToArray($post['nameItem']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
@@ -2497,8 +2496,6 @@ class Cotizacion extends MY_Controller
 			];
 
 			$idItem = $this->model_item->actualizarItem($dataItem);
-
-
 			if (!empty($item)) {
 				$idItem = $item['idItem'];
 				$itemsSinProveedor[$idItem] = true;
@@ -2561,7 +2558,6 @@ class Cotizacion extends MY_Controller
 		foreach ($operDetalle as $row) {
 			$dataParaVista['cotizaciones'][$row['idOper']][] = $row['cotizacionCodNombre'];
 		}
-
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -2795,8 +2791,6 @@ class Cotizacion extends MY_Controller
 				}
 			}
 
-
-
 			if (!empty($post["file-name[$k]"])) {
 
 				if (!empty($post["idCotizacionDetalleArchivo2[$k]"])) {
@@ -2810,7 +2804,6 @@ class Cotizacion extends MY_Controller
 
 					]);
 				}
-
 
 				if (empty($post["idCotizacionDetalleArchivo2[$k]"])) {
 
@@ -2837,7 +2830,6 @@ class Cotizacion extends MY_Controller
 				// 	}
 				// }
 
-
 				foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
 					if (empty($archivo['idCotizacionDetalleArchivo'])) {
 
@@ -2857,9 +2849,6 @@ class Cotizacion extends MY_Controller
 				}
 			}
 		}
-
-
-
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 
@@ -2897,10 +2886,6 @@ class Cotizacion extends MY_Controller
 			'estado' => true,
 		];
 		$insertCotizacionHistorico = $this->model->insertar(['tabla' => TABLA_HISTORICO_ESTADO_COTIZACION, 'insert' => $insertCotizacionHistorico]);
-
-
-
-
 
 		if (!$insert['estado'] || !$insertDetalle || !$estadoEmail) {
 			$result['result'] = 0;
@@ -2944,7 +2929,6 @@ class Cotizacion extends MY_Controller
 			$result['result'] = 0;
 			$result['msg']['content'] = getMensajeGestion('anulacionErronea');
 		}
-
 
 		echo json_encode($result);
 	}

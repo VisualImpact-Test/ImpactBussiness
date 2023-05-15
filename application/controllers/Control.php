@@ -250,7 +250,6 @@ class Control extends MY_Controller{
 		echo json_encode($result);
 	}
 
-
 	public function guardar_peticion_actualizar_visitas(){
 		$result = $this->result;
 			$input = json_decode($this->input->post('data'), true);
@@ -318,9 +317,6 @@ class Control extends MY_Controller{
 	public function bat_peticion_actualizar_visitas(){
 		execInBackground( RUTA_BAT.'carga_masiva procesar_peticiones_actualizar_visitas',$_POST);
 	}
-
-
-
 	
 }
 ?>

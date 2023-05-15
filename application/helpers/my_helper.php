@@ -1951,8 +1951,7 @@ function moneyToText($params = [])
 
 function completarFilasPdf($params)
 {
-
-	$filas = count($params['data']);
+	$filas = is_array($params['data']) ? count($params['data']) : $params['data'];
 	$filasRequeridas = $params['filas'];
 	$filasAdicionales = !empty($params['filasAdicionales']) ? ($params['filasAdicionales'] + $filas) : 0;
 	$columnas = $params['columnas'];

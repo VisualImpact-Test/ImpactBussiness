@@ -21,7 +21,7 @@
 	}
 </style>
 <div class="ui form attached fluid segment p-4 <?= !empty($disabled) ? 'disabled disabled-visible' : '' ?>">
-	<form class="ui form" role="form" id="formRegistroCotizacion" method="post">
+	<form class="ui form" role="form" id="formRegistroCotizacion" method="post" autocomplete="off">
 		<input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
 		<h4 class="ui dividing header">DATOS DE LA COTIZACIÓN</h4>
 		<div class="fields disabled disabled-visible ">
@@ -351,15 +351,52 @@
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
 								<div class="content-body-sub-item divItemServicio">
-									<?
-									if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) :
-										foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+									<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']])) : ?>
 
+										<?php $var1 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['sucursal']; ?>
+										<?php $var2 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['razonSocial']; ?>
+										<?php $var3 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['tipoElemento']; ?>
+										<?php $var4 = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']][0]['marca']; ?>
+										<?php $costoTotal = 0; ?>
+
+										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
+											<?php if (!($var1 == $dataSubItem['sucursal'] && $var2 == $dataSubItem['razonSocial'] && $var3 == $dataSubItem['tipoElemento'] && $var4 == $dataSubItem['marca'])) :  ?>
+												<?php $var1 = $dataSubItem['sucursal']; ?>
+												<?php $var2 = $dataSubItem['razonSocial']; ?>
+												<?php $var3 = $dataSubItem['tipoElemento']; ?>
+												<?php $var4 = $dataSubItem['marca']; ?>
+												<div class="fields">
+													<div class="field thirteen wide">
+														<label class="text-right">SUBTOTAL</label>
+													</div>
+													<div class="field three wide">
+														<label class="text-center"><?= $costoTotal; ?></label>
+													</div>
+												</div>
+												<?php $costoTotal = 0; ?>
+											<?php endif; ?>
+											<?php $costoTotal += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
 											<div class="fields body-sub-item body-sub-item-servicio">
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 												<div class="five wide field">
-													<div class="ui sub header">Sub item </div>
-													<input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
+													<div class="ui sub header">Sucursal</div>
+													<input class="marcaSubItem" name="sucursalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Sucursal" value="<?= !empty($dataSubItem['sucursal']) ? $dataSubItem['sucursal'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Razón Social</div>
+													<input class="marcaSubItem" name="razonSocialSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Razón Social" value="<?= !empty($dataSubItem['razonSocial']) ? $dataSubItem['razonSocial'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Tipo Elemento</div>
+													<input class="marcaSubItem" name="tipoElementoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tipo Elemento" value="<?= !empty($dataSubItem['tipoElemento']) ? $dataSubItem['tipoElemento'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Marca</div>
+													<input class="marcaSubItem" name="marcaSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Marca" value="<?= !empty($dataSubItem['marca']) ? $dataSubItem['marca'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Descripción</div>
+													<input class="nombreSubItem" name="nombreSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
 												</div>
 												<div class="five wide field">
 													<div class="ui sub header">Cantidad</div>
@@ -374,10 +411,16 @@
 													<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal']) ?>" readonly>
 												</div>
 											</div>
-									<?
-										endforeach;
-									endif;
-									?>
+										<?php endforeach; ?>
+										<div class="fields">
+											<div class="field thirteen wide">
+												<label class="text-right">SUBTOTAL</label>
+											</div>
+											<div class="field three wide">
+												<label class="text-center"><?= $costoTotal; ?></label>
+											</div>
+										</div>
+									<?php endif; ?>
 								</div>
 							</div>
 

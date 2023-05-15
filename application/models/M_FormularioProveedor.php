@@ -222,7 +222,6 @@ class M_FormularioProveedor extends MY_Model
 			AND correoContacto like '%{$params['email']}%'
 			{$filtros}
 		";
-
 		return $this->db->query($sql);
 	}
 	public function obtenerCotizacionDetalleProveedorDetalleArchivos($params = [])

@@ -107,7 +107,6 @@ class CotizacionEfectiva extends MY_Controller
 
         $update = $this->model->actualizarCotizacion($data);
 
-
         if(!$update['estado']){
             $result['result'] = 0;
             $result['msg']['title'] = 'Finalizar CotizacionEfectiva';

@@ -18,7 +18,7 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>" rowspan="2">Unidad de Negocio</td>
-			<td class="text-center bold" width="<?= $w2 ?>" rowspan="2"><?= verificarEmpty($cuentas, 3) ?></td>
+			<td class="text-center" width="<?= $w2 ?>" rowspan="2"><?= verificarEmpty($cuentas, 3) ?></td>
 			<td class="text-left bold" width="<?= $w3 ?>">PO Cliente</td>
 			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
 		</tr>
@@ -28,8 +28,8 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
-			<td class="text-center bold" width="<?= $w2 ?>"><?= verificarEmpty($centrosCosto, 3) ?></td>
-			<td class="text-left bold" width="<?= $w3 ?>">Fecha:</td>
+			<td class="text-center" width="<?= $w2 ?>"><?= verificarEmpty($centrosCosto, 3) ?></td>
+			<td class="text-left bold" width="<?= $w3 ?>">Fecha</td>
 			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['fechaRegistro'], 3) ?></td>
 		</tr>
 		<tr>
@@ -78,62 +78,95 @@
 		<tbody style="border:1px solid black;">
 			<?php $total = 0; ?>
 			<?php $igv_total = 0; ?>
+			<?php $indexT = 0 ?>
 			<?php foreach ($detalle as $k => $row) : ?>
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo']; ?>
 				<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
-				<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0 /*IGV */)); ?>
-				<?php
-
-				$mostrarSubDetalle = false;
-				$rowS = 1;
-				if ($row['idItemTipo'] == COD_TEXTILES['id']) {
-					$mostrarSubDetalle = true;
-					$rowS = count($subDetalleItem[$row['idItem']]) + 1;
-				}
-
-				?>
-				<tr style="border-bottom: none;">
-					<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
-					<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
-					<?php if ($incluirImagen) : ?>
-						<td rowspan="<?= $rowS ?>">
-							<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
-								<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
-									<p style="text-align:center;"><img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
-								<?php endforeach; ?>
-							<?php endif; ?>
-						</td>
-					<?php endif; ?>
-					<?php if ($mostrarSubDetalle) :  ?>
-						<td class="text-center bold">CARACTERISTICA</td>
-						<td class="text-center bold">TALLA</td>
-						<td class="text-center bold">SEXO</td>
-						<td class="text-center bold">CANTIDAD</td>
-					<?php else : ?>
-						<td class="text-left" colspan="4">
-							<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
-						</td>
-					<?php endif; ?>
-					<td class="text-right" rowspan="<?= $rowS ?>">
-						<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
-					</td>
-					<td class="text-right" rowspan="<?= $rowS ?>">
-						<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
-					</td>
-				</tr>
-				<?php if ($mostrarSubDetalle) :  ?>
-					<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
-						<tr>
-							<?php if ($km == 0) :  ?>
-								<td class="text-left" rowspan="<?= $rowS - 1 ?>">
-									<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+				<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($row['igv']) ? ($row['igv'] / 100) : 0)); ?>
+				<?php $mostrarSubDetalle = false; ?>
+				<?php $rowS = 1; ?>
+				<?php if ($row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
+					<?php $mostrarSubDetalle = true; ?>
+					<?php $rowS = count($subDetalleItem[$row['idItem']]) + 1; ?>
+				<?php endif; ?>
+				<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+					<?php $v1 = $subDetalleItem[$row['idItem']][0]['sucursal'] ?>
+					<?php $v2 = $subDetalleItem[$row['idItem']][0]['razonSocial'] ?>
+					<?php $v3 = $subDetalleItem[$row['idItem']][0]['tipoElemento'] ?>
+					<?php $v4 = $subDetalleItem[$row['idItem']][0]['marca'] ?>
+					<?php $costoTotal = 0; ?>
+					<?php foreach ($subDetalleItem[$row['idItem']] as $ks => $vs) : ?>
+						<?php if (!($v1 == $vs['sucursal'] && $v2 == $vs['razonSocial'] && $v3 == $vs['tipoElemento'] && $v4 == $vs['marca'])) :  ?>
+							<tr>
+								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
+								<td class="text-center"><?= '1'; ?></td>
+								<td class="text-left" colspan="4">
+									<?= $v2 . '_' . $v3 . '_' . $v4 . '_' . $v1 ?>
 								</td>
-							<?php endif; ?>
-							<td class="text-center"><?= $vm['talla']; ?></td>
-							<td class="text-center"><?= RESULT_GENERO[$vm['genero']]; ?></td>
-							<td class="text-center"><?= $vm['cantidad']; ?></td>
-						</tr>
+								<td class="text-center"><?= $costoTotal; ?></td>
+								<td class="text-center"><?= $costoTotal; ?></td>
+							</tr>
+							<?php $v1 = $vs['sucursal']; ?>
+							<?php $v2 = $vs['razonSocial']; ?>
+							<?php $v3 = $vs['tipoElemento']; ?>
+							<?php $v4 = $vs['marca']; ?>
+							<?php $costoTotal = 0; ?>
+						<?php endif; ?>
+						<?php $costoTotal += (floatval($vs['cantidad']) * floatval($vs['costo'])); ?>
 					<?php endforeach; ?>
+					<tr>
+						<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
+						<td class="text-center"><?= '1'; ?></td>
+						<td class="text-left" colspan="4">
+							<?= $v2 . '_' . $v3 . '_' . $v4 . '_' . $v1 ?>
+						</td>
+						<td class="text-center"><?= $costoTotal; ?></td>
+						<td class="text-center"><?= $costoTotal; ?></td>
+					</tr>
+				<?php else :  ?>
+					<tr style="border-bottom: none;">
+						<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
+						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
+						<?php if ($incluirImagen) : ?>
+							<td rowspan="<?= $rowS ?>">
+								<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
+									<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+										<p style="text-align:center;"><img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</td>
+						<?php endif; ?>
+						<?php if ($mostrarSubDetalle) :  ?>
+							<td class="text-center bold">CARACTERISTICA</td>
+							<td class="text-center bold">TALLA</td>
+							<td class="text-center bold">SEXO</td>
+							<td class="text-center bold">CANTIDAD</td>
+						<?php else : ?>
+							<td class="text-left" colspan="4">
+								<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+							</td>
+						<?php endif; ?>
+						<td class="text-right" rowspan="<?= $rowS ?>">
+							<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
+						</td>
+						<td class="text-right" rowspan="<?= $rowS ?>">
+							<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
+						</td>
+					</tr>
+					<?php if ($mostrarSubDetalle) :  ?>
+						<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
+							<tr>
+								<?php if ($km == 0) :  ?>
+									<td class="text-left" rowspan="<?= $rowS - 1 ?>">
+										<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+									</td>
+								<?php endif; ?>
+								<td class="text-center"><?= $vm['talla']; ?></td>
+								<td class="text-center"><?= RESULT_GENERO[$vm['genero']]; ?></td>
+								<td class="text-center"><?= $vm['cantidad']; ?></td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
 		</tbody>
