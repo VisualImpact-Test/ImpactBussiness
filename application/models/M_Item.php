@@ -189,7 +189,6 @@ class M_Item extends MY_Model
 		$filtros = "";
 		$filtros .= !empty($params['logistica']) ? " AND ISNULL(a.idItemLogistica, 0 ) <> 0" : "";
 
-
 		$sql = "
 		DECLARE @fechaHoy DATE = GETDATE();
 		WITH listTarifario AS (
@@ -263,7 +262,8 @@ class M_Item extends MY_Model
 		return $result;
 	}
 
-	public function obtenerUnidadMedida(){
+	public function obtenerUnidadMedida()
+	{
 		$sql = "
 			SELECT
 				idUnidadMedida id, nombre value
@@ -301,12 +301,10 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
-
 	public function validarExistenciaItemMasivo($params = array())
 	{
 		$filtros = "";
 		$nombre = "";
-
 
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
 
@@ -358,15 +356,12 @@ class M_Item extends MY_Model
 			}
 		}
 
-
-
 		if (!empty($insertArchivos)) {
 			$query = $this->db->insert_batch('compras.itemImagen', $insertArchivos);
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 		}
 		// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
-
 
 		return $this->resultado;
 	}
@@ -389,10 +384,6 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
-
-
-
-
 
 	public function actualizarItem($params = [])
 	{
@@ -421,11 +412,14 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
-	
-	public function obtenerItemsCuenta($idCuenta,$idArticulo=null){
-		$filtro='';
-		if(!empty($idArticulo)){ $filtro ='  AND  a.idArticulo='.$idArticulo; }
-		$sql ="
+
+	public function obtenerItemsCuenta($idCuenta, $idArticulo = null)
+	{
+		$filtro = '';
+		if (!empty($idArticulo)) {
+			$filtro = '  AND  a.idArticulo=' . $idArticulo;
+		}
+		$sql = "
 		SELECT DISTINCT
 				a.idArticulo AS value
 			, ISNULL(a.codigo + ' - ','') + a.nombre AS label
@@ -434,9 +428,8 @@ class M_Item extends MY_Model
 		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
-		WHERE mc.idCuenta='".$idCuenta."'  $filtro
+		WHERE mc.idCuenta='" . $idCuenta . "'  $filtro
 		";
 		return $query = $this->db->query($sql);
-
-	} 
+	}
 }

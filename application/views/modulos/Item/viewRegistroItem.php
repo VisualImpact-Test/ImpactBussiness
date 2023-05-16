@@ -4,12 +4,11 @@
 	}
 </style>
 <div class="ui form attached fluid segment p-4">
-	<form class="ui form" role="form" id="formRegistroItems" method="post">
-		<h4 class="ui dividing header">DETALLE DE LOS ITEMS
-		</h4>
+	<form class="ui form" role="form" id="formRegistroItems" method="post" autocomplete="off">
+		<h4 class="ui dividing header">DETALLE DE LOS ITEMS</h4>
 		<div class="default-item">
 			<div class="ui segment body-item nuevo">
-				<div class="ui right floated header">
+				<!-- <div class="ui right floated header">
 					<div class="ui icon menu">
 						<a class="item btn-bloquear-detalle-item" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 							<i class="lock icon"></i>
@@ -18,16 +17,15 @@
 							<i class="trash icon"></i>
 						</a>
 					</div>
-				</div>
+				</div> -->
 				<div class="ui left floated header">
 					<span class="ui medium text ">Item N. <span class="title-n-detalle">00001</span></span>
 				</div>
 				<div class="ui clearing divider"></div>
 				<div class="ui grid">
-					<div class="sixteen wide tablet twelve wide computer column">
+					<div class="sixteen wide tablet wide computer column">
 						<div class="fields">
-
-							<div class="six wide field">
+							<div class="four wide field">
 								<div class="ui sub header">Nombre</div>
 								<div class="ui-widget">
 									<div class="ui icon input w-100">
@@ -35,17 +33,66 @@
 									</div>
 								</div>
 							</div>
-							<div class="five wide field">
+							<div class="four wide field">
 								<div class="ui sub header">Tipo Item</div>
 								<select class="ui dropdown simpleDropdown tipoArticulo" id="tipo" name="tipo" patron="requerido">
 									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoItem, 'class' => 'text-titlecase']); ?>
 								</select>
 							</div>
-							<div class="five wide field">
+							<div class="four wide field">
 								<div class="ui sub header">Características</div>
 								<div class="ui right labeled input w-100">
 									<input type='text' class=" <?= (!empty($caracteristicasItem)) ? "disabled" : "" ?>" id="caracteristicas" name="caracteristicas" patron="requerido" value="">
 								</div>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Marca</div>
+								<select name="marca" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+						</div>
+						<div class="fields">
+							<div class="four wide field">
+								<div class="ui sub header">Categoria</div>
+								<select name="categoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Subcategoria</div>
+
+								<select name="subcategoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $subcategoriaItem, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Unidad Medida</div>
+								<select class="form-control" name="unidadMedida" id="unidadMedida">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="four wide field itemLogisticaDiv">
+								<div class="ui sub header">Equivalente en logistica</div>
+								<div class="ui action input">
+									<input class="form-control itemLogistica" id="equivalente" name="equivalente" placeholder="Buscar " autocomplete="off">
+									<a class="ui button" onclick="Cotizacion.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></a>
+								</div>
+								<input class="d-none codItemLogistica" name="idItemLogistica">
+							</div>
+						</div>
+						<div class="fields">
+							<div class="four wide field">
+								<div class="ui sub header">Cuenta</div>
+								<select class="ui dropdown parentDependiente centro-visible" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
+									<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Centro Costo</div>
+								<select class="ui dropdown clearable semantic-dropdown centro-ocultado" multiple="" name="centroCosto" id="cuentaCentroCostoForm">
+									<?= htmlSelectOptionArray2(['title' => 'TODAS LOS CENTROS DE COSTO', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
+								</select>
 							</div>
 						</div>
 						<div class="fields">
@@ -83,60 +130,6 @@
 							</div>
 						</div>
 					</div>
-					<div class="sixteen wide tablet four wide computer column">
-						<div class="fields">
-							<div class="sixteen wide field">
-								<div class="ui sub header">Marca</div>
-
-								<select name="marca" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
-									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $marcaItem, 'class' => 'text-titlecase']); ?>
-								</select>
-							</div>
-						</div>
-						<div class="fields">
-							<div class="sixteen wide field">
-								<div class="ui sub header">Categoria</div>
-
-								<select name="categoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
-									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $categoriaItem, 'class' => 'text-titlecase']); ?>
-								</select>
-							</div>
-						</div>
-						<div class="fields">
-							<div class="sixteen wide field">
-								<div class="ui sub header">Subcategoria</div>
-
-								<select name="subcategoria" class="ui fluid search clearable dropdown dropdownSingleAditions" patron="requerido">
-									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $subcategoriaItem, 'class' => 'text-titlecase']); ?>
-								</select>
-							</div>
-						</div>
-
-						<div class="fields">
-							<div class="sixteen wide field itemLogisticaDiv">
-								<div class="ui sub header">Equivalente en logistica</div>
-								<div class="ui action input">
-									<input class="form-control itemLogistica" id="equivalente" name="equivalente" placeholder="Buscar " autocomplete="off">
-									<a class="ui button" onclick="Cotizacion.editItemLogisticaValue(this);"><i class="fa fa-edit"></i></a>
-								</div>
-								<input class="d-none codItemLogistica" name="idItemLogistica">
-							</div>
-						</div>
-
-						<div class="sixteen wide field">
-							<div class="ui sub header">Unidad Medida</div>
-							<select class="form-control" name="unidadMedida" id="unidadMedida">
-								<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase']); ?>
-							</select>
-						</div>
-						<div class="sixteen wide field">
-							<div class="ui sub header">Cuenta</div>
-							<select class="form-control" name="cuenta" id="cuenta">
-								<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
-							</select>
-						</div>
-					</div>
-
 				</div>
 			</div>
 		</div>

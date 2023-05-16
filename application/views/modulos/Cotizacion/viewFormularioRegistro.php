@@ -119,7 +119,11 @@
 		<div class="fields">
 			<div class="eight wide field">
 				<div class="ui sub header">Ver precio PDF</div>
-				<div class="ui basic floating dropdown button simpleDropdown w-100">
+				<select class="ui simpleDropdown" name="flagMostrarPrecio" patron="requerido">
+					<option value="1" selected>Ver Precio</option>
+					<option value="0">Ocultar Precio</option>
+				</select>
+				<!-- <div class="ui basic floating dropdown button simpleDropdown w-100">
 					<input type="hidden" name="flagMostrarPrecio" value="1" patron="requerido">
 					<div class="text">Ver Precio PDF</div>
 					<i class="dropdown icon"></i>
@@ -127,7 +131,7 @@
 						<div data-value="1">Ver precio</div>
 						<div data-value="0">Ocultar Precio</div>
 					</div>
-				</div>
+				</div> -->
 			</div>
 		</div>
 		<h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
@@ -188,7 +192,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Unidad Medida</div>
-								<select class="ui dropdown simpleDropdown unidadMed" name="unidadMedida">
+								<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>

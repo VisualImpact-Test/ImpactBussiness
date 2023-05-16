@@ -1405,6 +1405,7 @@ class SolicitudCotizacion extends MY_Controller
 					$toComprasProveedor[] = $contactoProveedor['correo'];
 				}
 
+				$dataParaVista['ocDet'] = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $rs_oc['id']])['query']->result_array();
 				$html = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
 				$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "FormularioProveedor/viewOrdenCompra/{$correoProveedor['idOrdenCompra']}{$urlAcceso}"], true);
 

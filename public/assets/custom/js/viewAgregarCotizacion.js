@@ -251,6 +251,7 @@ var Cotizacion = {
 					on: 'click'
 				})
 			});
+			$('.unidadMed').dropdown({ allowAdditions: true });
 			// $.each($('.btnPopupPropuestaItem'), function(i,v){    
 			// 	var id = $(v).data('id');
 			// 	$(v).popup({
@@ -401,6 +402,9 @@ var Cotizacion = {
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
 			$('.ui.checkbox').checkbox();
 
+			
+			Fn.loadSemanticFunctions();
+			$('.unidadMed').dropdown({ allowAdditions: true });
 		});
 
 		// centro costo

@@ -462,6 +462,18 @@ class Cotizacion extends MY_Controller
 			$idItem = (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL;
 			$nameItem = $post['nameItem'][$k];
 			$itemsSinProveedor = [];
+			// UM
+			if (!is_numeric($post['unidadMedida'][$k])) {
+				$getUm = $this->db->where('nombre', $post['unidadMedida'][$k])->get('compras.unidadMedida')->row_array();
+				if (empty($getUm)) {
+					$this->db->insert('compras.unidadMedida', ['nombre' => $post['unidadMedida'][$k]]);
+					$post['unidadMedida'][$k] = $this->db->insert_id();
+				}else{
+					$post['unidadMedida'][$k] = $getUm['idUnidadMedida'];
+				}
+			}
+			// Fin: UM
+
 			if (empty($idItem)) { // si es nuevo verificamos y lo registramos
 				$validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem, 'nombre' =>  $nameItem]);
 				$item = $validacionExistencia['query']->row_array();

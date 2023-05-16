@@ -52,8 +52,16 @@
 			</div>
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" style="border:0px;">Cuenta :</label>
-				<select class="form-control col-md-7" name="cuenta">
+				<select class="ui dropdown parentDependiente centro-visible col-md-7" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $informacionItem['idCuenta']]); ?>
+				</select>
+			</div>
+			<div class="control-group child-divcenter row w-100">
+				<label class="form-control col-md-5" style="border:0px;">Centro Costo :</label>
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado col-md-7" multiple="" name="centroCosto" id="cuentaCentroCostoForm">
+					<?php foreach ($cuentaCentroCosto as $ko => $vo) : ?>
+						<option data-parentDependiente="<?= $vo['idDependiente']; ?>" class='text-titlecase' value="<?= $vo['id']; ?>" <?= !empty($itemCC[$vo['id']]) ? 'selected' : ''; ?>><?= $vo['value']; ?></option>
+					<?php endforeach; ?>
 				</select>
 			</div>
 		</div>

@@ -122,7 +122,13 @@ class Item extends MY_Controller
 		$dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
 		$dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['cuentaCentroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$dataParaVista['unidadMedida'] = $this->model->obtenerUnidadMedida();
+
+		$itemCentroCosto = $this->db->where('idItem', $post['idItem'])->where('estado', 1)->get('compras.itemCentroCosto')->result_array();
+		foreach ($itemCentroCosto as $kicc => $vicc) {
+			$dataParaVista['itemCC'][$vicc['idCentroCosto']] = $vicc['idCentroCosto'];
+		}
 		$itemsLogistica =  $this->model->obtenerItemsLogistica();
 
 		foreach ($itemsLogistica as $key => $row) {
@@ -177,6 +183,7 @@ class Item extends MY_Controller
 		$dataParaVista['unidadMedida'] =  $this->model->obtenerUnidadMedida();
 		$dataParaVista['informacionItem'] = $this->model->obtenerInformacionItems()['query']->row_array();
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['cuentaCentroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 
 		$itemsLogistica =  $this->model->obtenerItemsLogistica();
 		foreach ($itemsLogistica as $key => $row) {
@@ -213,6 +220,7 @@ class Item extends MY_Controller
 		$post['idItemLogistica'] = checkAndConvertToArray($post['idItemLogistica']);
 		$post['unidadMedida'] = checkAndConvertToArray($post['unidadMedida']);
 		$post['cuenta'] = checkAndConvertToArray($post['cuenta']);
+		$post['centroCosto'] = checkAndConvertToArray($post['centroCosto']);
 
 		$idMarca = NULL;
 		if (!is_numeric($post['marca'])) {
@@ -254,7 +262,7 @@ class Item extends MY_Controller
 			foreach ($Categorias as $Categoria) {
 				$dataCategoria[$Categoria['nombre']] = $Categoria['idItemCategoria'];
 			}
-			
+
 			if (empty($dataCategoria[$post['categoria']])) {
 				$insertCategoria = [
 					'nombre' => $post['categoria'],
@@ -325,18 +333,7 @@ class Item extends MY_Controller
 
 			$insert = $this->model->insertarItem($data);
 
-			if ($post['tipo'][$k] == COD_DISTRIBUCION || $post['tipo'][$k] == COD_TEXTILES) {
-				$dataDetallle['insert'][] = [
-					'idItem' => $insert['id'],
-					'fechaIni' => getActualDateTime(),
-					'talla' => !empty($post['talla'][$k]) ? $post['talla'][$k] : NULL,
-					'tela' => !empty($post['tela'][$k]) ? $post['tela'][$k] : NULL,
-					'color' => !empty($post['color'][$k]) ? $post['color'][$k] : NULL,
-					'monto' => !empty($post['monto'][$k]) ? $post['monto'][$k] : NULL
-				];
-			}
-
-			//imagen
+			// Imagen
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([
 					'base64' => $post["file-item[$k]"],
@@ -354,10 +351,23 @@ class Item extends MY_Controller
 					];
 				}
 			}
+
+			// Centro Costo
+			$insertCC = [];
+			foreach ($post['centroCosto'] as $kcc => $vcc) {
+				$insertCC[] = [
+					'idItem' => $insert['id'],
+					'idCuenta' => $post['cuenta'][$k],
+					'idCentroCosto' => $vcc,
+				];
+			}
+			if (!empty($insertCC)) {
+				$this->db->insert_batch('compras.itemCentroCosto', $insertCC);
+			}
 		}
 
 		$insertDetalle = true;
-		if(!empty( $dataDetallle['insert'])){
+		if (!empty($dataDetallle['insert'])) {
 			$insertDetalle = $this->model->insertarMasivo('compras.itemDetalle', $dataDetallle['insert']);
 		}
 
@@ -408,6 +418,8 @@ class Item extends MY_Controller
 			'idCuenta' => $post['cuenta']
 		];
 
+		$post['centroCosto'] = checkAndConvertToArray($post['centroCosto']);
+
 		$validacionExistencia = $this->model->validarExistenciaItem($data['update']);
 		unset($data['update']['idItem']);
 
@@ -424,6 +436,17 @@ class Item extends MY_Controller
 		];
 
 		$insert = $this->model->actualizarItem($data);
+		// itemCentroCosto
+		$this->db->update('compras.itemCentroCosto', ['estado' => 0], ['idItem' => $post['idItem']]);
+		foreach ($post['centroCosto'] as $kc => $vc) {
+			$d = $this->db->where('idItem', $post['idItem'])->where('idCentroCosto', $vc)->get('compras.itemCentroCosto')->row_array();
+			if (!empty($d)) {
+				$this->db->update('compras.itemCentroCosto', ['estado' => 1], ['idItemCentroCosto' => $d['idItemCentroCosto']]);
+			} else {
+				$this->db->insert('compras.itemCentroCosto', ['idItem' => $post['idItem'], 'idCuenta' => $post['cuenta'], 'idCentroCosto' => $vc]);
+			}
+		}
+		// Fin: itemCentroCosto
 		$data = [];
 
 		if (isset($post['idImagenAnularItem'])) {
@@ -867,7 +890,7 @@ class Item extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$data = [];
-		$data['idItem']=$post['idItem'];
+		$data['idItem'] = $post['idItem'];
 
 		$dataParaVista = [];
 		$dataParaVista['itemFotos'] = $this->model->obtenerItemImagenes($data)->result_array();;
@@ -875,7 +898,7 @@ class Item extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Fotos de Items';
 		$result['data']['html'] = $this->load->view("modulos/Item/formularioFotos", $dataParaVista, true);
-	 
+
 
 		echo json_encode($result);
 	}
