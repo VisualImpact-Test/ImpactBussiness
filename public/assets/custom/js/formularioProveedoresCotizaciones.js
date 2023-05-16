@@ -70,6 +70,9 @@ var FormularioProveedores = {
 						btn[1] = { title: 'Guardar', fn: fn[1] };
 						Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 						FormularioProveedores.divPropuesta = $('#divBase' + id).html();
+						$('.dropdownSingleAditions').dropdown({
+							allowAdditions: true
+						});
 					});
 				} else {
 					let config = { 'url': FormularioProveedores.url + 'contraofertaRegistrado', 'data': jsonString };
@@ -381,7 +384,7 @@ var FormularioProveedores = {
 
 		if (t != null) {
 			let inCosto = $(t).closest('.row').closest('.cotiDet').find('.filaDetalle').find('input.costo');
-			if( $(inCosto[0]).val() == ''){
+			if ($(inCosto[0]).val() == '') {
 				for (let i = 0; i < inCosto.length; i++) {
 					cost = inCosto[i];
 					$(cost).val(val);

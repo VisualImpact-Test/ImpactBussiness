@@ -913,7 +913,15 @@ class SolicitudCotizacion extends MY_Controller
 			}
 
 			$data = [];
+			$asunto = 'SOLICITUD DE COTIZACIÓN';
+			$titles = [];
 			foreach ($dataParaVista['detalle'] as $k => $row) {
+				if (!empty($row['tituloParaOc'])) {
+					$titles[] = $row['tituloParaOc'];
+				}
+				if (!empty($titles)) {
+					$asunto = 'COTIZACIÓN - ' . implode(', ', $titles);
+				}
 				$row_cotizacion = isset($cotizacionProveedorDetalle[$idProveedor][$post['idCotizacion']]) ? $cotizacionProveedorDetalle[$idProveedor][$post['idCotizacion']] : [];
 				if (empty($row_cotizacion[$row['idItem']])) {
 					$data['insert'][] = [
@@ -976,7 +984,7 @@ class SolicitudCotizacion extends MY_Controller
 			$config = [
 				'to' => !empty($proveedor['correoContacto']) ? $proveedor['correoContacto'] : $toComprasProveedor,
 				'cc' => $toComprasProveedor,
-				'asunto' => 'SOLICITUD DE COTIZACIÓN',
+				'asunto' => $asunto,
 				'contenido' => $correo,
 			];
 			email($config);
@@ -1632,6 +1640,48 @@ class SolicitudCotizacion extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['html'] = $html;
 		$result['msg']['title'] = 'Oper Registrados';
+		$result['data']['width'] = '80%';
+
+		echo json_encode($result);
+	}
+
+	public function filtrarCotPro()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+
+		$cotiPro = $this->model->getCotizacionDelProveedor()->result_array();
+
+		$comp = '';
+		foreach ($cotiPro as $k => $v) {
+			if ($comp != $v['idCotizacion'] . '_' . $v['idProveedor']) {
+				$comp = $v['idCotizacion'] . '_' . $v['idProveedor'];
+
+				$doc = null;
+				$files = $this->db->where('idCotizacionDetalleProveedorDetalle', $v['idCotizacionDetalleProveedorDetalle'])->get('compras.cotizacionDetalleProveedorDetalleArchivos')->result_array();
+				foreach ($files as $kf => $vf) {
+					if ($vf['idTipoArchivo'] == TIPO_EXCEL || $vf['idTipoArchivo'] == TIPO_PDF) {
+						$doc = RUTA_WASABI . 'cotizacionProveedor/' . $vf['nombre_archivo'];
+					}
+				}
+				$v['doc'] = $doc;
+				$dataParaVista['datos'][] = $v;
+			}
+		}
+		// $operDetalle = $this->model->obtenerOperDetalleCotizacion()['query']->result_array();
+
+		// foreach ($operDetalle as $row) {
+		// 	$dataParaVista['cotizaciones'][$row['idOper']][] = $row['cotizacionCodNombre'];
+		// }
+		$html = getMensajeGestion('noRegistros');
+		if (!empty($dataParaVista)) {
+			$html = $this->load->view("modulos/SolicitudCotizacion/reporteFiltroCotizacionProveedor", $dataParaVista, true);
+		}
+
+		$result['result'] = 1;
+		$result['data']['html'] = $html;
+		$result['msg']['title'] = 'Cotizaciones del Proveedor';
 		$result['data']['width'] = '80%';
 
 		echo json_encode($result);

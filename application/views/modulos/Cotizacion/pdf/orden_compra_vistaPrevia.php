@@ -6,8 +6,8 @@
 		<?php endif; ?>
 	<?php endforeach; ?>
 	<table border="1" style="width: 100%;">
-		<?php $w1 = '18%'; ?>
-		<?php $w2 = '44%'; ?>
+		<?php $w1 = '23%'; ?>
+		<?php $w2 = '39%'; ?>
 		<?php $w3 = '13%'; ?>
 		<?php $w4 = '25%'; ?>
 		<tr>
@@ -128,10 +128,10 @@
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
 						<?php if ($incluirImagen) : ?>
-							<td rowspan="<?= $rowS ?>">
+							<td rowspan="<?= $rowS ?>" class="text-center">
 								<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
 									<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
-										<p style="text-align:center;"><img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;"></p>
+										<img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;">
 									<?php endforeach; ?>
 								<?php endif; ?>
 							</td>

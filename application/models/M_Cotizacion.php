@@ -321,7 +321,7 @@ class M_Cotizacion extends MY_Model
 
 		if (isset($params['idCotizacion'])) $this->db->where("c.idCotizacion in ({$params['idCotizacion']})");
 		// if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
-		
+
 		if (isset($params['idCotizacionDetalle'])) $this->db->where("cd.idCotizacionDetalle in ({$params['idCotizacionDetalle']})");
 		return $this->db->get();
 	}
@@ -436,11 +436,11 @@ class M_Cotizacion extends MY_Model
 
 	public function getImagenCotiProv($params = [])
 	{
-		$sql = "SELECT idTipoArchivo, '../cotizacion/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleArchivos WHERE idTipoArchivo = 2 AND idCotizacionDetalle = ".$params['idCotizacionDetalle'];
+		$sql = "SELECT idTipoArchivo, '../cotizacion/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleArchivos WHERE idTipoArchivo = 2 AND idCotizacionDetalle = " . $params['idCotizacionDetalle'];
 		$sql .= " UNION select idTipoArchivo, '../cotizacionProveedor/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleProveedorDetalleArchivos cdpda LEFT JOIN compras.cotizacionDetalleProveedorDetalle cdpd  ON cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle ";
 		$sql .= " LEFT JOIN compras.cotizacionDetalleProveedor cdp ON cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor";
-		$sql .= " WHERE cdpd.idCotizacionDetalle =".$params['idCotizacionDetalle'];
-		$sql .= " AND cdp.idProveedor =".$params['idProveedor'];
+		$sql .= " WHERE cdpd.idCotizacionDetalle =" . $params['idCotizacionDetalle'];
+		$sql .= " AND cdp.idProveedor =" . $params['idProveedor'];
 		$sql .= " AND cdpda.idTipoArchivo = 2";
 		return $this->db->query($sql);
 	}
@@ -2064,5 +2064,22 @@ class M_Cotizacion extends MY_Model
                     where auth.idCotizacion = 586 order by idCotizacionEstadoHistorico DESC';
 
 		return $this->db->query($sql)->result_array();
+	}
+
+	public function getCotizacionDelProveedor()
+	{
+		$this->db
+			->distinct()
+			->select('cdpd.idCotizacionDetalleProveedorDetalle, cdp.idCotizacion, c.nombre, p.razonSocial, cdp.idProveedor, cdpd.idCotizacionDetalle')
+			->from('compras.cotizacionDetalleProveedorDetalle cdpd')
+			->join('compras.cotizacionDetalleProveedor cdp', 'cdp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor', 'left')
+			->join('compras.cotizacion c', 'c.idCotizacion = cdp.idCotizacion', 'left')
+			->join('compras.proveedor p', 'p.idProveedor = cdp.idProveedor', 'left')
+			->where('fechaEntrega is not null')
+			->where('cdpd.estado = 1')
+			// ->group_by('cdp.idCotizacion, c.nombre, p.razonSocial, cdp.idProveedor')
+			->order_by('2 desc, 5');
+
+		return $this->db->get();
 	}
 }

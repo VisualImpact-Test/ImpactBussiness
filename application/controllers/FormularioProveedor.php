@@ -381,10 +381,15 @@ class FormularioProveedor extends MY_Controller
 		$orden = 0;
 		$insertArchivos = [];
 		foreach ($post['nombre'] as $key => $value) {
+			$idItemMarca = $post['idItemMarca'][$key];
+			if (!empty($post['idItemMarca'][$key]) && !is_numeric($post['idItemMarca'][$key])) {
+				$this->db->insert('compras.itemMarca', ['nombre' => $post['idItemMarca'][$key], 'estado' => 1]);
+				$idItemMarca = $this->db->insert_id();
+			}
 			$insertData = [
 				'idCotizacionDetalleProveedorDetalle' => $post['idCotizacionDetalleProveedorDetalle'][$key],
 				'nombre' => $post['nombre'][$key],
-				'idItemMarca' => !empty($post['idItemMarca'][$key]) ? $post['idItemMarca'][$key] : NULL,
+				'idItemMarca' => !empty($post['idItemMarca'][$key]) ? $idItemMarca : NULL,
 				'idItemCategoria' => !empty($post['idItemCategoria'][$key]) ? $post['idItemCategoria'][$key] : NULL,
 				'idPropuestaMotivo' => $post['idPropuestaMotivo'][$key],
 				'cantidad' => $post['cantidad'][$key],

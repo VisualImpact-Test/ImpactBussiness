@@ -11,12 +11,7 @@ var Cotizacion = {
 	tablaCotizacionesOper: '',
 
 	load: function () {
-
-
-
 		//filtroCotizacion
-
-
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
 			++modalId;
 
@@ -44,14 +39,12 @@ var Cotizacion = {
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
 		});
 
-
 		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
 			++modalId;
 			let data = {};
 			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
-
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
@@ -70,11 +63,8 @@ var Cotizacion = {
 
 				Cotizacion.modalIdForm = modalId;
 
-
 			});
 		});
-
-
 
 		$(document).on('click', '.btn-finalizarCotizacion', function () {
 			let idCotizacion = $(this).closest('tr').data('id');
@@ -82,7 +72,7 @@ var Cotizacion = {
 		});
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
-			if (idOper==undefined) {
+			if (idOper == undefined) {
 				idOper = $(this).data('idoper');
 			}
 			let data = { idOper };
@@ -91,7 +81,7 @@ var Cotizacion = {
 		});
 		$(document).on('click', '.btn-descargarOrdenCompra', function () {
 			let id = $(this).closest('tr').data('id');
-			if (id==undefined) {
+			if (id == undefined) {
 				id = $(this).data('id');
 			}
 			let data = { id };
@@ -100,37 +90,37 @@ var Cotizacion = {
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
 			let id = $(this).closest('tr').data('id');
-			if (id==undefined) {
+			if (id == undefined) {
 				id = $(this).data('id');
 			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
 		});
-		$(document).on('click','.btnAnularCotizacion', function (){
+		$(document).on('click', '.btnAnularCotizacion', function () {
 			let id = $(this).data('id');
-			Fn.showConfirm({ fn:"Cotizacion.anularCotizacion("+id+")",content:" ¿Está seguro de anular esta cotización?" });
+			Fn.showConfirm({ fn: "Cotizacion.anularCotizacion(" + id + ")", content: " ¿Está seguro de anular esta cotización?" });
 		});
-		$(document).on('click','.btnI', function (){
-				let id = $(this).data('id');
-				var jsonString = { 'data': JSON.stringify(id) };
-				var config = { url:  Cotizacion.url + 'anulacionInfo', data: jsonString };
-				$.when(Fn.ajax(config)).then(function (a) {
-					if (a.result === 2) return false;
-					++modalId;
-					var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		$(document).on('click', '.btnI', function () {
+			let id = $(this).data('id');
+			var jsonString = { 'data': JSON.stringify(id) };
+			var config = { url: Cotizacion.url + 'anulacionInfo', data: jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				if (a.result === 2) return false;
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-					if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarCotizacion").click();';
+				if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarCotizacion").click();';
 
-					var btn = [];
-					btn[0] = { title: 'Cerrar', fn: fn };
-					Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
-				});
+				var btn = [];
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			});
 		});
 	},
-	anularCotizacion: function (id){
+	anularCotizacion: function (id) {
 		var jsonString = { 'data': JSON.stringify(id) };
-		var config = { url:  Cotizacion.url + 'anularCotizacion', data: jsonString };
+		var config = { url: Cotizacion.url + 'anularCotizacion', data: jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result === 2) return false;
 			++modalId;
@@ -302,8 +292,6 @@ var Cotizacion = {
 
 Cotizacion.load();
 
-
-
 var SolicitudCotizacion = {
 
 	frm: 'frm-cotizacion',
@@ -342,7 +330,6 @@ var SolicitudCotizacion = {
 			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
-
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
@@ -385,10 +372,37 @@ var SolicitudCotizacion = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
+			});
+		});
+		$(document).on('click', '#filtrarCotPro', function () {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': SolicitudCotizacion.url + 'filtrarCotPro', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
+			});
+		});
+
+		$(document).on('click', '.btn-descargarOCdelProveedor', function (e) {
+			e.preventDefault();
+			idCotizacionDetalle = $(this).data('id');
+			idProveedor = $(this).data('proveedor');
+			data = { 'idCotizacionDetalle': idCotizacionDetalle, 'idProveedor': idProveedor };
+			var url = SolicitudCotizacion.url + 'descargarExcel';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
 			});
 		});
 
@@ -400,7 +414,6 @@ var SolicitudCotizacion = {
 			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': SolicitudCotizacion.url + 'formularioSolicitudCotizacionfecha', 'data': jsonString };
-
 
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
@@ -650,7 +663,6 @@ var SolicitudCotizacion = {
 			++modalId;
 			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroCotizacion')) };
 			let config = { 'url': SolicitudCotizacion.url + 'verCotizacionesProveedor', 'data': jsonString };
-
 
 			$.when(Fn.ajax(config)).then((a) => {
 

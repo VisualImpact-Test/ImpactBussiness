@@ -38,7 +38,7 @@
 					</div>
 					<div class="col-md-6 mb-3">
 						<label>Marca</label>
-						<select class="form-control" name="marca">
+						<select class="ui fluid search clearable dropdown dropdownSingleAditions form-control" name="marca">
 							<?=
 							htmlSelectOptionArray2([
 								'title' => 'Seleccione',
