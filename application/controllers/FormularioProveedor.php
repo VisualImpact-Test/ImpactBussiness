@@ -504,6 +504,19 @@ class FormularioProveedor extends MY_Controller
 		$post['idProveedor'] = $proveedor['idProveedor'];
 		$dataParaVista = [];
 		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
+		foreach ($dataParaVista as $k => $v) {
+			$dataParaVista[$k]['title'] = $v['nombre'];
+			$st = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.cotizacionDetalle')->result_array();
+			$title = [];
+			foreach ($st as $kt => $vt) {
+				if (!empty($vt['tituloParaOC'])) {
+					$title[] = $vt['tituloParaOC'];
+				}
+			}
+			if (!empty($title)) {
+				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
+			}
+		}
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
 		$result['result'] = 1;
@@ -813,7 +826,7 @@ class FormularioProveedor extends MY_Controller
 						'estado' => '1'
 					];
 					$dataTarifario = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
-					
+
 					$dataIT = [
 						'idItem' => $value,
 						'idProveedor' => $post['idProveedor'],
@@ -828,7 +841,7 @@ class FormularioProveedor extends MY_Controller
 						}
 						$rpta = $this->db->insert('compras.itemTarifario', $dataIT);
 						$idItemTarifario = $this->db->insert_id();
-					}else{
+					} else {
 						$idItemTarifario = $dataTarifario['idItemTarifario'];
 						$this->db->update('compras.itemTarifario', $dataIT, ['idItemTarifario' => $idItemTarifario]);
 					}
@@ -968,7 +981,7 @@ class FormularioProveedor extends MY_Controller
 				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
-		
+
 		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
 			foreach ($ordenCompra as $key => $value) {
 				$dd = $this->m_cotizacion->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $value['idProveedor']])->result_array();
@@ -994,7 +1007,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
-		
+
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',
