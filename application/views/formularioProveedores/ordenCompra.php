@@ -3,6 +3,12 @@
 		height: 150px !important;
 	}
 </style>
+<?php $incluirImagen = false; ?>
+<?php foreach ($imagen as $key => $value) : ?>
+	<?php if (!empty($value)) : ?>
+		<?php $incluirImagen = true; ?>
+	<?php endif; ?>
+<?php endforeach; ?>
 <form id="frmOrdenCompraProveedorCabecera">
 	<div>
 		<div class="row child-divcenter">
@@ -24,43 +30,32 @@
 							<div class="row">
 								<div class="col-md-5 child-divcenter">
 									<div class="control-group child-divcenter row w-100">
-										<label class="form-control form-control-sm col-md-5" for="nombre" style="border:0px;">N° DE RQ :</label>
-										<label class="form-control form-control-sm col-md-7" for="nombre" style="border:0px;"><?= verificarEmpty($cabecera['requerimiento'], 3) ?></label>
+										<label class="form-control form-control-sm col-md-5" style="border:0px;">N° DE RQ :</label>
+										<label class="form-control form-control-sm col-md-7" style="border:0px;"><?= verificarEmpty($cabecera['requerimiento'], 3) ?></label>
 									</div>
-									<!-- <div class="control-group child-divcenter row w-100">
-											<label class="form-control form-control-sm col-md-5" for="cuentaForm" style="border:0px;">CUENTA :</label>
-											<label class="form-control form-control-sm col-md-7" for="cuentaForm" style="border:0px;"><?= verificarEmpty($cabecera['cuenta'], 3) ?></label>
-									</div> -->
 									<div class="control-group child-divcenter row w-100">
 									</div>
 								</div>
 								<div class="col-md-5 child-divcenter">
 									<div class="control-group child-divcenter row w-100">
-										<label class="form-control form-control-sm col-md-5" for="tipo" style="border:0px;">FECHA :</label>
-										<label class="form-control form-control-sm col-md-7" for="tipo" style="border:0px;"><?= verificarEmpty($cabecera['fechaReg'], 3) ?></label>
+										<label class="form-control form-control-sm col-md-5" style="border:0px;">FECHA :</label>
+										<label class="form-control form-control-sm col-md-7" style="border:0px;"><?= verificarEmpty($cabecera['fechaReg'], 3) ?></label>
 									</div>
-									<!-- <div class="control-group child-divcenter row w-100">
-											<label class="form-control form-control-sm col-md-5" for="cuentaCentroCostoForm" style="border:0px;">CENTRO DE COSTO :</label>
-											<label class="form-control form-control-sm col-md-7" for="cuentaCentroCostoForm" style="border:0px;"><?= verificarEmpty($cabecera['cuentaCentroCosto'], 3) ?></label>
-									</div> -->
 								</div>
 							</div>
 							<div class="row">
 								<div class="col-md-5 child-divcenter">
 									<div class="control-group child-divcenter row w-100">
-										<label class="form-control form-control-sm col-md-5" for="nombre" style="border:0px;">PROVEEDOR :</label>
-										<label class="form-control form-control-sm col-md-7" for="nombre" style="border:0px;"><?= verificarEmpty($cabecera['razonSocial'], 3) ?></label>
+										<label class="form-control form-control-sm col-md-5" style="border:0px;">PROVEEDOR :</label>
+										<label class="form-control form-control-sm col-md-7" style="border:0px;"><?= verificarEmpty($cabecera['razonSocial'], 3) ?></label>
 									</div>
 								</div>
 								<div class="col-md-5 child-divcenter">
 									<div class="control-group child-divcenter row w-100">
-										<label class="form-control form-control-sm col-md-5" for="tipo" style="border:0px;">RUC :</label>
-										<label class="form-control form-control-sm col-md-7" for="tipo" style="border:0px;"><?= verificarEmpty($cabecera['ruc'], 3) ?></label>
+										<label class="form-control form-control-sm col-md-5" style="border:0px;">RUC :</label>
+										<label class="form-control form-control-sm col-md-7" style="border:0px;"><?= verificarEmpty($cabecera['ruc'], 3) ?></label>
 									</div>
 								</div>
-							</div>
-							<div class="mb-3 w-100" id="content-tb-ordenCompra-proveedor" style="width:75%">
-
 							</div>
 						</div>
 					</div>
@@ -78,56 +73,139 @@
 				</div>
 				<input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="<?= !empty($cabecera['fechaEntrega']) ? $cabecera['fechaEntrega'] : '' ?>" patron="requerido">
 			</div>
-			<table id="tb-cotizaciones" class="ui compact celled definition table">
+			<table id="tb-cotizaciones" class="ui celled structured table">
 				<thead class="full-width">
 					<tr>
 						<th class="text-center">Item</th>
 						<th class="text-center">Cantidad</th>
-						<th class="text-center" colspan="2">Descripción</th>
+						<?php if ($incluirImagen) : ?>
+							<th class="text-center">Imagen</th>
+						<?php endif; ?>
+						<th class="text-center" colspan="4">Descripción</th>
 						<th class="text-center">Precio Unit.</th>
 						<th class="text-center">Precio Total</th>
 					</tr>
 				</thead>
 				<tbody>
+					<?php $indexT = 0; ?>
 					<?php foreach ($detalle as $k => $row) : ?>
 						<?php $total = $row['subTotalOrdenCompra']; ?>
 						<?php $igv_total = ($row['subTotalOrdenCompra'] * (!empty($row['igv']) ? ($row['igv'] / 100) : 0)); ?>
-						<tr>
-							<td class="text-center"><?= ($k + 1) ?>
-								<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
-							</td>
-							<td class="text-center"><?= verificarEmpty($row['cantidad'], 2) ?></td>
-							<td class="text-left" colspan="2"><?= verificarEmpty($row['nombre'], 3) ?></td>
-							<td class="text-right">
-								<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
-							</td>
-							<td class="text-right">
-								<?= !empty($row['subtotal']) ? monedaNew(['valor' => $row['subtotal'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
-							</td>
-						</tr>
-						<?php if (!empty($imagen[$row['idCotizacionDetalle']])) :  ?>
+
+						<?php $mostrarSubDetalle = false; ?>
+						<?php $rowS = 1; ?>
+						<?php if ($row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
+							<?php $mostrarSubDetalle = true; ?>
+							<?php $rowS = count($subDetalleItem[$row['idItem']]) + 1; ?>
+						<?php endif; ?>
+						<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+							<?php $v1 = $subDetalleItem[$row['idItem']][0]['sucursal'] ?>
+							<?php $v2 = $subDetalleItem[$row['idItem']][0]['razonSocial'] ?>
+							<?php $v3 = $subDetalleItem[$row['idItem']][0]['tipoElemento'] ?>
+							<?php $v4 = $subDetalleItem[$row['idItem']][0]['marca'] ?>
+							<?php $costoTotal = 0; ?>
+							<?php foreach ($subDetalleItem[$row['idItem']] as $ks => $vs) : ?>
+								<?php if (!($v1 == $vs['sucursal'] && $v2 == $vs['razonSocial'] && $v3 == $vs['tipoElemento'] && $v4 == $vs['marca'])) :  ?>
+									<tr>
+										<td class="text-center"><?= ++$indexT ?></td>
+										<td class="text-center"><?= '1'; ?></td>
+										<td class="text-left" colspan="4">
+											<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
+										</td>
+										<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $cabecera['simboloMoneda']]); ?></td>
+										<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $cabecera['simboloMoneda']]); ?></td>
+									</tr>
+									<?php $v1 = $vs['sucursal']; ?>
+									<?php $v2 = $vs['razonSocial']; ?>
+									<?php $v3 = $vs['tipoElemento']; ?>
+									<?php $v4 = $vs['marca']; ?>
+									<?php $costoTotal = 0; ?>
+								<?php endif; ?>
+								<?php $costoTotal += (floatval($vs['cantidad']) * floatval($vs['costo'])); ?>
+							<?php endforeach; ?>
+							<tr>
+								<td class="text-center"><?= ++$indexT ?></td>
+								<td class="text-center"><?= '1'; ?></td>
+								<td class="text-left" colspan="4">
+									<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
+								</td>
+								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $cabecera['simboloMoneda']]); ?></td>
+								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $cabecera['simboloMoneda']]); ?></td>
+							</tr>
+						<?php else :  ?>
+							<tr>
+								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?>
+									<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
+								</td>
+								<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
+								<?php if ($incluirImagen) : ?>
+									<td rowspan="<?= $rowS ?>" class="text-center">
+										<?php if (!empty($imagen[$row['idCotizacionDetalle']])) :  ?>
+											<?php if (($cabecera['mostrar_imagenes'] == '1' || $cabecera['mostrar_imagenesCoti'] == '1') && count($imagen[$row['idCotizacionDetalle']])) : ?>
+												<?php foreach ($imagen[$row['idCotizacionDetalle']] as $kkk => $imagenDeItem) : ?>
+													<img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;">
+												<?php endforeach; ?>
+											<?php endif; ?>
+										<?php endif; ?>
+									</td>
+								<?php endif; ?>
+								<?php if ($mostrarSubDetalle) :  ?>
+									<td class="text-center bold">CARACTERISTICA</td>
+									<td class="text-center bold">TALLA</td>
+									<td class="text-center bold">SEXO</td>
+									<td class="text-center bold">CANTIDAD</td>
+								<?php else : ?>
+									<td class="text-left" colspan="4">
+										<?= verificarEmpty($row['nombre'], 3) ?>
+										<!-- <?= json_encode($row); ?> -->
+									</td>
+								<?php endif; ?>
+
+								<td class="text-right" rowspan="<?= $rowS ?>">
+									<?= !empty($row['costo']) ? monedaNew(['valor' => $row['costo'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
+								</td>
+								<td class="text-right" rowspan="<?= $rowS ?>">
+									<?= !empty($row['subtotal']) ? monedaNew(['valor' => $row['subtotal'], 'simbolo' => $cabecera['simboloMoneda']]) : 0 ?>
+								</td>
+							</tr>
+							<?php if ($mostrarSubDetalle) :  ?>
+								<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
+									<tr>
+										<?php if ($km == 0) :  ?>
+											<td class="text-left" rowspan="<?= $rowS - 1 ?>">
+												<?= verificarEmpty($row['nombre'] . ' ' . $row['caracteristicasCompras'], 3) ?>
+											</td>
+										<?php endif; ?>
+										<td class="text-center"><?= $vm['talla']; ?></td>
+										<td class="text-center"><?= RESULT_GENERO[$vm['genero']]; ?></td>
+										<td class="text-center"><?= $vm['cantidad']; ?></td>
+									</tr>
+								<?php endforeach; ?>
+							<?php endif; ?>
+						<?php endif; ?>
+
+						<!-- <?php if (!empty($imagen[$row['idCotizacionDetalle']])) :  ?>
 							<tr>
 								<td></td>
 								<td></td>
-								<td colspan="4" class="text-left">
+								<td colspan="6" class="text-left">
 									<?php foreach ($imagen[$row['idCotizacionDetalle']] as $key => $value) : ?>
 										<img src="<?= RUTA_WASABI . $value['carpeta'] . $value['nombre_archivo'] ?>" style="padding-top: -120px; width: 200px; height: 120px;">
 									<?php endforeach; ?>
 								</td>
 							</tr>
-						<?php endif; ?>
+						<?php endif; ?> -->
 					<?php endforeach; ?>
-					<!-- <tr style="height: 100px;"></tr> -->
 				</tbody>
 				<tfoot class="full-width">
 					<tr>
-						<th colspan="4" class="text-right">
+						<th colspan="<?= $incluirImagen ? 7 : 6; ?>" class="text-right">
 							<p>Sub Total</p>
 							<p>IGV</p>
 							<p>TOTAL</p>
 						</th>
 						<th class="text-center">
-							<p><?= !empty($data['igv']) ? $data['igv'] : (0 * 100) ?>%</p>
+							<p><?= !empty($cabecera['igv']) ? $cabecera['igv'] : '0' ?>%</p>
 						</th>
 						<th class="text-right">
 							<p><?= monedaNew(['valor' => $total, 'simbolo' => $cabecera['simboloMoneda']]) ?></p>
@@ -136,7 +214,7 @@
 						</th>
 					</tr>
 					<tr>
-						<th colspan="6">
+						<th colspan="<?= $incluirImagen ? 9 : 8; ?>">
 							Son: <?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $cabecera['monedaPlural']]) ?>
 						</th>
 					</tr>
@@ -144,7 +222,7 @@
 						<th colspan="2">
 							<strong>Forma de Pago</strong>
 						</th>
-						<th>
+						<th colspan="2">
 							<strong>
 								<?= !empty($cabecera['metodoPago']) ? $cabecera['metodoPago'] : '' ?>
 							</strong>
@@ -154,7 +232,7 @@
 								Observaciones
 							</strong>
 						</th>
-						<th colspan="2">
+						<th colspan="<?= $incluirImagen ? 4 : 3; ?>">
 							<strong>
 								<?= !empty($cabecera['observacion']) ? $cabecera['observacion'] : '' ?>
 							</strong>

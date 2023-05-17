@@ -1371,13 +1371,14 @@ var Cotizacion = {
 					valor4 = v.marca;
 					html += `
 						<div class="fields">
-							<div class="field thirteen wide">
-								<label class="text-right">SUBTOTAL</label>
+							<div class="field fourteen wide ui transparent input">
+								<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 							</div>
-							<div class="field three wide">
-								<label class="text-center">${costTo}</label>
+							<div class="field two wide ui transparent input">
+								<input readonly="readonly" class="" value="${costTo}" readonly style="font-size: 20px;">
 							</div>
-						</div>`;
+						</div>
+						<hr class="solid">`;
 					costTo = 0;
 				}
 				costTo += parseFloat(v.subTotal);
@@ -1402,11 +1403,11 @@ var Cotizacion = {
 						</div>
 					</div>
 					<div class="fields field eight">
-						<div class="five wide field">
+						<div class="six wide field">
 							<div class="ui sub header">Descripción</div>
 							<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}" readonly>
 						</div>
-						<div class="five wide field">
+						<div class="three wide field">
 							<div class="ui sub header">Cantidad</div>
 							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
 						</div>
@@ -1414,7 +1415,7 @@ var Cotizacion = {
 							<div class="ui sub header">Costo</div>
 							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
 						</div>
-						<div class="three wide field">
+						<div class="four wide field">
 							<div class="ui sub header">Subtotal</div>
 							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
 						</div>
@@ -1424,13 +1425,14 @@ var Cotizacion = {
 			});
 			html += `
 			<div class="fields">
-				<div class="field thirteen wide">
-					<label class="text-right">SUBTOTAL</label>
+				<div class="field fourteen wide ui transparent input">
+					<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 				</div>
-				<div class="field three wide">
-					<label class="text-center">${costTo}</label>
+				<div class="field two wide ui transparent input">
+					<input readonly="readonly" class="" value="${costTo}" readonly style="font-size: 20px;">
 				</div>
-			</div>`;
+			</div>
+			<hr class="solid">`;
 			divItemServicio.html(html);
 
 			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');

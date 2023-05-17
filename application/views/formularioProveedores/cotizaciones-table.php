@@ -44,6 +44,9 @@
 								<div class="btn-group" role="group">
 									<button class="form-control imgShow btnContraoferta" type="button" name="button" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" title="Agregar Contraoferta"><i class="handshake outline icon"></i></button>
 									<button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')" title="Mostrar Archivos"><i class="folder open outline icon"></i></button>
+									<?php if (!empty($cotizacionIMG[$row['idCotizacionDetalle']])) :  ?>
+										<div class="floating ui teal label"><?= count($cotizacionIMG[$row['idCotizacionDetalle']]); ?></div>
+									<?php endif; ?>
 									<button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');" title="Ocultar Archivos"><i class="folder closed outline icon"></i></button>
 								</div>
 							</div>
@@ -62,7 +65,7 @@
 													</div>
 												</div>
 												<a target="_blank" href="<?= RUTA_WASABI . 'cotizacion/' . $img['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-												<img height="100" src="<?= $img['idTipoArchivo'] == TIPO_OTROS ? (RUTA_WIREFRAME . "file.png") : ($img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacion/' . $img['nombre_archivo'])) ?>" class="img-responsive img-thumbnail">
+												<img height="100" src="<?= $img['idTipoArchivo'] == TIPO_OTROS ? (RUTA_WIREFRAME . "file.png") : ($img['idTipoArchivo'] == TIPO_EXCEL ? RUTA_WIREFRAME . "xlsx.png" : ($img['extension'] == 'pdf' ? (RUTA_WIREFRAME . "pdf.png") : (RUTA_WASABI . 'cotizacion/' . $img['nombre_archivo']))) ?>" class="img-responsive img-thumbnail">
 											</div>
 										<?php endforeach; ?>
 									</div>
@@ -271,7 +274,7 @@
 														<?php $var4 = $value['marca']; ?>
 														<tr style="background: #f9fafb;">
 															<td colspan="7" class="text-right" style="font-weight: bold;">SUBTOTAL</td>
-															<td><?= $costoTotal; ?></td>
+															<td class="text-right"><?= moneda($costoTotal); ?></td>
 														</tr>
 														<?php $costoTotal = 0; ?>
 													<?php endif; ?>
@@ -283,13 +286,13 @@
 														<td><?= $value['marca']; ?></td>
 														<td><?= $value['descripcion']; ?></td>
 														<td><?= $value['cantidad']; ?></td>
-														<td><?= $value['costo']; ?></td>
-														<td><?= floatval($value['cantidad']) * floatval($value['costo']); ?></td>
+														<td class="text-right"><?= moneda($value['costo']); ?></td>
+														<td class="text-right"><?= moneda(floatval($value['cantidad']) * floatval($value['costo'])); ?></td>
 													</tr>
 												<?php endforeach; ?>
 												<tr style="background: #f9fafb;">
 													<td colspan="7" class="text-right" style="font-weight: bold;">SUBTOTAL</td>
-													<td><?= $costoTotal; ?></td>
+													<td class="text-right"><?= moneda($costoTotal); ?></td>
 												</tr>
 											<?php endif; ?>
 										</tbody>

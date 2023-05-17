@@ -71,7 +71,6 @@ class FormularioProveedor extends MY_Controller
 			goto respuesta;
 		}
 
-
 		$result['result'] = 1;
 		$result['msg']['content'] = createMessage(['type' => 1, 'message' => "Bienvenido <b>{$proveedor['razonSocial']}</b>"]);
 		$result['data']['url'] = base_url() . "FormularioProveedor/cotizacionesLista";
@@ -181,8 +180,6 @@ class FormularioProveedor extends MY_Controller
 
 		$second_insert = $this->model->insertarProveedorCobertura($data);
 		$data = [];
-
-
 
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
 			$data['insert'][] = [
@@ -427,11 +424,9 @@ class FormularioProveedor extends MY_Controller
 			$insert = $this->model->insertarMasivo('compras.propuestaItemArchivo', $insertArchivos);
 		}
 
-
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-
 
 		echo json_encode($result);
 	}
@@ -700,7 +695,6 @@ class FormularioProveedor extends MY_Controller
 				'fechaEntrega' => $post['fechaEntrega'][$k],
 			];
 
-
 			// Para archivos
 			if (isset($post['file-type[' . $r . ']'])) {
 				$post['file-type[' . $r . ']'] = checkAndConvertToArray($post['file-type[' . $r . ']']);
@@ -924,6 +918,10 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		$config['data']['detalle'] = $ordenCompraProveedor;
 
+		foreach ($config['data']['detalle'] as $k => $v) {
+			$config['data']['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
+
 		$config['data']['imagen'] = [];
 
 		if (!empty($config['data']['cabecera']['mostrar_imagenes'])) {
@@ -1074,7 +1072,6 @@ class FormularioProveedor extends MY_Controller
 		$updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion', $updateCotizacion, 'idCotizacion');
 		$insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION, $insertHistoricoCotizacion);
 
-
 		if ($updateOrdenCompra && $updateCotizacion && $insertHistoricoCotizacion) {
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Confirmar OC';
@@ -1165,7 +1162,6 @@ class FormularioProveedor extends MY_Controller
 		$result['data']['width'] = '95%';
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
-
 
 		echo json_encode($result);
 	}

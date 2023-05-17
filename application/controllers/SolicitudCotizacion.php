@@ -293,12 +293,6 @@ class SolicitudCotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function descargarExcel_()
-	{
-		$post = $this->input->post();
-		$idCotizacionDetalle = $post['idCotizacionDetalle'];
-	}
-
 	public function descargarExcel()
 	{
 		$post = $this->input->post();
@@ -315,14 +309,18 @@ class SolicitudCotizacion extends MY_Controller
 		$cc = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $cotizacion['idCentroCosto']])->row_array();
 
 		$ids = [];
+		$ids_two = [];
 		if (!empty($data)) {
 			foreach ($data as $k => $v) {
 				$ids[] = $v['idCotizacionDetalleProveedorDetalle'];
+				$ids_two[] = $v['idCotizacionDetalle'];
 			}
 		}
 		$idsT = implode(',', $ids);
-		$imgProveedor = $this->db->where('idTipoArchivo', 2)->where("idCotizacionDetalleProveedorDetalle in ($idsT)")->get('compras.cotizacionDetalleProveedorDetalleArchivos')->result_array();
-
+		$idsT_two = implode(',', $ids_two);
+		$imgCDP = $this->db->select("extension, nombre_archivo, nombre_inicial, 'cotizacionProveedor/' as ruta")->where('idTipoArchivo', 2)->where("idCotizacionDetalleProveedorDetalle in ($idsT)")->get('compras.cotizacionDetalleProveedorDetalleArchivos')->result_array();
+		$imgCoti = $this->db->select("extension, nombre_archivo, nombre_inicial, 'cotizacion/' as ruta")->where('idTipoArchivo', 2)->where("idCotizacionDetalle in ($idsT_two)")->get('compras.cotizacionDetalleArchivos')->result_array();
+		$imgProveedor = array_merge($imgCDP, $imgCoti);
 		error_reporting(E_ALL);
 		ini_set('display_errors', TRUE);
 		ini_set('display_startup_errors', TRUE);
@@ -460,8 +458,9 @@ class SolicitudCotizacion extends MY_Controller
 		$objPHPExcel->getActiveSheet()->getStyle("A13:E13")->applyFromArray($estilo_cabecera);
 		$nIni = 14;
 		foreach ($data as $k => $v) {
+			$itm = $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array();
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $nIni, $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array()['nombre'])
+				->setCellValue('A' . $nIni, $itm['nombre'].' - '.$itm['caracteristicas'])
 				->setCellValue('B' . $nIni, $v['cantidad'])
 				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
 				->setCellValue('D' . $nIni, moneda($v['costo']))
@@ -487,10 +486,10 @@ class SolicitudCotizacion extends MY_Controller
 		$nIni = $nIni + 2;
 		foreach ($imgProveedor as $k => $v) {
 			if ($v['extension'] == 'jpeg') {
-				$gdImage = imagecreatefromjpeg(RUTA_WASABI . 'cotizacionProveedor/' . $v['nombre_archivo']);
+				$gdImage = imagecreatefromjpeg(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
 			}
 			if ($v['extension'] == 'png') {
-				$gdImage = imagecreatefrompng(RUTA_WASABI . 'cotizacionProveedor/' . $v['nombre_archivo']);
+				$gdImage = imagecreatefrompng(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
 			}
 
 			$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
@@ -1664,6 +1663,7 @@ class SolicitudCotizacion extends MY_Controller
 				foreach ($files as $kf => $vf) {
 					if ($vf['idTipoArchivo'] == TIPO_EXCEL || $vf['idTipoArchivo'] == TIPO_PDF) {
 						$doc = RUTA_WASABI . 'cotizacionProveedor/' . $vf['nombre_archivo'];
+						$v['iconFile'] = $vf['idTipoArchivo'] == TIPO_EXCEL ? 'excel' : 'pdf';
 					}
 				}
 				$v['doc'] = $doc;

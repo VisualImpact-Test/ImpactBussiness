@@ -14,9 +14,9 @@
 					<td class="text-center"> <?= ($k + 1) ?></td>
 					<td class="text-center">
 						<?php if (empty($row['doc'])) :  ?>
-							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacionDetalle'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-pdf" title="Descargar Cotización"></i></a>
+							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacionDetalle'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
 						<?php else :  ?>
-							<a href="<?= $row['doc'] ?>" target="_blank"><i class="fa fa-lg fa-file-pdf" title="Descargar Cotización"></i></a>
+							<a href="<?= $row['doc'] ?>" target="_blank"><i class="fa fa-lg fa-file-<?= $row['iconFile'] ?>" title="Descargar Cotización"></i></a>
 						<?php endif; ?>
 					</td>
 					<td class="text-left"> <?= !empty($row['nombre']) ? $row['nombre'] : '-' ?></td>
