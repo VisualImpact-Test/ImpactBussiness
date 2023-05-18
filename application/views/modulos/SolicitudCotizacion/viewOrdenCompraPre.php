@@ -223,13 +223,14 @@
 													<?php $var3 = $dataSubItem['tipoElemento']; ?>
 													<?php $var4 = $dataSubItem['marca']; ?>
 													<div class="fields">
-														<div class="field thirteen wide">
-															<label class="text-right">SUBTOTAL</label>
+														<div class="field fifteen wide ui transparent input">
+															<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 														</div>
-														<div class="field three wide">
-															<label class="text-center"><?= $costoTotal ?></label>
+														<div class="field one wide ui transparent input">
+															<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 														</div>
 													</div>
+													<hr class="solid">
 													<?php $costoTotal = 0; ?>
 												<?php endif; ?>
 												<?php $costoTotal += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
@@ -259,18 +260,22 @@
 														<div class="ui sub header">Cantidad</div>
 														<input class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 													</div>
-													<div class="two wide field">
-														<div class="ui sub header">Precio Unitario </div>
+													<div class="one wide field">
+														<div class="ui sub header">Costo</div>
 														<input class="precioUnitarioSubItem" name="precioUnitarioSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
+													</div>
+													<div class="one wide field">
+														<div class="ui sub header">Subtotal</div>
+														<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $rowDetalle['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal']) ?>" readonly>
 													</div>
 												</div>
 											<?php endforeach; ?>
 											<div class="fields">
-												<div class="field thirteen wide">
-													<label class="text-right">SUBTOTAL</label>
+												<div class="field fifteen wide ui transparent input">
+													<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 												</div>
-												<div class="field three wide">
-													<label class="text-center"><?= $costoTotal ?></label>
+												<div class="field one wide ui transparent input">
+													<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 												</div>
 											</div>
 										<?php endif; ?>

@@ -103,8 +103,8 @@
 								<td class="text-left" colspan="4">
 									<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
 								</td>
-								<td class="text-center"><?= $costoTotal; ?></td>
-								<td class="text-center"><?= $costoTotal; ?></td>
+								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
+								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
 							</tr>
 							<?php $v1 = $vs['sucursal']; ?>
 							<?php $v2 = $vs['razonSocial']; ?>
@@ -120,8 +120,8 @@
 						<td class="text-left" colspan="4">
 							<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
 						</td>
-						<td class="text-center"><?= $costoTotal; ?></td>
-						<td class="text-center"><?= $costoTotal; ?></td>
+						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
+						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
 					</tr>
 				<?php else :  ?>
 					<tr style="border-bottom: none;">

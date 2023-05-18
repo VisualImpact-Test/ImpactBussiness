@@ -202,8 +202,6 @@ class Proveedor extends MY_Controller
 		$dataParaVista['proveedorComprobante'] =  $dataParaVistaComprobante;
 		if (!empty($row['idProveedorTipoServicio'])) $dataParaVista['proveedorTipoServicio'] =  $dataParaVistaTipoServicio;
 		$dataParaVista['listTipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
-
-
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
 		foreach ($ciudad as $ciu) {
@@ -363,7 +361,6 @@ class Proveedor extends MY_Controller
 			$fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
 		}
 
-
 		if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$fifth_insert || !$tipoServicio_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
@@ -412,15 +409,12 @@ class Proveedor extends MY_Controller
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['update']);
 		unset($data['update']['idProveedor']);
 
-
-
 		if (!empty($validacionExistencia['query']->row_array())) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroRepetido');
 			goto respuesta;
 		}
-
 
 		$data['tabla'] = 'compras.proveedor';
 		$data['where'] = [
@@ -429,14 +423,10 @@ class Proveedor extends MY_Controller
 
 		$insert = $this->model->actualizarProveedor($data);
 		$data = [];
-
-
 		$data['tabla'] = 'compras.zonaCobertura';
 		$data['where'] = [
 			'idProveedor' => $post['idProveedor']
 		];
-
-
 		$zonasCobertura = [
 			'regionCobertura' => $post['regionCobertura'],
 			'provinciaCobertura' => $post['provinciaCobertura'],
@@ -469,8 +459,6 @@ class Proveedor extends MY_Controller
 
 		$second_insert = $this->model->insertarProveedorCobertura($data);
 		$data = [];
-
-
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
 			$data['insert'][] = [
 				'idProveedor' => $post['idProveedor'],
@@ -480,15 +468,11 @@ class Proveedor extends MY_Controller
 		}
 
 		$data['where'] = ['idProveedor' => $post['idProveedor']];
-
-
 		$this->model->BorrarProveedorMetodoPago(['tabla' => "compras.proveedorMetodoPago", 'where' => $data['where']]);
 
 		$third_insert = $this->model->insertarMasivo("compras.proveedorMetodoPago", $data['insert']);
 
 		$data = [];
-
-
 		foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
 			$data['insert'][] = [
 				'idProveedor' => $post['idProveedor'],
@@ -566,8 +550,6 @@ class Proveedor extends MY_Controller
 			}
 			$sixth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
 		}
-
-
 		if (!$insert['estado'] || !$second_insert['estado'] || !$third_insert || !$fourth_insert || !$rptaCorreo || !$sixth_insert) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';

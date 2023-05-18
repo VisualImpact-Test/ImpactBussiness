@@ -46,7 +46,6 @@ class OrdenServicio extends MY_Controller
 		$config['data']['documento'] = $this->model->getDocumento($id)->row_array();
 		$config['view'] = 'adjuntarDocumento';
 
-
 		$this->view($config);
 	}
 
@@ -154,7 +153,6 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['num'] = $post['id'];
 		$dataParaVista['area'] = $this->db->get('compras.area')->result_array();
 		$dataParaVista['persona'] = $this->db->get('compras.personal')->result_array();
-
 
 		echo $this->load->view('modulos/OrdenServicio/addDocumento', $dataParaVista, true);
 	}
@@ -374,7 +372,6 @@ class OrdenServicio extends MY_Controller
 		foreach ($detalle as $value) {
 			$dataParaVista['ordenServicioDetalle'][$value['idTipoPresupuesto']] = $value;
 		}
-
 
 		$provincia = [];
 		foreach ($this->model->obtenerProvincia()->result_array() as $v) {
@@ -597,7 +594,6 @@ class OrdenServicio extends MY_Controller
 		$this->email->to($params['to']);
 		$this->email->cc($cc);
 
-
 		$dataParaVista['link'] = base_url() . index_page() . 'OrdenServicio/adjuntarArchivo/' . $data['idDocumento'];
 
 		$bcc = array(
@@ -730,7 +726,6 @@ class OrdenServicio extends MY_Controller
 		$post['idTipoPresupuesto'] = checkAndConvertToArray($post['idTipoPresupuesto']);
 		$post['tpdS'] = checkAndConvertToArray($post['tpdS']);
 		$post['clS'] = checkAndConvertToArray($post['clS']);
-
 
 		// compras.presupuesto
 		$insertPresupuesto = [

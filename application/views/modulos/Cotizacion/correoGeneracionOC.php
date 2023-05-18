@@ -36,4 +36,31 @@
 </style>
 <h3 style="margin: 0px;">Estimados, se le informa que se ha generado una nueva ORDEN DE COMPRA:</h3>
 <br>
+<div style="margin-top: 15px;">
+    <fieldset style="margin-top:15px;margin-bottom:15px;">
+        <legend>Items</legend>
+        <div>
+            <div id="div-ajax-detalle" class="table-responsive" style="text-align:center">
+                <table class="tabla" id="listaItemsPresupuesto" style="background:#ffffff;color:#666666" width="100%" class="tabla">
+                    <thead class="thead-light">
+                        <tr class="row_data">
+                            <th style="width: 5%;background-color: #2586da;color: white;" class="text-center header">#</th>
+                            <th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Item</th>
+                            <th style="width: 15%;background-color: #2586da;color: white;" class="text-center header">Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($ocDet as $key => $row) : ?>
+                            <tr class="default">
+                                <td><?= $key + 1 ?></td>
+                                <td><?= verificarEmpty($row['nombre'], 3) ?></td>
+                                <td><?= verificarEmpty($row['cantidad'], 3) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+</div>
 <!-- <h4 style="margin: 0px;">Se pide a los implicados rellenar los costos de cada item para completar la cotización.</h4> -->

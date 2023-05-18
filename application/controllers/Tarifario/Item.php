@@ -29,7 +29,6 @@ class Item extends MY_Controller
 			'assets/custom/js/core/gestion',
 			'assets/custom/js/Tarifario/item',
 
-
 		);
 
 		$config['data']['icon'] = 'fas fa-shopping-cart';
@@ -127,8 +126,6 @@ class Item extends MY_Controller
 				'COSTO (*)',
 				'FECHA (*)',
 				'ESTE ITEM ES EL ACTUAL (*)',
-
-
 			],
 			'columns' => [
 				['data' => 'item', 'type' => 'myDropdown', 'placeholder' => 'item', 'width' => 200, 'source' => $itemNombre],
@@ -147,7 +144,6 @@ class Item extends MY_Controller
 		$result['data']['width'] = '95%';
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
-
 
 		echo json_encode($result);
 	}
@@ -201,7 +197,6 @@ class Item extends MY_Controller
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
 
-
 		echo json_encode($result);
 	}
 
@@ -219,8 +214,6 @@ class Item extends MY_Controller
 
 		$post = json_decode($this->input->post('data'), true);
 
-
-
 		$itemProveedores = [];
 		$itemNombre = [];
 		$conteoFlag = [];
@@ -228,8 +221,6 @@ class Item extends MY_Controller
 
 		$proveedores = $this->model->getWhereJoinMultiple('compras.proveedor', [0 => ['idProveedorEstado' => 2]])->result_array();
 		$item['item'] = $this->model->obtenerItems();
-
-
 
 		foreach ($proveedores as $key => $row) {
 			$itemProveedores[$row['razonSocial']] = $row['idProveedor'];
@@ -283,12 +274,9 @@ class Item extends MY_Controller
 
 			];
 
-
-
 			// Validar que el flag y/o proveedor no se indique varias veces sobre el mismo item.
 			if (!isset($conteoFlag[$idItem])) $conteoFlag[$idItem] = 0;
 			if (!isset($conteoProv[$idItem][$idProveedor])) $conteoProv[$idItem][$idProveedor] = 0;
-
 
 			if ($tablaHT['itemActual']) {
 				$conteoFlag[$idItem]++;
@@ -441,7 +429,6 @@ class Item extends MY_Controller
 			/**
 			if (!isset($conteoFlag[$idItem])) $conteoFlag[$idItem] = 0;
 			if (!isset($conteoProv[$idItem][$idProveedor])) $conteoProv[$idItem][$idProveedor] = 0;
-
 
 			if ($tablaHT['itemActual']) {
 				$conteoFlag[$idItem]++;

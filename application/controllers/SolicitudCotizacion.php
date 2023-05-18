@@ -1763,6 +1763,7 @@ class SolicitudCotizacion extends MY_Controller
 							'tipoElemento' => $post["tipoElementoSubItemServicio[$k]"],
 							'marca' => $post["marcaSubItemServicio[$k]"],
 							'costo' => $post["precioUnitarioSubItemServicio[$k]"],
+							'subtotal' => $post["subtotalSubItemServicio[$k]"],
 						]);
 						break;
 

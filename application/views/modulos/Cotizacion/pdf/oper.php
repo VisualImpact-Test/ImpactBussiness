@@ -76,6 +76,7 @@ $filas = 10;
 	</thead>
 	<tbody>
 		<?php $indexT = 0; ?>
+		<?php $sbTotal = 0 ?>
 		<?php foreach ($cotizacionDetalle as $key => $row) : ?>
 			<?php $rowT = ($row['idItemTipo'] == COD_TEXTILES['id'] && !empty($detalleSubTalla[$row['idCotizacionDetalle']])) ? count($detalleSubTalla[$row['idCotizacionDetalle']]) : 1; ?>
 			<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && !empty($detalleSubTalla[$row['idCotizacionDetalle']])) :  ?>
@@ -94,6 +95,7 @@ $filas = 10;
 							<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['cantidad'], 3) ?></td>
 							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
 							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['subtotalSinGap']) ? moneda($row['subtotalSinGap']) : '-' ?></td>
+							<?php $sbTotal += floatval($row['subtotalSinGap']) ?>
 						</tr>
 					<?php else :  ?>
 						<tr>
@@ -125,6 +127,7 @@ $filas = 10;
 								<td style="text-align: center;" rowspan="<?= $rowT; ?>">1</td>
 								<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
 								<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
+								<?php $sbTotal += floatval($costoTotal) ?>
 							</tr>
 							<?php $v1 = $vs['sucursal']; ?>
 							<?php $v2 = $vs['razonSocial']; ?>
@@ -146,6 +149,7 @@ $filas = 10;
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>">1</td>
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
+						<?php $sbTotal += floatval($costoTotal) ?>
 					</tr>
 				<?php else :  ?>
 					<tr>
@@ -158,11 +162,17 @@ $filas = 10;
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['cantidad'], 3) ?></td>
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costo']) ? "-" : moneda($row['costo']); ?></td>
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['subtotalSinGap']) ? moneda($row['subtotalSinGap']) : '-' ?></td>
+						<?php $sbTotal += floatval($row['subtotalSinGap']) ?>
 					</tr>
 				<?php endif; ?>
 			<?php endif; ?>
 		<?php endforeach; ?>
 		<?= completarFilasPdf(['data' => $indexT, 'filas' => $filas, 'columnas' => 8 + ($tieneTextil ? ($colGen + 1) : 0)]) ?>
+		<tr>
+			<td style="border: none;" colspan="<?= 7 + ($tieneTextil ? $colGen : 0); ?>"></td>
+			<td class="text-center bold">TOTAL</td>
+			<td class="text-right"><?= moneda($sbTotal); ?></td>
+		</tr>
 	</tbody>
 </table>
 <p style="width: 100%; margin-bottom: 100px;">
