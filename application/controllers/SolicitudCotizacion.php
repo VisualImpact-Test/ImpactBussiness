@@ -789,7 +789,6 @@ class SolicitudCotizacion extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -1830,7 +1829,7 @@ class SolicitudCotizacion extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['html'] = $html;
 		$result['msg']['title'] = 'OC Vista previa';
-		$result['data']['width'] = '95%';
+		$result['data']['width'] = '98%';
 
 		resultado:
 		echo json_encode($result);

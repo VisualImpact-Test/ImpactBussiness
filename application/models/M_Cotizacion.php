@@ -903,6 +903,7 @@ class M_Cotizacion extends MY_Model
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['anexo']) ? " AND cda.flag_anexo = 1 " : "";
+		$filtros .= !empty($params['idTipoArchivo']) ? " AND cda.idTipoArchivo = {$params['idTipoArchivo']} " : "";
 
 
 		$sql = "
@@ -1171,13 +1172,9 @@ class M_Cotizacion extends MY_Model
 			od.idCotizacion,
 			o.requerimiento,
 			o.concepto,
-			-- '' cuentas,
-			-- '' centrosCosto,
-			-- '' ordenCompra,
 			CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
 			CONVERT(VARCHAR, o.fechaReg, 103) AS fechaReg,
 			ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') usuarioRegistro,
-			--ur.nombres + ' ' + ISNULL(ur.apePaterno,'') + ' ' + ISNULL(ur.apeMaterno,'') usuarioReceptor,
 			'Coordinadora de compras' usuarioReceptor,
 			cuenta.nombre as cuenta,
 			centrocosto.subcanal as centroCosto,

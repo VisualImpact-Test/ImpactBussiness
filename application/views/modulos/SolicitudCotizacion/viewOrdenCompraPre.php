@@ -223,11 +223,11 @@
 													<?php $var3 = $dataSubItem['tipoElemento']; ?>
 													<?php $var4 = $dataSubItem['marca']; ?>
 													<div class="fields">
-														<div class="field fifteen wide ui transparent input">
+														<div class="field fifteen wide ui transparent input p-0">
 															<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 														</div>
-														<div class="field one wide ui transparent input">
-															<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
+														<div class="field one wide ui transparent input p-0">
+															<input class="pl-0" readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 														</div>
 													</div>
 													<hr class="solid">
@@ -271,10 +271,10 @@
 												</div>
 											<?php endforeach; ?>
 											<div class="fields">
-												<div class="field fifteen wide ui transparent input">
+												<div class="field fifteen wide ui transparent input p-0">
 													<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 												</div>
-												<div class="field one wide ui transparent input">
+												<div class="field one wide ui transparent input p-0">
 													<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 												</div>
 											</div>

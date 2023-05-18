@@ -101,7 +101,7 @@
 								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 								<td class="text-center"><?= '1'; ?></td>
 								<td class="text-left" colspan="4">
-									<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
+									<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' ' . $v1 ?>
 								</td>
 								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
 								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
@@ -118,7 +118,7 @@
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 						<td class="text-center"><?= '1'; ?></td>
 						<td class="text-left" colspan="4">
-							<?= $v3 . '_' . $v4 . '_' . $v2 . '_' . $v1 ?>
+							<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' ' . $v1 ?>
 						</td>
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>

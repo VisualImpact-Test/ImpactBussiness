@@ -293,19 +293,19 @@
 												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 												<div class="one wide field">
 													<div class="ui sub header">Talla</div>
-													<input readonly="readonly" class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
+													<input readonly class="tallaSubItem camposTextil" name="tallaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Talla" value="<?= !empty($dataSubItem['talla']) ? $dataSubItem['talla'] : '' ?>">
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Tela</div>
-													<input readonly="readonly" class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
+													<input readonly class="telaSubItem camposTextil" name="telaSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Tela" value="<?= !empty($dataSubItem['tela']) ? $dataSubItem['tela'] : '' ?>">
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Color</div>
-													<input readonly="readonly" class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
+													<input readonly class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Cantidad</div>
-													<input readonly="readonly" class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+													<input readonly class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Genero</div>
@@ -315,11 +315,11 @@
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Costo</div>
-													<input patron="requerido" readonly="readonly" class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
+													<input patron="requerido" readonly class="onlyNumbers costoSubItem costoSubItemTextil" name="costoTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '' ?>">
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Subtotal</div>
-													<input patron="requerido" readonly="readonly" class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '' ?>">
+													<input patron="requerido" readonly class="onlyNumbers subtotalSubItem subtotalSubItemTextil" name="subtotalTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Subtotal" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '' ?>">
 												</div>
 											</div>
 									<?
@@ -367,10 +367,10 @@
 												<?php $var4 = $dataSubItem['marca']; ?>
 												<div class="fields">
 													<div class="field fourteen wide ui transparent input">
-														<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
+														<input readonly class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 													</div>
 													<div class="field two wide ui transparent input">
-														<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
+														<input readonly class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 													</div>
 												</div>
 												<hr class="solid">
@@ -401,24 +401,24 @@
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Cantidad</div>
-													<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+													<input readonly class="onlyNumbers cantidadSubItem" name="cantidadSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Costo</div>
-													<input readonly="readonly" class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costo']) ?>" readonly>
+													<input readonly class="onlyNumbers costoSubItem" name="costoSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costo']) ?>" readonly>
 												</div>
 												<div class="four wide field">
 													<div class="ui sub header">Subtotal</div>
-													<input readonly="readonly" class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['subtotal']) ?>" readonly>
+													<input readonly class="onlyNumbers subTotalSubItem" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= number_format(verificarEmpty($dataSubItem['subtotal'], 2), 2) ?>" readonly>
 												</div>
 											</div>
 										<?php endforeach; ?>
 										<div class="fields">
 											<div class="field fourteen wide ui transparent input">
-												<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
+												<input readonly class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 											</div>
 											<div class="field two wide ui transparent input">
-												<input readonly="readonly" class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
+												<input readonly class="" value="<?= $costoTotal; ?>" readonly style="font-size: 20px;">
 											</div>
 										</div>
 										<hr class="solid">

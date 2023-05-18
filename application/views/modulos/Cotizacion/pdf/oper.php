@@ -169,7 +169,7 @@ $filas = 10;
 		<?php endforeach; ?>
 		<?= completarFilasPdf(['data' => $indexT, 'filas' => $filas, 'columnas' => 8 + ($tieneTextil ? ($colGen + 1) : 0)]) ?>
 		<tr>
-			<td style="border: none;" colspan="<?= 7 + ($tieneTextil ? $colGen : 0); ?>"></td>
+			<td style="border: none;" colspan="<?= 6 + ($tieneTextil ? $colGen + 1 : 0); ?>"></td>
 			<td class="text-center bold">TOTAL</td>
 			<td class="text-right"><?= moneda($sbTotal); ?></td>
 		</tr>

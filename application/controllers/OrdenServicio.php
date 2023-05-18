@@ -328,7 +328,6 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -567,7 +566,6 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -638,7 +636,6 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -852,7 +849,6 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -1034,7 +1030,6 @@ class OrdenServicio extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -1044,7 +1039,6 @@ class OrdenServicio extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		/////////////////////////////////////////////////////////
 		$archivo = [
 			'base64' => $post['file-item'],
 			'name' => $post['file-name'],
@@ -1066,14 +1060,12 @@ class OrdenServicio extends MY_Controller
 		];
 		$this->db->update('compras.documento', $updateDocumento, ['idDocumento' => $post['idDocumento']]);
 
-		/////////////////////////////////////////////////////////
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
 
 		$this->db->trans_complete();
 		respuesta:
-
 		echo json_encode($result);
 	}
 }

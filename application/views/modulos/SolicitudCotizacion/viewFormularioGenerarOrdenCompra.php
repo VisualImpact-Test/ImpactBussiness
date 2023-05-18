@@ -66,7 +66,6 @@
 								</div>
 							</div>
 						<?php endif; ?>
-
 					</div>
 					<div class="ui left floated header">
 						<span class="ui medium text "><?= $row['item'] ?></span></span>
@@ -84,7 +83,6 @@
 										</div>
 
 										<input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
-
 										<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 										<input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : '' ?>">
 										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">

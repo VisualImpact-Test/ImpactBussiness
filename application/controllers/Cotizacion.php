@@ -3,7 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Cotizacion extends MY_Controller
 {
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -20,7 +19,6 @@ class Cotizacion extends MY_Controller
 
 	public function index()
 	{
-
 		$config = array();
 		$config['nav']['menu_active'] = '131';
 		$config['css']['style'] = array(
@@ -276,9 +274,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		if ($post['tipoRegistro'] == ESTADO_COTIZACION_APROBADA) {
-
 			if (!empty($post['codigo_oc']) || !empty($post['motivo']) || (isset($post['file-item[0]']) && !empty($post['file-item[0]']))) {
-
 				$data['update'] = [
 					'idCotizacionEstado' => ESTADO_COTIZACION_APROBADA,
 					'codOrdenCompra' => !empty($post['codigo_oc']) ? $post['codigo_oc'] : NULL,
@@ -395,12 +391,10 @@ class Cotizacion extends MY_Controller
 		$data['anexos'] = [];
 
 		if (!empty($post['anexo-file'])) {
-
 			$data['anexos_arreglo'] = getDataRefactorizada([
 				'base64' => $post['anexo-file'],
 				'type' => $post['anexo-type'],
 				'name' => $post['anexo-name'],
-
 			]);
 
 			foreach ($data['anexos_arreglo'] as $anexo) {
@@ -468,7 +462,7 @@ class Cotizacion extends MY_Controller
 				if (empty($getUm)) {
 					$this->db->insert('compras.unidadMedida', ['nombre' => $post['unidadMedida'][$k]]);
 					$post['unidadMedida'][$k] = $this->db->insert_id();
-				}else{
+				} else {
 					$post['unidadMedida'][$k] = $getUm['idUnidadMedida'];
 				}
 			}
@@ -479,7 +473,6 @@ class Cotizacion extends MY_Controller
 				$item = $validacionExistencia['query']->row_array();
 
 				if (empty($item)) {
-
 					$dataItem['insert'] = [
 						'nombre' => trim($nameItem),
 						'caracteristicas' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
@@ -559,7 +552,6 @@ class Cotizacion extends MY_Controller
 						'cantidad' => $post["cantidadTextil[$k]"],
 						'genero' => $post["generoSubItem[$k]"]
 					]);
-
 					break;
 
 				case COD_TARJETAS_VALES['id']:
@@ -574,8 +566,6 @@ class Cotizacion extends MY_Controller
 			}
 
 			foreach ($data['subDetalle'][$k] as $subItem) {
-
-				// if (isset($subItem['genero']) === NULL or empty($subItem['genero'])) unset($subItem['genero']);
 				$data['insertSubItem'][$k][] = [
 					'nombre' => !empty($subItem['nombre']) ? $subItem['nombre'] : NULL,
 					'cantidad' => !empty($subItem['cantidad']) ? $subItem['cantidad'] : NULL,
@@ -595,7 +585,6 @@ class Cotizacion extends MY_Controller
 					'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 					'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
-
 				];
 			}
 
@@ -680,7 +669,6 @@ class Cotizacion extends MY_Controller
 		}
 
 		respuesta:
-
 		echo json_encode($result);
 	}
 
@@ -785,7 +773,6 @@ class Cotizacion extends MY_Controller
 		$estadoEmail = $this->email->send();
 
 		if (!$estadoEmail) {
-
 			$mensaje = $this->email->print_debugger();
 		}
 
@@ -807,7 +794,7 @@ class Cotizacion extends MY_Controller
 		if (!empty($idCotizacion)) {
 			$data = [];
 			$dataParaVista = [];
-			$dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion /*, 'anexo' => true */])['query']->result_array();
+			$dataParaVista['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'idTipoArchivo' => TIPO_IMAGEN /*, 'anexo' => true */])['query']->result_array();
 			// $dataParaVista['imagenDeItem'] = $this->model->obtenerImagenesDeCotizacion(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 			$data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 			$dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
@@ -826,6 +813,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
 				$dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
 				$dataParaVista['cabecera']['solicitante'] = $row['solicitante'];
+				$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -848,9 +836,7 @@ class Cotizacion extends MY_Controller
 			}
 
 			if (!empty($dataParaVista['cabecera']['fee'])) {
-
 				$dataParaVista['cabecera']['fee_prc'] = $fee = ($total * ($dataParaVista['cabecera']['fee'] / 100));
-
 				$totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
 			}
 
@@ -904,7 +890,7 @@ class Cotizacion extends MY_Controller
 
 			header('Set-Cookie: fileDownload=true; path=/');
 			header('Cache-Control: max-age=60, must-revalidate');
-			$title = $dataParaVista['cabecera']['cotizacion'];
+			$title = $dataParaVista['cabecera']['codCotizacion'] . ' ' . $dataParaVista['cabecera']['cotizacion'];
 			$mpdf->Output("$title.pdf", 'D');
 		}
 
@@ -1141,7 +1127,6 @@ class Cotizacion extends MY_Controller
 
 	public function viewRegistroCotizacion()
 	{
-
 		$config = array();
 		$config['nav']['menu_active'] = '131';
 		$config['css']['style'] = array(
@@ -1470,7 +1455,6 @@ class Cotizacion extends MY_Controller
 		$updateCotizacion = [];
 		$insertHistoricoCotizacion = [];
 		foreach ($post['idCotizacion'] as $idCotizacion) {
-
 			$updateCotizacion[] = [
 				'idCotizacion' => $idCotizacion,
 				'idCotizacionEstado' => ESTADO_FINALIZADA,
@@ -1556,7 +1540,8 @@ class Cotizacion extends MY_Controller
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 		// $mpdf->Output('OPER.pdf', 'D');
-		$mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		$titlePdf = $oper[0]['requerimiento'] . ' - ' . $oper[0]['concepto'];
+		$mpdf->Output("$titlePdf.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 
 		return true;
 	}
@@ -1728,7 +1713,6 @@ class Cotizacion extends MY_Controller
 
 		$message = 'Se actualizó la cotización';
 		if ($post['flagEnviarCorreo'] == 1) {
-
 			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => !empty($post['correos']) ? $post['correos'] : []]);
 			$message = 'La cotización se envió al cliente';
 		}
@@ -1749,7 +1733,6 @@ class Cotizacion extends MY_Controller
 	}
 	public function actualizarCotizacion($post)
 	{
-
 		$this->db->trans_start();
 		$result = $this->result;
 
@@ -1825,7 +1808,6 @@ class Cotizacion extends MY_Controller
 		$data['anexos'] = [];
 
 		if (!empty($post['anexo-file'])) {
-
 			$data['anexos_arreglo'] = getDataRefactorizada([
 				'base64' => $post['anexo-file'],
 				'type' => $post['anexo-type'],
@@ -2193,7 +2175,6 @@ class Cotizacion extends MY_Controller
 
 	public function viewFormularioActualizar($idCotizacion = '')
 	{
-
 		if (empty($idCotizacion)) {
 			redirect('Cotizacion', 'refresh');
 		}
@@ -2407,7 +2388,6 @@ class Cotizacion extends MY_Controller
 
 	public function actualizarCotizacion2()
 	{
-
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
@@ -2586,7 +2566,6 @@ class Cotizacion extends MY_Controller
 
 	public function duplicarCotizacion()
 	{
-
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
@@ -2629,7 +2608,6 @@ class Cotizacion extends MY_Controller
 		$data['anexos_arreglo'] = [];
 		$data['anexos'] = [];
 		if (!empty($post['anexo-name'])) {
-
 			$data['anexos_arreglo'] = getDataRefactorizada([
 				'idCotizacionDetalleArchivo' => $post['idCotizacionDetalleArchivo'],
 				'base64' => $post['anexo-file'],
@@ -2640,7 +2618,6 @@ class Cotizacion extends MY_Controller
 
 			foreach ($data['anexos_arreglo'] as $anexo) {
 				if (empty($anexo['idCotizacionDetalleArchivo'])) {
-
 					$data['anexos'][] = [
 						'base64' => $anexo['base64'],
 						'type' => $anexo['type'],
@@ -2804,57 +2781,45 @@ class Cotizacion extends MY_Controller
 			}
 
 			if (!empty($post["file-name[$k]"])) {
-
 				if (!empty($post["idCotizacionDetalleArchivo2[$k]"])) {
-
 					$data['archivos_arreglo'][$k] = getDataRefactorizada([
-
 						'idCotizacionDetalleArchivo' => $post["idCotizacionDetalleArchivo2[$k]"],
 						'base64' => $post["file-item[$k]"],
 						'type' => $post["file-type[$k]"],
 						'name' => $post["file-name[$k]"]
-
 					]);
 				}
 
 				if (empty($post["idCotizacionDetalleArchivo2[$k]"])) {
-
 					$data['archivos_arreglo'][$k] = getDataRefactorizada([
-
 						'base64' => $post["file-item[$k]"],
 						'type' => $post["file-type[$k]"],
 						'name' => $post["file-name[$k]"]
-
 					]);
 				}
 
 				// foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
 				// 	if (empty($archivo['idCotizacionDetalleArchivo'])) {
-
 				// 		$data['archivos'][$k][] = [
 				// 			'base64' => $archivo['base64'],
 				// 			'type' => $archivo['type'],
 				// 			'name' => $archivo['name'],
 				// 			'carpeta' => 'cotizacion',
 				// 			'nombreUnico' => uniqid(),
-
 				// 		];
 				// 	}
 				// }
 
 				foreach ($data['archivos_arreglo'][$k] as $key => $archivo) {
 					if (empty($archivo['idCotizacionDetalleArchivo'])) {
-
 						$data['archivos'][$k][] = [
 							'base64' => $archivo['base64'],
 							'type' => $archivo['type'],
 							'name' => $archivo['name'],
 							'carpeta' => 'cotizacion',
 							'nombreUnico' => uniqid(),
-
 						];
 					} else {
-
 						$data['archivoExistente'][$k][] = $archivo['idCotizacionDetalleArchivo'];
 						$data['idCotizacion'] = $insert['id'];
 					}
@@ -2951,7 +2916,6 @@ class Cotizacion extends MY_Controller
 		$idCotizacion = json_decode($this->input->post('data'));
 		$item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
 		if (!empty($item)) {
-
 			$dataParaVista['data']  = [
 				'nombreCotizacion' => $item[0]['nombreCotizacion'],
 				'codigoCotizacion' => $item[0]['codigoCotizacion'],
