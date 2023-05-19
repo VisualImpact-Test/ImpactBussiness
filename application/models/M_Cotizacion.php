@@ -406,6 +406,7 @@ class M_Cotizacion extends MY_Model
 				, pd.flagAlternativo
 				, pd.nombreAlternativo
 				, ss.nombre as solicitante
+				, pd.flagRedondear
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo

@@ -252,6 +252,7 @@ var Cotizacion = {
 				})
 			});
 			$('.unidadMed').dropdown({ allowAdditions: true });
+			$('.flagRedondearForm').change();
 			// $.each($('.btnPopupPropuestaItem'), function(i,v){    
 			// 	var id = $(v).data('id');
 			// 	$(v).popup({
@@ -402,7 +403,7 @@ var Cotizacion = {
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
 			$('.ui.checkbox').checkbox();
 
-			
+
 			Fn.loadSemanticFunctions();
 			$('.unidadMed').dropdown({ allowAdditions: true });
 		});
@@ -651,8 +652,51 @@ var Cotizacion = {
 			let thisControlParents = thisControl.parents('.nuevo');
 			let thisPrecioForm = thisControlParents.find('.precioForm');
 			let thisCostoForm = thisControlParents.find('.costoForm');
+			let thisCostoFormLabel = thisControlParents.find('.costoFormLabel');
 			let thisSubTotalForm = thisControlParents.find('.subtotalForm');
 			let thisCantidadForm = thisControlParents.find('.cantidadForm');
+			let thisGapForm = thisControlParents.find('.gapForm');
+
+			let valores = [];
+			if (thisControl.val() == '1') {
+				// thisControlParents.find('.subtotalSubItem').addClass('d-none');
+				// thisControlParents.find('.subtotalSubItemCT').addClass('d-none');
+				// thisControlParents.find('.subtotalSubItemRedondeo').removeClass('d-none');
+				// thisControlParents.find('.subtotalSubItemCTRedondeo').removeClass('d-none');
+				valores = thisControlParents.find('.subtotalSubItem');
+			} else {
+				// thisControlParents.find('.subtotalSubItemRedondeo').addClass('d-none');
+				// thisControlParents.find('.subtotalSubItemCTRedondeo').addClass('d-none');
+				// thisControlParents.find('.subtotalSubItem').removeClass('d-none');
+				// thisControlParents.find('.subtotalSubItemCT').removeClass('d-none');
+				valores = thisControlParents.find('.subtotalSubItem');
+			}
+
+			let sTotal = 0;
+			let subtotalSubItemGap = thisControlParents.find('.subtotalSubItemGap');
+			for (let i = 0; i < valores.length; i++) {
+				inp = valores[i];
+				if (thisControl.val() == '1') {
+					vl = Math.ceil(parseFloat($(inp).val()) * ((100 + parseFloat(thisGapForm.val())) / 100));
+					
+				} else {
+					vl = parseFloat($(inp).val())  * ((100 + parseFloat(thisGapForm.val())) / 100);
+				}
+				$(subtotalSubItemGap[i]).val(vl.toFixed(2));
+				sTotal += vl;
+			}
+			thisSubTotalForm.val(sTotal.toFixed(2));
+			let cantidad = parseFloat(thisCantidadForm.val());
+
+			newCost = sTotal / cantidad;
+			// if (thisControl.val() == '1') {
+				newCost = parseFloat(newCost.toFixed(2)) / ((100 + parseFloat(thisGapForm.val())) / 100);
+			// }
+			thisCostoForm.val(newCost.toFixed(4));
+
+			thisCostoFormLabel.val('S/ ' + newCost.toFixed(4));
+
+
 
 			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm'); // sirve Para el subtotal
 			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm'); // Sirve para el subtotal
@@ -852,6 +896,14 @@ var Cotizacion = {
 			Cotizacion.actualizarTotal();
 		});
 
+		$(document).on('focusout', '.gapForm', function (e) {
+			e.preventDefault();
+			let thisControl = $(this);
+			let thisControlParents = thisControl.parents('.nuevo');
+			
+			let flagRedondear = thisControlParents.find('.flagRedondearForm');
+			flagRedondear.change();
+		});
 		$(document).on('keyup', '.gapForm', function (e) {
 			e.preventDefault();
 			let thisControl = $(this);
@@ -881,7 +933,7 @@ var Cotizacion = {
 			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
 
-			precioForm.val(precio);
+			precioForm.val(precio.toFixed(2));
 			precioFormLabel.val(moneyFormatter.format(precio));
 
 			let enteroSuperior = Math.ceil(subTotal);
@@ -1375,7 +1427,7 @@ var Cotizacion = {
 								<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 							</div>
 							<div class="field two wide ui transparent input">
-								<input readonly="readonly" class="" value="${costTo}" readonly style="font-size: 20px;">
+								<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
 							</div>
 						</div>
 						<hr class="solid">`;
@@ -1429,7 +1481,7 @@ var Cotizacion = {
 					<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 				</div>
 				<div class="field two wide ui transparent input">
-					<input readonly="readonly" class="" value="${costTo}" readonly style="font-size: 20px;">
+					<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
 				</div>
 			</div>
 			<hr class="solid">`;
@@ -1693,9 +1745,7 @@ var Cotizacion = {
 
 		$(document).on('change', '#cuentaForm', function () {
 			let control = $(this);
-
 			let cod = control.val();
-
 			let gap = 0;
 
 			$.each(Cotizacion.gapEmpresas, (k, v) => {
@@ -1704,7 +1754,6 @@ var Cotizacion = {
 					return;
 				}
 			});
-
 			if (gap) {
 				$('.gapForm').val(gap);
 				$('.cantidadForm').keyup();
@@ -1712,7 +1761,13 @@ var Cotizacion = {
 				$('.gapForm').val('');
 			}
 
+			$('#tipoItemForm').change();
 		});
+
+		$(document).on('change', '#cuentaCentroCostoForm', function () {
+			$('#tipoItemForm').change();
+		});
+
 		$(document).on('click', '.btnPopupPropuestaItem', function () {
 
 			++modalId;

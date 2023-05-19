@@ -827,6 +827,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['itemMarca'] = $row['itemMarca'];
 				$dataParaVista['detalle'][$key]['flagAlternativo'] = $row['flagAlternativo'];
 				$dataParaVista['detalle'][$key]['nombreAlternativo'] = $row['nombreAlternativo'];
+				$dataParaVista['detalle'][$key]['flagRedondear'] = $row['flagRedondear'];
 
 				$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 			}
