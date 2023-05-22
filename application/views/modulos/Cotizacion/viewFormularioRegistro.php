@@ -275,7 +275,7 @@
 									</div>
 									<div class="five wide field">
 										<div class="ui sub header">Costo</div>
-										<input class="onlyNumbers costoSubItem costoTransporte" name="costoSubItemForm[0]" placeholder="0" value="<?= !empty($data['costoSubItem']) ? $data['costoSubItem'] : '' ?>">
+										<input class="onlyNumbers costoSubItemForm costoTransporte" name="costoSubItemForm[0]" placeholder="0" value="<?= !empty($data['costoSubItem']) ? $data['costoSubItem'] : '' ?>">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>

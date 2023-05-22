@@ -407,6 +407,7 @@ class M_Cotizacion extends MY_Model
 				, pd.nombreAlternativo
 				, ss.nombre as solicitante
 				, pd.flagRedondear
+				, p.mostrarPrecio
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -1905,13 +1906,15 @@ class M_Cotizacion extends MY_Model
 				cds.sucursal,
 				cds.razonSocial,
 				cds.marca,
-				cds.tipoElemento
+				cds.tipoElemento,
+				il.nombre as itemLogistica
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			JOIN compras.cotizacionDetalleSub cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
 			LEFT JOIN compras.tipoServicio ts ON ts.idTipoServicio = cds.idTipoServicio
 			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cds.idUnidadMedida
+			LEFT JOIN visualImpact.logistica.articulo il ON il.idArticulo = cds.idItem
 			WHERE
 			1 = 1
 			{$filtros}

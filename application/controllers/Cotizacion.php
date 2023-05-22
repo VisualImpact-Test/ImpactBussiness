@@ -814,6 +814,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
 				$dataParaVista['cabecera']['solicitante'] = $row['solicitante'];
 				$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
+				$dataParaVista['cabecera']['mostrarPrecio'] = $row['mostrarPrecio'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -856,7 +857,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['total_fee_igv'] = $totalFee;
 			}
 
-			$dataParaVista['cabecera']['mostrarPrecio'] = false;
+			// $dataParaVista['cabecera']['mostrarPrecio'] = false;
 
 			if (count($dataParaVista) == 0) exit();
 
@@ -2252,26 +2253,26 @@ class Cotizacion extends MY_Controller
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
 		}
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
-		if (!empty($itemServicio)) {
-			foreach ($itemServicio as $key => $row) {
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
-				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cantidadImagenes'] = $row['cantidadImagenes'];
-			}
-			foreach ($data['itemServicio'] as $k => $r) {
-				$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
-			}
-		}
-		$data['itemServicio'][0] = array();
-		$config['data']['itemServicio'] = $data['itemServicio'];
+		// $itemServicio =  $this->model_item->obtenerItemServicio();
+		// if (!empty($itemServicio)) {
+		// 	foreach ($itemServicio as $key => $row) {
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cantidadImagenes'] = $row['cantidadImagenes'];
+		// 	}
+		// 	foreach ($data['itemServicio'] as $k => $r) {
+		// 		$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+		// 	}
+		// }
+		// $data['itemServicio'][0] = array();
+		// $config['data']['itemServicio'] = $data['itemServicio'];
 		$config['single'] = true;
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'Cotizacion';

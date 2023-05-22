@@ -626,6 +626,7 @@ var Cotizacion = {
 
 		$(document).on('change', '.itemLogisticaForm', function (e) {
 			var fPeso = $(this).closest('.fields').find('.pesoForm');
+			var fPesoReal = $(this).closest('.div-features').find('.cantidadRealSubItem');
 			var idArticulo = $(this).val();
 			var parametros = {
 				"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
@@ -639,7 +640,8 @@ var Cotizacion = {
 					//$("#resultado").html("Procesando, espere por favor...");
 				},
 				success: function (response) {
-					$(fPeso).val(response);
+					$(fPeso).val(parseFloat(response) * 1.2);
+					$(fPesoReal).val(response);
 					fPeso.keyup();
 				}
 			});
@@ -656,45 +658,36 @@ var Cotizacion = {
 			let thisSubTotalForm = thisControlParents.find('.subtotalForm');
 			let thisCantidadForm = thisControlParents.find('.cantidadForm');
 			let thisGapForm = thisControlParents.find('.gapForm');
-
+			let tipoItem = thisControlParents.find('#tipoItemForm');
 			let valores = [];
-			if (thisControl.val() == '1') {
-				// thisControlParents.find('.subtotalSubItem').addClass('d-none');
-				// thisControlParents.find('.subtotalSubItemCT').addClass('d-none');
-				// thisControlParents.find('.subtotalSubItemRedondeo').removeClass('d-none');
-				// thisControlParents.find('.subtotalSubItemCTRedondeo').removeClass('d-none');
-				valores = thisControlParents.find('.subtotalSubItem');
-			} else {
-				// thisControlParents.find('.subtotalSubItemRedondeo').addClass('d-none');
-				// thisControlParents.find('.subtotalSubItemCTRedondeo').addClass('d-none');
-				// thisControlParents.find('.subtotalSubItem').removeClass('d-none');
-				// thisControlParents.find('.subtotalSubItemCT').removeClass('d-none');
+			if (thisControlParents.find('.subtotalSubItem').length != 0) {
 				valores = thisControlParents.find('.subtotalSubItem');
 			}
-
 			let sTotal = 0;
 			let subtotalSubItemGap = thisControlParents.find('.subtotalSubItemGap');
 			for (let i = 0; i < valores.length; i++) {
 				inp = valores[i];
+				st = $(inp).val() == '' ? 0 : parseFloat($(inp).val());
+				gp = thisGapForm.val() == '' ? 0 : parseFloat(thisGapForm.val());
 				if (thisControl.val() == '1') {
-					vl = Math.ceil(parseFloat($(inp).val()) * ((100 + parseFloat(thisGapForm.val())) / 100));
-					
+					vl = Math.ceil(st * ((100 + gp) / 100));
 				} else {
-					vl = parseFloat($(inp).val())  * ((100 + parseFloat(thisGapForm.val())) / 100);
+					vl = st * ((100 + gp) / 100);
 				}
 				$(subtotalSubItemGap[i]).val(vl.toFixed(2));
 				sTotal += vl;
 			}
-			thisSubTotalForm.val(sTotal.toFixed(2));
-			let cantidad = parseFloat(thisCantidadForm.val());
+			if (sTotal != 0) {
+				thisSubTotalForm.val(sTotal.toFixed(2));
+				let cantidad = parseFloat(thisCantidadForm.val());
+				newCost = sTotal / cantidad;
 
-			newCost = sTotal / cantidad;
-			// if (thisControl.val() == '1') {
 				newCost = parseFloat(newCost.toFixed(2)) / ((100 + parseFloat(thisGapForm.val())) / 100);
-			// }
-			thisCostoForm.val(newCost.toFixed(4));
 
-			thisCostoFormLabel.val('S/ ' + newCost.toFixed(4));
+				thisCostoForm.val(newCost.toFixed(4));
+
+				thisCostoFormLabel.val('S/ ' + newCost.toFixed(4));
+			}
 
 
 
@@ -900,7 +893,7 @@ var Cotizacion = {
 			e.preventDefault();
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
-			
+
 			let flagRedondear = thisControlParents.find('.flagRedondearForm');
 			flagRedondear.change();
 		});
@@ -1409,83 +1402,84 @@ var Cotizacion = {
 			let subDetalleServicio = $(this).find('.txtDetalleTipoServicio').length > 0 ? JSON.parse($(this).find('.txtDetalleTipoServicio').html()) : [];
 			let idCotizacionDetalle = $(this).parents('.nuevo').find('.txtIdCotizacionDetalle').val();
 			var html = '';
-
-			let valor1 = subDetalleServicio[0]['sucursal'];
-			let valor2 = subDetalleServicio[0]['razonSocial'];
-			let valor3 = subDetalleServicio[0]['tipoElemento'];
-			let valor4 = subDetalleServicio[0]['marca'];
-			let costTo = 0;
-			$.each(subDetalleServicio, function (k, v) {
-				if (!(v.sucursal == valor1 && v.razonSocial == valor2 && v.tipoElemento == valor3 && v.marca == valor4)) {
-					valor1 = v.sucursal;
-					valor2 = v.razonSocial;
-					valor3 = v.tipoElemento;
-					valor4 = v.marca;
+			if (subDetalleServicio.length != 0) {
+				let valor1 = subDetalleServicio[0]['sucursal'];
+				let valor2 = subDetalleServicio[0]['razonSocial'];
+				let valor3 = subDetalleServicio[0]['tipoElemento'];
+				let valor4 = subDetalleServicio[0]['marca'];
+				let costTo = 0;
+				$.each(subDetalleServicio, function (k, v) {
+					if (!(v.sucursal == valor1 && v.razonSocial == valor2 && v.tipoElemento == valor3 && v.marca == valor4)) {
+						valor1 = v.sucursal;
+						valor2 = v.razonSocial;
+						valor3 = v.tipoElemento;
+						valor4 = v.marca;
+						html += `
+							<div class="fields">
+								<div class="field fourteen wide ui transparent input">
+									<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
+								</div>
+								<div class="field two wide ui transparent input">
+									<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
+								</div>
+							</div>
+							<hr class="solid">`;
+						costTo = 0;
+					}
+					costTo += parseFloat(v.subTotal);
 					html += `
-						<div class="fields">
-							<div class="field fourteen wide ui transparent input">
-								<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
+					<div class="fields body-sub-item body-sub-item-servicio">
+						<div class="fields field eight">
+							<div class="four wide field">
+								<div class="ui sub header">Sucursal</div>
+								<input class="nombreSubItem" name="newSucursaleSubItemServicio[${idCotizacionDetalle}]" placeholder="Sucursal" value="${v.sucursal}" readonly>
 							</div>
-							<div class="field two wide ui transparent input">
-								<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
+							<div class="four wide field">
+								<div class="ui sub header">Razon Social</div>
+								<input class="nombreSubItem" name="newRazonSocialSubItemServicio[${idCotizacionDetalle}]" placeholder="Razon Social" value="${v.razonSocial}" readonly>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Tipo Elemento</div>
+								<input class="nombreSubItem" name="newTipoElementoSubItemServicio[${idCotizacionDetalle}]" placeholder="Tipo Elemento" value="${v.tipoElemento}" readonly>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Marca</div>
+								<input class="nombreSubItem" name="newMarcaSubItemServicio[${idCotizacionDetalle}]" placeholder="Marca" value="${v.marca}" readonly>
 							</div>
 						</div>
-						<hr class="solid">`;
-					costTo = 0;
-				}
-				costTo += parseFloat(v.subTotal);
+						<div class="fields field eight">
+							<div class="six wide field">
+								<div class="ui sub header">Descripción</div>
+								<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}" readonly>
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Cantidad</div>
+								<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo</div>
+								<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Subtotal</div>
+								<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
+							</div>
+						</div>
+					</div>
+					`;
+				});
 				html += `
-				<div class="fields body-sub-item body-sub-item-servicio">
-					<div class="fields field eight">
-						<div class="four wide field">
-							<div class="ui sub header">Sucursal</div>
-							<input class="nombreSubItem" name="newSucursaleSubItemServicio[${idCotizacionDetalle}]" placeholder="Sucursal" value="${v.sucursal}" readonly>
-						</div>
-						<div class="four wide field">
-							<div class="ui sub header">Razon Social</div>
-							<input class="nombreSubItem" name="newRazonSocialSubItemServicio[${idCotizacionDetalle}]" placeholder="Razon Social" value="${v.razonSocial}" readonly>
-						</div>
-						<div class="four wide field">
-							<div class="ui sub header">Tipo Elemento</div>
-							<input class="nombreSubItem" name="newTipoElementoSubItemServicio[${idCotizacionDetalle}]" placeholder="Tipo Elemento" value="${v.tipoElemento}" readonly>
-						</div>
-						<div class="four wide field">
-							<div class="ui sub header">Marca</div>
-							<input class="nombreSubItem" name="newMarcaSubItemServicio[${idCotizacionDetalle}]" placeholder="Marca" value="${v.marca}" readonly>
-						</div>
+				<div class="fields">
+					<div class="field fourteen wide ui transparent input">
+						<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
 					</div>
-					<div class="fields field eight">
-						<div class="six wide field">
-							<div class="ui sub header">Descripción</div>
-							<input class="nombreSubItem" name="newNombreSubItemServicio[${idCotizacionDetalle}]" placeholder="Nombre" value="${v.descripcion}" readonly>
-						</div>
-						<div class="three wide field">
-							<div class="ui sub header">Cantidad</div>
-							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCantidadSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.cantidad}" readonly>
-						</div>
-						<div class="three wide field">
-							<div class="ui sub header">Costo</div>
-							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newCostoSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.costo}" readonly>
-						</div>
-						<div class="four wide field">
-							<div class="ui sub header">Subtotal</div>
-							<input readonly="readonly" class="onlyNumbers cantidadSubItem" name="newSubtotalSubItemServicio[${idCotizacionDetalle}]" placeholder="0" value="${v.subTotal}" readonly>
-						</div>
+					<div class="field two wide ui transparent input">
+						<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
 					</div>
 				</div>
-				`;
-			});
-			html += `
-			<div class="fields">
-				<div class="field fourteen wide ui transparent input">
-					<input readonly="readonly" class="text-right" value="SUBTOTAL" readonly style="font-size: 20px;">
-				</div>
-				<div class="field two wide ui transparent input">
-					<input readonly="readonly" class="" value="${costTo.toFixed(2)}" readonly style="font-size: 20px;">
-				</div>
-			</div>
-			<hr class="solid">`;
-			divItemServicio.html(html);
+				<hr class="solid">`;
+				divItemServicio.html(html);
+			}
 
 			let bodySubItem = $(this).parents('.nuevo').find('.body-sub-item');
 			$.each(bodySubItem, function (k, v) {
@@ -2414,6 +2408,7 @@ var Cotizacion = {
 		let proveedorDistribucion = parent.find('.proveedorDistribucionSubItem').find('select');
 		let cantidadReal = parent.find('.cantidadRealSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
+		let costoSubItemForm = parent.find('.costoSubItemForm');
 
 		let idCotizacionDetalle = parent.find('.idCotizacionDetalleSubForm');
 
@@ -2444,6 +2439,7 @@ var Cotizacion = {
 		proveedorDistribucion.attr('name', `proveedorDistribucionSubItem[${number}]`);
 		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
+		costoSubItemForm.attr('name', `costoSubItemForm[${number}]`);
 		idCotizacionDetalle.attr('name', `idCotizacionDetalleSub[${number}]`);
 	},
 

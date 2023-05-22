@@ -566,7 +566,7 @@
 										<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
 										<input type="hidden" class="costoNoRedondeadoForm" name="costoNoRedondeadoForm" placeholder="0" value="0">
 
-										<div class="ui basic floating dropdown button simpleDropdown ">
+										<div class="ui basic floating dropdown button simpleDropdown d-none">
 											<input type="hidden" class="flagRedondearForm" name="flagRedondearForm" value="<?= !empty($row['flagRedondear']) ? $row['flagRedondear'] : 0 ?>" patron="requerido">
 											<div class="text">Redondear</div>
 											<i class="dropdown icon"></i>

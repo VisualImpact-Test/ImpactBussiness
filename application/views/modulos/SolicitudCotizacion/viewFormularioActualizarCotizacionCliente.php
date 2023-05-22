@@ -354,7 +354,7 @@
 													<div class="ui sub header">Sub Total</div>
 													<input class="onlyNumbers subtotalSubItem d-none" name="subtotalSubItemServicio[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '0' ?>" readonly>
 													<input class="subtotalSubItemGap" value="<?= !empty($dataSubItem['subtotal']) ? $dataSubItem['subtotal'] : '0' ?>" readonly>
-												
+
 												</div>
 											</div>
 										<?php endforeach; ?>
@@ -408,7 +408,6 @@
 										<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 										<div class="fields ">
 											<div class="six wide field">
-												<?= json_encode($dataSubItem); ?>
 												<div class="ui sub header">Tipo Servicio</div>
 												<select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicioSubItem[<?= $row['idCotizacionDetalle'] ?>]">
 													<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $dataSubItem['idTipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
@@ -434,7 +433,7 @@
 											<div class="eight wide field ">
 												<div class="ui sub header">Item Logística</div>
 												<select class="ui clearable search dropdown simpleDropdown itemLogisticaForm " name="itemLogisticaForm[<?= $row['idCotizacionDetalle'] ?>]">
-													<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $itemLogistica, 'id' => 'value', 'value' => 'label', 'selected' => $dataSubItem['idItem'], 'class' => 'text-titlecase', 'data-option' => ['pesoLogistica']]); ?>
+													<option selected value="<?= $dataSubItem['idItem']; ?>"><?= $dataSubItem['itemLogistica']; ?></option>
 												</select>
 											</div>
 											<div class="four wide field">

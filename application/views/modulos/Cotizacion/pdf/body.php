@@ -77,7 +77,7 @@
 					</tr>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
-					<?php $col1 = 8; ?>
+					<?php $col1 = 7; ?>
 					<tr style="background-color: #FFE598;">
 						<th>ITEM</th>
 						<th>SUCURSAL</th>
@@ -86,7 +86,10 @@
 						<th>MARCA</th>
 						<th>DETALLES DE SERVICIO</th>
 						<th>CANTIDAD</th>
-						<th>COSTO</th>
+						<?php if ($cabecera['mostrarPrecio']) :  ?>
+							<?php $col1++; ?>
+							<th>COSTO</th>
+						<?php endif; ?>
 						<th>TOTAL</th>
 					</tr>
 				<?php endif; ?>
@@ -127,10 +130,12 @@
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
 						<td class="text-center" rowspan="1"><?= $value[0]['nombre']; ?></td>
 						<td class="text-center" rowspan="1"><?= $value[0]['cantidad']; ?></td>
-						<?php if ($redondear) :  ?>
-							<td class="text-center" rowspan="1"><?= ceil($value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
-						<?php else : ?>
-							<td class="text-center" rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+						<?php if ($cabecera['mostrarPrecio']) :  ?>
+							<?php if ($redondear) :  ?>
+								<td class="text-center" rowspan="1"><?= ceil($value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
+							<?php else : ?>
+								<td class="text-center" rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+							<?php endif; ?>
 						<?php endif; ?>
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
 					</tr>
@@ -139,10 +144,12 @@
 							<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 								<td class="text-center" rowspan="1"><?= $v['nombre']; ?></td>
 								<td class="text-center" rowspan="1"><?= $v['cantidad']; ?></td>
-								<?php if ($redondear) :  ?>
-									<td class="text-center" rowspan="1"><?= ceil($v['costo'] * ($row['gap'] + 100) / 100); ?></td>
-								<?php else : ?>
-									<td class="text-center" rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
+								<?php if ($cabecera['mostrarPrecio']) :  ?>
+									<?php if ($redondear) :  ?>
+										<td class="text-center" rowspan="1"><?= ceil($v['costo'] * ($row['gap'] + 100) / 100); ?></td>
+									<?php else : ?>
+										<td class="text-center" rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
+									<?php endif; ?>
 								<?php endif; ?>
 							</tr>
 						<?php endif; ?>
