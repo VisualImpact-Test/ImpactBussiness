@@ -16,6 +16,12 @@
 				<input type="text" name="asunto" value="Cotización <?= $dataOper['tituloAsunto'] ?>" readonly patron="requerido">
 			</div>
 		</div>
+		<div class="fields">
+			<div class="sixteen wide field">
+				<div class="ui sub header">Links</div>
+				<textarea name="enlaces" placeholder="Ingrese los enlaces aquí " rows="6" class="w-100"><?= !empty($dataOper['enlaces']) ? $dataOper['enlaces'] : '' ?></textarea>
+			</div>
+		</div>
 		<? foreach ($data['idCotizacion'] as $idCotizacion) { ?>
 			<input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
 		<? } ?>

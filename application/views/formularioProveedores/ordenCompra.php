@@ -73,6 +73,17 @@
 				</div>
 				<input type="hidden" class="date-semantic-value" name="fechaEntrega" placeholder="Fecha de entrega" value="<?= !empty($cabecera['fechaEntrega']) ? $cabecera['fechaEntrega'] : '' ?>" patron="requerido">
 			</div>
+			<?php if (!empty($cabecera['enlaces'])) :  ?>
+				<div class="sixteen wide field pt-4">
+					<div class="ui sub header">Links</div>
+					<div class="ui left corner labeled input w-100">
+						<div class="ui left corner label">
+							<i class="linkify icon"></i>
+						</div>
+						<textarea name="linkForm" placeholder="Ingrese los enlaces aquí " rows="6" class="w-100"><?= !empty($cabecera['enlaces']) ? $cabecera['enlaces'] : '' ?></textarea>
+					</div>
+				</div>
+			<?php endif; ?>
 			<table id="tb-cotizaciones" class="ui celled structured table">
 				<thead class="full-width">
 					<tr>

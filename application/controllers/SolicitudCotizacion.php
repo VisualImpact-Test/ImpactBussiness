@@ -1320,6 +1320,7 @@ class SolicitudCotizacion extends MY_Controller
 			'mostrar_imagenesCoti' => isset($post['mostrar_imagenesCoti']) ? 1 : 0,
 			'idAlmacen' => $post['idAlmacen'],
 			'idOper' => isset($post['idOper']) ? $post['idOper'] : null,
+			'enlaces' => isset($post['enlaces']) ? $post['enlaces'] : null,
 		]);
 
 		$oper = $this->db->get_where("compras.oper", ['idOper' => $post['idOper']])->row_array();
@@ -1343,6 +1344,7 @@ class SolicitudCotizacion extends MY_Controller
 				'mostrar_imagenes' => !empty($row['mostrar_imagenes']) ? $row['mostrar_imagenes'] : NULL,
 				'mostrar_imagenesCoti' => !empty($row['mostrar_imagenesCoti']) ? $row['mostrar_imagenesCoti'] : NULL,
 				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
+				'enlaces' => !empty($row['enlaces']) ? $row['enlaces'] : NULL,
 			];
 
 			$rs_oc = $this->model->insertar(['tabla' => 'compras.ordenCompra', 'insert' => $insert_oc]);
@@ -1744,7 +1746,19 @@ class SolicitudCotizacion extends MY_Controller
 		if (!empty($titulos)) {
 			$titulo = implode(', ', $titulos);
 		}
+		$enlaces = [];
+		foreach ($post['idCotizacionDetalle'] as $kc => $vc) {
+			$tt = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $vc])->row_array()['enlaces'];
+			if (!empty($tt)) {
+				$enlaces[] = $tt;
+			}
+		}
+		$enlace = '';
+		if (!empty($enlaces)) {
+			$enlace = implode('\n ', $enlaces);
+		}
 		$dataParaVista['dataOper']['tituloAsunto'] = $titulo;
+		$dataParaVista['dataOper']['enlaces'] = $enlace;
 		foreach ($dataParaVista['detalle'] as $dd => $row) {
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;

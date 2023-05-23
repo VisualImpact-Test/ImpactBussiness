@@ -1236,6 +1236,7 @@ class M_Cotizacion extends MY_Model
 				, pr.nroDocumento as ruc
 				, o.mostrar_imagenes
 				, o.mostrar_imagenesCoti
+				, o.enlaces
 			FROM compras.ordenCompra o
 			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
