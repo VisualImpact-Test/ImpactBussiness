@@ -639,6 +639,7 @@ class SolicitudCotizacion extends MY_Controller
 				'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 				'diasEntrega' => !empty($post['diasEntregaItem'][$k]) ? $post['diasEntregaItem'][$k] : NULL,
 				'tituloParaOC' => !empty($post['tituloCoti'][$k]) ? $post['tituloCoti'][$k] : NULL,
+				'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 			];
 
 			// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.

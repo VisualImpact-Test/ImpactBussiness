@@ -71,6 +71,18 @@
 									</div>
 								<?php endif; ?>
 							</div>
+							<?php if (!empty($row['enlaces'])) :  ?>
+								<div class="col-sm-12 row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<div class="form-group">
+												<h4 class="mb-1">LINKS</h4>
+												<textarea placeholder="Ingrese los enlaces aquí " rows="6" class="form-control"><?= !empty($row['enlaces']) ? $row['enlaces'] : '' ?></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+							<?php endif; ?>
 							<div class="col-sm-12 row">
 								<div class="col-sm-2">
 									<div class="form-group">

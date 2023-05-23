@@ -291,7 +291,8 @@ class M_FormularioProveedor extends MY_Model
 			cdpd.razonSocial,
 			cdpd.tipoElemento,
 			cdpd.marca,
-			it.idItemTipo
+			it.idItemTipo,
+			cd.enlaces
 		FROM
 		compras.cotizacionDetalleProveedor cdp
 		JOIN compras.proveedor p ON p.idProveedor = cdp.idProveedor
