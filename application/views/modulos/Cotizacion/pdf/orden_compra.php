@@ -100,8 +100,17 @@
 							<tr>
 								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 								<td class="text-center"><?= '1'; ?></td>
+								<?php if ($incluirImagen) : ?>
+									<td rowspan="<?= $rowS ?>" class="text-center">
+										<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
+											<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+												<img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;">
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</td>
+								<?php endif; ?>
 								<td class="text-left" colspan="4">
-									<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' ' . $v1 ?>
+									<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' - ' . $v1 ?>
 								</td>
 								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['monedaSimbolo']]); ?></td>
 								<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['monedaSimbolo']]); ?></td>
@@ -117,8 +126,17 @@
 					<tr>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 						<td class="text-center"><?= '1'; ?></td>
+						<?php if ($incluirImagen) : ?>
+							<td rowspan="<?= $rowS ?>" class="text-center">
+								<?php if (($data['mostrar_imagenes'] == '1' || $data['mostrar_imagenesCoti'] == '1') && count($imagenesDeItem[$row['idItem']])) : ?>
+									<?php foreach ($imagenesDeItem[$row['idItem']] as $kkk => $imagenDeItem) : ?>
+										<img class="imgCenter" src="<?= RUTA_WASABI . 'item/' . $imagenDeItem['nombre_archivo'] ?>" style="width: 80px; height: 80px;">
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</td>
+						<?php endif; ?>
 						<td class="text-left" colspan="4">
-							<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' ' . $v1 ?>
+							<?= $v3 . ' ' . $v4 . ' ' . $v2 . ' - ' . $v1 ?>
 						</td>
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['monedaSimbolo']]); ?></td>
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['monedaSimbolo']]); ?></td>
