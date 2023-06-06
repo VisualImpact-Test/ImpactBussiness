@@ -257,8 +257,27 @@ class M_Item extends MY_Model
 		";
 
 		$result = $this->db->query($sql)->result_array();
+		return $result;
+	}
 
-		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.articulo', 'id' => null];
+	public function obtenerAllItemsLogistica()
+	{
+		$sql = "
+			SELECT DISTINCT
+				  a.idArticulo AS id
+				, ISNULL(a.codigo + ' - ','') + a.nombre AS value
+				, ISNULL(a.peso,0) as pesoLogistica
+				, um.idUnidadMedida AS idum
+				, um.nombre AS um
+				, mc.idCuenta as cuenta
+			FROM visualimpact.logistica.articulo a
+			LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
+			LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
+			JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
+			ORDER BY 2,1
+		";
+		
+		$result = $this->db->query($sql)->result_array();
 		return $result;
 	}
 

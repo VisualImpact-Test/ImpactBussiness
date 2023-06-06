@@ -15,6 +15,14 @@ class M_Cotizacion extends MY_Model
 		parent::__construct();
 	}
 
+	public function obtenerDetallePDV($id)
+	{
+		return $this->db->distinct()->select("l.*, departamento, provincia,  case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
+		->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
+		AND ISNULL(l.idDistrito , 1) = ubi_zc.cod_distrito
+		AND ubi_zc.estado = 1', 'left')
+		->get('compras.cotizacionDetalleUbigeo l')->result_array();
+	}
 	public function obtenerCuenta($params = [])
 	{
 		$sql = "
@@ -221,6 +229,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
+		log_message('error', $sql);
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -424,7 +433,6 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY itemTipo, pd.idCotizacionDetalle
 		";
-
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -608,6 +616,18 @@ class M_Cotizacion extends MY_Model
 				}
 			}
 
+			if (!empty($params['insertUbigeo'][$k])) {
+				foreach ($params['insertUbigeo'][$k] as $kiu => $viu) {
+					$this->db->insert('compras.cotizacionDetalleUbigeo', [
+						'idCotizacionDetalle' => $idCotizacionDetalle,
+						'idDepartamento' => $viu['idDepartamento'],
+						'idProvincia' => $viu['idProvincia'],
+						'idDistrito' => !empty($viu['idDistrito']) ? $viu['idDistrito'] : null,
+						'cantidadPDV' => $viu['cantidadPDV'],
+					]);
+				}
+			}
+
 			//Sub Items
 			if (!empty($params['insertSubItem'][$k])) {
 				foreach ($params['insertSubItem'][$k] as $subItem) {
@@ -631,6 +651,8 @@ class M_Cotizacion extends MY_Model
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
+						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 					];
 				}
 			}
@@ -741,7 +763,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
-		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
+		$filtros .= !empty($params['noTipoItem']) ? " AND ( cd.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
 		$filtros .= !empty($params['noOC']) ? " AND ocd.idOrdenCompraDetalle is null " : "";
 
 
@@ -773,7 +795,15 @@ class M_Cotizacion extends MY_Model
 			cd.flagAlternativo,
 			cd.nombreAlternativo,
 			cd.tituloParaOc,
-			um.nombre as unidadMedida
+			um.nombre as unidadMedida,
+			cd.cantPdv,
+			cd.tipoServicio,
+			cd.requiereOrdenCompra,
+			cd.tsCosto,
+			cd.costoPacking,
+			ts.idUnidadMedida as umTs,
+			umts.nombre as umTipoServicio,
+			cd.flagDetallePDV
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -782,6 +812,8 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.item i ON i.idItem = cd.idItem
 			LEFT JOIN compras.ordenCompraDetalle ocd ON ocd.idCotizacionDetalle = cd.idCotizacionDetalle AND ocd.estado = 1
 			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = i.idUnidadMedida
+			LEFT JOIN compras.tipoServicio ts ON ts.idTipoServicio = cd.tipoServicio
+			LEFT JOIN compras.unidadMedida umts ON umts.idUnidadMedida = ts.idUnidadMedida
 			WHERE 
 			1 = 1 and cd.estado=1
 			{$filtros}
@@ -1190,7 +1222,7 @@ class M_Cotizacion extends MY_Model
 		LEFT JOIN sistema.usuario ur ON ur.idUsuario = o.idUsuarioReceptor
 		LEFT JOIN rrhh.dbo.Empresa cuenta ON p.idCuenta = cuenta.idEmpresa
 		LEFT JOIN rrhh.dbo.empresa_Canal centrocosto ON centrocosto.idEmpresaCanal = p.idCentroCosto
-		WHERE o.estado = 1
+		WHERE 1=1 /* o.estado = 1 */ 
 		{$filtros}";
 
 		$query = $this->db->query($sql);
@@ -1454,6 +1486,8 @@ class M_Cotizacion extends MY_Model
 						'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
 						'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
 						'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
+						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 					];
 				}
 			}
@@ -1486,6 +1520,8 @@ class M_Cotizacion extends MY_Model
 							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
 							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
 							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
+							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 
 						];
 					} else {
@@ -1513,6 +1549,8 @@ class M_Cotizacion extends MY_Model
 							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
 							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
 							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
+							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 						];
 					}
 				}
@@ -1908,14 +1946,16 @@ class M_Cotizacion extends MY_Model
 				cds.razonSocial,
 				cds.marca,
 				cds.tipoElemento,
-				il.nombre as itemLogistica
+				ISNULL(il.nombre, il2.nombre) as itemLogistica,
+				cds.peso
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 			JOIN compras.cotizacionDetalleSub cds ON cds.idCotizacionDetalle = cd.idCotizacionDetalle
 			LEFT JOIN compras.tipoServicio ts ON ts.idTipoServicio = cds.idTipoServicio
 			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = cds.idUnidadMedida
-			LEFT JOIN visualImpact.logistica.articulo il ON il.idArticulo = cds.idItem
+			LEFT JOIN visualImpact.logistica.articulo il ON il.idArticulo = cds.idItem and cds.flagItemInterno = 0
+			LEFT JOIN compras.item il2 ON il2.idItem = cds.idItem and cds.flagItemInterno = 1
 			WHERE
 			1 = 1
 			{$filtros}

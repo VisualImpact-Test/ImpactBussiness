@@ -12,9 +12,9 @@ var SolicitudCotizacion = {
 
 	load: function () {
 
-	
 
-	
+
+
 
 		//reportefiltro
 
@@ -25,28 +25,28 @@ var SolicitudCotizacion = {
 			let config = { 'url': SolicitudCotizacion.url + 'filtroOper', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				
+
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				
-				
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
 
 		//reportefiltro
-	
+
 
 		$(document).on('click', '.btn-generarCotizacion', function () {
 			++modalId;
 
 			let items = [];
-			$.each($(this).parents('.row').find('.item'), function(index, value){
+			$.each($(this).parents('.row').find('.item'), function (index, value) {
 				items.push($(value).val());
 			});
 			let data = { 'items': items };
@@ -70,7 +70,7 @@ var SolicitudCotizacion = {
 				$(".btn-add-row-cotizacion").click();
 			});
 		});
-		
+
 		$(document).on('click', '.btnSolicitarCotizacion', function () {
 			++modalId;
 
@@ -107,14 +107,14 @@ var SolicitudCotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				SolicitudCotizacion.modalIdForm = modalId;
-				
+
 			});
 		});
 	},
 
-	
 
-	
+
+
 
 
 }
@@ -134,7 +134,7 @@ var Cotizacion = {
 	itemsLogistica: [],
 	htmlG: '',
 	htmlCotizacion: '',
-	tablaCotizacionesOper : '',
+	tablaCotizacionesOper: '',
 
 	load: function () {
 
@@ -142,7 +142,7 @@ var Cotizacion = {
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarCotizacion').click();
 		});
-		
+
 		//checkbox del datatable
 
 		$(document).ready(function () {
@@ -181,7 +181,7 @@ var Cotizacion = {
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
 				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%',large: true });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%', large: true });
 
 				Cotizacion.modalIdForm = modalId;
 
@@ -190,10 +190,10 @@ var Cotizacion = {
 				$(".btn-add-row").click();
 
 				$('.dropdownSingleAditions')
-				.dropdown({
-					allowAdditions: true
-				})
-				;
+					.dropdown({
+						allowAdditions: true
+					})
+					;
 
 			});
 		});
@@ -206,7 +206,7 @@ var Cotizacion = {
 			let config = { 'url': Cotizacion.url + 'filtroCotizacion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				
+
 				let btn = [];
 				let fn = [];
 
@@ -215,35 +215,35 @@ var Cotizacion = {
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.generarOPER()", content: "¿Esta seguro de continuar?" });';
 				btn[1] = { title: 'Continuar', fn: fn[1] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
 
 
-		
+
 		//reportefiltro
 
-/* 	//	$(document).on('click', '#filtrarReporteOper', function () {
-			++modalId;
-
-			let jsonString = { 'data': '' };
-			let config = { 'url': Cotizacion.url + 'filtroOper', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				
-				let btn = [];
-				let fn = [];
-//
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-	//			btn[0] = { title: 'Cerrar', fn: fn[0] };
-				
-				
-///
-//				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
-//
-///			});
-	//	}); */
+		/* 	//	$(document).on('click', '#filtrarReporteOper', function () {
+					++modalId;
+		
+					let jsonString = { 'data': '' };
+					let config = { 'url': Cotizacion.url + 'filtroOper', 'data': jsonString };
+		
+					$.when(Fn.ajax(config)).then((a) => {
+						
+						let btn = [];
+						let fn = [];
+		//
+						fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			//			btn[0] = { title: 'Cerrar', fn: fn[0] };
+						
+						
+		///
+		//				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+		//
+		///			});
+			//	}); */
 
 		//reportefiltro
 
@@ -255,14 +255,14 @@ var Cotizacion = {
 			let config = { 'url': Cotizacion.url + 'getOrdenesCompra', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
-				
+
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
@@ -291,7 +291,7 @@ var Cotizacion = {
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
 				btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%',large: true });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '100%', large: true });
 
 				Cotizacion.modalIdForm = modalId;
 
@@ -300,10 +300,10 @@ var Cotizacion = {
 				$(".btn-add-row").click();
 
 				$('.dropdownSingleAditions')
-				.dropdown({
-					allowAdditions: true
-				})
-				;
+					.dropdown({
+						allowAdditions: true
+					})
+					;
 
 			});
 		});
@@ -334,7 +334,7 @@ var Cotizacion = {
 				Cotizacion.actualizarAutocomplete();
 			});
 		});
-	
+
 
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
@@ -408,7 +408,7 @@ var Cotizacion = {
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-				
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Aceptar', fn: fn[0] };
 
@@ -464,7 +464,7 @@ var Cotizacion = {
 			Cotizacion.generarRequerimientoPDF($idCotizacion);
 		});
 
-		
+
 		// $(document).on('click', '.btn-generarCotizacion', function () {
 		// 	++modalId;
 
@@ -510,7 +510,7 @@ var Cotizacion = {
 			var formatter = new Intl.NumberFormat('en-US', {
 				style: 'currency',
 				currency: 'PEN',
-			  
+
 				// These options are needed to round to whole numbers if that's what you want.
 				//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
 				//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
@@ -520,10 +520,10 @@ var Cotizacion = {
 			Cotizacion.actualizarTotal();
 		});
 
-		$(document).on('change','input[name=upload_orden_compra]', function(e){
-			let idCotizacion =  $(this).closest('tr').data('id');
-			var archivos = document.getElementById("upload_orden_compra["+idCotizacion+"]");
-			
+		$(document).on('change', 'input[name=upload_orden_compra]', function (e) {
+			let idCotizacion = $(this).closest('tr').data('id');
+			var archivos = document.getElementById("upload_orden_compra[" + idCotizacion + "]");
+
 			//Creamos un objeto con el elemento que contiene los archivos: el campo input file, que tiene el id = 'archivos'
 			var archivo = archivos.files; //Obtenemos los archivos seleccionados en el imput
 			//Creamos una instancia del Objeto FormDara.
@@ -531,55 +531,55 @@ var Cotizacion = {
 			/* Como son multiples archivos creamos un ciclo for que recorra la el arreglo de los archivos seleccionados en el input
 			Este y añadimos cada elemento al formulario FormData en forma de arreglo, utilizando la variable i (autoincremental) como 
 			indice para cada archivo, si no hacemos esto, los valores del arreglo se sobre escriben*/
-			for(i=0; i<archivo.length; i++){
-			archivos.append('archivo'+i,archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
+			for (i = 0; i < archivo.length; i++) {
+				archivos.append('archivo' + i, archivo[i]); //Añadimos cada archivo a el arreglo con un indice direfente
 			}
 			$.ajax({
-				url:site_url+Cotizacion.url + 'guardarArchivo/', //Url a donde la enviaremos
-				type:'POST', //Metodo que usaremos
-				contentType:false, //Debe estar en false para que pase el objeto sin procesar
-				data:archivos, //Le pasamos el objeto que creamos con los archivos
-				processData:false, //Debe estar en false para que JQuery no procese los datos a enviar
-				cache:false, //Para que el formulario no guarde cache
-				beforeSend: function(){ Fn.showLoading(true) },
-			}).done(function(a){//Escuchamos la respuesta y continuamos
-				Fn.showLoading( false );
+				url: site_url + Cotizacion.url + 'guardarArchivo/', //Url a donde la enviaremos
+				type: 'POST', //Metodo que usaremos
+				contentType: false, //Debe estar en false para que pase el objeto sin procesar
+				data: archivos, //Le pasamos el objeto que creamos con los archivos
+				processData: false, //Debe estar en false para que JQuery no procese los datos a enviar
+				cache: false, //Para que el formulario no guarde cache
+				beforeSend: function () { Fn.showLoading(true) },
+			}).done(function (a) {//Escuchamos la respuesta y continuamos
+				Fn.showLoading(false);
 
 				a = $.parseJSON(a);
-				var data= {};
-					data= a ;
-					data.idCotizacion = idCotizacion;
+				var data = {};
+				data = a;
+				data.idCotizacion = idCotizacion;
 
-				var jsonString={ 'data':JSON.stringify(data) };
-				var url=Cotizacion.url+'guardarArchivoBD';
-				var config={ url:url,data:jsonString };
-	
-				$.when( Fn.ajax(config) ).then(function(a){
-					if( a.result!=2 ){
+				var jsonString = { 'data': JSON.stringify(data) };
+				var url = Cotizacion.url + 'guardarArchivoBD';
+				var config = { url: url, data: jsonString };
+
+				$.when(Fn.ajax(config)).then(function (a) {
+					if (a.result != 2) {
 						++modalId;
-						var btn=[];
-						var fn=[];
-	
-						if(a.result==0){
-							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');';
-							btn[0]={title:'Aceptar',fn:fn[0]};
+						var btn = [];
+						var fn = [];
+
+						if (a.result == 0) {
+							fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Fn.closeModals(' + modalId + ');';
+							btn[0] = { title: 'Aceptar', fn: fn[0] };
 						}
-						else{
-							fn[0]='Fn.showModal({ id:'+modalId+',show:false });Fn.closeModals('+modalId+');$("#btn-filtrarCotizacion").click();';
-							btn[0]={title:'Aceptar',fn:fn[0]};
+						else {
+							fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+							btn[0] = { title: 'Aceptar', fn: fn[0] };
 						}
-	
-						Fn.showModal({ id:modalId,show:true,title:a.msg.title,content:a.data.html,btn:btn,width:a.data.width });
+
+						Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.data.html, btn: btn, width: a.data.width });
 					}
 				});
 			});
-	
+
 		});
 
 		$(document).on('click', '.btn-frmCotizacionConfirmada', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioSolicitudCotizacion', 'data': jsonString };
 
@@ -600,15 +600,15 @@ var Cotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				Cotizacion.modalIdForm = modalId;
-			
-				
+
+
 			});
 		});
 
 		$(document).on('click', '.btn-aprobar-cotizacion', function () {
 			++modalId;
 			let data = {};
-				data.id = $(this).closest("tr").data("id");
+			data.id = $(this).closest("tr").data("id");
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioAprobar', 'data': jsonString };
 
@@ -629,7 +629,7 @@ var Cotizacion = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				Cotizacion.modalIdForm = modalId;
-				
+
 			});
 		});
 		$(document).on('click', '.verCaracteristicaArticulo', function () {
@@ -637,7 +637,7 @@ var Cotizacion = {
 			let control = $(this).closest("tr");
 			let codItem = control.find('.codItems').val();
 
-			if(codItem == '') return false;
+			if (codItem == '') return false;
 
 			let data = { codItem };
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -650,13 +650,13 @@ var Cotizacion = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-		
+
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			});
 		});
 
-		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function(e){
+		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
 
 			var data = control.data();
@@ -664,26 +664,26 @@ var Cotizacion = {
 
 			var id = '';
 			var nameImg = '';
-			if( data['row'] ){
+			if (data['row']) {
 				id = data['row'];
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
-			}else{
+			} else {
 				id = 0;
 				name = 'file-item';
 				nameType = 'file-type';
 				nameFile = 'file-name';
 			}
-			
-			if( control.val() ){
+
+			if (control.val()) {
 				var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
 				var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
 				var num = control.get(0).files.length;
 
 				list: {
 					var total = $('input[name="' + name + '[' + id + ']"]').length;
-					if( (num + total) > control.data('fileMax') ){
+					if ((num + total) > control.data('fileMax')) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${control.data('fileMax')} archivo como máximo` });
 						Fn.showModal({
 							'id': ++modalId,
@@ -696,11 +696,11 @@ var Cotizacion = {
 						break list;
 					}
 
-					for(var i = 0; i < num; ++i){
+					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
-							size = Math.round((size / 1024)); 
+						size = Math.round((size / 1024));
 
-						if( size > KB_MAXIMO_ARCHIVO ){
+						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} por archivo` });
 							Fn.showModal({
 								'id': ++modalId,
@@ -713,43 +713,43 @@ var Cotizacion = {
 							break list;
 						}
 					}
-                    let file = '';
-                    let imgFile = '';
-                    let contenedor = '';
-					for(var i = 0; i < num; ++i){
-                        file = control.get(0).files[i];
-                            Fn.getBase64(file).then(function(fileBase){
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
 
-                                if(fileBase.type.split('/')[0] == 'image'){
-                                    imgFile = fileBase.base64;
-                                    contenedor = content;
-                                }else{
-                                    imgFile = `${RUTA_WIREFRAME}pdf.png`;
-                                    contenedor = content_files;
-                                }
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							}
 
-                                var fileApp = '';
-                                    fileApp += '<div class="ui fluid image content-lsck-capturas">';
-									fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
-                                        fileApp += `
+							var fileApp = '';
+							fileApp += '<div class="ui fluid image content-lsck-capturas">';
+							fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
+							fileApp += `
                                         <div class="ui dimmer dimmer-file-detalle">
                                             <div class="content">
                                                 <p class="ui tiny inverted header">${fileBase.name}</p>
                                             </div>
                                         </div>`;
-                                        fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-                                        fileApp += '<input type="hidden" name="' + name +'[' + id + ']"  value="' + fileBase.base64 + '">';
-                                        fileApp += '<input type="hidden" name="' + nameType +'[' + id + ']"  value="' + fileBase.type + '">';
-                                        fileApp += '<input type="hidden" name="' + nameFile +'[' + id + ']"  value="' + fileBase.name + '">';
-                                        fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
-                                    fileApp += '</div>';
-                                    
-                                    contenedor.append(fileApp);
-                                    control.parents('.nuevo').find('.dimmer-file-detalle')
-                                    .dimmer({
-                                        on: 'click'
-                                    });
-                            });
+							fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
+							fileApp += '<input type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+							fileApp += '</div>';
+
+							contenedor.append(fileApp);
+							control.parents('.nuevo').find('.dimmer-file-detalle')
+								.dimmer({
+									on: 'click'
+								});
+						});
 
 					}
 				}
@@ -758,11 +758,11 @@ var Cotizacion = {
 			}
 		});
 
-		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function(e){
+		$(document).off('click', '.img-lsck-capturas').on('click', '.img-lsck-capturas', function (e) {
 			e.preventDefault();
 		});
 
-		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function(e){
+		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
@@ -770,45 +770,45 @@ var Cotizacion = {
 
 		$(document).on('click', '.btn-finalizarCotizacion', function () {
 			let idCotizacion = $(this).closest('tr').data('id');
-			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion("+idCotizacion+")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
+			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion(" + idCotizacion + ")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
 		});
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
-			if (idOper==undefined) {
+			if (idOper == undefined) {
 				idOper = $(this).data('idoper');
 			}
 			let data = { idOper };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(site_url + Cotizacion.url + 'descargarOper' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOper', jsonString);
 		});
 		$(document).on('click', '.btn-descargarOrdenCompra', function () {
 			let id = $(this).closest('tr').data('id');
-			if (id==undefined) {
+			if (id == undefined) {
 				id = $(this).data('id');
 			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'descargarOrdenCompra', jsonString);
 		});
 		$(document).on('click', '.btn-descargarCotizacion', function () {
 			let id = $(this).closest('tr').data('id');
-			if (id==undefined) {
+			if (id == undefined) {
 				id = $(this).data('id');
 			}
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
 
-			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF' ,jsonString);
+			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
 		});
 
-		$(document).on('click','.btnAnularCotizacion', function (){
+		$(document).on('click', '.btnAnularCotizacion', function () {
 			let id = $(this).data('id');
-			Fn.showConfirm({ fn:"Cotizacion.anularCotizacion("+id+")",content:" ¿Está seguro de anular esta cotización?" });
+			Fn.showConfirm({ fn: "Cotizacion.anularCotizacion(" + id + ")", content: " ¿Está seguro de anular esta cotización?" });
 		});
-		$(document).on('click','.btnI', function (){
+		$(document).on('click', '.btnI', function () {
 			let id = $(this).data('id');
 			var jsonString = { 'data': JSON.stringify(id) };
-			var config = { url:  Cotizacion.url + 'anulacionInfo', data: jsonString };
+			var config = { url: Cotizacion.url + 'anulacionInfo', data: jsonString };
 			$.when(Fn.ajax(config)).then(function (a) {
 				if (a.result === 2) return false;
 				++modalId;
@@ -818,16 +818,16 @@ var Cotizacion = {
 
 				var btn = [];
 				btn[0] = { title: 'Cerrar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content , escape: true});
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content, escape: true });
 			});
 
 
 		});
 
 	},
-	anularCotizacion: function (id){
+	anularCotizacion: function (id) {
 		var jsonString = { 'data': JSON.stringify(id) };
-		var config = { url:  Cotizacion.url + 'anularCotizacion', data: jsonString };
+		var config = { url: Cotizacion.url + 'anularCotizacion', data: jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result === 2) return false;
 			++modalId;
@@ -859,7 +859,7 @@ var Cotizacion = {
 		});
 	},
 
-	generarOPER: function(){
+	generarOPER: function () {
 		var ids = [];
 
 		if (typeof Cotizacion.tablaCotizacionesOper !== 'undefined') {
@@ -875,7 +875,7 @@ var Cotizacion = {
 			return false;
 		}
 
-		let data = { ids: ids};
+		let data = { ids: ids };
 		let jsonString = { 'data': JSON.stringify(data) };
 		let config = { 'url': Cotizacion.url + 'frmGenerarOper', 'data': jsonString };
 
@@ -885,21 +885,23 @@ var Cotizacion = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
-			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_guardar()", content: "¿Esta seguro de guardar y enviar el OPER ?" });';
-			btn[1] = { title: 'Enviar', fn: fn[1] };
+			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_vistaPrevia()", content: "¿Mostrar vista previa?" });';
+			btn[1] = { title: 'Vista Previa', fn: fn[1] };
+			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Cotizacion.generarOPER_guardar()", content: "¿Esta seguro de guardar y enviar el OPER ?" });';
+			btn[2] = { title: 'Enviar', fn: fn[2] };
 
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width});
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 
 			$('.simpleDropdown').dropdown();
 		});
-		
+
 	},
 	finalizarCotizacion: function (idCotizacion) {
-		let data = {idCotizacion};
+		let data = { idCotizacion };
 		let jsonString = { 'data': JSON.stringify(data) };
 		let url = Cotizacion.url + "finalizarCotizacion";
 		let config = { url: url, data: jsonString };
-		
+
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
 			var btn = [];
@@ -913,8 +915,8 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	generarOPER_guardar: function (){
-		
+	generarOPER_guardar: function () {
+
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
 		let config = { 'url': Cotizacion.url + 'registrarOper', 'data': jsonString };
 
@@ -929,6 +931,23 @@ var Cotizacion = {
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
+		});
+	},
+	generarOPER_vistaPrevia: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
+		let config = { 'url': Cotizacion.url + 'registrarOperTemp', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			// let btn = [];
+			// let fn = [];
+			// console.log(a);
+			idOper = a.data.idOper;
+			let data = { idOper };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(site_url + Cotizacion.url + 'descargarOper', jsonString);
+			// var url = site_url + '/Cotizacion/generarCotizacionPDF/' + a.data.idOper;
+			// window.open(url, '_blank');
+
 		});
 	},
 	actualizarAutocomplete: function () {
@@ -954,7 +973,7 @@ var Cotizacion = {
 				$(this).parents(".ui-widget").find(".codItems").val(ui.item.value);
 
 				//Llenamos el precio actual
-				if (ui.item.costo == null || ui.item.semaforoVigencia == "red" ) {
+				if (ui.item.costo == null || ui.item.semaforoVigencia == "red") {
 					ui.item.costo = 0;
 				}
 				control.find(".costoForm").val(ui.item.costo);
@@ -973,11 +992,11 @@ var Cotizacion = {
 				//LLenar semaforo
 
 				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
-				
-				control.find('.semaforoForm').popup({content : `Vigencia: ${ui.item.diasVigencia} días`});
-				
+
+				control.find('.semaforoForm').popup({ content: `Vigencia: ${ui.item.diasVigencia} días` });
+
 				//Validar boton ver caracteristicas del articulo
-				
+
 				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
 
 				//Validacion ID
@@ -986,8 +1005,8 @@ var Cotizacion = {
 				if ($cod != '') {
 					$(this).attr('readonly', 'readonly');
 					control.find('.costoForm').attr('readonly', 'readonly');
-					control.find(".cantidadForm").attr('readonly',false);
-					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');					
+					control.find(".cantidadForm").attr('readonly', false);
+					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');
 				}
 			},
 			appendTo: "#modal-page-" + Cotizacion.modalIdForm,
@@ -1024,7 +1043,7 @@ var Cotizacion = {
 
 	registrarItem: function (idCotizacion) {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
-			formValues.idCotizacion = idCotizacion;
+		formValues.idCotizacion = idCotizacion;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarItem";
 		let config = { url: url, data: jsonString };
@@ -1045,7 +1064,7 @@ var Cotizacion = {
 
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
-			formValues.tipoRegistro = tipoRegistro;
+		formValues.tipoRegistro = tipoRegistro;
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "registrarCotizacion";
 		let config = { url: url, data: jsonString };

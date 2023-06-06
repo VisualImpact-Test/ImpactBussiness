@@ -450,7 +450,10 @@ class Cotizacion extends MY_Controller
 		$post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 		$post['itemTextoPdf'] = checkAndConvertToArray($post['itemTextoPdf']);
+		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
+		$post['flagDetallePDV'] = checkAndConvertToArray($post['flagDetallePDV']);
 
+		$ttt = 0;
 		foreach ($post['nameItem'] as $k => $r) {
 			$dataItem = [];
 			$idItem = (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL;
@@ -518,6 +521,12 @@ class Cotizacion extends MY_Controller
 				'flagAlternativo' => !empty($post['itemTextoPdf'][$k]) ? '1' : '0',
 				'nombreAlternativo' => !empty($post['itemTextoPdf'][$k]) ? $post['itemTextoPdf'][$k] : NULL,
 				'tituloParaOC' => !empty($post['tituloCoti'][$k]) ? $post['tituloCoti'][$k] : NULL,
+				'cantPDV' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : NULL,
+				'flagDetallePDV' => !empty($post['flagDetallePDV'][$k]) ? $post['flagDetallePDV'][$k] : NULL,
+				'tipoServicio' => !empty($post['tipoServicio'][$k]) ? $post['tipoServicio'][$k] : NULL,
+				'requiereOrdenCompra' => !empty($post['generarOC'][$k]) ? $post['generarOC'][$k] : 0,
+				'tsCosto' => !empty($post['tsCosto'][$k]) ? $post['tsCosto'][$k] : NULL,
+				'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : NULL,
 			];
 
 			switch ($post['tipoItemForm'][$k]) {
@@ -530,18 +539,36 @@ class Cotizacion extends MY_Controller
 					break;
 
 				case COD_DISTRIBUCION['id']:
-					$data['subDetalle'][$k] = getDataRefactorizada([
-						'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
-						'tipoServicio' => $post["tipoServicioSubItem[$k]"],
-						'costo' => $post["costoSubItem[$k]"],
-						'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
-						'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
-						'idItemLogistica' => isset($post["itemLogisticaForm[$k]"]) ? $post["itemLogisticaForm[$k]"] : null,
-						'idDistribucionTachado' => $post["chkTachado[$k]"],
-						'requiereOrdenCompra' => empty($post["generarOCSubItem[$k]"]) ? 0 : 1,
-						'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[$k]"]) ? $post["proveedorDistribucionSubItem[$k]"] : null,
-						'cantidadReal' => $post["cantidadRealSubItem[$k]"],
-					]);
+					$data['subDetalle'][$k] = [];
+					foreach ($post["cantidadSubItemNro[$k]"] as $kdr => $vdr) {
+						// Validar si existe el Item Logistica
+						$idItemLogistica = '';
+						$itemInterno = 0;
+						if (!is_numeric($post["itemLogisticaFormNew[$k]"][$kdr])) {
+							$getItem = $this->db->where('nombre', $post["itemLogisticaFormNew[$k]"][$kdr])->get('compras.item')->row_array();
+							$itemInterno = 1;
+							if (empty($getItem)) {
+								$this->db->insert('compras.item', [
+									'nombre' => $post["itemLogisticaFormNew[$k]"][$kdr],
+									'idItemTipo' => COD_ARTICULO['id'],
+									'idCuenta' => $post['cuentaForm']
+								]);
+								$idItemLogistica = $this->db->insert_id();
+							} else {
+								$idItemLogistica = $getItem['idItem'];
+							}
+						} else {
+							$idItemLogistica = $post["itemLogisticaFormNew[$k]"][$kdr];
+						}
+						// FIN: Validar si existe el Item Logistica
+						$data['subDetalle'][$k][] = [
+							'cantidad' => $vdr, //$post["cantidadSubItemNro[$k]"][$kdr],
+							'idItemLogistica' => $idItemLogistica, //$post["itemLogisticaFormNew[$k]"][$kdr],
+							'cantidadReal' => $post["cantidadRealSubItem[$k]"][$kdr],
+							'peso' => $post["cantidadSubItemDistribucion[$k]"][$kdr],
+							'flagItemInterno' => $itemInterno
+						];
+					}
 					break;
 
 				case COD_TEXTILES['id']:
@@ -585,6 +612,8 @@ class Cotizacion extends MY_Controller
 					'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 					'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+					'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
+					'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 				];
 			}
 
@@ -610,6 +639,25 @@ class Cotizacion extends MY_Controller
 					$itemImagen = $this->db->where('idItemImagen', $imagenes)->get('compras.itemImagen')->row_array();
 					$data['archivosDeImagen'][$k][] = $this->db->where('idItemImagen', $imagenes)->get('compras.itemImagen')->row_array();
 				}
+			}
+
+			$post['cantidadDeUbigeos'] = checkAndConvertToArray($post['cantidadDeUbigeos']);
+			$post['departamentoPDV'] = checkAndConvertToArray($post['departamentoPDV']);
+			$post['provinciaPDV'] = checkAndConvertToArray($post['provinciaPDV']);
+			$post['distritoPDV'] = checkAndConvertToArray($post['distritoPDV']);
+			$post['paradasPDV'] = checkAndConvertToArray($post['paradasPDV']);
+
+
+			for ($ordUbi = 0; $ordUbi < intval($post['cantidadDeUbigeos'][$k]); $ordUbi++) {
+				if (intval($post['flagDetallePDV'][$k]) == 1) {
+					$data['insertUbigeo'][$k][] = [
+						'idDepartamento' => $post['departamentoPDV'][$ttt],
+						'idProvincia' => $post['provinciaPDV'][$ttt],
+						'idDistrito' => $post['distritoPDV'][$ttt],
+						'cantidadPDV' => $post['paradasPDV'][$ttt],
+					];
+				}
+				$ttt++;
 			}
 		}
 
@@ -1180,8 +1228,9 @@ class Cotizacion extends MY_Controller
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
+		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		$config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
-		$config['data']['itemLogistica'] = $this->model_item->obtenerItemsLogistica();
+		$config['data']['itemLogistica'] = $this->model_item->obtenerAllItemsLogistica();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
@@ -1189,7 +1238,22 @@ class Cotizacion extends MY_Controller
 		$config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 		$this->view($config);
 	}
+	public function getProvincia()
+	{
+		$post = $this->input->post();
 
+		$provincia = $this->db->distinct()->select('cod_provincia, provincia')->where('cod_departamento', $post['cod_dep'])->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
+
+		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_provincia', 'value' => 'provincia', 'query' => $provincia, 'class' => 'text-titlecase']);
+	}
+	public function getDistrito()
+	{
+		$post = $this->input->post();
+
+		$distrito = $this->db->distinct()->select('cod_distrito, distrito')->where('cod_departamento', $post['cod_dep'])->where('cod_provincia', $post['cod_pro'])->where('estado', 1)->order_by('distrito')->get('General.dbo.ubigeo')->result_array();
+
+		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_distrito', 'value' => 'distrito', 'query' => $distrito, 'class' => 'text-titlecase']);
+	}
 	public function getImagenes()
 	{
 		$post = $this->input->post();
@@ -1248,6 +1312,8 @@ class Cotizacion extends MY_Controller
 
 		foreach ($config['data']['cotizacionDetalle'] as $sub) {
 			$config['data']['cotizacionDetalleArchivosDelProveedor'][$sub['idCotizacionDetalle']] = $this->model->getCotizacionProveedorArchivosSeleccionados(['idCotizacionDetalle' => $sub['idCotizacionDetalle']])->result_array();
+
+			$config['data']['cotizacionDetallePDV'][$sub['idCotizacionDetalle']] = $this->model->obtenerDetallePDV($sub['idCotizacionDetalle']); //$this->db->where('idCotizacionDetalle', $sub['idCotizacionDetalle'])->get('compras.cotizacionDetalleUbigeo')->result_array();
 		}
 
 		foreach ($archivos as $archivo) {
@@ -1445,6 +1511,71 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function registrarOperTemp()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$insertOper = [
+			'requerimiento' => !empty($post['requerimiento']) ? $post['requerimiento'] : NULL,
+			'total' => !empty($post['totalOper']) ? $post['totalOper'] : NULL,
+			'fechaRequerimiento' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
+			'concepto' => !empty($post['concepto']) ? $post['concepto'] : NULL,
+			'idUsuarioReceptor' => !empty($post['receptor']) ? $post['receptor'] : NULL,
+			'idUsuarioReg' => $this->idUsuario,
+			'observacion' => !empty($post['observaciones']) ? $post['observaciones'] : NULL,
+			'estado' => 0
+		];
+
+		$oper = $this->model->insertar(['tabla' => 'compras.oper', 'insert' => $insertOper]);
+		$operUpdate = $this->model->actualizarCotizacion(['tabla' => 'compras.oper', 'update' => ['requerimiento' => "OP" . generarCorrelativo($oper['id'], 6)], 'where' => ['idOper' => $oper['id']]]);
+
+		$post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
+
+		$insertOperDetalle = [];
+		$updateCotizacion = [];
+		// $insertHistoricoCotizacion = [];
+		foreach ($post['idCotizacion'] as $idCotizacion) {
+			$insertOperDetalle[] = [
+				'idOper' => $oper['id'],
+				'idCotizacion' => $idCotizacion,
+				'estado' => 0
+			];
+
+			// $updateCotizacion[] = [
+			// 	'idCotizacion' => $idCotizacion,
+			// 	'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+			// ];
+
+			// $insertHistoricoCotizacion[] = [
+			// 	'idCotizacionEstado' => ESTADO_OPER_ENVIADO,
+			// 	'idCotizacion' => $idCotizacion,
+			// 	'idUsuarioReg' => $this->idUsuario,
+			// ];
+		}
+
+		$operDet = $this->model->insertarMasivo('compras.operDetalle', $insertOperDetalle);
+		// $updateCotizacion = $this->model->actualizarMasivo('compras.cotizacion', $updateCotizacion, 'idCotizacion');
+		// $insertHistoricoCotizacion = $this->model->insertarMasivo(TABLA_HISTORICO_ESTADO_COTIZACION, $insertHistoricoCotizacion);
+
+		if (!$oper['estado'] || $operDet['estado']) {
+			$result['result'] = 0;
+			$result['data']['width'] = '40%';
+			$result['data']['html'] = createMessage(['type' => 2, 'No se pudo generar el OPER']);
+			goto respuesta;
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Generar Oper';
+			$result['data']['idOper'] = $oper['id'];
+
+		}
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
+
 	public function finalizarCotizacion()
 	{
 		$this->db->trans_start();
@@ -1494,6 +1625,7 @@ class Cotizacion extends MY_Controller
 
 		$post = json_decode($this->input->post('data'), true);
 		$oper = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])['query']->result_array();
+		
 		$dataParaVista['dataOper'] = $oper[0];
 		$ids = [];
 		foreach ($oper as $v) {
@@ -1899,16 +2031,17 @@ class Cotizacion extends MY_Controller
 						case COD_DISTRIBUCION['id']:
 							$data['subDetalle'][$k] = getDataRefactorizada([
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-								'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								'cantidad' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
-								'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
-								'idItem' => $post["itemLogisticaForm[{$post['idCotizacionDetalle'][$k]}]"],
-								'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"],
-								'requiereOrdenCompra' => empty($post["generarOCSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? 0 : 1,
-								'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"] : null,
+								// 'unidadMedida' => $post["unidadMedidaSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'tipoServicio' => $post["tipoServicioSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'costo' => $post["costoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidad' => $post["cantidadSubItemNro[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
+								'idItem' => $post["itemLogisticaFormNew[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'idDistribucionTachado' => $post["chkTachado[{$post['idCotizacionDetalle'][$k]}]"],
+								// 'requiereOrdenCompra' => empty($post["generarOCSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? 0 : 1,
+								// 'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"]) ? $post["proveedorDistribucionSubItem[{$post['idCotizacionDetalle'][$k]}]"] : null,
 								'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+								'peso' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
 
@@ -2010,13 +2143,14 @@ class Cotizacion extends MY_Controller
 							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
 							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
 							'costo' => $post["costoSubItem[$k]"],
-							'cantidad' => $post["cantidadSubItemDistribucion[$k]"],
+							'cantidad' => $post["cantidadSubItemNro[$k]"],
 							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
-							'idItem' => $post["itemLogisticaForm[$k]"],
+							'idItem' => $post["itemLogisticaFormNew[$k]"],
 							'idDistribucionTachado' => $post["chkTachado[$k]"],
 							'requiereOrdenCompra' => empty($post["generarOCSubItem[$k]"]) ? 0 : 1,
 							'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[$k]"]) ? $post["proveedorDistribucionSubItem[$k]"] : null,
 							'cantidadReal' => $post["cantidadRealSubItem[$k]"],
+							'peso' => $post["cantidadSubItemDistribucion[$k]"],
 						]);
 						break;
 
@@ -2253,26 +2387,27 @@ class Cotizacion extends MY_Controller
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
 		}
 
-		// $itemServicio =  $this->model_item->obtenerItemServicio();
-		// if (!empty($itemServicio)) {
-		// 	foreach ($itemServicio as $key => $row) {
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
-		// 		$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cantidadImagenes'] = $row['cantidadImagenes'];
-		// 	}
-		// 	foreach ($data['itemServicio'] as $k => $r) {
-		// 		$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
-		// 	}
-		// }
-		// $data['itemServicio'][0] = array();
-		// $config['data']['itemServicio'] = $data['itemServicio'];
+		$itemServicio =  $this->model_item->obtenerItemServicio();
+		if (!empty($itemServicio)) {
+			foreach ($itemServicio as $key => $row) {
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['costo'] = $row['costo'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['tipo'] = $row['tipo'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['idProveedor'] = $row['idProveedor'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['proveedor'] = $row['proveedor'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['semaforoVigencia'] = $row['semaforoVigencia'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['diasVigencia'] = $row['diasVigencia'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cotizacionInterna'] = $row['cotizacionInterna'];
+				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['cantidadImagenes'] = $row['cantidadImagenes'];
+			}
+			foreach ($data['itemServicio'] as $k => $r) {
+				$data['itemServicio'][$k] = array_values($data['itemServicio'][$k]);
+			}
+		}
+		$data['itemServicio'][0] = array();
+		$config['data']['itemServicio'] = $data['itemServicio'];
+
 		$config['single'] = true;
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'Cotizacion';

@@ -18,7 +18,7 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>" rowspan="2">Unidad de Negocio</td>
-			<td class="text-center" width="<?= $w2 ?>" rowspan="2"><?= verificarEmpty($cuentas, 3) ?></td>
+			<td class="text-center" width="<?= $w2 ?>" rowspan="2"><?= strtoupper(verificarEmpty($cuentas, 3)) ?></td>
 			<td class="text-left bold" width="<?= $w3 ?>">PO Cliente</td>
 			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['pocliente'], 3) ?></td>
 		</tr>
@@ -28,7 +28,7 @@
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
-			<td class="text-center" width="<?= $w2 ?>"><?= verificarEmpty($centrosCosto, 3) ?></td>
+			<td class="text-center" width="<?= $w2 ?>"><?= strtoupper(verificarEmpty($centrosCosto, 3)) ?></td>
 			<td class="text-left bold" width="<?= $w3 ?>">Fecha</td>
 			<td class="text-left" width="<?= $w4 ?>"><?= getFechaActual() ?></td>
 		</tr>

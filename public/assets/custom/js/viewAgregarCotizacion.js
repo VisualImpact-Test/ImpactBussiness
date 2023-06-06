@@ -203,6 +203,8 @@ var Cotizacion = {
 	controlesOC: [],
 	nuevo_item: [],
 	objetoParaAgregarImagen: null,
+	comboItemLogistica: '',
+	ubigeoSelects: '',
 	// solicitanteData: [],
 
 	load: function () {
@@ -262,6 +264,7 @@ var Cotizacion = {
 			// });
 			// Cotizacion.solicitanteData = $.parseJSON($('#solicitantes').val());
 			// Cotizacion.solicitanteInputComplete();
+			Cotizacion.ubigeoSelects = $('.baseUbigeoSelects').html();
 		});
 
 		$(document).on('click', '#btn-filtrarCotizacion', function () {
@@ -408,22 +411,9 @@ var Cotizacion = {
 			$('.unidadMed').dropdown({ allowAdditions: true });
 		});
 
-		// centro costo
-		// $(document).ready(function() {
-		// 	let centro = $(".centro-ocultado .item").hide();
-
-		// 	//console.log(centro);
-		// });
-
-		// $(".centro visible").click(function(){
-
-		// 	console.log('hola mundo');
-		//   });
-
 		$(document).ready(function () {
 			$(".centro-ocultado .menu").attr("id", "centroCosto_oculto");
 			$(".centro-visible .menu").attr("id", "centroCosto_visible");
-
 		});
 
 		$(document).ready(function () {
@@ -556,32 +546,70 @@ var Cotizacion = {
 			let elementoBuscado2 = buscado2.data('id');
 
 			if (idTipo == COD_DISTRIBUCION.id) {
-				let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
-				cotizacionInternaForm.val(0); //Sin cotizacion Interna
+				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
+					++modalId;
+					let btn = [];
+					let fn = [];
+					let message = Fn.message(
+						{
+							type: 3,
+							message: 'Debe indicar cuenta para esta operación'
+						});
+					fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+					btn[0] = { title: 'Cerrar', fn: fn[0] };
+					Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
+					control.dropdown('clear');
+					return false;
+				} else {
+					(parent.find('.cCompras')).addClass('d-none');
+					(parent.find('.cantPDV')).removeClass('d-none');
 
-				var parametros = {
-					"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
-					"centroCosto": $('#centroCosto_oculto .selected').attr('data-value')
-				};
-				$.ajax({
-					data: parametros,
-					url: '../Cotizacion/obtenerItemsLogistica',
-					type: 'post',
-					beforeSend: function () {
-						//$("#resultado").html("Procesando, espere por favor...");
-					},
-					success: function (response) {
-						var html = '';
-						html += '<select class="itemsLogisticaBuscador  itemLogisticaForm" name="itemLogisticaForm[0]">';
-						html += '<option></option>';
-						html += response;
-						html += '</select>';
-						$('.SelectitemLogisticaForm').html(html);
-						$(".itemsLogisticaBuscador").select2();
+					let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
+					cotizacionInternaForm.val(0); //Sin cotizacion Interna
+					var empresas = [1, 2, 11, 36, 52, 54];
+					for (let i = 0; i < empresas.length; i++) {
+						var id = empresas[i];
+						if (id != $('#centroCosto_visible .selected').attr('data-value')) {
+							$('option.cuentaID-' + id).remove();
+						}
 					}
-				});
+
+					parent.find(".unidadMed").dropdown('set selected', '1');
+
+					Cotizacion.comboItemLogistica = parent.find('#divIL').html();
+					$('.specialSearch').dropdown({ fullTextSearch: true, allowAdditions: true });
+
+					// var parametros = {
+					// 	"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
+					// 	"centroCosto": $('#centroCosto_oculto .selected').attr('data-value')
+					// };
+					// $.ajax({
+					// 	data: parametros,
+					// 	url: '../Cotizacion/obtenerItemsLogistica',
+					// 	type: 'post',
+					// 	beforeSend: function () {
+					// 		//$("#resultado").html("Procesando, espere por favor...");
+					// 	},
+					// 	success: function (response) {
+					// 		var html = '';
+					// 		html += '<select class="itemsLogisticaBuscador itemLogisticaForm" name="itemLogisticaForm[0]">';
+					// 		html += '<option></option>';
+					// 		html += response;
+					// 		html += '</select>';
+					// 		$('.SelectitemLogisticaForm').html(html);
+					// 		Cotizacion.comboItemLogistica = html;
+					// 		$(".itemsLogisticaBuscador").select2();
+					// 		$('.select2-container').css('height', '35px');
+					// 		$('.select2-selection').css('height', '35px');
+					// 	}
+					// });
+				}
+
 
 			} else {
+				(parent.find('.cCompras')).removeClass('d-none');
+				(parent.find('.cantPDV')).addClass('d-none');
+
 				let codItem = parent.find('.codItems');
 
 				if (codItem !== typeof undefined && codItem > 0) {
@@ -589,14 +617,9 @@ var Cotizacion = {
 				}
 			}
 
-			if (elementoBuscado) {
-				Cotizacion.repetidoSubItem.push(elementoBuscado);
+			if (elementoBuscado) { Cotizacion.repetidoSubItem.push(elementoBuscado); }
 
-			}
-
-			if (elementoBuscado2) {
-				Cotizacion.repetidoSubItem2.push(elementoBuscado2);
-			}
+			if (elementoBuscado2) { Cotizacion.repetidoSubItem2.push(elementoBuscado2); }
 
 			allFeatures.addClass('d-none');
 			divFeature.removeClass('d-none');
@@ -626,7 +649,7 @@ var Cotizacion = {
 
 		$(document).on('change', '.itemLogisticaForm', function (e) {
 			var fPeso = $(this).closest('.fields').find('.pesoForm');
-			var fPesoReal = $(this).closest('.div-features').find('.cantidadRealSubItem');
+			var fPesoReal = $(this).closest('.fields').find('.cantidadRealSubItem');
 			var idArticulo = $(this).val();
 			var parametros = {
 				"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
@@ -715,7 +738,8 @@ var Cotizacion = {
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let tipoItem = thisControlParents.find('#tipoItemForm');
-			let cantPdvDist = thisControlParents.find('.cantidadPdvSubItemDistribucion');
+			let cantPdvDist_ = thisControlParents.find('.cantidadPdvSubItemDistribucion');
+			let cantPdvDist = thisControlParents.find('.cantidadPDV');
 			let costoForm = thisControlParents.find('.costoForm');
 			let precioForm = thisControlParents.find('.precioForm');
 			let gapForm = thisControlParents.find('.gapForm');
@@ -770,13 +794,30 @@ var Cotizacion = {
 			let costoFormLabel = thisControlParents.find('.costoFormLabel');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let costoTipoServicioForm = thisControlParents.find('.costoTipoServicio');
-			let cantidadTipoServicio = Number(thisControl.val());
+
+			// let cantidadTipoServicio = Number(thisControl.val());
+			totalPeso = thisControl.closest('.div-features').find('.pesoForm');
+			totalCantidad = thisControl.closest('.div-features').find('.cantidadIL');
+			totalTotal = thisControl.closest('.div-features').find('.pesoTotalIL');
+			cantidadCalculada = 0;
+			let costoPacking = 0;
+			for (let i = 0; i < totalCantidad.length; i++) {
+				var tt = totalCantidad[i];
+				var tp = totalPeso[i];
+				var tttt = totalTotal[i];
+				cantidadCalculada += (parseFloat($(tt).val()) * parseFloat($(tp).val()));
+				$(tttt).val((parseFloat($(tt).val()) * parseFloat($(tp).val())).toFixed(2));
+			}
+			costoPacking = parseFloat(thisControl.closest('.div-features').find('.costoPacking').val());
+			cantidadTipoServicio = cantidadCalculada;
+
+
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
 
 			let subTotalTipoServicio = Fn.multiply(cantidadTipoServicio, costoTipoServicio);
 
-			costoForm.val(subTotalTipoServicio);
-			costoFormLabel.val(moneyFormatter.format(subTotalTipoServicio));
+			costoForm.val(subTotalTipoServicio + costoPacking);
+			costoFormLabel.val(moneyFormatter.format(subTotalTipoServicio + costoPacking));
 
 			cantidadForm.keyup();
 
@@ -942,7 +983,8 @@ var Cotizacion = {
 			let thisControl = $(this);
 			let thisControlParents = thisControl.parents('.nuevo');
 			let tipoItem = thisControlParents.find('#tipoItemForm');
-			let cantPdvDist = thisControlParents.find('.cantidadPdvSubItemDistribucion');
+			let cantPdvDist_ = thisControlParents.find('.cantidadPdvSubItemDistribucion');
+			let cantPdvDist = thisControlParents.find('.cantidadPDV');
 			let costoForm = thisControlParents.find('.costoForm');
 			let cantidadForm = thisControlParents.find('.cantidadForm');
 			let subTotalForm = thisControlParents.find('.subtotalForm');
@@ -1565,21 +1607,34 @@ var Cotizacion = {
 			let contenedor = parent.find('.content-body-sub-item');
 
 			let bodyHtmlSubItem = contenedor.find('.body-sub-item').first().wrap('<p/>').parent();
-
-			// contenedor.append(Cotizacion.htmlBodySubItem[tipo]);
 			contenedor.append(bodyHtmlSubItem.html());
 
 			let childInserted = contenedor.children().last();
-
-			// $("html").animate({ scrollTop: contenedor.height() }, 500);
 			childInserted.transition('glow');
 			childInserted.find(':input').val('');
 
 			let gen_nuevo = childInserted.find('#genero .item-4');
-			// hola3 = hola.remove('option');
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
 			gen_nuevo.remove('option');
+		});
+		$(document).on('click', '.btn-add-sub-item2', function () {
+			let control = $(this);
+			let parent = control.closest('.div-features');
+			let tipo = parent.data('tipo');
 
+			let contenedor = parent.find('.content-body-sub-item');
+
+			let bodyHtmlSubItem = Cotizacion.comboItemLogistica;
+			contenedor.append(bodyHtmlSubItem);
+			$('.specialSearch').dropdown({ fullTextSearch: true, allowAdditions: true });
+
+			let childInserted = contenedor.children().last();
+			childInserted.transition('glow');
+			childInserted.find(':input').val('');
+
+			let gen_nuevo = childInserted.find('#genero .item-4');
+			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
+			gen_nuevo.remove('option');
 		});
 		$(document).on('click', '.btn-eliminar-sub-item', function () {
 			let control = $(this);
@@ -1684,8 +1739,8 @@ var Cotizacion = {
 			let pesoCantidadRealForm = parent.find('.cantidadRealSubItem');
 			let cantidadFormSubItem = parent.find('.cantidadSubItemDistribucion');
 
-			pesoCantidadForm.val(peso);
-			pesoCantidadRealForm.val(peso);
+			// pesoCantidadForm.val(peso);
+			// pesoCantidadRealForm.val(peso);
 			cantidadFormSubItem.keyup();
 			//cantidadFormSubItem.change();
 
@@ -1828,15 +1883,17 @@ var Cotizacion = {
 		$(document).on('click', '.checkValidarOC', function () {
 			// Input Check
 			let check = $(this).find('.checkForm');
-
+			let vcheck = $(this).find('.vCheckForm');
 			// Div donde se tiene los campos adicionales
 			let div = $(this).parents('.div-features').find('.divAddParaOC');
 
 			// Si(IF) el check esta activo mostrar los campos necesario. En caso contrario (ELSE) ocultarlo.
 			// La clase "d-none" sirve para ocultar.
 			if (check.is(":checked")) {
+				vcheck.val('1');
 				div.removeClass('d-none');
 			} else {
+				vcheck.val('0');
 				div.addClass('d-none');
 			}
 
@@ -1905,7 +1962,57 @@ var Cotizacion = {
 		Cotizacion.controlesOC.costoForm.val(costoAnterior);
 		Cotizacion.controlesOC.costoFormLabel.val(costoAnterior);
 	},
+	cargarProvincia: function (t) {
+		Fn.showLoading(true);
+		var ts = $(t);
+		$.post(site_url + Cotizacion.url + 'getProvincia', {
+			cod_dep: ts.val()
+		}, function (d) {
+			// console.log(d);
+			ts.closest('.fields').find('.provinciaPDV').html('<option selected>Seleccionar</option>');
+			ts.closest('.fields').find('.distritoPDV').html('<option selected>Seleccionar</option>');
+			ts.closest('.fields').find('.provinciaPDV').html(d);
+			Fn.showLoading(false);
+		})
+	},
+	cargarDistrito: function (t) {
+		Fn.showLoading(true);
+		var ts = $(t);
+		var dep = ts.closest('.fields').find('.departamentoPDV').val();
+		$.post(site_url + Cotizacion.url + 'getDistrito', {
+			cod_dep: dep,
+			cod_pro: ts.val()
+		}, function (d) {
+			// console.log(d);
+			ts.closest('.fields').find('.distritoPDV').html('<option selected>Seleccionar</option>');
+			ts.closest('.fields').find('.distritoPDV').html(d);
+			Fn.showLoading(false);
+		})
+	},
+	calcularParadas: function (t) {
+		var this_ = $(t);
+		var paradas = this_.closest('.body-item').find('.cantidadParadas');
+		total = 0;
+		for (let i = 0; i < paradas.length; i++) {
+			eac = paradas[i];
+			console.log(eac);
+			total += parseInt($(eac).val());
 
+		}
+		cantidadPDV = this_.closest('.body-item').find('.cantidadPDV');
+		cantidadPDV.val(total);
+		cantidadPDV.keyup();
+	},
+	addUbigeo: function (t) {
+		Fn.showLoading(true);
+		var this_ = $(t);
+		var div = this_.closest('.body-item').find('.baseUbigeoSelects');
+		var cu = this_.closest('.fields').find('.cantUbigeo');
+		div.append(Cotizacion.ubigeoSelects);
+		cantidad = parseInt(cu.val()) + 1;
+		cu.val(cantidad);
+		Fn.showLoading(false);
+	},
 	solicitarAutorizacion: function (configOC) {
 
 		Cotizacion.controlesOC.gapForm.val(configOC.gapActual);
@@ -2399,8 +2506,11 @@ var Cotizacion = {
 
 		let cantidadSubItemDistribucion = parent.find('.cantidadSubItemDistribucion');
 		let chkTachadoDistribucion = parent.find('.chkTachadoDistribucion');
-		let cantidadPdvSubItemDistribucion = parent.find('.cantidadPdvSubItemDistribucion');
-		let itemLogisticaForm = parent.find('.itemLogisticaForm').find('select');
+		let cantidadPdvSubItemDistribucion_ = parent.find('.cantidadPdvSubItemDistribucion');
+		let cantidadPdvSubItemDistribucion = parent.find('.cantidadPPDV');
+		let itemLogisticaForm = parent.find('select.itemLogisticaForm');
+		let cantidadIL = parent.find('.cantidadIL');
+		let pesoTotalIL = parent.find('.pesoTotalIL');
 
 		let tipoServicioSubItem = parent.find('.tipoServicioSubItem').find('select');
 		let unidadMedidaSubItem = parent.find('.unidadMedidaSubItem');
@@ -2431,7 +2541,9 @@ var Cotizacion = {
 		cantidadSubItemDistribucion.attr('name', `cantidadSubItemDistribucion[${number}]`);
 		chkTachadoDistribucion.attr('name', `chkTachado[${number}]`);
 		cantidadPdvSubItemDistribucion.attr('name', `cantidadPdvSubItemDistribucion[${number}]`);
-		itemLogisticaForm.attr('name', `itemLogisticaForm[${number}]`);
+		itemLogisticaForm.attr('name', `itemLogisticaFormNew[${number}]`);
+		cantidadIL.attr('name', `cantidadSubItemNro[${number}]`);
+		pesoTotalIL.attr('name', `cantidadPesoTotal[${number}]`);
 
 		tipoServicioSubItem.attr('name', `tipoServicioSubItem[${number}]`);
 		unidadMedidaSubItem.attr('name', `unidadMedidaSubItem[${number}]`);
@@ -2533,6 +2645,8 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+
+
 
 }
 
