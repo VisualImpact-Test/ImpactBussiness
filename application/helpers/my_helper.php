@@ -1,4 +1,7 @@
 <?php
+
+use Mpdf\Tag\Input;
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
 function numRandom($digits = 4)
@@ -11,7 +14,7 @@ function refactorizarDataHT($data = [])
 {
 	$dataRefactorizada = [];
 	foreach ($data["data"] as $row) {
-		if (!in_array($row[$data["value"]], $dataRefactorizada)) $dataRefactorizada[] = $row[$data["value"]];
+		if (!in_array($row[$data["value"]], $dataRefactorizada)) $dataRefactorizada[] = trim($row[$data["value"]]);
 	}
 	return !empty($dataRefactorizada) ? $dataRefactorizada : [];
 }
@@ -1230,7 +1233,35 @@ function htmlSelectOptionArray($query, $idSelected = '')
 
 	return $html;
 }
+function htmlTableValueArray($params)
+{
+	$cabecera = $params['cabecera'];
 
+	$datos = $params['datos'];
+	$cantidad = count($datos);
+	$html = '';
+	$html = "<input type='hidden' value='$cantidad' name='cantidadDatosTabla'>";
+	$html .= '<table class="ui table"><thead><tr>';
+	foreach ($cabecera as $key => $value) {
+		$html .= "<th> $value </th>";
+	}
+	$html .= '</tr></thead>';
+	$html .= '<tbody>';
+	foreach ($datos as $v) {
+		$html .= '<tr>';
+		foreach ($cabecera as $kh => $vh) {
+			$value = $v[$kh];
+			$class = empty($params['classP']) ? '' : ($params['classP'] . $kh);
+			$html .= "<td><input class='$class' type='hidden' name='$kh' value=\"$value\">";
+			$html .= "$value";
+			$html .= '</td>';
+		}
+		$html .= '</tr>';
+	}
+
+	$html .= '</tbody></table>';
+	return $html;
+}
 function htmlSelectOptionArray2($params = [])
 {
 

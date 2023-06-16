@@ -265,11 +265,12 @@ class M_Item extends MY_Model
 		$sql = "
 			SELECT DISTINCT
 				  a.idArticulo AS id
-				, ISNULL(a.codigo + ' - ','') + a.nombre AS value
+				, a.nombre AS value
 				, ISNULL(a.peso,0) as pesoLogistica
 				, um.idUnidadMedida AS idum
 				, um.nombre AS um
 				, mc.idCuenta as cuenta
+				, ISNULL(a.pesoCosto,0) as pesoCostoLogistica
 			FROM visualimpact.logistica.articulo a
 			LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 			LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
@@ -449,6 +450,25 @@ class M_Item extends MY_Model
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
 		WHERE mc.idCuenta='" . $idCuenta . "'  $filtro
 		";
+		return $query = $this->db->query($sql);
+	}
+	public function obtenerItemsCuenta2($idCuenta, $idArticulo = null)
+	{
+		$filtro = '';
+		if (!empty($idArticulo)) {
+			$filtro = '  AND  a.idArticulo=' . $idArticulo;
+		}
+		$sql = "
+		SELECT DISTINCT
+				a.idArticulo AS value
+			, a.nombre AS label
+			, ISNULL(a.peso,0) as pesoLogistica
+		FROM visualimpact.logistica.articulo a
+		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
+		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
+		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
+		WHERE mc.idCuenta='" . $idCuenta . "'  $filtro
+		ORDER BY 2";
 		return $query = $this->db->query($sql);
 	}
 }

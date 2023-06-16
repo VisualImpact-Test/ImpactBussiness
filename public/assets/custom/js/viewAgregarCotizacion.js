@@ -205,6 +205,10 @@ var Cotizacion = {
 	objetoParaAgregarImagen: null,
 	comboItemLogistica: '',
 	ubigeoSelects: '',
+	temp: null,
+	itemDistribuciónSeleccionadosTemp: [],
+	pesosRealesTemp: [],
+	pesosTemp: [],
 	// solicitanteData: [],
 
 	load: function () {
@@ -566,7 +570,7 @@ var Cotizacion = {
 
 					let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 					cotizacionInternaForm.val(0); //Sin cotizacion Interna
-					var empresas = [1, 2, 11, 36, 52, 54];
+					var empresas = [1, 2, 11, 13, 36, 52, 54];
 					for (let i = 0; i < empresas.length; i++) {
 						var id = empresas[i];
 						if (id != $('#centroCosto_visible .selected').attr('data-value')) {
@@ -577,7 +581,7 @@ var Cotizacion = {
 					parent.find(".unidadMed").dropdown('set selected', '1');
 
 					Cotizacion.comboItemLogistica = parent.find('#divIL').html();
-					$('.specialSearch').dropdown({ fullTextSearch: true, allowAdditions: true });
+					$('.specialSearch').dropdown({ allowAdditions: true });
 
 					// var parametros = {
 					// 	"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
@@ -650,24 +654,31 @@ var Cotizacion = {
 		$(document).on('change', '.itemLogisticaForm', function (e) {
 			var fPeso = $(this).closest('.fields').find('.pesoForm');
 			var fPesoReal = $(this).closest('.fields').find('.cantidadRealSubItem');
-			var idArticulo = $(this).val();
-			var parametros = {
-				"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
-				"idArticulo": idArticulo
-			};
-			$.ajax({
-				data: parametros,
-				url: '../Cotizacion/obtenerPesoLogistica',
-				type: 'post',
-				beforeSend: function () {
-					//$("#resultado").html("Procesando, espere por favor...");
-				},
-				success: function (response) {
-					$(fPeso).val(parseFloat(response) * 1.2);
-					$(fPesoReal).val(response);
-					fPeso.keyup();
-				}
-			});
+			var idArticulo = $(this).dropdown('get value');
+
+			var peso = $(this).closest('.itemLogisticaForm').find('select').find('option:selected').data('peso');
+			var pesoCosto = $(this).closest('.itemLogisticaForm').find('select').find('option:selected').data('pesocosto');
+
+			$(fPesoReal).val(peso);
+			$(fPeso).val(pesoCosto).keyup();
+
+			// console.log(sel);
+			// var parametros = {
+			// 	"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
+			// 	"idArticulo": idArticulo
+			// };
+			// $.ajax({
+			// 	data: parametros,
+			// 	url: '../Cotizacion/obtenerPesoLogistica',
+			// 	type: 'post',
+			// 	beforeSend: function () {
+			// 	},
+			// 	success: function (response) {
+			// 		$(fPeso).val(parseFloat(response) * 1.2);
+			// 		$(fPesoReal).val(response);
+			// 		fPeso.keyup();
+			// 	}
+			// });
 
 		});
 
@@ -752,7 +763,7 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
+			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id) {
 				gapForm.val(GAP_MINIMO);
 			}
 
@@ -1001,7 +1012,7 @@ var Cotizacion = {
 
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 			//Si el monto es mayor a 1500, el gap no puede ser menor al 15%
-			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0) {
+			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id) {
 				thisControl.val(GAP_MINIMO).trigger('keyup');
 				$("#nagGapValidacion").nag({
 					persist: true
@@ -1626,7 +1637,7 @@ var Cotizacion = {
 
 			let bodyHtmlSubItem = Cotizacion.comboItemLogistica;
 			contenedor.append(bodyHtmlSubItem);
-			$('.specialSearch').dropdown({ fullTextSearch: true, allowAdditions: true });
+			$('.specialSearch').dropdown({ allowAdditions: true });
 
 			let childInserted = contenedor.children().last();
 			childInserted.transition('glow');
@@ -1635,6 +1646,56 @@ var Cotizacion = {
 			let gen_nuevo = childInserted.find('#genero .item-4');
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
 			gen_nuevo.remove('option');
+		});
+		$(document).on('click', '.btn-add-subDetalleDistribucion', function (e) {
+			e.preventDefault();
+			var this_ = $(this);
+			Cotizacion.temp = this_;
+
+			let selects = this_.closest('.div-features').find('.itemLogisticaForm');
+			let inp1 = this_.closest('.div-features').find('.cantidadRealSubItem');
+			let inp2 = this_.closest('.div-features').find('.cantidadSubItem');
+			let dataPrevia = this_.closest('.div-features').find('.arrayDatos').html();
+			let item = [];
+			let pesR = [];
+			let pes = [];
+			for (let i = 0; i < selects.length; i++) {
+				id = $(selects[i]).dropdown('get value');
+				item.push(id);
+				pesoR = $(inp1[i]).val();
+				pesR.push(pesoR);
+				peso = $(inp2[i]).val();
+				pes.push(peso);
+			}
+			let data = {};
+			data.data = $('#cuentaForm').val();
+			data.item = item;
+			data.pesoReal = pesR;
+			data.peso = pes;
+			data.dataPrevia = dataPrevia;
+
+			Cotizacion.itemDistribuciónSeleccionadosTemp = item;
+			Cotizacion.pesosRealesTemp = pesR;
+			Cotizacion.pesosTemp = pes;
+			let jsonString = { 'data': JSON.stringify(data) };
+			var config = { 'url': Cotizacion.url + 'getSubDetalleDistribucionMasivo', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				var btn = [];
+				if (a.result === 1) {
+					var fn1 = `Cotizacion.procesarTablaConDatos(${modalId});`;
+					var fn2 = `Cotizacion.llenarTablaConDatos(${modalId});`;
+
+					btn[1] = { title: 'Procesar', fn: fn1 };
+					btn[2] = { title: 'Guardar', fn: fn2 };
+
+				}
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+
+			});
 		});
 		$(document).on('click', '.btn-eliminar-sub-item', function () {
 			let control = $(this);
@@ -1908,7 +1969,91 @@ var Cotizacion = {
 			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF', jsonString);
 		});
 	},
+	procesarTablaConDatos: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['cuenta'] = $('#cuentaForm').val();
+		data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
+		data['pesoReal'] = Cotizacion.pesosRealesTemp;
+		data['peso'] = Cotizacion.pesosTemp;
+		var jsonString = { 'data': JSON.stringify(data) };
+		var config = { 'url': Cotizacion.url + 'procesarTablaDatosDistribucion', 'data': jsonString };
 
+		$.when(Fn.ajax(config)).then(function (a) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			if (a.result === 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				var fn1 = `Cotizacion.procesarTablaConDatos(${modalId});`;
+				var fn2 = `Cotizacion.llenarTablaConDatos(${modalId});`;
+
+				btn[1] = { title: 'Procesar', fn: fn1 };
+				btn[2] = { title: 'Guardar', fn: fn2 };
+
+			}
+			btn[0] = { title: 'Cerrar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+			HTCustom.llenarHTObjectsFeatures(a.data.ht);
+
+		});
+	},
+	llenarTablaConDatos: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
+		data['pesoReal'] = Cotizacion.pesosRealesTemp;
+		data['peso'] = Cotizacion.pesosTemp;
+		var jsonString = { 'data': JSON.stringify(data) };
+		var config = { 'url': Cotizacion.url + 'generarTablaDatosDistribucion', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result === 2) return false;
+
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+
+			if (a.result == 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+
+				Cotizacion.temp.closest('.div-features').find('.datosTable').html(a.msg.content);
+				HT[0].pop();
+				Cotizacion.temp.closest('.div-features').find('.arrayDatos').html(JSON.stringify(HT[0]));
+				tv = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalVisual');
+				tc = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalCuenta');
+				totalV = 0;
+				totalC = 0;
+				for (let i = 0; i < tv.length; i++) {
+					totalV += parseFloat($(tv[i]).val());
+					totalC += parseFloat($(tc[i]).val());
+				}
+				Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').append(`
+					<tfoot>
+						<tr>
+							<td colspan="13"></td>
+							<td>${totalV.toFixed(2)}</td>
+							<td colspan="4"></td>
+							<td>${totalC.toFixed(2)}</td>
+						</tr>
+					</tfoot>
+				`);
+				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(2));
+				Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
+			} else {
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			}
+		});
+	},
 	actualizarPropuestaItem: function (data) {
 		let parent = $(`.idCotizacionDetalleForm-${data.idCotizacionDetalle}`).closest('.nuevo');
 
@@ -1968,7 +2113,6 @@ var Cotizacion = {
 		$.post(site_url + Cotizacion.url + 'getProvincia', {
 			cod_dep: ts.val()
 		}, function (d) {
-			// console.log(d);
 			ts.closest('.fields').find('.provinciaPDV').html('<option selected>Seleccionar</option>');
 			ts.closest('.fields').find('.distritoPDV').html('<option selected>Seleccionar</option>');
 			ts.closest('.fields').find('.provinciaPDV').html(d);
@@ -1983,7 +2127,6 @@ var Cotizacion = {
 			cod_dep: dep,
 			cod_pro: ts.val()
 		}, function (d) {
-			// console.log(d);
 			ts.closest('.fields').find('.distritoPDV').html('<option selected>Seleccionar</option>');
 			ts.closest('.fields').find('.distritoPDV').html(d);
 			Fn.showLoading(false);
@@ -1995,7 +2138,6 @@ var Cotizacion = {
 		total = 0;
 		for (let i = 0; i < paradas.length; i++) {
 			eac = paradas[i];
-			console.log(eac);
 			total += parseInt($(eac).val());
 
 		}
@@ -2003,16 +2145,16 @@ var Cotizacion = {
 		cantidadPDV.val(total);
 		cantidadPDV.keyup();
 	},
-	addUbigeo: function (t) {
-		Fn.showLoading(true);
-		var this_ = $(t);
-		var div = this_.closest('.body-item').find('.baseUbigeoSelects');
-		var cu = this_.closest('.fields').find('.cantUbigeo');
-		div.append(Cotizacion.ubigeoSelects);
-		cantidad = parseInt(cu.val()) + 1;
-		cu.val(cantidad);
-		Fn.showLoading(false);
-	},
+	// addUbigeo: function (t) {
+	// 	Fn.showLoading(true);
+	// 	var this_ = $(t);
+	// 	var div = this_.closest('.body-item').find('.baseUbigeoSelects');
+	// 	var cu = this_.closest('.fields').find('.cantUbigeo');
+	// 	div.append(Cotizacion.ubigeoSelects);
+	// 	cantidad = parseInt(cu.val()) + 1;
+	// 	cu.val(cantidad);
+	// 	Fn.showLoading(false);
+	// },
 	solicitarAutorizacion: function (configOC) {
 
 		Cotizacion.controlesOC.gapForm.val(configOC.gapActual);

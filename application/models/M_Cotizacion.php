@@ -18,10 +18,10 @@ class M_Cotizacion extends MY_Model
 	public function obtenerDetallePDV($id)
 	{
 		return $this->db->distinct()->select("l.*, departamento, provincia,  case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
-		->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
+			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 		AND ISNULL(l.idDistrito , 1) = ubi_zc.cod_distrito
 		AND ubi_zc.estado = 1', 'left')
-		->get('compras.cotizacionDetalleUbigeo l')->result_array();
+			->get('compras.cotizacionDetalleUbigeo l')->result_array();
 	}
 	public function obtenerCuenta($params = [])
 	{
@@ -652,6 +652,13 @@ class M_Cotizacion extends MY_Model
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
+						//
+						'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+						'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
+						'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
+						'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
+						'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+						//
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 					];
 				}

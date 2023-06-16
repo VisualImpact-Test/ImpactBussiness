@@ -98,7 +98,11 @@
 					<tr style="background-color: #FFE598;">
 						<th width="7%">ITEM</th>
 						<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
-						<th width="15%" class="text-center">CANTIDAD</th>
+						<th width="15%" class="text-center">
+							<?php if ($idItemTipo != COD_DISTRIBUCION['id']) :  ?>
+								CANTIDAD
+							<?php endif; ?>
+						</th>
 						<th width="15%">SUBTOTAL</th>
 					</tr>
 				<?php endif; ?>
@@ -176,7 +180,9 @@
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
 					<td class="text-center">
-						<?= verificarEmpty($row['cantidad'], 1) ?>
+						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) :  ?>
+							<?= verificarEmpty($row['cantidad'], 1) ?>
+						<?php endif; ?>
 					</td>
 					<td class="text-right">
 						<?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?>
@@ -258,12 +264,84 @@
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
 			</label>
 		</div>
+		<?php if (!empty($detalleDistribucionZonas)) :  ?>
+			<?php foreach ($detalle as $kd => $vd) : ?>
+				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id']) :  ?>
+					<table id="customers">
+						<thead>
+							<tr>
+								<th colspan="2">PRODUCTO</th>
+								<?php foreach ($detalleDistribucionItems[$vd['idCotizacionDetalle']] as $ki => $vi) : ?>
+									<th>
+										<?= $vi[0]['itemNombre']; ?>
+									</th>
+									<?php $tot[$ki] = 0; ?>
+									<?php foreach ($vi as $v_) : ?>
+										<?php $tot[$ki] += floatval($v_['cantidad']); ?>
+									<?php endforeach; ?>
+								<?php endforeach; ?>
+
+								<?php foreach ($detalleDistribucionItems[$vd['idCotizacionDetalle']] as $ki => $vi) : ?>
+									<th rowspan="2">
+										PESO <?= $vi[0]['itemNombre']; ?>
+									</th>
+								<?php endforeach; ?>
+								<th rowspan="2"> PESO TOTAL </th>
+								<th rowspan="2"> TIPO </th>
+							</tr>
+							<tr>
+								<th colspan="2">CANTIDAD</th>
+								<?php foreach ($tot as $valueT) : ?>
+									<th class="text-right"><?= $valueT; ?></th>
+								<?php endforeach; ?>
+							</tr>
+						</thead>
+						<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
+							<?php $totZC[$kf] = 0; ?>
+							<?php $totZP[$kf] = 0; ?>
+							<?php foreach ($vf as $v_) : ?>
+								<?php $totZC[$kf] += floatval($v_['cantidad']); ?>
+								<?php $totZP[$kf] += (floatval($v_['peso']) * floatval($v_['cantidad']) * (100 + floatval($v_['gap'])) / 100); ?>
+							<?php endforeach; ?>
+						<?php endforeach; ?>
+						<tbody>
+							<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
+								<tr>
+									<td>
+										<?= $vf[0]['zonaNombre']; ?>
+									</td>
+									<td>
+										<?= $totZC[$kf]; ?>
+									</td>
+									<?php foreach ($vf as $valueF) : ?>
+										<td class="text-right">
+											<?= $valueF['cantidad']; ?>
+										</td>
+									<?php endforeach; ?>
+									<?php foreach ($vf as $valueF) : ?>
+										<td class="text-right">
+											<?= (floatval($valueF['peso']) * floatval($valueF['cantidad']) * (100 + floatval($valueF['gap'])) / 100); ?>
+										</td>
+									<?php endforeach; ?>
+									<td class="text-right">
+										<?= $totZP[$kf]; ?>
+									</td>
+									<td>
+										<?= $vf[0]['tipoServicioNombre']; ?>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				<?php endif; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		<?php if (!empty($anexos)) :  ?>
 			<h3>Anexos</h3>
 			<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
 				<?php foreach ($anexos as $anexo) : ?>
 					<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>">
-						<img height="290" src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+						<img src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 					</a>
 				<?php endforeach; ?>
 			</div>
