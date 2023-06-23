@@ -1647,20 +1647,52 @@ var Cotizacion = {
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
 			gen_nuevo.remove('option');
 		});
+		$(document).on('click', '.btn-add-subItemDist-Masivo', function (e) {
+			e.preventDefault();
+			var this_ = $(this);
+			Cotizacion.temp = this_;
+			let dataPrevia = this_.closest('.div-features').find('.arrayDatosItems').html();
+
+			let data = {};
+			data.data = $('#cuentaForm').val();
+
+			data.dataPrevia = dataPrevia;
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			var config = { 'url': Cotizacion.url + 'getSubDetalleDistribucionMasivo_Items', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				var btn = [];
+				if (a.result === 1) {
+					var fn1 = `Cotizacion.buscarPesos(${modalId});`;
+					var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
+
+					btn[1] = { title: 'Procesar', fn: fn1 };
+					btn[2] = { title: 'Guardar', fn: fn2 };
+
+				}
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+
+			});
+		});
 		$(document).on('click', '.btn-add-subDetalleDistribucion', function (e) {
 			e.preventDefault();
 			var this_ = $(this);
 			Cotizacion.temp = this_;
 
-			let selects = this_.closest('.div-features').find('.itemLogisticaForm');
-			let inp1 = this_.closest('.div-features').find('.cantidadRealSubItem');
-			let inp2 = this_.closest('.div-features').find('.cantidadSubItem');
+			let selects = this_.closest('.div-features').find('.itemD');
+			let inp1 = this_.closest('.div-features').find('.itemDPesoV');
+			let inp2 = this_.closest('.div-features').find('.itemDPesoR');
 			let dataPrevia = this_.closest('.div-features').find('.arrayDatos').html();
 			let item = [];
 			let pesR = [];
 			let pes = [];
 			for (let i = 0; i < selects.length; i++) {
-				id = $(selects[i]).dropdown('get value');
+				// id = $(selects[i]).dropdown('get value');
+				id = $(selects[i]).val();
 				item.push(id);
 				pesoR = $(inp1[i]).val();
 				pesR.push(pesoR);
@@ -1969,6 +2001,39 @@ var Cotizacion = {
 			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF', jsonString);
 		});
 	},
+	buscarPesos: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['cuenta'] = $('#cuentaForm').val();
+		// data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
+		// data['pesoReal'] = Cotizacion.pesosRealesTemp;
+		// data['peso'] = Cotizacion.pesosTemp;
+		var jsonString = { 'data': JSON.stringify(data) };
+		var config = { 'url': Cotizacion.url + 'procesarTablaDatosDistribucion_Pesos', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			if (a.result === 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				var fn1 = `Cotizacion.buscarPesos(${modalId});`;
+				var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
+
+				btn[1] = { title: 'Procesar', fn: fn1 };
+				btn[2] = { title: 'Guardar', fn: fn2 };
+
+			}
+			btn[0] = { title: 'Cerrar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+			HTCustom.llenarHTObjectsFeatures(a.data.ht);
+
+		});
+	},
 	procesarTablaConDatos: function (idModalHT) {
 		var data = Fn.formSerializeObject('formCargaMasiva');
 		var HT = [];
@@ -2049,6 +2114,77 @@ var Cotizacion = {
 				`);
 				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(2));
 				Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
+			} else {
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			}
+		});
+	},
+	llenarCamposEnTabla: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['cuenta'] = $('#cuentaForm').val();
+		var jsonString = { 'data': JSON.stringify(data) };
+		var config = { 'url': Cotizacion.url + 'generarDatosPesosItem', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result === 2) return false;
+
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+
+			if (a.result == 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				datosDeHT = JSON.parse(JSON.stringify(a.msg.content));
+				html = `<input type="hidden" name="cantidadItemsDistribucion" value="${datosDeHT.length}">`;
+				for (let i = 0; i < datosDeHT.length; i++) {
+					row = datosDeHT[i];
+					html += `
+					<div class="fields body-sub-item">
+						<div class="seven wide field">
+							<div class="ui sub header">Item Logística</div>
+							<input type="hidden" name="nameSID" class="itemD" value="${row.idArticulo}">
+							<input name="nameSID" value="${row.nombre}" readonly>
+						</div>
+						<div class="two wide field">
+							<div class="ui sub header">Peso Visual</div>
+							<input name="pesoVisualSID" class="itemDPesoV" value="${row.pesoVisual}" readonly>
+						</div>
+						<div class="two wide field">
+							<div class="ui sub header">Peso Cuenta</div>
+							<input name="pesoCuentaSID" class="itemDPesoR" value="${row.pesoCuenta}" readonly>
+						</div>
+					</div>`;
+				}
+				// Cotizacion.temp.closest('.div-features').find('.datosTable').html(a.msg.content);
+				HT[0].pop();
+				Cotizacion.temp.closest('.div-features').find('.content-body-sub-item').html(html);
+				Cotizacion.temp.closest('.div-features').find('.arrayDatosItems').html(JSON.stringify(HT[0]));
+				// tv = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalVisual');
+				// tc = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalCuenta');
+				// totalV = 0;
+				// totalC = 0;
+				// for (let i = 0; i < tv.length; i++) {
+				// 	totalV += parseFloat($(tv[i]).val());
+				// 	totalC += parseFloat($(tc[i]).val());
+				// }
+				// Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').append(`
+				// 	<tfoot>
+				// 		<tr>
+				// 			<td colspan="13"></td>
+				// 			<td>${totalV.toFixed(2)}</td>
+				// 			<td colspan="4"></td>
+				// 			<td>${totalC.toFixed(2)}</td>
+				// 		</tr>
+				// 	</tfoot>
+				// `);
+				// Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(2));
+				// Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
 			} else {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
 			}

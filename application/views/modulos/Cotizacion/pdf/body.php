@@ -34,6 +34,7 @@
 <?php $idItemTipo = ''; ?>
 <?php $col1 = 0; ?>
 <?php $montoSub = 0; ?>
+<?php $totalPacking = 0; ?>
 <?php foreach ($detalle as $key => $row) : ?>
 	<!-- PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
 	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
@@ -185,7 +186,10 @@
 						<?php endif; ?>
 					</td>
 					<td class="text-right">
-						<?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?>
+						<?php if (!empty($row['costoPacking'])) :  ?>
+							<?php $totalPacking += floatval($row['costoPacking']); ?>
+						<?php endif; ?>
+						<?= empty($row['subtotal']) ? "-" : moneda(floatval($row['subtotal']) + floatval($row['costoPacking'])); ?>
 					</td>
 				</tr>
 				<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) :  ?>
@@ -238,6 +242,7 @@
 						<p>SUB TOTAL</p>
 					</td>
 					<td class="text-right bold" style="color:black">
+						<?php $montoSub += floatval($totalPacking) ?>
 						<p><?= moneda($montoSub); ?></p>
 					</td>
 				</tr>
@@ -266,7 +271,7 @@
 		</div>
 		<?php if (!empty($detalleDistribucionZonas)) :  ?>
 			<?php foreach ($detalle as $kd => $vd) : ?>
-				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id']) :  ?>
+				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') :  ?>
 					<table id="customers">
 						<thead>
 							<tr>

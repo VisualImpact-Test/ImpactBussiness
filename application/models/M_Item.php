@@ -277,7 +277,7 @@ class M_Item extends MY_Model
 			JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
 			ORDER BY 2,1
 		";
-		
+
 		$result = $this->db->query($sql)->result_array();
 		return $result;
 	}
@@ -452,17 +452,18 @@ class M_Item extends MY_Model
 		";
 		return $query = $this->db->query($sql);
 	}
-	public function obtenerItemsCuenta2($idCuenta, $idArticulo = null)
+	public function obtenerItemsCuenta2($idCuenta, $articulo = null)
 	{
 		$filtro = '';
-		if (!empty($idArticulo)) {
-			$filtro = '  AND  a.idArticulo=' . $idArticulo;
+		if (!empty($articulo)) {
+			$filtro = "  AND  a.nombre='" . $articulo . "'";
 		}
 		$sql = "
 		SELECT DISTINCT
 				a.idArticulo AS value
 			, a.nombre AS label
 			, ISNULL(a.peso,0) as pesoLogistica
+			, ISNULL(a.pesoCosto,0) as pesoCuenta
 		FROM visualimpact.logistica.articulo a
 		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida

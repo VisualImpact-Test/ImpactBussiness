@@ -410,6 +410,7 @@ class Cotizacion extends MY_Controller
 
 		$insert = $this->model->insertarCotizacion($data);
 		$data['idCotizacion'] = $insert['id'];
+		$idCotizacion = $data['idCotizacion'];
 		$insertAnexos = $this->model->insertarCotizacionAnexos($data);
 		$data['update'] = [
 			'codCotizacion' => generarCorrelativo($insert['id'], 6),
@@ -451,10 +452,13 @@ class Cotizacion extends MY_Controller
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 		$post['itemTextoPdf'] = checkAndConvertToArray($post['itemTextoPdf']);
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
+		$post['flagPackingSolicitado'] = checkAndConvertToArray($post['flagPackingSolicitado']);
+		$post['flagMostrarDetalle'] = checkAndConvertToArray($post['flagMostrarDetalle']);
 		// $post['flagDetallePDV'] = checkAndConvertToArray($post['flagDetallePDV']);
 
 		$ttt = 0;
 		$n = 0; // Cantidad de items en la tabla de distribución.
+		$enviarCorreoPacking = false;
 		foreach ($post['nameItem'] as $k => $r) {
 			$dataItem = [];
 			$idItem = (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL;
@@ -525,11 +529,16 @@ class Cotizacion extends MY_Controller
 				'cantPDV' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : NULL,
 				'flagDetallePDV' => !empty($post['flagDetallePDV'][$k]) ? $post['flagDetallePDV'][$k] : NULL,
 				// 'tipoServicio' => !empty($post['tipoServicio'][$k]) ? $post['tipoServicio'][$k] : NULL,
-				'requiereOrdenCompra' => !empty($post['generarOC'][$k]) ? $post['generarOC'][$k] : 0,
+				'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 				'tsCosto' => !empty($post['tsCosto'][$k]) ? $post['tsCosto'][$k] : NULL,
-				'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : NULL,
+				// 'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : NULL,
+				'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
+				'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 			];
 
+			if ($post['flagPackingSolicitado'][$k] == '1') {
+				$enviarCorreoPacking = true;
+			}
 			switch ($post['tipoItemForm'][$k]) {
 				case COD_TRANSPORTE['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
@@ -545,18 +554,18 @@ class Cotizacion extends MY_Controller
 
 					for ($it = 0; $it < $cantidad; $it++) {
 						$data['subDetalle'][$k][] = [
-							'tipoServicio' => $post['idTipoServicio'][$n], // idTipoServicio ... el modal esta con ese KEY por eso le pngo asi.
-							'nombre' => $post['item'][$n],
-							'cantidad' => $post['cantidad'][$n],
-							'costo' => $post['costoTSCuenta'][$n],
-							'subtotal' => $post['totalCuenta'][$n],
-							'idItemLogistica' => $post['idItem'][$n], // lo mismo que idTipoServicio xd
-							'peso' => $post['pesoCuenta'][$n],
-							'idZona' => $post['idZona'][$n], //falta
-							'dias' => $post['dias'][$n],
-							'gap' => $post['gap'][$n],
-							'pesoVisual' => $post['pesoVisual'][$n],
-							'costoVisual' => $post['costoTSVisual'][$n],
+							'tipoServicio' => strval($post['idTipoServicio'][$n]), // idTipoServicio ... el modal esta con ese KEY por eso le pngo asi.
+							'nombre' => strval($post['item'][$n]),
+							'cantidad' => strval($post['cantidad'][$n]),
+							'costo' => strval($post['costoTSCuenta'][$n]),
+							'subtotal' => strval($post['totalCuenta'][$n]),
+							'idItemLogistica' => strval($post['idItem'][$n]), // lo mismo que idTipoServicio xd
+							'peso' => strval($post['pesoCuenta'][$n]),
+							'idZona' => strval($post['idZona'][$n]), //falta
+							'dias' => strval($post['dias'][$n]),
+							'gap' => strval($post['gap'][$n]),
+							'pesoVisual' => strval($post['pesoVisual'][$n]),
+							'costoVisual' => strval($post['costoTSVisual'][$n]),
 							'flagItemInterno' => 0, // FALTA LA OPCION DE AGREGAR ITEM DE COMPRAS
 							// 'fechaCreacion'
 							// 'fechaModificacion'
@@ -700,6 +709,10 @@ class Cotizacion extends MY_Controller
 		$insertDetalle = $this->model->insertarCotizacionDetalle($data);
 		$data = [];
 
+		if ($enviarCorreoPacking) {
+			$this->enviarCorreoPacking(['idCotizacion' => $idCotizacion, 'to' => ['eder.alata@visualimpact.com.pe']]);
+		}
+
 		if ($post['tipoRegistro'] == ESTADO_ENVIADO_COMPRAS) {
 			// Para no enviar Correos en modo prueba.
 			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
@@ -803,7 +816,51 @@ class Cotizacion extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+	public function enviarCorreoPacking($params)
+	{
+		$config = array(
+			'protocol' => 'smtp',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			'smtp_user' => 'teamsystem@visualimpact.com.pe',
+			'smtp_pass' => '#nVi=0sN0ti$',
+			'mailtype' => 'html'
+		);
 
+		$this->load->library('email', $config);
+		$this->email->clear(true);
+		$this->email->set_newline("\r\n");
+
+		$data = !empty($params['data']) ? $params['data'] : [];
+		$dataParaVista = [];
+		$cc = !empty($params['cc']) ? $params['cc'] : [];
+
+		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+		$this->email->to($params['to']);
+		$this->email->cc($cc);
+
+		$dataParaVista['link'] = base_url() . index_page() . 'Cotizacion/RegistrarPesos/' . $params['idCotizacion'];
+
+		$bcc = array(
+			'eder.alata@visualimpact.com.pe',
+			// 'luis.durand@visualimpact.com.pe'
+		);
+		$this->email->bcc($bcc);
+
+		$this->email->subject('IMPACTBUSSINESS - INDICAR PESOS EN COTIZACION');
+		$html = $dataParaVista['link'];
+		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => $dataParaVista['link']], true);
+		$this->email->message($correo);
+
+		$estadoEmail = $this->email->send();
+
+		if (!$estadoEmail) {
+
+			$mensaje = $this->email->print_debugger();
+		}
+
+		return $estadoEmail;
+	}
 	public function enviarCorreo($params = [])
 	{
 		$config = array(
@@ -914,6 +971,8 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['flagAlternativo'] = $row['flagAlternativo'];
 				$dataParaVista['detalle'][$key]['nombreAlternativo'] = $row['nombreAlternativo'];
 				$dataParaVista['detalle'][$key]['flagRedondear'] = $row['flagRedondear'];
+				$dataParaVista['detalle'][$key]['costoPacking'] = $row['costoPacking'];
+				$dataParaVista['detalle'][$key]['flagMostrarDetalle'] = $row['flagMostrarDetalle'];
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 				} else {
@@ -1302,7 +1361,7 @@ class Cotizacion extends MY_Controller
 		$pesoReal = $post->{'pesoReal'};
 		$peso = $post->{'peso'};
 
-		$zonas = $this->db->get('compras.zona')->result_array();
+		$zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
 		$tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
@@ -1316,7 +1375,7 @@ class Cotizacion extends MY_Controller
 		if (!empty($ht)) {
 			foreach ($ht as $k => $v) {
 				$datosHt[$k]['zona'] = $v->{'zona'};
-				$datosHt[$k]['dias'] = $this->db->where('nombre', $v->{'zona'})->get('compras.zona')->row_array()['dias'];
+				$datosHt[$k]['dias'] = $this->db->where('idCuenta', $idCuenta)->where('nombre', $v->{'zona'})->get('compras.zona')->row_array()['dias'];
 
 				foreach ($item as $ki => $vi) {
 					if (!is_numeric($vi)) {
@@ -1466,6 +1525,126 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function RegistrarPesos($id)
+	{
+		$config['single'] = true;
+		// AGREGAR VALIDACION PARA SOLO MOSTRAR LOS PENDIENTES.
+		$config['js']['script'] = array('assets/custom/js/registroPesos');
+		$config['data']['cotizacion'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacion')->row_array();
+		$config['data']['cotizacionDetalle'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacionDetalle')->result_array();
+		foreach ($this->db->get('compras.zona')->result_array() as $k => $v) {
+			$config['data']['zona'][$v['idZona']] = $v['nombre'];
+		}
+		foreach ($config['data']['cotizacionDetalle'] as $k => $v) {
+			$config['data']['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
+		$config['view'] = 'cargarPesoPacking';
+
+		$this->view($config);
+	}
+
+	public function guardarPesoPacking(){
+		$post = json_decode($this->input->post('data'));
+		
+		$post->{'idCotizacionDetalle'} = checkAndConvertToArray($post->{'idCotizacionDetalle'});
+		$dataInsert = [];
+		foreach ($post->{'idCotizacionDetalle'} as $key => $value) {
+			$this->db->update('compras.cotizacionDetalleCostoPacking', ['estado' => 0], ['idCotizacionDetalle' => $value]);
+			$this->db->update('compras.cotizacionDetalle', ['costoPacking' => $post->{"costoTotal[{$value}]"}], ['idCotizacionDetalle' => $value]);
+			$post->{"item[{$value}]"} = checkAndConvertToArray($post->{"item[{$value}]"});
+			$post->{"costo[{$value}]"} = checkAndConvertToArray($post->{"costo[{$value}]"});
+			foreach ($post->{"item[{$value}]"} as $k => $v) {
+				$dataInsert[] = [
+					'idCotizacionDetalle' => $value,
+					'idItem' => $v,
+					'costo' => $post->{"costo[{$value}]"}[$k]
+				];
+			}
+		}
+		$this->db->insert_batch('compras.cotizacionDetalleCostoPacking', $dataInsert);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Ok';
+		echo json_encode($result);
+	}
+	public function procesarTablaDatosDistribucion_Pesos()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'));
+
+		$ht = $post->{'HT'}[0];
+		array_pop($ht);
+
+		$idCuenta = $post->{'cuenta'};
+
+		// $item = $post->{'item'};
+		// $pesoReal = $post->{'pesoReal'};
+		// $peso = $post->{'peso'};
+
+		// $zonas = $this->db->get('compras.zona')->result_array();
+		// $zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
+
+		// $tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
+		// $tipoServicio = refactorizarDataHT(["data" => $tipoServicio, "value" => "label"]);
+
+		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
+		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
+
+
+		$header = [];
+		$column = [];
+		$datosHt = [];
+		$itOb = [];
+		// DATOS
+		if (!empty($ht)) {
+			foreach ($ht as $k => $v) {
+				$itm = $this->model_item->obtenerItemsCuenta2($idCuenta, $v->{'itemLogistica'})->row_array();
+				$datosHt[$k]['itemLogistica'] = $itm['label'];
+				$datosHt[$k]['pesoCuenta'] = $itm['pesoCuenta'];
+				$datosHt[$k]['pesoVisual'] = $itm['pesoLogistica'];
+			}
+		} else {
+			$datosHt[0]['itemLogistica'] = null;
+			$datosHt[0]['pesoCuenta'] = null;
+			$datosHt[0]['pesoVisual'] = null;
+		}
+
+		// HEADER & COLUMN & DATOS
+		$header[] = 'ITEM LOGISTICA*';
+		$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Zona', 'width' => 700, 'source' => $itemLogistica];
+		// $datosHt[$nro]['zona'] = null;
+
+		$header[] = 'PESO CUENTA';
+		$column[] = ['data' => 'pesoCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Cuenta', 'width' => 200, 'readOnly' => true];
+		// $datosHt[$nro]['pesoCuenta'] = null;
+
+		$header[] = 'PESO VISUAL';
+		$column[] = ['data' => 'pesoVisual', 'type' => 'numeric', 'placeholder' => 'Peso Visual', 'width' => 200, 'readOnly' => true];
+		// $datosHt[$nro]['pesoVisual'] = null;
+		// FIN: HEADER & COLUMN
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Detalle Distribución',
+			'data' => $datosHt,
+			'headers' => $header,
+			'columns' => $column,
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+		$result['msg']['title'] = "Carga masiva detalle distribución";
+
+		Respuesta:
+		echo json_encode($result);
+	}
+
 	public function getSubDetalleDistribucionMasivo()
 	{
 		$result = $this->result;
@@ -1477,7 +1656,7 @@ class Cotizacion extends MY_Controller
 		$peso = $post->{'peso'};
 		$dataPrevia = json_decode(json_encode(json_decode($post->{'dataPrevia'})));
 
-		$zonas = $this->db->get('compras.zona')->result_array();
+		$zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
 		$tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
@@ -1561,15 +1740,6 @@ class Cotizacion extends MY_Controller
 
 		// FIN: HEADER & COLUMN
 
-		// $datosHt = [];
-		// $datosHt[] = [
-		// 	'zona' => null,
-		// 	'item' => null,
-		// 	'cantidad' => null,
-		// 	'peso' => null,
-		// 	'peso_total' => null,
-		// 	'peso_costo' => null,
-		// ];
 		//ARMANDO HANDSONTABLE
 		$HT[0] = [
 			'nombre' => 'Detalle Distribución',
@@ -1588,6 +1758,66 @@ class Cotizacion extends MY_Controller
 
 		$result['msg']['title'] = "Carga masiva detalle distribución";
 
+		Respuesta:
+		echo json_encode($result);
+	}
+
+	public function getSubDetalleDistribucionMasivo_Items()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'));
+
+		$idCuenta = $post->{'data'};
+		// $item = $post->{'item'};
+		// $pesoReal = $post->{'pesoReal'};
+		// $peso = $post->{'peso'};
+		$dataPrevia = json_decode(json_encode(json_decode($post->{'dataPrevia'})));
+
+		// $zonas = $this->db->get('compras.zona')->result_array();
+		// $zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
+
+		// $tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
+		// $tipoServicio = refactorizarDataHT(["data" => $tipoServicio, "value" => "label"]);
+
+
+		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
+		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
+		$header = [];
+		$column = [];
+		$datosHt = $dataPrevia;
+		$nro = count($datosHt);
+
+		// HEADER & COLUMN & DATOS
+		$header[] = 'ITEM LOGISTICA*';
+		$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Zona', 'width' => 700, 'source' => $itemLogistica];
+		$datosHt[$nro]['zona'] = null;
+
+		$header[] = 'PESO CUENTA';
+		$column[] = ['data' => 'pesoCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Cuenta', 'width' => 200, 'readOnly' => true];
+		$datosHt[$nro]['pesoCuenta'] = null;
+
+		$header[] = 'PESO VISUAL';
+		$column[] = ['data' => 'pesoVisual', 'type' => 'numeric', 'placeholder' => 'Peso Visual', 'width' => 200, 'readOnly' => true];
+		$datosHt[$nro]['pesoVisual'] = null;
+		// FIN: HEADER & COLUMN
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Items - Detalle Distribución',
+			'data' => $datosHt,
+			'headers' => $header,
+			'columns' => $column,
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+		$result['msg']['title'] = "Carga masiva items en detalle distribución";
 		Respuesta:
 		echo json_encode($result);
 	}
@@ -1657,6 +1887,34 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$result['result'] = 1;
 		$result['msg']['content'] = htmlTableValueArray($data);
+		echo json_encode($result);
+	}
+
+	function generarDatosPesosItem()
+	{
+		$post = json_decode($this->input->post('data'), true);
+		$ht = $post['HT'][0];
+		array_pop($ht);
+
+		$cuenta = $post['cuenta'];
+		// $pesoReal = $post['pesoReal'];
+		// $peso = $post['peso'];
+
+		$arrayDatos = [];
+		$n = 0;
+
+		foreach ($ht as $k => $v) {
+			$item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
+			$arrayDatos[$n]['idArticulo'] = $item['value'];
+			$arrayDatos[$n]['nombre'] = $item['label'];
+			$arrayDatos[$n]['pesoVisual'] = $item['pesoLogistica'];
+			$arrayDatos[$n]['pesoCuenta'] = $item['pesoCuenta'];
+			$n++;
+		}
+
+		$result = $this->result;
+		$result['result'] = 1;
+		$result['msg']['content'] = $arrayDatos;
 		echo json_encode($result);
 	}
 	public function getProvincia()

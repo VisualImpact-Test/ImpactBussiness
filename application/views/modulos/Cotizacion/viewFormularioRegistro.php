@@ -198,13 +198,13 @@
 							</div>
 						</div>
 						<div class="fields">
-							<div class="six wide field">
+							<div class="five wide field">
 								<div class="ui sub header">Características para el cliente</div>
 								<div class="ui labeled input w-100">
 									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
 								</div>
 							</div>
-							<div class="five wide field cCompras">
+							<div class="six wide field cCompras">
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características">
 							</div>
@@ -212,15 +212,32 @@
 								<div class="ui sub header">Características para proveedor</div>
 								<input name="caracteristicasProveedor" placeholder="Características">
 							</div>
-							<div class="two wide field cantPDV d-none">
-								<div class="ui sub header">Cantidad PDV</div>
+						</div>
+						<div class="fields cantPDV d-none">
+							<div class="three wide field">
+								<div class="ui sub header">Cant. PDV</div>
 								<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
 							</div>
-							<div class="three wide field cantPDV d-none">
-								<div class="ui sub header">Generar O.C.</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo Packing</div>
+								<select class="ui basic floating dropdown button simpleDropdown" name="flagPackingSolicitado">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+								<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
+							</div>
+							<div class="five wide field">
+								<div class="ui sub header">¿ Requiere OC ?</div>
 								<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
-									<option value="0" selected>No generar OC</option>
+									<option value="0" selected>NO generar</option>
 									<option value="1">Generar OC</option>
+								</select>
+							</div>
+							<div class="five wide field">
+								<div class="ui sub header">Tabla Detalle</div>
+								<select class="ui basic floating dropdown button simpleDropdown" name="flagMostrarDetalle">
+									<option value="0" selected>Ocultar</option>
+									<option value="1">Mostrar</option>
 								</select>
 							</div>
 						</div>
@@ -339,38 +356,43 @@
 							</div>
 							<div class="content-body-sub-item" id="divIL">
 								<div class="fields body-sub-item">
-									<div class="seven wide field">
+									<!-- <div class="seven wide field">
 										<div class="ui sub header">Item Logística</div>
-										<select class="ui search dropdown specialSearch itemLogisticaForm" name="itemLogisticaFormNew[0]">
+										<input type="hidden" name="nameSID" value="1">
+										<input name="nameSID" value="2"> -->
+									<!-- <select class="ui search dropdown specialSearch itemLogisticaForm" name="itemLogisticaFormNew[0]">
 											<option class="text-titlecase">Seleccionar</option>
 											<?php foreach ($itemLogistica as $k => $v) : ?>
 												<option class="text-titlecase cuentaID-<?= $v['cuenta'] ?>" data-peso="<?= $v['pesoLogistica'] ?>" data-pesocosto="<?= $v['pesoCostoLogistica'] ?>" value="<?= $v['id'] ?>"><?= $v['value'] ?></option>
 											<?php endforeach; ?>
-										</select>
-									</div>
+										</select> -->
+									<!-- </div>
 									<div class="two wide field">
 										<div class="ui sub header">Peso</div>
-										<input id="peso" class="onlyNumbers cantidadSubItem pesoForm" name="cantidadSubItemDistribucion[0]" placeholder="Peso" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>">
-									</div>
+										<input name="pesoVisualSID" value="3"> -->
+									<!-- <input id="peso" class="onlyNumbers cantidadSubItem pesoForm" name="cantidadSubItemDistribucion[0]" placeholder="Peso" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>" readonly> -->
+									<!-- </div>
 									<div class="two wide field">
 										<div class="ui sub header">Peso Real</div>
-										<input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Peso REAL">
-									</div>
-									<div class="one wide field">
+										<input name="pesoCuentaSID" value="3"> -->
+									<!-- <input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Peso REAL" readonly> -->
+									<!-- </div> -->
+									<!-- <div class="one wide field">
 										<div class="ui sub header">`</div>
 										<button class="ui button red" onclick="$(this).closest('.body-sub-item').remove()"><i class="trash icon"></i></button>
-									</div>
+									</div> -->
 								</div>
 							</div>
-							<button type="button" class="ui basic button btn-add-sub-item2 mb-4">
-								<i class="plus icon"></i> Agregar Item
+							<button type="button" class="ui basic button btn-add-subItemDist-Masivo mb-4">
+								<i class="plus icon"></i> Agregar Item Masivo
 							</button>
 							<div class="fields">
 								<button type="button" class="ui basic button btn-add-subDetalleDistribucion mb-4">
-									<i class="list ul icon"></i> SubDetalle 
+									<i class="list ul icon"></i> SubDetalle
 								</button>
 							</div>
 							<div class="datosTable"></div>
+							<div class="arrayDatosItems d-none"></div>
 							<div class="arrayDatos d-none"></div>
 							<div class="tbDistribucionTachado d-none">
 								<h4 class="ui dividing header">TACHADO</h4>

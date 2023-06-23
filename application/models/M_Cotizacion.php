@@ -417,6 +417,8 @@ class M_Cotizacion extends MY_Model
 				, ss.nombre as solicitante
 				, pd.flagRedondear
 				, p.mostrarPrecio
+				, pd.costoPacking
+				, pd.flagMostrarDetalle
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -650,8 +652,8 @@ class M_Cotizacion extends MY_Model
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 						'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
-						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
-						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
+						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : '0',
+						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : '0',
 						//
 						'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
 						'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
@@ -659,7 +661,7 @@ class M_Cotizacion extends MY_Model
 						'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 						'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 						//
-						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
+						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : '0',
 					];
 				}
 			}
