@@ -51,6 +51,13 @@
 				</select>
 			</div>
 			<div class="control-group child-divcenter row w-100">
+				<label class="form-control col-md-5" for="unidadMedida" style="border:0px;">¿ Es Packing ?</label>
+				<select class="form-control col-md-7" name="flagPacking">
+					<option value="0" <?= $informacionItem['flagPacking'] == '1' ? 'selected':''; ?>>NO</option>
+					<option value="1" <?= $informacionItem['flagPacking'] == '1' ? 'selected':''; ?>>SI, EL ITEM SERÁ CONSIDERADO POR ALMACÉN</option>
+				</select>
+			</div>
+			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" style="border:0px;">Cuenta :</label>
 				<select class="ui dropdown parentDependiente centro-visible col-md-7" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $informacionItem['idCuenta']]); ?>

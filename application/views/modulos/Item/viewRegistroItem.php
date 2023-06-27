@@ -68,7 +68,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Unidad Medida</div>
-								<select class="form-control" name="unidadMedida" id="unidadMedida">
+								<select class="ui dropdown simpleDropdown" name="unidadMedida" id="unidadMedida">
 									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $unidadMedida, 'class' => 'text-titlecase']); ?>
 								</select>
 							</div>
@@ -82,6 +82,13 @@
 							</div>
 						</div>
 						<div class="fields">
+							<div class="four wide field">
+								<div class="ui sub header">¿ Es Packing ?</div>
+								<select class="ui dropdown simpleDropdown" name="flagPacking">
+									<option value="0" selected>NO</option>
+									<option value="1">SI, EL ITEM SERÁ CONSIDERADO POR ALMACÉN</option>
+								</select>
+							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Cuenta</div>
 								<select class="ui dropdown parentDependiente centro-visible" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">

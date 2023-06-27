@@ -2094,6 +2094,7 @@ var Cotizacion = {
 				Cotizacion.temp.closest('.div-features').find('.datosTable').html(a.msg.content);
 				HT[0].pop();
 				Cotizacion.temp.closest('.div-features').find('.arrayDatos').html(JSON.stringify(HT[0]));
+				Cotizacion.temp.closest('.itemDet_1').find('.cantidadPDV').val(a.msg.cantidadPdv).keyup();
 				tv = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalVisual');
 				tc = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalCuenta');
 				totalV = 0;

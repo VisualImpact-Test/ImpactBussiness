@@ -549,7 +549,8 @@ class Cotizacion extends MY_Controller
 					break;
 
 				case COD_DISTRIBUCION['id']:
-					$cantidad = $post['cantidadDatosTabla'][$k];
+					$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
+					$cantidad = intval($post['cantidadDatosTabla'][$k]);
 					$data['subDetalle'][$k] = [];
 
 					for ($it = 0; $it < $cantidad; $it++) {
@@ -572,6 +573,7 @@ class Cotizacion extends MY_Controller
 						];
 						$n++;
 					}
+
 					/**
 					$data['subDetalle'][$k] = [];
 					foreach ($post["cantidadSubItemNro[$k]"] as $kdr => $vdr) {
@@ -689,19 +691,6 @@ class Cotizacion extends MY_Controller
 			$post['provinciaPDV'] = checkAndConvertToArray($post['provinciaPDV']);
 			$post['distritoPDV'] = checkAndConvertToArray($post['distritoPDV']);
 			$post['paradasPDV'] = checkAndConvertToArray($post['paradasPDV']);
-
-
-			// for ($ordUbi = 0; $ordUbi < intval($post['cantidadDeUbigeos'][$k]); $ordUbi++) {
-			// 	if (intval($post['flagDetallePDV'][$k]) == 1) {
-			// 		$data['insertUbigeo'][$k][] = [
-			// 			'idDepartamento' => $post['departamentoPDV'][$ttt],
-			// 			'idProvincia' => $post['provinciaPDV'][$ttt],
-			// 			'idDistrito' => $post['distritoPDV'][$ttt],
-			// 			'cantidadPDV' => $post['paradasPDV'][$ttt],
-			// 		];
-			// 	}
-			// 	$ttt++;
-			// }
 		}
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
@@ -764,7 +753,6 @@ class Cotizacion extends MY_Controller
 		}
 
 		respuesta:
-
 
 		echo json_encode($result);
 	}
@@ -978,7 +966,8 @@ class Cotizacion extends MY_Controller
 				} else {
 					$cds = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('idZona, idItem')->get('compras.cotizacionDetalleSub')->result_array();
 					foreach ($cds as $kz => $vz) {
-						$vz['zonaNombre'] = $this->db->where('idZona', $vz['idZona'])->get('compras.zona')->row_array()['nombre'];
+						$zona = $this->model->getZonas(['idZona' => $vz['idZona']])->row_array();
+						$vz['zonaNombre'] = $zona['nombre'];
 						$vz['tipoServicioNombre'] = $this->db->where('idTipoServicio', $vz['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
 						$dataParaVista['detalleDistribucionZonas'][$row['idCotizacionDetalle']][$vz['idZona']][] = $vz;
 					}
@@ -1361,7 +1350,8 @@ class Cotizacion extends MY_Controller
 		$pesoReal = $post->{'pesoReal'};
 		$peso = $post->{'peso'};
 
-		$zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
+		// $zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
+		$zonas = $this->model->getZonas()->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
 		$tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
@@ -1375,8 +1365,8 @@ class Cotizacion extends MY_Controller
 		if (!empty($ht)) {
 			foreach ($ht as $k => $v) {
 				$datosHt[$k]['zona'] = $v->{'zona'};
-				$datosHt[$k]['dias'] = $this->db->where('idCuenta', $idCuenta)->where('nombre', $v->{'zona'})->get('compras.zona')->row_array()['dias'];
-
+				// $datosHt[$k]['dias'] = $this->db->where('idCuenta', $idCuenta)->where('nombre', $v->{'zona'})->get('compras.zona')->row_array()['dias'];
+				$datosHt[$k]['dias'] = $this->model->getZonas(['nombre' => $v->{'zona'}])->row_array()['dias'];
 				foreach ($item as $ki => $vi) {
 					if (!is_numeric($vi)) {
 						$result['result'] = 0;
@@ -1398,8 +1388,8 @@ class Cotizacion extends MY_Controller
 
 				$pesoTotal = 0;
 				foreach ($item as $ki => $vi) {
-					$datosHt[$k]['pesoTotalVisual' . $ki] = strval(floatval($v->{'item' . $ki}) * floatval($itOb[$ki]['peso']));
-					$pesoTotal += floatval($v->{'item' . $ki}) * floatval($itOb[$ki]['peso']);
+					$datosHt[$k]['pesoTotalVisual' . $ki] = strval(floatval($v->{'item' . $ki}) * floatval(round($itOb[$ki]['peso'], 2)));
+					$pesoTotal += floatval($v->{'item' . $ki}) * floatval(round($itOb[$ki]['peso'], 2));
 				}
 				$datosHt[$k]['pesoTotalVisual'] = strval($pesoTotal);
 				$datosHt[$k]['pesoGapVisual'] = strval((floatval($v->{'gap'}) + 100) * $pesoTotal / 100);
@@ -1409,8 +1399,8 @@ class Cotizacion extends MY_Controller
 
 				$pesoTotal = 0;
 				foreach ($item as $ki => $vi) {
-					$datosHt[$k]['pesoTotalCuenta' . $ki] = strval(floatval($v->{'item' . $ki}) * floatval($itOb[$ki]['pesoCosto']));
-					$pesoTotal += floatval($v->{'item' . $ki}) * floatval($itOb[$ki]['pesoCosto']);
+					$datosHt[$k]['pesoTotalCuenta' . $ki] = strval(floatval($v->{'item' . $ki}) * floatval(round($itOb[$ki]['pesoCosto'], 2)));
+					$pesoTotal += floatval($v->{'item' . $ki}) * floatval(round($itOb[$ki]['pesoCosto'], 2));
 				}
 				$datosHt[$k]['pesoTotalCuenta'] = strval($pesoTotal);
 				$datosHt[$k]['pesoGapCuenta'] = strval((floatval($v->{'gap'}) + 100) * $pesoTotal / 100);
@@ -1444,7 +1434,6 @@ class Cotizacion extends MY_Controller
 			$datosHt[0]['pesoGapCuenta'] = null;
 			$datosHt[0]['totalFinalCuenta'] = null;
 		}
-
 
 		// HEADER & COLUMN & DATOS
 		$header[] = 'ZONA *';
@@ -1532,8 +1521,12 @@ class Cotizacion extends MY_Controller
 		$config['js']['script'] = array('assets/custom/js/registroPesos');
 		$config['data']['cotizacion'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacion')->row_array();
 		$config['data']['cotizacionDetalle'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacionDetalle')->result_array();
-		foreach ($this->db->get('compras.zona')->result_array() as $k => $v) {
-			$config['data']['zona'][$v['idZona']] = $v['nombre'];
+		// $zz = $this->db->get('compras.zona')->result_array();
+		$zz = $this->model->getZonas()->result_array();
+
+		$config['data']['itemPacking'] = $this->db->where('flagPacking', 1)->get('compras.item')->result_array();
+		foreach ($zz as $k => $v) {
+			$config['data']['zona'][$v['idAlmacen']] = $v['nombre'];
 		}
 		foreach ($config['data']['cotizacionDetalle'] as $k => $v) {
 			$config['data']['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
@@ -1543,9 +1536,10 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
-	public function guardarPesoPacking(){
+	public function guardarPesoPacking()
+	{
 		$post = json_decode($this->input->post('data'));
-		
+
 		$post->{'idCotizacionDetalle'} = checkAndConvertToArray($post->{'idCotizacionDetalle'});
 		$dataInsert = [];
 		foreach ($post->{'idCotizacionDetalle'} as $key => $value) {
@@ -1553,11 +1547,13 @@ class Cotizacion extends MY_Controller
 			$this->db->update('compras.cotizacionDetalle', ['costoPacking' => $post->{"costoTotal[{$value}]"}], ['idCotizacionDetalle' => $value]);
 			$post->{"item[{$value}]"} = checkAndConvertToArray($post->{"item[{$value}]"});
 			$post->{"costo[{$value}]"} = checkAndConvertToArray($post->{"costo[{$value}]"});
+			$post->{"cantidad[{$value}]"} = checkAndConvertToArray($post->{"cantidad[{$value}]"});
 			foreach ($post->{"item[{$value}]"} as $k => $v) {
 				$dataInsert[] = [
 					'idCotizacionDetalle' => $value,
 					'idItem' => $v,
-					'costo' => $post->{"costo[{$value}]"}[$k]
+					'costo' => $post->{"costo[{$value}]"}[$k],
+					'cantidad' => $post->{"cantidad[{$value}]"}[$k]
 				];
 			}
 		}
@@ -1577,19 +1573,8 @@ class Cotizacion extends MY_Controller
 
 		$idCuenta = $post->{'cuenta'};
 
-		// $item = $post->{'item'};
-		// $pesoReal = $post->{'pesoReal'};
-		// $peso = $post->{'peso'};
-
-		// $zonas = $this->db->get('compras.zona')->result_array();
-		// $zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
-
-		// $tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
-		// $tipoServicio = refactorizarDataHT(["data" => $tipoServicio, "value" => "label"]);
-
 		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
 		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
-
 
 		$header = [];
 		$column = [];
@@ -1600,8 +1585,8 @@ class Cotizacion extends MY_Controller
 			foreach ($ht as $k => $v) {
 				$itm = $this->model_item->obtenerItemsCuenta2($idCuenta, $v->{'itemLogistica'})->row_array();
 				$datosHt[$k]['itemLogistica'] = $itm['label'];
-				$datosHt[$k]['pesoCuenta'] = $itm['pesoCuenta'];
-				$datosHt[$k]['pesoVisual'] = $itm['pesoLogistica'];
+				$datosHt[$k]['pesoCuenta'] = round($itm['pesoCuenta'], 2);
+				$datosHt[$k]['pesoVisual'] = round($itm['pesoLogistica'], 2);
 			}
 		} else {
 			$datosHt[0]['itemLogistica'] = null;
@@ -1656,7 +1641,8 @@ class Cotizacion extends MY_Controller
 		$peso = $post->{'peso'};
 		$dataPrevia = json_decode(json_encode(json_decode($post->{'dataPrevia'})));
 
-		$zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
+		// $zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
+		$zonas = $this->model->getZonas()->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
 		$tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
@@ -1768,17 +1754,8 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'));
 
 		$idCuenta = $post->{'data'};
-		// $item = $post->{'item'};
-		// $pesoReal = $post->{'pesoReal'};
-		// $peso = $post->{'peso'};
+
 		$dataPrevia = json_decode(json_encode(json_decode($post->{'dataPrevia'})));
-
-		// $zonas = $this->db->get('compras.zona')->result_array();
-		// $zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
-
-		// $tipoServicio = $this->db->select("nombre as label")->get('compras.tipoServicio')->result_array();
-		// $tipoServicio = refactorizarDataHT(["data" => $tipoServicio, "value" => "label"]);
-
 
 		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
 		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
@@ -1837,7 +1814,9 @@ class Cotizacion extends MY_Controller
 		foreach ($item as $ki => $vi) {
 			foreach ($ht as $k => $v) {
 				$ts = $this->db->where('nombre', $v['tipoServicio'])->get('compras.tipoServicio')->row_array();
-				$arrayDatos[$n]['idZona'] = $this->db->where('nombre', $v['zona'])->get('compras.zona')->row_array()['idZona'];
+				// $zona = $this->db->where('nombre', $v['zona'])->get('compras.zona')->row_array();
+				$zona = $this->model->getZonas(['nombre' => $v['zona']])->row_array();
+				$arrayDatos[$n]['idZona'] = $zona['idAlmacen'];
 				$arrayDatos[$n]['zona'] = $v['zona'];
 				$arrayDatos[$n]['dias'] = $v['dias'];
 				$arrayDatos[$n]['idItem'] = $vi; // id
@@ -1887,6 +1866,7 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$result['result'] = 1;
 		$result['msg']['content'] = htmlTableValueArray($data);
+		$result['msg']['cantidadPdv'] = count($ht);
 		echo json_encode($result);
 	}
 
@@ -1907,8 +1887,8 @@ class Cotizacion extends MY_Controller
 			$item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
 			$arrayDatos[$n]['idArticulo'] = $item['value'];
 			$arrayDatos[$n]['nombre'] = $item['label'];
-			$arrayDatos[$n]['pesoVisual'] = $item['pesoLogistica'];
-			$arrayDatos[$n]['pesoCuenta'] = $item['pesoCuenta'];
+			$arrayDatos[$n]['pesoVisual'] = round($item['pesoLogistica'], 2);
+			$arrayDatos[$n]['pesoCuenta'] = round($item['pesoCuenta'], 2);
 			$n++;
 		}
 

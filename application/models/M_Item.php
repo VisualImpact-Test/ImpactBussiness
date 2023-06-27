@@ -162,6 +162,7 @@ class M_Item extends MY_Model
 				, a.estado
 				, a.idUnidadMedida
 				, a.idCuenta
+				, a.flagPacking
 			FROM compras.item a
 			JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca

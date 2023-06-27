@@ -318,7 +318,8 @@ class Item extends MY_Controller
 				'idItemSubCategoria' => $idItemSubcategoria,
 				'idItemLogistica' => $post['idItemLogistica'][$k],
 				'idUnidadMedida' => $post['unidadMedida'][$k],
-				'idCuenta' => $post['cuenta'][$k]
+				'idCuenta' => $post['cuenta'][$k],
+				'flagPacking' => $post['flagPacking'][$k]
 			];
 
 			$validacionExistencia = $this->model->validarExistenciaItem($data['insert']);
@@ -415,7 +416,8 @@ class Item extends MY_Controller
 			// 'idItemtextil' => $post['textil'],
 			'idItemLogistica' => $post['idItemLogistica'],
 			'idUnidadMedida' => $post['unidadMedida'],
-			'idCuenta' => $post['cuenta']
+			'idCuenta' => $post['cuenta'],
+			'flagPacking' => $post['flagPacking']
 		];
 
 		$post['centroCosto'] = checkAndConvertToArray($post['centroCosto']);

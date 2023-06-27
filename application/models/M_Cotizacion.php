@@ -229,7 +229,6 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
-		log_message('error', $sql);
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -350,6 +349,27 @@ class M_Cotizacion extends MY_Model
 
 		if (isset($params['idCotizacionDetalle'])) $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
+	}
+
+	function getZonas($params = [])
+	{
+		$this->db
+		->select('a.idAlmacen, a.nombre, ttd.dias')
+		->from('visualImpact.logistica.almacen a')
+		->join('visualImpact.logistica.tipo_transporte_det ttd', 'a.idUbigeo = ttd.cod_ubigeo')
+		->where('a.estado', 1)
+		->where('ttd.estado', 1)
+		->order_by('a.nombre');
+
+		if (isset($params['idZona'])) {
+			$this->db->where('a.idAlmacen', $params['idZona']);
+		}
+		if (isset($params['nombre'])) {
+			$this->db->where('a.nombre', $params['nombre']);
+		}
+
+		return $this->db->get();
+
 	}
 	public function obtenerMaxDiasEntrega($params = [])
 	{

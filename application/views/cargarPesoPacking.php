@@ -57,22 +57,20 @@
 									<div class="mb-2 input-group control-group child-divcenter row" style="width:85%">
 										<label class="form-control col-md-3" style="border:0px;">Item :</label>
 										<select class="form-control" name="item[<?= $vd['idCotizacionDetalle'] ?>]" patron="requerido">
-											<option>Seleccionar</option>
-											<option value="1">CAJA DE CARTÓN NUEVA SIN LOGO 23X33X23</option>
-											<option value="2">CAJA DE CARTÓN NUEVA SIN LOGO 30X40X30</option>
-											<option value="3">CAJA DE CARTÓN NUEVA SIN LOGO 60.5X40.5X40.5</option>
-											<option value="4">CARTON CORRUGADO 75 X 1.64 M</option>
-											<option value="5">CINTA DE EMBALAJE PEGAFAN 2" X 110 YDS</option>
-											<option value="6">CINTA DE SEGURIDAD LOGO FRAGIL 2" X 110 YDS</option>
-											<option value="7">PLUMON FABER CASTELL INDELEBLES GRUESO BISELADO (NEGRO) #54</option>
-											<option value="8">SOBRES MANILA MEDIO OFICIO (PAQX50)</option>
-											<option value="9">SOBRES MANILA OFICIO (PAQX50)</option>
-											<option value="10">STRETCH FILM 20" X 1.5 KG POR ROLLO</option>
+											<?= htmlSelectOptionArray2(['query' => $itemPacking, 'value' => 'nombre', 'id' => 'idItem', 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 										</select>
-										<input class="form-control col-md-2 costo" name="costo[<?= $vd['idCotizacionDetalle'] ?>]" patron="requerido" value="0" onchange="registroPesos.calcularTotal(this);">
+										<!-- <input class="form-control col-md-2 costo" name="costo[<?= $vd['idCotizacionDetalle'] ?>]" patron="requerido" value="0" onchange="registroPesos.calcularTotal(this);"> -->
 										<div class="input-group-append" id="button-addon4">
 											<button class="btn btn-outline-success btnAddCorreo" type="button" onclick="registroPesos.addItem(this)"><i class="fa fa-plus"></i></button>
 										</div>
+									</div>
+									<div class="mb-2 child-divcenter row" style="width:85%">
+										<label class="form-control col-md-3" style="border:0px;">Cantidad :</label>
+										<input class="form-control col-md-2" name="cantidad[<?= $vd['idCotizacionDetalle'] ?>]" patron="requerido" value="0">
+									</div>
+									<div class="mb-2 child-divcenter row" style="width:85%">
+										<label class="form-control col-md-3" style="border:0px;">Peso Costo :</label>
+										<input class="form-control col-md-2 costo" name="costo[<?= $vd['idCotizacionDetalle'] ?>]" patron="requerido" value="0" onchange="registroPesos.calcularTotal(this);">
 									</div>
 								</div>
 							</fieldset>

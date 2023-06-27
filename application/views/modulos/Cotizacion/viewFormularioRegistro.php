@@ -157,7 +157,7 @@
 				</div>
 				<div class="ui clearing divider"></div>
 				<div class="ui grid">
-					<div class="sixteen wide tablet twelve wide computer column">
+					<div class="sixteen wide tablet twelve wide computer column itemDet_1">
 						<div class="fields">
 							<div class="eight wide field">
 								<div class="ui sub header">Item</div>
