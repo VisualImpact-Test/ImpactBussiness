@@ -285,12 +285,6 @@
 										<?php $tot[$ki] += floatval($v_['cantidad']); ?>
 									<?php endforeach; ?>
 								<?php endforeach; ?>
-
-								<?php foreach ($detalleDistribucionItems[$vd['idCotizacionDetalle']] as $ki => $vi) : ?>
-									<th rowspan="2">
-										PESO <?= $vi[0]['itemNombre']; ?>
-									</th>
-								<?php endforeach; ?>
 								<th rowspan="2"> PESO TOTAL </th>
 								<th rowspan="2"> TIPO </th>
 							</tr>
@@ -321,11 +315,6 @@
 									<?php foreach ($vf as $valueF) : ?>
 										<td class="text-right">
 											<?= $valueF['cantidad']; ?>
-										</td>
-									<?php endforeach; ?>
-									<?php foreach ($vf as $valueF) : ?>
-										<td class="text-right">
-											<?= (floatval($valueF['peso']) * floatval($valueF['cantidad']) * (100 + floatval($valueF['gap'])) / 100); ?>
 										</td>
 									<?php endforeach; ?>
 									<td class="text-right">

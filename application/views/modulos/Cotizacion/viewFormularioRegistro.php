@@ -123,15 +123,6 @@
 					<option value="1" selected>Ver Precio</option>
 					<option value="0">Ocultar Precio</option>
 				</select>
-				<!-- <div class="ui basic floating dropdown button simpleDropdown w-100">
-					<input type="hidden" name="flagMostrarPrecio" value="1" patron="requerido">
-					<div class="text">Ver Precio PDF</div>
-					<i class="dropdown icon"></i>
-					<div class="menu">
-						<div data-value="1">Ver precio</div>
-						<div data-value="0">Ocultar Precio</div>
-					</div>
-				</div> -->
 			</div>
 		</div>
 		<h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
@@ -226,18 +217,25 @@
 								</select>
 								<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
 							</div>
-							<div class="five wide field">
+							<div class="three wide field">
 								<div class="ui sub header">¿ Requiere OC ?</div>
 								<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
 									<option value="0" selected>NO generar</option>
 									<option value="1">Generar OC</option>
 								</select>
 							</div>
-							<div class="five wide field">
+							<div class="three wide field">
 								<div class="ui sub header">Tabla Detalle</div>
 								<select class="ui basic floating dropdown button simpleDropdown" name="flagMostrarDetalle">
 									<option value="0" selected>Ocultar</option>
 									<option value="1">Mostrar</option>
+								</select>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Almacén</div>
+								<select class="ui basic floating dropdown button simpleDropdown flagOtrosPuntos" name="flagOtrosPuntos">
+									<option value="0" selected>Almacén Visual</option>
+									<option value="1">Otros Puntos</option>
 								</select>
 							</div>
 						</div>
@@ -355,33 +353,7 @@
 								</div>
 							</div>
 							<div class="content-body-sub-item" id="divIL">
-								<div class="fields body-sub-item">
-									<!-- <div class="seven wide field">
-										<div class="ui sub header">Item Logística</div>
-										<input type="hidden" name="nameSID" value="1">
-										<input name="nameSID" value="2"> -->
-									<!-- <select class="ui search dropdown specialSearch itemLogisticaForm" name="itemLogisticaFormNew[0]">
-											<option class="text-titlecase">Seleccionar</option>
-											<?php foreach ($itemLogistica as $k => $v) : ?>
-												<option class="text-titlecase cuentaID-<?= $v['cuenta'] ?>" data-peso="<?= $v['pesoLogistica'] ?>" data-pesocosto="<?= $v['pesoCostoLogistica'] ?>" value="<?= $v['id'] ?>"><?= $v['value'] ?></option>
-											<?php endforeach; ?>
-										</select> -->
-									<!-- </div>
-									<div class="two wide field">
-										<div class="ui sub header">Peso</div>
-										<input name="pesoVisualSID" value="3"> -->
-									<!-- <input id="peso" class="onlyNumbers cantidadSubItem pesoForm" name="cantidadSubItemDistribucion[0]" placeholder="Peso" value="<?= !empty($data['cantidadSubItem']) ? $data['cantidadSubItem'] : '' ?>" readonly> -->
-									<!-- </div>
-									<div class="two wide field">
-										<div class="ui sub header">Peso Real</div>
-										<input name="pesoCuentaSID" value="3"> -->
-									<!-- <input class="cantidadRealSubItem" name="cantidadRealSubItem[0]" placeholder="Peso REAL" readonly> -->
-									<!-- </div> -->
-									<!-- <div class="one wide field">
-										<div class="ui sub header">`</div>
-										<button class="ui button red" onclick="$(this).closest('.body-sub-item').remove()"><i class="trash icon"></i></button>
-									</div> -->
-								</div>
+								<div class="fields body-sub-item"></div>
 							</div>
 							<button type="button" class="ui basic button btn-add-subItemDist-Masivo mb-4">
 								<i class="plus icon"></i> Agregar Item Masivo
@@ -396,7 +368,6 @@
 							<div class="arrayDatos d-none"></div>
 							<div class="tbDistribucionTachado d-none">
 								<h4 class="ui dividing header">TACHADO</h4>
-								<!-- <input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]" type="radio" checked> -->
 								<!-- El input de tipo radio al ser duplicado se pierde el valor original de la funcion serializeArray de js -->
 								<input value='0' class='chkTachadoDistribucion d-none' name="chkTachado[0]">
 								<table class="ui single line table">

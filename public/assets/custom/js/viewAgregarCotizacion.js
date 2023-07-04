@@ -209,6 +209,7 @@ var Cotizacion = {
 	itemDistribuciónSeleccionadosTemp: [],
 	pesosRealesTemp: [],
 	pesosTemp: [],
+	almacenTemp: null,
 	// solicitanteData: [],
 
 	load: function () {
@@ -1687,6 +1688,7 @@ var Cotizacion = {
 			let inp1 = this_.closest('.div-features').find('.itemDPesoV');
 			let inp2 = this_.closest('.div-features').find('.itemDPesoR');
 			let dataPrevia = this_.closest('.div-features').find('.arrayDatos').html();
+			let almacen = this_.closest('.body-item').find('.flagOtrosPuntos').dropdown('get value');
 			let item = [];
 			let pesR = [];
 			let pes = [];
@@ -1705,7 +1707,9 @@ var Cotizacion = {
 			data.pesoReal = pesR;
 			data.peso = pes;
 			data.dataPrevia = dataPrevia;
+			data.almacen = almacen;
 
+			Cotizacion.almacenTemp = almacen;
 			Cotizacion.itemDistribuciónSeleccionadosTemp = item;
 			Cotizacion.pesosRealesTemp = pesR;
 			Cotizacion.pesosTemp = pes;
@@ -2009,9 +2013,6 @@ var Cotizacion = {
 		});
 		data['HT'] = HT;
 		data['cuenta'] = $('#cuentaForm').val();
-		// data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
-		// data['pesoReal'] = Cotizacion.pesosRealesTemp;
-		// data['peso'] = Cotizacion.pesosTemp;
 		var jsonString = { 'data': JSON.stringify(data) };
 		var config = { 'url': Cotizacion.url + 'procesarTablaDatosDistribucion_Pesos', 'data': jsonString };
 
@@ -2026,11 +2027,14 @@ var Cotizacion = {
 
 				btn[1] = { title: 'Procesar', fn: fn1 };
 				btn[2] = { title: 'Guardar', fn: fn2 };
-
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
 			}
-			btn[0] = { title: 'Cerrar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
-			HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			if (a.result === 0) {
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+			}
 
 		});
 	},
@@ -2045,6 +2049,8 @@ var Cotizacion = {
 		data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
 		data['pesoReal'] = Cotizacion.pesosRealesTemp;
 		data['peso'] = Cotizacion.pesosTemp;
+		data['almacen'] = Cotizacion.almacenTemp;
+		console.log(data);
 		var jsonString = { 'data': JSON.stringify(data) };
 		var config = { 'url': Cotizacion.url + 'procesarTablaDatosDistribucion', 'data': jsonString };
 
@@ -2077,6 +2083,7 @@ var Cotizacion = {
 		data['item'] = Cotizacion.itemDistribuciónSeleccionadosTemp;
 		data['pesoReal'] = Cotizacion.pesosRealesTemp;
 		data['peso'] = Cotizacion.pesosTemp;
+		data['almacen'] = Cotizacion.almacenTemp;
 		var jsonString = { 'data': JSON.stringify(data) };
 		var config = { 'url': Cotizacion.url + 'generarTablaDatosDistribucion', 'data': jsonString };
 
@@ -2166,26 +2173,6 @@ var Cotizacion = {
 				HT[0].pop();
 				Cotizacion.temp.closest('.div-features').find('.content-body-sub-item').html(html);
 				Cotizacion.temp.closest('.div-features').find('.arrayDatosItems').html(JSON.stringify(HT[0]));
-				// tv = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalVisual');
-				// tc = Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').find('.tb_data_totalCuenta');
-				// totalV = 0;
-				// totalC = 0;
-				// for (let i = 0; i < tv.length; i++) {
-				// 	totalV += parseFloat($(tv[i]).val());
-				// 	totalC += parseFloat($(tc[i]).val());
-				// }
-				// Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').append(`
-				// 	<tfoot>
-				// 		<tr>
-				// 			<td colspan="13"></td>
-				// 			<td>${totalV.toFixed(2)}</td>
-				// 			<td colspan="4"></td>
-				// 			<td>${totalC.toFixed(2)}</td>
-				// 		</tr>
-				// 	</tfoot>
-				// `);
-				// Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(2));
-				// Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
 			} else {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
 			}
@@ -2882,8 +2869,6 @@ var Cotizacion = {
 		if (updateEstado == 2) {
 			formValues.actualizarEstado = 2;
 		}
-
-		console.log(formValues);
 
 		let jsonString = { 'data': JSON.stringify(formValues) };
 		let url = Cotizacion.url + "actualizaCotizacionData";

@@ -206,15 +206,15 @@
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
+							</div>
+							<div class="fields">
 								<div class="five wide field">
 									<div class="ui sub header">Características para el cliente</div>
-									<div class="ui right labeled input w-100">
+									<div class="ui labeled input w-100">
 										<input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' patron="requerido" value="<?= !empty($row['caracteristicas']) ? $row['caracteristicas'] : '' ?>" placeholder="Caracteristicas del item">
 									</div>
 								</div>
-							</div>
-							<div class="fields">
-								<div class="six wide field">
+								<div class="six wide field <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? 'd-none' : '' ?>">
 									<div class="ui sub header">Características para compras</div>
 									<input id="caracteristicasCompras" name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
 								</div>
@@ -222,40 +222,42 @@
 									<div class="ui sub header">Características para proveedor</div>
 									<input id="caracteristicasProveedor" name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
 								</div>
-								<div class="five wide field cantPDV <?= $row['idItemTipo'] != COD_DISTRIBUCION['id'] ? 'd-none' : ''; ?>">
-									<div class="ui sub header">Cantidad PDV</div>
-									<div class="ui right labeled input">
-										<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()" value="<?= verificarEmpty($row['cantPdv']) ?>">
-										<select class="ui basic floating dropdown button simpleDropdown" name="flagDetallePDV" onchange="$(this).closest('.body-item').find('.cantidadPDVDetallado').toggleClass('d-none'); $(this).closest('.labeled').find('.cantidadPDV').toggleClass('disabled');">
-											<option value="0">SIN DETALLAR</option>
-											<option value="1" <?= $row['flagDetallePDV'] == '1' ? 'selected' : ''; ?>>DETALLADO</option>
-										</select>
-									</div>
-								</div>
 							</div>
-							<div class="baseUbigeoSelects cantidadPDVDetallado <?= $row['flagDetallePDV'] == '1' ? '' : 'd-none'; ?>">
-								<?php if (!empty($cotizacionDetallePDV[$row['idCotizacionDetalle']])) :  ?>
-									<?php foreach ($cotizacionDetallePDV[$row['idCotizacionDetalle']] as $kcdpdv => $vcdpdv) : ?>
-										<div class="fields" style="width:100%;">
-											<div class="four wide field">
-												<div class="ui sub header">Departamento</div>
-												<input type="text" value="<?= $vcdpdv['departamento']; ?>" readonly>
-											</div>
-											<div class="four wide field">
-												<div class="ui sub header">Provincia</div>
-												<input type="text" value="<?= $vcdpdv['provincia']; ?>" readonly>
-											</div>
-											<div class="four wide field">
-												<div class="ui sub header">Distrito</div>
-												<input type="text" value="<?= $vcdpdv['distrito']; ?>" readonly>
-											</div>
-											<div class="four wide field">
-												<div class="ui sub header">Paradas</div>
-												<input type="text" class="cantidadParadas" name="paradasPDV" value="<?= $vcdpdv['cantidadPDV']; ?>" readonly>
-											</div>
-										</div>
-									<?php endforeach; ?>
-								<?php endif; ?>
+
+							<div class="fields cantPDV <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
+								<div class="three wide field">
+									<div class="ui sub header">Cant. PDV</div>
+									<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()" value="<?= verificarEmpty($row['cantPdv']); ?>">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Costo Packing</div>
+									<select class="ui basic floating dropdown button simpleDropdown" name="flagPackingSolicitado">
+										<option value="0" <?= $row['flagPackingSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
+										<option value="1" <?= $row['flagPackingSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
+									</select>
+									<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">¿ Requiere OC ?</div>
+									<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
+										<option value="0" <?= $row['requiereOrdenCompra'] == '0' ? 'selected' : ''; ?>>NO generar</option>
+										<option value="1" <?= $row['requiereOrdenCompra'] == '1' ? 'selected' : ''; ?>>Generar OC</option>
+									</select>
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Tabla Detalle</div>
+									<select class="ui basic floating dropdown button simpleDropdown" name="flagMostrarDetalle">
+										<option value="0" <?= $row['flagMostrarDetalle'] == '0' ? 'selected' : ''; ?>>Ocultar</option>
+										<option value="1" <?= $row['flagMostrarDetalle'] == '1' ? 'selected' : ''; ?>>Mostrar</option>
+									</select>
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Almacén</div>
+									<select class="ui basic floating dropdown button simpleDropdown flagOtrosPuntos" name="flagOtrosPuntos">
+										<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
+										<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
+									</select>
+								</div>
 							</div>
 							<!-- Textiles -->
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_TEXTILES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TEXTILES['id'] ?>">
@@ -434,75 +436,9 @@
 									</button>
 								</div>
 							<?php endif; ?>
-							<!-- Distribucion -->
-							<div class="<?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
-								<? if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) : ?>
-									<!-- Datos Iniciales -->
-									<div class="fields ">
-										<div class="six wide field">
-											<div class="ui sub header">Tipo Servicio</div>
-											<select class="ui search dropdown simpleDropdown tipoServicioForm tipoServicioSubItem" name="tipoServicio">
-												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicios, 'selected' => $row['tipoServicio'], 'class' => 'text-titlecase', 'data-option' => ['costo', 'unidadMedida', 'idUnidadMedida']]); ?>
-											</select>
-										</div>
-										<div class="two wide field">
-											<div class="ui sub header">Generar OC</div>
-											<div class="ui test toggle checkbox checkValidarOC mt-2">
-												<input class="checkForm generarOCSubItem" name="generarOC" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $row['requiereOrdenCompra'] == '1' ? 'checked' : '' ?>>
-											</div>
-										</div>
-										<div class="three wide field">
-											<div class="ui sub header">Unidad de medida</div>
-											<input class="unidadMedidaTipoServicio" placeholder="Unidad Medida" value="<?= verificarEmpty($row['umTipoServicio']) ?>" readonly>
-											<input type="hidden" class="unidadMedidaSubItem" name="unidadMedida" placeholder="Unidad Medida" value="<?= verificarEmpty($row['umTs']) ?>" readonly>
-										</div>
-										<div class="three wide field">
-											<div class="ui sub header">Costo Packing</div>
-											<input class="costoPacking" value="<?= verificarEmpty($row['costoPacking']) ?>" name="costoPacking" onchange="$(this).closest('.div-features').find('.cantidadSubItemDistribucion').keyup();" readonly>
-										</div>
-										<div class="two wide field">
-											<div class="ui sub header">Costo S/</div>
-											<input class="costoTipoServicio costoSubItem" name="costo" placeholder="Costo" value="<?= verificarEmpty($row['tsCosto']) ?>" readonly>
-										</div>
-									</div>
-									<div class="<?= ($row['requiereOrdenCompra'] == '0') ? 'd-none ' : ''; ?> fields divAddParaOC">
-										<div class="eight wide field">
-											<div class="ui sub header">Proveedor</div>
-											<select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'selected' => $row['idProveedor'], 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/]); ?>
-											</select>
-										</div>
-									</div>
-									<!-- Fin: Datos Iniciales -->
-									<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']] as $dataSubItem) : ?>
-										<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
-										<div class="fields">
-											<div class="eight wide field ">
-												<div class="ui sub header">Item Logística</div>
-												<select class="ui search dropdown simpleDropdown itemLogisticaForm " name="itemLogisticaFormNew[<?= $row['idCotizacionDetalle'] ?>]">
-													<option selected value="<?= $dataSubItem['idItem']; ?>"><?= $dataSubItem['itemLogistica']; ?></option>
-												</select>
-											</div>
-											<div class="two wide field">
-												<div class="ui sub header">Cantidad</div>
-												<input readonly class="onlyNumbers cantidadPdvSubItemDistribucion" name="cantidadSubItemNro[<?= $row['idCotizacionDetalle'] ?>]" data-min="1" value="<?= verificarEmpty($dataSubItem['cantidad']) ?>" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
-											</div>
-											<div class="two wide field">
-												<div class="ui sub header">Peso</div>
-												<input readonly class="onlyNumbers cantidadSubItemDistribucion cantidadSubItem" name="cantidadSubItemDistribucion[<?= $row['idCotizacionDetalle'] ?>]" value="<?= verificarEmpty($dataSubItem['peso'], 2) ?>">
-											</div>
-											<div class="two wide field">
-												<div class="ui sub header">Peso Real</div>
-												<input readonly class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" value="<?= verificarEmpty($dataSubItem['cantidadReal'], 2) ?>">
-											</div>
-											<div class="two wide field">
-												<div class="ui sub header">Peso Total</div>
-												<input readonly class="pesoTotalIL" name="cantidadPesoTotal[<?= $row['idCotizacionDetalle'] ?>]" value="<?= floatval($dataSubItem['cantidad']) * floatval($dataSubItem['peso']) ?>" readonly>
-											</div>
-										</div>
-									<? endforeach; ?>
-								<? endif;
-								?>
+							
+							<div class="fields datosTable pt-5">
+								<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
 							</div>
 
 

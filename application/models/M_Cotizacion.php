@@ -353,23 +353,44 @@ class M_Cotizacion extends MY_Model
 
 	function getZonas($params = [])
 	{
+
+		if (!isset($params['otroAlmacen'])) {
+			$params['otroAlmacen'] = '0';
+		}
+		if ($params['otroAlmacen'] != '1') {
+			$this->db
+				->select('a.idAlmacen, a.nombre, ttd.dias')
+				->from('visualImpact.logistica.almacen a')
+				->join('visualImpact.logistica.tipo_transporte_det ttd', 'a.idUbigeo = ttd.cod_ubigeo and ttd.idTipoTransporte = 1');
+		} else {
+			$this->db
+				->select('a.idLocalTercero as idAlmacen, a.nombreLocal as nombre, isnull(ttd.dias, 0) as dias')
+				->from('visualImpact.logistica.localesTerceros a')
+				->join('visualImpact.logistica.tipo_transporte_det ttd', 'a.cod_ubigeo = ttd.cod_ubigeo and ttd.idTipoTransporte = 1', 'left')
+				->where('a.cod_ubigeo != 0');
+		}
+
 		$this->db
-		->select('a.idAlmacen, a.nombre, ttd.dias')
-		->from('visualImpact.logistica.almacen a')
-		->join('visualImpact.logistica.tipo_transporte_det ttd', 'a.idUbigeo = ttd.cod_ubigeo')
-		->where('a.estado', 1)
-		->where('ttd.estado', 1)
-		->order_by('a.nombre');
+			->where('a.estado', 1)
+			->where('isnull(ttd.estado, 1) = 1')
+			->order_by('2');
 
 		if (isset($params['idZona'])) {
-			$this->db->where('a.idAlmacen', $params['idZona']);
+			if ($params['otroAlmacen'] != '1') {
+				$this->db->where('a.idAlmacen', $params['idZona']);
+			} else {
+				$this->db->where('a.idLocalTercero', $params['idZona']);
+			}
 		}
 		if (isset($params['nombre'])) {
-			$this->db->where('a.nombre', $params['nombre']);
+			if ($params['otroAlmacen'] != '1') {
+				$this->db->where('a.nombre', $params['nombre']);
+			} else {
+				$this->db->where('a.nombreLocal', $params['nombre']);
+			}
 		}
 
 		return $this->db->get();
-
 	}
 	public function obtenerMaxDiasEntrega($params = [])
 	{
@@ -682,6 +703,7 @@ class M_Cotizacion extends MY_Model
 						'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 						//
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : '0',
+						'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : '0',
 					];
 				}
 			}
@@ -832,7 +854,9 @@ class M_Cotizacion extends MY_Model
 			cd.costoPacking,
 			ts.idUnidadMedida as umTs,
 			umts.nombre as umTipoServicio,
-			cd.flagDetallePDV
+			cd.flagDetallePDV,
+			cd.flagPackingSolicitado,
+			cd.flagMostrarDetalle
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1580,6 +1604,13 @@ class M_Cotizacion extends MY_Model
 							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
+							'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+							'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
+							'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
+							'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
+							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
+							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 						];
 					}
 				}
@@ -1869,7 +1900,11 @@ class M_Cotizacion extends MY_Model
 					p.razonSocial AS razonSocial,
 					ci.flag_actual AS flag_actual,
 					cd.costo as costoCotizacion,
-					cd.flagRedondear
+					cd.flagRedondear,
+					cd.cantPdv,
+					cd.flagPackingSolicitado,
+					cd.flagMostrarDetalle,
+					cd.requiereOrdenCompra
 				FROM
 					compras.cotizacion c
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -1882,28 +1917,28 @@ class M_Cotizacion extends MY_Model
 
 			), lst_tarifario_det AS(
 				SELECT
-				lt.idCotizacion ,
-				lt.idCotizacionDetalle ,
-				lt.Vigencia ,
-				lt.item ,
-				lt.itemNombre ,
+				lt.idCotizacion,
+				lt.idCotizacionDetalle,
+				lt.Vigencia,
+				lt.item,
+				lt.itemNombre,
 				lt.diasVigencia,
-				lt.idItem ,
-				lt.cantidad ,
-				lt.costo ,
-				lt.caracteristicasCompras ,
-				lt.caracteristicasProveedor ,
-				lt.subtotal ,
-				lt.total ,
-				lt.idItemTipo ,
-				lt.caracteristicas ,
-				lt.gap ,
-				lt.precio ,
-				lt.enlaces ,
-				lt.idProveedor ,
-				lt.razonSocial ,
-				lt.flag_actual ,
-				lt.costoCotizacion ,
+				lt.idItem,
+				lt.cantidad,
+				lt.costo,
+				lt.caracteristicasCompras,
+				lt.caracteristicasProveedor,
+				lt.subtotal,
+				lt.total,
+				lt.idItemTipo,
+				lt.caracteristicas,
+				lt.gap,
+				lt.precio,
+				lt.enlaces,
+				lt.idProveedor,
+				lt.razonSocial,
+				lt.flag_actual,
+				lt.costoCotizacion,
 				lt.flagRedondear,
 				CASE
 				-- WHEN diasVigencia <= 7 AND lt.idProveedor is not null THEN 'green'
@@ -1911,7 +1946,11 @@ class M_Cotizacion extends MY_Model
 				-- WHEN diasVigencia > 7 AND diasVigencia < 15 THEN 'yellow'
 				WHEN diasVigencia > -2 AND diasVigencia <= 0 THEN 'yellow'
 				ELSE 'red' END
-				AS semaforoVigencia
+				AS semaforoVigencia,
+				lt.cantPdv,
+				lt.flagPackingSolicitado,
+				lt.flagMostrarDetalle,
+				lt.requiereOrdenCompra
 
 				FROM listItem lt
 			)
@@ -1976,7 +2015,9 @@ class M_Cotizacion extends MY_Model
 				cds.marca,
 				cds.tipoElemento,
 				ISNULL(il.nombre, il2.nombre) as itemLogistica,
-				cds.peso
+				cds.peso,
+				cds.flagOtrosPuntos,
+				cds.idZona
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
