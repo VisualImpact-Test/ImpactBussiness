@@ -67,6 +67,21 @@
 							<span class="tooltiptext">Cotizacion</span>
 							<input class="form-control form-control-sm" name="cotizacion" id="cotizacion">
 						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Estado</span>
+							<select class="form-control form-control-sm ui childDependiente" name="ocGenerado">
+								<option value="0">Sin filtro</option>
+								<option value="1">Pendiente de generar OC</option>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group">
+							<span class="tooltiptext bold">Fecha Desde: </span>
+							<input class="form-control form-control-sm" name="fechaDesde" type="date">
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group">
+							<span class="tooltiptext bold">Fecha Hasta</span>
+							<input class="form-control form-control-sm" name="fechaHasta" type="date">
+						</div>
 					</div>
 				</div>
 			</div>

@@ -168,6 +168,9 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 		$filtros .= !empty($params['idDiferente']) ? " AND p.idCotizacion !=" . $params['idDiferente'] : '';
 		$filtros .= !empty($params['idUsuarioReg']) ? ' AND p.idUsuarioReg = ' . $params['idUsuarioReg'] : '';
+		$filtros .= !empty($params['fechaDesde']) ? ' AND p.fechaEmision >= Convert(date,\'' . $params['fechaDesde'] . '\') '  : '';
+		$filtros .= !empty($params['fechaHasta']) ? ' AND p.fechaEmision <= Convert(date,\'' . $params['fechaHasta'] . '\') '  : '';
+		$filtros .= !empty($params['ocGenerado']) ? ($params['ocGenerado'] != '0' ? " AND p.idCotizacionEstado < 8 " : '') : '';
 		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
 		$sql = "
@@ -229,6 +232,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
+		log_message('error', $sql);
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
