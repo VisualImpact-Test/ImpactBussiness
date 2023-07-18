@@ -10,6 +10,9 @@
 					<th>Cotización</th>
 					<th>Cuenta</th>
 					<th>Centro Costo</th>
+					<th>Estado</th>
+					<th>Validación de Artes</th>
+					<th>Fecha de Ejecución</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -28,13 +31,46 @@
 						<td><?= verificarEmpty($row['title'], 3) ?></td>
 						<td><?= verificarEmpty($row['cuenta'], 3) ?></td>
 						<td><?= verificarEmpty($row['cuentaCentroCosto'], 3) ?></td>
+						<td><?= verificarEmpty($row['status'], 3) ?></td>
+						<td>
+							<?php if ($row['status'] == 'Aprobado') :  ?>
+								<?php if ($row['mostrarValidacion'] == '1') :  ?>
+									<div>
+										<input id="invisibleupload1" type="file" class="ui invisible file input file-uploadedd d-none" lang="es" accept="image/png, image/jpeg" multiple>
+										<label for="invisibleupload1" class="ui blue icon button">
+											<i class="file icon"></i>
+											Indicar Archivos
+										</label>
+										<div class="ui center floated small green button btnCargarValidacion" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+											<i class="save icon"></i>
+										</div>
+									</div>
+								<?php else : ?>
+									Arte enviado Correctamente
+								<?php endif; ?>
+							<?php endif; ?>
+						</td>
+						<td>
+							<?php if ($row['status'] == 'Aprobado') :  ?>
+								<?php if ($row['solicitarFecha'] == '1') :  ?>
+									<div class="field">
+										<label>Fecha Inicial</label>
+										<input type="date" name="fechaIni" id="fechaIni">
+									</div>
+									<div class="field">
+										<label>Fecha Final</label>
+										<input type="date" name="fechaFin" id="fechaFin">
+									</div>
+								<?php endif; ?>
+							<?php endif; ?>
+						</td>
 					</tr>
 				<? } ?>
 			</tbody>
 			<tfoot class="full-width">
 				<tr>
 					<th></th>
-					<th colspan="5">
+					<th colspan="8">
 						<div class="ui right floated small button btnRefreshCotizaciones">
 							<i class="sync icon"></i>
 							Refresh

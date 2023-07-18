@@ -511,6 +511,53 @@ class FormularioProveedor extends MY_Controller
 			if (!empty($title)) {
 				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
 			}
+
+			$dataParaVista[$k]['mostrarValidacion'] = '1';
+			$dataParaVista[$k]['solicitarFecha'] = '0';
+			if (empty($v['fechaEntrega'])) {
+				$dataParaVista[$k]['status'] = 'Solicitado';
+			} else {
+				$cotDetPro = $this->db->where('estado', '1')->where('idCotizacionDetalleProveedor', $v['idCotizacionDetalleProveedor'])->get('compras.cotizacionDetalleProveedorDetalle')->result_array();
+				foreach ($cotDetPro as $kcd => $vcd) {
+					$dd[] = $vcd['idCotizacionDetalle'];
+				}
+				$cotDet = $this->db->where('idProveedor', $v['idProveedor'])->where_in('idCotizacionDetalle', $dd)->get('compras.cotizacionDetalle')->result_array();
+				if (empty($cotDet)) {
+					$dataParaVista[$k]['status'] = 'Cotizado';
+				} else {
+					$ocd = $this->db->where_in('idCotizacionDetalle', $dd)->get('compras.ordenCompraDetalle')->result_array();
+					if (empty($ocd)) {
+						$fEn = new DateTime(date_change_format_bd($v['fechaEntrega']));
+						$fAc = new DateTime('now');
+						if ($fAc > $fEn) {
+							$dataParaVista[$k]['status'] = 'Vencido';
+						} else {
+							$dataParaVista[$k]['status'] = 'Por confirmar';
+						}
+					} else {
+						foreach ($ocd as $k1 => $v1) {
+							$dd2[] = $v1['idOrdenCompra'];
+						}
+						$oc = $this->db->where_in('idOrdenCompra', $dd2)->where('idProveedor', $v['idProveedor'])->get('compras.ordenCompra')->result_array();
+						if (empty($oc)) {
+							$dataParaVista[$k]['status'] = 'Por confirmar';
+						} else {
+							$dataParaVista[$k]['status'] = 'Aprobado';
+							$va = $this->db->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->get('compras.validacionArte')->result_array();
+							if (!empty($va)) {
+								$dataParaVista[$k]['mostrarValidacion'] = '0';
+							}
+							$va2 = $this->db->where('flagAprobado', 1)->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->get('compras.validacionArte')->result_array();
+							if (!empty($va2)) {
+								$dataParaVista[$k]['solicitarFecha'] = '1';
+							}
+						}
+					}
+
+					// foreach ($cotDet as $k1 => $v1) {
+					// }
+				}
+			}
 		}
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
@@ -531,6 +578,57 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 		// echo json_encode($this->model->obtenerListaCotizaciones($post)->result_array());
 
+	}
+
+	public function registrarValidacionArte()
+	{
+
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = [];
+
+		if (isset($post['base64Adjunto'])) {
+			foreach ($post['base64Adjunto'] as $key => $row) {
+				$archivo = [
+					// 'idItem' => $post['idItem'],
+					'base64' => $row,
+					'name' => $post['nameAdjunto'][$key],
+					'type' => $post['typeAdjunto'][$key],
+					'carpeta' => 'validacionArte',
+					'nombreUnico' => uniqid()
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+
+				$insertArchivos = [];
+				$insertArchivos = [
+					// 'idItem' => $archivo['idItem'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					// 'idTipoArchivo' => TIPO_IMAGEN,
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					// 'extension' => $tipoArchivo[1],
+					'estado' => true,
+					'idProveedor' => $post['proveedor'],
+					'idCotizacion' => $post['cotizacion']
+				];
+				$this->db->insert('compras.validacionArte', $insertArchivos);
+			}
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
 	}
 
 	public function cotizaciones($idCotizacion = '0')

@@ -340,7 +340,7 @@ class M_FormularioProveedor extends MY_Model
 	{
 		$this->db
 			->select('DISTINCT
-							min(cdpd.fechaEntrega) AS fechaEntrega,
+							CONVERT(VARCHAR, min(cdpd.fechaEntrega), 103) AS fechaEntrega,
 							cp.idCotizacion,
 							cp.idCotizacionDetalleProveedor,
 							CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
@@ -348,14 +348,15 @@ class M_FormularioProveedor extends MY_Model
 							c.motivo,
 							c.total,
 							cc.nombre AS cuentaCentroCosto,
-							cu.nombre AS cuenta')
+							cu.nombre AS cuenta,
+							cp.idProveedor')
 			->from('compras.cotizacionDetalleProveedor cp')
 			->join('compras.cotizacion c', 'c.idCotizacion=cp.idCotizacion', 'left')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'left')
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'left')
 			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
 			->where('cp.estado', '1')
-			->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre')
+			->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre, cp.idProveedor')
 			->order_by('cp.idCotizacionDetalleProveedor desc');
 		isset($params['idProveedor']) ? $this->db->where('cp.idProveedor', $params['idProveedor']) : '';
 		return $this->db->get();
