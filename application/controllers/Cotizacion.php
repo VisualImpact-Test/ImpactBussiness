@@ -1336,6 +1336,12 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
+		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' =>2])->result_array();
+		$areas = [];
+		foreach ($area as $k => $v) {
+			$areas[] = $v['idArea'];
+		}
+		$config['data']['cargoPersonal'] = $this->db->distinct()->select('nombre')->where_in('idArea', $areas)->order_by('nombre')->get('rrhh.dbo.cargoTrabajo')->result_array(); //Solo P&G
 		$config['view'] = 'modulos/Cotizacion/viewFormularioRegistro';
 		$this->view($config);
 	}

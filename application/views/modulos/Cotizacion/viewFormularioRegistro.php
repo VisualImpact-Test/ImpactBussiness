@@ -315,7 +315,60 @@
 								<input class="montoSubItem" name="montoSubItem[0]" placeholder="Monto" value="<?= !empty($data['montoSubItem']) ? $data['montoSubItem'] : '' ?>">
 							</div>
 						</div>
-
+						<!-- Personal -->
+						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?>">
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">Tipo</div>
+									<input value="PERSONAL" readonly>
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Cantidad</div>
+									<input value="">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Cargo</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
+									</select>
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Tipo de Contrato</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">Part Time</option>
+										<option value="2">Full Time</option>
+									</select>
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Pago día</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">Trabajo Amanecida</option>
+										<option value="2">Trabajo Horario Regular</option>
+									</select>
+								</div>
+							</div>
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">Periodo de Contrato</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">Diario</option>
+										<option value="2" selected>Mensual</option>
+									</select>
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Cantidad de días</div>
+									<input value="30">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Pago diario</div>
+									<input value="34.1667">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Pago mensual</div>
+									<input value="1025">
+								</div>
+							</div>
+						</div>
 						<!-- Transporte -->
 						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TRANSPORTE['id'] ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
 							<h4 class="ui dividing header">SUB ITEMS</h4>

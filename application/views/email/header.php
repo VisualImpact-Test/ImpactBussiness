@@ -2,14 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-    <!--[if gte mso 15]>
-	<xml>
-		<o:OfficeDocumentSettings>
-		<o:AllowPNG/>
-		<o:PixelsPerInch>96</o:PixelsPerInch>
-		</o:OfficeDocumentSettings>
-	</xml>
-	<![endif]-->
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -22,10 +14,9 @@
     <style type="text/css">
         .b {
             position: relative !important;
-            top:-5px !important;
+            top: -5px !important;
         }
     </style>
-
 
     <style type="text/css" media="screen">
         [style*="SSP"] {
@@ -43,16 +34,14 @@
             -webkit-text-size-adjust: none
         }
 
-        
-
         .fa {
-    display: inline-block;
-    font: normal normal normal 14px/1 FontAwesome;
-    font-size: inherit;
-    text-rendering: auto;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+            display: inline-block;
+            font: normal normal normal 14px/1 FontAwesome;
+            font-size: inherit;
+            text-rendering: auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
 
         a {
             color: #949490;
@@ -210,7 +199,7 @@
                                                                                 <tr>
                                                                                     <td class="img" style="font-size:0pt; line-height:0pt; text-align:left">
                                                                                         <!-- Logo -->
-                                                                                        <div class="img-m-center" style="font-size:0pt; line-height:0pt; text-align:left"><a href="<?=base_url()?>Proveedor" target="_blank"><img src="https://ww7.visualimpact.com.pe/public/site/wp-content/uploads/2020/08/logo-3.png" border="0" width="200" height="80" alt="" /></a></div>
+                                                                                        <div class="img-m-center" style="font-size:0pt; line-height:0pt; text-align:left"><a href="<?= base_url() ?>Proveedor" target="_blank"><img src="https://ww7.visualimpact.com.pe/public/site/wp-content/uploads/2020/08/logo-3.png" border="0" width="200" height="80" alt="" /></a></div>
                                                                                         <!-- END Logo -->
                                                                                         <div style="font-size:0pt; line-height:0pt;" class="mobile-br-20"></div>
 
@@ -288,7 +277,6 @@
                                                         </tr>
                                                     </table>
 
-
                                                     <!-- Call To Action -->
                                                     <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                                         <tr>
@@ -308,7 +296,7 @@
                                                                                         </table>
 
                                                                                         <div class="text-button1" style="color:#ffffff; font-family:Arial,sans-serif, 'SSP'; font-size:12px; line-height:16px; text-align:center; text-transform:uppercase">
-                                                                                            <a href="<?=base_url()?>Proveedor" target="_blank" class="link-black" style="color:#4a4a44; text-decoration:none"><span class="link-black" style="color:#4a4a44; text-decoration:none">Validar Proveedor</span></a>
+                                                                                            <a href="<?= base_url() ?>Proveedor" target="_blank" class="link-black" style="color:#4a4a44; text-decoration:none"><span class="link-black" style="color:#4a4a44; text-decoration:none">Validar Proveedor</span></a>
                                                                                         </div>
                                                                                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">
                                                                                             <tr>
@@ -343,17 +331,14 @@
                                         <!-- Section 3 -->
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
                                             <tr>
-                                                
+
                                                 <td>
-                                                    
-
-
                                                     <!-- Article Image On The Right -->
                                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" dir="rtl" bgcolor="#ffffff" style="direction:rtl !important;">
                                                         <tr>
                                                             <!-- Column -->
                                                             <th class="column" style="font-size:0pt; line-height:0pt; padding:0; margin:0; font-weight:normal; Margin:0" width="260" valign="top" dir="ltr">
-                                                                <table width="100%" border="0" cellspacing="0" cellpadding="0"  style="direction:ltr !important;">
+                                                                <table width="100%" border="0" cellspacing="0" cellpadding="0" style="direction:ltr !important;">
                                                                     <tr>
                                                                         <td class="img" style="font-size:0pt; line-height:0pt; text-align:left" width="10"></td>
                                                                         <td>
@@ -395,24 +380,21 @@
                                                                 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="direction:ltr !important;">
                                                                     <tr>
                                                                         <td>
-                                                                            
+
                                                                             <!-- Article Content -->
                                                                             <div class="h4" style="color:#4a4a44; font-family:Arial,sans-serif, 'SSP'; font-size:18px; line-height:24px; text-align:left">
                                                                                 <h4>DATOS DE PROVEEDOR</h4>
                                                                                 <div>
-                                                                                    
-                                                                                <p ><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important; ">  <?=  $nombreContacto ?></b> </p>
-                                                                                <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;">  <?=  $correoContacto ?></b> </p>
-                                                                                <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/901/901141.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;">  <?=  $numeroContacto ?></b></p>
-                                                                                <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/2928/2928892.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;">  <?=  $direccion?></b></p>
-                                                                                    
+
+                                                                                    <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important; "> <?= $nombreContacto ?></b> </p>
+                                                                                    <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;"> <?= $correoContacto ?></b> </p>
+                                                                                    <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/901/901141.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;"> <?= $numeroContacto ?></b></p>
+                                                                                    <p><img width="25" height="25" src="https://cdn-icons-png.flaticon.com/512/2928/2928892.png" alt="" title="" class="loaded "><b class="b" style="font-family:initial;color:black !important;"> <?= $direccion ?></b></p>
+
                                                                                 </div>
-                                                                                
-                                                                               
-                                                                                
+
                                                                                 <br />
-                                                                                
-                                                                                 
+
                                                                             </div>
                                                                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">
                                                                                 <tr>
@@ -420,9 +402,8 @@
                                                                                 </tr>
                                                                             </table>
 
-
                                                                             <div class="text" style="color:#949490; font-family:Arial,sans-serif, 'SSP'; font-size:14px; line-height:24px; text-align:center">
-                                                                            
+
                                                                             </div>
 
                                                                             <table width="100%" border="0" cellspacing="0" cellpadding="0" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">
@@ -430,32 +411,28 @@
                                                                                     <td height="16" class="spacer" style="font-size:0pt; line-height:0pt; text-align:center; width:100%; min-width:100%">&nbsp;</td>
                                                                                 </tr>
                                                                             </table>
-
-
-                                                                          
-
                                                                             <!-- END Article Content -->
                                                                         </td>
                                                                     </tr>
                                                                 </table>
                                                             </th>
                                                             <!-- END Column -->
-                                                            
-                                                        </tr>
-                                                        
-                                                    </table>
-                                                   
-                            <!-- END Main -->
 
-                            <!-- Footer -->
-                            
-                            <!-- END Footer -->
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+                                                        </tr>
+
+                                                    </table>
+
+                                                    <!-- END Main -->
+
+                                                    <!-- Footer -->
+
+                                                    <!-- END Footer -->
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
 </body>
 
 </html>

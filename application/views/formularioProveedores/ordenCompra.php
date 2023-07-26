@@ -1,6 +1,6 @@
 <style>
 	.floating-container {
-		height: 150px !important;
+		height: 220px !important;
 	}
 </style>
 <?php $incluirImagen = false; ?>
@@ -265,10 +265,10 @@
 				<i class="file pdf icon"></i>
 			</span>
 		</a>
-		<!-- <a href="javascript:;">
+		<a href="<?= $this->config->base_url() . 'FormularioProveedor/cotizacionesLista' ?>">
 			<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "frmOrdenCompraProveedorCabecera", fn: "FormularioProveedoresOC.confirmarOrdenCompra()", content: "¿Está seguro de confirmar la fecha de entrega para la orden de compra?" });'>
-				<i class="send icon"></i>
+				<i class="tasks icon"></i>
 			</span>
-		</a> -->
+		</a>
 	</div>
 </div>

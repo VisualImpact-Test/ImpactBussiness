@@ -35,8 +35,8 @@
 						<td>
 							<?php if ($row['status'] == 'Aprobado') :  ?>
 								<?php if ($row['mostrarValidacion'] == '1') :  ?>
-									<div>
-										<input id="invisibleupload1" type="file" class="ui invisible file input file-uploadedd d-none" lang="es" accept="image/png, image/jpeg" multiple>
+									<div class="ui buttons">
+										<input id="invisibleupload1" type="file" class="ui invisible file input file-uploadedd d-none" lang="es" multiple>
 										<label for="invisibleupload1" class="ui blue icon button">
 											<i class="file icon"></i>
 											Indicar Archivos
@@ -50,19 +50,28 @@
 								<?php endif; ?>
 							<?php endif; ?>
 						</td>
-						<td>
-							<?php if ($row['status'] == 'Aprobado') :  ?>
-								<?php if ($row['solicitarFecha'] == '1') :  ?>
-									<div class="field">
-										<label>Fecha Inicial</label>
-										<input type="date" name="fechaIni" id="fechaIni">
-									</div>
-									<div class="field">
-										<label>Fecha Final</label>
-										<input type="date" name="fechaFin" id="fechaFin">
-									</div>
+						<td class="tdFecha">
+							<div class="ui form">
+								<?php if ($row['status'] == 'Aprobado') :  ?>
+									<?php if ($row['solicitarFecha'] == '1') :  ?>
+										<?php if (empty($row['fechaFinal'])) :  ?>
+											<div class="field">
+												<label>Fecha Inicial</label>
+												<input type="date" class="fechaIni px-0" name="fechaIni">
+											</div>
+											<div class="field">
+												<label>Fecha Final</label>
+												<input type="date" class="fechaFin px-0" name="fechaFin">
+											</div>
+											<div class="ui center floated small green button btnGuardarFecha" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+												<i class="save icon"></i>
+											</div>
+											<?php  else : ?>
+												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+										<?php endif; ?>
+									<?php endif; ?>
 								<?php endif; ?>
-							<?php endif; ?>
+							</div>
 						</td>
 					</tr>
 				<? } ?>

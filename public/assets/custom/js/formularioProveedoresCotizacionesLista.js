@@ -69,6 +69,34 @@ var FormularioProveedores = {
 
 		});
 
+		$(document).on('click', '.btnGuardarFecha', function () {
+			let pr = $(this).closest('td.tdFecha');
+			++modalId;
+			var dataForm = {};
+			dataForm.fechaIni =pr.find('.fechaIni').val();
+			dataForm.fechaFin =pr.find('.fechaFin').val();
+			dataForm.proveedor = $(this).data('prov');
+			dataForm.cotizacion = $(this).data('idcoti');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			let config = { 'url': FormularioProveedores.url + 'guardarFechaEjecucion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				if (a.result == 1) {
+					fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+				location.reload();
+			});
+
+		});
+
 		$(document).off('change', '.file-uploadedd').on('change', '.file-uploadedd', function (e) {
 			var control = $(this);
 			if (control.val()) {
