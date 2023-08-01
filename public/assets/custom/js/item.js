@@ -107,6 +107,29 @@ var Item = {
 			});
 		});
 
+		$(document).on('click', '#btn-adicionarIL', function () {
+			++modalId;
+
+			let id = '';
+			let data = { 'idItem': id, 'formularioValidar': false };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Item.url + 'formularioRegistroItemLogistica', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroItemLogistica", fn: "Item.registrarItemLogistica()", content: "¿Esta seguro de registrar el item?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		});
+
 		$(document).on('click', '.btn-fotosItem', function () {
 			++modalId;
 
@@ -146,8 +169,21 @@ var Item = {
 				$("#btn-filtrarItem").click();
 			});
 		});
+		$(document).on('click', '#btn-listaItemLogistica', function () {
+			++modalId;
+			let jsonString = { 'data': '' };
+			let config = { 'url': Item.url + 'listItemLogistica', 'data': jsonString };
 
-		//textiles y monto
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		});
 
 		$(document).on('change', '#tipo', function () {
 			let idtipo = $(this).val();
@@ -155,10 +191,6 @@ var Item = {
 			control.find('.campos_dinamicos').addClass('d-none');
 			control.find(`.div-feature-${idtipo}`).removeClass('d-none');
 		});
-
-
-		//de la imagen
-
 
 		$(document).off('change', '.file-lsck-capturas').on('change', '.file-lsck-capturas', function (e) {
 			var control = $(this);
@@ -302,21 +334,19 @@ var Item = {
 						}
 					}
 
-
 					let file = '';
 					let imgFile = '';
 					let contenedor = '';
 
-					
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
 						Item.base64 = [];
 						Item.type = [];
 						Item.name = [];
-						
+
 						Fn.getBase64(file).then(function (fileBase) {
-							$('.labelImagen').html(num+ ' Imagen(es) cargada(s)');
+							$('.labelImagen').html(num + ' Imagen(es) cargada(s)');
 
 							Item.base64.push(fileBase.base64);
 							Item.type.push(fileBase.type);
@@ -340,11 +370,7 @@ var Item = {
 			control.parents('.content-lsck-capturas:first').remove();
 		});
 
-
-
 		//de la imagen
-
-
 
 		//$(document).on('change', '.tipoArticulo', function () {
 		//++modalId;
@@ -380,7 +406,24 @@ var Item = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	registrarItemLogistica: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroItemLogistica')) };
+		let url = Item.url + "registrarItemLogistica";
+		let config = { url: url, data: jsonString };
 
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 	actualizarItem: function () {
 		++modalId;
 		// Almacenamos los datos del formulario en una variable por que vamos a incluir:

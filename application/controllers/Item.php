@@ -40,7 +40,6 @@ class Item extends MY_Controller
 		$config['data']['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
 		$config['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
 
-
 		$config['view'] = 'modulos/item/index';
 
 		$this->view($config);
@@ -88,7 +87,6 @@ class Item extends MY_Controller
 		$dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
 		$dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
 
-
 		$itemsLogistica =  $this->model->obtenerItemsLogistica();
 		foreach ($itemsLogistica as $key => $row) {
 			$data['items'][1][$row['value']]['value'] = $row['value'];
@@ -105,6 +103,55 @@ class Item extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Item';
 		$result['data']['html'] = $this->load->view("modulos/Item/formularioRegistro", $dataParaVista, true);
+		$result['data']['itemsLogistica'] = $data['items'];
+
+		echo json_encode($result);
+	}
+
+	public function listItemLogistica()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista['datos'] = [];
+
+		$html = $this->load->view("modulos/Item/listItemLogistica", $dataParaVista, true);
+
+		$result['result'] = 1;
+		$result['data']['html'] = $html;
+		$result['msg']['title'] = 'Lista de Items solicitados a Logística';
+		$result['data']['width'] = '75%';
+
+		echo json_encode($result);
+	}
+
+	public function formularioRegistroItemLogistica()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+
+		$dataParaVista['tipoItem'] = $this->model->obtenerTipoItem()['query']->result_array();
+		$dataParaVista['marcaItem'] = $this->model->obtenerMarcaItem()['query']->result_array();
+		$dataParaVista['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
+		$dataParaVista['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
+
+		$itemsLogistica =  $this->model->obtenerItemsLogistica();
+		foreach ($itemsLogistica as $key => $row) {
+			$data['items'][1][$row['value']]['value'] = $row['value'];
+			$data['items'][1][$row['value']]['label'] = $row['label'];
+			$data['items'][1][$row['value']]['idum'][$row['idum']] = $row['idum'];
+			$data['items'][1][$row['value']]['um'][$row['idum']] = $row['um'];
+		}
+		foreach ($data['items'] as $k => $r) {
+			$data['items'][$k] = array_values($data['items'][$k]);
+		}
+		$data['items'][0] = array();
+		$result['data']['existe'] = 0;
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Item Logistica';
+		$result['data']['html'] = $this->load->view("modulos/Item/formularioRegistroItemLogistica", $dataParaVista, true);
 		$result['data']['itemsLogistica'] = $data['items'];
 
 		echo json_encode($result);
@@ -206,7 +253,6 @@ class Item extends MY_Controller
 		$result['view'] = 'modulos/Item/viewRegistroItem';
 		$this->view($result);
 	}
-
 
 	public function registrarItem()
 	{
@@ -394,7 +440,69 @@ class Item extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+	public function registrarItemLogistica()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
+		$data = [];
+
+		if (empty($post['nombre'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
+			goto respuesta;
+		}
+
+		$art = $this->db->where('nombre', $post['nombre'])->get('visualImpact.logistica.articulo')->result_array();
+		if (!empty($art)) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroRepetido');
+			goto respuesta;
+		}
+
+		$art = $this->db->where('nombre', $post['nombre'])->get('compras.itemLogistica')->result_array();
+		if (!empty($art)) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroRepetido');
+			goto respuesta;
+		}
+
+		$this->db->insert('compras.itemLogistica', ['nombre' => $post['nombre']]);
+		$id_insert = $this->db->insert_id();
+
+		$this->db->trans_complete();
+
+		$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
+		$cfg['asunto'] = 'IMPACT BUSSINESS - SOLICITUD DE PESO PARA LA COTIZACIÓN';
+		$html = $this->load->view("email/indicarPeso", [], true);
+
+		$cfg['contenido'] = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Item/DetallarPeso/' . $id_insert], true);
+		$this->sendEmail($cfg);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+
+		respuesta:
+		echo json_encode($result);
+	}
+
+	public function DetallarPeso($id)
+	{
+		$config['single'] = true;
+		// AGREGAR VALIDACION PARA SOLO MOSTRAR LOS PENDIENTES.
+		$config['js']['script'] = array('assets/custom/js/registroPesos');
+		$config['data']['item'] = $this->db->where('idItemLogistica', $id)->get('compras.itemLogistica')->row_array();
+
+		$config['view'] = 'modulos/Item/cargarPeso';
+
+		$this->view($config);
+	}
 	public function actualizarItem()
 	{
 
@@ -499,7 +607,24 @@ class Item extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+	public function guardarPesoItemLogistica()
+	{
+		$post = json_decode($this->input->post('data'));
+		if (empty($post->{'peso'})) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
+			goto respuesta;
+		}
 
+		$this->db->update('compras.itemLogistica', ['peso' => $post->{'peso'}], ['idItemLogistica' => $post->{'idItemLogistica'}]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Ok';
+		
+		respuesta:
+		echo json_encode($result);
+	}
 	public function descargarTarifarioPDF()
 	{
 		require_once('../mpdf/mpdf.php');
@@ -688,7 +813,6 @@ class Item extends MY_Controller
 				['data' => 'color', 'type' => 'text', 'placeholder' => 'color', 'width' => 200, 'source'],
 				['data' => 'monto', 'type' => 'text', 'placeholder' => 'monto', 'width' => 200, 'source'],
 
-
 			],
 			'hideColumns' => [0, 1, 2],
 			'colWidths' => 200,
@@ -701,10 +825,8 @@ class Item extends MY_Controller
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
 
-
 		echo json_encode($result);
 	}
-
 
 	public function guardarListaItemHT()
 	{
@@ -712,7 +834,6 @@ class Item extends MY_Controller
 		ini_set('display_errors', TRUE);
 		ini_set('display_startup_errors', TRUE);
 		set_time_limit(0);
-
 
 		$this->db->trans_start();
 		$result = $this->result;
@@ -755,11 +876,7 @@ class Item extends MY_Controller
 
 		array_pop($post['HT'][0]);
 
-
-
-
 		foreach ($post['HT'][0] as $tablaHT) {
-
 
 			if (
 				empty($tablaHT['tipo'] || $tablaHT['marca'] || $tablaHT['categoria'] || $tablaHT['subcategoria'] || $tablaHT['item'] || $tablaHT['caracteristicas'] || $tablaHT['logistica'])
@@ -799,7 +916,6 @@ class Item extends MY_Controller
 			}
 		}
 
-
 		$insertItem = $this->model->insertarMasivo('compras.item', $data['insert']);
 
 		$dataItem['item'] = $this->model->obtenerInformacionItems($post)['query']->result_array();
@@ -809,8 +925,6 @@ class Item extends MY_Controller
 		foreach ($dataItem['item'] as $key => $row) {
 			$items[$row['item']] = $row['idItem'];
 		}
-
-
 
 		foreach ($post['HT'][0] as $tablaHTDetalle) {
 
@@ -885,7 +999,6 @@ class Item extends MY_Controller
 		exit;
 	}
 
-
 	public function formularioFotosItem()
 	{
 		$result = $this->result;
@@ -900,7 +1013,6 @@ class Item extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Fotos de Items';
 		$result['data']['html'] = $this->load->view("modulos/Item/formularioFotos", $dataParaVista, true);
-
 
 		echo json_encode($result);
 	}

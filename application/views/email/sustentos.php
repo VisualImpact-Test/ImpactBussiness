@@ -72,7 +72,7 @@
 		background-color: #555555;
 	}
 </style>
-<h3 style="margin: 0px;">Estimados, se le informa que se han indicado artes de la cotización "<?= $cotizacion['nombre'] ?>" del proveedor "<?= $proveedor['razonSocial'] ?>":</h3>
+<h3 style="margin: 0px;">Estimados, se le informa que se han subido los documentos de sustento</h3>
 <br>
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">
@@ -83,6 +83,7 @@
 					<thead class="thead-light">
 						<tr class="row_data">
 							<th style="width: 5%;background-color: #2586da;color: white;" class="text-center header">#</th>
+							<th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Formato Documento</th>
 							<th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
 							<th style="width: 15%;background-color: #2586da;color: white;" class="text-center header">Opciones</th>
 						</tr>
@@ -91,16 +92,30 @@
 						<?php foreach ($data as $key => $row) : ?>
 							<tr class="default">
 								<td><?= $key + 1 ?></td>
+								<td>
+									<?php switch ($row['idFormatoDocumento']) {
+										case '1':
+											$tt = 'Guia';
+											break;
+										case '2':
+											$tt =  'Factura';
+											break;
+										case '3':
+											$tt =  'Xml';
+											break;
+										case '4':
+											$tt =  'Adicional';
+											break;
+										default:
+											$tt =  '-';
+											break;
+									}  ?>
+									<?= $tt; ?>
+								</td>
 								<td><?= verificarEmpty($row['nombre_inicial'], 3) ?></td>
-								<?php if ($row['flagAdjunto'] == '1') {
-									$direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3);
-								} else {
-									$direccion = verificarEmpty($row['nombre_archivo'], 3);
-								} ?>
+								<?php $direccion = RUTA_WASABI . 'sustento' . $tt . '/' . verificarEmpty($row['nombre_archivo'], 3); ?>
 								<td>
 									<a class="ui button" href="<?= $direccion ?>" target="_blank">Descargar</a>
-									<a class="boton verde" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(1). '&det='.base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Aprobar</a>
-									<a class="boton rojo" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(0). '&det='.base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Rechazar</a>
 								</td>
 							</tr>
 						<?php endforeach; ?>
