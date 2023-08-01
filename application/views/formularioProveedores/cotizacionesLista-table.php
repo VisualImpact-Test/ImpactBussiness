@@ -64,7 +64,10 @@
 										<label class="lMsg"></label>
 									</div> -->
 								<?php else : ?>
-									Arte enviado
+									<a class="ui basic button formLisArts" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+										<i class="icon search"></i>
+										Arte enviado
+									</a>
 								<?php endif; ?>
 							<?php endif; ?>
 						</td>
@@ -91,7 +94,11 @@
 												<i class="save icon"></i>
 											</div> -->
 										<?php else : ?>
-											Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+											<?php if ($row['fechaInicio'] == '1900-01-01') :  ?>
+												Se adjunto archivos
+											<?php else : ?>
+												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+											<?php endif; ?>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
@@ -101,12 +108,16 @@
 							<?php if ($row['status'] == 'Aprobado') :  ?>
 								<?php if ($row['solicitarFecha'] == '1') :  ?>
 									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-										<div class="ui">
-											<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
-												<i class="icon archive"></i>
-												Indicar Sustento
-											</a>
-										</div>
+										<?php if (empty($row['sustentoC'])) :  ?>
+											<div class="ui">
+												<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+													<i class="icon archive"></i>
+													Indicar Sustento
+												</a>
+											</div>
+										<?php else : ?>
+											Sustento enviado correctamente
+										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
 							<?php endif; ?>
@@ -115,7 +126,15 @@
 							<?php if ($row['status'] == 'Aprobado') :  ?>
 								<?php if ($row['solicitarFecha'] == '1') :  ?>
 									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-										En Proceso
+										<?php if (empty($row['sustentoC'])) :  ?>
+											En proceso
+										<?php else : ?>
+											<?php if ($row['sustentoC'][$row['idCotizacion']][$row['idProveedor']]['flagIncidencia'] == '1') :  ?>
+												Finalizado con incidencia.
+											<?php else : ?>
+												Finalizado al 100%
+											<?php endif; ?>
+										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
 							<?php endif; ?>

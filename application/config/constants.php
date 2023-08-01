@@ -102,7 +102,9 @@ defined('FILES_WASABI')         or define('FILES_WASABI', [
     'pdf' => 'pdf',
     'png' => 'png',
     'jpg' => 'jpg',
-    'jpeg' => 'jpeg'
+    'jpeg' => 'jpeg',
+    'xml' => 'xml',
+    'x-zip-compressed' => 'zip'
 ]);
 defined('FILES_TIPO_WASABI')         or define('FILES_TIPO_WASABI', [
     'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => '6',
@@ -112,7 +114,9 @@ defined('FILES_TIPO_WASABI')         or define('FILES_TIPO_WASABI', [
     'pdf' => '3',
     'png' => '2',
     'jpg' => '2',
-    'jpeg' => '2'
+    'jpeg' => '2',
+    'xml' => '5',
+    'x-zip-compressed' => '5'
 ]);
 
 

@@ -98,6 +98,28 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		$(document).on('click', '.formLisArts', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.proveedor = $(this).data('prov');
+			dataForm.cotizacion = $(this).data('idcoti');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			
+			let config = { 'url': FormularioProveedores.url + 'formularioListadoArtesCargados', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
 		$(document).on('click', '.formFechaEje', function () {
 			++modalId;
 			var dataForm = {};
@@ -413,11 +435,10 @@ var FormularioProveedores = {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
-					if ((num) > 10) {
-						var message = Fn.message({ type: 2, message: 'Solo se permite ' + 10 + ' archivos como máximo' });
+					if ((num) > 50) {
+						var message = Fn.message({ type: 2, message: 'Solo se permite ' + 50 + ' archivos como máximo' });
 						Fn.showModal({
 							'id': ++modalId,
 							'show': true,

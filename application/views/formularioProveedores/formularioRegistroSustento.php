@@ -8,28 +8,28 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Guia</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es">
+						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Factura</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_factura file-upload_factura" lang="es">
+						<input type="file" class="custom-file-input files-upload_factura file-upload_factura" lang="es" accept=".pdf">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es">
+						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Doc Adicional</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es">
+						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple>
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
@@ -41,7 +41,7 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Comentario</label>
 					 <select name="incidencia" class="form-control col-md-8">
-						<option value="1">Con Incidencia</option>
+						<option value="1">Finalizado con Incidencia</option>
 						<option value="0">Finalizado al 100%</option>
 					 </select>
 				</div>

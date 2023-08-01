@@ -564,6 +564,10 @@ class FormularioProveedor extends MY_Controller
 
 			$dataParaVista[$k]['ocGen'] = $this->model->getDistinctOC(['idCotizacion' => $v['idCotizacion'], 'idProveedor' => $proveedor['idProveedor']])->result_array();
 
+			$va4 = $this->db->where('estado', '1')->where('idCotizacion', $v['idCotizacion'])->where('idProveedor', $v['idProveedor'])->get('compras.sustentoAdjunto')->result_array();
+			foreach ($va4 as $k4 => $v4) {
+				$dataParaVista[$k]['sustentoC'][$v4['idCotizacion']][$v4['idProveedor']] = $v4;
+			}
 			$accesoDocumento = !empty($proveedor['nroDocumento']) ? base64_encode($proveedor['nroDocumento']) : '';
 			$accesoEmail = !empty($proveedor['correoContacto']) ? base64_encode($proveedor['correoContacto']) : '';
 			$fechaActual = base64_encode(date('Y-m-d'));
@@ -600,6 +604,22 @@ class FormularioProveedor extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Arte';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroValidacionArte", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	public function formularioListadoArtesCargados()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+		$dataParaVista['proveedor'] = $post['proveedor'];
+		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Artes Cargados';
+		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoArtes", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
@@ -815,7 +835,7 @@ class FormularioProveedor extends MY_Controller
 		// 	'flagAprobado' => 1
 		// ];
 		// $this->db->update('compras.validacionArte', $data, $where);
-
+		$this->db->update('compras.sustentoAdjunto', ['estado' => 0], ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion']]);
 		if (isset($post['base64Adjunto_g'])) {
 			foreach ($post['base64Adjunto_g'] as $key => $row) {
 				$archivo = [
@@ -932,11 +952,11 @@ class FormularioProveedor extends MY_Controller
 			}
 		}
 
-		$daC = $this->db->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
+		$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
 
 		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
 		$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
-		if (!empty($df)) {
+		if (!empty($daC)) {
 			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
 			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot], true);
