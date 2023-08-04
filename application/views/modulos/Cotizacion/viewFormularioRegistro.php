@@ -148,7 +148,7 @@
 				</div>
 				<div class="ui clearing divider"></div>
 				<div class="ui grid">
-					<div class="sixteen wide tablet twelve wide computer column itemDet_1">
+					<div class="columna_itemss sixteen wide tablet twelve wide computer column itemDet_1">
 						<div class="fields">
 							<div class="eight wide field">
 								<div class="ui sub header">Item</div>
@@ -181,7 +181,7 @@
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<div class="four wide field">
+							<div class="four wide field no-personal">
 								<div class="ui sub header">Unidad Medida</div>
 								<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
@@ -189,17 +189,17 @@
 							</div>
 						</div>
 						<div class="fields">
-							<div class="five wide field">
+							<div class="five wide field no-personal">
 								<div class="ui sub header">Características para el cliente</div>
 								<div class="ui labeled input w-100">
 									<input class="caracteristicasCliente" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
 								</div>
 							</div>
-							<div class="six wide field cCompras">
+							<div class="six wide field cCompras no-personal">
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características">
 							</div>
-							<div class="five wide field">
+							<div class="five wide field no-personal">
 								<div class="ui sub header">Características para proveedor</div>
 								<input name="caracteristicasProveedor" placeholder="Características">
 							</div>
@@ -318,10 +318,6 @@
 						<!-- Personal -->
 						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?>">
 							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">Tipo</div>
-									<input value="PERSONAL" readonly>
-								</div>
 								<div class="four wide field">
 									<div class="ui sub header">Cantidad</div>
 									<input value="">
@@ -366,6 +362,40 @@
 								<div class="three wide field">
 									<div class="ui sub header">Pago mensual</div>
 									<input value="1025">
+								</div>
+							</div>
+
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">SCTR</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">SI</option>
+										<option value="2">NO</option>
+									</select>
+									<p style="margin-top: 14px;">
+									<input value="" placeholder="monto por persona">
+									</p>
+								</div>
+								<div class="four wide field">
+									<div class="ui sub header">Equipos de seguridad</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">SI</option>
+										<option value="2">NO</option>
+									</select>
+									<p style="margin-top: 14px;">
+									<input value="" placeholder="monto por persona">
+									</p>
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">FAJAS</div>
+									<input value="0">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">UNIFORMES</div>
+									<select class="ui clearable dropdown simpleDropdown">
+										<option value="1">SI</option>
+										<option value="2">NO</option>
+									</select>
 								</div>
 							</div>
 						</div>
@@ -483,8 +513,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="sixteen wide tablet four wide computer column">
-						<div class="fields">
+					<div class="sixteen wide tablet four wide computer column no-personal">
+						<div class="fields ">
 							<div class="sixteen wide field">
 								<div class="ui sub header">
 									Cantidad de Elementos <div class="ui btn-info-custom text-primary btn-info-cantidad"><i class="info circle icon"></i></div>

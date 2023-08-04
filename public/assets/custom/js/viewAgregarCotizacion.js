@@ -538,7 +538,7 @@ var Cotizacion = {
 			let control = $(this);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
-
+			
 			let allFeatures = parent.find(`.div-features`);
 			let divFeature = parent.find(`.div-feature-${idTipo}`);
 
@@ -551,6 +551,9 @@ var Cotizacion = {
 			let elementoBuscado2 = buscado2.data('id');
 
 			if (idTipo == COD_DISTRIBUCION.id) {
+				$('.no-personal').removeClass('d-none');
+				$('.columna_itemss').addClass('twelve');
+				$('.cantidadForm').val('0');
 				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
 					++modalId;
 					let btn = [];
@@ -610,8 +613,17 @@ var Cotizacion = {
 					// });
 				}
 
+				Cotizacion.cleanDetalle(parent);
 
+			} else if (idTipo == 5) {
+				$('.no-personal').addClass('d-none');
+				$('.columna_itemss').removeClass('twelve');
+				$('.cantidadForm').val('1');
 			} else {
+				$('.no-personal').removeClass('d-none');
+				$('.columna_itemss').addClass('twelve');
+				$('.cantidadForm').val('0');
+				
 				(parent.find('.cCompras')).removeClass('d-none');
 				(parent.find('.cantPDV')).addClass('d-none');
 
@@ -620,6 +632,8 @@ var Cotizacion = {
 				if (codItem !== typeof undefined && codItem > 0) {
 					parent.find('.cotizacionInternaForm').val(1);
 				}
+
+				Cotizacion.cleanDetalle(parent);
 			}
 
 			if (elementoBuscado) { Cotizacion.repetidoSubItem.push(elementoBuscado); }
@@ -630,7 +644,7 @@ var Cotizacion = {
 			divFeature.removeClass('d-none');
 			$("input").remove("#identificador");
 
-			Cotizacion.cleanDetalle(parent);
+			
 		});
 
 		$(document).on('change', '#prioridadForm', function (e) {
