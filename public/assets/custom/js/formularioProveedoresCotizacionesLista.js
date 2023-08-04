@@ -83,7 +83,7 @@ var FormularioProveedores = {
 			dataForm.cotizacion = $(this).data('idcoti');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			
+
 			let config = { 'url': FormularioProveedores.url + 'formularioValidacionArte', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -105,7 +105,7 @@ var FormularioProveedores = {
 			dataForm.cotizacion = $(this).data('idcoti');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			
+
 			let config = { 'url': FormularioProveedores.url + 'formularioListadoArtesCargados', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -114,7 +114,28 @@ var FormularioProveedores = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.enviarCorreoValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				btn[1] = { title: 'Enviar Correo', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formEditArte', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': FormularioProveedores.url + 'formularioEditarArte', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarValidacionDeArtes(' + modalId + ')", content: "¿Esta seguro de registrar la validación de Arte?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -127,7 +148,7 @@ var FormularioProveedores = {
 			dataForm.cotizacion = $(this).data('idcoti');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			
+
 			let config = { 'url': FormularioProveedores.url + 'formularioFechaEjecucion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -147,9 +168,10 @@ var FormularioProveedores = {
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
 			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.requiereguia = $(this).data('requiereguia');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			
+
 			let config = { 'url': FormularioProveedores.url + 'formularioSustento', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -158,7 +180,7 @@ var FormularioProveedores = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarSustento()", content: "¿Esta seguro de registrar sustento indicado?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSustento", fn: "FormularioProveedores.registrarSustento()", content: "¿Esta seguro de registrar sustento indicado?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -588,6 +610,53 @@ var FormularioProveedores = {
 			location.reload();
 		});
 	},
+	actualizarValidacionDeArtes: function (modal) {
+		++modalId;
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionValidacionArte'));
+		dataForm.base64Adjunto = FormularioProveedores.base64;
+		dataForm.typeAdjunto = FormularioProveedores.type;
+		dataForm.nameAdjunto = FormularioProveedores.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': FormularioProveedores.url + 'editarValidacionArte', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			console.log(a);
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				Fn.showModal({ id: modal, show: false })
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	enviarCorreoValidacionDeArtes: function () {
+		++modalId;
+
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formularioListadoDeArtes'));
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': FormularioProveedores.url + 'enviarCorreoValidacionDeArtes', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			location.reload();
+		});
+	},
 	registrarSustento: function () {
 		++modalId;
 
@@ -596,7 +665,7 @@ var FormularioProveedores = {
 		dataForm.base64Adjunto_g = FormularioProveedores.base64_g;
 		dataForm.typeAdjunto_g = FormularioProveedores.type_g;
 		dataForm.nameAdjunto_g = FormularioProveedores.name_g;
-		
+
 		dataForm.base64Adjunto_f = FormularioProveedores.base64_f;
 		dataForm.typeAdjunto_f = FormularioProveedores.type_f;
 		dataForm.nameAdjunto_f = FormularioProveedores.name_f;

@@ -232,7 +232,6 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
-		log_message('error', $sql);
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;

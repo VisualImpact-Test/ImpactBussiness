@@ -8,28 +8,28 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Guia</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf">
+						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf" patron="<?= $requiereguia == 1 ? 'requerido' : ''; ?>">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Factura</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_factura file-upload_factura" lang="es" accept=".pdf">
+						<input type="file" class="custom-file-input files-upload_factura file-upload_factura" lang="es" accept=".pdf" patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml">
+						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml" patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Doc Adicional</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple>
+						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>

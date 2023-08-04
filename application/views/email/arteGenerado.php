@@ -84,6 +84,7 @@
 						<tr class="row_data">
 							<th style="width: 5%;background-color: #2586da;color: white;" class="text-center header">#</th>
 							<th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
+							<th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Estado</th>
 							<th style="width: 15%;background-color: #2586da;color: white;" class="text-center header">Opciones</th>
 						</tr>
 					</thead>
@@ -98,9 +99,20 @@
 									$direccion = verificarEmpty($row['nombre_archivo'], 3);
 								} ?>
 								<td>
+									<?php if ($row['flagRevisado'] == '0') :  ?>
+										Pendiente Revisión
+									<?php else : ?>
+										<?php if ($row['flagAprobado'] == '1') :  ?>
+											Aprobado
+										<?php else : ?>
+											Rechazado
+										<?php endif; ?>
+									<?php endif; ?>
+								</td>
+								<td>
 									<a class="ui button" href="<?= $direccion ?>" target="_blank">Descargar</a>
-									<a class="boton verde" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(1). '&det='.base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Aprobar</a>
-									<a class="boton rojo" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(0). '&det='.base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Rechazar</a>
+									<a class="boton verde" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(1) . '&det=' . base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Aprobar</a>
+									<a class="boton rojo" href="<?= $this->config->base_url() . 'FormularioProveedor/confirmarArte?pro=' . base64_encode($proveedor['idProveedor']) . '&cot=' . base64_encode($cotizacion['idCotizacion']) . '&ne=' . base64_encode(0) . '&det=' . base64_encode($row['idValidacionArte']); ?>" target="_blank" rel="noopener noreferrer">Rechazar</a>
 								</td>
 							</tr>
 						<?php endforeach; ?>

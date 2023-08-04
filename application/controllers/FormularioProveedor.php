@@ -503,10 +503,16 @@ class FormularioProveedor extends MY_Controller
 			$dataParaVista[$k]['title'] = $v['nombre'];
 			$st = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.cotizacionDetalle')->result_array();
 			$title = [];
+			$dataParaVista[$k]['requiereGuia'] = 1;
 			foreach ($st as $kt => $vt) {
 				if (!empty($vt['tituloParaOC'])) {
 					$title[] = $vt['tituloParaOC'];
 				}
+				if ($vt['idItemTipo'] == COD_SERVICIO['id'] || $vt['idItemTipo'] == COD_DISTRIBUCION['id']) {
+					$dataParaVista[$k]['requiereGuia'] = 0;
+				}
+				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.fechaEjecucion')->result_array();
+				
 			}
 			if (!empty($title)) {
 				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
@@ -624,6 +630,44 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function enviarCorreoValidacionDeArtes()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$post['data'] = json_decode($post['data']);
+		foreach ($post['data'] as $k => $v) {
+			$post[$k] = $v;
+		}
+
+		$df = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', '1')->get('compras.validacionArte')->result_array();
+		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
+		$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
+		if (!empty($df)) {
+			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
+			$cfg['asunto'] = 'IMPACT BUSSINESS - VALIDACIÓN DE ARCHIVOS';
+			$cfg['contenido'] = $this->load->view("email/arteGenerado", ['data' => $df, 'proveedor' => $pro, 'cotizacion' => $cot], true);
+			$this->sendEmail($cfg);
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		echo json_encode($result);
+	}
+	public function formularioEditarArte()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista['idValidacionArte'] = $post['id'];
+		// $dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar Arte';
+		$result['data']['html'] = $this->load->view("formularioProveedores/formularioEditarArte", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function formularioFechaEjecucion()
 	{
 		$result = $this->result;
@@ -647,6 +691,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['proveedor'] = $post['proveedor'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['requiereguia'] = $post['requiereguia'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroSustento", $dataParaVista, true);
@@ -686,7 +731,7 @@ class FormularioProveedor extends MY_Controller
 			foreach ($post['enlaces'] as $k => $v) {
 				if (!empty($v)) {
 					$insertArchivos = [
-						'nombre_inicial' => 'Enlace ' . ($k + 1),
+						'nombre_inicial' => 'Enlace',
 						'nombre_archivo' => $v,
 						'nombre_unico' => $v,
 						'estado' => true,
@@ -750,7 +795,83 @@ class FormularioProveedor extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+	public function editarValidacionArte()
+	{
+		$this->db->trans_start();
 
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$post['data'] = json_decode($post['data']);
+		foreach ($post['data'] as $k => $v) {
+			$post[$k] = $v;
+		}
+
+		if ($post['opcion'] == '1') {
+			if (empty($post['enlace'])) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
+			$set = [
+				'idTipoArchivo' => null,
+				'nombre_inicial' => 'Enlace',
+				'nombre_archivo' => $post['enlace'],
+				'nombre_unico' => $post['enlace'],
+				'extension' => null,
+				'flagRevisado' => 0,
+				'flagAdjunto' => 0
+			];
+			$where = [
+				'idValidacionArte'	 => $post['idValidacionArte']
+			];
+			$this->db->update('compras.validacionArte', $set, $where);
+		} else {
+			if (!isset($post['base64Adjunto'])) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
+
+			foreach ($post['base64Adjunto'] as $key => $row) {
+				$archivo = [
+					'base64' => $row,
+					'name' => $post['nameAdjunto'][$key],
+					'type' => $post['typeAdjunto'][$key],
+					'carpeta' => 'validacionArte',
+					'nombreUnico' => uniqid()
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+
+				$set = [];
+				$set = [
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'estado' => true,
+					'flagRevisado' => 0,
+					'flagAdjunto' => 1
+				];
+				$where = [
+					'idValidacionArte'	 => $post['idValidacionArte']
+				];
+				$this->db->update('compras.validacionArte', $set, $where);
+			}
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
+	}
 	public function guardarFechaEjecucion()
 	{
 		$this->db->trans_start();

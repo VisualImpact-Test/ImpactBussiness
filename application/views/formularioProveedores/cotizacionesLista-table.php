@@ -82,22 +82,17 @@
 													Indicar Fecha Ejecución
 												</a>
 											</div>
-											<!-- <div class="field">
-												<label>Fecha Inicial</label>
-												<input type="date" class="fechaIni px-0" name="fechaIni">
-											</div>
-											<div class="field">
-												<label>Fecha Final</label>
-												<input type="date" class="fechaFin px-0" name="fechaFin">
-											</div>
-											<div class="ui center floated small green button btnGuardarFecha" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
-												<i class="save icon"></i>
-											</div> -->
 										<?php else : ?>
-											<?php if ($row['fechaInicio'] == '1900-01-01') :  ?>
-												Se adjunto archivos
-											<?php else : ?>
-												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+											<?php if (!empty($row['adjuntoFechaEjecucion'])) :  ?>
+												<a class="ui button" href="<?= RUTA_WASABI . 'fechaEjecucion/' . $row['adjuntoFechaEjecucion'][0]['nombre_archivo']; ?>" target="_blank">
+												<?php endif; ?>
+												<?php if ($row['fechaInicio'] == '1900-01-01') :  ?>
+													Se adjunto archivo
+												<?php else : ?>
+													Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+												<?php endif; ?>
+												<?php if (!empty($row['adjuntoFechaEjecucion'])) :  ?>
+												</a>
 											<?php endif; ?>
 										<?php endif; ?>
 									<?php endif; ?>
@@ -110,7 +105,7 @@
 									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
 										<?php if (empty($row['sustentoC'])) :  ?>
 											<div class="ui">
-												<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+												<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>">
 													<i class="icon archive"></i>
 													Indicar Sustento
 												</a>

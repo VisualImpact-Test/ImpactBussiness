@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistroValidacionArte" method="post">
+<form class="form" role="form" id="formularioListadoDeArtes" method="post">
 	<input type="hidden" name="proveedor" value="<?= $proveedor ?>">
 	<input type="hidden" name="cotizacion" value="<?= $cotizacion ?>">
 	<div class="row">
@@ -8,23 +8,42 @@
 				<table class="ui celled table" id="listaItemsPresupuesto" width="100%" class="tabla">
 					<thead class="thead-light">
 						<tr class="row_data">
-							<th style="width: 5%;background-color: #2586da;color: white;" class="text-center header">#</th>
-							<th style="width: 50%;background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
-							<th style="width: 15%;background-color: #2586da;color: white;" class="text-center header">Opciones</th>
+							<th style="width: 5%; background-color: #2586da;color: white;" class="text-center header">#</th>
+							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
+							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Estado</th>
+							<th style="width: 15%; background-color: #2586da;color: white;" class="text-center header">Opciones</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach ($artes as $k => $row) : ?>
+							<?php if ($row['flagAdjunto'] == '1') :  ?>
+								<?php $direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+							<?php else : ?>
+								<?php $direccion = verificarEmpty($row['nombre_archivo'], 3); ?>
+							<?php endif; ?>
 							<tr class="default">
 								<td><?= $k + 1 ?></td>
 								<td><?= verificarEmpty($row['nombre_inicial'], 3) ?></td>
-								<?php if ($row['flagAdjunto'] == '1') {
-									$direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3);
-								} else {
-									$direccion = verificarEmpty($row['nombre_archivo'], 3);
-								} ?>
 								<td>
-									<a class="ui button" href="<?= $direccion ?>" target="_blank">Descargar</a>
+									<?php if ($row['flagRevisado'] == '1') :  ?>
+										<?php if ($row['flagAprobado'] == '1') :  ?>
+											<label class="ui green basic label large">Aprobado</label>
+										<?php else : ?>
+											<label class="ui red basic label large">Rechazado</label>
+										<?php endif; ?>
+									<?php else : ?>
+										<label class="ui black basic label large">Pendiente Revisión</label>
+									<?php endif; ?>
+								</td>
+								<td>
+									<a class="ui button" href="<?= $direccion ?>" target="_blank">
+										<i class="icon eye"></i>
+									</a>
+									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') :  ?>
+										<a class="ui button formEditArte" data-id="<?= $row['idValidacionArte'] ?>">
+											<i class="icon edit"></i>
+										</a>
+									<?php endif; ?>
 								</td>
 							</tr>
 						<?php endforeach; ?>
