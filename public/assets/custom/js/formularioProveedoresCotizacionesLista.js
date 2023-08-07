@@ -686,12 +686,12 @@ var FormularioProveedores = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
+				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();';
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-			location.reload();
+			
 		});
 	}
 

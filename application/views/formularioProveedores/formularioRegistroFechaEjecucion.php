@@ -22,7 +22,7 @@
 				<legend class="scheduler-border">Archivos</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<div class="form-control custom-file">
-						<input type="file" class="custom-file-input files-uploadedd file-uploadedd" lang="es" accept="image/*, .pdf">
+						<input type="file" class="custom-file-input files-uploadedd file-uploadedd" lang="es" accept=".xlsx, .pdf">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>

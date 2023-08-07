@@ -72,7 +72,9 @@
 		background-color: #555555;
 	}
 </style>
-<h3 style="margin: 0px;">Estimados, se le informa que se han subido los documentos de sustento</h3>
+<h3 style="margin: 0px;">Estimados</h3>
+<br>
+<h3 style="margin: 0px;">Se han adjuntado los sustentos del proveedor "<?= $proveedor['razonSocial']; ?>".</h3>
 <br>
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">

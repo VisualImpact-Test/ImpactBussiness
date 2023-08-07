@@ -512,7 +512,6 @@ class FormularioProveedor extends MY_Controller
 					$dataParaVista[$k]['requiereGuia'] = 0;
 				}
 				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.fechaEjecucion')->result_array();
-				
 			}
 			if (!empty($title)) {
 				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
@@ -920,7 +919,7 @@ class FormularioProveedor extends MY_Controller
 					'idCotizacion' => $post['cotizacion'],
 				];
 				$this->db->insert('compras.fechaEjecucion', $insertArchivos);
-				// $ids_insert[] = $this->db->insert_id();
+				$ids_insert[] = $this->db->insert_id();
 			}
 		}
 
@@ -929,7 +928,16 @@ class FormularioProveedor extends MY_Controller
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
 
 		$this->db->trans_complete();
+		////////////////////////////////////
+		$daC = $this->db->where_in('idFechaEjecucion', $ids_insert)->get('compras.fechaEjecucion')->result_array();
 
+		if (!empty($daC)) {
+			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
+			$cfg['asunto'] = 'IMPACT BUSSINESS - Fecha de Ejecución';
+			$cfg['contenido'] = $this->load->view("email/fechaEjecucion", ['data' => $daC, 'fechaInicial' => $post['fechaIni'], 'fechaFinal' => $post['fechaFin']], true);
+			$this->sendEmail($cfg);
+		}
+		/////////////////////////////////////
 		respuesta:
 		echo json_encode($result);
 	}
@@ -939,23 +947,32 @@ class FormularioProveedor extends MY_Controller
 		$this->db->trans_start();
 
 		$result = $this->result;
+
+		$fechaHoy = date_change_format_bd(getFechaActual());
+		$hora =  strtotime(time_change_format(getActualDateTime()));
+		$horaLimite = strtotime('12:30:00');
+		
+		$r = $this->db->where('fecha', $fechaHoy)->get('General.dbo.tiempo')->row_array();
+
+		if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 0:00 hasta las 12:30']);
+			goto respuesta;
+		}
+
+		if ($hora > $horaLimite) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 0:00 hasta las 12:30']);
+			goto respuesta;
+		}
+
 		$post = json_decode($this->input->post('data'), true);
 		$post['data'] = json_decode($post['data'], true);
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
 		}
-		// $data = [
-		// 	'fechaInicio' => $post['fechaIni'],
-		// 	'fechaFinal' => $post['fechaFin'],
-		// 	'flagRevisado' => 1,
-		// 	'flagFechaRegistro' => 1
-		// ];
-		// $where = [
-		// 	'idCotizacion' => $post['cotizacion'],
-		// 	'idProveedor' => $post['proveedor'],
-		// 	'flagAprobado' => 1
-		// ];
-		// $this->db->update('compras.validacionArte', $data, $where);
 		$this->db->update('compras.sustentoAdjunto', ['estado' => 0], ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion']]);
 		if (isset($post['base64Adjunto_g'])) {
 			foreach ($post['base64Adjunto_g'] as $key => $row) {
