@@ -181,6 +181,7 @@
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
+							<!--<button class="personal btn btn-trade-visual d-none">Añadir</button>-->
 							<div class="four wide field no-personal">
 								<div class="ui sub header">Unidad Medida</div>
 								<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
@@ -316,28 +317,32 @@
 							</div>
 						</div>
 						<!-- Personal -->
-						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?>">
+						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?>" style="border: 1px solid;padding: 15px;">
 							<div class="fields">
 								<div class="four wide field">
 									<div class="ui sub header">Cantidad</div>
-									<input value="">
+									<input value="" name="cantidad_personal">
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Cargo</div>
-									<select class="ui clearable dropdown simpleDropdown">
-										<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
+									<div class="cargo_rrhh">
+									<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal">
+										<?//=htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
 									</select>
+									</div>
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Tipo de Contrato</div>
-									<select class="ui clearable dropdown simpleDropdown">
+									<select class="" name="tipo_contrato_personal">
+										<option value="0">Seleccione</option>
 										<option value="1">Part Time</option>
 										<option value="2">Full Time</option>
 									</select>
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Pago día</div>
-									<select class="ui clearable dropdown simpleDropdown">
+									<select class="" name="pago_dia_personal">
+										<option value="0">Seleccione</option>
 										<option value="1">Trabajo Amanecida</option>
 										<option value="2">Trabajo Horario Regular</option>
 									</select>
@@ -346,23 +351,71 @@
 							<div class="fields">
 								<div class="three wide field">
 									<div class="ui sub header">Periodo de Contrato</div>
-									<select class="ui clearable dropdown simpleDropdown">
+									<select class="" id="periodo_contrato_personal" name="periodo_contrato_personal">
+										<option value="0">Seleccione</option>
 										<option value="1">Diario</option>
-										<option value="2" selected>Mensual</option>
+										<option value="2">Mensual</option>
 									</select>
 								</div>
-								<div class="four wide field">
+								<div class="four wide field cantidad_dias_personal">
 									<div class="ui sub header">Cantidad de días</div>
-									<input value="30">
+									<input value="0" id="cantidad_dias_personal" name="cantidad_dias_personal">
 								</div>
-								<div class="three wide field">
+								<div class="three wide field pago_diario_personal">
 									<div class="ui sub header">Pago diario</div>
-									<input value="34.1667">
+									<input value="0" id="pago_diario_personal" name="pago_diario_personal">
+								</div>
+								<div class="three wide field pago_mensual_personal">
+									<div class="ui sub header">Pago mensual</div>
+									<input value="0" id="pago_mensual_personal" name="pago_mensual_personal">
+								</div>
+							</div>
+							<div class="ui sub header">Estructura Salarial</div>
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">Sueldo</div>
+									<input value="" name="sueldo_personal" id="sueldo_personal">
 								</div>
 								<div class="three wide field">
-									<div class="ui sub header">Pago mensual</div>
-									<input value="1025">
+									<div class="ui sub header">Movilidad</div>
+									<input value="" name="movilidad_personal" id="movilidad_personal">
 								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Refrigerio</div>
+									<input value="" name="refrigerio_personal" id="refrigerio_personal">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Incentivo</div>
+									<input value="" name="incentivo_personal" id="incentivo_personal">
+								</div>
+							</div>
+
+							<div class="ui sub header">Cargas Sociales</div>
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">Essalud</div>
+									<input value="" name="essalud_personal" id="essalud_personal">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">CTS</div>
+									<input value="" name="cts_personal" id="cts_personal">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Vacaciones</div>
+									<input value="" name="refrigerio_personal" id="refrigerio_personal">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Gratificacion</div>
+									<input value="" name="incentivo_personal" id="incentivo_personal">
+								</div>
+							</div>
+
+							<div class="fields">
+								<div class="three wide field">
+									<div class="ui sub header">Seguro Vida Ley</div>
+									<input value="" name="essalud_personal" id="essalud_personal">
+								</div>
+								
 							</div>
 
 							<div class="fields">
@@ -372,30 +425,19 @@
 										<option value="1">SI</option>
 										<option value="2">NO</option>
 									</select>
-									<p style="margin-top: 14px;">
-									<input value="" placeholder="monto por persona">
-									</p>
 								</div>
 								<div class="four wide field">
+									<input value="" placeholder="monto por persona" style="margin-top: 15px;">
+								</div>
+								<div class="three wide field">
 									<div class="ui sub header">Equipos de seguridad</div>
 									<select class="ui clearable dropdown simpleDropdown">
 										<option value="1">SI</option>
 										<option value="2">NO</option>
 									</select>
-									<p style="margin-top: 14px;">
-									<input value="" placeholder="monto por persona">
-									</p>
 								</div>
 								<div class="three wide field">
-									<div class="ui sub header">FAJAS</div>
-									<input value="0">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">UNIFORMES</div>
-									<select class="ui clearable dropdown simpleDropdown">
-										<option value="1">SI</option>
-										<option value="2">NO</option>
-									</select>
+									<input value="" placeholder="monto por persona" style="margin-top: 15px;">
 								</div>
 							</div>
 						</div>
@@ -513,7 +555,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="sixteen wide tablet four wide computer column no-personal">
+					<div class="sixteen wide tablet four wide computer column">
 						<div class="fields ">
 							<div class="sixteen wide field">
 								<div class="ui sub header">
