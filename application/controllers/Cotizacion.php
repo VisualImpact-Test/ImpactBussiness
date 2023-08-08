@@ -3997,4 +3997,59 @@ class Cotizacion extends MY_Controller
 		}
 		echo $html;
 	}
+
+	public function cargos(){
+		$data =  json_decode($this->input->post('data'), true);
+		$idCuenta = $data['idCuenta'];
+		$idCentro = $data['idCentro'];
+		$result = $this->result;
+		
+		$data = $this->model->obtener_cargos($idCentro)->result_array();
+		$html = '<select class="ui clearable dropdown simpleDropdown" id="cargo_personal">';
+		$html.= '<option value="0">Seleccione</option>';
+		foreach ($data as $row) {
+			$html.= '<option value="'.$row['idCargoTrabajo'].'">'.$row['nombre'].'</option>';
+		}
+		$html.="</select>";
+		
+		$result['result'] = 1;
+		$result['data'] = $html;
+
+		echo json_encode($result);
+	}
+
+	public function obtener_sueldos(){
+		$data =  json_decode($this->input->post('data'), true);
+
+		$idCuenta = $data['idCuenta'];
+		$idCentro = $data['idCentro'];
+		$idCargo = $data['idCargo'];
+		$result = $this->result;
+		
+		$data = $this->model->obtener_sueldos($idCuenta,$idCentro,$idCargo)->result_array();
+		$total = count($data);
+		$sueldo=0;
+		$movilidad=0;
+		$refrigerio=0;
+		$incentivo=0;
+		$tipo_cargo_sueldo=0;
+		if($total==1){
+			foreach ($data as $row) {
+				$tipo_cargo_sueldo =0;
+				$sueldo =$row['sueldo'];
+				$movilidad =$row['movilidad'];
+				$refrigerio =$row['refrigerio'];
+				$incentivo =$row['comisionFija'];
+			}
+		}
+		
+		$result['result'] = 1;
+		$result['tipo_cargo_sueldo'] = $tipo_cargo_sueldo;
+		$result['sueldo'] = $sueldo;
+		$result['refrigerio'] = $refrigerio;
+		$result['movilidad'] = $movilidad;
+		$result['incentivo'] = $incentivo;
+
+		echo json_encode($result);
+	}
 }

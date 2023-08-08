@@ -2197,4 +2197,24 @@ class M_Cotizacion extends MY_Model
 
 		return $this->db->get();
 	}
+
+	public function obtener_cargos($idCentro){
+		$sql = "
+			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where idArea IN (
+				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
+			) AND flag=1
+		";
+		return $this->db->query($sql);
+	}
+
+	public function obtener_sueldos($idCuenta,$idCentro,$idCargo){
+		$sql="
+			SELECT * FROM rrhh.dbo.sueldo WHERE idCargoTrabajo =$idCargo AND idSubcanal IN (
+				SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
+			)
+			AND idEmpresa=$idCuenta
+		";
+
+		return $this->db->query($sql);
+	}																																			 
 }

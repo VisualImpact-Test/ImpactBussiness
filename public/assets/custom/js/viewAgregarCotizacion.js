@@ -552,8 +552,9 @@ var Cotizacion = {
 
 			if (idTipo == COD_DISTRIBUCION.id) {
 				$('.no-personal').removeClass('d-none');
-				$('.columna_itemss').addClass('twelve');
+											
 				$('.cantidadForm').val('0');
+				$('.personal').addClass('d-none');
 				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
 					++modalId;
 					let btn = [];
@@ -617,11 +618,26 @@ var Cotizacion = {
 
 			} else if (idTipo == 5) {
 				$('.no-personal').addClass('d-none');
-				$('.columna_itemss').removeClass('twelve');
+				$('.personal').removeClass('d-none');
 				$('.cantidadForm').val('1');
+				var idCuenta = $('#cuentaForm').val();
+				var idCentro = $('#cuentaCentroCostoForm').val();
+				//////////////////
+				var data = {'idCuenta':idCuenta,'idCentro':idCentro};
+				
+				var jsonString = { 'data': JSON.stringify(data) };
+				var url = Cotizacion.url + 'cargos';
+				var config = { url: url, data: jsonString };
+
+				$.when(Fn.ajax(config)).then(function (a) {
+					console.log(a);
+					$('.cargo_rrhh').html(a.data);
+				});
+				//////////////////
+
 			} else {
 				$('.no-personal').removeClass('d-none');
-				$('.columna_itemss').addClass('twelve');
+				$('.personal').addClass('d-none');
 				$('.cantidadForm').val('0');
 				
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -646,6 +662,44 @@ var Cotizacion = {
 
 			
 		});
+		
+		$(document).on('change','#periodo_contrato_personal', function(e){
+			e.preventDefault();
+			var id=$(this).val()
+			var idCuenta = $('#cuentaForm').val();
+			var idCentro = $('#cuentaCentroCostoForm').val();
+			var idCargo = $('#cargo_personal').val();
+		
+			var data = {'idCuenta':idCuenta,'idCentro':idCentro,'idCargo':idCargo };
+			if(id==2){
+				$('.cantidad_dias_personal').hide();
+				$('.pago_diario_personal').hide();
+		
+				var jsonString = { 'data': JSON.stringify(data) };
+				var url = Cotizacion.url + 'obtener_sueldos';
+				var config = { url: url, data: jsonString };
+
+				$.when(Fn.ajax(config)).then(function (a) {
+					console.log(a);
+					$('#sueldo_personal').val(a.sueldo);
+					$('#movilidad_personal').val(a.movilidad);
+					$('#incentivo_personal').val(a.incentivo);
+					$('#refrigerio_personal').val(a.refrigerio);
+					$('#pago_mensual_personal').val(a.sueldo);
+
+					
+				});
+			}else if(id==1){
+				$('.cantidad_dias_personal').show();
+				$('.pago_diario_personal').show();
+				$('#pago_mensual_personal').val(0);
+			}
+			
+	});
+
+	$("#pago_mensual_personal").on( "keyup", function() {
+		//alert("Handler for `keyup` called.");
+	});
 
 		$(document).on('change', '#prioridadForm', function (e) {
 			let prioridad = $(this).val();
