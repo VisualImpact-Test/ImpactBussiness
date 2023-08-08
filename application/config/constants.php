@@ -94,7 +94,7 @@ defined('RUTA_BAT')            or define('RUTA_BAT', 'C:\wamp64\bin\php\php7.1.3
 
 //WASABI
 defined('RUTA_WASABI')         or define('RUTA_WASABI', 'https://s3.us-central-1.wasabisys.com/impact.business/');
-defined('FILES_WASABI')         or define('FILES_WASABI', [
+defined('FILES_WASABI')        or define('FILES_WASABI', [
     'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
     'vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
     'vnd.ms-excel' => 'xls',
@@ -106,7 +106,7 @@ defined('FILES_WASABI')         or define('FILES_WASABI', [
     'xml' => 'xml',
     'x-zip-compressed' => 'zip'
 ]);
-defined('FILES_TIPO_WASABI')         or define('FILES_TIPO_WASABI', [
+defined('FILES_TIPO_WASABI') or define('FILES_TIPO_WASABI', [
     'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => '6',
     'vnd.openxmlformats-officedocument.presentationml.presentation' => '5',
     'vnd.ms-excel' => '6',

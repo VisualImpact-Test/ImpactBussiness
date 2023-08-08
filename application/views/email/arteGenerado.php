@@ -94,7 +94,7 @@
 								<td><?= $key + 1 ?></td>
 								<td><?= verificarEmpty($row['nombre_inicial'], 3) ?></td>
 								<?php if ($row['flagAdjunto'] == '1') {
-									$direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3);
+									$direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3) . '?response-content-disposition=attachment';
 								} else {
 									$direccion = verificarEmpty($row['nombre_archivo'], 3);
 								} ?>

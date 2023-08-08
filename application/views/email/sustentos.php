@@ -115,7 +115,7 @@
 									<?= $tt; ?>
 								</td>
 								<td><?= verificarEmpty($row['nombre_inicial'], 3) ?></td>
-								<?php $direccion = RUTA_WASABI . 'sustento' . $tt . '/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+								<?php $direccion = RUTA_WASABI . 'sustento' . $tt . '/' . verificarEmpty($row['nombre_archivo'], 3) . '?response-content-disposition=attachment'; ?>
 								<td>
 									<a class="ui button" href="<?= $direccion ?>" target="_blank">Descargar</a>
 								</td>
