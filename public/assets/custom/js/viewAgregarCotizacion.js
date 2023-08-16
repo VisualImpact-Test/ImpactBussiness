@@ -857,7 +857,7 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id) {
+			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id && tipoItem.val() != COD_TRANSPORTE.id) {
 				gapForm.val(GAP_MINIMO);
 			}
 
@@ -1106,7 +1106,7 @@ var Cotizacion = {
 
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 			//Si el monto es mayor a 1500, el gap no puede ser menor al 15%
-			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id) {
+			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id && tipoItem.val() != COD_TRANSPORTE.id) {
 				thisControl.val(GAP_MINIMO).trigger('keyup');
 				$("#nagGapValidacion").nag({
 					persist: true
