@@ -630,16 +630,31 @@ var Cotizacion = {
 				var idCuenta = $('#cuentaForm').val();
 				var idCentro = $('#cuentaCentroCostoForm').val();
 				//////////////////
-				var data = { 'idCuenta': idCuenta, 'idCentro': idCentro };
+				if(idCuenta!='' && idCentro!=''){
+					var data = {'idCuenta':idCuenta,'idCentro':idCentro};
+					var jsonString = { 'data': JSON.stringify(data) };
+					var url = Cotizacion.url + 'cargos';
+					var config = { url: url, data: jsonString };
+					$.when(Fn.ajax(config)).then(function (a) {
+						console.log(a);
+						$('.cargo_rrhh').html(a.data);
+					});
+				}else{
+					let btn = [];
+					let fn = [];
+					let message = Fn.message(
+					{
+						type: 3,
+						message: 'SELECCIONE LA CUENTA Y CENTRO DE COSTO'
+					});
+					fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+					btn[0] = { title: 'Aceptar', fn: fn[0]};
 
-				var jsonString = { 'data': JSON.stringify(data) };
-				var url = Cotizacion.url + 'cargos';
-				var config = { url: url, data: jsonString };
+					Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
+										
+												
 
-				$.when(Fn.ajax(config)).then(function (a) {
-					console.log(a);
-					$('.cargo_rrhh').html(a.data);
-				});
+				}
 				//////////////////
 
 			} else if (idTipo == COD_TRANSPORTE.id) {
@@ -688,18 +703,19 @@ var Cotizacion = {
 
 		});
 
-		$(document).on('change', '#periodo_contrato_personal', function (e) {
+		$(document).on('change','#periodo_contrato_personal', function(e){
 			e.preventDefault();
-			var id = $(this).val()
+			var id=$(this).val()
 			var idCuenta = $('#cuentaForm').val();
 			var idCentro = $('#cuentaCentroCostoForm').val();
 			var idCargo = $('#cargo_personal').val();
-
-			var data = { 'idCuenta': idCuenta, 'idCentro': idCentro, 'idCargo': idCargo };
-			if (id == 2) {
-				$('.cantidad_dias_personal').hide();
-				$('.pago_diario_personal').hide();
-
+		
+			var cantidad = $('#cantidad_personal').val()
+			var data = {'idCuenta':idCuenta,'idCentro':idCentro,'idCargo':idCargo };
+			if(id==2){
+				$('.cantidad_dias').hide();
+				$('.pago_diario').hide();
+		
 				var jsonString = { 'data': JSON.stringify(data) };
 				var url = Cotizacion.url + 'obtener_sueldos';
 				var config = { url: url, data: jsonString };
@@ -711,20 +727,68 @@ var Cotizacion = {
 					$('#incentivo_personal').val(a.incentivo);
 					$('#refrigerio_personal').val(a.refrigerio);
 					$('#pago_mensual_personal').val(a.sueldo);
+					$('#asignacion_familiar_personal').val(a.asignacionFamiliar);
 
-
+					var essalud;
+					var cts;
+					var vacaciones;
+					var gratificacion;
+					var seguroVidaLey;
+					if(a.sueldo<1025){
+						essalud = 1025*0.09;
+					}else{
+						essalud = a.sueldo*0.09;
+					}
+					cts=a.sueldo*0.097;
+					vacaciones=a.sueldo*0.091;
+					gratificacion=a.sueldo*0.1820;
+					seguroVidaLey=a.sueldo*0.0026;
+					$('#essalud_personal').val(essalud);		
+					$('#vacaciones_personal').val(vacaciones);		
+					$('#cts_personal').val(cts);		
+					$('#gratificacion_personal').val(gratificacion);	
+					$('#seguro_vida_personal').val(gratificacion);	
 				});
-			} else if (id == 1) {
-				$('.cantidad_dias_personal').show();
-				$('.pago_diario_personal').show();
+				
+			}else if(id==1){
+				$('.cantidad_dias').show();
+				$('.pago_diario').show();
 				$('#pago_mensual_personal').val(0);
 			}
 
-		});
+			var id=$(this).val()
+			var cantidad = $('#cantidad_personal').val();
+		
+			var data_adicional = {'id':id,'cantidad':cantidad };
+			
+			var jsonString = { 'data': JSON.stringify(data_adicional) };
+			var url = Cotizacion.url + 'obtener_conceptos_adicionales';
+			var config = { url: url, data: jsonString };
 
-		$("#pago_mensual_personal").on("keyup", function () {
-			//alert("Handler for `keyup` called.");
-		});
+			$.when(Fn.ajax(config)).then(function (a) {
+				console.log(a);
+				$('.campos_adicionales').html(a.data)
+
+			});
+		
+	});
+
+	$("#cantidad_dias_personal").on( "keyup", function() {
+		 var dias = $(this).val();
+		 var pago = $('#pago_diario_personal').val();
+		var total = dias*pago;
+		 $('#pago_mensual_personal').val(total);
+		 $('#sueldo_personal').val(total);
+	});
+
+	$("#pago_diario_personal").on( "keyup", function() {
+		var dias = $("#cantidad_dias_personal").val();
+		var pago = $(this).val();
+	   var total = dias*pago;
+		$('#pago_mensual_personal').val(total);
+		$('#sueldo_personal').val(total);
+   });
+	
 
 		$(document).on('change', '#prioridadForm', function (e) {
 			let prioridad = $(this).val();
