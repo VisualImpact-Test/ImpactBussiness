@@ -300,6 +300,10 @@ var View = {
 				e.preventDefault();
 			}
 		});
+		$(document).on('keyup', '.keyUpChange', function (e) {
+			let control = $(this);
+			control.change();
+		});
 
 		$('.navbar-toggler').click(function (e) {
 			e.preventDefault();

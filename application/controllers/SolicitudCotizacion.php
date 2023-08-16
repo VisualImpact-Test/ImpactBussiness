@@ -128,6 +128,39 @@ class SolicitudCotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+	public function formCotizacionTransporteSincerado()
+	{
+		$result = $this->result;
+		$idCotizacion = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+
+		$dataParaVista['cotizacion'] = $this->db->where('idCotizacion', $idCotizacion)->get('compras.cotizacion')->row_array();
+		// Add Cuenta y CentroCosto
+		$coti = $dataParaVista['cotizacion'];
+		$dataParaVista['cotizacion']['cuenta'] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $coti['idCuenta']])->row_array()['nombre'];
+		$dataParaVista['cotizacion']['centroCosto'] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $coti['idCentroCosto']])->row_array()['subcanal'];
+
+		$dataParaVista['cotizacionDetalle'] = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $coti['idCotizacion']])->result_array();
+
+		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
+			$dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
+		}
+
+		$depPro = $this->db->get('General.dbo.ubigeo')->result_array();
+		foreach ($depPro as $k => $v) {
+			$dataParaVista['depPro'][$v['cod_departamento']][$v['cod_provincia']] = $v;
+		}
+
+		$tipoServicioUbigeo = $this->db->get('compras.tipoServicioUbigeo')->result_array();
+		foreach ($tipoServicioUbigeo as $k => $v) {
+			$dataParaVista['tipoServicioUbigeo'][$v['idTipoServicioUbigeo']] = $v;
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Sincerado Cotización Transporte';
+		$result['msg']['content'] = $this->load->view("modulos/SolicitudCotizacion/formularioRegistroSincerado", $dataParaVista, true);
+		echo json_encode($result);
+	}
 
 	public function formularioSolicitudCotizacionfecha()
 	{
@@ -460,7 +493,7 @@ class SolicitudCotizacion extends MY_Controller
 		foreach ($data as $k => $v) {
 			$itm = $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array();
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('A' . $nIni, $itm['nombre'].' - '.$itm['caracteristicas'])
+				->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
 				->setCellValue('B' . $nIni, $v['cantidad'])
 				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
 				->setCellValue('D' . $nIni, moneda($v['costo']))
@@ -1280,6 +1313,42 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['idOper'] = $idOper;
 		$config['view'] = 'modulos/SolicitudCotizacion/viewFormularioGenerarOrdenCompra';
 		$this->view($config);
+	}
+	public function registrarSincerado()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$post['cotizacionDetalleSub'] = checkAndConvertToArray($post['cotizacionDetalleSub']);
+
+		$dataInsert = [];
+		foreach ($post['cotizacionDetalleSub'] as $k => $v) {
+			$dataInsert[] = [
+				'idCotizacionDetalleSub' => $v,
+				'costo' => $post["costo[$v]"],
+				'dias' => $post["dias[$v]"],
+				'cantidad' => $post["cantidad[$v]"],
+				'idUsuario' => $this->idUsuario,
+				'fechaReg' => getActualDateTime()
+			];
+		}
+		if (!empty($dataInsert)) {
+			$this->db->insert_batch('compras.cotizacionDetalleSubSincerado', $dataInsert);
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Registro Sincerado';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+			$this->db->update('compras.cotizacion', ['idCotizacionEstado' => 4], ['idCotizacion' => $post['idCotizacion']]);
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Registro Sincerado';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		}
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
 	}
 
 	public function registrarOrdenCompra()

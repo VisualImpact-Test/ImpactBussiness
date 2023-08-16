@@ -523,6 +523,7 @@ class FormularioProveedor extends MY_Controller
 				$dataParaVista[$k]['status'] = 'Solicitado';
 			} else {
 				$cotDetPro = $this->db->where('estado', '1')->where('idCotizacionDetalleProveedor', $v['idCotizacionDetalleProveedor'])->get('compras.cotizacionDetalleProveedorDetalle')->result_array();
+				$dd = [];
 				foreach ($cotDetPro as $kcd => $vcd) {
 					$dd[] = $vcd['idCotizacionDetalle'];
 				}
@@ -540,6 +541,7 @@ class FormularioProveedor extends MY_Controller
 							$dataParaVista[$k]['status'] = 'Por confirmar';
 						}
 					} else {
+						$dd2 = [];
 						foreach ($ocd as $k1 => $v1) {
 							$dd2[] = $v1['idOrdenCompra'];
 						}

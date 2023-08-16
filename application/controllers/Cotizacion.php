@@ -502,6 +502,9 @@ class Cotizacion extends MY_Controller
 			if ($post['cantidadForm'][$k] > LIMITE_COMPRAS) {
 				$post['cotizacionInternaForm'][$k] = 1;
 			}
+			if ($post['tipoItemForm'][$k] == COD_TRANSPORTE['id']) {
+				$post['cotizacionInternaForm'][$k] = 0;
+			}
 
 			$data['insert'][] = [
 				'idCotizacion' => $insert['id'],
@@ -543,9 +546,12 @@ class Cotizacion extends MY_Controller
 			switch ($post['tipoItemForm'][$k]) {
 				case COD_TRANSPORTE['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
-						'nombre' => $post["nombreSubItemForm[$k]"],
-						'costo' => $post["costoSubItemForm[$k]"],
-						'subTotal' => $post["costoSubItemForm[$k]"],
+						'cod_departamento' => $post["departamentoTransporte[$k]"],
+						'cod_provincia' => $post["provinciaTransporte[$k]"],
+						'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
+						'costo' => $post["costoClienteTransporte[$k]"],
+						'dias' => $post["diasTransporte[$k]"],
+						'cantidad' => $post["cantidadTransporte[$k]"],
 					]);
 					break;
 
@@ -575,39 +581,6 @@ class Cotizacion extends MY_Controller
 						];
 						$n++;
 					}
-
-					/**
-					$data['subDetalle'][$k] = [];
-					foreach ($post["cantidadSubItemNro[$k]"] as $kdr => $vdr) {
-						// Validar si existe el Item Logistica
-						$idItemLogistica = '';
-						$itemInterno = 0;
-						if (!is_numeric($post["itemLogisticaFormNew[$k]"][$kdr])) {
-							$getItem = $this->db->where('nombre', $post["itemLogisticaFormNew[$k]"][$kdr])->get('compras.item')->row_array();
-							$itemInterno = 1;
-							if (empty($getItem)) {
-								$this->db->insert('compras.item', [
-									'nombre' => $post["itemLogisticaFormNew[$k]"][$kdr],
-									'idItemTipo' => COD_ARTICULO['id'],
-									'idCuenta' => $post['cuentaForm']
-								]);
-								$idItemLogistica = $this->db->insert_id();
-							} else {
-								$idItemLogistica = $getItem['idItem'];
-							}
-						} else {
-							$idItemLogistica = $post["itemLogisticaFormNew[$k]"][$kdr];
-						}
-						// FIN: Validar si existe el Item Logistica
-						$data['subDetalle'][$k][] = [
-							'cantidad' => $vdr, //$post["cantidadSubItemNro[$k]"][$kdr],
-							'idItemLogistica' => $idItemLogistica, //$post["itemLogisticaFormNew[$k]"][$kdr],
-							'cantidadReal' => $post["cantidadRealSubItem[$k]"][$kdr],
-							'peso' => $post["cantidadSubItemDistribucion[$k]"][$kdr],
-							'flagItemInterno' => $itemInterno,
-						];
-					}
-					 */
 					break;
 
 				case COD_TEXTILES['id']:
@@ -652,16 +625,16 @@ class Cotizacion extends MY_Controller
 					'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 					'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
-					// TODO
-					// Los acabo de agregar e.e ... checando ... si vez este mensaje borralo
 					'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
 					'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 					'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 					'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 					'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
-					//
 					'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 					'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : 0,
+					'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : 0,
+					'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : 0,
+					'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : 0,
 				];
 			}
 
@@ -1346,6 +1319,34 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
+	public function getAllProvincias() {
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia as value, provincia as name')->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
+		$provincias = [];
+		foreach ($data as $k => $v) {
+			$provincias[$v['cod_departamento']][] = $v;
+		}
+		echo json_encode($provincias);
+	}
+	public function getAllTiposDeTransporte() {
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
+		->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+		
+		$tarifarioZona = [];
+		foreach ($data as $k => $v) {
+			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][] = $v;
+		}
+		echo json_encode($tarifarioZona);
+	}
+	public function getAllCostoPorTipoDeTransporte() {
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
+		->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+		
+		$tarifarioZona = [];
+		foreach ($data as $k => $v) {
+			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][$v['idTipoServicioUbigeo']][] = $v;
+		}
+		echo json_encode($tarifarioZona);
+	}
 	public function procesarTablaDatosDistribucion()
 	{
 		$result = $this->result;

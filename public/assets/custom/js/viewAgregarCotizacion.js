@@ -210,6 +210,9 @@ var Cotizacion = {
 	pesosRealesTemp: [],
 	pesosTemp: [],
 	almacenTemp: null,
+	provincias: [],
+	tipoTransporte: [],
+	costosTransportes: [],
 	// solicitanteData: [],
 
 	load: function () {
@@ -538,7 +541,7 @@ var Cotizacion = {
 			let control = $(this);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
-			
+
 			let allFeatures = parent.find(`.div-features`);
 			let divFeature = parent.find(`.div-feature-${idTipo}`);
 
@@ -550,9 +553,13 @@ var Cotizacion = {
 			let buscado2 = idRepetido2.find("#distribucion2");
 			let elementoBuscado2 = buscado2.data('id');
 
+			// EN CASO NO SEA TRANSPORTE QUITAR LA ETIQUETA DE OBLIGATORIO
+			allFeatures.find('input.formTransporte').removeAttr("patron");
+			allFeatures.find('div.formTransporte').find('select').removeAttr("patron");
+
 			if (idTipo == COD_DISTRIBUCION.id) {
 				$('.no-personal').removeClass('d-none');
-											
+
 				$('.cantidadForm').val('0');
 				$('.personal').addClass('d-none');
 				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
@@ -616,15 +623,15 @@ var Cotizacion = {
 
 				Cotizacion.cleanDetalle(parent);
 
-			} else if (idTipo == 5) {
+			} else if (idTipo == COD_PERSONAL.id) {
 				$('.no-personal').addClass('d-none');
 				$('.personal').removeClass('d-none');
 				$('.cantidadForm').val('1');
 				var idCuenta = $('#cuentaForm').val();
 				var idCentro = $('#cuentaCentroCostoForm').val();
 				//////////////////
-				var data = {'idCuenta':idCuenta,'idCentro':idCentro};
-				
+				var data = { 'idCuenta': idCuenta, 'idCentro': idCentro };
+
 				var jsonString = { 'data': JSON.stringify(data) };
 				var url = Cotizacion.url + 'cargos';
 				var config = { url: url, data: jsonString };
@@ -635,11 +642,29 @@ var Cotizacion = {
 				});
 				//////////////////
 
+			} else if (idTipo == COD_TRANSPORTE.id) {
+				if (Cotizacion.provincias = []) {
+					$.post(site_url + Cotizacion.url + 'getAllProvincias', {}, function (d) {
+						Cotizacion.provincias = jQuery.parseJSON(d);
+					});
+				}
+				if (Cotizacion.tipoTransporte = []) {
+					$.post(site_url + Cotizacion.url + 'getAllTiposDeTransporte', {}, function (d) {
+						Cotizacion.tipoTransporte = jQuery.parseJSON(d);
+					});
+				}
+				if (Cotizacion.costosTransportes = []) {
+					$.post(site_url + Cotizacion.url + 'getAllCostoPorTipoDeTransporte', {}, function (d) {
+						Cotizacion.costosTransportes = jQuery.parseJSON(d);
+					});
+				}
+				allFeatures.find('input.formTransporte').attr("patron", "requerido");
+				allFeatures.find('div.formTransporte').find('select').attr("patron", "requerido");
 			} else {
 				$('.no-personal').removeClass('d-none');
 				$('.personal').addClass('d-none');
 				$('.cantidadForm').val('0');
-				
+
 				(parent.find('.cCompras')).removeClass('d-none');
 				(parent.find('.cantPDV')).addClass('d-none');
 
@@ -660,21 +685,21 @@ var Cotizacion = {
 			divFeature.removeClass('d-none');
 			$("input").remove("#identificador");
 
-			
+
 		});
-		
-		$(document).on('change','#periodo_contrato_personal', function(e){
+
+		$(document).on('change', '#periodo_contrato_personal', function (e) {
 			e.preventDefault();
-			var id=$(this).val()
+			var id = $(this).val()
 			var idCuenta = $('#cuentaForm').val();
 			var idCentro = $('#cuentaCentroCostoForm').val();
 			var idCargo = $('#cargo_personal').val();
-		
-			var data = {'idCuenta':idCuenta,'idCentro':idCentro,'idCargo':idCargo };
-			if(id==2){
+
+			var data = { 'idCuenta': idCuenta, 'idCentro': idCentro, 'idCargo': idCargo };
+			if (id == 2) {
 				$('.cantidad_dias_personal').hide();
 				$('.pago_diario_personal').hide();
-		
+
 				var jsonString = { 'data': JSON.stringify(data) };
 				var url = Cotizacion.url + 'obtener_sueldos';
 				var config = { url: url, data: jsonString };
@@ -687,19 +712,19 @@ var Cotizacion = {
 					$('#refrigerio_personal').val(a.refrigerio);
 					$('#pago_mensual_personal').val(a.sueldo);
 
-					
+
 				});
-			}else if(id==1){
+			} else if (id == 1) {
 				$('.cantidad_dias_personal').show();
 				$('.pago_diario_personal').show();
 				$('#pago_mensual_personal').val(0);
 			}
-			
-	});
 
-	$("#pago_mensual_personal").on( "keyup", function() {
-		//alert("Handler for `keyup` called.");
-	});
+		});
+
+		$("#pago_mensual_personal").on("keyup", function () {
+			//alert("Handler for `keyup` called.");
+		});
 
 		$(document).on('change', '#prioridadForm', function (e) {
 			let prioridad = $(this).val();
@@ -1696,6 +1721,12 @@ var Cotizacion = {
 			let gen_nuevo = childInserted.find('#genero .item-4');
 			gen_nuevo.before('<option class="item-5" value="">seleccione</option>');
 			gen_nuevo.remove('option');
+
+			if (tipo == COD_TRANSPORTE.id) {
+				$('.simpleDropdown').dropdown();
+				data = parent.find('.content-body-sub-item').find('.body-sub-item').last().wrap('<p/>').parent();
+				data.find('.simpleDropdown').dropdown('clear');
+			}
 		});
 		$(document).on('click', '.btn-add-sub-item2', function () {
 			let control = $(this);
@@ -2105,6 +2136,78 @@ var Cotizacion = {
 			}
 
 		});
+	},
+	buscarProvincias: function (t) {
+		let control = $(t);
+		let div = control.closest('.body-sub-item');
+		let dep = control.val();
+
+		let cbP = div.find('.provT');
+
+		$(cbP).dropdown("destroy");
+		let arData = Cotizacion.provincias[dep];
+		$(cbP).dropdown({ values: arData });
+		$(cbP).dropdown("refresh");
+	},
+	buscarTipoTransporte: function (t) {
+		let control = $(t);
+		let div = control.closest('.body-sub-item');
+		let dep = div.find('.depT').dropdown('get value');
+		let pro = div.find('.provT').dropdown('get value');
+
+		let cb = div.find('.tipoT');
+
+		$(cb).dropdown("destroy");
+		$(cb).dropdown("remove selected");
+		let arData = Cotizacion.tipoTransporte?.[dep]?.[pro];
+		if (typeof arData === "undefined") {
+			arData = [];
+		}
+		$(cb).dropdown({ values: arData });
+		$(cb).dropdown("refresh");
+
+	},
+	buscarCosto: function (t) {
+		let control = $(t);
+		let div = control.closest('.body-sub-item');
+		let dep = div.find('.depT').dropdown('get value');
+		let pro = div.find('.provT').dropdown('get value');
+		let ttr = div.find('.tipoT').dropdown('get value');
+		console.log(dep);
+		console.log(pro);
+		console.log(ttr);
+
+		let inp = div.find('.inpCosto');
+		console.log(Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]);
+
+		let data = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.costoCliente;
+		if (typeof data === "undefined") {
+			data = 0;
+		}
+		$(inp).val(data).change();
+
+	},
+	calcularValorTransporte: function (t) {
+		control = $(t);
+		control.closest('.body-item').find('.cantidadForm').val('1');
+
+		divFeature = control.closest('.div-feature-' + COD_TRANSPORTE.id);
+
+		costoCliente = divFeature.find('.costoCliente_transporte');
+		cantidadDias = divFeature.find('.dias_transporte');
+		cantidadMoviles = divFeature.find('.cantidad_transporte');
+
+		let vt = 0;
+		for (let i = 0; i < costoCliente.length; i++) {
+			cc = $(costoCliente[i]).val();
+			cd = $(cantidadDias[i]).val();
+			cm = $(cantidadMoviles[i]).val();
+
+			vt += parseFloat(Number(cc)) * parseFloat(Number(cd)) * parseFloat(Number(cm));
+		}
+		control.closest('.body-item').find('.costoForm').val(vt.toFixed(2));
+		control.closest('.body-item').find('.cantidadForm').keyup();
+
 	},
 	procesarTablaConDatos: function (idModalHT) {
 		var data = Fn.formSerializeObject('formCargaMasiva');
@@ -2852,7 +2955,16 @@ var Cotizacion = {
 		let proveedorDistribucion = parent.find('.proveedorDistribucionSubItem').find('select');
 		let cantidadReal = parent.find('.cantidadRealSubItem');
 		let costoSubItem = parent.find('.costoSubItem');
-		let costoSubItemForm = parent.find('.costoSubItemForm');
+		// let costoSubItemForm = parent.find('.costoSubItemForm');
+
+		// TRANSPORTE
+		let departamentoF = parent.find('.departamento_transporte').find('select');
+		let provinciaF = parent.find('.provincia_transporte').find('select');
+		let tipoTransporteF = parent.find('.tipoTransporte_transporte').find('select');
+		let costoClienteF = parent.find('.costoCliente_transporte');
+		let diasF = parent.find('.dias_transporte');
+		let cantidadF = parent.find('.cantidad_transporte');
+		// FIN: TRANSPORTE
 
 		let idCotizacionDetalle = parent.find('.idCotizacionDetalleSubForm');
 
@@ -2885,8 +2997,17 @@ var Cotizacion = {
 		proveedorDistribucion.attr('name', `proveedorDistribucionSubItem[${number}]`);
 		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
-		costoSubItemForm.attr('name', `costoSubItemForm[${number}]`);
+		// costoSubItemForm.attr('name', `costoSubItemForm[${number}]`);
 		idCotizacionDetalle.attr('name', `idCotizacionDetalleSub[${number}]`);
+
+		// TRANSPORTE
+		departamentoF.attr('name', `departamentoTransporte[${number}]`);
+		provinciaF.attr('name', `provinciaTransporte[${number}]`);
+		tipoTransporteF.attr('name', `tipoTransporte[${number}]`);
+		costoClienteF.attr('name', `costoClienteTransporte[${number}]`);
+		diasF.attr('name', `diasTransporte[${number}]`);
+		cantidadF.attr('name', `cantidadTransporte[${number}]`);
+		// FIN: TRANSPORTE
 	},
 
 	cleanDetalle: (parent) => {

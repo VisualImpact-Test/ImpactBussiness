@@ -173,6 +173,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['ocGenerado']) ? ($params['ocGenerado'] != '0' ? " AND p.idCotizacionEstado < 8 " : '') : '';
 		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
+		$codTransporte = COD_TRANSPORTE['id'];
 		$sql = "
 			DECLARE @hoy DATE = GETDATE();
 			WITH lst_historico_estado AS (
@@ -218,6 +219,7 @@ class M_Cotizacion extends MY_Model
 				, p.montoOrdenCompra
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = $codTransporte) cantidadTransporte
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
@@ -690,7 +692,7 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
-						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL,
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
@@ -707,6 +709,10 @@ class M_Cotizacion extends MY_Model
 						//
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : '0',
 						'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : '0',
+						//
+						'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : null,
+						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : null,
+						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
 					];
 				}
 			}

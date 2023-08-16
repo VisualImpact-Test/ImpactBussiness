@@ -462,6 +462,28 @@ var SolicitudCotizacion = {
 			});
 		});
 
+		$(document).on('click', '.btnSinceradoTransporte', function () {
+			let id = $(this).data('id');
+
+			var jsonString = { 'data': JSON.stringify(id) };
+			var config = { url: SolicitudCotizacion.url + 'formCotizacionTransporteSincerado', data: jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				if (a.result === 2) return false;
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+				// if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarCotizacion").click();';
+				var btn = [];
+				btn[0] = { title: 'Cerrar', fn: fn };
+				if (a.result == 1) {
+					// fn += 'Fn.showModal({ id:' + modalId + ',show:false });';
+					fn1 = 'Fn.showConfirm({ idForm: "formRegistroSincerado", fn: "SolicitudCotizacion.registrarSincerado()", content: "¿Esta seguro de guardar la información indicada?" });';
+					btn[1] = {title: 'Guardar', fn: fn1}
+				}
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content, width: '80%' });
+			});
+		});
+
 		$(document).on('click', '.btn-consultarMultiple', function () {
 			++modalId;
 
@@ -681,7 +703,16 @@ var SolicitudCotizacion = {
 			});
 		});
 	},
+	calcularSubTotalTransporte: function (t) {
+		let control = $(t);
+		let costo = control.closest('tr').find('.costoTransporte').val();
+		let dias = control.closest('tr').find('.diasTransporte').val();
+		let cantidad = control.closest('tr').find('.cantidadTransporte').val();
 
+		let subTotal = parseFloat(costo) * parseFloat(dias) * parseFloat(cantidad);
+
+		control.closest('tr').find('.subtotalTransporte').html(subTotal);
+	},
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
 		formValues.tipoRegistro = tipoRegistro;
@@ -723,7 +754,26 @@ var SolicitudCotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	registrarSincerado: function () {
+		let formValues = Fn.formSerializeObject('formRegistroSincerado');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = SolicitudCotizacion.url + "registrarSincerado";
+		let config = { url: url, data: jsonString };
+		// let diferencias = 0;
 
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 	actualizarCotizacion: function () {
 		++modalId;
 

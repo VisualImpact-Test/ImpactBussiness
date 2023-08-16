@@ -326,9 +326,10 @@
 								<div class="three wide field">
 									<div class="ui sub header">Cargo</div>
 									<div class="cargo_rrhh">
-									<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal">
-										<?//=htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
-									</select>
+										<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal">
+											<? //=htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); 
+											?>
+										</select>
 									</div>
 								</div>
 								<div class="three wide field">
@@ -415,7 +416,7 @@
 									<div class="ui sub header">Seguro Vida Ley</div>
 									<input value="" name="essalud_personal" id="essalud_personal">
 								</div>
-								
+
 							</div>
 
 							<div class="fields">
@@ -446,23 +447,45 @@
 							<h4 class="ui dividing header">SUB ITEMS</h4>
 							<div class="content-body-sub-item">
 								<div class="fields body-sub-item body-sub-item-servicio">
-									<div class="ten wide field">
-										<div class="ui sub header">Sub item </div>
-										<input class="nombreSubItem" name="nombreSubItemForm[0]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
+									<div class="three wide field">
+										<div class="ui sub header">Departamento</div>
+										<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[0]" onchange="Cotizacion.buscarProvincias(this);">
+											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
+										</select>
 									</div>
-									<div class="five wide field">
-										<div class="ui sub header">Costo</div>
-										<input class="onlyNumbers costoSubItemForm costoTransporte" name="costoSubItemForm[0]" placeholder="0" value="<?= !empty($data['costoSubItem']) ? $data['costoSubItem'] : '' ?>">
+									<div class="three wide field">
+										<div class="ui sub header">Provincia</div>
+										<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
+											<option value>Seleccione</option>
+										</select>
+									</div>
+									<div class="three wide field">
+										<div class="ui sub header">Tipo de Transporte</div>
+										<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
+											<option value>Seleccione</option>
+										</select>
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Costo Cliente</div>
+										<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[0]" placeholder="0" value="" readonly onchange="Cotizacion.calcularValorTransporte(this);">
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Cantidad días</div>
+										<input class="formTransporte dias_transporte" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Cantidad moviles</div>
+										<input class="formTransporte cantidad_transporte" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>
-										<button type="button" class="ui basic button btn-eliminar-sub-item">
+										<button type="button" class="ui button btn-eliminar-sub-item red">
 											<i class="trash icon"></i>
 										</button>
 									</div>
 								</div>
 							</div>
-							<button type="button" class="ui basic button btn-add-sub-item">
+							<button type="button" class="ui button btn-add-sub-item teal">
 								<i class="plus icon"></i>
 								Agregar
 							</button>
