@@ -2205,22 +2205,59 @@ class M_Cotizacion extends MY_Model
 	}
 
 	public function obtener_cargos($idCentro){
+		$filtro='';
+		if(!empty($idCentro)){
+			$filtro.='AND idArea IN (
+				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+			)';
+		}
 		$sql = "
-			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where idArea IN (
-				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
-			) AND flag=1
+			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where 1=1 AND flag=1 $filtro
+																			
+			   
 		";
 		return $this->db->query($sql);
 	}
 
 	public function obtener_sueldos($idCuenta,$idCentro,$idCargo){
+		$filtro='';
+		if(!empty($idCuenta)) $filtro.='AND idEmpresa='.$idCuenta;
+		if(!empty($idCargo)) $filtro.='AND idCargoTrabajo='.$idCargo;
+		if(!empty($idCentro)) { $filtro.='AND idSubcanal IN (
+			SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+		)';
+		}
 		$sql="
-			SELECT * FROM rrhh.dbo.sueldo WHERE idCargoTrabajo =$idCargo AND idSubcanal IN (
-				SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
-			)
-			AND idEmpresa=$idCuenta
+			SELECT *,case WHEN sueldo>1025 THEN sueldo*0.1 ELSE 1025*0.1 END asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro
+	  
+	
+								
 		";
 
 		return $this->db->query($sql);
-	}																																			 
+	}
+
+	public function obtener_conceptos_adicionales($idTipo,$cantidad){
+		$sql ="
+			DECLARE 
+				@fecha DATE = GETDATE()
+			SELECT 
+				  cc.idConcepto
+				, cc.nombre
+				, cc.id_campo
+				, cc.grupo
+				, ccc.costo
+				, ccc.costo*$cantidad  as total
+			FROM 
+				rrhh.dbo.conceptosCotizacion cc
+				JOIN rrhh.dbo.conceptosCotizacionCosto ccc
+					ON ccc.idConcepto=cc.idConcepto
+					AND @fecha BETWEEN ccc.fecIni AND ISNULL(ccc.fecFin,@fecha)
+				JOIN rrhh.dbo.conceptosCotizacionTipo cct
+					ON cct.idConcepto=cc.idConcepto
+			WHERE
+				cct.idTipo=$idTipo
+		";
+		return $this->db->query($sql);
+	}
 }

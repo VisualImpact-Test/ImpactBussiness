@@ -4047,6 +4047,7 @@ class Cotizacion extends MY_Controller
 		$refrigerio = 0;
 		$incentivo = 0;
 		$tipo_cargo_sueldo = 0;
+		$asignacionFamiliar = 0;
 		if ($total == 1) {
 			foreach ($data as $row) {
 				$tipo_cargo_sueldo = 0;
@@ -4054,6 +4055,7 @@ class Cotizacion extends MY_Controller
 				$movilidad = $row['movilidad'];
 				$refrigerio = $row['refrigerio'];
 				$incentivo = $row['comisionFija'];
+				$asignacionFamiliar = $row['asignacionFamiliar'];
 			}
 		}
 
@@ -4063,7 +4065,31 @@ class Cotizacion extends MY_Controller
 		$result['refrigerio'] = $refrigerio;
 		$result['movilidad'] = $movilidad;
 		$result['incentivo'] = $incentivo;
+		$result['asignacionFamiliar'] = $asignacionFamiliar;
 
+		echo json_encode($result);
+	}
+
+	public function obtener_conceptos_adicionales(){
+		$data =  json_decode($this->input->post('data'), true);
+		$id=$data['id'];
+		$cantidad=$data['cantidad'];
+		$adicionales = $this->model->obtener_conceptos_adicionales($id,$cantidad)->result_array();
+		$html="";
+		$html.="<table style='width:100%;'>";
+		$html.="<tr><th colspan='2'></th><th>Cantidad</th><th>Costo X Persona</th><th>COSTO TOTAL</th></tr>";
+			foreach($adicionales as $row){
+				$html.="<tr>";
+				$html.='<td><div style="padding:15px;">'.$row['nombre'].'</div></td>';
+				$html.='<td><div style="padding:15px;"><select name="seleccionar_'.$row['id_campo'].'" id="seleccionar_'.$row['id_campo'].'"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+				$html.='<td><div style="padding:15px;"><input name="cantidad_'.$row['id_campo'].'" id="'.$row['id_campo'].'" value="'.$cantidad.'"></div></td>';
+				$html.='<td><div style="padding:15px;"><input name="costo_'.$row['id_campo'].'" id="costo_'.$row['id_campo'].'" value="'.$row['costo'].'"></div></td>';
+				$html.='<td><div style="padding:15px;"><input name="costo_total_'.$row['id_campo'].'" id="costo_total_'.$row['id_campo'].'" value="'.$row['total'].'"></div></td>';
+				$html.="</tr>";
+			}
+		$html.="</table>";
+
+		$result['data'] = $html;
 		echo json_encode($result);
 	}
 }
