@@ -74,8 +74,36 @@
 </style>
 <h3 style="margin: 0px;">Estimados</h3>
 <br>
-<h3 style="margin: 0px;">Se han adjuntado los sustentos del proveedor "<?= $proveedor['razonSocial']; ?>".</h3>
+<h3 style="margin: 0px;">Se adjunta documentos para la programación de abonos.</h3>
 <br>
+<h3 style="margin: 0px;">Descripción de PO: </h3>
+<h4><?= $cotizacion['motivoAprobacion']; ?></h4>
+<br>
+<h3 style="margin: 0px;">Número de PO: </h3>
+<h4><?= $cotizacion['codOrdenCompra']; ?></h4>
+<br>
+<h3 style="margin: 0px;">Formatos cargados:</h3>
+<!-- Variables PHP -->
+<?php $aGuia = false; ?>
+<?php $aFactura = false; ?>
+<?php $aXml = false; ?>
+<?php $aAdicional = false; ?>
+<?php foreach ($formatos as $k => $v) : ?>
+	<?php if ($v['idFormatoDocumento'] == '1') $aGuia = true;  ?>
+	<?php if ($v['idFormatoDocumento'] == '2') $aFactura = true;  ?>
+	<?php if ($v['idFormatoDocumento'] == '3') $aXml = true;  ?>
+	<?php if ($v['idFormatoDocumento'] == '4') $aAdicional = true;  ?>
+<?php endforeach; ?>
+
+<br>
+<h4 style="margin: 0px;"> Guia <?= $aGuia ? '✔' : '✘'; ?></h4>
+<br>
+<h4 style="margin: 0px;"> Factura <?= $aFactura ? '✔' : '✘'; ?></h4>
+<br>
+<h4 style="margin: 0px;"> XML <?= $aXml ? '✔' : '✘'; ?></h4>
+<br>
+<h4 style="margin: 0px;"> Adicional <?= $aAdicional ? '✔' : '✘'; ?></h4>
+
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">
 		<legend>Archivos</legend>

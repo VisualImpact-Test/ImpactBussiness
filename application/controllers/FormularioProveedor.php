@@ -952,23 +952,25 @@ class FormularioProveedor extends MY_Controller
 
 		$fechaHoy = date_change_format_bd(getFechaActual());
 		$hora =  strtotime(time_change_format(getActualDateTime()));
-		$horaLimite = strtotime('12:30:00');
-		
+
+		$horaLimiteMin = strtotime('09:00:00');
+		$horaLimiteMax = strtotime('13:00:00');
+
 		$r = $this->db->where('fecha', $fechaHoy)->get('General.dbo.tiempo')->row_array();
 
-		if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 0:00 hasta las 12:30']);
-			goto respuesta;
-		}
+		// if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
+		// 	$result['result'] = 0;
+		// 	$result['msg']['title'] = 'Alerta!';
+		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 9:00 AM hasta las 12:00']);
+		// 	goto respuesta;
+		// }
 
-		if ($hora > $horaLimite) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 0:00 hasta las 12:30']);
-			goto respuesta;
-		}
+		// if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
+		// 	$result['result'] = 0;
+		// 	$result['msg']['title'] = 'Alerta!';
+		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 9:00 AM hasta las 12:00']);
+		// 	goto respuesta;
+		// }
 
 		$post = json_decode($this->input->post('data'), true);
 		$post['data'] = json_decode($post['data'], true);
@@ -1093,13 +1095,13 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
-
+		$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
 		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
 		$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
 		if (!empty($daC)) {
 			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
-			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot], true);
+			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot, 'formatos' => $daD], true);
 			$this->sendEmail($cfg);
 		}
 

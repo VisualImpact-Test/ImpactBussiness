@@ -459,23 +459,27 @@
 											<option value>Seleccione</option>
 										</select>
 									</div>
-									<div class="three wide field">
-										<div class="ui sub header">Tipo de Transporte</div>
+									<div class="two wide field">
+										<div class="ui sub header">Tipo Transporte</div>
 										<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
 											<option value>Seleccione</option>
 										</select>
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Costo Visual</div>
+										<input class="inpCostoVisual formTransporte costoVisual_transporte" placeholder="0" value="" readonly>
 									</div>
 									<div class="two wide field">
 										<div class="ui sub header">Costo Cliente</div>
 										<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[0]" placeholder="0" value="" readonly onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="two wide field">
-										<div class="ui sub header">Cantidad días</div>
-										<input class="formTransporte dias_transporte" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+										<div class="ui sub header">Cant días</div>
+										<input class="formTransporte dias_transporte keyUpChange" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="two wide field">
-										<div class="ui sub header">Cantidad moviles</div>
-										<input class="formTransporte cantidad_transporte" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+										<div class="ui sub header">Cant moviles</div>
+										<input class="formTransporte cantidad_transporte keyUpChange" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>

@@ -2178,13 +2178,17 @@ var Cotizacion = {
 		console.log(ttr);
 
 		let inp = div.find('.inpCosto');
-		console.log(Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]);
-
 		let data = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.costoCliente;
 		if (typeof data === "undefined") {
 			data = 0;
 		}
 		$(inp).val(data).change();
+		let inpV = div.find('.inpCostoVisual');
+		let dataV = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.costoVisual;
+		if (typeof dataV === "undefined") {
+			dataV = 0;
+		}
+		$(inpV).val(dataV).change();
 
 	},
 	calcularValorTransporte: function (t) {

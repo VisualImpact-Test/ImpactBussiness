@@ -903,7 +903,12 @@ class Cotizacion extends MY_Controller
 			// $dataParaVista['imagenDeItem'] = $this->model->obtenerImagenesDeCotizacion(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 			$data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 			$dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
+			$zonas = $this->db->where('estado', 1)->get('General.dbo.ubigeo')->result_array();
+			foreach ($zonas as $k => $v) {
+				$dataParaVista['zonas'][$v['cod_departamento']][$v['cod_provincia']] = $v;
+			}
 			$dataParaVista['detalleDistribucion'] = [];
+			$dataParaVista['detalleSubT'] = [];
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
@@ -939,6 +944,9 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['flagMostrarDetalle'] = $row['flagMostrarDetalle'];
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
+					if ($row['idItemTipo'] == COD_TRANSPORTE['id']) {
+						$dataParaVista['detalleSubT'][$row['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('cod_departamento, cod_provincia, 1')->get('compras.cotizacionDetalleSub')->result_array();
+					}
 				} else {
 					$cds = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('idZona, idItem')->get('compras.cotizacionDetalleSub')->result_array();
 					foreach ($cds as $kz => $vz) {
@@ -1309,7 +1317,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
-		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' =>2])->result_array();
+		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' => 2])->result_array();
 		$areas = [];
 		foreach ($area as $k => $v) {
 			$areas[] = $v['idArea'];
@@ -1319,7 +1327,8 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
-	public function getAllProvincias() {
+	public function getAllProvincias()
+	{
 		$data = $this->db->distinct()->select('cod_departamento, cod_provincia as value, provincia as name')->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
 		$provincias = [];
 		foreach ($data as $k => $v) {
@@ -1327,20 +1336,22 @@ class Cotizacion extends MY_Controller
 		}
 		echo json_encode($provincias);
 	}
-	public function getAllTiposDeTransporte() {
+	public function getAllTiposDeTransporte()
+	{
 		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
-		->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
-		
+			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+
 		$tarifarioZona = [];
 		foreach ($data as $k => $v) {
 			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][] = $v;
 		}
 		echo json_encode($tarifarioZona);
 	}
-	public function getAllCostoPorTipoDeTransporte() {
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
-		->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
-		
+	public function getAllCostoPorTipoDeTransporte()
+	{
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoVisual, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
+			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+
 		$tarifarioZona = [];
 		foreach ($data as $k => $v) {
 			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][$v['idTipoServicioUbigeo']][] = $v;
@@ -2777,7 +2788,7 @@ class Cotizacion extends MY_Controller
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 		$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
 		if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
-		
+
 
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 		$n = 0; // Cantidad de items en la tabla de distribución.
@@ -3999,51 +4010,53 @@ class Cotizacion extends MY_Controller
 		echo $html;
 	}
 
-	public function cargos(){
+	public function cargos()
+	{
 		$data =  json_decode($this->input->post('data'), true);
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$result = $this->result;
-		
+
 		$data = $this->model->obtener_cargos($idCentro)->result_array();
 		$html = '<select class="ui clearable dropdown simpleDropdown" id="cargo_personal">';
-		$html.= '<option value="0">Seleccione</option>';
+		$html .= '<option value="0">Seleccione</option>';
 		foreach ($data as $row) {
-			$html.= '<option value="'.$row['idCargoTrabajo'].'">'.$row['nombre'].'</option>';
+			$html .= '<option value="' . $row['idCargoTrabajo'] . '">' . $row['nombre'] . '</option>';
 		}
-		$html.="</select>";
-		
+		$html .= "</select>";
+
 		$result['result'] = 1;
 		$result['data'] = $html;
 
 		echo json_encode($result);
 	}
 
-	public function obtener_sueldos(){
+	public function obtener_sueldos()
+	{
 		$data =  json_decode($this->input->post('data'), true);
 
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$idCargo = $data['idCargo'];
 		$result = $this->result;
-		
-		$data = $this->model->obtener_sueldos($idCuenta,$idCentro,$idCargo)->result_array();
+
+		$data = $this->model->obtener_sueldos($idCuenta, $idCentro, $idCargo)->result_array();
 		$total = count($data);
-		$sueldo=0;
-		$movilidad=0;
-		$refrigerio=0;
-		$incentivo=0;
-		$tipo_cargo_sueldo=0;
-		if($total==1){
+		$sueldo = 0;
+		$movilidad = 0;
+		$refrigerio = 0;
+		$incentivo = 0;
+		$tipo_cargo_sueldo = 0;
+		if ($total == 1) {
 			foreach ($data as $row) {
-				$tipo_cargo_sueldo =0;
-				$sueldo =$row['sueldo'];
-				$movilidad =$row['movilidad'];
-				$refrigerio =$row['refrigerio'];
-				$incentivo =$row['comisionFija'];
+				$tipo_cargo_sueldo = 0;
+				$sueldo = $row['sueldo'];
+				$movilidad = $row['movilidad'];
+				$refrigerio = $row['refrigerio'];
+				$incentivo = $row['comisionFija'];
 			}
 		}
-		
+
 		$result['result'] = 1;
 		$result['tipo_cargo_sueldo'] = $tipo_cargo_sueldo;
 		$result['sueldo'] = $sueldo;

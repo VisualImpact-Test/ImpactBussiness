@@ -22,14 +22,14 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml" patron="requerido">
+						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml, .zip" patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Doc Adicional</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple patron="requerido">
+						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple>
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>

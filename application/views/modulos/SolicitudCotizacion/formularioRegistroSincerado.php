@@ -51,7 +51,9 @@
 									<th>Provincia</th>
 									<th>Tipo de Transporte</th>
 									<th class="text-center">Costo Cliente</th>
+									<th class="text-center">Cotización Cantidad Días</th>
 									<th class="text-center">Cantidad Días</th>
+									<th class="text-center">Cotización Cantidad Moviles</th>
 									<th class="text-center">Cantidad Moviles</th>
 									<th class="text-center">Subtotal</th>
 								</tr>
@@ -66,8 +68,10 @@
 										<td><?= $depPro[$vs['cod_departamento']][$vs['cod_provincia']]['departamento']; ?></td>
 										<td><?= $depPro[$vs['cod_departamento']][$vs['cod_provincia']]['provincia']; ?></td>
 										<td><?= $tipoServicioUbigeo[$vs['idTipoServicioUbigeo']]['nombreAlternativo']; ?></td>
-										<td><input class="costoTransporte keyUpChange" name="costo[<?= $vs['idCotizacionDetalleSub']; ?>]" value="<?= $vs['costo']; ?>" onchange="SolicitudCotizacion.calcularSubTotalTransporte(this);"></td>
+										<td><input class="costoTransporte keyUpChange" name="costo[<?= $vs['idCotizacionDetalleSub']; ?>]" value="<?= $vs['costo']; ?>" readonly onchange="SolicitudCotizacion.calcularSubTotalTransporte(this);"></td>
+										<td class="text-center"><?= $vs['dias']; ?></td>
 										<td><input class="diasTransporte keyUpChange" name="dias[<?= $vs['idCotizacionDetalleSub']; ?>]" value="<?= $vs['dias']; ?>" onchange="SolicitudCotizacion.calcularSubTotalTransporte(this);"></td>
+										<td class="text-center"><?= $vs['cantidad']; ?></td>
 										<td><input class="cantidadTransporte keyUpChange" name="cantidad[<?= $vs['idCotizacionDetalleSub']; ?>]" value="<?= $vs['cantidad']; ?>" onchange="SolicitudCotizacion.calcularSubTotalTransporte(this);"></td>
 										<td class="subtotalTransporte"><?= floatval($vs['costo']) * floatval($vs['dias']) * floatval($vs['cantidad']); ?></td>
 									</tr>

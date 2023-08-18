@@ -70,11 +70,12 @@
 		<table class="tb-detalle" style="width: 100%; margin-bottom: 10px;">
 			<thead>
 				<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
-					<?php $col1 = 2; ?>
+					<?php $col1 = 3; ?>
 					<tr style="background-color: #FFE598;">
-						<th>ITEM</th>
-						<th>DESCRIPCIÓN</th>
-						<th>TOTAL</th>
+						<th style="width: 10%;">ITEM</th>
+						<th style="width: 50%;">DESCRIPCIÓN</th>
+						<th style="width: 25%;">CANTIDAD</th>
+						<th style="width: 15%;">TOTAL</th>
 					</tr>
 				<?php endif; ?>
 				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
@@ -163,16 +164,18 @@
 			<?php endif; ?>
 			<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
 				<?php $rowspan = 1; ?>
-				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-					<td class="text-center" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= $key + 1 ?></td>
-					<td class="text-left bold" rowspan="1"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
-					<td class="text-right" rowspan="<?= count($detalleSub[$row['idCotizacionDetalle']]) + 1; ?>"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
-				</tr>
+				<?php $cantidadMoviles = 0; ?>
+				<?php $cantidadDias = 0; ?>
 				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $k => $v) : ?>
-					<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-						<td class="text-left" rowspan="1"> <?= $v['nombre']; ?> </td>
-					</tr>
+					<?php $cantidadMoviles += $v['cantidad']; ?>
+					<?php $cantidadDias += $v['dias']; ?>
 				<?php endforeach; ?>
+				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+					<td class="text-center"><?= $key + 1 ?></td>
+					<td class="text-left bold"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
+					<td class="text-left bold"> <?= $cantidadMoviles; ?> MOVILES X <?= $cantidadDias; ?> DÍAS</td>
+					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+				</tr>
 			<?php endif; ?>
 			<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) :  ?>
 				<tr class="bg-gray">
@@ -269,6 +272,44 @@
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
 			</label>
 		</div>
+		<?php if (!empty($detalleSubT)) :  ?>
+			<table id="customers">
+				<thead>
+					<tr>
+						<th>DEPARTAMENTO</th>
+						<th>PROVINCIA</th>
+						<th>DÍAS</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($detalleSubT as $idCD => $dataD) : ?>
+						<?php $dp = '' ?>
+						<?php $pr = '' ?>
+						<?php $totalD = 0 ?>
+						<?php foreach ($dataD as $k => $v) : ?>
+							<?php if ($dp != $v['cod_departamento'] || $pr != $v['cod_provincia']) :  ?>
+								<?php if ($k != 0) :  ?>
+									<tr>
+										<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
+										<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
+										<td><?= $totalD; ?></td>
+									</tr>
+								<?php endif; ?>
+								<?php $dp = $v['cod_departamento']; ?>
+								<?php $pr = $v['cod_provincia']; ?>
+								<?php $totalD = 0 ?>
+							<?php endif; ?>
+							<?php $totalD += intval($v['dias']) ?>
+						<?php endforeach; ?>
+						<tr>
+							<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
+							<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
+							<td><?= $totalD; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		<?php endif; ?>
 		<?php if (!empty($detalleDistribucionZonas)) :  ?>
 			<?php foreach ($detalle as $kd => $vd) : ?>
 				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') :  ?>
