@@ -675,6 +675,7 @@ var Cotizacion = {
 				}
 				allFeatures.find('input.formTransporte').attr("patron", "requerido");
 				allFeatures.find('div.formTransporte').find('select').attr("patron", "requerido");
+				parent.find(".unidadMed").dropdown('set selected', '1');
 			} else {
 				$('.no-personal').removeClass('d-none');
 				$('.personal').addClass('d-none');

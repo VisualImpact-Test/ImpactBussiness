@@ -489,50 +489,54 @@ class FormularioProveedor extends MY_Controller
 
 	public function cotizacionesListaRefresh()
 	{
+		// En caso no se encuentre proveedor logueado
 		$proveedor = $this->session->userdata('proveedor');
 		if (empty($proveedor)) {
 			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
+
 		$result = $this->result;
-		// $post = json_decode($this->input->post('data'), true);
 		$post['idProveedor'] = $proveedor['idProveedor'];
 		$dataParaVista = [];
 		$dataParaVista = $this->model->obtenerListaCotizaciones($post)->result_array();
 		foreach ($dataParaVista as $k => $v) {
+			//Inicio: Para el titulo de la cotizacion
 			$dataParaVista[$k]['title'] = $v['nombre'];
-			$st = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.cotizacionDetalle')->result_array();
+			$st = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $v['idCotizacion']])->result_array();
 			$title = [];
 			$dataParaVista[$k]['requiereGuia'] = 1;
-			foreach ($st as $kt => $vt) {
-				if (!empty($vt['tituloParaOC'])) {
-					$title[] = $vt['tituloParaOC'];
-				}
-				if ($vt['idItemTipo'] == COD_SERVICIO['id'] || $vt['idItemTipo'] == COD_DISTRIBUCION['id']) {
-					$dataParaVista[$k]['requiereGuia'] = 0;
-				}
-				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->where('idCotizacion', $v['idCotizacion'])->get('compras.fechaEjecucion')->result_array();
+			foreach ($st as $vt) {
+				if (!empty($vt['tituloParaOC'])) $title[] = $vt['tituloParaOC'];
+				if ($vt['idItemTipo'] == COD_SERVICIO['id'] || $vt['idItemTipo'] == COD_DISTRIBUCION['id']) $dataParaVista[$k]['requiereGuia'] = 0;
+				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->get_where('compras.fechaEjecucion', ['idCotizacion' => $v['idCotizacion']])->result_array();
 			}
 			if (!empty($title)) {
 				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
 			}
+			// Fin: Para el titulo de la cotizacion
 
-			$dataParaVista[$k]['mostrarValidacion'] = '1';
-			$dataParaVista[$k]['solicitarFecha'] = '0';
+			// Inicio: Para el estado del proveedor
+			$dataParaVista[$k]['mostrarValidacion'] = '2'; // No requiere Val Art
+			$dataParaVista[$k]['solicitarFecha'] = '1';
+			$dataParaVista[$k]['flagFechaRegistro'] = '0';
 			if (empty($v['fechaEntrega'])) {
 				$dataParaVista[$k]['status'] = 'Solicitado';
 			} else {
-				$cotDetPro = $this->db->where('estado', '1')->where('idCotizacionDetalleProveedor', $v['idCotizacionDetalleProveedor'])->get('compras.cotizacionDetalleProveedorDetalle')->result_array();
-				$dd = [];
-				foreach ($cotDetPro as $kcd => $vcd) {
-					$dd[] = $vcd['idCotizacionDetalle'];
+				// Se busca cotizaciones del proveedor y se listan los ids
+				$cotizacionDelProveedor = $this->db->get_where('compras.cotizacionDetalleProveedorDetalle', ['estado' => '1', 'idCotizacionDetalleProveedor' => $v['idCotizacionDetalleProveedor']])->result_array();
+				$list_idCotDet = [];
+				foreach ($cotizacionDelProveedor as $vcd) {
+					$list_idCotDet[] = $vcd['idCotizacionDetalle'];
 				}
-				$cotDet = $this->db->where('idProveedor', $v['idProveedor'])->where_in('idCotizacionDetalle', $dd)->get('compras.cotizacionDetalle')->result_array();
+				// De los ids listados se busca cuales fueron tomadas para la cotizacion
+				$cotDet = $this->db->where_in('idCotizacionDetalle', $list_idCotDet)->get_where('compras.cotizacionDetalle', ['idProveedor' => $v['idProveedor']])->result_array();
 				if (empty($cotDet)) {
 					$dataParaVista[$k]['status'] = 'Cotizado';
 				} else {
-					$ocd = $this->db->where_in('idCotizacionDetalle', $dd)->get('compras.ordenCompraDetalle')->result_array();
-					if (empty($ocd)) {
+					// En caso se encuentren en uso la cotizacion del proveedor se busca las ordenes de compras utilizadas en dicha cotizacion
+					$ocd = $this->db->where_in('idCotizacionDetalle', $list_idCotDet)->get('compras.ordenCompraDetalle')->result_array();
+					if (empty($ocd)) { // Si no hay ordenes se analiza que el tiempo de vigencia siga disponible.
 						$fEn = new DateTime(date_change_format_bd($v['fechaEntrega']));
 						$fAc = new DateTime('now');
 						if ($fAc > $fEn) {
@@ -541,27 +545,57 @@ class FormularioProveedor extends MY_Controller
 							$dataParaVista[$k]['status'] = 'Por confirmar';
 						}
 					} else {
-						$dd2 = [];
-						foreach ($ocd as $k1 => $v1) {
-							$dd2[] = $v1['idOrdenCompra'];
+						// En caso SI se encuentren ordenes de compra se listan los ids de las OC (usualmente es 1 pero se tiene en consideración para multiples).
+						$list_idOrdComp = [];
+						foreach ($ocd as $v1) {
+							$list_idOrdComp[] = $v1['idOrdenCompra'];
 						}
-						$oc = $this->db->where_in('idOrdenCompra', $dd2)->where('idProveedor', $v['idProveedor'])->get('compras.ordenCompra')->result_array();
+						$oc = $this->db->where_in('idOrdenCompra', $list_idOrdComp)->where('idProveedor', $v['idProveedor'])->get('compras.ordenCompra')->result_array();
+						// TODO → El if parece que puede borrarse ya que no existe posibilidad que cumpla la condición
 						if (empty($oc)) {
 							$dataParaVista[$k]['status'] = 'Por confirmar';
 						} else {
 							$dataParaVista[$k]['status'] = 'Aprobado';
-							$va = $this->db->group_start()->where('flagRevisado', 0)->or_where('flagAprobado', 1)->group_end()->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->get('compras.validacionArte')->result_array();
+
+							// Se consulta los tipos de Item, considerando que solo se requiere Validación de Arte para SERVICIO (Mantenimiento), Textiles e Impresiones.
+							// TODO falta generar tipo de item "Impresiones"
+							$listDetalleCotProv = $this->db->get_where('compras.cotizacionDetalleProveedorDetalle', ['idCotizacionDetalleProveedor' => $v['idCotizacionDetalleProveedor']])->result_array();
+							foreach ($listDetalleCotProv as $vt) {
+								$it = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $vt['idCotizacionDetalle'], 'estado' => 1])->row_array()['idItemTipo'];
+								if ($it == COD_SERVICIO['id'] || $it == COD_TEXTILES['id']) {
+									$dataParaVista[$k]['requiereValidacion'] = '1';
+									$dataParaVista[$k]['mostrarValidacion'] = '1';
+									$dataParaVista[$k]['solicitarFecha'] = '0';
+								}
+							}
+							// Se consulta si tiene "Validación de Arte" cargado aprobados.
+							$va = $this->db->group_start()->where('flagRevisado', 0)->or_where('flagAprobado', 1)->group_end()->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
 							if (!empty($va)) {
 								$dataParaVista[$k]['mostrarValidacion'] = '0';
 							}
-							$va2 = $this->db->where('flagRevisado', 1)->where('flagAprobado', 1)->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->get('compras.validacionArte')->result_array();
-							$va3 = $this->db->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->get('compras.validacionArte')->result_array();
-							if (!empty($va2)) {
-								if (count($va2) == count($va3)) {
+
+							// Se compara el Total de Artes Cargados con el Total de Artes Aprobados.
+							$w = ['idProveedor' => $v['idProveedor'], 'idCotizacion' => $v['idCotizacion'], 'estado' => 1];
+							$artesCargados = $this->db->get_where('compras.validacionArte', $w)->result_array();
+							$w['flagRevisado'] = 1;
+							$w['flagAprobado'] = 1;
+							$artesAprobados = $this->db->get_where('compras.validacionArte', $w)->result_array();
+
+							if (!empty($artesAprobados)) {
+								if (count($artesAprobados) == count($artesCargados)) {
 									$dataParaVista[$k]['solicitarFecha'] = '1';
-									$dataParaVista[$k]['fechaInicio'] = $va2[0]['fechaInicio'];
-									$dataParaVista[$k]['fechaFinal'] = $va2[0]['fechaFinal'];
-									$dataParaVista[$k]['flagFechaRegistro'] = $va2[0]['flagFechaRegistro'];
+									// $dataParaVista[$k]['fechaInicio'] = $artesAprobados[0]['fechaInicio'];
+									// $dataParaVista[$k]['fechaFinal'] = $artesAprobados[0]['fechaFinal'];
+									// $dataParaVista[$k]['flagFechaRegistro'] = $artesAprobados[0]['flagFechaRegistro'];
+								}
+							}
+							// Si se solicita fecha, validar si la información fue cargada o no.
+							if ($dataParaVista[$k]['solicitarFecha'] == '1') {
+								$fechaEjecCargado = $this->db->get_where('compras.cotizacionDetalleProveedorFechaEjecucion', ['idCotizacionDetalleProveedor' => $v['idCotizacionDetalleProveedor'], 'estado' => '1'])->result_array();
+								if (!empty($fechaEjecCargado)) {
+									$dataParaVista[$k]['flagFechaRegistro'] = '1';
+									$dataParaVista[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
+									$dataParaVista[$k]['fechaFinal'] = $fechaEjecCargado[0]['fechaFinal'];
 								}
 							}
 						}
@@ -883,21 +917,51 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
 		}
-		$data = [
-			'fechaInicio' => $post['fechaIni'],
-			'fechaFinal' => $post['fechaFin'],
-			'flagRevisado' => 1,
-			'flagFechaRegistro' => 1
-		];
-		$where = [
-			'idCotizacion' => $post['cotizacion'],
-			'idProveedor' => $post['proveedor'],
-			'flagAprobado' => 1
-		];
-		$this->db->update('compras.validacionArte', $data, $where);
 
-		if (isset($post['base64Adjunto'])) {
+		// Inicio: Validaciones anti-errores :v
+		if ((!empty($post['fechaIni']) || !empty($post['fechaFin'])) && (empty($post['fechaIni']) || empty($post['fechaFin']))) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Al seleccionar fecha de Ejecución es necesario indicar ambas fechas.']);
+			goto respuesta;
+		}
 
+		if (strtotime($post['fechaIni']) > strtotime($post['fechaFin'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Error en las fechas seleccionadas.']);
+			goto respuesta;
+		}
+
+		if (empty($post['fechaIni']) && empty($post['fechaFin']) && empty($post['base64Adjunto'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Debe completar el registro indicando información.']);
+			goto respuesta;
+		}
+		// Fin: Validaciones anti-errores
+
+		// $data = [
+		// 	'fechaInicio' => $post['fechaIni'],
+		// 	'fechaFinal' => $post['fechaFin'],
+		// 	'flagRevisado' => 1,
+		// 	'flagFechaRegistro' => 1
+		// ];
+		// $where = [
+		// 	'idCotizacion' => $post['cotizacion'],
+		// 	'idProveedor' => $post['proveedor'],
+		// 	'flagAprobado' => 1
+		// ];
+		// $this->db->update('compras.validacionArte', $data, $where);
+
+		$ids_insert = [];
+		$post['base64Adjunto'] = checkAndConvertToArray($post['base64Adjunto']);
+		$post['nameAdjunto'] = checkAndConvertToArray($post['nameAdjunto']);
+		$post['typeAdjunto'] = checkAndConvertToArray($post['typeAdjunto']);
+
+		$cdp = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion'], 'estado' => 1])->row_array()['idCotizacionDetalleProveedor'];
+
+		if (!empty($post['base64Adjunto'])) {
 			foreach ($post['base64Adjunto'] as $key => $row) {
 				$archivo = [
 					'base64' => $row,
@@ -911,18 +975,37 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos = [];
 				$insertArchivos = [
+					'idCotizacionDetalleProveedor' => $cdp,
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
+					'fechaInicial' => $post['fechaIni'],
+					'fechaFinal' => $post['fechaFin'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'estado' => true,
-					'idProveedor' => $post['proveedor'],
-					'idCotizacion' => $post['cotizacion'],
+					'idUsuario' => $this->idUsuario,
+					'fechaReg' => getActualDateTime()
 				];
-				$this->db->insert('compras.fechaEjecucion', $insertArchivos);
+				$this->db->insert('compras.cotizacionDetalleProveedorFechaEjecucion', $insertArchivos);
 				$ids_insert[] = $this->db->insert_id();
 			}
+		} else {
+			$insertArchivos = [
+				'idCotizacionDetalleProveedor' => $cdp,
+				'idTipoArchivo' => null,
+				'nombre_inicial' => null,
+				'nombre_archivo' => null,
+				'nombre_unico' => null,
+				'fechaInicial' => $post['fechaIni'],
+				'fechaFinal' => $post['fechaFin'],
+				'extension' => null,
+				'estado' => true,
+				'idUsuario' => $this->idUsuario,
+				'fechaReg' => getActualDateTime()
+			];
+			$this->db->insert('compras.cotizacionDetalleProveedorFechaEjecucion', $insertArchivos);
+			$ids_insert[] = $this->db->insert_id();
 		}
 
 		$result['result'] = 1;
@@ -931,7 +1014,11 @@ class FormularioProveedor extends MY_Controller
 
 		$this->db->trans_complete();
 		////////////////////////////////////
-		$daC = $this->db->where_in('idFechaEjecucion', $ids_insert)->get('compras.fechaEjecucion')->result_array();
+		if (!empty($ids_insert)) {
+			$daC = $this->db->where_in('idCotizacionDetalleProveedorFechaEjecucion', $ids_insert)->get('compras.cotizacionDetalleProveedorFechaEjecucion')->result_array();
+		} else {
+			$daC = [];
+		}
 
 		if (!empty($daC)) {
 			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
@@ -961,14 +1048,14 @@ class FormularioProveedor extends MY_Controller
 		// if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
 		// 	$result['result'] = 0;
 		// 	$result['msg']['title'] = 'Alerta!';
-		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 9:00 AM hasta las 12:00']);
+		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
 		// 	goto respuesta;
 		// }
 
 		// if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
 		// 	$result['result'] = 0;
 		// 	$result['msg']['title'] = 'Alerta!';
-		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Lunes, Martes y Jueves de 9:00 AM hasta las 12:00']);
+		// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
 		// 	goto respuesta;
 		// }
 
@@ -1098,10 +1185,14 @@ class FormularioProveedor extends MY_Controller
 		$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
 		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
 		$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
+		$ocG = $this->model->getDistinctOC(['idCotizacion' => $post['cotizacion'], 'idProveedor' => $post['proveedor']])->result_array();
+		// foreach ($ocG as $k => $v) {
+		// 	$ocG[$k]['url'] =
+		// }
 		if (!empty($daC)) {
 			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
-			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot, 'formatos' => $daD], true);
+			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot, 'formatos' => $daD, 'ocG' => $ocG], true);
 			$this->sendEmail($cfg);
 		}
 

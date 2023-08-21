@@ -13,7 +13,7 @@
 					<th>Estado</th>
 					<th>Validación de Artes</th>
 					<th>Fecha de Ejecución</th>
-					<th>Sustento</th>
+					<th>Carga de Comprobantes</th>
 					<th>Comentario</th>
 				</tr>
 			</thead>
@@ -50,19 +50,8 @@
 											Subir artes
 										</a>
 									</div>
-									<!-- <div class="tdFile">
-										<div class="ui buttons">
-											<input id="invisibleupload1" type="file" class="ui invisible file input file-uploadedd d-none" lang="es" multiple>
-											<label for="invisibleupload1" class="ui blue icon button">
-												<i class="file icon"></i>
-												Indicar Archivos
-											</label>
-											<div class="ui center floated small green button btnCargarValidacion" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
-												<i class="save icon"></i>
-											</div>
-										</div>
-										<label class="lMsg"></label>
-									</div> -->
+								<?php elseif ($row['mostrarValidacion'] == '2') : ?>
+									No requiere Arte
 								<?php else : ?>
 									<a class="ui basic button formLisArts" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
 										<i class="icon search"></i>
@@ -75,7 +64,7 @@
 							<div class="ui form">
 								<?php if ($row['status'] == 'Aprobado') :  ?>
 									<?php if ($row['solicitarFecha'] == '1') :  ?>
-										<?php if ($row['flagFechaRegistro'] != '1') :  ?>
+										<?php if ($row['flagFechaRegistro'] == '0') :  ?>
 											<div class="ui">
 												<a class="ui basic button formFechaEje" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
 													<i class="icon calendar"></i>

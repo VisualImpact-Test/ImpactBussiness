@@ -2209,6 +2209,14 @@ class Cotizacion extends MY_Controller
 
 		foreach ($cotizacionDetalle as $rowDetalle) {
 			$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']] = $rowDetalle;
+			if ($rowDetalle['idItemTipo'] == COD_TRANSPORTE['id']) {
+				$cds_ = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $rowDetalle['idCotizacionDetalle']])->result_array();
+				$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']]['costo'] = 0;
+				foreach ($cds_ as $k => $v) {
+					$cdss = $this->db->get_where('compras.cotizacionDetalleSubSincerado', ['idCotizacionDetalleSub' => $v['idCotizacionDetalleSub']])->row_array();
+					$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']]['costo'] += (floatval($cdss['costo']) * floatval($cdss['cantidad']) * floatval($cdss['dias']));
+				}
+			}
 		}
 		$dataParaVista['cotizaciones'] = $cotizaciones;
 		$dataParaVista['usuarios'] = $this->model->obtenerUsuarios()->result_array();
@@ -2444,6 +2452,16 @@ class Cotizacion extends MY_Controller
 			foreach ($dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] as $kd => $vd) {
 				$dataParaVista['detalleSubTalla'][$v['idCotizacionDetalle']][$vd['talla']][$vd['genero']] = $vd;
 			}
+
+			if ($v['idItemTipo'] == COD_TRANSPORTE['id']) {
+				$cds_ = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
+				$dataParaVista['cotizacionDetalle'][$k]['costo'] = 0;
+				foreach ($cds_ as $vds) {
+					$cdss = $this->db->get_where('compras.cotizacionDetalleSubSincerado', ['idCotizacionDetalleSub' => $vds['idCotizacionDetalleSub']])->row_array();
+					$dataParaVista['cotizacionDetalle'][$k]['costo'] += (floatval($cdss['costo']) * floatval($cdss['cantidad']) * floatval($cdss['dias']));
+				}
+				$dataParaVista['cotizacionDetalle'][$k]['subtotalSinGap'] = $dataParaVista['cotizacionDetalle'][$k]['costo'];
+			}
 		}
 
 		require APPPATH . '/vendor/autoload.php';
@@ -2506,13 +2524,21 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function descargarOrdenCompra()
+	public function descargarOCDirecto($oc = null)
+	{
+		$this->descargarOrdenCompra($oc);
+	}
+
+	public function descargarOrdenCompra($t = null)
 	{
 		require_once('../mpdf/mpdf.php');
 		ini_set('memory_limit', '1024M');
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
+		if (!empty($t)) {
+			$post['id'] = $t;
+		}
 
 		$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
 
@@ -4070,24 +4096,25 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function obtener_conceptos_adicionales(){
+	public function obtener_conceptos_adicionales()
+	{
 		$data =  json_decode($this->input->post('data'), true);
-		$id=$data['id'];
-		$cantidad=$data['cantidad'];
-		$adicionales = $this->model->obtener_conceptos_adicionales($id,$cantidad)->result_array();
-		$html="";
-		$html.="<table style='width:100%;'>";
-		$html.="<tr><th colspan='2'></th><th>Cantidad</th><th>Costo X Persona</th><th>COSTO TOTAL</th></tr>";
-			foreach($adicionales as $row){
-				$html.="<tr>";
-				$html.='<td><div style="padding:15px;">'.$row['nombre'].'</div></td>';
-				$html.='<td><div style="padding:15px;"><select name="seleccionar_'.$row['id_campo'].'" id="seleccionar_'.$row['id_campo'].'"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
-				$html.='<td><div style="padding:15px;"><input name="cantidad_'.$row['id_campo'].'" id="'.$row['id_campo'].'" value="'.$cantidad.'"></div></td>';
-				$html.='<td><div style="padding:15px;"><input name="costo_'.$row['id_campo'].'" id="costo_'.$row['id_campo'].'" value="'.$row['costo'].'"></div></td>';
-				$html.='<td><div style="padding:15px;"><input name="costo_total_'.$row['id_campo'].'" id="costo_total_'.$row['id_campo'].'" value="'.$row['total'].'"></div></td>';
-				$html.="</tr>";
-			}
-		$html.="</table>";
+		$id = $data['id'];
+		$cantidad = $data['cantidad'];
+		$adicionales = $this->model->obtener_conceptos_adicionales($id, $cantidad)->result_array();
+		$html = "";
+		$html .= "<table style='width:100%;'>";
+		$html .= "<tr><th colspan='2'></th><th>Cantidad</th><th>Costo X Persona</th><th>COSTO TOTAL</th></tr>";
+		foreach ($adicionales as $row) {
+			$html .= "<tr>";
+			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
+			$html .= '<td><div style="padding:15px;"><select name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '"></div></td>';
+			$html .= "</tr>";
+		}
+		$html .= "</table>";
 
 		$result['data'] = $html;
 		echo json_encode($result);

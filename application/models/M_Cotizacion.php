@@ -450,6 +450,7 @@ class M_Cotizacion extends MY_Model
 				, pd.subtotal subTotal
 				, ei.idItemEstado
 				, ei.nombre AS estadoItem
+				, pd.idProveedor
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion

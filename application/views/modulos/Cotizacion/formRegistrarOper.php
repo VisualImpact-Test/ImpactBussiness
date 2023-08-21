@@ -76,7 +76,7 @@
 		<h4 class="ui dividing header">
 			DETALLE COTIZACIONES
 		</h4>
-		<? foreach ($cotizaciones as $row) { ?>
+		<?php foreach ($cotizaciones as $row) : ?>
 			<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
 			<div class="default-item">
 				<div class="ui segment body-item nuevo">
@@ -84,7 +84,7 @@
 						<span class="ui medium text "><?= $row['cotizacion'] ?> <span class="title-n-detalle"><?= !empty($row['codCotizacion']) ? $row['codCotizacion'] : '' ?></span></span>
 					</div>
 					<div class="ui clearing divider"></div>
-					<? foreach ($detalle[$row['idCotizacion']] as $rowDetalle) { ?>
+					<?php foreach ($detalle[$row['idCotizacion']] as $rowDetalle) : ?>
 						<div class="ui grid">
 							<div class="sixteen wide column">
 								<div class="fields">
@@ -108,7 +108,11 @@
 										<div class="ui sub header">Subtotal</div>
 										<div class="ui right labeled input">
 											<label for="amount" class="ui label teal">S/</label>
-											<input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda($rowDetalle['subTotal']) ?>" readonly>
+											<?php if ($rowDetalle['idItemTipo'] != COD_TRANSPORTE['id']) :  ?>
+												<input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda($rowDetalle['subTotal']) ?>" readonly>
+											<?php else : ?>
+												<input class=" subtotalFormLabel" type="text" placeholder="0.00" value="<?= moneda(floatval($rowDetalle['costo']) * (100 + floatval($rowDetalle['gap'])) / 100) ?>" readonly>
+											<?php endif; ?>
 											<input class=" subtotalForm" type="hidden" name="subtotalForm" value="<?= $rowDetalle['subTotal'] ?>" placeholder="0.00" readonly>
 										</div>
 										<?php if (!empty($rowDetalle['gap'])) :  ?>
@@ -120,10 +124,9 @@
 								</div>
 							</div>
 						</div>
-					<? } ?>
-
+					<?php endforeach; ?>
 				</div>
 			</div>
-		<? } ?>
+		<?php endforeach; ?>
 	</form>
 </div>

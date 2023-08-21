@@ -331,9 +331,6 @@
 											<div class="ui sub header">Cargo</div>
 											<div class="cargo_rrhh" style="width:100%;">
 												<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal"></select>
-																																								   
-			 
-				   
 											</div>
 										</div>
 									</td>

@@ -32,7 +32,7 @@
                             <? if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_COMPRAS) { ?>
                                 <a href="../SolicitudCotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 btn-dp-<?= $row['idCotizacion']; ?> <?= $row['nuevos'] <= 0 ? "disabled" : "" ?>"><i class="fa fa-lg fa-badge-dollar" title="Cotizar items sin precio"></i></a>
                             <? } ?>
-                            <?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) :  ?>
+                            <?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS && intval($row['cantidadTransporte']) > 0) :  ?>
                                 <button class=" btn btn-outline-secondary border-0 btnSinceradoTransporte" data-id="<?= $row['idCotizacion'] ?>"><i class="icon truck" title="Cotizar items sin precio"></i></button>
                             <?php endif; ?>
                             <? if ($row['idCotizacionEstado'] == ESTADO_OPER_ENVIADO || $row['idCotizacionEstado'] == ESTADO_OC_GENERADA) { ?>

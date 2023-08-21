@@ -76,14 +76,29 @@
 <br>
 <h3 style="margin: 0px;">Se adjunta documentos para la programación de abonos.</h3>
 <br>
-<h3 style="margin: 0px;">Descripción de PO: </h3>
-<h4><?= $cotizacion['motivoAprobacion']; ?></h4>
-<br>
-<h3 style="margin: 0px;">Número de PO: </h3>
-<h4><?= $cotizacion['codOrdenCompra']; ?></h4>
+<table>
+	<tbody>
+		<tr>
+			<td>
+				<h3 style="margin: 0px;">Descripción de PO: </h3>
+			</td>
+			<td>
+				<h4><?= $cotizacion['motivoAprobacion']; ?></h4>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<h3 style="margin: 0px;">Número de PO: </h3>
+			</td>
+			<td>
+				<h4><?= $cotizacion['codOrdenCompra']; ?></h4>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
 <br>
 <h3 style="margin: 0px;">Formatos cargados:</h3>
-<!-- Variables PHP -->
 <?php $aGuia = false; ?>
 <?php $aFactura = false; ?>
 <?php $aXml = false; ?>
@@ -95,6 +110,8 @@
 	<?php if ($v['idFormatoDocumento'] == '4') $aAdicional = true;  ?>
 <?php endforeach; ?>
 
+<br>
+<h4 style="margin: 0px;"> Orden Compra ✔</h4>
 <br>
 <h4 style="margin: 0px;"> Guia <?= $aGuia ? '✔' : '✘'; ?></h4>
 <br>
@@ -119,9 +136,17 @@
 						</tr>
 					</thead>
 					<tbody>
+						<?php foreach ($ocG as $key => $row) : ?>
+							<tr class="default">
+								<td> <?= $key + 1; ?> </td>
+								<td>Orden de Compra</td>
+								<td> OC <?= $row['idOrdenCompra']; ?></td>
+								<td><a class="ui button" href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra'] ?>" target="_blank">Descargar</a></td>
+							</tr>
+						<?php endforeach; ?>
 						<?php foreach ($data as $key => $row) : ?>
 							<tr class="default">
-								<td><?= $key + 1 ?></td>
+								<td><?= $key + 1 + count($ocG) ?></td>
 								<td>
 									<?php switch ($row['idFormatoDocumento']) {
 										case '1':
