@@ -120,6 +120,52 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		$(document).on('click', '.formLisSustServ', function () {
+			++modalId;
+			// let id = 
+			var dataForm = {};
+			dataForm.id = $(this).data('idcotdetpro');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			// alert($(this).data('idcotdetpro'));
+			let config = { 'url': FormularioProveedores.url + 'formularioListadoSustentoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				// TODO : El actualizar cierra y vuelve a abrir el modal, buscar una forma de optimizar
+				fn[1] = 'Fn.closeModals(' + modalId + '); $(".formLisSustServ.dicdp-' + dataForm.id + '").click();';
+				btn[1] = { title: 'Actualizar', fn: fn[1], class: 'rstSustServ btn btn-trade-visual' };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formLisSustComprobante', function () {
+			++modalId;
+			// let id = 
+			var dataForm = {};
+			dataForm.id = $(this).data('idcotdetpro');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			// alert($(this).data('idcotdetpro'));
+			let config = { 'url': FormularioProveedores.url + 'formularioListadoSustentoComprobante', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				// TODO : El actualizar cierra y vuelve a abrir el modal, buscar una forma de optimizar
+				fn[1] = 'Fn.closeModals(' + modalId + '); $(".formLisSustComprobante.dicdp-' + dataForm.id + '").click();';
+				btn[1] = { title: 'Actualizar', fn: fn[1], class: 'rstSustServ btn btn-trade-visual' };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
 		$(document).on('click', '.formEditArte', function () {
 			++modalId;
 			var dataForm = {};
@@ -136,6 +182,48 @@ var FormularioProveedores = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarValidacionDeArtes(' + modalId + ')", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formEditSustentoServ', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': FormularioProveedores.url + 'formularioEditarSustentoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarSustentoServicio(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formEditSustentoComprobante', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': FormularioProveedores.url + 'formularioEditarSustentoComprobante', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarSustentoComprobante(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -158,6 +246,27 @@ var FormularioProveedores = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarFechaEjecucion()", content: "¿Esta seguro de registrar la fecha indicada?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formSustServ', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('idcotdetpro');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': FormularioProveedores.url + 'formularioSustentoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarSustentoServicio()", content: "¿Esta seguro de registrar la información?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -609,6 +718,30 @@ var FormularioProveedores = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	registrarSustentoServicio: function () {
+		++modalId;
+
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroSustentoServicio'));
+		dataForm.base64Adjunto = FormularioProveedores.base64;
+		dataForm.typeAdjunto = FormularioProveedores.type;
+		dataForm.nameAdjunto = FormularioProveedores.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': FormularioProveedores.url + 'guardarSustentoServicio', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
 	actualizarValidacionDeArtes: function (modal) {
 		++modalId;
 		var dataForm = {};
@@ -628,6 +761,56 @@ var FormularioProveedores = {
 			if (a.result == 1) {
 				// fn[0] = 'Fn.closeModals(' + modalId + ');';
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				Fn.showModal({ id: modal, show: false })
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	actualizarSustentoServicio: function (modal) {
+		++modalId;
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoServicio'));
+		dataForm.base64Adjunto = FormularioProveedores.base64;
+		dataForm.typeAdjunto = FormularioProveedores.type;
+		dataForm.nameAdjunto = FormularioProveedores.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': FormularioProveedores.url + 'editarSustentoServicio', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				Fn.showModal({ id: modal, show: false })
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	actualizarSustentoComprobante: function (modal) {
+		++modalId;
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoComprobante'));
+		dataForm.base64Adjunto = FormularioProveedores.base64;
+		dataForm.typeAdjunto = FormularioProveedores.type;
+		dataForm.nameAdjunto = FormularioProveedores.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': FormularioProveedores.url + 'editarSustentoServicio', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
 				Fn.showModal({ id: modal, show: false })
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
@@ -690,7 +873,7 @@ var FormularioProveedores = {
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-			
+
 		});
 	}
 

@@ -13,6 +13,7 @@
 					<th>Estado</th>
 					<th>Validación de Artes</th>
 					<th>Fecha de Ejecución</th>
+					<th>Sustento de Servicio</th>
 					<th>Carga de Comprobantes</th>
 					<th>Comentario</th>
 				</tr>
@@ -51,7 +52,8 @@
 										</a>
 									</div>
 								<?php elseif ($row['mostrarValidacion'] == '2') : ?>
-									No requiere Arte
+									-
+									<!-- No requiere Arte -->
 								<?php else : ?>
 									<a class="ui basic button formLisArts" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
 										<i class="icon search"></i>
@@ -89,18 +91,38 @@
 							</div>
 						</td>
 						<td>
+							<?php if ($row['status'] == 'Aprobado' && $row['solicitarFecha'] == '1' && $row['flagFechaRegistro'] == '1') :  ?>
+								<?php if (empty($row['sustentoComp'][$row['idCotizacionDetalleProveedor']])) :  ?>
+									<a class="ui basic button formSustServ" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+										<i class="icon upload"></i>
+										Indicar Sustento
+									</a>
+								<?php else : ?>
+									<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+										<i class="icon search"></i>
+										Sustento Enviado
+									</a>
+								<?php endif; ?>
+							<?php endif; ?>
+						</td>
+						<td>
 							<?php if ($row['status'] == 'Aprobado') :  ?>
 								<?php if ($row['solicitarFecha'] == '1') :  ?>
 									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-										<?php if (empty($row['sustentoC'])) :  ?>
-											<div class="ui">
-												<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>">
-													<i class="icon archive"></i>
-													Indicar Sustento
+										<?php if ($row['flagSustentoServicio'] == '1') :  ?>
+											<?php if (empty($row['sustentoC'])) :  ?>
+												<div class="ui">
+													<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>">
+														<i class="icon archive"></i>
+														Indicar Sustento
+													</a>
+												</div>
+											<?php else : ?>
+												<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+													<i class="icon search"></i>
+													Sustento enviado correctamente
 												</a>
-											</div>
-										<?php else : ?>
-											Sustento enviado correctamente
+											<?php endif; ?>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
@@ -110,13 +132,15 @@
 							<?php if ($row['status'] == 'Aprobado') :  ?>
 								<?php if ($row['solicitarFecha'] == '1') :  ?>
 									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-										<?php if (empty($row['sustentoC'])) :  ?>
-											En proceso
-										<?php else : ?>
-											<?php if ($row['sustentoC'][$row['idCotizacion']][$row['idProveedor']]['flagIncidencia'] == '1') :  ?>
-												Finalizado con incidencia.
+										<?php if ($row['flagSustentoServicio'] == '1') :  ?>
+											<?php if (empty($row['sustentoC'])) :  ?>
+												En proceso
 											<?php else : ?>
-												Finalizado al 100%
+												<?php if ($row['sustentoC'][$row['idCotizacion']][$row['idProveedor']]['flagIncidencia'] == '1') :  ?>
+													Finalizado con incidencia.
+												<?php else : ?>
+													Finalizado al 100%
+												<?php endif; ?>
 											<?php endif; ?>
 										<?php endif; ?>
 									<?php endif; ?>
@@ -129,7 +153,7 @@
 			<tfoot class="full-width">
 				<tr>
 					<th></th>
-					<th colspan="10">
+					<th colspan="11">
 						<div class="ui right floated small button btnRefreshCotizaciones">
 							<i class="sync icon"></i>
 							Refresh
