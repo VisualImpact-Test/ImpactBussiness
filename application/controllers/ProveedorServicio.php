@@ -32,6 +32,7 @@ class ProveedorServicio extends MY_Controller
 			'assets/custom/js/proveedorServicio',
 		);
 
+		$config['data']['proveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => '2'])->result_array();
 		$config['data']['icon'] = 'icon chartline';
 		$config['data']['title'] = 'Gestor de Servicio';
 		$config['data']['message'] = 'Lista';
@@ -43,13 +44,18 @@ class ProveedorServicio extends MY_Controller
 	public function reporte()
 	{
 		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
+		$where = [];
+		if (!empty($post['proveedor'])) $where['idProveedor'] = $post['proveedor'];
+		if (!empty($post['fecha'])) $where['fechaEmision'] = $post['fecha'];
 		$dataParaVista = [];
-		$data = $this->model->obtenerDatosReporte()->result_array();
+
+		$data = $this->model->obtenerDatosReporte($where)->result_array();
 		foreach ($data as $k => $v) {
 			// Inicio: Para número de Oper
 			$idOp = $this->db->get_where('compras.operDetalle', ['idCotizacion' => $v['idCotizacion'], 'estado' => '1'])->row_array()['idOper'];
-			$data[$k]['operData'] = $this->db->get_where('compras.oper', ['idOper'=> $idOp])->row_array();
+			$data[$k]['operData'] = $this->db->get_where('compras.oper', ['idOper' => $idOp])->row_array();
 			// Fin: Para número de Oper
 
 			// Inicio: Para el titulo de la cotizacion

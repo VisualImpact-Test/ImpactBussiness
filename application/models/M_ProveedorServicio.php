@@ -15,7 +15,7 @@ class M_ProveedorServicio extends MY_Model
 		parent::__construct();
 	}
 
-	public function obtenerDatosReporte()
+	public function obtenerDatosReporte($data = [])
 	{
 		$this->db
 			->select('DISTINCT
@@ -44,6 +44,9 @@ class M_ProveedorServicio extends MY_Model
 			c.motivoAprobacion,
 			c.codOrdenCompra')
 			->order_by('cp.idCotizacionDetalleProveedor desc');
+
+		if (isset($data['idProveedor'])) $this->db->where('pr.idProveedor', $data['idProveedor']);
+		if (isset($data['fechaEmision'])) $this->db->where('CAST(c.fechaEmision as DATE)', $data['fechaEmision']);
 
 		return $this->db->get();
 	}
