@@ -332,7 +332,12 @@ class SolicitudCotizacion extends MY_Controller
 		$idCotizacionDetalle = $post['idCotizacionDetalle'];
 		$idProveedor = $post['idProveedor'];
 
-		$idCotizacion = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $idCotizacionDetalle])->row_array()['idCotizacion'];
+		if (isset($post['idCotizacion'])) {
+			$idCotizacion = $post['idCotizacion'];
+		}else{
+			$idCotizacion = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $idCotizacionDetalle])->row_array()['idCotizacion'];
+		}
+		
 		$idCotizacionDetalleProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacion' => $idCotizacion, 'idProveedor' => $idProveedor, 'estado' => '1'])->row_array()['idCotizacionDetalleProveedor'];
 		$data = $this->db->get_where('compras.cotizacionDetalleProveedorDetalle', ['idCotizacionDetalleProveedor' => $idCotizacionDetalleProveedor])->result_array();
 		$proveedor = $this->db->get_where('compras.proveedor', ['idProveedor' => $idProveedor])->row_array();

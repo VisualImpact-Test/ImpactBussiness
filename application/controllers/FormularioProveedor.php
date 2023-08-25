@@ -667,6 +667,12 @@ class FormularioProveedor extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
+
+		$dataParaVista['mostrarOpcionesExt'] = false;
+		if (isset($post['mostrarOpcionesExt'])) {
+			$dataParaVista['mostrarOpcionesExt'] = true;
+		}
+
 		$dataParaVista['proveedor'] = $post['proveedor'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
 		$dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
@@ -677,12 +683,40 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function editarValidacionArteEstado()
+	{
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		// $post['data'] = json_decode($post['data']);
+		// foreach ($post['data'] as $k => $v) {
+		// 	$post[$k] = $v;
+		// }
+
+		$this->db->update('compras.validacionArte', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idValidacionArte' => $post['id']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
+	}
 	public function formularioListadoSustentoServicio()
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
+
+		$dataParaVista['mostrarOpcionesExt'] = false;
+		if (isset($post['mostrarOpcionesExt'])) {
+			$dataParaVista['mostrarOpcionesExt'] = true;
+		}
+
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
 		$dataParaVista['sustentosCargados'] = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedor' => $post['id'], 'estado' => '1'])->result_array();
 		// $dataParaVista['cotizacion'] = $post['cotizacion'];
@@ -699,9 +733,15 @@ class FormularioProveedor extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
+
+		$dataParaVista['mostrarOpcionesExt'] = false;
+		if (isset($post['mostrarOpcionesExt'])) {
+			$dataParaVista['mostrarOpcionesExt'] = true;
+		}
+
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
 		$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacionDetalleProveedor' => $post['id']])->row_array();
-		$dataParaVista['sustentosCargados'] = $this->db->get_where('compras.sustentoAdjunto', ['idProveedor' => $dc['idProveedor'], 'idCotizacion' => $dc['idCotizacion'], 'estado' => '1'])->result_array();
+		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')->get_where('compras.sustentoAdjunto', ['idProveedor' => $dc['idProveedor'], 'idCotizacion' => $dc['idCotizacion'], 'estado' => '1'])->result_array();
 		// $dataParaVista['cotizacion'] = $post['cotizacion'];
 		// $dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
 		$result['result'] = 1;
@@ -1009,7 +1049,7 @@ class FormularioProveedor extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-	public function editarSustentoServicio()
+	public function editarSustentoComprobante()
 	{
 		$this->db->trans_start();
 
@@ -1056,6 +1096,100 @@ class FormularioProveedor extends MY_Controller
 			$this->db->update('compras.sustentoAdjunto', ['estado' => 0], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
 			$this->db->insert('compras.sustentoAdjunto', $insert);
 		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
+	}
+	public function editarSustentoServicio()
+	{
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$post['data'] = json_decode($post['data']);
+		foreach ($post['data'] as $k => $v) {
+			$post[$k] = $v;
+		}
+
+		if (empty($post['base64Adjunto'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+			goto respuesta;
+		}
+
+		foreach ($post['base64Adjunto'] as $key => $row) {
+			$archivo = [
+				'base64' => $row,
+				'name' => $post['nameAdjunto'][$key],
+				'type' => $post['typeAdjunto'][$key],
+				'carpeta' => 'sustentoServicio',
+				'nombreUnico' => uniqid()
+			];
+			$archivoName = $this->saveFileWasabi($archivo);
+			$tipoArchivo = explode('/', $archivo['type']);
+
+			$sa = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
+			$insert = [
+				// 'idFormatoDocumento' => $sa['idFormatoDocumento'],
+				'idCotizacionDetalleProveedor' => $sa['idCotizacionDetalleProveedor'],
+				'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+				'extension' => FILES_WASABI[$tipoArchivo[1]],
+				'nombre_inicial' => $archivo['name'],
+				'nombre_archivo' => $archivoName,
+				'nombre_unico' => $archivo['nombreUnico'],
+				'flagRevisado' => 0,
+				'flagAprobado' => 0,
+				'estado' => true,
+				'fechaReg' => getActualDateTime()
+				// 'idCotizacion' => $sa['idCotizacion'],
+				// 'flagIncidencia' => $sa['flagIncidencia'],
+			];
+			$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
+			$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insert);
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
+	}
+	public function editarSustentoServicioEstado()
+	{
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+
+		respuesta:
+		echo json_encode($result);
+	}
+	public function editarSustentoComprobanteEstado()
+	{
+		$this->db->trans_start();
+
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$this->db->update('compras.sustentoAdjunto', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idSustentoAdjunto' => $post['id']]);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
