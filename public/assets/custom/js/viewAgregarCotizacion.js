@@ -223,7 +223,6 @@ var Cotizacion = {
 		$(document).ready(function () {
 			// $('#btn-filtrarCotizacion').click();
 			Fn.loadSemanticFunctions();
-
 			$('.simpleDropdown').dropdown();
 			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 			Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());

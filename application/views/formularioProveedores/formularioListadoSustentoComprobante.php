@@ -17,10 +17,25 @@
 						</tr>
 					</thead>
 					<tbody>
+						<?php foreach ($ocGenerado as $k => $row) : ?>
+							<tr class="default">
+								<td><?= $k + 1 ?></td>
+								<td>Orden Compra</td>
+								<td class="tdEstado">
+									<label class="ui green basic label large">Aprobado</label>
+								</td>
+								<td>
+									<a class="ui button btn-descargarOc" target="_blank" data-id="<?= $row['idOrdenCompra']; ?>">
+										<i class="icon eye"></i>
+									</a>
+								</td>
+								<td class="text-center"></td>
+							</tr>
+						<?php endforeach; ?>
 						<?php foreach ($sustentosCargados as $k => $row) : ?>
 							<?php $direccion = RUTA_WASABI . 'sustentoServicio/' . verificarEmpty($row['nombre_archivo'], 3); ?>
 							<tr class="default">
-								<td><?= $k + 1 ?></td>
+								<td><?= $k + 1 + count($ocGenerado) ?></td>
 								<td>
 									<?php
 									switch ($row['idFormatoDocumento']) {

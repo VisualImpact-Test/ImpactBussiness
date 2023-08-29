@@ -18,7 +18,11 @@
 					</thead>
 					<tbody>
 						<?php foreach ($sustentosCargados as $k => $row) : ?>
-							<?php $direccion = RUTA_WASABI . 'sustentoServicio/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+							<?php if ($row['idTipoArchivo'] == TIPO_ENLACE) :  ?>
+								<?php $direccion = $row['nombre_archivo']; ?>
+							<?php else : ?>
+								<?php $direccion = RUTA_WASABI . 'sustentoServicio/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+							<?php endif; ?>
 							<tr class="default">
 								<td><?= $k + 1 ?></td>
 								<td><?= verificarEmpty($row['nombre_inicial'], 3) ?></td>

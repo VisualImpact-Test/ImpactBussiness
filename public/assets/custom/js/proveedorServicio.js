@@ -28,6 +28,17 @@ var ProveedorServicio = {
 
 		$(document).ready(function () {
 			$('#btn-filtrarProveedorServicio').click();
+			// Para que no carguen los CC
+			$(".centro-ocultado .menu").attr("id", "centroCosto_oculto");
+			$(".centro-visible .menu").attr("id", "centroCosto_visible");
+			$("#centroCosto_oculto .item").hide();
+			let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
+			$elementoDiv.prependTo('#centroCosto_oculto');
+		});
+		$(document).on('click', '#centroCosto_visible .item', function () {
+			$("#centroCosto_oculto .item").removeAttr("style", "display");
+			$("#centroCosto_oculto .seleccion").attr("style", "display").addClass("d-none");
+
 		});
 
 		$(document).on('click', '#btn-filtrarProveedorServicio', function () {
@@ -54,8 +65,6 @@ var ProveedorServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				if (a.result == 1) {
-					console.log(control.closest('tr.default'));
-					console.log(control.closest('tr.default').find('.tdEstado'));
 					if (control.data('estado') == '1') {
 						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
 					} else {
@@ -136,8 +145,27 @@ var ProveedorServicio = {
 			e.preventDefault();
 			idCotizacionDetalle = $(this).data('id');
 			idProveedor = $(this).data('proveedor');
-			data = { 'idCotizacionDetalle': idCotizacionDetalle, 'idProveedor': idProveedor, 'idCotizacion' : idCotizacionDetalle };
+			data = { 'idCotizacionDetalle': idCotizacionDetalle, 'idProveedor': idProveedor, 'idCotizacion': idCotizacionDetalle };
 			var url = 'SolicitudCotizacion/' + 'descargarExcel';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
+		$(document).on('click', '.btn-descargarOper', function (e) {
+			e.preventDefault();
+			idOper = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'idOper': idOper }) };
+			var url = 'Cotizacion/' + 'descargarOper';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
+		$(document).on('click', '.btn-descargarOc', function (e) {
+			e.preventDefault();
+			Fn.showLoading(true);
+			id = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'id': id }) };
+			var url = 'Cotizacion/' + 'descargarOrdenCompra';
 			$.when(Fn.download(url, data)).then(function (a) {
 				Fn.showLoading(false);
 			});
@@ -485,7 +513,6 @@ var ProveedorServicio = {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
 					if ((num) > 10) {
@@ -545,7 +572,6 @@ var ProveedorServicio = {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
 					if ((num) > 10) {
@@ -722,7 +748,6 @@ var ProveedorServicio = {
 		let jsonString = { 'data': JSON.stringify(dataForm) };
 		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarValidacionArte', 'data': jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
-			console.log(a);
 			let btn = [];
 			let fn = [];
 

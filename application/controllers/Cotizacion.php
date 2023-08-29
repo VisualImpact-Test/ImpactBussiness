@@ -2456,11 +2456,14 @@ class Cotizacion extends MY_Controller
 			if ($v['idItemTipo'] == COD_TRANSPORTE['id']) {
 				$cds_ = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
 				$dataParaVista['cotizacionDetalle'][$k]['costo'] = 0;
+				$cantTotalT = 0;
 				foreach ($cds_ as $vds) {
 					$cdss = $this->db->get_where('compras.cotizacionDetalleSubSincerado', ['idCotizacionDetalleSub' => $vds['idCotizacionDetalleSub']])->row_array();
 					$dataParaVista['cotizacionDetalle'][$k]['costo'] += (floatval($cdss['costo']) * floatval($cdss['cantidad']) * floatval($cdss['dias']));
+					$cantTotalT += floatval($cdss['cantidad']);
 				}
 				$dataParaVista['cotizacionDetalle'][$k]['subtotalSinGap'] = $dataParaVista['cotizacionDetalle'][$k]['costo'];
+				$dataParaVista['cotizacionDetalle'][$k]['cantidad'] = $cantTotalT;
 			}
 		}
 

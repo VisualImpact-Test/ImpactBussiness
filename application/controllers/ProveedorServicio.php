@@ -10,6 +10,7 @@ class ProveedorServicio extends MY_Controller
 		parent::__construct();
 		$this->load->model('M_ProveedorServicio', 'model');
 		$this->load->model('M_FormularioProveedor', 'model_FormularioProveedor');
+		$this->load->model('M_Cotizacion', 'mCotizacion');
 		// $this->load->model('M_Cotizacion', 'mCotizacion');
 		// $this->load->model('M_control', 'model_control');
 	}
@@ -29,10 +30,14 @@ class ProveedorServicio extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
 			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
+			'assets/custom/js/core/gestion',
 			'assets/custom/js/proveedorServicio',
 		);
 
 		$config['data']['proveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => '2'])->result_array();
+		$config['data']['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$config['data']['cuentaCentroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
+		
 		$config['data']['icon'] = 'icon chartline';
 		$config['data']['title'] = 'Gestor de Servicio';
 		$config['data']['message'] = 'Lista';
@@ -49,6 +54,10 @@ class ProveedorServicio extends MY_Controller
 		$where = [];
 		if (!empty($post['proveedor'])) $where['idProveedor'] = $post['proveedor'];
 		if (!empty($post['fecha'])) $where['fechaEmision'] = $post['fecha'];
+		if (!empty($post['cuenta'])) $where['idCuenta'] = $post['cuenta'];
+		if (!empty($post['centroCosto'])) $where['idCentroCosto'] = $post['centroCosto'];
+		if (!empty($post['codPO'])) $where['codPo_'] = $post['codPO'];
+
 		$dataParaVista = [];
 
 		$data = $this->model->obtenerDatosReporte($where)->result_array();

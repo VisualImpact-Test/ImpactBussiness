@@ -52,9 +52,9 @@
 									<th>Tipo de Transporte</th>
 									<th class="text-center">Costo Cliente</th>
 									<th class="text-center">Cotización Cantidad Días</th>
-									<th class="text-center">Cantidad Días</th>
+									<th class="text-center">Sincerado de Cantidad Días</th>
 									<th class="text-center">Cotización Cantidad Moviles</th>
-									<th class="text-center">Cantidad Moviles</th>
+									<th class="text-center">Sincerado de Cantidad Moviles</th>
 									<th class="text-center">Subtotal</th>
 								</tr>
 							</thead>

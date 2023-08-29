@@ -40,11 +40,25 @@
 						<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion" data-id="<?= $row['idCotizacion']; ?>"><i class="icon eye" title="Generar PDF cotizacion"></i></a>
 					</td>
 					<td><?= verificarEmpty($row['status'], 3) ?></td>
-					<td><?= verificarEmpty($row['motivoAprobacion'], 3) ?></td>
-					<td><?= verificarEmpty($row['codOrdenCompra'], 3) ?></td>
-					<td><?= $row['operData']['requerimiento']; ?></td>
 					<td>
-						<?php if ($row['status'] == 'Aprobado' || $row['status'] == 'Vencido') :  ?>
+						<?php if ($row['status'] == 'Aprobado') : ?>
+							<?= verificarEmpty($row['motivoAprobacion'], 3) ?>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?php if ($row['status'] == 'Aprobado') : ?>
+							<?= verificarEmpty($row['codOrdenCompra'], 3) ?>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?php if ($row['status'] == 'Aprobado') : ?>
+							<a href="javascript:;" download class="ui button btn-descargarOper" data-id="<?= $row['operData']['idOper'] ?>">
+								<?= $row['operData']['requerimiento']; ?>
+							</a>
+						<?php endif; ?>
+					</td>
+					<td>
+						<?php if ($row['status'] == 'Aprobado') :  ?>
 							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
 						<?php endif; ?>
 					</td>
@@ -80,15 +94,15 @@
 											</a>
 										</div>
 									<?php else : ?>
-										<?php if (!empty($row['adjuntoFechaEjecucion'])) :  ?>
+										<?php if (!empty($row['adjuntoFechaEjecucion'])) : ?>
 											<a class="ui button" href="<?= RUTA_WASABI . 'fechaEjecucion/' . $row['adjuntoFechaEjecucion'][0]['nombre_archivo']; ?>" target="_blank">
 											<?php endif; ?>
-											<?php if ($row['fechaInicio'] == '1900-01-01') :  ?>
+											<?php if ($row['fechaInicio'] == '1900-01-01') : ?>
 												Se adjunto archivo
 											<?php else : ?>
 												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
 											<?php endif; ?>
-											<?php if (!empty($row['adjuntoFechaEjecucion'])) :  ?>
+											<?php if (!empty($row['adjuntoFechaEjecucion'])) : ?>
 											</a>
 										<?php endif; ?>
 									<?php endif; ?>
@@ -135,34 +149,6 @@
 							<?php endif; ?>
 						<?php endif; ?>
 					</td>
-					<!-- <td>
-						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<?php if ($row['solicitarFecha'] == '1') :  ?>
-								<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-									<?php if ($row['flagSustentoServicio'] == '1') :  ?>
-										<?php if (empty($row['sustentoC'])) :  ?>
-											En proceso
-										<?php else : ?>
-											<?php if ($row['sustentoC'][$row['idCotizacion']][$row['idProveedor']]['flagIncidencia'] == '1') :  ?>
-												Finalizado con incidencia.
-											<?php else : ?>
-												Finalizado al 100%
-											<?php endif; ?>
-										<?php endif; ?>
-									<?php endif; ?>
-								<?php endif; ?>
-							<?php endif; ?>
-						<?php endif; ?>
-					</td>
-					<td>
-						<?php if (!empty($row['ocGen'])) :  ?>
-							<?php foreach ($row['ocGen'] as $koc => $voc) : ?>
-								<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $voc['idOrdenCompra'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
-									<i class="icon file alternate outline" title="Validar OC"></i>
-								</a>
-							<?php endforeach; ?>
-						<?php endif; ?>
-					</td> -->
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

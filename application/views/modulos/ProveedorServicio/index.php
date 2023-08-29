@@ -45,22 +45,34 @@
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Estado</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="estadoProveedorServicio" id="estadoProveedorServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $estado, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							<!-- <span class="tooltiptext">Proveedor</span> -->
+							<select class="ui dropdown fluid search selection clearable semantic-dropdown" name="proveedor">
+								<?= htmlSelectOptionArray2(['title' => 'Proveedor', 'query' => $proveedor, 'value' => 'razonSocial', 'id' => 'idProveedor', 'class' => 'text-titlecase']); ?>
+							</select>
+						</div>
+
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<!-- <span class="tooltiptext">Fecha</span> -->
+							<div class="ui fluid input">
+								<input type="date" name="fecha">
+							</div>
+							<!-- <input class="form-control form-control-sm ui" type="date" name="fecha"> -->
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<!-- <span class="tooltiptext">Cuenta</span> -->
+							<select class="ui dropdown fluid selection clearable parentDependiente centro-visible" id="cuentaForm" name="cuenta" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+								<?= htmlSelectOptionArray2(['title' => 'Cuenta', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Rubro</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="rubroProveedorServicio" id="rubroProveedorServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $rubro, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							<!-- <span class="tooltiptext">Centro Costo</span> -->
+							<select class="ui dropdown fluid selection clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="centroCosto" patron="requerido">
+								<?= htmlSelectOptionArray2(['title' => 'Centro Costo', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Metodo Pago</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="metodoPagoProveedorServicio" id="metodoPagoProveedorServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $metodoPago, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
-							</select>
+							<!-- <span class="tooltiptext">Centro Costo</span> -->
+							<div class="ui fluid input"><input type="text" name="codPO" placeholder="código PO"></div>
 						</div>
 					</div>
 				</div>

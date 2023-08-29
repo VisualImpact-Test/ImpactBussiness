@@ -742,8 +742,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
 		$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacionDetalleProveedor' => $post['id']])->row_array();
 		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')->get_where('compras.sustentoAdjunto', ['idProveedor' => $dc['idProveedor'], 'idCotizacion' => $dc['idCotizacion'], 'estado' => '1'])->result_array();
-		// $dataParaVista['cotizacion'] = $post['cotizacion'];
-		// $dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
+		$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(['idCotizacion' => $dc['idCotizacion'], 'idProveedor' => $dc['idProveedor']])->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Sustentos Cargados';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoSustentoComprobante", $dataParaVista, true);
@@ -1117,33 +1116,22 @@ class FormularioProveedor extends MY_Controller
 			$post[$k] = $v;
 		}
 
-		if (empty($post['base64Adjunto'])) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
-			goto respuesta;
-		}
-
-		foreach ($post['base64Adjunto'] as $key => $row) {
-			$archivo = [
-				'base64' => $row,
-				'name' => $post['nameAdjunto'][$key],
-				'type' => $post['typeAdjunto'][$key],
-				'carpeta' => 'sustentoServicio',
-				'nombreUnico' => uniqid()
-			];
-			$archivoName = $this->saveFileWasabi($archivo);
-			$tipoArchivo = explode('/', $archivo['type']);
-
+		if ($post['opcion'] == '1') {
+			if (empty($post['enlace'])) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
 			$sa = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
 			$insert = [
 				// 'idFormatoDocumento' => $sa['idFormatoDocumento'],
 				'idCotizacionDetalleProveedor' => $sa['idCotizacionDetalleProveedor'],
-				'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-				'extension' => FILES_WASABI[$tipoArchivo[1]],
-				'nombre_inicial' => $archivo['name'],
-				'nombre_archivo' => $archivoName,
-				'nombre_unico' => $archivo['nombreUnico'],
+				'idTipoArchivo' => '7',
+				'extension' => null,
+				'nombre_inicial' => 'Enlace',
+				'nombre_archivo' => $post['enlace'],
+				'nombre_unico' => $post['enlace'],
 				'flagRevisado' => 0,
 				'flagAprobado' => 0,
 				'estado' => true,
@@ -1153,8 +1141,45 @@ class FormularioProveedor extends MY_Controller
 			];
 			$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
 			$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insert);
-		}
+		} else {
+			if (empty($post['base64Adjunto'])) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
+				goto respuesta;
+			}
 
+			foreach ($post['base64Adjunto'] as $key => $row) {
+				$archivo = [
+					'base64' => $row,
+					'name' => $post['nameAdjunto'][$key],
+					'type' => $post['typeAdjunto'][$key],
+					'carpeta' => 'sustentoServicio',
+					'nombreUnico' => uniqid()
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+
+				$sa = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
+				$insert = [
+					// 'idFormatoDocumento' => $sa['idFormatoDocumento'],
+					'idCotizacionDetalleProveedor' => $sa['idCotizacionDetalleProveedor'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'flagRevisado' => 0,
+					'flagAprobado' => 0,
+					'estado' => true,
+					'fechaReg' => getActualDateTime()
+					// 'idCotizacion' => $sa['idCotizacion'],
+					// 'flagIncidencia' => $sa['flagIncidencia'],
+				];
+				$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
+				$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insert);
+			}
+		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');

@@ -46,7 +46,11 @@ class M_ProveedorServicio extends MY_Model
 			->order_by('cp.idCotizacionDetalleProveedor desc');
 
 		if (isset($data['idProveedor'])) $this->db->where('pr.idProveedor', $data['idProveedor']);
-		if (isset($data['fechaEmision'])) $this->db->where('CAST(c.fechaEmision as DATE)', $data['fechaEmision']);
+		if (isset($data['fechaEmision'])) $this->db->where('CAST(c.fechaEmision as DATE) =', $data['fechaEmision']);
+		if (isset($data['idCuenta'])) $this->db->where('c.idCuenta', $data['idCuenta']);
+		if (isset($data['idCentroCosto'])) $this->db->where('c.idCentroCosto', $data['idCentroCosto']);
+		if (isset($data['codPo_'])) $this->db->like('c.codOrdenCompra', $data['codPo_']);
+		
 
 		return $this->db->get();
 	}
