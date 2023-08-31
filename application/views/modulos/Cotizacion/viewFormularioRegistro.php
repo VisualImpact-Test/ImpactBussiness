@@ -317,128 +317,168 @@
 							</div>
 						</div>
 						<!-- Personal -->
-						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?>" style="border: 1px solid;padding: 15px;">
-							<div class="fields">
-								<div class="four wide field">
-									<div class="ui sub header">Cantidad</div>
-									<input value="" name="cantidad_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Cargo</div>
-									<div class="cargo_rrhh">
-									<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal">
-										<?//=htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cargoPersonal, 'id' => 'nombre', 'value' => 'nombre', 'class' => 'text-titlecase']); ?>
-									</select>
-									</div>
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Tipo de Contrato</div>
-									<select class="" name="tipo_contrato_personal">
-										<option value="0">Seleccione</option>
-										<option value="1">Part Time</option>
-										<option value="2">Full Time</option>
-									</select>
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Pago día</div>
-									<select class="" name="pago_dia_personal">
-										<option value="0">Seleccione</option>
-										<option value="1">Trabajo Amanecida</option>
-										<option value="2">Trabajo Horario Regular</option>
-									</select>
-								</div>
-							</div>
-							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">Periodo de Contrato</div>
-									<select class="" id="periodo_contrato_personal" name="periodo_contrato_personal">
-										<option value="0">Seleccione</option>
-										<option value="1">Diario</option>
-										<option value="2">Mensual</option>
-									</select>
-								</div>
-								<div class="four wide field cantidad_dias_personal">
-									<div class="ui sub header">Cantidad de días</div>
-									<input value="0" id="cantidad_dias_personal" name="cantidad_dias_personal">
-								</div>
-								<div class="three wide field pago_diario_personal">
-									<div class="ui sub header">Pago diario</div>
-									<input value="0" id="pago_diario_personal" name="pago_diario_personal">
-								</div>
-								<div class="three wide field pago_mensual_personal">
-									<div class="ui sub header">Pago mensual</div>
-									<input value="0" id="pago_mensual_personal" name="pago_mensual_personal">
-								</div>
-							</div>
-							<div class="ui sub header">Estructura Salarial</div>
-							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">Sueldo</div>
-									<input value="" name="sueldo_personal" id="sueldo_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Movilidad</div>
-									<input value="" name="movilidad_personal" id="movilidad_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Refrigerio</div>
-									<input value="" name="refrigerio_personal" id="refrigerio_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Incentivo</div>
-									<input value="" name="incentivo_personal" id="incentivo_personal">
-								</div>
-							</div>
+						<div class="d-none div-features div-feature-<?=COD_PERSONAL['id']?>" style="border: 1px solid;padding: 15px;">
+							<table style="width: 100%;">
+								<tr>
+									<td style="width:20%;">
+										<div style="padding:15px;">
+											<div class="ui sub header">Cantidad</div>
+											<input value="" name="cantidad_personal" id="cantidad_personal">
+										</div>
+									</td>
+									<td style="width:20%;">
+										<div style="padding:15px;">
+											<div class="ui sub header">Cargo</div>
+											<div class="cargo_rrhh" style="width:100%;">
+												<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal"></select>
+											</div>
+										</div>
+									</td>
+									<td style="width:20%;">
+										<div style="padding:15px;">
+											<div class="ui sub header">Tipo de Contrato</div>
+											<select class="" name="tipo_contrato_personal">
+												<option value="0">Seleccione</option>
+												<option value="1">Part Time</option>
+												<option value="2">Full Time</option>
+											</select>
+										</div>
+									</td>
+									<td style="width:20%;">
+										<div style="padding:15px;">
+											<div class="ui sub header">Tipo Jornada</div>
+											<select class="" name="tipo_jornada_personal">
+												<option value="0">Seleccione</option>
+												<option value="1">Amanecida</option>
+												<option value="2">Horario Regular</option>
+											</select>
+										</div>
+									</td>
+									<td style="width:20%;"></td>
+								</tr>
+								<tr>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Periodo de Contrato</div>
+											<select class="" id="periodo_contrato_personal" name="periodo_contrato_personal">
+												<option value="0">Seleccione</option>
+												<option value="1">Diario</option>
+												<option value="2">Mensual</option>
+											</select>
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;display:none;" class="cantidad_dias">
+											<div class="ui sub header">Cantidad de días</div>
+											<input value="0" id="cantidad_dias_personal" name="cantidad_dias_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;display:none;" class="pago_diario">
+											<div class="ui sub header">Pago diario</div>
+											<input value="0" id="pago_diario_personal" name="pago_diario_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Pago mensual</div>
+											<input value="0" id="pago_mensual_personal" name="pago_mensual_personal">
+										</div>
+									</td>
+									<td style="width:20%;"></td>
+								</tr>
+								<tr>
+									<td colspan="5">
+										<div style="padding:15px;">
+											<div class="ui sub header">Estructura Salarial</div>
+										</div>	
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Sueldo</div>
+											<input value="" name="sueldo_personal" id="sueldo_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Asignacion Familiar</div>
+											<input value="" name="asignacion_familiar_personal" id="asignacion_familiar_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Movilidad</div>
+											<input value="" name="movilidad_personal" id="movilidad_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Refrigerio</div>
+											<input value="" name="refrigerio_personal" id="refrigerio_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+						   
+									  
+											<div class="ui sub header">Incentivo</div>
+											<input value="" name="incentivo_personal" id="incentivo_personal">
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="5">
+										<div style="padding:15px;">
+											<div class="ui sub header">Cargas Sociales</div>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Essalud  9% </div>
+											<input value="" name="essalud_personal" id="essalud_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">CTS  9.7%</div>
+											<input value="" name="cts_personal" id="cts_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+									  
+											<div class="ui sub header">Vacaciones 9.1%</div>
+											<input value="" name="vacaciones_personal" id="vacaciones_personal">
+										</div>
 
-							<div class="ui sub header">Cargas Sociales</div>
-							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">Essalud</div>
-									<input value="" name="essalud_personal" id="essalud_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">CTS</div>
-									<input value="" name="cts_personal" id="cts_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Vacaciones</div>
-									<input value="" name="refrigerio_personal" id="refrigerio_personal">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Gratificacion</div>
-									<input value="" name="incentivo_personal" id="incentivo_personal">
-								</div>
-							</div>
-
-							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">Seguro Vida Ley</div>
-									<input value="" name="essalud_personal" id="essalud_personal">
-								</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+									  
+											<div class="ui sub header">Gratificacion 18.20%</div>
+											<input value="" name="gratificacion_personal" id="gratificacion_personal">
+										</div>
+									</td>
+									<td>
+										<div style="padding:15px;">
+									 
+																				   
+			  
+									  
+											<div class="ui sub header">Seguro Vida Ley 0.26%</div>
+											<input value="" name="seguro_vida_personal" id="seguro_vida_personal">
+										</div>
+									</td>
+				  
+								</tr>
+							</table>
+							<div class="campos_adicionales">
 								
-							</div>
-
-							<div class="fields">
-								<div class="three wide field">
-									<div class="ui sub header">SCTR</div>
-									<select class="ui clearable dropdown simpleDropdown">
-										<option value="1">SI</option>
-										<option value="2">NO</option>
-									</select>
-								</div>
-								<div class="four wide field">
-									<input value="" placeholder="monto por persona" style="margin-top: 15px;">
-								</div>
-								<div class="three wide field">
-									<div class="ui sub header">Equipos de seguridad</div>
-									<select class="ui clearable dropdown simpleDropdown">
-										<option value="1">SI</option>
-										<option value="2">NO</option>
-									</select>
-								</div>
-								<div class="three wide field">
-									<input value="" placeholder="monto por persona" style="margin-top: 15px;">
-								</div>
+			  
 							</div>
 						</div>
 						<!-- Transporte -->
@@ -446,23 +486,49 @@
 							<h4 class="ui dividing header">SUB ITEMS</h4>
 							<div class="content-body-sub-item">
 								<div class="fields body-sub-item body-sub-item-servicio">
-									<div class="ten wide field">
-										<div class="ui sub header">Sub item </div>
-										<input class="nombreSubItem" name="nombreSubItemForm[0]" placeholder="Nombre" value="<?= !empty($data['nombreSubItem']) ? $data['nombreSubItem'] : '' ?>">
+									<div class="three wide field">
+										<div class="ui sub header">Departamento</div>
+										<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[0]" onchange="Cotizacion.buscarProvincias(this);">
+											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
+										</select>
 									</div>
-									<div class="five wide field">
-										<div class="ui sub header">Costo</div>
-										<input class="onlyNumbers costoSubItemForm costoTransporte" name="costoSubItemForm[0]" placeholder="0" value="<?= !empty($data['costoSubItem']) ? $data['costoSubItem'] : '' ?>">
+									<div class="three wide field">
+										<div class="ui sub header">Provincia</div>
+										<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
+											<option value>Seleccione</option>
+										</select>
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Tipo Transporte</div>
+										<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
+											<option value>Seleccione</option>
+										</select>
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Costo Visual</div>
+										<input class="inpCostoVisual formTransporte costoVisual_transporte" placeholder="0" value="" readonly>
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Costo Cliente</div>
+										<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[0]" placeholder="0" value="" readonly onchange="Cotizacion.calcularValorTransporte(this);">
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Cant días</div>
+										<input class="formTransporte dias_transporte keyUpChange" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+									</div>
+									<div class="two wide field">
+										<div class="ui sub header">Cant moviles</div>
+										<input class="formTransporte cantidad_transporte keyUpChange" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>
-										<button type="button" class="ui basic button btn-eliminar-sub-item">
+										<button type="button" class="ui button btn-eliminar-sub-item red">
 											<i class="trash icon"></i>
 										</button>
 									</div>
 								</div>
 							</div>
-							<button type="button" class="ui basic button btn-add-sub-item">
+							<button type="button" class="ui button btn-add-sub-item teal">
 								<i class="plus icon"></i>
 								Agregar
 							</button>

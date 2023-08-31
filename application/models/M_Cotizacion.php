@@ -173,6 +173,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['ocGenerado']) ? ($params['ocGenerado'] != '0' ? " AND p.idCotizacionEstado < 8 " : '') : '';
 		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
+		$codTransporte = COD_TRANSPORTE['id'];
 		$sql = "
 			DECLARE @hoy DATE = GETDATE();
 			WITH lst_historico_estado AS (
@@ -218,6 +219,7 @@ class M_Cotizacion extends MY_Model
 				, p.montoOrdenCompra
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = $codTransporte) cantidadTransporte
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
@@ -448,6 +450,7 @@ class M_Cotizacion extends MY_Model
 				, pd.subtotal subTotal
 				, ei.idItemEstado
 				, ei.nombre AS estadoItem
+				, pd.idProveedor
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
 				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion
@@ -690,7 +693,7 @@ class M_Cotizacion extends MY_Model
 						'color' => !empty($subItem['color']) ? $subItem['color'] : '',
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : '',
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : '',
-						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL, //$post
+						'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL,
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 						'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
@@ -707,6 +710,10 @@ class M_Cotizacion extends MY_Model
 						//
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : '0',
 						'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : '0',
+						//
+						'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : null,
+						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : null,
+						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
 					];
 				}
 			}
@@ -2199,22 +2206,59 @@ class M_Cotizacion extends MY_Model
 	}
 
 	public function obtener_cargos($idCentro){
+		$filtro='';
+		if(!empty($idCentro)){
+			$filtro.='AND idArea IN (
+				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+			)';
+		}
 		$sql = "
-			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where idArea IN (
-				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
-			) AND flag=1
+			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where 1=1 AND flag=1 $filtro
+																			
+			   
 		";
 		return $this->db->query($sql);
 	}
 
 	public function obtener_sueldos($idCuenta,$idCentro,$idCargo){
+		$filtro='';
+		if(!empty($idCuenta)) $filtro.='AND idEmpresa='.$idCuenta;
+		if(!empty($idCargo)) $filtro.='AND idCargoTrabajo='.$idCargo;
+		if(!empty($idCentro)) { $filtro.='AND idSubcanal IN (
+			SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+		)';
+		}
 		$sql="
-			SELECT * FROM rrhh.dbo.sueldo WHERE idCargoTrabajo =$idCargo AND idSubcanal IN (
-				SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=$idCentro
-			)
-			AND idEmpresa=$idCuenta
+			SELECT *,case WHEN sueldo>1025 THEN sueldo*0.1 ELSE 1025*0.1 END asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro
+	  
+	
+								
 		";
 
 		return $this->db->query($sql);
-	}																																			 
+	}
+
+	public function obtener_conceptos_adicionales($idTipo,$cantidad){
+		$sql ="
+			DECLARE 
+				@fecha DATE = GETDATE()
+			SELECT 
+				  cc.idConcepto
+				, cc.nombre
+				, cc.id_campo
+				, cc.grupo
+				, ccc.costo
+				, ccc.costo*$cantidad  as total
+			FROM 
+				rrhh.dbo.conceptosCotizacion cc
+				JOIN rrhh.dbo.conceptosCotizacionCosto ccc
+					ON ccc.idConcepto=cc.idConcepto
+					AND @fecha BETWEEN ccc.fecIni AND ISNULL(ccc.fecFin,@fecha)
+				JOIN rrhh.dbo.conceptosCotizacionTipo cct
+					ON cct.idConcepto=cc.idConcepto
+			WHERE
+				cct.idTipo=$idTipo
+		";
+		return $this->db->query($sql);
+	}
 }

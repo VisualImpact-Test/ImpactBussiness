@@ -502,6 +502,9 @@ class Cotizacion extends MY_Controller
 			if ($post['cantidadForm'][$k] > LIMITE_COMPRAS) {
 				$post['cotizacionInternaForm'][$k] = 1;
 			}
+			if ($post['tipoItemForm'][$k] == COD_TRANSPORTE['id']) {
+				$post['cotizacionInternaForm'][$k] = 0;
+			}
 
 			$data['insert'][] = [
 				'idCotizacion' => $insert['id'],
@@ -543,9 +546,12 @@ class Cotizacion extends MY_Controller
 			switch ($post['tipoItemForm'][$k]) {
 				case COD_TRANSPORTE['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
-						'nombre' => $post["nombreSubItemForm[$k]"],
-						'costo' => $post["costoSubItemForm[$k]"],
-						'subTotal' => $post["costoSubItemForm[$k]"],
+						'cod_departamento' => $post["departamentoTransporte[$k]"],
+						'cod_provincia' => $post["provinciaTransporte[$k]"],
+						'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
+						'costo' => $post["costoClienteTransporte[$k]"],
+						'dias' => $post["diasTransporte[$k]"],
+						'cantidad' => $post["cantidadTransporte[$k]"],
 					]);
 					break;
 
@@ -575,39 +581,6 @@ class Cotizacion extends MY_Controller
 						];
 						$n++;
 					}
-
-					/**
-					$data['subDetalle'][$k] = [];
-					foreach ($post["cantidadSubItemNro[$k]"] as $kdr => $vdr) {
-						// Validar si existe el Item Logistica
-						$idItemLogistica = '';
-						$itemInterno = 0;
-						if (!is_numeric($post["itemLogisticaFormNew[$k]"][$kdr])) {
-							$getItem = $this->db->where('nombre', $post["itemLogisticaFormNew[$k]"][$kdr])->get('compras.item')->row_array();
-							$itemInterno = 1;
-							if (empty($getItem)) {
-								$this->db->insert('compras.item', [
-									'nombre' => $post["itemLogisticaFormNew[$k]"][$kdr],
-									'idItemTipo' => COD_ARTICULO['id'],
-									'idCuenta' => $post['cuentaForm']
-								]);
-								$idItemLogistica = $this->db->insert_id();
-							} else {
-								$idItemLogistica = $getItem['idItem'];
-							}
-						} else {
-							$idItemLogistica = $post["itemLogisticaFormNew[$k]"][$kdr];
-						}
-						// FIN: Validar si existe el Item Logistica
-						$data['subDetalle'][$k][] = [
-							'cantidad' => $vdr, //$post["cantidadSubItemNro[$k]"][$kdr],
-							'idItemLogistica' => $idItemLogistica, //$post["itemLogisticaFormNew[$k]"][$kdr],
-							'cantidadReal' => $post["cantidadRealSubItem[$k]"][$kdr],
-							'peso' => $post["cantidadSubItemDistribucion[$k]"][$kdr],
-							'flagItemInterno' => $itemInterno,
-						];
-					}
-					 */
 					break;
 
 				case COD_TEXTILES['id']:
@@ -652,16 +625,16 @@ class Cotizacion extends MY_Controller
 					'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 					'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
-					// TODO
-					// Los acabo de agregar e.e ... checando ... si vez este mensaje borralo
 					'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
 					'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 					'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 					'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 					'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
-					//
 					'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 					'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : 0,
+					'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : 0,
+					'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : 0,
+					'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : 0,
 				];
 			}
 
@@ -930,7 +903,12 @@ class Cotizacion extends MY_Controller
 			// $dataParaVista['imagenDeItem'] = $this->model->obtenerImagenesDeCotizacion(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 			$data = $this->model->obtenerInformacionCotizacionDetalle(['idCotizacion' => $idCotizacion])['query']->result_array();
 			$dataArchivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion])['query']->result_array();
+			$zonas = $this->db->where('estado', 1)->get('General.dbo.ubigeo')->result_array();
+			foreach ($zonas as $k => $v) {
+				$dataParaVista['zonas'][$v['cod_departamento']][$v['cod_provincia']] = $v;
+			}
 			$dataParaVista['detalleDistribucion'] = [];
+			$dataParaVista['detalleSubT'] = [];
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
@@ -966,6 +944,9 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['flagMostrarDetalle'] = $row['flagMostrarDetalle'];
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
+					if ($row['idItemTipo'] == COD_TRANSPORTE['id']) {
+						$dataParaVista['detalleSubT'][$row['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('cod_departamento, cod_provincia, 1')->get('compras.cotizacionDetalleSub')->result_array();
+					}
 				} else {
 					$cds = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('idZona, idItem')->get('compras.cotizacionDetalleSub')->result_array();
 					foreach ($cds as $kz => $vz) {
@@ -1336,7 +1317,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
-		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' =>2])->result_array();
+		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' => 2])->result_array();
 		$areas = [];
 		foreach ($area as $k => $v) {
 			$areas[] = $v['idArea'];
@@ -1346,6 +1327,37 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
+	public function getAllProvincias()
+	{
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia as value, provincia as name')->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
+		$provincias = [];
+		foreach ($data as $k => $v) {
+			$provincias[$v['cod_departamento']][] = $v;
+		}
+		echo json_encode($provincias);
+	}
+	public function getAllTiposDeTransporte()
+	{
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
+			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+
+		$tarifarioZona = [];
+		foreach ($data as $k => $v) {
+			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][] = $v;
+		}
+		echo json_encode($tarifarioZona);
+	}
+	public function getAllCostoPorTipoDeTransporte()
+	{
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoVisual, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
+			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+
+		$tarifarioZona = [];
+		foreach ($data as $k => $v) {
+			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][$v['idTipoServicioUbigeo']][] = $v;
+		}
+		echo json_encode($tarifarioZona);
+	}
 	public function procesarTablaDatosDistribucion()
 	{
 		$result = $this->result;
@@ -2197,6 +2209,14 @@ class Cotizacion extends MY_Controller
 
 		foreach ($cotizacionDetalle as $rowDetalle) {
 			$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']] = $rowDetalle;
+			if ($rowDetalle['idItemTipo'] == COD_TRANSPORTE['id']) {
+				$cds_ = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $rowDetalle['idCotizacionDetalle']])->result_array();
+				$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']]['costo'] = 0;
+				foreach ($cds_ as $k => $v) {
+					$cdss = $this->db->get_where('compras.cotizacionDetalleSubSincerado', ['idCotizacionDetalleSub' => $v['idCotizacionDetalleSub']])->row_array();
+					$dataParaVista['detalle'][$rowDetalle['idCotizacion']][$rowDetalle['idCotizacionDetalle']]['costo'] += (floatval($cdss['costo']) * floatval($cdss['cantidad']) * floatval($cdss['dias']));
+				}
+			}
 		}
 		$dataParaVista['cotizaciones'] = $cotizaciones;
 		$dataParaVista['usuarios'] = $this->model->obtenerUsuarios()->result_array();
@@ -2432,6 +2452,19 @@ class Cotizacion extends MY_Controller
 			foreach ($dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] as $kd => $vd) {
 				$dataParaVista['detalleSubTalla'][$v['idCotizacionDetalle']][$vd['talla']][$vd['genero']] = $vd;
 			}
+
+			if ($v['idItemTipo'] == COD_TRANSPORTE['id']) {
+				$cds_ = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
+				$dataParaVista['cotizacionDetalle'][$k]['costo'] = 0;
+				$cantTotalT = 0;
+				foreach ($cds_ as $vds) {
+					$cdss = $this->db->get_where('compras.cotizacionDetalleSubSincerado', ['idCotizacionDetalleSub' => $vds['idCotizacionDetalleSub']])->row_array();
+					$dataParaVista['cotizacionDetalle'][$k]['costo'] += (floatval($cdss['costo']) * floatval($cdss['cantidad']) * floatval($cdss['dias']));
+					$cantTotalT += floatval($cdss['cantidad']);
+				}
+				$dataParaVista['cotizacionDetalle'][$k]['subtotalSinGap'] = $dataParaVista['cotizacionDetalle'][$k]['costo'];
+				$dataParaVista['cotizacionDetalle'][$k]['cantidad'] = $cantTotalT;
+			}
 		}
 
 		require APPPATH . '/vendor/autoload.php';
@@ -2494,13 +2527,21 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function descargarOrdenCompra()
+	public function descargarOCDirecto($oc = null)
+	{
+		$this->descargarOrdenCompra($oc);
+	}
+
+	public function descargarOrdenCompra($t = null)
 	{
 		require_once('../mpdf/mpdf.php');
 		ini_set('memory_limit', '1024M');
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
+		if (!empty($t)) {
+			$post['id'] = $t;
+		}
 
 		$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
 
@@ -2776,7 +2817,7 @@ class Cotizacion extends MY_Controller
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 		$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
 		if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
-		
+
 
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 		$n = 0; // Cantidad de items en la tabla de distribución.
@@ -3998,58 +4039,87 @@ class Cotizacion extends MY_Controller
 		echo $html;
 	}
 
-	public function cargos(){
+	public function cargos()
+	{
 		$data =  json_decode($this->input->post('data'), true);
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$result = $this->result;
-		
+
 		$data = $this->model->obtener_cargos($idCentro)->result_array();
 		$html = '<select class="ui clearable dropdown simpleDropdown" id="cargo_personal">';
-		$html.= '<option value="0">Seleccione</option>';
+		$html .= '<option value="0">Seleccione</option>';
 		foreach ($data as $row) {
-			$html.= '<option value="'.$row['idCargoTrabajo'].'">'.$row['nombre'].'</option>';
+			$html .= '<option value="' . $row['idCargoTrabajo'] . '">' . $row['nombre'] . '</option>';
 		}
-		$html.="</select>";
-		
+		$html .= "</select>";
+
 		$result['result'] = 1;
 		$result['data'] = $html;
 
 		echo json_encode($result);
 	}
 
-	public function obtener_sueldos(){
+	public function obtener_sueldos()
+	{
 		$data =  json_decode($this->input->post('data'), true);
 
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$idCargo = $data['idCargo'];
 		$result = $this->result;
-		
-		$data = $this->model->obtener_sueldos($idCuenta,$idCentro,$idCargo)->result_array();
+
+		$data = $this->model->obtener_sueldos($idCuenta, $idCentro, $idCargo)->result_array();
 		$total = count($data);
-		$sueldo=0;
-		$movilidad=0;
-		$refrigerio=0;
-		$incentivo=0;
-		$tipo_cargo_sueldo=0;
-		if($total==1){
+		$sueldo = 0;
+		$movilidad = 0;
+		$refrigerio = 0;
+		$incentivo = 0;
+		$tipo_cargo_sueldo = 0;
+		$asignacionFamiliar = 0;
+		if ($total == 1) {
 			foreach ($data as $row) {
-				$tipo_cargo_sueldo =0;
-				$sueldo =$row['sueldo'];
-				$movilidad =$row['movilidad'];
-				$refrigerio =$row['refrigerio'];
-				$incentivo =$row['comisionFija'];
+				$tipo_cargo_sueldo = 0;
+				$sueldo = $row['sueldo'];
+				$movilidad = $row['movilidad'];
+				$refrigerio = $row['refrigerio'];
+				$incentivo = $row['comisionFija'];
+				$asignacionFamiliar = $row['asignacionFamiliar'];
 			}
 		}
-		
+
 		$result['result'] = 1;
 		$result['tipo_cargo_sueldo'] = $tipo_cargo_sueldo;
 		$result['sueldo'] = $sueldo;
 		$result['refrigerio'] = $refrigerio;
 		$result['movilidad'] = $movilidad;
 		$result['incentivo'] = $incentivo;
+		$result['asignacionFamiliar'] = $asignacionFamiliar;
 
+		echo json_encode($result);
+	}
+
+	public function obtener_conceptos_adicionales()
+	{
+		$data =  json_decode($this->input->post('data'), true);
+		$id = $data['id'];
+		$cantidad = $data['cantidad'];
+		$adicionales = $this->model->obtener_conceptos_adicionales($id, $cantidad)->result_array();
+		$html = "";
+		$html .= "<table style='width:100%;'>";
+		$html .= "<tr><th colspan='2'></th><th>Cantidad</th><th>Costo X Persona</th><th>COSTO TOTAL</th></tr>";
+		foreach ($adicionales as $row) {
+			$html .= "<tr>";
+			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
+			$html .= '<td><div style="padding:15px;"><select name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '"></div></td>';
+			$html .= "</tr>";
+		}
+		$html .= "</table>";
+
+		$result['data'] = $html;
 		echo json_encode($result);
 	}
 }

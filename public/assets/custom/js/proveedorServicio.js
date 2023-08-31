@@ -1,7 +1,9 @@
-var FormularioProveedores = {
-	frm: 'frmCotizacionProveedorCabecera',
-	contentDetalle: 'content-tb-cotizaciones-proveedor',
-	url: 'FormularioProveedor/',
+var ProveedorServicio = {
+
+	frm: 'frm-proveedorServicio',
+	contentDetalle: 'idContentProveedorServicio',
+	url: 'ProveedorServicio/',
+	url_FormularioProveedor: 'FormularioProveedor/',
 	base64: [],
 	type: [],
 	name: [],
@@ -20,62 +22,154 @@ var FormularioProveedores = {
 
 	load: function () {
 
+		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
+			$('#btn-filtrarProveedorServicio').click();
+		});
+
 		$(document).ready(function () {
-			FormularioProveedores.actualizarTable();
+			$('#btn-filtrarProveedorServicio').click();
+			// Para que no carguen los CC
+			$(".centro-ocultado .menu").attr("id", "centroCosto_oculto");
+			$(".centro-visible .menu").attr("id", "centroCosto_visible");
+			$("#centroCosto_oculto .item").hide();
+			let $elementoDiv = $('<div class="item text default active selected seleccion" data-value="1">Seleccione</div>')
+			$elementoDiv.prependTo('#centroCosto_oculto');
+		});
+		$(document).on('click', '#centroCosto_visible .item', function () {
+			$("#centroCosto_oculto .item").removeAttr("style", "display");
+			$("#centroCosto_oculto .seleccion").attr("style", "display").addClass("d-none");
+
 		});
 
-		$(document).on("click", ".btnGuardarCotizacion", () => {
-			let idForm = 'frmCotizacionesProveedor';
-			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
-				if (a === true) {
-					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject(idForm)) };
-					let url = "FormularioProveedor/actualizarCotizacionProveedor";
-					let config = { url: url, data: jsonString };
-
-					$.when(Fn.ajax(config)).then(function (b) {
-						++modalId;
-						var btn = [];
-						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });FormularioProveedores.actualizarTable()';
-
-						btn[0] = { title: 'Continuar', fn: fn };
-						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-					});
-				}
-			});
+		$(document).on('click', '#btn-filtrarProveedorServicio', function () {
+			var ruta = 'reporte';
+			var config = {
+				'idFrm': ProveedorServicio.frm
+				, 'url': ProveedorServicio.url + ruta
+				, 'contentDetalle': ProveedorServicio.contentDetalle
+			};
+			Fn.loadReporte_new(config);
 		});
-		$(document).on('click', '.btn-detalleCotizacion', function () {
-			let id = $(this).parents('tr:first').data('id');
-			Fn.goToUrl(site_url + 'FormularioProveedor/cotizaciones/' + id);
-
-		});
-		$(document).on('click', '.btnCargarValidacion', function () {
+		$(document).on('click', '.btn-estadoArte', function () {
+			control = $(this);
 			++modalId;
-
 			var dataForm = {};
-			dataForm.base64Adjunto = FormularioProveedores.base64;
-			dataForm.typeAdjunto = FormularioProveedores.type;
-			dataForm.nameAdjunto = FormularioProveedores.name;
-			dataForm.proveedor = $(this).data('prov');
-			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.id = $(this).data('id');
+			dataForm.estado = $(this).data('estado');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			let config = { 'url': FormularioProveedores.url + 'registrarValidacionArte', 'data': jsonString };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarValidacionArteEstado', 'data': jsonString };
 			$.when(Fn.ajax(config)).then(function (a) {
 				let btn = [];
 				let fn = [];
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				if (a.result == 1) {
-					fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
+					if (control.data('estado') == '1') {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
+					} else {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui red basic label large">Rechazado</label>');
+					}
+					// fn[0] = 'Fn.closeModals(' + modalId + ');';
 				}
 				btn[0] = { title: 'Continuar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-				location.reload();
 			});
 
 		});
+		$(document).on('click', '.btn-estadoSustServicio', function () {
+			control = $(this);
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+			dataForm.estado = $(this).data('estado');
 
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoServicioEstado', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				if (a.result == 1) {
+					if (control.data('estado') == '1') {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
+					} else {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui red basic label large">Rechazado</label>');
+					}
+					// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			});
+
+		});
+		$(document).on('click', '.btn-estadoSustComprobante', function () {
+			control = $(this);
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+			dataForm.estado = $(this).data('estado');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoComprobanteEstado', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				if (a.result == 1) {
+					if (control.data('estado') == '1') {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
+					} else {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui red basic label large">Rechazado</label>');
+					}
+					// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			});
+
+		});
+		$(document).on('click', '.btn-descargarCotizacion', function () {
+			let id = $(this).data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+
+			Fn.download(site_url + 'Cotizacion/' + 'generarCotizacionPDF', jsonString);
+		});
+		$(document).on('click', '.btn-descargarOCdelProveedor', function (e) {
+			e.preventDefault();
+			idCotizacionDetalle = $(this).data('id');
+			idProveedor = $(this).data('proveedor');
+			data = { 'idCotizacionDetalle': idCotizacionDetalle, 'idProveedor': idProveedor, 'idCotizacion': idCotizacionDetalle };
+			var url = 'SolicitudCotizacion/' + 'descargarExcel';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
+		$(document).on('click', '.btn-descargarOper', function (e) {
+			e.preventDefault();
+			idOper = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'idOper': idOper }) };
+			var url = 'Cotizacion/' + 'descargarOper';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
+		$(document).on('click', '.btn-descargarOc', function (e) {
+			e.preventDefault();
+			Fn.showLoading(true);
+			id = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'id': id }) };
+			var url = 'Cotizacion/' + 'descargarOrdenCompra';
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
 		$(document).on('click', '.formValArt', function () {
 			++modalId;
 			var dataForm = {};
@@ -84,7 +178,7 @@ var FormularioProveedores = {
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
-			let config = { 'url': FormularioProveedores.url + 'formularioValidacionArte', 'data': jsonString };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioValidacionArte', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -92,13 +186,57 @@ var FormularioProveedores = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarValidacionArte()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.registrarValidacionArte()", content: "¿Esta seguro de registrar la validación de Arte?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
-		})
+		});
 		$(document).on('click', '.formLisArts', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.proveedor = $(this).data('prov');
+			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.mostrarOpcionesExt = '1';
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioListadoArtesCargados', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.enviarCorreoValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				btn[1] = { title: 'Enviar Correo', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
+			});
+		})
+		$(document).on('click', '.formEditArte', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioEditarArte', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.actualizarValidacionDeArtes(' + modalId + ')", content: "¿Esta seguro de registrar la validación de Arte?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formFechaEje', function () {
 			++modalId;
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
@@ -106,7 +244,7 @@ var FormularioProveedores = {
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
-			let config = { 'url': FormularioProveedores.url + 'formularioListadoArtesCargados', 'data': jsonString };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioFechaEjecucion', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -114,8 +252,29 @@ var FormularioProveedores = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.enviarCorreoValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
-				btn[1] = { title: 'Enviar Correo', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.registrarFechaEjecucion()", content: "¿Esta seguro de registrar la fecha indicada?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formSustServ', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('idcotdetpro');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioSustentoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.registrarSustentoServicio()", content: "¿Esta seguro de registrar la información?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
@@ -125,10 +284,11 @@ var FormularioProveedores = {
 			// let id = 
 			var dataForm = {};
 			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.mostrarOpcionesExt = '1';
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 			// alert($(this).data('idcotdetpro'));
-			let config = { 'url': FormularioProveedores.url + 'formularioListadoSustentoServicio', 'data': jsonString };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioListadoSustentoServicio', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -143,15 +303,58 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
-		$(document).on('click', '.formLisSustComprobante', function () {
+		$(document).on('click', '.formEditSustentoServ', function () {
 			++modalId;
-			// let id = 
 			var dataForm = {};
-			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.id = $(this).data('id');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
-			// alert($(this).data('idcotdetpro'));
-			let config = { 'url': FormularioProveedores.url + 'formularioListadoSustentoComprobante', 'data': jsonString };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioEditarSustentoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.actualizarSustentoServicio(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formSustento', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.proveedor = $(this).data('prov');
+			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.requiereguia = $(this).data('requiereguia');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioSustento', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSustento", fn: "ProveedorServicio.registrarSustento()", content: "¿Esta seguro de registrar sustento indicado?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
+		$(document).on('click', '.formLisSustComprobante', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.mostrarOpcionesExt = '1';
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioListadoSustentoComprobante', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -166,48 +369,6 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
-		$(document).on('click', '.formEditArte', function () {
-			++modalId;
-			var dataForm = {};
-			dataForm.id = $(this).data('id');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-
-			let config = { 'url': FormularioProveedores.url + 'formularioEditarArte', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarValidacionDeArtes(' + modalId + ')", content: "¿Esta seguro de registrar la validación de Arte?" });';
-				btn[1] = { title: 'Actualizar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-			});
-		})
-		$(document).on('click', '.formEditSustentoServ', function () {
-			++modalId;
-			var dataForm = {};
-			dataForm.id = $(this).data('id');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-
-			let config = { 'url': FormularioProveedores.url + 'formularioEditarSustentoServicio', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarSustentoServicio(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
-				btn[1] = { title: 'Actualizar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-			});
-		})
 		$(document).on('click', '.formEditSustentoComprobante', function () {
 			++modalId;
 			var dataForm = {};
@@ -215,7 +376,7 @@ var FormularioProveedores = {
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
-			let config = { 'url': FormularioProveedores.url + 'formularioEditarSustentoComprobante', 'data': jsonString };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioEditarSustentoComprobante', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -223,111 +384,17 @@ var FormularioProveedores = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.actualizarSustentoComprobante(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.actualizarSustentoComprobante(' + modalId + ')", content: "¿Esta seguro de registrar el archivo cargado?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
-		$(document).on('click', '.formFechaEje', function () {
-			++modalId;
-			var dataForm = {};
-			dataForm.proveedor = $(this).data('prov');
-			dataForm.cotizacion = $(this).data('idcoti');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-
-			let config = { 'url': FormularioProveedores.url + 'formularioFechaEjecucion', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarFechaEjecucion()", content: "¿Esta seguro de registrar la fecha indicada?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-			});
-		})
-		$(document).on('click', '.formSustServ', function () {
-			++modalId;
-			var dataForm = {};
-			dataForm.id = $(this).data('idcotdetpro');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-
-			let config = { 'url': FormularioProveedores.url + 'formularioSustentoServicio', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "FormularioProveedores.registrarSustentoServicio()", content: "¿Esta seguro de registrar la información?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-			});
-		})
-		$(document).on('click', '.formSustento', function () {
-			++modalId;
-			var dataForm = {};
-			dataForm.proveedor = $(this).data('prov');
-			dataForm.cotizacion = $(this).data('idcoti');
-			dataForm.requiereguia = $(this).data('requiereguia');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-
-			let config = { 'url': FormularioProveedores.url + 'formularioSustento', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSustento", fn: "FormularioProveedores.registrarSustento()", content: "¿Esta seguro de registrar sustento indicado?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-			});
-		})
-		$(document).on('click', '.btnGuardarFecha', function () {
-			let pr = $(this).closest('td.tdFecha');
-			++modalId;
-			var dataForm = {};
-			dataForm.fechaIni = pr.find('.fechaIni').val();
-			dataForm.fechaFin = pr.find('.fechaFin').val();
-			dataForm.proveedor = $(this).data('prov');
-			dataForm.cotizacion = $(this).data('idcoti');
-
-			let jsonString = { 'data': JSON.stringify(dataForm) };
-			let config = { 'url': FormularioProveedores.url + 'guardarFechaEjecucion', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then(function (a) {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				if (a.result == 1) {
-					fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
-				}
-				btn[0] = { title: 'Continuar', fn: fn[0] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-				location.reload();
-			});
-
-		});
-
+		// Inicio: File Uploaded
 		$(document).off('change', '.file-uploadedd').on('change', '.file-uploadedd', function (e) {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
 					if ((num) > 10) {
@@ -367,16 +434,16 @@ var FormularioProveedores = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
-						FormularioProveedores.base64 = [];
-						FormularioProveedores.type = [];
-						FormularioProveedores.name = [];
+						ProveedorServicio.base64 = [];
+						ProveedorServicio.type = [];
+						ProveedorServicio.name = [];
 
 						Fn.getBase64(file).then(function (fileBase) {
 							$('.labelImagen').html(num + ' Archivo(s) cargado(s)');
 
-							FormularioProveedores.base64.push(fileBase.base64);
-							FormularioProveedores.type.push(fileBase.type);
-							FormularioProveedores.name.push(fileBase.name);
+							ProveedorServicio.base64.push(fileBase.base64);
+							ProveedorServicio.type.push(fileBase.type);
+							ProveedorServicio.name.push(fileBase.name);
 						});
 					}
 
@@ -426,16 +493,16 @@ var FormularioProveedores = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
-						FormularioProveedores.base64_g = [];
-						FormularioProveedores.type_g = [];
-						FormularioProveedores.name_g = [];
+						ProveedorServicio.base64_g = [];
+						ProveedorServicio.type_g = [];
+						ProveedorServicio.name_g = [];
 
 						Fn.getBase64(file).then(function (fileBase) {
 							control.closest('.custom-file').find('.labelImagen').html(num + ' Archivo(s) cargado(s)');
 
-							FormularioProveedores.base64_g.push(fileBase.base64);
-							FormularioProveedores.type_g.push(fileBase.type);
-							FormularioProveedores.name_g.push(fileBase.name);
+							ProveedorServicio.base64_g.push(fileBase.base64);
+							ProveedorServicio.type_g.push(fileBase.type);
+							ProveedorServicio.name_g.push(fileBase.name);
 						});
 					}
 
@@ -446,7 +513,6 @@ var FormularioProveedores = {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
 					if ((num) > 10) {
@@ -486,16 +552,16 @@ var FormularioProveedores = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
-						FormularioProveedores.base64_f = [];
-						FormularioProveedores.type_f = [];
-						FormularioProveedores.name_f = [];
+						ProveedorServicio.base64_f = [];
+						ProveedorServicio.type_f = [];
+						ProveedorServicio.name_f = [];
 
 						Fn.getBase64(file).then(function (fileBase) {
 							control.closest('.custom-file').find('.labelImagen').html(num + ' Archivo(s) cargado(s)');
 
-							FormularioProveedores.base64_f.push(fileBase.base64);
-							FormularioProveedores.type_f.push(fileBase.type);
-							FormularioProveedores.name_f.push(fileBase.name);
+							ProveedorServicio.base64_f.push(fileBase.base64);
+							ProveedorServicio.type_f.push(fileBase.type);
+							ProveedorServicio.name_f.push(fileBase.name);
 						});
 					}
 
@@ -506,7 +572,6 @@ var FormularioProveedores = {
 			var control = $(this);
 			if (control.val()) {
 				var num = control.get(0).files.length;
-				console.log(control);
 				control.closest('.tdFile').find('.lMsg').html(num + ' archivo(s) cargado(s).');
 				list: {
 					if ((num) > 10) {
@@ -546,16 +611,16 @@ var FormularioProveedores = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
-						FormularioProveedores.base64_x = [];
-						FormularioProveedores.type_x = [];
-						FormularioProveedores.name_x = [];
+						ProveedorServicio.base64_x = [];
+						ProveedorServicio.type_x = [];
+						ProveedorServicio.name_x = [];
 
 						Fn.getBase64(file).then(function (fileBase) {
 							control.closest('.custom-file').find('.labelImagen').html(num + ' Archivo(s) cargado(s)');
 
-							FormularioProveedores.base64_x.push(fileBase.base64);
-							FormularioProveedores.type_x.push(fileBase.type);
-							FormularioProveedores.name_x.push(fileBase.name);
+							ProveedorServicio.base64_x.push(fileBase.base64);
+							ProveedorServicio.type_x.push(fileBase.type);
+							ProveedorServicio.name_x.push(fileBase.name);
 						});
 					}
 
@@ -605,213 +670,46 @@ var FormularioProveedores = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 
-						FormularioProveedores.base64_da = [];
-						FormularioProveedores.type_da = [];
-						FormularioProveedores.name_da = [];
+						ProveedorServicio.base64_da = [];
+						ProveedorServicio.type_da = [];
+						ProveedorServicio.name_da = [];
 
 						Fn.getBase64(file).then(function (fileBase) {
 							control.closest('.custom-file').find('.labelImagen').html(num + ' Archivo(s) cargado(s)');
 
-							FormularioProveedores.base64_da.push(fileBase.base64);
-							FormularioProveedores.type_da.push(fileBase.type);
-							FormularioProveedores.name_da.push(fileBase.name);
+							ProveedorServicio.base64_da.push(fileBase.base64);
+							ProveedorServicio.type_da.push(fileBase.type);
+							ProveedorServicio.name_da.push(fileBase.name);
 						});
 					}
 
 				}
 			}
 		});
-		$(document).on("click", ".btnPopupCotizacionesProveedor", () => {
-			let idForm = 'frmCotizacionesProveedor';
-			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
-				if (a === true) {
-					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject(idForm)) };
-					let url = "FormularioProveedor/actualizarCotizacionProveedor";
-					let config = { url: url, data: jsonString };
+		// Fin: File uploaded
 
-					$.when(Fn.ajax(config)).then(function (b) {
-						++modalId;
-						var btn = [];
-						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });FormularioProveedores.actualizarTable()';
-
-						btn[0] = { title: 'Continuar', fn: fn };
-						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-					});
-				}
-			});
-		});
-		$(document).on("click", ".btnLogoutProveedor", () => {
-
-			let jsonString = {};
-			let url = "FormularioProveedor/logout";
-			let config = { url: url, data: jsonString };
-
-			$.when(Fn.ajax(config)).then(function (b) {
-				++modalId;
-				var btn = [];
-				let fn = 'Fn.showModal({ id: ' + modalId + ',show:false});Fn.goToUrl(`' + b.data.url + '`);';
-				btn[0] = { title: 'Aceptar', fn: fn };
-				Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-			});
-		});
-		$(document).on("click", ".btnRefreshCotizaciones", () => {
-			FormularioProveedores.actualizarTable();
-		});
+		HTCustom.load();
 
 	},
-	actualizarTable: function () {
-		var ruta = 'cotizacionesListaRefresh';
-		var config = {
-			'idFrm': FormularioProveedores.frm
-			, 'url': FormularioProveedores.url + ruta
-			, 'contentDetalle': FormularioProveedores.contentDetalle
-		};
 
-		Fn.loadReporte_new(config);
-	},
 	registrarValidacionArte: function () {
 		++modalId;
 
 		var dataForm = {};
 		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroValidacionArte'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
 
 		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'registrarValidacionArte', 'data': jsonString };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'registrarValidacionArte', 'data': jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
 			let fn = [];
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarItem").click();';
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
-
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-			location.reload();
-		});
-	},
-	registrarFechaEjecucion: function () {
-		++modalId;
-
-		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroFechaEjecucion'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
-
-		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'guardarFechaEjecucion', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			let btn = [];
-			let fn = [];
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();';
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
-
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-		});
-	},
-	registrarSustentoServicio: function () {
-		++modalId;
-
-		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroSustentoServicio'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
-
-		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'guardarSustentoServicio', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			let btn = [];
-			let fn = [];
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();';
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
-
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-		});
-	},
-	actualizarValidacionDeArtes: function (modal) {
-		++modalId;
-		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionValidacionArte'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
-
-		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'editarValidacionArte', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			console.log(a);
-			let btn = [];
-			let fn = [];
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				// fn[0] = 'Fn.closeModals(' + modalId + ');';
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				Fn.showModal({ id: modal, show: false })
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
-
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-		});
-	},
-	actualizarSustentoServicio: function (modal) {
-		++modalId;
-		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoServicio'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
-
-		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'editarSustentoServicio', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			let btn = [];
-			let fn = [];
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				// fn[0] = 'Fn.closeModals(' + modalId + ');';
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
-				Fn.showModal({ id: modal, show: false })
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
-
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-		});
-	},
-	actualizarSustentoComprobante: function (modal) {
-		++modalId;
-		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoComprobante'));
-		dataForm.base64Adjunto = FormularioProveedores.base64;
-		dataForm.typeAdjunto = FormularioProveedores.type;
-		dataForm.nameAdjunto = FormularioProveedores.name;
-
-		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'editarSustentoComprobante', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			let btn = [];
-			let fn = [];
-
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				// fn[0] = 'Fn.closeModals(' + modalId + ');';
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
-				Fn.showModal({ id: modal, show: false })
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
@@ -824,7 +722,7 @@ var FormularioProveedores = {
 		var dataForm = {};
 		dataForm.data = JSON.stringify(Fn.formSerializeObject('formularioListadoDeArtes'));
 		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'enviarCorreoValidacionDeArtes', 'data': jsonString };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'enviarCorreoValidacionDeArtes', 'data': jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
 			let fn = [];
@@ -839,43 +737,163 @@ var FormularioProveedores = {
 			location.reload();
 		});
 	},
-	registrarSustento: function () {
+	actualizarValidacionDeArtes: function (modal) {
 		++modalId;
-
 		var dataForm = {};
-		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroSustento'));
-		dataForm.base64Adjunto_g = FormularioProveedores.base64_g;
-		dataForm.typeAdjunto_g = FormularioProveedores.type_g;
-		dataForm.nameAdjunto_g = FormularioProveedores.name_g;
-
-		dataForm.base64Adjunto_f = FormularioProveedores.base64_f;
-		dataForm.typeAdjunto_f = FormularioProveedores.type_f;
-		dataForm.nameAdjunto_f = FormularioProveedores.name_f;
-
-		dataForm.base64Adjunto_x = FormularioProveedores.base64_x;
-		dataForm.typeAdjunto_x = FormularioProveedores.type_x;
-		dataForm.nameAdjunto_x = FormularioProveedores.name_x;
-
-		dataForm.base64Adjunto_da = FormularioProveedores.base64_da;
-		dataForm.typeAdjunto_da = FormularioProveedores.type_da;
-		dataForm.nameAdjunto_da = FormularioProveedores.name_da;
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionValidacionArte'));
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
 
 		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'guardarSustento', 'data': jsonString };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarValidacionArte', 'data': jsonString };
 		$.when(Fn.ajax(config)).then(function (a) {
 			let btn = [];
 			let fn = [];
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			if (a.result == 1) {
-				fn[0] = 'Fn.closeModals(' + modalId + ');location.reload();';
+				fn[0] = 'Fn.closeModals(' + modalId + ');';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	registrarFechaEjecucion: function () {
+		++modalId;
+
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroFechaEjecucion'));
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'guardarFechaEjecucion', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	registrarSustentoServicio: function () {
+		++modalId;
+
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroSustentoServicio'));
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'guardarSustentoServicio', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	actualizarSustentoServicio: function (modal) {
+		++modalId;
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoServicio'));
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoServicio', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				Fn.showModal({ id: modal, show: false })
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	registrarSustento: function () {
+		++modalId;
+
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formRegistroSustento'));
+		dataForm.base64Adjunto_g = ProveedorServicio.base64_g;
+		dataForm.typeAdjunto_g = ProveedorServicio.type_g;
+		dataForm.nameAdjunto_g = ProveedorServicio.name_g;
+
+		dataForm.base64Adjunto_f = ProveedorServicio.base64_f;
+		dataForm.typeAdjunto_f = ProveedorServicio.type_f;
+		dataForm.nameAdjunto_f = ProveedorServicio.name_f;
+
+		dataForm.base64Adjunto_x = ProveedorServicio.base64_x;
+		dataForm.typeAdjunto_x = ProveedorServicio.type_x;
+		dataForm.nameAdjunto_x = ProveedorServicio.name_x;
+
+		dataForm.base64Adjunto_da = ProveedorServicio.base64_da;
+		dataForm.typeAdjunto_da = ProveedorServicio.type_da;
+		dataForm.nameAdjunto_da = ProveedorServicio.name_da;
+
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'guardarSustento', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
 			}
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 
 		});
-	}
+	},
+	actualizarSustentoComprobante: function (modal) {
+		++modalId;
+		var dataForm = {};
+		dataForm.data = JSON.stringify(Fn.formSerializeObject('formEdicionSustentoComprobante'));
+		dataForm.base64Adjunto = ProveedorServicio.base64;
+		dataForm.typeAdjunto = ProveedorServicio.type;
+		dataForm.nameAdjunto = ProveedorServicio.name;
 
+		let jsonString = { 'data': JSON.stringify(dataForm) };
+		let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoComprobante', 'data': jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				Fn.showModal({ id: modal, show: false })
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
 }
-FormularioProveedores.load();
+
+ProveedorServicio.load();

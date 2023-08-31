@@ -22,14 +22,14 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml" patron="requerido">
+						<input type="file" class="custom-file-input files-upload_xml file-upload_xml" lang="es" accept=".xml, .zip" patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Doc Adicional</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple patron="requerido">
+						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple>
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
@@ -40,17 +40,24 @@
 				<legend class="scheduler-border">Adicional</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Comentario</label>
-					 <select name="incidencia" class="form-control col-md-8">
+					<select name="incidencia" class="form-control col-md-8">
 						<option value="1">Finalizado con Incidencia</option>
 						<option value="0">Finalizado al 100%</option>
-					 </select>
+					</select>
 				</div>
-				
+
 			</fieldset>
 		</div>
 	</div>
-	<div class="ui bottom attached warning message">
-		<i class="icon warning"></i>CONSIDERAR QUE LA FACTURA CARGADA DEBE TENER FECHA DE EMISION DEL MES EN CURSO
+	<div class="row">
+		<div class="col-md-10 child-divcenter">
+			<div class="ui bottom attached warning message">
+				<i class="icon warning"></i>CONSIDERAR QUE LA FACTURA CARGADA DEBE TENER FECHA DE EMISION DEL MES EN CURSO
+			</div>
+			<div class="ui bottom attached warning message">
+				<i class="icon warning"></i>SUBIR SUSTENTOS LOS DÍAS MARTES Y JUEVES DE 9:00 AM HASTA LAS 12:00
+			</div>
+		</div>
 	</div>
 </form>
 <script>

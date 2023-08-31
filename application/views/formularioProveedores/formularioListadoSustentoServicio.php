@@ -1,6 +1,5 @@
 <form class="form" role="form" id="formularioListadoDeArtes" method="post">
-	<input type="hidden" name="proveedor" value="<?= $proveedor ?>">
-	<input type="hidden" name="cotizacion" value="<?= $cotizacion ?>">
+	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor ?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -9,8 +8,8 @@
 					<thead class="thead-light">
 						<tr class="row_data">
 							<th style="width: 5%; background-color: #2586da;color: white;" class="text-center header">#</th>
-							<th style="width: 35%; background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
-							<th style="width: 30%; background-color: #2586da;color: white;" class="text-center header">Estado</th>
+							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
+							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Estado</th>
 							<th style="width: 15%; background-color: #2586da;color: white;" class="text-center header">Opciones</th>
 							<?php if ($mostrarOpcionesExt) :  ?>
 								<th style="width: 15%; background-color: #2586da;color: white;" class="text-center header">Validación</th>
@@ -18,11 +17,11 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ($artes as $k => $row) : ?>
-							<?php if ($row['flagAdjunto'] == '1') :  ?>
-								<?php $direccion = RUTA_WASABI . 'validacionArte/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+						<?php foreach ($sustentosCargados as $k => $row) : ?>
+							<?php if ($row['idTipoArchivo'] == TIPO_ENLACE) :  ?>
+								<?php $direccion = $row['nombre_archivo']; ?>
 							<?php else : ?>
-								<?php $direccion = verificarEmpty($row['nombre_archivo'], 3); ?>
+								<?php $direccion = RUTA_WASABI . 'sustentoServicio/' . verificarEmpty($row['nombre_archivo'], 3); ?>
 							<?php endif; ?>
 							<tr class="default">
 								<td><?= $k + 1 ?></td>
@@ -43,17 +42,17 @@
 										<i class="icon eye"></i>
 									</a>
 									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') :  ?>
-										<a class="ui button formEditArte" data-id="<?= $row['idValidacionArte'] ?>">
+										<a class="ui button formEditSustentoServ" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>">
 											<i class="icon edit"></i>
 										</a>
 									<?php endif; ?>
 								</td>
 								<?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
-										<a class="ui button green btn-estadoArte" data-id="<?= $row['idValidacionArte'] ?>" data-estado="1">
+										<a class="ui button green btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="1">
 											<i class="icon check"></i>
 										</a>
-										<a class="ui button red btn-estadoArte" data-id="<?= $row['idValidacionArte'] ?>" data-estado="0">
+										<a class="ui button red btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="0">
 											<i class="icon times"></i>
 										</a>
 									</td>

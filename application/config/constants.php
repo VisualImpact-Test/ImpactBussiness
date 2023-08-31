@@ -160,6 +160,7 @@ defined('TIPO_PDF') or define('TIPO_PDF', 3);
 defined('TIPO_LINK') or define('TIPO_LINK', 4);
 defined('TIPO_OTROS') or define('TIPO_OTROS', 5);
 defined('TIPO_EXCEL') or define('TIPO_EXCEL', 6);
+defined('TIPO_ENLACE') or define('TIPO_ENLACE', 7);
 
 //ESTADO COTIZACION
 

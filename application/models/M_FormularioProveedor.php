@@ -366,11 +366,12 @@ class M_FormularioProveedor extends MY_Model
 							cu.nombre AS cuenta,
 							cp.idProveedor')
 			->from('compras.cotizacionDetalleProveedor cp')
-			->join('compras.cotizacion c', 'c.idCotizacion=cp.idCotizacion', 'left')
-			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'left')
-			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'left')
+			->join('compras.cotizacion c', 'c.idCotizacion = cp.idCotizacion', 'INNER')
+			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
+			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
 			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
-			->where('cp.estado', '1')
+			// ->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = cdpd.idCotizacionDetalle', 'INNER')
+			->where('cp.estado', '1') // ->where('c.idCotizacion', 366)
 			->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre, cp.idProveedor')
 			->order_by('cp.idCotizacionDetalleProveedor desc');
 		isset($params['idProveedor']) ? $this->db->where('cp.idProveedor', $params['idProveedor']) : '';
