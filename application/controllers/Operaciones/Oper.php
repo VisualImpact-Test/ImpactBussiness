@@ -163,6 +163,7 @@ class Oper extends MY_Controller
 			$post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
 			$post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
 			$post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
+			$post['subItem_genero'] = checkAndConvertToArray($post['subItem_genero']);
 			$post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
 			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
@@ -224,6 +225,7 @@ class Oper extends MY_Controller
 					'idItemLogistica' => $post['subItem_itemLog'][$orden] == '' ? NULL : $post['subItem_itemLog'][$orden],
 					'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
 					'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
+					'genero' => $post['subItem_genero'][$orden] == '' ? NULL : $post['subItem_genero'][$orden],
 					'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
 					'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
 					'costo' => $post['subItem_costo'][$orden] == '' ? NULL : $post['subItem_costo'][$orden],
@@ -354,6 +356,60 @@ class Oper extends MY_Controller
 		echo json_encode($result);
 	}
 
+	// public function descargarOperSinCotizacion()
+	// {
+	// 	require_once('../mpdf/mpdf.php');
+	// 	ini_set('memory_limit', '1024M');
+	// 	set_time_limit(0);
+
+	// 	$post = json_decode($this->input->post('data'), true);
+	// 	$dataParaVista['dataOper'] = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])->result_array();
+	// 	$ids = [];
+	// 	foreach ($dataParaVista['dataOper'] as $key => $value) {
+	// 		$dataParaVista['dataOper'][$key]['fechaRequerimiento'] = date_change_format($value['fechaRequerimiento']);
+	// 		$dataParaVista['dataOper'][$key]['fechaEntrega'] = date_change_format($value['fechaEntrega']);
+	// 	}
+	// 	// foreach($dataParaVista['dataOper'] as $v){
+	// 	//   // $ids[] = $v['idCotizacion'];
+	// 	//   $config['data']['oper'][$v['idOper']] = $v;
+	// 	// }
+
+	// 	// $idCotizacion = implode(",",$ids);
+	// 	// $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
+	// 	// $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+
+	
+	// 	require APPPATH . '/vendor/autoload.php';
+	// 	$mpdf = new \Mpdf\Mpdf([
+	// 		'mode' => 'utf-8',
+	// 		'setAutoTopMargin' => 'stretch',
+	// 		// 'orientation' => '',
+	// 		'autoMarginPadding' => 0,
+	// 		'bleedMargin' => 0,
+	// 		'crossMarkMargin' => 0,
+	// 		'cropMarkMargin' => 0,
+	// 		'nonPrintMargin' => 0,
+	// 		'margBuffer' => 0,
+	// 		'collapseBlockMargins' => false,
+	// 	]);
+
+	// 	$contenido['header'] = $this->load->view("modulos/Operaciones/Oper/pdf2/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS LIBRE', 'codigo' => 'SIG-LOG-FOR-001'], true);
+	// 	$contenido['footer'] = $this->load->view("modulos/Operaciones/Oper/pdf2/footer", array(), true);
+
+	// 	$contenido['style'] = $this->load->view("modulos/Operaciones/Oper/pdf/oper_style", [], true);
+	// 	$contenido['body'] = $this->load->view("modulos/Operaciones/Oper/pdf2/oper", $dataParaVista, true);
+
+	// 	$mpdf->SetHTMLHeader($contenido['header']);
+	// 	$mpdf->SetHTMLFooter($contenido['footer']);
+	// 	$mpdf->AddPage();
+	// 	$mpdf->WriteHTML($contenido['style']);
+	// 	$mpdf->WriteHTML($contenido['body']);
+
+	// 	header('Set-Cookie: fileDownload=true; path=/');
+	// 	header('Cache-Control: max-age=60, must-revalidate');
+	// 	$mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+	// }
+
 	public function descargarOperSinCotizacion()
 	{
 		require_once('../mpdf/mpdf.php');
@@ -361,29 +417,46 @@ class Oper extends MY_Controller
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
-		$dataParaVista['dataOper'] = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])->result_array();
+		$oper =  $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])->result_array();
+		$dataParaVista['dataOper'] = $oper[0];
 		$ids = [];
-		foreach ($dataParaVista['dataOper'] as $key => $value) {
-			$dataParaVista['dataOper'][$key]['fechaRequerimiento'] = date_change_format($value['fechaRequerimiento']);
-			$dataParaVista['dataOper'][$key]['fechaEntrega'] = date_change_format($value['fechaEntrega']);
+		foreach ($oper as $v) {
+			$ids[] = $v['idOper'];
+			$config['data']['oper'][$v['idOper']] = $v;
+			$idt = $v['idOper'];
 		}
-		// foreach($dataParaVista['dataOper'] as $v){
-		//   // $ids[] = $v['idCotizacion'];
-		//   $config['data']['oper'][$v['idOper']] = $v;
-		// }
+		$idOper = implode(",", $ids);
+		$dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idt])['query']->result_array();
+		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idoper' => $idt, 'cotizacionInterna' => false])['query']->result_array();
 
-		// $idCotizacion = implode(",",$ids);
-		// $dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
-		// $dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
+		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
+			
+			$dataParaVista['cotizacionDetalleSub'][$v['idOperDetalle']] = $this->db->get_where('orden.operDetalleSub', ['idOperDetalle' => $v['idOperDetalle']])->result_array();
+			
+			foreach ($dataParaVista['cotizacionDetalleSub'][$v['idOperDetalle']] as $kd => $vd) {
+				$dataParaVista['detalleSubTalla'][$v['idOperDetalle']][$vd['talla']][$vd['genero']] = $vd;
+			}
+		}
 
 		require APPPATH . '/vendor/autoload.php';
-		$mpdf = new \Mpdf\Mpdf();
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			// 'orientation' => '',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
 
-		$contenido['header'] = $this->load->view("modulos/Operaciones/Oper/pdf/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS LIBRE', 'codigo' => 'SIG-LOG-FOR-001'], true);
-		$contenido['footer'] = $this->load->view("modulos/Operaciones/Oper/pdf/footer", array(), true);
-
+		$contenido['header'] = $this->load->view("modulos/Operaciones/Oper/pdf2/header", ['title' => 'REQUERIMIENTO DE BIENES O SERVICIOS LIBRE', 'codigo' => 'SIG-LOG-FOR-001'], true);
+		$contenido['footer'] = $this->load->view("modulos/Operaciones/Oper/pdf2/footer", array(), true);
+		//
 		$contenido['style'] = $this->load->view("modulos/Operaciones/Oper/pdf/oper_style", [], true);
-		$contenido['body'] = $this->load->view("modulos/Operaciones/Oper/pdf/oper", $dataParaVista, true);
+		$contenido['body'] = $this->load->view("modulos/Operaciones/Oper/pdf2/oper", $dataParaVista, true);
 
 		$mpdf->SetHTMLHeader($contenido['header']);
 		$mpdf->SetHTMLFooter($contenido['footer']);
@@ -395,4 +468,6 @@ class Oper extends MY_Controller
 		header('Cache-Control: max-age=60, must-revalidate');
 		$mpdf->Output("OPER.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
+
+
 };

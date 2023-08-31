@@ -72,11 +72,11 @@ var Oper = {
 			++modalId;
 			let jsonString = { 'data': '' };
 			let config = { 'url': Oper.url + 'formularioRegistroOper' + Oper.tipo, 'data': jsonString };
-
+			
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-
+				
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Oper.agregarItem();';
@@ -95,6 +95,7 @@ var Oper = {
 			let data = { idOper };
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Oper.url + 'descargarOper' + Oper.tipo, jsonString);
+			//console.log(site_url + Oper.url + 'descargarOper' + Oper.tipo, jsonString);
 		});
 
 		$(document).on('change', '.tipoServicio', function () {
@@ -270,26 +271,40 @@ var Oper = {
 						<input class="form-control" name="subItem_talla" patron="requerido">
 					</div>
 					<div class="form-group col-md-2">
+						<label class="font-weight-bold">Genero:</label>
+							<select class="form-control" name="subItem_genero">
+								<option class="item-4" value="">SELECCIONE</option>
+								<option class="item" value="1">VARON</option>
+								<option class="item" value="2">DAMA</option>
+								<option class="item" value="3">UNISEX</option>
+							</select>
+						</div>
+					<div class=" col-md-3" style="DISPLAY: flex;">
+					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 						<label class="font-weight-bold">Tela:</label>
 						<input class="form-control" name="subItem_tela" patron="requerido">
 					</div>
-					<div class="form-group col-md-2">
+					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 					<label class="font-weight-bold">Color:</label>
 					<input class="form-control" name="subItem_color" patron="requerido">
 					</div>
-					<div class="form-group col-md-2">
+					</div>
+
+					<div class=" col-md-3" style="DISPLAY: flex;">
+					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 					<label class="font-weight-bold">Cantidad:</label>
 					<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido"
 								 onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 								 onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 					>
 					</div>
-					<div class="form-group col-md-2">
+					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 						<label class="font-weight-bold">Costo:</label>
 						<input class="form-control SbItCosto" name="subItem_costo" patron="requerido"
 									 onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 									 onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 						>
+					</div>
 					</div>
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Sb Tot:</label>
