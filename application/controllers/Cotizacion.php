@@ -2426,13 +2426,20 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function descargarOper()
+	public function descargarOperDirecto($oper = null)
+	{
+		$this->descargarOper($oper, true);
+	}
+	public function descargarOper($t = null, $visible = false)
 	{
 		require_once('../mpdf/mpdf.php');
 		ini_set('memory_limit', '1024M');
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
+		if (!empty($t)) {
+			$post['idOper'] = $t;
+		}
 		$oper = $this->model->obtenerInformacionOper(['idOper' => $post['idOper']])['query']->result_array();
 
 		$dataParaVista['dataOper'] = $oper[0];
@@ -2497,7 +2504,12 @@ class Cotizacion extends MY_Controller
 		header('Cache-Control: max-age=60, must-revalidate');
 		// $mpdf->Output('OPER.pdf', 'D');
 		$titlePdf = $oper[0]['requerimiento'] . ' - ' . $oper[0]['concepto'];
-		$mpdf->Output("$titlePdf.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		if ($visible) {
+			$mpdf->Output('322', 'I');
+		} else {
+			// $mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+			$mpdf->Output("$titlePdf.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		}
 
 		return true;
 	}
@@ -2529,10 +2541,10 @@ class Cotizacion extends MY_Controller
 
 	public function descargarOCDirecto($oc = null)
 	{
-		$this->descargarOrdenCompra($oc);
+		$this->descargarOrdenCompra($oc, true);
 	}
 
-	public function descargarOrdenCompra($t = null)
+	public function descargarOrdenCompra($t = null, $visible = false)
 	{
 		require_once('../mpdf/mpdf.php');
 		ini_set('memory_limit', '1024M');
@@ -2617,8 +2629,11 @@ class Cotizacion extends MY_Controller
 		header('Cache-Control: max-age=60, must-revalidate');
 
 		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
-		// $mpdf->Output('OPER.pdf', 'D');
-		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		if ($visible) {
+			$mpdf->Output("OC{$cod_oc}.pdf", 'I');
+		} else {
+			$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		}
 	}
 
 	public function getFormSendToCliente()

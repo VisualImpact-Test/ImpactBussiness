@@ -1361,27 +1361,30 @@ class FormularioProveedor extends MY_Controller
 
 
 		// $post['proveedor'] = json_decode($post['data'], true)['proveedor'];
-		// $post['enlaces'] = explode(chr(10), json_decode($post['data'], true)['enlaces']);
+		$post['enlaces'] = explode(chr(10), json_decode($post['data'], true)['enlaces']);
 		$ids_insert = [];
-		/*
+
 		if (!empty($post['enlaces'])) {
 			foreach ($post['enlaces'] as $k => $v) {
 				if (!empty($v)) {
 					$insertArchivos = [
+						'idCotizacionDetalleProveedor' => $post['idCotizacionDetalleProveedor'],
+						'idTipoArchivo' => TIPO_ENLACE,
+						'extension' => '',
 						'nombre_inicial' => 'Enlace',
 						'nombre_archivo' => $v,
 						'nombre_unico' => $v,
+						'flagRevisado' => false,
+						'flagAprobado' => false,
 						'estado' => true,
-						'idProveedor' => $post['proveedor'],
-						'idCotizacion' => $post['cotizacion'],
-						'flagAdjunto' => 0
+						'fechaReg' => getActualDateTime(),
 					];
-					$this->db->insert('compras.validacionArte', $insertArchivos);
+					$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insertArchivos);
 					$ids_insert[] = $this->db->insert_id();
 				}
 			}
 		}
-		*/
+
 		if (!empty($post['base64Adjunto'])) {
 
 			foreach ($post['base64Adjunto'] as $key => $row) {

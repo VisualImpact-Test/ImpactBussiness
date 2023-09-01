@@ -60,14 +60,24 @@
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<!-- <span class="tooltiptext">Cuenta</span> -->
-							<select class="ui dropdown fluid selection clearable parentDependiente centro-visible" id="cuentaForm" name="cuenta" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+							<select class="ui dropdown fluid selection clearable parentDependiente centro-visible" id="cuentaForm" name="cuenta" data-childDependiente="cuentaCentroCostoForm">
 								<?= htmlSelectOptionArray2(['title' => 'Cuenta', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<!-- <span class="tooltiptext">Centro Costo</span> -->
-							<select class="ui dropdown fluid selection clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="centroCosto" patron="requerido">
+							<select class="ui dropdown fluid selection clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="centroCosto">
 								<?= htmlSelectOptionArray2(['title' => 'Centro Costo', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<!-- <span class="tooltiptext">Centro Costo</span> -->
+							<select class="ui dropdown fluid selection clearable semantic-dropdown" name="estado">
+								<option value>Estado</option>
+								<option>Solicitado</option>
+								<option>Cotizado</option>
+								<option>Vencido</option>
+								<option>Aprobado</option>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">

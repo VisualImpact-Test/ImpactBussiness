@@ -1,6 +1,6 @@
 <form class="form" role="form" id="formRegistroSustentoServicio" method="post">
 	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor?>">
-	<!-- <div class="row">
+	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Enlaces</legend>
@@ -9,7 +9,7 @@
 				</div>
 			</fieldset>
 		</div>
-	</div> -->
+	</div>
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

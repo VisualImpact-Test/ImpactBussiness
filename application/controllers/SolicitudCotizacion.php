@@ -1328,7 +1328,7 @@ class SolicitudCotizacion extends MY_Controller
 		$post['cotizacionDetalleSub'] = checkAndConvertToArray($post['cotizacionDetalleSub']);
 
 		$dataInsert = [];
-		foreach ($post['cotizacionDetalleSub'] as $k => $v) {
+		foreach ($post['cotizacionDetalleSub'] as $v) {
 			$dataInsert[] = [
 				'idCotizacionDetalleSub' => $v,
 				'costo' => $post["costo[$v]"],

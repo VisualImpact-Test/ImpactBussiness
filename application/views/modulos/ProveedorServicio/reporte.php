@@ -37,7 +37,8 @@
 					<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
 					<td><?= verificarEmpty($row['title'], 3) ?></td>
 					<td>
-						<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion" data-id="<?= $row['idCotizacion']; ?>"><i class="icon eye" title="Generar PDF cotizacion"></i></a>
+						<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+						<!-- <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion" data-id="<?= $row['idCotizacion']; ?>"><i class="icon eye" title="Generar PDF cotizacion"></i></a> -->
 					</td>
 					<td><?= verificarEmpty($row['status'], 3) ?></td>
 					<td>
@@ -52,14 +53,19 @@
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') : ?>
-							<a href="javascript:;" download class="ui button btn-descargarOper" data-id="<?= $row['operData']['idOper'] ?>">
+							<a href="<?= base_url() . 'Cotizacion/descargarOperDirecto/' . $row['operData']['idOper']; ?>" class="ui button" target="_blank">
 								<?= $row['operData']['requerimiento']; ?>
 							</a>
+							<!-- <a href="javascript:;" download class="ui button btn-descargarOper" data-id="<?= $row['operData']['idOper'] ?>"><?= $row['operData']['requerimiento']; ?></a> -->
 						<?php endif; ?>
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+							<?php foreach ($row['ocGen'] as $oc) : ?>
+								<a href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $oc['idOrdenCompra']; ?>" class="ui button" data-id="<?= $oc['idOrdenCompra'] ?>" target="_blank">
+									<?= 'OC' . str_pad($oc['idOrdenCompra'], 6, "0", STR_PAD_LEFT); ?>
+								</a>
+							<?php endforeach; ?>
 						<?php endif; ?>
 					</td>
 					<td>
