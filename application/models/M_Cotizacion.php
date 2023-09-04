@@ -466,6 +466,28 @@ class M_Cotizacion extends MY_Model
 				, p.mostrarPrecio
 				, pd.costoPacking
 				, pd.flagMostrarDetalle
+				, pd.adicionales
+				, pd.asignacionFamiliar
+				, pd.segurovidaley
+				, pd.refrigerio
+				, pd.incentivos
+				, pd.sueldo
+				, pd.cts
+				, pd.movilidad
+				, pd.essalud
+				, pd.vacaciones
+				, pd.gratificacion
+				, pd.mesInicio
+				, CASE WHEN pd.mesInicio=pd.mesFin THEN null ELSE pd.mesFin END mesFin
+				, p.feePersonal
+				, pd.idCargo
+				,ctt.nombre cargo
+				,pd.sueldo+pd.movilidad+pd.incentivos+pd.refrigerio+pd.asignacionFamiliar subtotalPersonal
+				,pd.sueldo+pd.movilidad+pd.incentivos+pd.refrigerio+pd.asignacionFamiliar+pd.segurovidaley+pd.cts+pd.essalud+pd.vacaciones+pd.gratificacion totalPersonal
+				,pd.asignacionFamiliar+pd.segurovidaley+pd.cts+pd.essalud+pd.vacaciones+pd.gratificacion totalCargasSociales
+				,1.4626*(pd.sueldo+pd.asignacionFamiliar)+(pd.movilidad+pd.refrigerio) totalSueldo
+				,1.4626*(pd.incentivos) totalIncentivo
+				,pd.cantidad_personal	 			   
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -478,6 +500,7 @@ class M_Cotizacion extends MY_Model
 			JOIN compras.itemEstado ei ON pd.idItemEstado = ei.idItemEstado
 			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
 			LEFT JOIN compras.solicitante ss ON ss.idSolicitante = p.idSolicitante
+			LEFT JOIN rrhh.dbo.CargoTrabajo ctt ON ctt.idCargoTrabajo=pd.idCargo														   																			
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY itemTipo, pd.idCotizacionDetalle
@@ -2229,10 +2252,10 @@ class M_Cotizacion extends MY_Model
 		)';
 		}
 		$sql="
-			SELECT *,case WHEN sueldo>1025 THEN sueldo*0.1 ELSE 1025*0.1 END asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro
-	  
-	
-								
+			SELECT *,1025*0.1 asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro				
+   
+ 
+		
 		";
 
 		return $this->db->query($sql);
@@ -2242,6 +2265,7 @@ class M_Cotizacion extends MY_Model
 		$sql ="
 			DECLARE 
 				@fecha DATE = GETDATE()
+			SELECT *,SUM(total) OVER() total_final FROM (
 			SELECT 
 				  cc.idConcepto
 				, cc.nombre
@@ -2258,7 +2282,16 @@ class M_Cotizacion extends MY_Model
 					ON cct.idConcepto=cc.idConcepto
 			WHERE
 				cct.idTipo=$idTipo
+			)a
 		";
 		return $this->db->query($sql);
 	}
+
+	public function obtenerPeriodo(){
+		$sql ="
+			select distinct idMes,anio, mes+'-'+anio periodo from General.dbo.tiempo 
+			WHERE fecha>=GETDATE() ORDER BY anio,idMes
+			";
+			return $this->db->query($sql);
+	}					 
 }

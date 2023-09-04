@@ -177,7 +177,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Tipo Item</div>
-								<select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
+								<select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido" data-correlativo="1">
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
@@ -317,27 +317,27 @@
 							</div>
 						</div>
 						<!-- Personal -->
-						<div class="d-none div-features div-feature-<?=COD_PERSONAL['id']?>" style="border: 1px solid;padding: 15px;">
+						<div class="d-none div-features div-feature-<?=COD_PERSONAL['id']?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width:20%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Cantidad</div>
-											<input value="" name="cantidad_personal" id="cantidad_personal">
+											<input name="cantidad_personal" class="cantidad_personal" id="cantidad_personal" data-cantidad="1" value="0">
 										</div>
 									</td>
 									<td style="width:20%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Cargo</div>
 											<div class="cargo_rrhh" style="width:100%;">
-												<select class="ui clearable dropdown simpleDropdown" id="cargo_personal" name="cargo_personal"></select>
+												<select class="ui clearable dropdown simpleDropdown cargo_personal" id="cargo_personal" name="cargo_personal"></select>
 											</div>
 										</div>
 									</td>
 									<td style="width:20%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Tipo de Contrato</div>
-											<select class="" name="tipo_contrato_personal">
+											<select class="tipo_contrato_personal" name="tipo_contrato_personal" data-obligatorio="1"> 
 												<option value="0">Seleccione</option>
 												<option value="1">Part Time</option>
 												<option value="2">Full Time</option>
@@ -347,7 +347,7 @@
 									<td style="width:20%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Tipo Jornada</div>
-											<select class="" name="tipo_jornada_personal">
+											<select class="tipo_jornada_personal" name="tipo_jornada_personal">
 												<option value="0">Seleccione</option>
 												<option value="1">Amanecida</option>
 												<option value="2">Horario Regular</option>
@@ -360,7 +360,7 @@
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Periodo de Contrato</div>
-											<select class="" id="periodo_contrato_personal" name="periodo_contrato_personal">
+											<select class="periodo_contrato_personal" id="periodo_contrato_personal" name="periodo_contrato_personal" data-obligatorio="1">
 												<option value="0">Seleccione</option>
 												<option value="1">Diario</option>
 												<option value="2">Mensual</option>
@@ -370,22 +370,51 @@
 									<td>
 										<div style="padding:15px;display:none;" class="cantidad_dias">
 											<div class="ui sub header">Cantidad de días</div>
-											<input value="0" id="cantidad_dias_personal" name="cantidad_dias_personal">
+											<input value="0" data-dias="1" class="cantidad_dias_personal" id="cantidad_dias_personal" name="cantidad_dias_personal">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;display:none;" class="pago_diario">
 											<div class="ui sub header">Pago diario</div>
-											<input value="0" id="pago_diario_personal" name="pago_diario_personal">
+											<input value="0" data-pago="1" class="pago_diario_personal" id="pago_diario_personal" name="pago_diario_personal">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Pago mensual</div>
-											<input value="0" id="pago_mensual_personal" name="pago_mensual_personal">
+											<input value="0" class="pago_mensual_personal" id="pago_mensual_personal" name="pago_mensual_personal" readonly>
 										</div>
 									</td>
 									<td style="width:20%;"></td>
+								</tr>
+								<tr>
+									<td colspan="5">
+										<div style="padding:15px;">
+											<div class="ui sub header">Periodo</div>
+										</div>	
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Mes Inicio</div>
+											<select class="mes_inicio_personal" id="mes_inicio_personal" name="mes_inicio_personal" data-obligatorio="1">
+												<? foreach($periodo as $row_p){?>
+													<option value="<?=$row_p['periodo']?>"><?=$row_p['periodo']?></option>
+												<? } ?>
+											</select>
+										</div>	
+									</td>
+									<td>
+										<div style="padding:15px;">
+											<div class="ui sub header">Mes Fin</div>
+											<select class="mes_fin_personal" id="mes_fin_personal" name="mes_fin_personal" data-obligatorio="1">
+												<? foreach($periodo as $row_p){?>
+													<option value="<?=$row_p['periodo']?>"><?=$row_p['periodo']?></option>
+												<? } ?>
+											</select>
+										</div>	
+									</td>
 								</tr>
 								<tr>
 									<td colspan="5">
@@ -398,33 +427,33 @@
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Sueldo</div>
-											<input value="" name="sueldo_personal" id="sueldo_personal">
+											<input value="" class="sueldo_personal" name="sueldo_personal" id="sueldo_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Asignacion Familiar</div>
-											<input value="" name="asignacion_familiar_personal" id="asignacion_familiar_personal">
+											<input value="" class="asignacion_familiar_personal" name="asignacion_familiar_personal" id="asignacion_familiar_personal" value="0" readonly>
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Movilidad</div>
-											<input value="" name="movilidad_personal" id="movilidad_personal">
+											<input value="" class="movilidad_personal" name="movilidad_personal" id="movilidad_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Refrigerio</div>
-											<input value="" name="refrigerio_personal" id="refrigerio_personal">
+											<input value="" class="refrigerio_personal" name="refrigerio_personal" id="refrigerio_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-						   
-									  
+		 
+		   
 											<div class="ui sub header">Incentivo</div>
-											<input value="" name="incentivo_personal" id="incentivo_personal">
+											<input value="" class="incentivo_personal" name="incentivo_personal" id="incentivo_personal" value="0" data-sueldo="1">
 										</div>
 									</td>
 								</tr>
@@ -439,20 +468,20 @@
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Essalud  9% </div>
-											<input value="" name="essalud_personal" id="essalud_personal">
+											<input value="" class="essalud_personal" name="essalud_personal" id="essalud_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">CTS  9.7%</div>
-											<input value="" name="cts_personal" id="cts_personal">
+											<input value="" class="cts_personal" name="cts_personal" id="cts_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 									  
 											<div class="ui sub header">Vacaciones 9.1%</div>
-											<input value="" name="vacaciones_personal" id="vacaciones_personal">
+											<input value="" class="vacaciones_personal" name="vacaciones_personal" id="vacaciones_personal" readonly value="0">
 										</div>
 
 									</td>
@@ -460,22 +489,24 @@
 										<div style="padding:15px;">
 									  
 											<div class="ui sub header">Gratificacion 18.20%</div>
-											<input value="" name="gratificacion_personal" id="gratificacion_personal">
+											<input value="" class="gratificacion_personal" name="gratificacion_personal" id="gratificacion_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-									 
-																				   
-			  
-									  
+		  
+					   
+	 
+		   
 											<div class="ui sub header">Seguro Vida Ley 0.26%</div>
-											<input value="" name="seguro_vida_personal" id="seguro_vida_personal">
+											<input value="" class="seguro_vida_personal" name="seguro_vida_personal" id="seguro_vida_personal" readonly value="0">
 										</div>
 									</td>
 				  
 								</tr>
 							</table>
+							<input class="total_sueldo" style="" type="hidden" value="0" >
+							<input class="total_adicionales" type="hidden" style="" value="0" name="total_adicionales">
 							<div class="campos_adicionales">
 								
 			  
@@ -707,6 +738,13 @@
 						%
 					</div>
 				</div>
+				<div class="ui right labeled input" style="margin-top:10px;">
+					<label for="feeFormPersonal" class="ui label">Fee Personal: </label>
+					<input style="width:100px;" data-max='100' data-min='0' type="number" id="feeFormPersonal" class="onlyNumbers" name="feeFormPersonal" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
+					<div class="ui basic label">
+						%
+					</div>
+				</div>												 																						 
 			</div>
 			<div class="column">
 				<div class="ui right labeled input">

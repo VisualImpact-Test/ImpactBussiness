@@ -162,6 +162,14 @@
 					<?php endforeach; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
+			<?php if ($idItemTipo == COD_PERSONAL['id']) :  ?>
+				<?php $rowspan = 1; ?>
+				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+					<td class="text-center" ><?= $key + 1 ?></td>
+					<td class="text-center bold"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo']:'Recursos: '.$row['cantidad_personal'].' '.$row['cargo'].' '.$row['mesInicio']; ?> </td>
+					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
+				</tr>	
+			<?php endif; ?>									   
 			<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
 				<?php $rowspan = 1; ?>
 				<?php $cantidadMoviles = 0; ?>
@@ -257,6 +265,14 @@
 						<p><?= moneda(($cabecera['fee_prc'])) ?></p>
 					</td>
 				</tr>
+				<tr class="height:100px" style="background-color: #F6FAFD;">
+					<td colspan="<?= $col1; ?>" class="text-right bold">
+						<p>FEE <?= !empty($cabecera['feePersonal']) ? $cabecera['feePersonal'] . '%' : '0%' ?></p>
+					</td>
+					<td class="text-right">
+						<p><?= moneda(($cabecera['fee_personal'])) ?></p>
+					</td>
+				</tr>												
 				<tr class="height:100px" style="background-color: #FFE598;">
 					<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
 						<p>TOTAL</p>
