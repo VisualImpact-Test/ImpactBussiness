@@ -35,13 +35,16 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarItemTarifario" title="Consultar">
 					<i class="fa fa-search"></i> <span class="txt_filtro"></span>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="descargaList" id="btn-descargaLista" title="Descargar">
+					<i class="fa fa-download"></i>
+				</button>
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarItemTarifario" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
-				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario" data-id="0">
+				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
                     <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
                 </button>
-				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario" data-id="0">
+				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
                     <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
                 </button>
 			</div>
@@ -84,7 +87,7 @@
 								<?= htmlSelectOptionArray2(['query' => $proveedor, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
-						<div class="">
+						<div>
 							<fieldset class="scheduler-border" style="text-align-last: center;">
 								<legend class="scheduler-border" style="font-size: 15px;margin-bottom: 0;">Precio</legend>
 								<div class="control-group" style="width:45%; display: inline-block;">

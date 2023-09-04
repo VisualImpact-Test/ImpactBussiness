@@ -58,19 +58,18 @@ class M_Item extends MY_Model
 	public function obtenerTarifarioItemProveedorParaActualizacionMasiva($params = [])
 	{
 		$this->db
-		->select('p.razonSocial as proveedor, i.nombre as item, it.costo, it.fechaVigencia as fecha')
-		->from('compras.itemTarifario it')
-		->join('compras.item i', 'i.idItem = it.idItem', 'LEFT')
-		->join('compras.proveedor p', 'p.idProveedor = it.idProveedor', 'LEFT')
-		->where('it.estado', 1)
-		->where('i.estado', 1)
-		->where('p.idProveedorEstado', 2) // Activo
-		->where('it.fechaVigencia < GETDATE()')
-		// ->limit('5')
-		->order_by('2, 1');
+			->select('p.razonSocial as proveedor, i.nombre as item, it.costo, it.fechaVigencia as fecha')
+			->from('compras.itemTarifario it')
+			->join('compras.item i', 'i.idItem = it.idItem', 'LEFT')
+			->join('compras.proveedor p', 'p.idProveedor = it.idProveedor', 'LEFT')
+			->where('it.estado', 1)
+			->where('i.estado', 1)
+			->where('p.idProveedorEstado', 2) // Activo
+			->where('it.fechaVigencia < GETDATE()')
+			// ->limit('5')
+			->order_by('2, 1');
 
 		return $this->db->get();
-		
 	}
 	public function obtenerItemCategoria($params = [])
 	{
@@ -175,7 +174,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
 		$filtros .= ($this->idTipoUsuario != '1') ? ' AND p.demo != 1 ' : '';
-
+		$tipoDistribucion = COD_DISTRIBUCION['id'];
 		$sql = "
 			SELECT 
 				tfa.idItemTarifario
@@ -203,7 +202,7 @@ class M_Item extends MY_Model
 			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
 			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
-			WHERE 1 = 1
+			WHERE 1 = 1 AND a.idItemTipo != {$tipoDistribucion}
 			{$filtros}
 		";
 

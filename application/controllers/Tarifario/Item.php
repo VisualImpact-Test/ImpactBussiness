@@ -19,12 +19,11 @@ class Item extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday'
 		);
 		$config['js']['script'] = array(
-			// 'assets/libs/datatables/responsive.bootstrap4.min',
-			// 'assets/custom/js/core/datatables-defaults',
 			'assets/libs//handsontable@7.4.2/dist/handsontable.full.min',
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
 			'assets/custom/js/core/gestion',
 			'assets/custom/js/Tarifario/item',
@@ -91,6 +90,269 @@ class Item extends MY_Controller
 		];
 
 		echo json_encode($result);
+	}
+
+	public function descargarTarifario() // Es la vista previa de como se veria la OC
+	{
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		$post = $this->input->post();
+
+		$dataParaVista['tarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+		// $dataProveedor = [];
+
+		foreach ($dataParaVista['tarifario']  as $value) {
+			$Rproveedor[$value['idProveedor']] = [
+				'idProveedor' => $value['idProveedor'],
+				'nproveedor' => $value['proveedor']
+			];
+
+			$item[$value['idItem']] = $value;
+			$itemProveedor[$value['idItem']][$value['idProveedor']] = $value;
+		}
+
+		$dataParaVista['dataProveedor'] = $Rproveedor;
+		$dataParaVista['dataItem'] = $item;
+		$dataParaVista['dataItemProveedor'] = $itemProveedor;
+
+		require APPPATH . '/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+			'orientation' => 'L',
+		]);
+
+		$contenido['header'] = $this->load->view("modulos/Tarifario/Item/pdf/header", ['title' => 'LISTADO DE ITEMs EN EL TARIFARIO' /*, 'codigo' => 'SIG-LOG-FOR-009' */], true);
+		// $contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+		$contenido['style'] = $this->load->view("modulos/Tarifario/Item/pdf/style", [], true);
+		$contenido['body'] = $this->load->view("modulos/Tarifario/Item/pdf/reporte", $dataParaVista, true);
+		$mpdf->SetHTMLHeader($contenido['header']);
+		// $mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
+
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+
+		// $cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+
+		$mpdf->Output("tarifario.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+	}
+
+	public function descargarExcelDemo()
+	{
+		$post = $this->input->post();
+
+		$dataTarifario = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
+
+		// $this->load->library('PHPExcel');
+
+		// $objPHPExcel = $this->phpexcel;
+
+		error_reporting(E_ALL);
+		ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		/** Include PHPExcel */
+		require_once '../phpExcel/Classes/PHPExcel.php';
+
+		$objPHPExcel = new PHPExcel();
+
+		/**ESTILOS**/
+		$estilo_cabecera =
+			array(
+				'alignment' => array(
+					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => 'E60000')
+				),
+				'font'  => array(
+					'color' => array('rgb' => 'ffffff'),
+					'size'  => 11,
+					'name'  => 'Calibri'
+				)
+			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 16,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_subtitulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 11,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['left'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['center'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['right'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		/**FIN ESTILOS**/
+
+		$gdImage = imagecreatefromjpeg(APPPATH . '../public/assets/images/visualimpact/logo_full.jpg');
+		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		$objDrawing->setName('Sample image');
+		$objDrawing->setDescription('TEST');
+		$objDrawing->setImageResource($gdImage);
+		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		$objDrawing->setHeight(50);
+		$objDrawing->setCoordinates('A1');
+		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+
+		$objPHPExcel->getActiveSheet()->mergeCells('B5:F5');
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('B5', 'REQUERIMIENTO DE COTIZACION INTERNA')
+			->setCellValue('A8', 'PROVEEDOR')
+			->setCellValue('B8', 'DEMO01')
+			->setCellValue('A9', 'CUENTA')
+			->setCellValue('B9', 'DEMO02')
+			->setCellValue('A10', 'CC')
+			->setCellValue('B10', 'DEMO03')
+			->setCellValue('A11', 'FECHA')
+			->setCellValue('B11', getFechaActual());
+
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->applyFromArray($estilo_titulo);
+
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->applyFromArray($estilo_subtitulo);
+
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('A13', 'DESCRIPCION')
+			->setCellValue('B13', 'CANTIDAD')
+			->setCellValue('C13', 'PRECIO UNITARIO')
+			->setCellValue('D13', 'TOTAL')
+			->setCellValue('E13', 'TIEMPO');
+		$objPHPExcel->getActiveSheet()->getStyle("A13:E13")->applyFromArray($estilo_cabecera);
+		$nIni = 14;
+		// foreach ($data as $k => $v) {
+		// 	$itm = $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array();
+		// 	$objPHPExcel->setActiveSheetIndex(0)
+		// 		->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
+		// 		->setCellValue('B' . $nIni, $v['cantidad'])
+		// 		->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
+		// 		->setCellValue('D' . $nIni, moneda($v['costo']))
+		// 		->setCellValue('E' . $nIni, $v['diasValidez']);
+		// 	$nIni++;
+		// }
+		$fin = $nIni - 1;
+		$objPHPExcel->getActiveSheet()->getStyle("A14:A$fin")->applyFromArray($estilo_data['left']);
+		$objPHPExcel->getActiveSheet()->getStyle("B14:B$fin")->applyFromArray($estilo_data['center']);
+		$objPHPExcel->getActiveSheet()->getStyle("C14:C$fin")->applyFromArray($estilo_data['right']);
+		$objPHPExcel->getActiveSheet()->getStyle("D14:D$fin")->applyFromArray($estilo_data['right']);
+		$objPHPExcel->getActiveSheet()->getStyle("E14:E$fin")->applyFromArray($estilo_data['center']);
+
+		$nIni++;
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precion no incluye IGV');
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precio valido por ' . 'DEMO04');
+		$nIni++;
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, 'IMAGENES ADJUNTAS');
+
+		$nIni = $nIni + 2;
+		// foreach ($imgProveedor as $k => $v) {
+		// 	if ($v['extension'] == 'jpeg') {
+		// 		$gdImage = imagecreatefromjpeg(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
+		// 	}
+		// 	if ($v['extension'] == 'png') {
+		// 		$gdImage = imagecreatefrompng(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
+		// 	}
+
+		// 	$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		// 	$objDrawing->setName('Sample image');
+		// 	$objDrawing->setDescription('TEST');
+		// 	$objDrawing->setImageResource($gdImage);
+		// 	if ($v['extension'] == 'jpeg') {
+		// 		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		// 	}
+		// 	if ($v['extension'] == 'png') {
+		// 		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
+		// 	}
+		// 	$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		// 	$objDrawing->setHeight(100);
+		// 	$objDrawing->setCoordinates('A' . $nIni);
+		// 	$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+		// 	$nIni = $nIni + 6;
+		// }
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="Formato.xls"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
 	}
 
 	public function getFormCargaMasivaTarifario()
@@ -422,7 +684,6 @@ class Item extends MY_Controller
 					'fecFin' => $tablaHT['fecha'],
 					'costo' => $tablaHT['costo'],
 				];
-
 			}
 
 			// Validar que el flag y/o proveedor no se indique varias veces sobre el mismo item.
@@ -455,7 +716,7 @@ class Item extends MY_Controller
 				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Se ha encontrado duplicidad de <b>ITEM - PROVEEDOR</b> entre los datos indicados']);
 				goto respuesta;
 			}
-			*/
+			 */
 		}
 
 		// Aprovechando la condicion se busca el "Item Actual" guardado en la BDs para quitarle el activo. pt.2
@@ -465,7 +726,7 @@ class Item extends MY_Controller
 				$this->db->update('compras.itemTarifario', ['flag_actual' => '0'], ['idItemTarifario' => $datos['idItemTarifario']]);
 			}
 		}
-		*/
+		 */
 
 		if (empty($updateData)) {
 			$result['result'] = 0;
@@ -881,7 +1142,7 @@ class Item extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$data = [];
-		$data['idItemTarifario']=$post['idItemTarifario'];
+		$data['idItemTarifario'] = $post['idItemTarifario'];
 
 		$dataParaVista = [];
 		$dataParaVista['itemFotos'] = $this->model->obtenerItemsFotos($data);
@@ -889,7 +1150,6 @@ class Item extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Fotos de Items';
 		$result['data']['html'] = $this->load->view("modulos/Tarifario/Item/formularioFotos", $dataParaVista, true);
-	 
 
 		echo json_encode($result);
 	}

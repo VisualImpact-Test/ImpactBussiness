@@ -14,7 +14,6 @@ var Item = {
 
 		$(document).ready(function () {
 			$('#btn-filtrarItemTarifario').click();
-			//Gestion.urlActivo = Item.url
 		});
 
 		$(document).on('click', '#btn-filtrarItemTarifario', function () {
@@ -24,7 +23,6 @@ var Item = {
 				, 'url': Item.url + ruta
 				, 'contentDetalle': Item.contentDetalle
 			};
-
 			Fn.loadReporte_new(config);
 		});
 
@@ -52,6 +50,15 @@ var Item = {
 				Item.actualizarAutocomplete();
 				// $("input").prop('disabled', false);
 			});
+		});
+
+		$(document).on('click', '#btn-descargaLista', function (e) {
+			let data = Fn.formSerializeObject(Item.frm);
+			var url = site_url + Item.url + 'descargarTarifario';
+
+			// Fn.showLoading(true);
+			Fn.download(url, data);
+
 		});
 
 		$(document).on('click', '.btn-actualizarItemTarifario', function () {
@@ -161,49 +168,49 @@ var Item = {
 
 			var data = tarifa[idProveedor];
 			if (jQuery.type(data) !== "undefined") {
-				if(data.flag_actual == 1){
+				if (data.flag_actual == 1) {
 					$('.checkActual').prop('checked', true);
-				}else{
+				} else {
 					$('.checkActual').prop('checked', false);
 				}
 
 				if (parseInt(data['diasTranscurridos']) < 0) {
 					div = $(".tipoDiv");
 					div.removeClass();
-					div.addClass( "tipoDiv ui bottom attached success message w-100" );
-	
+					div.addClass("tipoDiv ui bottom attached success message w-100");
+
 					icono = $(".tipoIcon");
 					icono.removeClass();
-					icono.addClass( "tipoIcon icon check" );
-	
+					icono.addClass("tipoIcon icon check");
+
 					$('#label_fecha').html(data.fechaVigencia);
-				}else{
+				} else {
 					div = $(".tipoDiv");
 					div.removeClass();
-					div.addClass( "tipoDiv ui bottom attached warning message w-100" );
-	
+					div.addClass("tipoDiv ui bottom attached warning message w-100");
+
 					icono = $(".tipoIcon");
 					icono.removeClass();
-					icono.addClass( "tipoIcon icon warning" );
-	
+					icono.addClass("tipoIcon icon warning");
+
 					$('#label_fecha').html(data.fechaVigencia);
 				}
-			}else{
+			} else {
 				$('.checkActual').prop('checked', false);
 
 				div = $(".tipoDiv");
-					div.removeClass();
-					div.addClass( "tipoDiv ui bottom attached success message w-100" );
-	
-					icono = $(".tipoIcon");
-					icono.removeClass();
-					icono.addClass( "tipoIcon icon check" );
-	
-					$('#label_fecha').html('SIN REGISTRAR');
+				div.removeClass();
+				div.addClass("tipoDiv ui bottom attached success message w-100");
+
+				icono = $(".tipoIcon");
+				icono.removeClass();
+				icono.addClass("tipoIcon icon check");
+
+				$('#label_fecha').html('SIN REGISTRAR');
 
 			}
 
-			
+
 		});
 
 		$(document).on('change', '.proveedorTarifarioActualizar', function (e) {
@@ -220,7 +227,7 @@ var Item = {
 			control.find('#idItemTarifario').val(idItemTarifario);
 			if (flag_actual == '1') {
 				control.find('#actual').prop('checked', true);
-			}else{
+			} else {
 				control.find('#actual').prop('checked', false);
 			}
 		});
