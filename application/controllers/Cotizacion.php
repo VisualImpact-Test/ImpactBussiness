@@ -366,7 +366,7 @@ class Cotizacion extends MY_Controller
 			'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
 			'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
 			'fee' => $post['feeForm'],
-			'feePersonal' => $post['feeFormPersonal'],								  
+			'feePersonal' => $post['feeFormPersonal'],
 			'total' => $post['totalForm'],
 			'total_fee' => $post['totalFormFee'],
 			'total_fee_igv' => $post['totalFormFeeIgv'],
@@ -469,7 +469,9 @@ class Cotizacion extends MY_Controller
 		$post['gratificacion_personal'] = checkAndConvertToArray($post['gratificacion_personal']);
 		$post['seguro_vida_personal'] = checkAndConvertToArray($post['seguro_vida_personal']);
 		$post['total_adicionales'] = checkAndConvertToArray($post['total_adicionales']);
-		$post['cargo_personal'] = checkAndConvertToArray($post['cargo_personal']);
+
+		if (isset($post['cargo_personal'])) $post['cargo_personal'] = checkAndConvertToArray($post['cargo_personal']);
+		
 		$post['cantidad_personal'] = checkAndConvertToArray($post['cantidad_personal']);
 		$post['incentivo_personal'] = checkAndConvertToArray($post['incentivo_personal']);
 		$post['mes_inicio_personal'] = checkAndConvertToArray($post['mes_inicio_personal']);
@@ -560,7 +562,7 @@ class Cotizacion extends MY_Controller
 				'asignacionFamiliar' => !empty($post['asignacion_familiar_personal'][$k]) ? $post['asignacion_familiar_personal'][$k] : 0,
 				'movilidad' => !empty($post['movilidad_personal'][$k]) ? $post['movilidad_personal'][$k] : 0,
 				'refrigerio' => !empty($post['refrigerio_personal'][$k]) ? $post['refrigerio_personal'][$k] : 0,
-				'incentivos' => !empty($post['incentivo_personal'][$k]) ? $post['incentivo_personal'][$k]: 0,
+				'incentivos' => !empty($post['incentivo_personal'][$k]) ? $post['incentivo_personal'][$k] : 0,
 				'essalud' => !empty($post['essalud_personal'][$k]) ? $post['essalud_personal'][$k] : 0,
 				'cts' => !empty($post['cts_personal'][$k]) ? $post['cts_personal'][$k] : 0,
 				'vacaciones' => !empty($post['vacaciones_personal'][$k]) ? $post['vacaciones_personal'][$k] : 0,
@@ -568,9 +570,9 @@ class Cotizacion extends MY_Controller
 				'segurovidaley' => !empty($post['seguro_vida_personal'][$k]) ? $post['seguro_vida_personal'][$k] : 0,
 				'adicionales' => !empty($post['total_adicionales'][$k]) ? $post['total_adicionales'][$k] : 0,
 				'idCargo' => !empty($post['cargo_personal'][$k]) ? $post['cargo_personal'][$k] : 0,
-				'cantidad_personal' => !empty($post['cantidad_personal'][$k]) ? $post['cantidad_personal'][$k] : 0,																						  
-				'mesInicio' => !empty($post['mes_inicio_personal'][$k]) ? $post['mes_inicio_personal'][$k] : 0,																						  
-				'mesFin' => !empty($post['mesFin'][$k]) ? $post['mesFin'][$k] : 0																								  													   
+				'cantidad_personal' => !empty($post['cantidad_personal'][$k]) ? $post['cantidad_personal'][$k] : 0,
+				'mesInicio' => !empty($post['mes_inicio_personal'][$k]) ? $post['mes_inicio_personal'][$k] : 0,
+				'mesFin' => !empty($post['mesFin'][$k]) ? $post['mesFin'][$k] : 0
 			];
 
 			if ($post['flagPackingSolicitado'][$k] == '1') {
@@ -615,15 +617,15 @@ class Cotizacion extends MY_Controller
 						$n++;
 					}
 					break;
-				case COD_PERSONAL['id']: 
+				case COD_PERSONAL['id']:
 
 					$data['subDetalle'][$k] = getDataRefactorizada([
 						'sueldo' => $post["sueldo_personal"],
-						'asignacionFamiliar' => $post["asignacion_familiar_personal"]					
+						'asignacionFamiliar' => $post["asignacion_familiar_personal"]
 					]);
 
-				 break;
-		   
+					break;
+
 				case COD_TEXTILES['id']:
 					$data['subDetalle'][$k] = getDataRefactorizada([
 						'talla' => $post["tallaSubItem[$k]"],
@@ -960,7 +962,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
-				$dataParaVista['cabecera']['feePersonal'] = $row['feePersonal'];															 
+				$dataParaVista['cabecera']['feePersonal'] = $row['feePersonal'];
 				$dataParaVista['cabecera']['igv'] = $row['flagIgv'];
 				$dataParaVista['cabecera']['total'] = $total = $row['total'];
 				$dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
@@ -1005,7 +1007,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['mesInicio'] = $row['mesInicio'];
 				$dataParaVista['detalle'][$key]['mesFin'] = $row['mesFin'];
 				$dataParaVista['detalle'][$key]['cantidad_personal'] = $row['cantidad_personal'];
-				
+
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 					if ($row['idItemTipo'] == COD_TRANSPORTE['id']) {
@@ -1340,7 +1342,7 @@ class Cotizacion extends MY_Controller
 		);
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
-		$config['data']['periodo'] = $this->model->obtenerPeriodo()->result_array();													
+		$config['data']['periodo'] = $this->model->obtenerPeriodo()->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
 		$itemServicio =  $this->model_item->obtenerItemServicio();
@@ -4119,55 +4121,57 @@ class Cotizacion extends MY_Controller
 		echo $html;
 	}
 
-public function cargos(){
-						 
+	public function cargos()
+	{
+
 		$data =  json_decode($this->input->post('data'), true);
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$result = $this->result;
-		
+
 		$data = $this->model->obtener_cargos($idCentro)->result_array();
 		$html = '<select class="ui clearable dropdown simpleDropdown cargo_personal" id="cargo_personal" name="cargo_personal" >';
-		$html.= '<option value="0">Seleccione</option>';
+		$html .= '<option value="0">Seleccione</option>';
 		foreach ($data as $row) {
-			$html.= '<option value="'.$row['idCargoTrabajo'].'">'.$row['nombre'].'</option>';
+			$html .= '<option value="' . $row['idCargoTrabajo'] . '">' . $row['nombre'] . '</option>';
 		}
-		$html.="</select>";
-		
+		$html .= "</select>";
+
 		$result['result'] = 1;
 		$result['data'] = $html;
 
 		echo json_encode($result);
 	}
 
-	public function obtener_sueldos(){
-								  
+	public function obtener_sueldos()
+	{
+
 		$data =  json_decode($this->input->post('data'), true);
 
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$idCargo = $data['idCargo'];
 		$result = $this->result;
-		
-		$data = $this->model->obtener_sueldos($idCuenta,$idCentro,$idCargo)->result_array();
+
+		$data = $this->model->obtener_sueldos($idCuenta, $idCentro, $idCargo)->result_array();
 		$total = count($data);
-		$sueldo=0;
-		$movilidad=0;
-		$refrigerio=0;
-		$incentivo=0;
-		$tipo_cargo_sueldo=0;
-		$asignacionFamiliar=0;
-		if($total==1){
+		$sueldo = 0;
+		$movilidad = 0;
+		$refrigerio = 0;
+		$incentivo = 0;
+		$tipo_cargo_sueldo = 0;
+		$asignacionFamiliar = 0;
+		if ($total == 1) {
 			foreach ($data as $row) {
-				$tipo_cargo_sueldo =0;
-				$sueldo =$row['sueldo'];
-				$movilidad =$row['movilidad'];
-				$refrigerio =$row['refrigerio'];
-				$incentivo =$row['comisionFija'];
-				$asignacionFamiliar =$row['asignacionFamiliar'];
+				$tipo_cargo_sueldo = 0;
+				$sueldo = $row['sueldo'];
+				$movilidad = $row['movilidad'];
+				$refrigerio = $row['refrigerio'];
+				$incentivo = $row['comisionFija'];
+				$asignacionFamiliar = $row['asignacionFamiliar'];
 			}
 		}
-		
+
 		$result['result'] = 1;
 		$result['tipo_cargo_sueldo'] = $tipo_cargo_sueldo;
 		$result['sueldo'] = $sueldo;
@@ -4179,16 +4183,17 @@ public function cargos(){
 		echo json_encode($result);
 	}
 
-	public function obtener_conceptos_adicionales(){								
-  
+	public function obtener_conceptos_adicionales()
+	{
+
 		$data =  json_decode($this->input->post('data'), true);
-		$id=$data['id'];
-		$cantidad=$data['cantidad'];
-		$adicionales = $this->model->obtener_conceptos_adicionales($id,$cantidad)->result_array();
-		$html="";
-		$total_adicional=0;
-		$html.="<table style='width:100%;'>";
-		$html.="
+		$id = $data['id'];
+		$cantidad = $data['cantidad'];
+		$adicionales = $this->model->obtener_conceptos_adicionales($id, $cantidad)->result_array();
+		$html = "";
+		$total_adicional = 0;
+		$html .= "<table style='width:100%;'>";
+		$html .= "
 				<tr>
 					<th style='width:210px;'></th>
 					<th></th>
@@ -4198,14 +4203,14 @@ public function cargos(){
 					<th><div style='padding: 0px 0px 0px 20px;'>Costo Total</div></th>
 				</tr>
 			";
-			foreach($adicionales as $row){
-				$html.="<tr>";
-				$html.='<td><div style="padding:15px;">'.$row['nombre'].'</div></td>';
-				$html.='<td><div style="padding:15px;"><select name="seleccionar_'.$row['id_campo'].'" id="seleccionar_'.$row['id_campo'].'"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
-				$html.='<td><div style="padding:15px;"><input name="cantidad_'.$row['id_campo'].'" id="'.$row['id_campo'].'" value="'.$cantidad.'"></div></td>';
-				$html.='<td>
+		foreach ($adicionales as $row) {
+			$html .= "<tr>";
+			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
+			$html .= '<td><div style="padding:15px;"><select name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
+			$html .= '<td>
 							<div style="padding:15px;">
-								<select name="frecuencia_'.$row['id_campo'].'" id="frecuencia_'.$row['id_campo'].'">
+								<select name="frecuencia_' . $row['id_campo'] . '" id="frecuencia_' . $row['id_campo'] . '">
 									<option value="1">mensual</option>
 									<option value="2">bimestral</option>
 									<option value="3">Trimestral</option>
@@ -4214,12 +4219,12 @@ public function cargos(){
 								</select>
 							</div>
 						</td>';
-				$html.='<td><div style="padding:15px;"><input name="costo_'.$row['id_campo'].'" id="costo_'.$row['id_campo'].'" value="'.$row['costo'].'" readonly></div></td>';
-				$html.='<td><div style="padding:15px;"><input name="costo_total_'.$row['id_campo'].'" id="costo_total_'.$row['id_campo'].'" value="'.$row['total'].'" readonly></div></td>';
-				$html.="</tr>";
-				$total_adicional=$row['total_final'];
-			}
-		$html.="</table>";
+			$html .= '<td><div style="padding:15px;"><input name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '" readonly></div></td>';
+			$html .= '<td><div style="padding:15px;"><input name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '" readonly></div></td>';
+			$html .= "</tr>";
+			$total_adicional = $row['total_final'];
+		}
+		$html .= "</table>";
 
 		$result['data'] = $html;
 		$result['total_adicional'] = $total_adicional;

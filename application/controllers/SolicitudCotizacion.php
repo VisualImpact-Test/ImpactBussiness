@@ -500,7 +500,7 @@ class SolicitudCotizacion extends MY_Controller
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
 				->setCellValue('B' . $nIni, $v['cantidad'])
-				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
+				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / empty($v['cantidad']) ? '1' : floatval($v['cantidad'])))
 				->setCellValue('D' . $nIni, moneda($v['costo']))
 				->setCellValue('E' . $nIni, $v['diasValidez']);
 			$nIni++;

@@ -116,6 +116,7 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
 		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
+		$tipoPresupuestoDetalle = [];
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
