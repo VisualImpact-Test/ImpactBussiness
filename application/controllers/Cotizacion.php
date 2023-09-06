@@ -121,7 +121,8 @@ class Cotizacion extends MY_Controller
 					"visible" => false,
 					"targets" => []
 				]
-			]
+			],
+			'language' => ['url' => '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json']
 		];
 
 		echo json_encode($result);
@@ -471,7 +472,7 @@ class Cotizacion extends MY_Controller
 		$post['total_adicionales'] = checkAndConvertToArray($post['total_adicionales']);
 
 		if (isset($post['cargo_personal'])) $post['cargo_personal'] = checkAndConvertToArray($post['cargo_personal']);
-		
+
 		$post['cantidad_personal'] = checkAndConvertToArray($post['cantidad_personal']);
 		$post['incentivo_personal'] = checkAndConvertToArray($post['incentivo_personal']);
 		$post['mes_inicio_personal'] = checkAndConvertToArray($post['mes_inicio_personal']);
@@ -1014,9 +1015,9 @@ class Cotizacion extends MY_Controller
 						$dataParaVista['detalleSubT'][$row['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('cod_departamento, cod_provincia, 1')->get('compras.cotizacionDetalleSub')->result_array();
 					}
 				} else {
-					$cds = $this->db->where('idCotizacionDetalle', $row['idCotizacionDetalle'])->order_by('idZona, idItem')->get('compras.cotizacionDetalleSub')->result_array();
+					$cds = $this->db->order_by('idZona, idItem')->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
 					foreach ($cds as $kz => $vz) {
-						$zona = $this->model->getZonas(['idZona' => $vz['idZona']])->row_array();
+						$zona = $this->model->getZonas(['otroAlmacen' => $vz['flagOtrosPuntos'], 'idZona' => $vz['idZona']])->row_array();
 						$vz['zonaNombre'] = $zona['nombre'];
 						$vz['tipoServicioNombre'] = $this->db->where('idTipoServicio', $vz['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
 						$dataParaVista['detalleDistribucionZonas'][$row['idCotizacionDetalle']][$vz['idZona']][] = $vz;
@@ -1051,8 +1052,6 @@ class Cotizacion extends MY_Controller
 			if (empty($dataParaVista['cabecera']['total_fee_igv'])) {
 				$dataParaVista['cabecera']['total_fee_igv'] = $totalFee;
 			}
-
-			// $dataParaVista['cabecera']['mostrarPrecio'] = false;
 
 			if (count($dataParaVista) == 0) exit();
 
@@ -1981,6 +1980,7 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$result['result'] = 1;
 		$result['msg']['content'] = htmlTableValueArray($data);
+
 		$result['msg']['cantidadPdv'] = count($ht);
 		Respuesta:
 		echo json_encode($result);
@@ -2931,6 +2931,7 @@ class Cotizacion extends MY_Controller
 					'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 					'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
 					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
+
 				];
 
 				if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
@@ -2958,31 +2959,22 @@ class Cotizacion extends MY_Controller
 							for ($it = 0; $it < $cantidad; $it++) {
 								$data['subDetalle'][$k][] = [
 									'tipoServicio' => strval($post['idTipoServicio'][$n]), // idTipoServicio ... el modal esta con ese KEY por eso le pongo asi.
-									'nombre' => strval($post['item'][$n]),
-									'cantidad' => strval($post['cantidad'][$n]),
-									'costo' 	=> strval($post['costoTSCuenta'][$n]), // EDER ESTAS AQUI
-									'subtotal' => strval($post['totalCuenta'][$n]),
-									'idItem' => strval($post['idItem'][$n]),
-									'peso' => strval($post['pesoCuenta'][$n]),
-									'idZona' => strval($post['idZona'][$n]),
-									'dias' => strval($post['dias'][$n]),
-									'gap' => strval($post['gap'][$n]),
-									'pesoVisual' => strval($post['pesoVisual'][$n]),
-									'costoVisual' => strval($post['costoTSVisual'][$n]),
+									'nombre' => strval(checkAndConvertToArray($post['item'])[$n]),
+									'cantidad' => strval(checkAndConvertToArray($post['cantidad'])[$n]),
+									'costo' 	=> strval(checkAndConvertToArray($post['costoTSCuenta'])[$n]),
+									'subtotal' => strval(checkAndConvertToArray($post['totalCuenta'])[$n]),
+									'idItem' => strval(checkAndConvertToArray($post['idItem'])[$n]),
+									'peso' => strval(checkAndConvertToArray($post['pesoCuenta'])[$n]),
+									'idZona' => strval(checkAndConvertToArray($post['idZona'])[$n]),
+									'dias' => strval(checkAndConvertToArray($post['dias'])[$n]),
+									'gap' => strval(checkAndConvertToArray($post['gap'])[$n]),
+									'pesoVisual' => strval(checkAndConvertToArray($post['pesoVisual'])[$n]),
+									'costoVisual' => strval(checkAndConvertToArray($post['costoTSVisual'])[$n]),
 									'flagItemInterno' => 0, // FALTA LA OPCION DE AGREGAR ITEM DE COMPRAS
-									'flagOtrosPuntos' => !empty($post['flagOtrosPuntos'][$k]) ? $post['flagOtrosPuntos'][$k] : 0
+									'flagOtrosPuntos' => !empty(checkAndConvertToArray($post['flagOtrosPuntos'])[$k]) ? checkAndConvertToArray($post['flagOtrosPuntos'])[$k] : 0
 								];
 								$n++;
 							}
-							/*
-							$data['subDetalle'][$k] = getDataRefactorizada([
-								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-								'cantidad' => $post["cantidadSubItemNro[{$post['idCotizacionDetalle'][$k]}]"],
-								'idItem' => $post["itemLogisticaFormNew[{$post['idCotizacionDetalle'][$k]}]"],
-								'cantidadReal' => $post["cantidadRealSubItem[{$post['idCotizacionDetalle'][$k]}]"],
-								'peso' => $post["cantidadSubItemDistribucion[{$post['idCotizacionDetalle'][$k]}]"],
-							]);
-							*/
 							break;
 
 						case COD_TEXTILES['id']:
@@ -3046,23 +3038,27 @@ class Cotizacion extends MY_Controller
 					'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
 					'idItemTipo' => $post['tipoItemForm'][$k],
 					'nombre' => $post['nameItem'][$k],
-					'cantidad' => $post['cantidadForm'][$k],
-					'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
-					//'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
-					'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
-					'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
-					'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
+					'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 					'idItemEstado' => $post['idEstadoItemForm'][$k],
 					'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+					'cantidad' => $post['cantidadForm'][$k],
+					'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+					'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
+					'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
+					'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 					'idCotizacionDetalleEstado' => 1,
-					'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
-					'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
-					'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
+					'fechaCreacion' => getActualDateTime(),
 					'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 					'cotizacionInterna' => !empty($post['cotizacionInternaForm'][$k]) ? $post['cotizacionInternaForm'][$k] : 0,
+					'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
 					'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 					'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
-					'fechaCreacion' => getActualDateTime(),
+					'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
+					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
+					'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
+					'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
+					'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
+
 				];
 
 				switch ($post['tipoItemForm'][$k]) {
@@ -3073,20 +3069,32 @@ class Cotizacion extends MY_Controller
 						// 	]);
 						// 	break;
 					case COD_DISTRIBUCION['id']:
-						$subDetalleInsert[$k] = getDataRefactorizada([
-							'unidadMedida' => $post["unidadMedidaSubItem[$k]"],
-							'tipoServicio' => $post["tipoServicioSubItem[$k]"],
-							'costo' => $post["costoSubItem[$k]"],
-							'cantidad' => $post["cantidadSubItemNro[$k]"],
-							'cantidadPdv' => $post["cantidadPdvSubItemDistribucion[$k]"],
-							'idItem' => $post["itemLogisticaFormNew[$k]"],
-							'idDistribucionTachado' => $post["chkTachado[$k]"],
-							'requiereOrdenCompra' => empty($post["generarOCSubItem[$k]"]) ? 0 : 1,
-							'idProveedorDistribucion' => isset($post["proveedorDistribucionSubItem[$k]"]) ? $post["proveedorDistribucionSubItem[$k]"] : null,
-							'cantidadReal' => $post["cantidadRealSubItem[$k]"],
-							'peso' => $post["cantidadSubItemDistribucion[$k]"],
-						]);
+						///////////// Ini
+						$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
+						$cantidad = intval($post['cantidadDatosTabla'][$k]);
+						$subDetalleInsert[$k] = [];
+
+						for ($it = 0; $it < $cantidad; $it++) {
+							$subDetalleInsert[$k][] = [
+								'tipoServicio' => strval($post['idTipoServicio'][$n]),
+								'nombre' => strval(checkAndConvertToArray($post['item'])[$n]),
+								'cantidad' => strval(checkAndConvertToArray($post['cantidad'])[$n]),
+								'costo' 	=> strval(checkAndConvertToArray($post['costoTSCuenta'])[$n]),
+								'subtotal' => strval(checkAndConvertToArray($post['totalCuenta'])[$n]),
+								'idItem' => strval(checkAndConvertToArray($post['idItem'])[$n]),
+								'peso' => strval(checkAndConvertToArray($post['pesoCuenta'])[$n]),
+								'idZona' => strval(checkAndConvertToArray($post['idZona'])[$n]),
+								'dias' => strval(checkAndConvertToArray($post['dias'])[$n]),
+								'gap' => strval(checkAndConvertToArray($post['gap'])[$n]),
+								'pesoVisual' => strval(checkAndConvertToArray($post['pesoVisual'])[$n]),
+								'costoVisual' => strval(checkAndConvertToArray($post['costoTSVisual'])[$n]),
+								'flagItemInterno' => 0,
+								'flagOtrosPuntos' => !empty(checkAndConvertToArray($post['flagOtrosPuntos'])[$k]) ? checkAndConvertToArray($post['flagOtrosPuntos'])[$k] : 0
+							];
+							$n++;
+						}
 						break;
+						///////////// fin
 
 					case COD_TEXTILES['id']:
 						$subDetalleInsert[$k] = getDataRefactorizada([
@@ -3128,13 +3136,22 @@ class Cotizacion extends MY_Controller
 							'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
 							'genero' => !empty($subItem['genero']) ? $subItem['genero'] : NULL,
 							'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
-							'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
+							'subTotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : NULL,
 							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
 							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
 							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
+							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+							'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+							'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
+							'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
+							'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
+							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
+							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
+
 						];
 					}
 				}
@@ -3364,14 +3381,14 @@ class Cotizacion extends MY_Controller
 			if ($sub['idItemTipo'] == COD_DISTRIBUCION['id']) {
 				$data = [
 					'cabecera' => [
-						'idZona' => 'IDZONA',
+						'idZona' => '',
 						'zona' => 'ZONA',
 						'dias' => 'DIAS',
-						'idItem' => 'ITEM',
+						'idItem' => '',
 						'item' => 'ITEM',
 						'cantidad' => 'CANTIDAD',
 						'gap' => 'GAP',
-						'idTipoServicio' => 'ID TS',
+						'idTipoServicio' => '',
 						'tipoServicio' => 'TIPO SERVICIO',
 						'pesoVisual' => 'PESO VISUAL',
 						'pesoTotalVisual' => 'PESO TOTAL VISUAL',

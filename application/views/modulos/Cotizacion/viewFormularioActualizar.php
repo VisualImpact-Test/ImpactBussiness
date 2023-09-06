@@ -10,7 +10,7 @@
 	}
 </style>
 <div class="ui form attached fluid segment p-4">
-	<form class="ui form" role="form" id="formActualizarCotizacion" method="post">
+	<form class="ui form" role="form" id="formActualizarCotizacion" method="post" autocomplete="off">
 		<input type="hidden" name="idCotizacion" value="<?= !empty($cotizacion['idCotizacion']) ? $cotizacion['idCotizacion'] : '' ?>">
 		<input type="hidden" name="idCotizacionEstado" value="<?= !empty($cotizacion['idCotizacionEstado']) ? $cotizacion['idCotizacionEstado'] : '' ?>">
 		<input type="hidden" name="costoDistribucion" id="costoDistribucion" value="<?= !empty($costoDistribucion) ? $costoDistribucion['costo'] : 0 ?>">
@@ -57,14 +57,14 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuenta']) ? $cotizacion['idCuenta'] : '']); ?>
+				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $cotizacion['idCuenta']]); ?>
 				</select>
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idCuentaCentroCosto']) ? $cotizacion['idCuentaCentroCosto'] : '']); ?>
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => $cotizacion['idCuentaCentroCosto']]); ?>
 				</select>
 			</div>
 		</div>
@@ -158,7 +158,7 @@
 				</div>
 				<div class="ui clearing divider"></div>
 				<div class="ui grid">
-					<div class="sixteen wide tablet twelve wide computer column">
+					<div class="sixteen wide tablet twelve wide computer column itemDet_1">
 						<div class="fields">
 							<div class="eight wide field">
 								<div class="ui sub header">Item</div>
@@ -311,14 +311,12 @@
 							<div class="content-body-sub-item" id="divIL">
 								<div class="fields body-sub-item"></div>
 							</div>
-							<button type="button" class="ui basic button btn-add-subItemDist-Masivo mb-4">
-								<i class="plus icon"></i> Agregar Item Masivo
+							<button type="button" class="ui button btn-add-subItemDist-Masivo mb-4 blue">
+								<i class="box open icon"></i> Indicar Items
 							</button>
-							<div class="fields">
-								<button type="button" class="ui basic button btn-add-subDetalleDistribucion mb-4">
-									<i class="list ul icon"></i> SubDetalle
-								</button>
-							</div>
+							<button type="button" class="ui button btn-add-subDetalleDistribucion mb-4 teal">
+								<i class="hand holding usd icon"></i> Detalle Cantidad y Costos
+							</button>
 							<div class="datosTable"></div>
 							<div class="arrayDatosItems d-none"></div>
 							<div class="arrayDatos d-none"></div>
@@ -477,7 +475,7 @@
 					</div>
 					<div class="ui clearing divider"></div>
 					<div class="ui grid">
-						<div class="sixteen wide tablet twelve wide computer column">
+						<div class="sixteen wide tablet twelve wide computer column itemDet_1">
 							<div class="fields">
 								<div class="six wide field">
 									<div class="ui sub header">Item</div>
@@ -675,24 +673,32 @@
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Peso Visual</div>
-													<input name="pesoVisualSID" class="itemDPesoV" value="<?= $vcdsi['pesoVisual']; ?>" readonly>
+													<div class="ui right labeled input">
+														<input name="pesoVisualSID" class="onlyNumbers itemDPesoV" value="<?= $vcdsi['pesoVisual']; ?>" readonly>
+														<div class="ui basic label">
+															KG
+														</div>
+													</div>
 												</div>
 												<div class="two wide field">
 													<div class="ui sub header">Peso Cuenta</div>
-													<input name="pesoCuentaSID" class="itemDPesoR" value="<?= $vcdsi['pesoCuenta']; ?>" readonly>
+													<div class="ui right labeled input">
+														<input name="pesoCuentaSID" class="itemDPesoR" value="<?= $vcdsi['pesoCuenta']; ?>" readonly>
+														<div class="ui basic label">
+															KG
+														</div>
+													</div>
 												</div>
 											</div>
 										<?php endforeach; ?>
 
 									</div>
-									<button type="button" class="ui basic button btn-add-subItemDist-Masivo mb-4">
-										<i class="plus icon"></i> Agregar Item Masivo
+									<button type="button" class="ui button btn-add-subItemDist-Masivo mb-4 blue">
+										<i class="box open icon"></i> Indicar Items
 									</button>
-									<div class="fields">
-										<button type="button" class="ui basic button btn-add-subDetalleDistribucion mb-4">
-											<i class="list ul icon"></i> SubDetalle
-										</button>
-									</div>
+									<button type="button" class="ui button btn-add-subDetalleDistribucion mb-4 teal">
+										<i class="hand holding usd icon"></i> Detalle Cantidad y Costos
+									</button>
 									<div class="datosTable">
 										<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
 									</div>

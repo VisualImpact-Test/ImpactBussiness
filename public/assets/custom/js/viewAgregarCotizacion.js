@@ -581,7 +581,7 @@ var Cotizacion = {
 			if (idTipo == COD_DISTRIBUCION.id) {
 				$('.no-personal').removeClass('d-none');
 
-				$('.cantidadForm').val('0');
+				control.closest('.body-item').find('.cantidadForm').val('0');
 				$('.personal').addClass('d-none');
 				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
 					++modalId;
@@ -647,7 +647,7 @@ var Cotizacion = {
 			} else if (idTipo == COD_PERSONAL.id) {
 				$('.no-personal').addClass('d-none');
 				$('.personal').removeClass('d-none');
-				$('.cantidadForm').val('1');
+				control.closest('.body-item').find('.cantidadForm').val('1');
 				var idCuenta = $('#cuentaForm').val();
 				var idCentro = $('#cuentaCentroCostoForm').val();
 				//////////////////
@@ -700,7 +700,7 @@ var Cotizacion = {
 			} else {
 				$('.no-personal').removeClass('d-none');
 				$('.personal').addClass('d-none');
-				$('.cantidadForm').val('0');
+				control.closest('.body-item').find('.cantidadForm').val('0');
 
 				(parent.find('.cCompras')).removeClass('d-none');
 				(parent.find('.cantPDV')).addClass('d-none');
@@ -2593,11 +2593,21 @@ var Cotizacion = {
 						</div>
 						<div class="two wide field">
 							<div class="ui sub header">Peso Visual</div>
-							<input name="pesoVisualSID" class="itemDPesoV" value="${row.pesoVisual}" readonly>
+							<div class="ui right labeled input">
+								<input name="pesoVisualSID" class="itemDPesoV" value="${row.pesoVisual}" readonly>
+								<div class="ui basic label">
+									KG
+								</div>
+							</div>
 						</div>
 						<div class="two wide field">
 							<div class="ui sub header">Peso Cuenta</div>
-							<input name="pesoCuentaSID" class="itemDPesoR" value="${row.pesoCuenta}" readonly>
+							<div class="ui right labeled input">
+								<input name="pesoCuentaSID" class="itemDPesoR" value="${row.pesoCuenta}" readonly>
+								<div class="ui basic label">
+									KG
+								</div>
+							</div>
 						</div>
 					</div>`;
 				}
@@ -3195,7 +3205,9 @@ var Cotizacion = {
 		let cantidadSubItemTextil = parent.find('.cantidadSubItemTextil');
 		let generoSubItem = parent.find('.generoSubItem');
 		//Tarjetas o vales
-		let montoSubItem = parent.find('.montoSubItem');
+		let razonSocialSubItemTarjVal = parent.find('.razonSocialSubItemTarjVal');
+		let sucursalSubItemTarjVal = parent.find('.sucursalSubItemTarjVal');
+		let montoSubItemTarjVal = parent.find('.montoSubItemTarjVal');
 
 		//Servicios y distribucion
 
@@ -3240,7 +3252,9 @@ var Cotizacion = {
 		generoSubItem.attr('name', `generoSubItem[${number}]`);
 		cantidadSubItemTextil.attr('name', `cantidadTextil[${number}]`);
 
-		montoSubItem.attr('name', `montoSubItem[${number}]`);
+		razonSocialSubItemTarjVal.attr('name', `razonSocialSubItemTarjVal[${number}]`);
+		sucursalSubItemTarjVal.attr('name', `sucursalSubItemTarjVal[${number}]`);
+		montoSubItemTarjVal.attr('name', `montoSubItemTarjVal[${number}]`);
 
 		nombreSubItem.attr('name', `nombreSubItemServicio[${number}]`);
 		cantidadSubItem.attr('name', `cantidadSubItemServicio[${number}]`);

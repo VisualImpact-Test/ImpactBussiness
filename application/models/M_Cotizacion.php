@@ -1695,6 +1695,25 @@ class M_Cotizacion extends MY_Model
 							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
 							'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
+
+							//// Los que faltaban ...
+							'costoDistribucion' => !empty($subItem['costoDistribucion']) ? $subItem['costoDistribucion'] : NULL,
+							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
+							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
+							'sucursal' => !empty($subItem['sucursal']) ? $subItem['sucursal'] : NULL,
+							'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : NULL,
+							'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
+							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
+							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
+							'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+							'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
+							'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
+							'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
+							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
+							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 						];
 					}
 				}
@@ -2228,11 +2247,12 @@ class M_Cotizacion extends MY_Model
 		return $this->db->get();
 	}
 
-	public function obtener_cargos($idCentro){
-		$filtro='';
-		if(!empty($idCentro)){
-			$filtro.='AND idArea IN (
-				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+	public function obtener_cargos($idCentro)
+	{
+		$filtro = '';
+		if (!empty($idCentro)) {
+			$filtro .= 'AND idArea IN (
+				select idArea from rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=' . $idCentro . '
 			)';
 		}
 		$sql = "
@@ -2243,15 +2263,17 @@ class M_Cotizacion extends MY_Model
 		return $this->db->query($sql);
 	}
 
-	public function obtener_sueldos($idCuenta,$idCentro,$idCargo){
-		$filtro='';
-		if(!empty($idCuenta)) $filtro.='AND idEmpresa='.$idCuenta;
-		if(!empty($idCargo)) $filtro.='AND idCargoTrabajo='.$idCargo;
-		if(!empty($idCentro)) { $filtro.='AND idSubcanal IN (
-			SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal='.$idCentro.'
+	public function obtener_sueldos($idCuenta, $idCentro, $idCargo)
+	{
+		$filtro = '';
+		if (!empty($idCuenta)) $filtro .= 'AND idEmpresa=' . $idCuenta;
+		if (!empty($idCargo)) $filtro .= 'AND idCargoTrabajo=' . $idCargo;
+		if (!empty($idCentro)) {
+			$filtro .= 'AND idSubcanal IN (
+			SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=' . $idCentro . '
 		)';
 		}
-		$sql="
+		$sql = "
 			SELECT *,1025*0.1 asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro				
    
  
@@ -2261,8 +2283,9 @@ class M_Cotizacion extends MY_Model
 		return $this->db->query($sql);
 	}
 
-	public function obtener_conceptos_adicionales($idTipo,$cantidad){
-		$sql ="
+	public function obtener_conceptos_adicionales($idTipo, $cantidad)
+	{
+		$sql = "
 			DECLARE 
 				@fecha DATE = GETDATE()
 			SELECT *,SUM(total) OVER() total_final FROM (
@@ -2287,11 +2310,12 @@ class M_Cotizacion extends MY_Model
 		return $this->db->query($sql);
 	}
 
-	public function obtenerPeriodo(){
-		$sql ="
+	public function obtenerPeriodo()
+	{
+		$sql = "
 			select distinct idMes,anio, mes+'-'+anio periodo from General.dbo.tiempo 
 			WHERE fecha>=GETDATE() ORDER BY anio,idMes
 			";
-			return $this->db->query($sql);
-	}					 
+		return $this->db->query($sql);
+	}
 }
