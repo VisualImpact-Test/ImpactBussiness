@@ -725,114 +725,20 @@ var Cotizacion = {
 
 		});
 
-		$(document).on('change','.periodo_contrato_personal', function(e){
-			e.preventDefault();
-			var id=$(this).val();
-			var idDiv=$(this).attr('data-obligatorio');
-			var idCuenta = $('#cuentaForm').val();
-			var idCentro = $('#cuentaCentroCostoForm').val();
-			var idCargo = $('.personal_'+idDiv+' .cargo_personal').val();
-			console.log(idCargo);
-			var total_final_costo=0;
-			var cantidad = $('.personal_'+idDiv+' .cantidad_personal').val()
-			var data = {'idCuenta':idCuenta,'idCentro':idCentro,'idCargo':idCargo };
-			if(id==2){
-				$('.personal_'+idDiv+' .cantidad_dias').hide();
-				$('.personal_'+idDiv+' .pago_diario').hide();
 		
-				var jsonString = { 'data': JSON.stringify(data) };
-				var url = Cotizacion.url + 'obtener_sueldos';
-				var config = { url: url, data: jsonString };
-
-				$.when(Fn.ajax(config)).then(function (a) {
-					console.log(a);
-					$('.personal_'+idDiv+' .sueldo_personal').val(a.sueldo);
-					$('.personal_'+idDiv+' .movilidad_personal').val(a.movilidad);
-					$('.personal_'+idDiv+' .incentivo_personal').val(a.incentivo);
-					$('.personal_'+idDiv+' .refrigerio_personal').val(a.refrigerio);
-					$('.personal_'+idDiv+' .pago_mensual_personal').val(a.sueldo);
-					$('.personal_'+idDiv+' .asignacion_familiar_personal').val(a.asignacionFamiliar);
-
-					var essalud;
-					var cts;
-					var vacaciones;
-					var gratificacion;
-					var seguroVidaLey;
-					if(a.sueldo<1025){
-						essalud = 1025+ parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo)
-					}else{
-						essalud = parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo);
-					}
-					var essalud1 = essalud*0.09;
-					console.log(essalud1);
-					cts= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.097;
-					vacaciones= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.091;
-					gratificacion= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.1820;
-					seguroVidaLey= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.0026;
-					$('.personal_'+idDiv+' .essalud_personal').val(essalud1.toFixed(2));		
-					$('.personal_'+idDiv+' .vacaciones_personal').val(vacaciones.toFixed(2));		
-					$('.personal_'+idDiv+' .cts_personal').val(cts.toFixed(2));		
-					$('.personal_'+idDiv+' .gratificacion_personal').val(gratificacion.toFixed(2));	
-					$('.personal_'+idDiv+' .seguro_vida_personal').val(seguroVidaLey.toFixed(2));	
-
-					var total_sueldos = ((parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))+(parseFloat(essalud)+parseFloat(cts)+parseFloat(vacaciones)+parseFloat(gratificacion)+parseFloat(seguroVidaLey)))*cantidad;
-					var total_adicionales = $('.personal_'+idDiv+' .total_adicionales').val();
-					var total_final_costo = total_sueldos + parseFloat(total_adicionales);
-					$('.costoForm').val(total_final_costo.toFixed(2))
-				});
-
-				
-				
-			}else if(id==1){
-				$('.personal_'+idDiv+' .cantidad_dias').show();
-				$('.personal_'+idDiv+' .pago_diario').show();
-				$('.personal_'+idDiv+' .pago_mensual_personal').val(0);
-				var essalud=0;
-				var cts=0;
-				var vacaciones=0;
-				var gratificacion=0;
-				var seguroVidaLey=0;
-				var asignacionFamiliar=1025*0.1;
-
-				$('.personal_'+idDiv+' .asignacion_familiar_personal').val(asignacionFamiliar);
-				$('.personal_'+idDiv+' .vacaciones_personal').val(essalud.toFixed(2));		
-				$('.personal_'+idDiv+' .cts_personal').val(cts);		
-				$('.personal_'+idDiv+' .gratificacion_personal').val(vacaciones.toFixed(2));	
-				$('.personal_'+idDiv+' .seguro_vida_personal').val(seguroVidaLey.toFixed(2));	
-				$('.personal_'+idDiv+' .movilidad_personal').val(0);	
-				$('.personal_'+idDiv+' .sueldo_personal').val(0);
-				
-			}
-
-			var id=$(this).val()
-			var cantidad = $('.personal_'+idDiv+' .cantidad_personal').val();
-		
-			var data_adicional = {'id':id,'cantidad':cantidad };
-			
-			var jsonString = { 'data': JSON.stringify(data_adicional) };
-			var url = Cotizacion.url + 'obtener_conceptos_adicionales';
-			var config = { url: url, data: jsonString };
-
-			$.when(Fn.ajax(config)).then(function (a) {
-				console.log(a);
-				$('.personal_'+idDiv+' .campos_adicionales').html(a.data);
-				$('.personal_'+idDiv+' .total_adicionales').val(a.total_adicional);
-			});
-		
-	});
 
 	$(document).on( "keyup",".cantidad_dias_personal", function() {
-		 var dias = $(this).val();
-		 var idDiv = $(this).attr('data-dias');
+		var dias = $(this).val();
+		var idDiv = $(this).attr('data-dias');
 
-		 var pago = $('.personal_'+idDiv+' .pago_diario_personal').val();
+		var pago = $('.personal_'+idDiv+' .pago_diario_personal').val();
 		var total = dias*pago;
 		var essalud=0;
 		var cantidad = $('.personal_'+idDiv+' .cantidad_personal').val();
-		 $('.personal_'+idDiv+' .pago_mensual_personal').val(total.toFixed(2));
-		 $('.personal_'+idDiv+' .sueldo_personal').val(total.toFixed(2));
-		 var asignacionFamiliar=1025*0.1;
-		 if(total<1025){
+		$('.personal_'+idDiv+' .pago_mensual_personal').val(total.toFixed(2));
+		$('.personal_'+idDiv+' .sueldo_personal').val(total.toFixed(2));
+		var asignacionFamiliar=1025*0.1;
+		if(total<1025){
 			essalud = (1025+asignacionFamiliar)*0.09;
 		}else{
 			essalud = (total+asignacionFamiliar)*0.09;
@@ -844,7 +750,7 @@ var Cotizacion = {
 		$('.personal_'+idDiv+' .seguro_vida_personal').val(0);	
 		$('.personal_'+idDiv+' .movilidad_personal').val(0);
 		
-		$('.personal_'+idDiv+' .asignacion_familiar_personal').val(asignacionFamiliar.toFixed(2));		
+		$('.personal_'+idDiv+' .asignacion_familiar_personal').val(asignacionFamiliar.toFixed(2));
 
 		var total_sueldos = (parseFloat(total)+parseFloat(asignacionFamiliar))*cantidad;
 		var total_adicionales = $('.personal_'+idDiv+' .total_adicionales').val();
@@ -2360,6 +2266,104 @@ var Cotizacion = {
 
 			Fn.download(site_url + Cotizacion.url + 'generarVistaPreviaCotizacionPDF', jsonString);
 		});
+		////COTIZACION PERSONAL
+		$(document).on('change','.periodo_contrato_personal', function(e){
+		//$(document).on('change','.change_data', function(e){
+			e.preventDefault();
+			//var id=$(this).val();
+			var idDiv=$(this).attr('data-obligatorio');
+			var idCuenta = $('#cuentaForm').val();
+			var idCentro = $('#cuentaCentroCostoForm').val();
+			var periodoContrato = $('.personal_'+idDiv+' .periodo_contrato_personal').val();
+			var idCargo = $('.personal_'+idDiv+' .cargo_personal').val();
+			var total_final_costo=0;
+			var cantidad = $('.personal_'+idDiv+' .cantidad_personal').val();
+			var data = {'idCuenta':idCuenta,'idCentro':idCentro,'idCargo':idCargo };
+			if(id==2){
+				$('.personal_'+idDiv+' .cantidad_dias').hide();
+				$('.personal_'+idDiv+' .pago_diario').hide();
+		
+				var jsonString = { 'data': JSON.stringify(data) };
+				var url = Cotizacion.url + 'obtener_sueldos';
+				var config = { url: url, data: jsonString };
+
+				$.when(Fn.ajax(config)).then(function (a) {
+					console.log(a);
+					$('.personal_'+idDiv+' .sueldo_personal').val(a.sueldo);
+					$('.personal_'+idDiv+' .movilidad_personal').val(a.movilidad);
+					$('.personal_'+idDiv+' .incentivo_personal').val(a.incentivo);
+					$('.personal_'+idDiv+' .refrigerio_personal').val(a.refrigerio);
+					$('.personal_'+idDiv+' .pago_mensual_personal').val(a.sueldo);
+					$('.personal_'+idDiv+' .asignacion_familiar_personal').val(a.asignacionFamiliar);
+
+					var essalud;
+					var cts;
+					var vacaciones;
+					var gratificacion;
+					var seguroVidaLey;
+					if(a.sueldo<1025){
+						essalud = 1025+ parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo)
+					}else{
+						essalud = parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo);
+					}
+					var essalud1 = essalud*0.09;
+					console.log(essalud1);
+					cts= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.097;
+					vacaciones= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.091;
+					gratificacion= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.1820;
+					seguroVidaLey= (parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))*0.0026;
+					$('.personal_'+idDiv+' .essalud_personal').val(essalud1.toFixed(2));		
+					$('.personal_'+idDiv+' .vacaciones_personal').val(vacaciones.toFixed(2));		
+					$('.personal_'+idDiv+' .cts_personal').val(cts.toFixed(2));		
+					$('.personal_'+idDiv+' .gratificacion_personal').val(gratificacion.toFixed(2));	
+					$('.personal_'+idDiv+' .seguro_vida_personal').val(seguroVidaLey.toFixed(2));	
+
+					var total_sueldos = ((parseFloat(a.sueldo)+parseFloat(a.asignacionFamiliar)+parseFloat(a.incentivo))+(parseFloat(essalud)+parseFloat(cts)+parseFloat(vacaciones)+parseFloat(gratificacion)+parseFloat(seguroVidaLey)))*cantidad;
+					var total_adicionales = $('.personal_'+idDiv+' .total_adicionales').val();
+					var total_final_costo = total_sueldos + parseFloat(total_adicionales);
+					$('.costoForm').val(total_final_costo.toFixed(2))
+				});
+
+				
+				
+			}else if(id==1){
+				$('.personal_'+idDiv+' .cantidad_dias').show();
+				$('.personal_'+idDiv+' .pago_diario').show();
+				$('.personal_'+idDiv+' .pago_mensual_personal').val(0);
+				var essalud=0;
+				var cts=0;
+				var vacaciones=0;
+				var gratificacion=0;
+				var seguroVidaLey=0;
+				var asignacionFamiliar=1025*0.1;
+
+				$('.personal_'+idDiv+' .asignacion_familiar_personal').val(asignacionFamiliar);
+				$('.personal_'+idDiv+' .vacaciones_personal').val(essalud.toFixed(2));		
+				$('.personal_'+idDiv+' .cts_personal').val(cts);		
+				$('.personal_'+idDiv+' .gratificacion_personal').val(vacaciones.toFixed(2));	
+				$('.personal_'+idDiv+' .seguro_vida_personal').val(seguroVidaLey.toFixed(2));	
+				$('.personal_'+idDiv+' .movilidad_personal').val(0);	
+				$('.personal_'+idDiv+' .sueldo_personal').val(0);
+				
+			}
+
+			var id=$(this).val()
+			var cantidad = $('.personal_'+idDiv+' .cantidad_personal').val();
+		
+			var data_adicional = {'id':id,'cantidad':cantidad };
+			
+			var jsonString = { 'data': JSON.stringify(data_adicional) };
+			var url = Cotizacion.url + 'obtener_conceptos_adicionales';
+			var config = { url: url, data: jsonString };
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				console.log(a);
+				$('.personal_'+idDiv+' .campos_adicionales').html(a.data);
+				$('.personal_'+idDiv+' .total_adicionales').val(a.total_adicional);
+			});
+		
+		});
+		////FIN COTIZACION PERSONAL
 	},
 	buscarPesos: function (idModalHT) {
 		var data = Fn.formSerializeObject('formCargaMasiva');

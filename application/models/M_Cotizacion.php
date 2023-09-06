@@ -223,6 +223,7 @@ class M_Cotizacion extends MY_Model
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
+				, (SELECT CASE WHEN COUNT(idCotizacionDetalle)>0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = 5) tipoPersonal
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -2293,5 +2294,13 @@ class M_Cotizacion extends MY_Model
 			WHERE fecha>=GETDATE() ORDER BY anio,idMes
 			";
 			return $this->db->query($sql);
-	}					 
+	}	
+	
+	public function obtenerDetalleItemPersonal($idCotizacion){
+		$sql ="
+			select distinct idMes,anio, mes+'-'+anio periodo from General.dbo.tiempo 
+			WHERE fecha>=GETDATE() ORDER BY anio,idMes
+			";
+			return $this->db->query($sql);
+	}	
 }

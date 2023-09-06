@@ -4230,4 +4230,17 @@ class Cotizacion extends MY_Controller
 		$result['total_adicional'] = $total_adicional;
 		echo json_encode($result);
 	}
+
+	function formularioItemsPersonal(){
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$idCotizacion = $post['idCotizacion'];
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Visualizar Cotizacion';
+		$result['data']['html'] = 'hola mundo';//$this->load->view("modulos/Cotizacion/formularioVisualizacion", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
 }
