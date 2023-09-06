@@ -73,7 +73,7 @@
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui dropdown  clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
@@ -268,10 +268,10 @@
 						</div>
 						<!-- Textiles -->
 						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TEXTILES['id'] ?>">
-							<h4 class="ui dividing header">SUB ITEMS</h4>
+							<h4 class="ui dividing header">SUB ITEMs</h4>
 							<div class="content-body-sub-item">
 								<div class="fields body-sub-item ">
-									<div class="six wide field">
+									<div class="three wide field">
 										<div class="ui sub header">Talla</div>
 										<input class="tallaSubItem camposTextil" name="tallaSubItem[0]" placeholder="Talla" value="<?= !empty($data['talla']) ? $data['talla'] : '' ?>">
 									</div>
@@ -290,7 +290,7 @@
 									<div class="three wide field">
 										<div class="ui sub header">Genero</div>
 										<select class="ui dropdown generoSubItem" name="generoSubItem[0]">
-											<option class="item-4" value="">SELECCIONE</option>
+											<option class="item-4" value="">Seleccione</option>
 											<option class="item" value="1">VARON</option>
 											<option class="item" value="2">DAMA</option>
 											<option class="item" value="3">UNISEX</option>
@@ -298,26 +298,34 @@
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>
-										<button type="button" class="ui basic button btn-eliminar-sub-item">
+										<button type="button" class="ui button btn-eliminar-sub-item red">
 											<i class="trash icon"></i>
 										</button>
 									</div>
 								</div>
 							</div>
-							<button type="button" class="ui basic button btn-add-sub-item">
+							<button type="button" class="ui btn btn-trade-visual btn-add-sub-item">
 								<i class="plus icon"></i>
-								Agregar Item Logistica
+								Agregar Sub Item
 							</button>
 						</div>
-						<!-- Monto S/ -->
+						<!-- Tarjetas y Vales -->
 						<div class="fields d-none div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
-							<div class="sixteen wide field">
+							<div class="six wide field">
+								<div class="ui sub header">Razón Social</div>
+								<input class="razonSocialSubItemTarjVal" name="razonSocialSubItemTarjVal[0]" placeholder="Razón Social">
+							</div>
+							<div class="five wide field">
+								<div class="ui sub header">Sucursal</div>
+								<input class="sucursalSubItemTarjVal" name="sucursalSubItemTarjVal[0]" placeholder="Sucursal">
+							</div>
+							<div class="five wide field">
 								<div class="ui sub header">Monto S/</div>
-								<input class="montoSubItem" name="montoSubItem[0]" placeholder="Monto" value="<?= !empty($data['montoSubItem']) ? $data['montoSubItem'] : '' ?>">
+								<input class="montoSubItemTarjVal" name="montoSubItemTarjVal[0]" placeholder="Monto">
 							</div>
 						</div>
 						<!-- Personal -->
-						<div class="d-none div-features div-feature-<?=COD_PERSONAL['id']?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">
+						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">
 							<table style="width: 100%;">
 								<tr>
 									<td style="width:20%;">
@@ -337,7 +345,7 @@
 									<td style="width:20%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Tipo de Contrato</div>
-											<select class="tipo_contrato_personal" name="tipo_contrato_personal" data-obligatorio="1"> 
+											<select class="tipo_contrato_personal" name="tipo_contrato_personal" data-obligatorio="1">
 												<option value="0">Seleccione</option>
 												<option value="1">Part Time</option>
 												<option value="2">Full Time</option>
@@ -391,7 +399,7 @@
 									<td colspan="5">
 										<div style="padding:15px;">
 											<div class="ui sub header">Periodo</div>
-										</div>	
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -399,28 +407,28 @@
 										<div style="padding:15px;">
 											<div class="ui sub header">Mes Inicio</div>
 											<select class="mes_inicio_personal" id="mes_inicio_personal" name="mes_inicio_personal" data-obligatorio="1">
-												<? foreach($periodo as $row_p){?>
-													<option value="<?=$row_p['periodo']?>"><?=$row_p['periodo']?></option>
+												<? foreach ($periodo as $row_p) { ?>
+													<option value="<?= $row_p['periodo'] ?>"><?= $row_p['periodo'] ?></option>
 												<? } ?>
 											</select>
-										</div>	
+										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Mes Fin</div>
 											<select class="mes_fin_personal" id="mes_fin_personal" name="mes_fin_personal" data-obligatorio="1">
-												<? foreach($periodo as $row_p){?>
-													<option value="<?=$row_p['periodo']?>"><?=$row_p['periodo']?></option>
+												<? foreach ($periodo as $row_p) { ?>
+													<option value="<?= $row_p['periodo'] ?>"><?= $row_p['periodo'] ?></option>
 												<? } ?>
 											</select>
-										</div>	
+										</div>
 									</td>
 								</tr>
 								<tr>
 									<td colspan="5">
 										<div style="padding:15px;">
 											<div class="ui sub header">Estructura Salarial</div>
-										</div>	
+										</div>
 									</td>
 								</tr>
 								<tr>
@@ -450,8 +458,8 @@
 									</td>
 									<td>
 										<div style="padding:15px;">
-		 
-		   
+
+
 											<div class="ui sub header">Incentivo</div>
 											<input value="" class="incentivo_personal" name="incentivo_personal" id="incentivo_personal" value="0" data-sueldo="1">
 										</div>
@@ -467,19 +475,19 @@
 								<tr>
 									<td>
 										<div style="padding:15px;">
-											<div class="ui sub header">Essalud  9% </div>
+											<div class="ui sub header">Essalud 9% </div>
 											<input value="" class="essalud_personal" name="essalud_personal" id="essalud_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-											<div class="ui sub header">CTS  9.7%</div>
+											<div class="ui sub header">CTS 9.7%</div>
 											<input value="" class="cts_personal" name="cts_personal" id="cts_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-									  
+
 											<div class="ui sub header">Vacaciones 9.1%</div>
 											<input value="" class="vacaciones_personal" name="vacaciones_personal" id="vacaciones_personal" readonly value="0">
 										</div>
@@ -487,29 +495,25 @@
 									</td>
 									<td>
 										<div style="padding:15px;">
-									  
+
 											<div class="ui sub header">Gratificacion 18.20%</div>
 											<input value="" class="gratificacion_personal" name="gratificacion_personal" id="gratificacion_personal" readonly value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-		  
-					   
-	 
-		   
 											<div class="ui sub header">Seguro Vida Ley 0.26%</div>
 											<input value="" class="seguro_vida_personal" name="seguro_vida_personal" id="seguro_vida_personal" readonly value="0">
 										</div>
 									</td>
-				  
+
 								</tr>
 							</table>
-							<input class="total_sueldo" style="" type="hidden" value="0" >
-							<input class="total_adicionales" type="hidden" style="" value="0" name="total_adicionales">
+							<input class="total_sueldo" type="hidden" value="0">
+							<input class="total_adicionales" type="hidden" value="0" name="total_adicionales">
 							<div class="campos_adicionales">
-								
-			  
+
+
 							</div>
 						</div>
 						<!-- Transporte -->
@@ -577,14 +581,12 @@
 							<div class="content-body-sub-item" id="divIL">
 								<div class="fields body-sub-item"></div>
 							</div>
-							<button type="button" class="ui basic button btn-add-subItemDist-Masivo mb-4">
-								<i class="plus icon"></i> Agregar Item Masivo
+							<button type="button" class="ui button btn-add-subItemDist-Masivo mb-4 blue">
+								<i class="box open icon"></i> Indicar Items
 							</button>
-							<div class="fields">
-								<button type="button" class="ui basic button btn-add-subDetalleDistribucion mb-4">
-									<i class="list ul icon"></i> SubDetalle
-								</button>
-							</div>
+							<button type="button" class="ui button btn-add-subDetalleDistribucion mb-4 teal">
+								<i class="hand holding usd icon"></i> Detalle Cantidad y Costos
+							</button>
 							<div class="datosTable"></div>
 							<div class="arrayDatosItems d-none"></div>
 							<div class="arrayDatos d-none"></div>
@@ -744,7 +746,7 @@
 					<div class="ui basic label">
 						%
 					</div>
-				</div>												 																						 
+				</div>
 			</div>
 			<div class="column">
 				<div class="ui right labeled input">

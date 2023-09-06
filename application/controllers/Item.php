@@ -69,7 +69,8 @@ class Item extends MY_Controller
 					"visible" => false,
 					"targets" => []
 				]
-			]
+			],
+			'language' => ['url' => '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json']
 		];
 
 		echo json_encode($result);
@@ -621,7 +622,7 @@ class Item extends MY_Controller
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Ok';
-		
+
 		respuesta:
 		echo json_encode($result);
 	}

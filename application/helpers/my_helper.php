@@ -1243,7 +1243,7 @@ function htmlTableValueArray($params)
 	$html = "<input type='hidden' value='$cantidad' name='cantidadDatosTabla'>";
 	$html .= '<table class="ui table"><thead><tr>';
 	foreach ($cabecera as $key => $value) {
-		$html .= "<th> $value </th>";
+		if (!empty($value)) $html .= "<th> $value </th>";
 	}
 	$html .= '</tr></thead>';
 	$html .= '<tbody>';
@@ -1252,9 +1252,9 @@ function htmlTableValueArray($params)
 		foreach ($cabecera as $kh => $vh) {
 			$value = $v[$kh];
 			$class = empty($params['classP']) ? '' : ($params['classP'] . $kh);
-			$html .= "<td><input class='$class' type='hidden' name='$kh' value=\"$value\">";
-			$html .= "$value";
-			$html .= '</td>';
+			if (!empty($vh))  $html .= "<td>";
+			$html .= "<input class='$class' type='hidden' name='$kh' value=\"$value\">";
+			if (!empty($vh))  $html .= "$value</td>";
 		}
 		$html .= '</tr>';
 	}

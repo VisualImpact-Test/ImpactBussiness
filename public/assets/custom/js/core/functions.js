@@ -1478,7 +1478,7 @@ var Fn = {
 			}
 		});
 		$('.date-semantic').calendar({
-			// minDate: $(this).data('disablepast') ? new Date() : false,
+			minDate: new Date('2020-01-02'),
 			type: 'date',
 			text: {
 				days: ['D', 'L', 'M', 'MM', 'J', 'V', 'S'],
@@ -1493,16 +1493,20 @@ var Fn = {
 				observeChanges: false
 			},
 			onChange: function (date) {
-				var year = date.getFullYear();
-				var month = date.getMonth() + 1;
-				var day = date.getDate();
-				if (month < 10) {
-					month = '0' + month;
+				if (date != null && date != '') {
+					var year = date.getFullYear();
+					var month = date.getMonth() + 1;
+					var day = date.getDate();
+					if (month < 10) {
+						month = '0' + month;
+					}
+					if (day < 10) {
+						day = '0' + day;
+					}
+					$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
+				}else{
+					$(this).siblings('.date-semantic-value').val('').trigger('change');
 				}
-				if (day < 10) {
-					day = '0' + day;
-				}
-				$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
 			}
 		});
 		$('.ui.checkbox').checkbox();

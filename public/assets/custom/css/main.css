@@ -1148,8 +1148,8 @@ li.select2-results__option:empty {
 
 .ui.table>tbody>tr>.td-left,
 .ui.table>tr>.td-left {
-  text-align: center !important;
-  vertical-align: left !important;
+  text-align: left !important;
+  vertical-align: middle !important;
 }
 
 .badge {
