@@ -4318,10 +4318,24 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$idCotizacion = $post['idCotizacion'];
-
+		$dataParaVista['data']=$this->model->obtenerDetalleItemPersonal($idCotizacion)->result_array();
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Visualizar Cotizacion';
-		$result['data']['html'] = 'hola mundo'; //$this->load->view("modulos/Cotizacion/formularioVisualizacion", $dataParaVista, true);
+		$result['msg']['title'] = 'Visualizar Items Personal';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/verItemsPersonal", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	function formularioRequerimientoPersonal(){
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		
+		$idCotizacionDetalle=$post['idCotizacionDetalle'];
+		$dataParaVista=array();
+		$dataParaVista['idCotizacionDetalle']=$idCotizacionDetalle;
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Generar Requerimiento';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/generarRequerimientoPersonal", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
