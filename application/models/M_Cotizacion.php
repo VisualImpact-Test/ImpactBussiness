@@ -219,6 +219,7 @@ class M_Cotizacion extends MY_Model
 				, p.montoOrdenCompra
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND estado = 1) cantDetalle
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = $codTransporte) cantidadTransporte
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
@@ -1532,13 +1533,11 @@ class M_Cotizacion extends MY_Model
 				foreach ($params['archivos'][$k] as $archivo) {
 					$archivoName = $this->saveFileWasabi($archivo);
 					$tipoArchivo = explode('/', $archivo['type']);
-					// PARA EL CODIGO DE ARCHIVO
-					$codArchivo = FILES_TIPO_WASABI[$tipoArchivo[1]];
-					// FIN: PARA EL CODIGO DE ARCHIVO
+
 					$insertArchivos[] = [
 						'idCotizacion' => $update['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo' => $codArchivo, //$tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_OTROS, // FILES_WASABI[$tipoArchivo[1]],
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
@@ -1609,6 +1608,11 @@ class M_Cotizacion extends MY_Model
 							'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 							'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
+							'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
+							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
+							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 
 						];
 					} else {
@@ -1645,6 +1649,9 @@ class M_Cotizacion extends MY_Model
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
+							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
+							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 						];
 					}
 				}
@@ -2070,7 +2077,12 @@ class M_Cotizacion extends MY_Model
 				ISNULL(il.nombre, il2.nombre) as itemLogistica,
 				cds.peso,
 				cds.flagOtrosPuntos,
-				cds.idZona
+				cds.idZona,
+				cds.dias,
+				cds.costoVisual,
+				cds.cod_departamento,
+				cds.cod_provincia,
+				cds.idTipoServicioUbigeo
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2083,7 +2095,6 @@ class M_Cotizacion extends MY_Model
 			1 = 1
 			{$filtros}
 			";
-
 
 		$query = $this->db->query($sql);
 

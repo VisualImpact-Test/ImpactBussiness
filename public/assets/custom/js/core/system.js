@@ -88,21 +88,21 @@ const GAP_MINIMO = 15;
 const LIMITE_COMPRAS = 1000;
 
 const RUTA_WIREFRAME = '../public/assets/images/wireframe/';
-const COD_ARTICULO = {'id' : 1, 'nombre' : 'ARTICULO'};
-const COD_SERVICIO = {'id' : 2, 'nombre' : 'SERVICIO'};
-const COD_COMPUTO = {'id' : 3, 'nombre' : 'COMPUTO'};
-const COD_MOVIL = {'id' : 4, 'nombre' : 'MOVIL'};
-const COD_PERSONAL = {'id' : 5, 'nombre' : 'PERSONAL'};
-const COD_EVENTO = {'id' : 6, 'nombre' : 'EVENTO'};
-const COD_DISTRIBUCION = {'id' : 7, 'nombre' : 'DISTRIBUCION'};
-const COD_TEXTILES = {'id' : 9, 'nombre' : 'TEXTILES'};
-const COD_TARJETAS_VALES = {'id' : 10, 'nombre' : 'TARJETAS_VALES'};
-const COD_TRANSPORTE = {'id' : 12, 'nombre' : 'TRANSPORTE'};
+const COD_ARTICULO = { 'id': 1, 'nombre': 'ARTICULO' };
+const COD_SERVICIO = { 'id': 2, 'nombre': 'SERVICIO' };
+const COD_COMPUTO = { 'id': 3, 'nombre': 'COMPUTO' };
+const COD_MOVIL = { 'id': 4, 'nombre': 'MOVIL' };
+const COD_PERSONAL = { 'id': 5, 'nombre': 'PERSONAL' };
+const COD_EVENTO = { 'id': 6, 'nombre': 'EVENTO' };
+const COD_DISTRIBUCION = { 'id': 7, 'nombre': 'DISTRIBUCION' };
+const COD_TEXTILES = { 'id': 9, 'nombre': 'TEXTILES' };
+const COD_TARJETAS_VALES = { 'id': 10, 'nombre': 'TARJETAS_VALES' };
+const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'PEN',
-  
+
 	// These options are needed to round to whole numbers if that's what you want.
 	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
 	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
@@ -274,22 +274,22 @@ var View = {
 				}
 			}
 			let nmax = Number(control.data('max'));
-			if(nmax > 0){
-				if(control.val() > nmax){
+			if (nmax > 0) {
+				if (control.val() > nmax) {
 					$(this).val(nmax);
 				}
 			}
-			
+
 			let nmin = Number(control.data('min'));
-			if(nmin !== typeof undefined){
-				if(control.val() < nmin){
+			if (nmin !== typeof undefined) {
+				if (control.val() < nmin) {
 					// $(this).val(nmin); // Comentado para que no escriba automaticamente el valor minimo.
 					$(this).val('');
 				}
 			}
 
 
-			if(Fn.validators['numeros']['expr'].test(control.val())){
+			if (Fn.validators['numeros']['expr'].test(control.val())) {
 				e.preventDefault();
 			}
 		});
@@ -1372,6 +1372,10 @@ var View = {
 				$('div.customizer.border-left-blue-grey.border-left-lighten-4').removeClass('d-none d-xl-block');
 				$('div.customizer.border-left-blue-grey.border-left-lighten-4').addClass('d-sm-block customizerGraphics');
 			}
+			// DEFAULT LENGUAGE ESPAÑOL PARA DATATABLE
+			$.extend($.fn.dataTable.defaults, {
+				language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
+			});
 		});
 
 		$(document).on("click", '.btn-datatable-excel', function (e) {

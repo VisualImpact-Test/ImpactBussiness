@@ -495,7 +495,7 @@
 								</div>
 								<div class="five wide field">
 									<div class="ui sub header">Tipo Item</div>
-									<select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
+									<select class="ui dropdown simpleDropdown idTipoItem read-only" id="tipoItemForm" name="tipoItemForm" patron="requerido">
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
@@ -546,8 +546,13 @@
 								<div class="four wide field">
 									<div class="ui sub header">Almacén</div>
 									<select class="ui basic floating dropdown button simpleDropdown flagOtrosPuntos" name="flagOtrosPuntos">
-										<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
-										<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
+										<?php if ($row['idItemTipo'] == COD_DISTRIBUCION['id']) :  ?>
+											<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
+											<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
+											<?php else: ?>
+												<option value="0" selected>Almacén Visual</option>
+												<option value="1" >Otros Puntos</option>
+											<?php endif; ?>
 									</select>
 								</div>
 							</div>
@@ -615,11 +620,55 @@
 							</div>
 							<!-- TRANSPORTE -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) :  ?>
-								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>">
+								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
 									<div class="content-body-sub-item">
 										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']] as $dataSubItem) : ?>
 											<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 											<div class="fields body-sub-item body-sub-item-servicio" data-id="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+												<div class="three wide field">
+													<div class="ui sub header">Departamento</div>
+													<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarProvincias(this);">
+														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected'=> $dataSubItem['cod_departamento'], 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
+													</select>
+												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Provincia</div>
+													<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarTipoTransporte(this);">
+														<option value>Seleccione</option>
+														<option selected value="<?= $dataSubItem['cod_provincia']; ?>"><?= $dataSubItem['provincia']; ?></option>
+													</select>
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Tipo Transporte</div>
+													<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarCosto(this);">
+														<option value>Seleccione</option>
+														<option selected value="<?= $dataSubItem['idTipoServicioUbigeo']; ?>"><?= $dataSubItem['tipoServicioUbigeo']; ?></option>
+													</select>
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Costo Visual</div>
+													<input class="inpCostoVisual formTransporte costoVisual_transporte" name="costoVisualTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costoVisual'], 2) ?>" readonly>
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Costo Cliente</div>
+													<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costoSubItem']) ?>" readonly onchange="Cotizacion.calcularValorTransporte(this);">
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Cant días</div>
+													<input class="formTransporte dias_transporte keyUpChange" name="diasTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['dias']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
+												</div>
+												<div class="two wide field">
+													<div class="ui sub header">Cant moviles</div>
+													<input class="formTransporte cantidad_transporte keyUpChange" name="cantidadTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['cantidad']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
+												</div>
+												<div class="one wide field">
+													<div class="ui sub header">Eliminar</div>
+													<button type="button" class="ui button btn-eliminar-sub-item red">
+														<i class="trash icon"></i>
+													</button>
+												</div>
+											</div>
+											<!-- <div class="fields body-sub-item body-sub-item-servicio" data-id="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 												<div class="ten wide field">
 													<div class="ui sub header">Descripción</div>
 													<input class="nombreSubItem" name="nombreSubItemForm[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Nombre" value="<?= verificarEmpty($dataSubItem['nombre']) ?>">
@@ -634,10 +683,10 @@
 														<i class="trash icon"></i>
 													</button>
 												</div>
-											</div>
+											</div> -->
 										<?php endforeach; ?>
 									</div>
-									<button type="button" class="ui basic button btn-add-sub-item">
+									<button type="button" class="ui button btn-add-sub-item teal">
 										<i class="plus icon"></i>
 										Agregar
 									</button>

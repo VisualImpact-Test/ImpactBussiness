@@ -121,8 +121,7 @@ class Cotizacion extends MY_Controller
 					"visible" => false,
 					"targets" => []
 				]
-			],
-			'language' => ['url' => '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json']
+			]
 		];
 
 		echo json_encode($result);
@@ -251,8 +250,9 @@ class Cotizacion extends MY_Controller
 			foreach ($usuariosOperaciones as $usuario) {
 				$toOperaciones[] = $usuario['email'];
 			}
-
-			$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
+			if ($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE) {
+				$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
+			}
 		}
 
 		if ($post['tipoRegistro'] == ESTADO_ENVIADO_CLIENTE) {
@@ -317,6 +317,8 @@ class Cotizacion extends MY_Controller
 				$result['msg']['title'] = 'Hecho!';
 				$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se procesó la cotizacion correctamente']);
 				$this->db->trans_complete();
+
+				$this->enviarCorreo(['idCotizacion' => $post['idCotizacion'], 'to' => $toOperaciones]);
 			} else {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
@@ -628,6 +630,40 @@ class Cotizacion extends MY_Controller
 					break;
 
 				case COD_TEXTILES['id']:
+					$search_textil = [];
+					foreach (checkAndConvertToArray($post["cantidadTextil[$k]"]) as $ixT => $cantT) {
+						if (empty($cantT)) {
+							$result['result'] = 0;
+							$result['msg']['title'] = 'Alerta!';
+							$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar la cantidad de textiles para el item <b>' . $r . '</b>']);
+							goto respuesta;
+						}
+						$txt_talla = checkAndConvertToArray($post["tallaSubItem[$k]"])[$ixT];
+						$txt_tela = checkAndConvertToArray($post["telaSubItem[$k]"])[$ixT];
+						$txt_color = checkAndConvertToArray($post["colorSubItem[$k]"])[$ixT];
+						$txt_genero = checkAndConvertToArray($post["generoSubItem[$k]"])[$ixT];
+
+						if (empty($txt_talla) && empty($txt_tela) && empty($txt_color) && empty($txt_genero)) {
+							$result['result'] = 0;
+							$result['msg']['title'] = 'Alerta!';
+							$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'El sub-detalle de <b>' . $r . '</b> solo tiene indicado el dato de cantidad, por favor registre el item como <b>Articulo</b>']);
+							goto respuesta;
+						}
+
+						if (empty($txt_talla)) $txt_talla = '_data_';
+						if (empty($txt_tela)) $txt_tela = '_data_';
+						if (empty($txt_color)) $txt_color = '_data_';
+						if (empty($txt_genero)) $txt_genero = '_data_';
+
+						if (!isset($search_textil[$txt_talla][$txt_tela][$txt_color][$txt_genero])) $search_textil[$txt_talla][$txt_tela][$txt_color][$txt_genero] = 1;
+						else {
+							$result['result'] = 0;
+							$result['msg']['title'] = 'Alerta!';
+							$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Se repite el sub-detalle para el item <b>' . json_encode($r) . '</b>, debe asignar una diferencia con los datos de talla, tela, color, genero']);
+							goto respuesta;
+						}
+					}
+
 					$data['subDetalle'][$k] = getDataRefactorizada([
 						'talla' => $post["tallaSubItem[$k]"],
 						'tela' => $post["telaSubItem[$k]"],
@@ -2155,6 +2191,7 @@ class Cotizacion extends MY_Controller
 				$dcds[$kCds]['costoTSCuenta'] = $vCds['costo'];
 				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']);
 			}
+			$config['data']['tablaGen'][$sub['idCotizacionDetalle']] = '';
 			if ($sub['idItemTipo'] == COD_DISTRIBUCION['id']) {
 				$data = [
 					'cabecera' => [
@@ -2198,7 +2235,7 @@ class Cotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
@@ -3000,8 +3037,14 @@ class Cotizacion extends MY_Controller
 						case COD_TRANSPORTE['id']:
 							$data['subDetalle'][$k] = getDataRefactorizada([
 								'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-								'nombre' => $post["nombreSubItemForm[{$post['idCotizacionDetalle'][$k]}]"],
-								'costo' => $post["costoSubItemForm[{$post['idCotizacionDetalle'][$k]}]"],
+								'cantidad' => $post["cantidadTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'costo' => $post["costoClienteTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'costoDistribucion' => null,
+								'dias' => $post["diasTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'costoVisual' => $post["costoVisualTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'cod_departamento' => $post["departamentoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'cod_provincia' => $post["provinciaTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'idTipoServicioUbigeo' => $post["tipoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
 						default:
@@ -3114,8 +3157,14 @@ class Cotizacion extends MY_Controller
 
 					case COD_TRANSPORTE['id']:
 						$subDetalleInsert[$k] = getDataRefactorizada([
-							'nombre' => $post["nombreSubItemForm[$k]"],
-							'costo' => $post["costoSubItemForm[$k]"],
+							// 'nombre' => $post["nombreSubItemForm[$k]"],
+							// 'costo' => $post["costoSubItemForm[$k]"],
+							'cantidad' => $post["cantidadTransporte[$k]"],
+							'costo' => $post["costoClienteTransporte[$k]"],
+							'costoDistribucion' => null,
+							'cod_departamento' => $post["departamentoTransporte[$k]"],
+							'cod_provincia' => $post["provinciaTransporte[$k]"],
+							'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
 						]);
 						break;
 					default:
@@ -3151,6 +3200,9 @@ class Cotizacion extends MY_Controller
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
+							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
+							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 
 						];
 					}
@@ -3309,8 +3361,8 @@ class Cotizacion extends MY_Controller
 		$config['data']['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-		// $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 
 		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
@@ -3362,8 +3414,19 @@ class Cotizacion extends MY_Controller
 		}
 
 		foreach ($cotizacionDetalleSub as $sub) {
+			$sub['provincia'] = '';
+			if (!empty($sub['cod_provincia'])) {
+				$sub['provincia'] = $this->db->get_where('General.dbo.ubigeo', ['cod_departamento' => $sub['cod_departamento'], 'cod_provincia' => $sub['cod_provincia']])->row_array()['provincia'];
+			}
+			$sub['tipoServicioUbigeo'] = '';
+			if (!empty($sub['idTipoServicioUbigeo'])) {
+				$sub['tipoServicioUbigeo'] = $this->db->get_where('compras.tipoServicioUbigeo', ['idTipoServicioUbigeo' => $sub['idTipoServicioUbigeo']])->row_array()['nombreAlternativo'];
+			}
 			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
-			$dcds = $this->db->where('idCotizacionDetalle', $sub['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			$dcds = [];
+			if ($sub['idItemTipo'] == COD_DISTRIBUCION['id']) {
+				$dcds = $this->db->where('idCotizacionDetalle', $sub['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			}
 			foreach ($dcds as $kCds => $vCds) {
 				$dcds[$kCds]['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 				$dcds[$kCds]['item'] = $vCds['nombre'];
@@ -3378,6 +3441,7 @@ class Cotizacion extends MY_Controller
 				$dcds[$kCds]['costoTSCuenta'] = $vCds['costo'];
 				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']);
 			}
+			$config['data']['tablaGen'][$sub['idCotizacionDetalle']] = '';
 			if ($sub['idItemTipo'] == COD_DISTRIBUCION['id']) {
 				$data = [
 					'cabecera' => [
@@ -3417,7 +3481,7 @@ class Cotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
@@ -3516,7 +3580,7 @@ class Cotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
@@ -4248,7 +4312,8 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
-	function formularioItemsPersonal(){
+	function formularioItemsPersonal()
+	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
@@ -4256,7 +4321,7 @@ class Cotizacion extends MY_Controller
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Visualizar Cotizacion';
-		$result['data']['html'] = 'hola mundo';//$this->load->view("modulos/Cotizacion/formularioVisualizacion", $dataParaVista, true);
+		$result['data']['html'] = 'hola mundo'; //$this->load->view("modulos/Cotizacion/formularioVisualizacion", $dataParaVista, true);
 
 		echo json_encode($result);
 	}

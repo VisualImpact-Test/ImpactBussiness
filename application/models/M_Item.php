@@ -172,6 +172,7 @@ class M_Item extends MY_Model
 			LEFT JOIN visualImpact.logistica.articulo a_l ON a.idItemLogistica = a_l.idArticulo
 			WHERE 1 = 1
 			{$filtros}
+			ORDER BY a.nombre
 		";
 
 		$query = $this->db->query($sql);

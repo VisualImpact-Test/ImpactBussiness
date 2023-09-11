@@ -96,20 +96,22 @@
 		</div>
 		<h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
 		</h4>
-		<div class="fields ui sticky stickyProveedores">
-			<div class="thirteen wide field">
-				<div class="ui sub header">Proveedor</div>
-				<select class="ui fluid search <?= $col_dropdown ?> dropdown simpleDropdown proveedorSolicitudForm" multiple="" name="proveedorSolicitudForm">
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedores, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
-				</select>
-			</div>
-			<div class="three wide field">
-				<div class="ui sub header">&nbsp;</div>
-				<button type='button' class="ui labeled icon green button w-100 btnSolicitarCotizacion">
-					<i class="hand holding usd icon"></i>
-					Solicitar cotización
-				</button>
+		<div class="default-item">
+			<div class="fields ui sticky">
+				<div class="thirteen wide field">
+					<div class="ui sub header">Proveedor</div>
+					<select class="ui fluid search <?= $col_dropdown ?> dropdown simpleDropdown proveedorSolicitudForm" multiple="" name="proveedorSolicitudForm">
+						<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedores, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
+					</select>
+				</div>
+				<div class="three wide field">
+					<div class="ui sub header">&nbsp;</div>
+					<button type='button' class="ui labeled icon green button w-100 btnSolicitarCotizacion">
+						<i class="hand holding usd icon"></i>
+						Solicitar cotización
+					</button>
 
+				</div>
 			</div>
 		</div>
 		<div class="default-item">

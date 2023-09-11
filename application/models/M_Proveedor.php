@@ -177,6 +177,9 @@ class M_Proveedor extends MY_Model
 		$filtros .= !empty($params['metodoPagoProveedor']) ? ' AND at.idMetodoPago = ' . $params['metodoPagoProveedor'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
 
+		$orden = !empty($params['order_by']) ? 'ORDER BY ' . $params['order_by'] : "ORDER BY p.idProveedor DESC";
+		
+
 		$sql = "
 			SELECT DISTINCT
 				p.idProveedor
@@ -230,7 +233,7 @@ class M_Proveedor extends MY_Model
 			-- AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}
-			ORDER BY p.idProveedor DESC
+			{$orden}
 		";
 
 		$query = $this->db->query($sql);

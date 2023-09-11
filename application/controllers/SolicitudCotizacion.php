@@ -101,7 +101,7 @@ class SolicitudCotizacion extends MY_Controller
 		$dataParaVista['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
 		foreach ($proveedores as $k => $p) {
 			$dataParaVista['proveedores'][$p['idProveedor']] = $p;
 		}
@@ -334,10 +334,10 @@ class SolicitudCotizacion extends MY_Controller
 
 		if (isset($post['idCotizacion'])) {
 			$idCotizacion = $post['idCotizacion'];
-		}else{
+		} else {
 			$idCotizacion = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacionDetalle' => $idCotizacionDetalle])->row_array()['idCotizacion'];
 		}
-		
+
 		$idCotizacionDetalleProveedor = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacion' => $idCotizacion, 'idProveedor' => $idProveedor, 'estado' => '1'])->row_array()['idCotizacionDetalleProveedor'];
 		$data = $this->db->get_where('compras.cotizacionDetalleProveedorDetalle', ['idCotizacionDetalleProveedor' => $idCotizacionDetalleProveedor])->result_array();
 		$proveedor = $this->db->get_where('compras.proveedor', ['idProveedor' => $idProveedor])->row_array();
@@ -497,10 +497,11 @@ class SolicitudCotizacion extends MY_Controller
 		$nIni = 14;
 		foreach ($data as $k => $v) {
 			$itm = $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array();
+			if (empty($v['cantidad']) || intval($v['cantidad']) == 0) $v['cantidad'] = 1;
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
 				->setCellValue('B' . $nIni, $v['cantidad'])
-				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / empty($v['cantidad']) ? '1' : floatval($v['cantidad'])))
+				->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
 				->setCellValue('D' . $nIni, moneda($v['costo']))
 				->setCellValue('E' . $nIni, $v['diasValidez']);
 			$nIni++;
@@ -896,6 +897,15 @@ class SolicitudCotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
+		foreach (checkAndConvertToArray($post['proveedorSolicitudForm']) as $idPro) {
+			$datoExistente = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $idPro, 'idCotizacion' => $post['idCotizacion']])->result_array();
+			if (!empty($datoExistente)) {
+				$result['result'] = 1;
+				$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Ya se asignó previamente al proveedor con esta cotización.']);
+				$result['msg']['title'] = 'Alerta';
+				goto respuesta;
+			}
+		}
 
 		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
 		$post['nameItem'] = checkAndConvertToArray($post['nameItem']);
@@ -906,6 +916,7 @@ class SolicitudCotizacion extends MY_Controller
 			$data['select'][] = $idCotizacionDetalle_;
 		}
 
+		// No deberia activarse esta alerta, debido a que existe una validación con las funciones del semantic
 		if (empty($data['select'])) {
 			$result['result'] = 1;
 			$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Debe seleccionar al menos un item']);
@@ -934,6 +945,7 @@ class SolicitudCotizacion extends MY_Controller
 		}
 
 		foreach ($post['proveedorSolicitudForm'] as $idProveedor) {
+
 			if (empty($cotizacionProveedor[$idProveedor])) {
 				$data['tabla'] = 'compras.cotizacionDetalleProveedor';
 				$data['insert'] = [
@@ -1147,7 +1159,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2, 'order_by' => 'razonSocial ASC'])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
@@ -1276,7 +1288,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['proveedorEstado' => 2])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;

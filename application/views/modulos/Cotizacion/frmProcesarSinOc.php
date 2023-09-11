@@ -3,20 +3,20 @@
 		background: none !important;
 	}
 </style>
-<form class="form" role="form" id="formRegistroCotizacion" method="post">
+<form class="form" role="form" id="formRegistroCotizacion" method="post" autocomplete="off">
 	<div class="child-divcenter" style="width:90%">
 		<input type="hidden" name="idCotizacion" id="" value="<?= $cotizacion['idCotizacion'] ?>">
 		<div class="ui form">
 			<div class="fields">
 				<div class="sixteen wide field">
 					<label>Código OC:</label>
-					<input id="motivo" name="codigo_oc" patron="" placeholder="Código Orden de compra" value="<?= !empty($cotizacion['codOrdenCompra']) ? $cotizacion['codOrdenCompra'] : '' ?>" autocomplete="off">
+					<input id="motivo" name="codigo_oc" patron="" placeholder="Código Orden de compra" value="<?= !empty($cotizacion['codOrdenCompra']) ? $cotizacion['codOrdenCompra'] : '' ?>">
 				</div>
 			</div>
 			<div class="fields">
 				<div class="sixteen wide field">
 					<label>Monto de OC:</label>
-					<input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>" autocomplete="off">
+					<input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>">
 				</div>
 			</div>
 			<div class="fields">
@@ -55,7 +55,7 @@
 			<div class="fields">
 				<div class="sixteen wide field">
 					<label>Descripción de OC:</label>
-					<input id="motivo" name="motivo" patron="" placeholder="Motivo" value="<?= !empty($cotizacion['motivoAprobacion']) ? $cotizacion['motivoAprobacion'] : '' ?>" autocomplete="off">
+					<input id="motivo" name="motivo" patron="" placeholder="Descripción de Orden de Compra" value="<?= !empty($cotizacion['motivoAprobacion']) ? $cotizacion['motivoAprobacion'] : '' ?>">
 				</div>
 			</div>
 		</div>
