@@ -2318,5 +2318,21 @@ class M_Cotizacion extends MY_Model
 			WHERE fecha>=GETDATE() ORDER BY anio,idMes
 			";
 			return $this->db->query($sql);
-	}					 
+	}
+	
+	public function obtenerDetalleItemPersonal($id){
+		$sql ="
+			SELECT 
+				cd.idCotizacionDetalle
+				, cd.nombre
+				, cd.cantidad_personal
+			FROM 
+				ImpactBussiness.compras.cotizacionDetalle cd
+			WHERE 
+				idCotizacion=$id 
+				AND idItemTipo=5
+		";
+		return $this->db->query($sql);
+	}
+	
 }

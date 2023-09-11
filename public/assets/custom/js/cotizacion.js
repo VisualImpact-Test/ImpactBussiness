@@ -357,6 +357,28 @@ var Cotizacion = {
 			});
 		});
 
+		$(document).on('click', '.generar-requerimiento-rrhh', function () {
+			++modalId;
+
+			let id = $(this).data('id');
+			let data = { 'idCotizacionDetalle': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioRequerimientoPersonal', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+
+				//Cotizacion.actualizarAutocomplete();
+			});
+		});
+
 
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
