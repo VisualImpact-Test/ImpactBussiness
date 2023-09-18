@@ -44,8 +44,8 @@ class M_OrdenServicio extends MY_Model
 	public function obtenerInformacionOrdenServicio()
 	{
 		$this->db
-			->select('l.idOrdenServicio, l.idCliente, l.estado, l.observacion, l.chkAprobado, mon.nombreMoneda as moneda, ubi_zc.departamento, ubi_zc.provincia, l.idDistrito,
-			ubi_zc.distrito, cli.nombre as cliente, l.chkPresupuesto, pr.idPresupuesto')
+			->select('l.idOrdenServicio, l.idCliente, l.estado, l.observacion, l.chkAprobado, mon.nombreMoneda as moneda, ubi_zc.departamento, ubi_zc.provincia, l.idDistrito, c.nombre as cuenta, cc.subcanal as centroCosto, 
+			ubi_zc.distrito, cli.nombre as cliente, l.chkPresupuesto, pr.idPresupuesto, l.chkUtilizarCliente, l.nombre')
 			->from('compras.ordenServicio l')
 			->join('compras.moneda mon', 'mon.idMoneda = l.idMoneda', 'LEFT')
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
@@ -53,8 +53,8 @@ class M_OrdenServicio extends MY_Model
 					AND ubi_zc.estado = 1', 'LEFT')
 			->join('compras.cliente cli', 'cli.idCliente = l.idCliente', 'LEFT')
 			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio', 'LEFT')
-			// ->join('rrhh.dbo.Empresa c', 'l.idCuenta = c.idEmpresa', 'LEFT')
-			// ->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = l.idCanal AND cc.idEmpresa = c.idEmpresa', 'LEFT')
+			->join('rrhh.dbo.Empresa c', 'l.idCuenta = c.idEmpresa', 'LEFT')
+			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = l.idCentroCosto', 'LEFT')
 			->order_by('l.idOrdenServicio desc');
 		return $this->db->get();
 	}
@@ -79,7 +79,7 @@ class M_OrdenServicio extends MY_Model
 		$query = $this->db
 			->select('lc.*, c.nombre as cargo')
 			->from('compras.ordenServicioCargo lc')
-			->join('compras.cargo c', 'c.idCargo = lc.idCargo', 'LEFT')
+			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = lc.idCargo', 'LEFT')
 			->where('lc.estado', 1)
 			->where('lc.idOrdenServicio', $id)
 			->order_by('lc.idOrdenServicioCargo')

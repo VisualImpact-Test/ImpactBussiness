@@ -527,7 +527,6 @@
 										<option value="0" <?= $row['flagPackingSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
 										<option value="1" <?= $row['flagPackingSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
 									</select>
-									<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">¿ Requiere OC ?</div>
@@ -577,7 +576,7 @@
 													<div class="ui sub header">Color</div>
 													<input class="colorSubItem " name="colorSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Color" value="<?= !empty($dataSubItem['color']) ? $dataSubItem['color'] : '' ?>">
 												</div>
-												<div class="two wide field">
+												<div class="three wide field">
 													<div class="ui sub header">Cantidad</div>
 													<input class="onlyNumbers cantidadSubItemAcumulativo cantidadSubItemTextil" name="cantidadTextil[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
 												</div>
@@ -589,7 +588,7 @@
 												</div>
 												<div class="one wide field">
 													<div class="ui sub header">Eliminar</div>
-													<button type="button" class="ui basic button btn-eliminar-sub-item">
+													<button type="button" class="ui button btn-eliminar-sub-item red">
 														<i class="trash icon"></i>
 													</button>
 												</div>
@@ -599,9 +598,9 @@
 									endif;
 									?>
 								</div>
-								<button type="button" class="ui basic button btn-add-sub-item">
+								<button type="button" class="ui btn btn-trade-visual btn-add-sub-item teal">
 									<i class="plus icon"></i>
-									Agregar
+									Agregar Sub Item
 								</button>
 							</div>
 							<!-- Monto -->
@@ -697,7 +696,7 @@
 							<!-- Distribucion -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :  ?>
 								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
-									<?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
+									<!-- <?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
 									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $distribucion['idCotizacionDetalleSub'] ?>">
 									<div class="<?= ($distribucion['requiereOrdenCompra'] == '0') ? 'd-none ' : ''; ?> fields divAddParaOC">
 										<div class="eight wide field">
@@ -710,7 +709,7 @@
 											<div class="ui sub header">Peso Real </div>
 											<input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" value="<?= verificarEmpty($distribucion['cantidadReal']) ?>" placeholder="Cantidad REAL">
 										</div>
-									</div>
+									</div> -->
 									<div class="content-body-sub-item" id="divIL">
 										<input type="hidden" name="cantidadItemsDistribucion" value="<?= count($cotizacionDetalleSubItems[$row['idCotizacionDetalle']]); ?>">
 										<?php foreach ($cotizacionDetalleSubItems[$row['idCotizacionDetalle']] as $kcdsi => $vcdsi) : ?>

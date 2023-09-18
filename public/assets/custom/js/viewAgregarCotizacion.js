@@ -3205,6 +3205,7 @@ var Cotizacion = {
 		let departamentoF = parent.find('.departamento_transporte').find('select');
 		let provinciaF = parent.find('.provincia_transporte').find('select');
 		let tipoTransporteF = parent.find('.tipoTransporte_transporte').find('select');
+		let costoVisualF = parent.find('.costoVisual_transporte');
 		let costoClienteF = parent.find('.costoCliente_transporte');
 		let diasF = parent.find('.dias_transporte');
 		let cantidadF = parent.find('.cantidad_transporte');
@@ -3250,6 +3251,7 @@ var Cotizacion = {
 		departamentoF.attr('name', `departamentoTransporte[${number}]`);
 		provinciaF.attr('name', `provinciaTransporte[${number}]`);
 		tipoTransporteF.attr('name', `tipoTransporte[${number}]`);
+		costoVisualF.attr('name', `costoVisualTransporte[${number}]`);
 		costoClienteF.attr('name', `costoClienteTransporte[${number}]`);
 		diasF.attr('name', `diasTransporte[${number}]`);
 		cantidadF.attr('name', `cantidadTransporte[${number}]`);

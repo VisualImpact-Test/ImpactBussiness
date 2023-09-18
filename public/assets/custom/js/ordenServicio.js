@@ -51,7 +51,6 @@ var OrdenServicio = {
 			a = control.closest('.fields').find('.botonDescarga');
 			$(a).attr('href', 'https://s3.us-central-1.wasabisys.com/impact.business/documentos/' + direccion);
 		})
-
 		$(document).on('click', '#btn-registrarOrdenServicio', function () {
 			++modalId;
 
@@ -64,7 +63,7 @@ var OrdenServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOrdenServicio", fn: "OrdenServicio.registrarOrdenServicio()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOrdenServicio", fn: "OrdenServicio.registrarOrdenServicio()", fnFin: "OrdenServicio.validarCheckbox()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 
@@ -77,7 +76,6 @@ var OrdenServicio = {
 				OrdenServicio.validarCheckbox();
 			});
 		});
-
 		$(document).on('change', '.cloneAll', function () {
 			id = $(this).data('personal');
 			valor = $(this).val();
@@ -110,7 +108,6 @@ var OrdenServicio = {
 				$('.tabTiposPresupuestos').addClass('disabled');
 			}
 		})
-
 		$(document).on('click', '.btn-editar', function () {
 			++modalId;
 
@@ -138,11 +135,10 @@ var OrdenServicio = {
 				OrdenServicio.validarCheckbox();
 			});
 		});
-
 		$(document).on('change', '.cboTPD', function () {
 			let control = $(this);
-			let precio = control.find('option:selected').data('preciounitario')||0;
-			let split = control.find('option:selected').data('split')||1;
+			let precio = control.find('option:selected').data('preciounitario') || 0;
+			let split = control.find('option:selected').data('split') || 1;
 			let frecuencia = control.find('option:selected').data('frecuencia');
 
 			txtPrecio = control.closest('tr').find('td.precioUnitarioDetalle').find('input');
@@ -187,7 +183,6 @@ var OrdenServicio = {
 				$("#calculateTablaSueldo").click();
 			});
 		});
-
 		$(document).on('click', '.btnPresupuestoEdit', function () {
 			++modalId;
 
@@ -222,7 +217,6 @@ var OrdenServicio = {
 				$("#calculateTablaSueldo").click();
 			});
 		});
-
 		$(document).on('click', '.btnAprobar', function () {
 			++modalId;
 
@@ -236,14 +230,12 @@ var OrdenServicio = {
 				$("#btn-filtrarOrdenServicio").click();
 			});
 		});
-
 		$(document).on('change', '.date-semantic-value', function () {
 			let text = $(this).val();
 			const myArray = text.split("-");
 			let control = $(this).parent('th').find('label');
 			control.html(myArray[2] + '/' + myArray[1] + '/' + myArray[0]);
 		});
-
 		$(document).on('change', '#cboRegion', function (e) {
 			e.preventDefault();
 			var idDepartamento = $(this).val();
@@ -260,7 +252,6 @@ var OrdenServicio = {
 			$('#cboProvincia').html(html);
 			Fn.selectOrderOption('cboProvincia');
 		});
-
 		$(document).on('change', '#cboProvincia', function (e) {
 			e.preventDefault();
 			var idDepartamento = $('#cboRegion').val();
@@ -276,7 +267,6 @@ var OrdenServicio = {
 			$('#cboDistrito').html(html);
 			Fn.selectOrderOption('cboDistrito');
 		});
-
 		$(document).on('click', '#btnCrearTabla', function () {
 			let jsonString = { 'nroFecha': $('#nroFecha').val(), 'nroPersona': $('#nroPersona').val() };
 			let config = { 'url': OrdenServicio.url + 'formTablaParaLlenado', 'data': jsonString };
@@ -289,7 +279,6 @@ var OrdenServicio = {
 				OrdenServicio.arrayPersona = a.data.personal;
 			});
 		})
-
 		$(document).on('click', '#btnSueldo', function () {
 			var rowCount = $('#tablaFechaPersona >tbody >tr').length;
 			OrdenServicio.sueldoConteo++;
@@ -355,12 +344,21 @@ var OrdenServicio = {
 			let control = $(this).parent('td').parent('tr').find('input.porcentajeSueldo');
 			control.val(tipo);
 		})
+		$(document).on('change', '#cboCuenta', function () {
+			$('#divCargo').find('.fields').remove();
+			if ($(this).val()) {
+				$('#btn-addCargo').removeClass('disabled');
+			} else {
+				$('#btn-addCargo').addClass('disabled');
+			}
+		})
 		HTCustom.load();
 
 	},
 
 	registrarOrdenServicio: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenServicio')) };
+		// let jsonString = { 'data': Fn.formSerializeObject('formRegistroOrdenServicio') };
 		let url = OrdenServicio.url + "registrarOrdenServicio";
 		let config = { url: url, data: jsonString };
 
@@ -375,6 +373,7 @@ var OrdenServicio = {
 
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+			OrdenServicio.validarCheckbox();
 		});
 	},
 	registrarPresupuesto: function () {
@@ -552,6 +551,29 @@ var OrdenServicio = {
 			}
 		});
 	},
+	validarSiClienteOCuenta: function (t) {
+		let this_ = $(t);
+		this_.closest('.fields').find('.divCl, .divCu').toggleClass('d-none');
+
+		this_.toggleClass('blue');
+
+		$('#cboCuenta').dropdown('clear');
+		$('#cboCentroCosto').dropdown('clear');
+		$('#divCargo').find('.fields').remove();
+
+		if (this_.closest('.fields').find('.divCl').hasClass('d-none')) {
+			this_.closest('.fields').find('input.chkUtilizarCliente').val('0');
+			this_.closest('.fields').find('.divCu').find('select').attr('patron', 'requerido');
+			this_.closest('.fields').find('.divCl').find('select').removeAttr('patron');
+			$('#btn-addCargo').addClass('disabled');
+
+		} else {
+			this_.closest('.fields').find('input.chkUtilizarCliente').val('1');
+			this_.closest('.fields').find('.divCl').find('select').attr('patron', 'requerido');
+			this_.closest('.fields').find('.divCu').find('select').removeAttr('patron');
+			$('#btn-addCargo').removeClass('disabled');
+		}
+	},
 	addCargo: function () {
 		html = '';
 		html +=
@@ -559,10 +581,15 @@ var OrdenServicio = {
 				<div class="six wide field">
 					<div class="ui sub header">Cargo</div>
 					<select name="cargo" class="ui fluid dropdown semantic-dropdown" patron="requerido" onchange="$(this).closest('.fields').find('.inSueldo').val($(this).find('option:selected').data('sueldobase'))">`;
+		sueldoPrimero = null;
+		first = true;
 		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
 			let cargo = OrdenServicio.arrayCargo[i];
-			console.log(cargo);
-			html += `<option value="${cargo.idCargo}" data-sueldobase="${cargo.sueldoBase}" >${cargo.nombre}</option>`;
+			if ($('#cboCuenta').dropdown('get value') == '' || $('#cboCuenta').dropdown('get value') == cargo.idEmpresa) {
+				if (sueldoPrimero == null) sueldoPrimero = cargo.sueldo;
+				textS = (first ? 'selected' : ''); first = false;
+				html += `<option value="${cargo.idCargoTrabajo}" data-sueldobase="${cargo.sueldo}" ${textS}>${cargo.cargo}</option>`;
+			}
 		}
 		html +=
 			`		</select>
@@ -573,7 +600,7 @@ var OrdenServicio = {
 				</div>
 				<div class="three wide field">
 					<div class="ui sub header">Sueldo</div>
-					<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Sueldo" value="${OrdenServicio.arrayCargo[0].sueldoBase}" patron="requerido">
+					<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Sueldo" value="${sueldoPrimero}" patron="requerido">
 				</div>
 				<div class="one wide field">
 					<div class="ui sub header text-white">.</div>
@@ -730,7 +757,8 @@ var OrdenServicio = {
 				f = 9999999;
 			}
 		}
-		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado).trigger('change');
+		// totalFinalAcumulado
+		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado.toFixed(2)).trigger('change');
 
 	},
 	calcularTotalColumna: function (t) {

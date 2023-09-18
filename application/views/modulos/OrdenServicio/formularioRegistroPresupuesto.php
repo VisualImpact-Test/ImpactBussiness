@@ -43,7 +43,7 @@
 									<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 										<td>
 											<div class="ui input" style="width: 80px;">
-												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
+												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center keyUpChange <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
@@ -170,7 +170,12 @@
 													</div>
 												</td>
 												<?php foreach ($ordenServicioCargo as $kp => $vp) : ?>
-													<td><input class="form-control text-right" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>></td>
+													<td>
+														<div class="ui input">
+															<input class="form-control text-right" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
+														</div>
+													</td>
+													<!-- </div> -->
 												<?php endforeach; ?>
 												<td>
 													<!-- <a class="ui button red" onclick="$(this).parent('td').parent('tr').remove();"><i class="trash icon"></i></a> -->
@@ -351,7 +356,7 @@
 												</td>
 												<td class="gapDetalle">
 													<div class="ui input" style="width: 80px;">
-														<input type="number" min="5" class="text-right" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="7" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<input type="number" min="5" class="text-right" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="cantidadDeTabla">

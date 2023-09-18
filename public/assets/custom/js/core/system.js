@@ -1409,6 +1409,31 @@ var View = {
 				$("#" + childDependiente).val('');
 			}
 		});
+		$(document).on("change", '.parentDependienteSemantic', function (e) {
+			e.preventDefault();
+			let control = $(this);
+			let childDependiente = control.find('select').data('childdependiente');
+			let idParent = control.dropdown('get value');
+
+			$("#" + childDependiente).dropdown('clear');  
+			$("#" + childDependiente).dropdown('destroy');
+			$("#" + childDependiente).closest('.dropdown').find('.menu.transition.hidden').remove();
+			$("#" + childDependiente).dropdown({
+				className: { 'item': 'item d-none' }
+			});
+
+			$("#" + childDependiente + ' option').each(function () {
+				valorOpt = $(this).val();
+				if ($(this).data('parentdependiente') == idParent) {
+					$("#" + childDependiente).closest('.childdependienteSemantic').find('.menu').find('.item').each(function () {
+						if ($(this).data('value') == valorOpt){
+							$(this).removeClass('d-none')
+						}
+					})
+				}
+			})
+			$("#" + childDependiente).closest('.childdependienteSemantic').removeClass('read-only');
+		});
 	},
 	toast: (config = {}) => {
 		var defaults = {

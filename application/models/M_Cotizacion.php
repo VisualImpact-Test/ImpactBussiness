@@ -2259,7 +2259,7 @@ class M_Cotizacion extends MY_Model
 		return $this->db->get();
 	}
 
-	public function obtener_cargos($idCentro)
+	public function obtener_cargos($idCentro = null)
 	{
 		$filtro = '';
 		if (!empty($idCentro)) {
@@ -2275,6 +2275,23 @@ class M_Cotizacion extends MY_Model
 		return $this->db->query($sql);
 	}
 
+	public function getAll_Cargos()
+	{
+		$this->db
+			->select('ct.idCargoTrabajo, ct.nombre as cargo, e.idEmpresa, e.nombre as empresa, ISNULL(su.sueldo, 0) as sueldo', false)
+			->from('rrhh.dbo.CargoTrabajo ct')
+			->join('rrhh.dbo.Area a', 'ct.idArea = a.idArea', 'INNER')
+			->join('rrhh.dbo.Empresa e', 'a.idEmpresa = e.idEmpresa', 'INNER')
+			->join('(
+				select min(sueldo) sueldo, idCargoTrabajo from rrhh.dbo.sueldo where estado=1 group by idCargoTrabajo
+			) as su', 'su.idCargoTrabajo=ct.idCargoTrabajo', 'LEFT')
+			->order_by('ct.nombre');
+
+		$this->db->where('ct.flag', 1);
+
+		return $this->db->get();
+	}
+
 	public function obtener_sueldos($idCuenta, $idCentro, $idCargo)
 	{
 		$filtro = '';
@@ -2282,8 +2299,8 @@ class M_Cotizacion extends MY_Model
 		if (!empty($idCargo)) $filtro .= 'AND idCargoTrabajo=' . $idCargo;
 		if (!empty($idCentro)) {
 			$filtro .= 'AND idSubcanal IN (
-			SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=' . $idCentro . '
-		)';
+				SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=' . $idCentro . '
+			)';
 		}
 		$sql = "
 			SELECT *,1025*0.1 asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro				
@@ -2328,11 +2345,12 @@ class M_Cotizacion extends MY_Model
 			select distinct idMes,anio, mes+'-'+anio periodo from General.dbo.tiempo 
 			WHERE fecha>=GETDATE() ORDER BY anio,idMes
 			";
-			return $this->db->query($sql);
+		return $this->db->query($sql);
 	}
-	
-	public function obtenerDetalleItemPersonal($id){
-		$sql ="
+
+	public function obtenerDetalleItemPersonal($id)
+	{
+		$sql = "
 			SELECT 
 				cd.idCotizacionDetalle
 				, cd.nombre
@@ -2345,5 +2363,4 @@ class M_Cotizacion extends MY_Model
 		";
 		return $this->db->query($sql);
 	}
-	
 }

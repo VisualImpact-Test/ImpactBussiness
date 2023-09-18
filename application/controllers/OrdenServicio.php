@@ -62,7 +62,7 @@ class OrdenServicio extends MY_Controller
 
 		foreach ($data as $value) {
 			$dataParaVista['ordenServicio'][$value['idOrdenServicio']] = $value;
-			$cargo = $this->model->getOrdenServicioCargo($value['idOrdenServicio'])->result_array(); //$this->db->where('idOrdenServicio', )->where('estado', 1)->get('compras.ordenServicioCargo')->result_array();
+			$cargo = $this->model->getOrdenServicioCargo($value['idOrdenServicio'])->result_array();
 			$documento = $this->db->where('idOrdenServicio', $value['idOrdenServicio'])->where('estado', 1)->get('compras.ordenServicioDocumento')->result_array();
 
 			if (!empty($cargo)) {
@@ -94,7 +94,7 @@ class OrdenServicio extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['views']['idContentOrdenServicio']['datatable'] = 'tb-ordenServicio';
 		$result['data']['views']['idContentOrdenServicio']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -114,12 +114,18 @@ class OrdenServicio extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
-		$dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
+		// $dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
 		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		$tipoPresupuestoDetalle = [];
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
+
+		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
+
+		$dataParaVista['cargo'] = $this->mCotizacion->getAll_Cargos()->result_array();
+
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
 		$dataParaVista['cliente'] = $this->db->get('compras.cliente')->result_array();
 		$dataParaVista['departamento'] = $this->model->obtenerDepartamento()->result_array();
@@ -136,6 +142,8 @@ class OrdenServicio extends MY_Controller
 			$distrito[$v['cod_departamento']][$v['cod_provincia']][$v['cod_distrito']] = $v;
 		}
 		$result['data']['distrito'] = $distrito;
+
+		$dataParaVista['ordenServicio'] = [];
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar OrdenServicio';
@@ -163,32 +171,42 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
-		$data = [];
-
-		if (!is_numeric($post['clienteForm'])) {
-			$insertCliente = [
-				'nombre' => $post['clienteForm'],
-				'idUsuario' => $this->idUsuario,
-				'fechaReg' => getActualDateTime()
-			];
-			$this->db->insert('compras.cliente', $insertCliente);
-			$idCliente = $this->db->insert_id();
+		// $post = $this->input->post('data');
+		$idCliente = null;
+		$idCuenta = null;
+		$idCentroCosto = null;
+		if ($post['chkUtilizarCliente']) {
+			if (!is_numeric($post['clienteForm'])) {
+				$insertCliente = [
+					'nombre' => $post['clienteForm'],
+					'idUsuario' => $this->idUsuario,
+					'fechaReg' => getActualDateTime()
+				];
+				$this->db->insert('compras.cliente', $insertCliente);
+				$idCliente = $this->db->insert_id();
+			} else {
+				$idCliente = $post['clienteForm'];
+			}
 		} else {
-			$idCliente = $post['clienteForm'];
+			$idCuenta = $post['cuentaForm'];
+			$idCentroCosto = $post['centroCostoForm'];
 		}
 
 		$insertOrdenServicio = [
 			'idCliente' => $idCliente,
+			'idCuenta' => $idCuenta,
+			'idCentroCosto' => $idCentroCosto,
 			'idDepartamento' => $post['departamento'],
 			'idProvincia' => $post['provincia'],
 			'idDistrito' => !empty($post['distrito']) ? $post['distrito'] : NULL,
+			'nombre' => $post['nombre'],
 			'idMoneda' => $post['moneda'],
 			'cantidadMeses' => $post['cantidadMeses'],
 			'fechaIni' => !empty($post['fechaIni']) ? $post['fechaIni'] : NULL,
 			'fechaFin' => !empty($post['fechaFin']) ? $post['fechaFin'] : NULL,
 			'observacion' => $post['observacion'],
 			'chkAprobado' => false,
+			'chkUtilizarCliente' => $post['chkUtilizarCliente'],
 			'chkPresupuesto' => false,
 		];
 
@@ -235,6 +253,7 @@ class OrdenServicio extends MY_Controller
 
 		$insertOrdenServicioDetalle = [];
 		$insertOrdenServicioDetalleSub = [];
+
 		foreach ($post['chkContadorTipo'] as $k => $v) {
 			if (isset($post["chkTipoPresupuesto[$v]"])) {
 				$insertOrdenServicioDetalle = [
@@ -260,6 +279,7 @@ class OrdenServicio extends MY_Controller
 				}
 			}
 		}
+
 		$this->db->insert_batch('compras.ordenServicioDetalleSub', $insertOrdenServicioDetalleSub);
 
 		$insertDocumento = [];
@@ -338,10 +358,14 @@ class OrdenServicio extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$idOrdenServicio = $post['idOrdenServicio'];
 		$dataParaVista = [];
-		$dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
+		// $dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
+		$dataParaVista['cargo'] = $this->mCotizacion->getAll_Cargos()->result_array();
 		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		$dataParaVista['area'] = $this->db->get('compras.area')->result_array();
-		//$dataParaVista['tipoPresupuesto'] = $this->db->get('compras.tipoPresupuesto')->result_array();
+
+		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
+
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
@@ -398,22 +422,31 @@ class OrdenServicio extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$data = [];
-
-		if (!is_numeric($post['clienteForm'])) {
-			$insertCliente = [
-				'nombre' => $post['clienteForm'],
-				'idUsuario' => $this->idUsuario,
-				'fechaReg' => getActualDateTime()
-			];
-			$this->db->insert('compras.cliente', $insertCliente);
-			$idCliente = $this->db->insert_id();
+		$idCliente = null;
+		$idCuenta = null;
+		$idCentroCosto = null;
+		if ($post['chkUtilizarCliente']) {
+			if (!is_numeric($post['clienteForm'])) {
+				$insertCliente = [
+					'nombre' => $post['clienteForm'],
+					'idUsuario' => $this->idUsuario,
+					'fechaReg' => getActualDateTime()
+				];
+				$this->db->insert('compras.cliente', $insertCliente);
+				$idCliente = $this->db->insert_id();
+			} else {
+				$idCliente = $post['clienteForm'];
+			}
 		} else {
-			$idCliente = $post['clienteForm'];
+			$idCuenta = $post['cuentaForm'];
+			$idCentroCosto = $post['centroCostoForm'];
 		}
 
 		$updateOrdenServicio = [
 			'idCliente' => $idCliente,
+			'idCuenta' => $idCuenta,
+			'idCentroCosto' => $idCentroCosto,
+			'nombre' => $post['nombre'],
 			'idDepartamento' => $post['departamento'],
 			'idProvincia' => $post['provincia'],
 			'idDistrito' => !empty($post['distrito']) ? $post['distrito'] : NULL,
@@ -423,6 +456,7 @@ class OrdenServicio extends MY_Controller
 			'fechaFin' => !empty($post['fechaFin']) ? $post['fechaFin'] : NULL,
 			'observacion' => $post['observacion'],
 			'chkAprobado' => false,
+			'chkUtilizarCliente' => $post['chkUtilizarCliente'],
 			'chkPresupuesto' => false
 		];
 
@@ -437,6 +471,13 @@ class OrdenServicio extends MY_Controller
 		unset($insertOrdenServicioHistorico['chkAprobado']);
 		unset($insertOrdenServicioHistorico['chkPresupuesto']);
 		$this->db->insert('compras.ordenServicioHistorico', $insertOrdenServicioHistorico);
+
+		if (!isset($post['cargo'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Registro Erroneo!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe indicar al menos un cargo']);
+			goto respuesta;
+		}
 
 		$post['cargo'] = checkAndConvertToArray($post['cargo']);
 		$post['cantidadCargo'] = checkAndConvertToArray($post['cantidadCargo']);
@@ -783,7 +824,7 @@ class OrdenServicio extends MY_Controller
 			}
 
 			// compras.presupuestoDetalleSub
-			if ($vd != COD_SUELDO) {	
+			if ($vd != COD_SUELDO) {
 				$insertPresupuestoDetalleSub = [];
 				if (isset($post["tipoPresupuestoDetalleSub[$vd]"])) {
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);

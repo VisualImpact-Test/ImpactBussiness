@@ -541,7 +541,7 @@
 									</div>
 									<div class="two wide field">
 										<div class="ui sub header">Costo Visual</div>
-										<input class="inpCostoVisual formTransporte costoVisual_transporte" placeholder="0" value="" readonly>
+										<input class="inpCostoVisual formTransporte costoVisual_transporte" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>
 									</div>
 									<div class="two wide field">
 										<div class="ui sub header">Costo Cliente</div>

@@ -163,20 +163,20 @@ var Fn = {
 	showConfirm: function (config) {
 
 		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
+			let fnF = '';
+			if (config.fnFin) fnF = config.fnFin + ';';
 			if (a === true) {
 				++modalId;
 				var btn = new Array();
-				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' };
-				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' };
-				//Fn.showModal({ id:modalId,show:true,width:'500px',title:'Alerta',content:config.content,btn:btn });
+				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
+				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
 				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: config.content, btn: btn });
 			}
 			else {
 				++modalId;
 				var btn = new Array();
-				btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' };
+				btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
 				var content = "<div class='alert alert-danger'>Se encontraron incidencias en la operación. <strong>Verifique el formulario.</strong></div>";
-				//Fn.showModal({ id:modalId,show:true,width:'500px',title:'Alerta',content:content,btn:btn });
 				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
 			}
 		});
@@ -1504,7 +1504,7 @@ var Fn = {
 						day = '0' + day;
 					}
 					$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
-				}else{
+				} else {
 					$(this).siblings('.date-semantic-value').val('').trigger('change');
 				}
 			}

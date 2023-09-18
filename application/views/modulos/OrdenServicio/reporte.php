@@ -8,7 +8,8 @@
 				<th class="td-center">#</th>
 				<th>OPCIONES</th>
 				<th class="td-center">NRO</th>
-				<th>CLIENTE</th>
+				<th>TÍTULO</th>
+				<th>CUENTA & CENTRO COSTO / CLIENTE</th>
 				<th>DEPARTAMENTO</th>
 				<th>PROVINCIA</th>
 				<th>DISTRITO</th>
@@ -34,7 +35,8 @@
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>
 					</td>
-					<td class="td-left"><?= verificarEmpty($row['cliente'], 3); ?></td>
+					<td class="td-left"><?= verificarEmpty($row['nombre'], 3); ?></td>
+					<td class="td-left"><?= $row['chkUtilizarCliente'] ? verificarEmpty($row['cliente'], 3) : (verificarEmpty($row['cuenta'], 3) . ' ( ' . verificarEmpty($row['centroCosto'], 3) . ' )'); ?></td>
 					<td class="td-left"><?= verificarEmpty($row['departamento'], 3); ?></td>
 					<td class="td-left"><?= verificarEmpty($row['provincia'], 3); ?></td>
 					<td class="td-left"><?= $row['idDistrito'] ? $row['distrito'] : '-' ?></td>
