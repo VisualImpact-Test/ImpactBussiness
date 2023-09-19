@@ -40,6 +40,11 @@ body {
   margin-left: 0;
 }
 
+.ui.table.no-paddingR > tbody > tr > td {
+  /* padding-left: 0px !important; */
+  padding-right: 0px !important;
+}
+
 .d-flex {
   display: flex !important;
 }

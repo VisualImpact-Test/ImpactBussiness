@@ -419,11 +419,10 @@ var OrdenServicio = {
 		html += `
 		<tr>
 			<td>
-				<select class="ui fluid search dropdown dropdownSingleAditions cboTPD" name="tipoPresupuestoDetalleSub[${detalle}]" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
+				<select class="ui fluid search dropdown dropdownSingleAditions cboTPD keyUpChange" name="tipoPresupuestoDetalleSub[${detalle}]" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
 					<option value=""></option>`;
 		for (let i = 0; i < OrdenServicio.arrayTipoPresupuestoDetalle[detalle].length; i++) {
 			let tpd = OrdenServicio.arrayTipoPresupuestoDetalle[detalle][i];
-			console.log(tpd);
 			html += `<option value="${tpd.idTipoPresupuestoDetalle}" data-preciounitario="${tpd.costo}" data-split="${tpd.split}" data-frecuencia="${tpd.frecuencia}">${tpd.nombre}</option>`;
 
 		}
@@ -437,17 +436,17 @@ var OrdenServicio = {
 			</td>
 			<td class="splitDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="onlyNumbers" name="splitDS[${detalle}]" value="1" onchange="OrdenServicio.cantidadSplitCargo(this);">
+					<input type="text" class="onlyNumbers keyUpChange" name="splitDS[${detalle}]" value="1" onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="precioUnitarioDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right" name="precioUnitarioDS[${detalle}]" value="0"  onchange="OrdenServicio.cantidadSplitCargo(this);">
+					<input type="text" class="text-right keyUpChange" name="precioUnitarioDS[${detalle}]" value="0"  onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="gapDetalle">
 				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right" name="gapDS[${detalle}]" value="7" onchange="OrdenServicio.cantidadSplitCargo(this);">
+					<input type="text" class="text-right keyUpChange" name="gapDS[${detalle}]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
 				</div>
 			</td>
 			<td class="cantidadDeTabla">
@@ -506,7 +505,7 @@ var OrdenServicio = {
 		nhtml += `
 			<td>
 				<div class="ui input transparent" style="width: 80px;">
-					<input class="text-right" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="OrdenServicio.calcularTotalColumna(this);">
+					<input class="text-right keyUpChange" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="OrdenServicio.calcularTotalColumna(this);">
 				</div>
 			</td>
 		</tr>`;

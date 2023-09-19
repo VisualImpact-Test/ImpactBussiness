@@ -928,7 +928,7 @@ class OrdenServicio extends MY_Controller
 			}
 		}
 
-		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
+		foreach ($this->db->select('tpd.*, it.costo, it.idProveedor')->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')->get('compras.tipoPresupuestoDetalle tpd')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;

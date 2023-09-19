@@ -131,7 +131,8 @@ class M_OrdenServicio extends MY_Model
 		$query = $this->db
 			->select('pc.*, c.nombre as cargo')
 			->from('compras.presupuestoCargo pc')
-			->join('compras.cargo c', 'c.idCargo = pc.idCargo')
+			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = pc.idCargo', 'LEFT')
+			// ->join('compras.cargo c', 'c.idCargo = pc.idCargo')
 			->where('pc.estado', 1)
 			->where('pc.idPresupuesto', $id)
 			->get();

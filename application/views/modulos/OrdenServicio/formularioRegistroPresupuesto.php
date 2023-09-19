@@ -26,29 +26,32 @@
 					<table class="ui table" id="tablaFechaPersona">
 						<thead>
 							<tr>
-								<th> <label class="text-white">________________</label> </th>
+								<th class="three wide"><label class="text-white">________________</label></th>
 								<?php foreach ($ordenServicioFecha as $k => $v) : ?>
-									<th>
-										<div class="ui input transparent" style="width: 80px;">
+									<th class="one wide p-0">
+										<div class="ui input transparent">
 											<input type="text" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
 										</div>
 									</th>
 								<?php endforeach; ?>
+								<th class="one wide"></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($ordenServicioCargo as $kp => $vp) : ?>
 								<tr>
-									<td> <?= $vp['cargo']; ?> </td>
+									<td><?= $vp['cargo']; ?></td>
 									<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 										<td>
-											<div class="ui input" style="width: 80px;">
+											<div class="ui input">
 												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center keyUpChange <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
+									<td></td>
 								</tr>
 							<?php endforeach; ?>
+
 						</tbody>
 					</table>
 				</div>
@@ -58,22 +61,22 @@
 						<table class="ui table" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
 							<thead>
 								<tr>
-									<th><?= $vd['tipoPresupuesto']; ?></th>
+									<th class="three wide"><?= $vd['tipoPresupuesto']; ?></th>
 									<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
-										<th>
+										<th class="one wide">
 											<div class="ui input transparent" style="width: 80px;">
 												<input class="text-right" type="text" value=" - " readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
 											</div>
 										</th>
 									<?php endforeach; ?>
-									<th>TOTAL</th>
+									<th class="one wide text-right">TOTAL</th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) :  ?>
 									<?php foreach ($ordenServicioCargo as $k => $v) : ?>
 										<tr>
-											<td> <?= $v['cargo']; ?> </td>
+											<td><?= $v['cargo']; ?></td>
 											<input type="hidden" name="cargoList" value="<?= $v['idCargo'] ?>">
 											<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 												<td>
@@ -108,7 +111,7 @@
 									<?php if (!empty($ordenServicioDetalleSub[$vd['idTipoPresupuesto']])) :  ?>
 										<?php foreach ($ordenServicioDetalleSub[$vd['idTipoPresupuesto']] as $kLDS => $vLDS) : ?>
 											<tr>
-												<td> <?= $vLDS['nombre']; ?> </td>
+												<td><?= $vLDS['nombre']; ?></td>
 												<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 													<td>
 														<div class="ui input transparent" style="width: 80px;">
@@ -227,9 +230,7 @@
 														</div>
 													</td>
 												<?php endforeach; ?>
-												<td style="background: #fff">
-													<!-- <a class="ui button red" onclick="$(this).parent('td').parent('tr').remove();"><i class="trash icon"></i></a> -->
-												</td>
+												<td style="background: #fff"></td>
 											</tr>
 											<?php $dataRow++; ?>
 										<?php endif; ?>
@@ -292,7 +293,7 @@
 												</div>
 												<label>/ &nbsp;</label>
 												<label id="cantidadSueldo_<?= $k ?>"><?= $v['cantidad']; ?></label>
-												<label> &nbsp; <i class="fa fa-sm fa-user"></i> </label>
+												<label> &nbsp; <i class="fa fa-sm fa-user"></i></label>
 											</td>
 										<?php endforeach; ?>
 									</tr>

@@ -30,24 +30,25 @@
 					<table class="ui table" id="tablaFechaPersona">
 						<thead>
 							<tr>
-								<th> <label class="text-white">________________</label> </th>
+								<th class="three wide"><label class="text-white">________________</label></th>
 								<?php foreach ($fechaDelPre as $k => $v) : ?>
-									<th>
-										<div class="ui input transparent" style="width: 80px;">
+									<th class="one wide p-0">
+										<div class="ui input transparent">
 											<input type="text" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
 										</div>
 									</th>
 								<?php endforeach; ?>
+								<th class="one wide"></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 								<tr>
-									<td> <?= $vp['cargo']; ?> </td>
+									<td class="three wide"><?= $vp['cargo']; ?></td>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
-										<td>
-											<div class="ui input" style="width: 80px;">
-												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) :  ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
+										<td class="one wide">
+											<div class="ui input">
+												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $vp['cantidad']; ?>" class="form-control text-center keyUpChange <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
@@ -58,26 +59,26 @@
 				</div>
 				<?php foreach ($presupuestoDetalle as $kd => $vd) : ?>
 					<input type="hidden" name="idTipoPresupuesto" value="<?= $vd['idTipoPresupuesto']; ?>">
-					<div class="ui table">
-						<table class="ui table" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
+					<div class="ui very compact table">
+						<table class="ui table no-paddingR" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
 							<thead>
 								<tr>
-									<th><?= $vd['tipoPresupuesto']; ?></th>
+									<th class="three wide"><?= $vd['tipoPresupuesto']; ?></th>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
-										<th>
+										<th class="one wide">
 											<div class="ui input transparent" style="width: 80px;">
 												<input class="text-right" type="text" value=" - " readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
 											</div>
 										</th>
 									<?php endforeach; ?>
-									<th>TOTAL</th>
+									<th class="one wide text-right">TOTAL</th>
 								</tr>
 							</thead>
 							<tbody>
-								<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) :  ?>
+								<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) : ?>
 									<?php foreach ($cargoDelPre as $k => $v) : ?>
 										<tr>
-											<td> <?= $v['cargo']; ?> </td>
+											<td><?= $v['cargo']; ?></td>
 											<input type="hidden" name="cargoList" value="<?= $v['idCargo'] ?>">
 											<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 												<td>
@@ -109,10 +110,10 @@
 										</td>
 									</tr>
 								<?php else : ?>
-									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) :  ?>
+									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) : ?>
 										<?php foreach ($presupuestoDetalleSub[$vd['idPresupuestoDetalle']] as $kLDS => $vLDS) : ?>
 											<tr>
-												<td> <?= $vLDS['nombre']; ?> </td>
+												<td><?= $vLDS['nombre']; ?></td>
 												<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 													<td>
 														<div class="ui input transparent" style="width: 80px;">
@@ -136,7 +137,7 @@
 			</div>
 			<?php foreach ($presupuestoDetalle as $kd => $vd) : ?>
 				<div class="ui bottom attached tab segment" data-tab="<?= $vd['idTipoPresupuesto']; ?>">
-					<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) :  ?>
+					<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) : ?>
 						<div class="control-group child-divcenter col-md-11" style="width:100%">
 							<table class="ui table" id="tablaSueldo" data-personal="<?= count($cargoDelPre); ?>">
 								<thead>
@@ -154,15 +155,15 @@
 								</thead>
 								<tbody>
 									<?php foreach ($presupuestoDetalleSueldo[$vd['idPresupuestoDetalle']] as $k1 => $v1) : ?>
-										<?php $preDetSu = $v1[$idCargoRef]?>
-										<?php if ($preDetSu['tipo'] != 4) :  ?>
+										<?php $preDetSu = $v1[$idCargoRef] ?>
+										<?php if ($preDetSu['tipo'] != 4) : ?>
 											<tr data-row="<?= $dataRow ?>">
 												<td class="d-none"><input class="form-control tipoSueldo" value="<?= $preDetSu['tipo'] ?>" id="rowTipo_Sueldo<?= $dataRow ?>"></td>
 												<td>
 													<select class="ui search dropdown disabled toast semantic-dropdown cboSueldo" name="tpdS">
 														<option value="">Sueldo</option>
 														<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $k2 => $v2) : ?>
-															<?php if ($v2['tipo'] != 4) :  ?>
+															<?php if ($v2['tipo'] != 4) : ?>
 																<option value="<?= $v2['idTipoPresupuestoDetalle']; ?>" data-tipo="<?= $v2['tipo']; ?>" data-cl="<?= $v2['porCl']; ?>" <?= $v2['idTipoPresupuestoDetalle'] == $preDetSu['idTipoPresupuestoDetalle'] ? 'selected' : '' ?>><?= $v2['nombre']; ?></option>
 															<?php endif; ?>
 														<?php endforeach; ?>
@@ -200,8 +201,8 @@
 									</tr>
 									<?php $totalPorcentaje = 0; ?>
 									<?php foreach ($presupuestoDetalleSueldo[$vd['idPresupuestoDetalle']] as $k1 => $v1) : ?>
-										<?php $preDetSu = $v1[$idCargoRef]?>
-										<?php if ($preDetSu['tipo'] == 4) :  ?>
+										<?php $preDetSu = $v1[$idCargoRef] ?>
+										<?php if ($preDetSu['tipo'] == 4) : ?>
 											<?php $totalPorcentaje += floatval($preDetSu['porCL']); ?>
 											<tr data-row="<?= $dataRow; ?>">
 												<td class="d-none" style="background: #fff"><input class="form-control beneficioSueldo" value="<?= $preDetSu['tipo'] ?>" id="rowBeneficio_Sueldo<?= $dataRow ?>"></td>
@@ -209,7 +210,7 @@
 													<select class="ui search dropdown semantic-dropdown disabled toast cboSueldo" name="tpdS">
 														<option value="">Sueldo</option>
 														<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $k2 => $v2) : ?>
-															<?php if ($v2['tipo'] == 4) :  ?>
+															<?php if ($v2['tipo'] == 4) : ?>
 																<option value="<?= $v2['idTipoPresupuestoDetalle']; ?>" data-tipo="<?= $v2['tipo']; ?>" data-cl="<?= $v2['porCl']; ?>" <?= $v2['idTipoPresupuestoDetalle'] == $preDetSu['idTipoPresupuestoDetalle'] ? 'selected' : '' ?>><?= $v2['nombre']; ?></option>
 															<?php endif; ?>
 														<?php endforeach; ?>
@@ -293,7 +294,7 @@
 												</div>
 												<label>/ &nbsp;</label>
 												<label id="cantidadSueldo_<?= $k ?>"><?= $v['cantidad']; ?></label>
-												<label> &nbsp; <i class="fa fa-sm fa-user"></i> </label>
+												<label> &nbsp; <i class="fa fa-sm fa-user"></i></label>
 											</td>
 										<?php endforeach; ?>
 									</tr>
@@ -316,7 +317,7 @@
 					<?php else : ?>
 						<div class="control-group child-divcenter col-md-11 divTipoDetalle" style="width:100%">
 							<div class="field">
-								<?php if ($vd['mostrarDetalle'] != '1') :  ?>
+								<?php if ($vd['mostrarDetalle'] != '1') : ?>
 									<a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="OrdenServicio.addRow(this)">Agregar</a>
 								<?php endif; ?>
 								<!-- <a class="ui green button" onclick="$(this).closest('.divTipoDetalle').find('th.cantidadDeTabla').toggleClass('d-none'); $(this).closest('.divTipoDetalle').find('td.cantidadDeTabla').toggleClass('d-none');$(this).find('i').toggleClass('slash');"><i class="icon eye"></i>Cantidad por cargo</a> -->
@@ -334,7 +335,7 @@
 									</tr>
 								</thead>
 								<tbody>
-									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) :  ?>
+									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) : ?>
 										<?php foreach ($presupuestoDetalleSub[$vd['idPresupuestoDetalle']] as $key => $value) : ?>
 											<tr>
 												<td>
