@@ -740,13 +740,13 @@
 						%
 					</div>
 				</div>
-				<div class="ui right labeled input" style="margin-top:10px;">
+				<!--<div class="ui right labeled input" style="margin-top:10px;">
 					<label for="feeFormPersonal" class="ui label">Fee Personal: </label>
 					<input style="width:100px;" data-max='100' data-min='0' type="number" id="feeFormPersonal" class="onlyNumbers" name="feeFormPersonal" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
-				</div>
+				</div>-->
 			</div>
 			<div class="column">
 				<div class="ui right labeled input">
