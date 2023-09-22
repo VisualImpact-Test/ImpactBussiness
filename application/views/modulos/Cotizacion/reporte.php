@@ -44,9 +44,9 @@
 								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
 								<?php endif; ?>
-								<?php if ($row['tipoPersonal'] == 1) :  ?>
-									<button class=" btn btn-outline-secondary border-0 btn-generarRequerimiento" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-file-alt" title="Generar Requerimientos"></i></button>
-								<?php endif; ?>
+								<?php //if ($row['tipoPersonal'] == 1) :  ?>
+								<!--	<button class=" btn btn-outline-secondary border-0 btn-generarRequerimiento" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-file-alt" title="Generar Requerimientos"></i></button>-->
+								<?php //endif; ?>
 								<?php if ($row['idCotizacionEstado'] == 1 || $row['idCotizacionEstado'] == 2 || $row['idCotizacionEstado'] == 3) :  ?>
 									<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
 								<?php endif; ?>
