@@ -19,7 +19,8 @@ class OrdenServicio extends MY_Controller
 		$config['nav']['menu_active'] = '131';
 		$config['css']['style'] = array(
 			'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
-			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday'
+			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/custom/js/select.dataTables.min'
 		);
 		$config['js']['script'] = array(
 			'assets/libs/handsontable@7.4.2/dist/handsontable.full.min',
@@ -114,7 +115,6 @@ class OrdenServicio extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
-		// $dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
 		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		$tipoPresupuestoDetalle = [];
 		foreach ($this->db->get('compras.tipoPresupuestoDetalle')->result_array() as $k => $v) {
@@ -171,7 +171,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		// $post = $this->input->post('data');
 		$idCliente = null;
 		$idCuenta = null;
 		$idCentroCosto = null;
@@ -358,7 +357,6 @@ class OrdenServicio extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$idOrdenServicio = $post['idOrdenServicio'];
 		$dataParaVista = [];
-		// $dataParaVista['cargo'] = $this->db->get('compras.cargo')->result_array();
 		$dataParaVista['cargo'] = $this->mCotizacion->getAll_Cargos()->result_array();
 		$dataParaVista['tipoPresupuesto'] = $this->db->order_by('orden, 1')->get('compras.tipoPresupuesto')->result_array();
 		$dataParaVista['area'] = $this->db->get('compras.area')->result_array();
@@ -377,7 +375,6 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['moneda'] = $this->db->where('estado', 1)->get('compras.moneda')->result_array();
 		$dataParaVista['ordenServicio'] = $this->model->getOrdenServicio($idOrdenServicio);
 		$dataParaVista['ordenServicioFecha'] = $this->db->where('estado', 1)->where('idOrdenServicio', $idOrdenServicio)->order_by('idOrdenServicioFecha')->get('compras.ordenServicioFecha')->result_array();
-		// $dataParaVista['ordenServicioDocumento'] = $this->db->where('estado', 1)->where('idOrdenServicio', $idOrdenServicio)->order_by('idOrdenServicioDocumento')->get('compras.ordenServicioDocumento')->result_array();
 		$dataParaVista['ordenServicioDocumento'] = $this->model->obtenerDocumento($idOrdenServicio)->result_array();
 		$ordenServicioDetalle = $this->db->where('estado', 1)->where('idOrdenServicio', $idOrdenServicio)->get('compras.ordenServicioDetalle')->result_array();
 		$cargo = $this->model->getOrdenServicioCargo($idOrdenServicio)->result_array();
@@ -703,7 +700,8 @@ class OrdenServicio extends MY_Controller
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
-
+		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Presupuesto';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioRegistroPresupuesto", $dataParaVista, true);
@@ -713,44 +711,44 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function formTablaParaLlenado()
-	{
-		$result = $this->result;
-		$post = $this->input->post();
+	// public function formTablaParaLlenado()
+	// {
+	// 	$result = $this->result;
+	// 	$post = $this->input->post();
 
-		if (empty($post['nroFecha'])) {
-			$result['data']['html'] = 'No hay cantidad de Fechas';
-			goto resultado;
-		}
-		if (empty($post['nroFecha'])) {
-			$result['data']['html'] = 'No hay cantidad de Personas';
-			goto resultado;
-		}
-		$result['result'] = 1;
-		$result['msg']['title'] = '';
-		$persona = [
-			0 => [
-				'id' => 1, 'nombre' => 'Persona A'
-			],
-			1 => [
-				'id' => 2, 'nombre' => 'Persona B'
-			],
-			2 => [
-				'id' => 3, 'nombre' => 'Persona C'
-			]
-		];
-		$personaList = [];
-		foreach ($persona as $k => $v) {
-			$personaList[$v['id']] = $v;
-		}
-		$dataParaVista = $post;
-		$dataParaVista['persona'] = $persona;
-		$result['data']['persona'] = $personaList;
-		$result['data']['html'] = $this->load->view('modulos/OrdenServicio/tablaParaRegistro', $dataParaVista, true);
-		$result['data']['htmlSueldo'] = $this->load->view('modulos/OrdenServicio/tablaSueldo', $dataParaVista, true);
-		resultado:
-		echo json_encode($result);
-	}
+	// 	if (empty($post['nroFecha'])) {
+	// 		$result['data']['html'] = 'No hay cantidad de Fechas';
+	// 		goto resultado;
+	// 	}
+	// 	if (empty($post['nroFecha'])) {
+	// 		$result['data']['html'] = 'No hay cantidad de Personas';
+	// 		goto resultado;
+	// 	}
+	// 	$result['result'] = 1;
+	// 	$result['msg']['title'] = '';
+	// 	$persona = [
+	// 		0 => [
+	// 			'id' => 1, 'nombre' => 'Persona A'
+	// 		],
+	// 		1 => [
+	// 			'id' => 2, 'nombre' => 'Persona B'
+	// 		],
+	// 		2 => [
+	// 			'id' => 3, 'nombre' => 'Persona C'
+	// 		]
+	// 	];
+	// 	$personaList = [];
+	// 	foreach ($persona as $k => $v) {
+	// 		$personaList[$v['id']] = $v;
+	// 	}
+	// 	$dataParaVista = $post;
+	// 	$dataParaVista['persona'] = $persona;
+	// 	$result['data']['persona'] = $personaList;
+	// 	$result['data']['html'] = $this->load->view('modulos/OrdenServicio/tablaParaRegistro', $dataParaVista, true);
+	// 	$result['data']['htmlSueldo'] = $this->load->view('modulos/OrdenServicio/tablaSueldo', $dataParaVista, true);
+	// 	resultado:
+	// 	echo json_encode($result);
+	// }
 
 	public function registrarPresupuesto()
 	{
@@ -769,6 +767,15 @@ class OrdenServicio extends MY_Controller
 		// compras.presupuesto
 		$insertPresupuesto = [
 			'idOrdenServicio' => $idOrdenServicio,
+			'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
+			'subtotal' => $post['presupuestoSubTotal'],
+			'fee1' => $post['presupuestoFee1'],
+			'totalFee1' => $post['presupuestoTotalFee1'],
+			'fee2' => $post['presupuestoFee2'],
+			'totalFee2' => $post['presupuestoTotalFee2'],
+			'fee3' => $post['presupuestoFee3'],
+			'totalFee3' => $post['presupuestoTotalFee3'],
+			'total' => $post['presupuestoTotal'],
 			'observacion' => $post['observacion'],
 			'idUsuario' => $this->idUsuario,
 			'fechaReg' => getActualDateTime()
@@ -803,8 +810,9 @@ class OrdenServicio extends MY_Controller
 			$this->db->insert('compras.presupuestoDetalle', $insertPresupuestoDetalle);
 			$idPresupuestoDetalle = $this->db->insert_id();
 
-			// compras.presupuestoDetalleSueldo
+			// compras.presupuestoDetalleSueldoAdicional && compras.presupuestoDetalleSueldo
 			if ($vd == COD_SUELDO) {
+				// compras.presupuestoDetalleSueldo
 				$insertPresupuestoDetalleSueldo = [];
 				foreach ($post['cargoList'] as $vc) {
 					$post["monto[$vc]"] = checkAndConvertToArray($post["monto[$vc]"]);
@@ -821,13 +829,112 @@ class OrdenServicio extends MY_Controller
 					}
 				}
 				$this->db->insert_batch('compras.presupuestoDetalleSueldo', $insertPresupuestoDetalleSueldo);
-			}
 
-			// compras.presupuestoDetalleSub
-			if ($vd != COD_SUELDO) {
+				// compras.presupuestoDetalleSueldoAdicional
+				$insertPresupuestoDetalleSueldoAdicional = [];
+				if (isset($post['cargoSueldoAdicional'])) {
+					$post['cargoSueldoAdicional'] = checkAndConvertToArray($post['cargoSueldoAdicional']);
+					$post['empleadoSueldoAdicional'] = checkAndConvertToArray($post['empleadoSueldoAdicional']);
+					$post['montoSueldoAdicional'] = checkAndConvertToArray($post['montoSueldoAdicional']);
+					$post['movilidadSueldoAdicional'] = checkAndConvertToArray($post['movilidadSueldoAdicional']);
+
+					foreach ($post['cargoSueldoAdicional'] as $pdaK => $pda) {
+						$insertPresupuestoDetalleSueldoAdicional[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idCargo' => $pda,
+							'idEmpleado' => $post['empleadoSueldoAdicional'][$pdaK],
+							'monto' => $post['montoSueldoAdicional'][$pdaK],
+							'montoMovilidad' => $post['movilidadSueldoAdicional'][$pdaK],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleSueldoAdicional', $insertPresupuestoDetalleSueldoAdicional);
+				}
+			} else if ($vd == COD_MOVILIDAD) {
+				// compras.presupuestoDetalleMovilidad
+				$insertPresupuestoDetalleMovilidad = [];
+				if (isset($post['movOrigen'])) {
+					$post['movIdTPDM'] = checkAndConvertToArray($post['movIdTPDM']);
+					$post['movOrigen'] = checkAndConvertToArray($post['movOrigen']);
+					$post['movDestino'] = checkAndConvertToArray($post['movDestino']);
+					$post['movFrecuenciaOpc'] = checkAndConvertToArray($post['movFrecuenciaOpc']);
+					$post['movDias'] = checkAndConvertToArray($post['movDias']);
+					$post['movPrecBus'] = checkAndConvertToArray($post['movPrecBus']);
+					$post['movPrecHosp'] = checkAndConvertToArray($post['movPrecHosp']);
+					$post['movPrecViaticos'] = checkAndConvertToArray($post['movPrecViaticos']);
+					$post['movPrecMovInt'] = checkAndConvertToArray($post['movPrecMovInt']);
+					$post['movPrecTaxi'] = checkAndConvertToArray($post['movPrecTaxi']);
+					$post['movSubTotal'] = checkAndConvertToArray($post['movSubTotal']);
+					$post['movFrecuenciaCnt'] = checkAndConvertToArray($post['movFrecuenciaCnt']);
+					$post['movTotal'] = checkAndConvertToArray($post['movTotal']);
+
+					foreach ($post['movOrigen'] as $kmov => $vmov) {
+						$insertPresupuestoDetalleMovilidad[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idTipoPresupuestoDetalleMovilidad' => $post['movIdTPDM'][$kmov],
+							'origen' => $vmov,
+							'destino' => $post['movDestino'][$kmov],
+							'split' => $post['movFrecuenciaOpc'][$kmov],
+							'dias' => $post['movDias'][$kmov],
+							'precioBus' => $post['movPrecBus'][$kmov],
+							'precioHospedaje' => $post['movPrecHosp'][$kmov],
+							'precioViaticos' => $post['movPrecViaticos'][$kmov],
+							'precioMovilidadInterna' => $post['movPrecMovInt'][$kmov],
+							'precioTaxi' => $post['movPrecTaxi'][$kmov],
+							'subtotal' => $post['movSubTotal'][$kmov],
+							'frecuencia' => $post['movFrecuenciaCnt'][$kmov],
+							'total' => $post['movTotal'][$kmov],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleMovilidad', $insertPresupuestoDetalleMovilidad);
+				}
+			} else if ($vd == COD_ALMACEN) {
+				// compras.presupuestoDetalleAlmacen
+				$insertPresupuestoDetalleAlmacen = [];
+				if (isset($post['almFrecuenciaOpc'])) {
+					$post['almIdTPDA'] = checkAndConvertToArray($post['almIdTPDA']);
+					$post['almFrecuenciaOpc'] = checkAndConvertToArray($post['almFrecuenciaOpc']);
+					$post['almMonto'] = checkAndConvertToArray($post['almMonto']);
+
+					foreach ($post['almIdTPDA'] as $kalm => $valm) {
+						$insertPresupuestoDetalleAlmacen[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idTipoPresupuestoDetalleAlmacen' => $valm,
+							'split' => $post['almFrecuenciaOpc'][$kalm],
+							'monto' => $post['almMonto'][$kalm],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleAlmacen', $insertPresupuestoDetalleAlmacen);
+				}
+
+				// compras.presupuestoDetalleAlmacenRecursos
+				if (isset($post['almIdTPDAR'])) {
+					$post['almIdTPDAR'] = checkAndConvertToArray($post['almIdTPDAR']);
+					$insertPresupuestoDetalleAlmacenRecursos = [];
+					foreach ($post['fechaList'] as $kf => $vf) {
+						foreach ($post['almIdTPDAR'] as $vc) {
+							$insertPresupuestoDetalleAlmacenRecursos[] = [
+								'idPresupuestoDetalle' => $idPresupuestoDetalle,
+								'idTipoPresupuestoDetalleAlmacen' => $vc,
+								'fecha' => $vf,
+								'cantidad' => $post["almRecursos[$vc][$kf]"],
+								'idUsuario' => $this->idUsuario,
+								'fechaReg' => getActualDateTime()
+							];
+						}
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleAlmacenRecursos', $insertPresupuestoDetalleAlmacenRecursos);
+				}
+			} else { // compras.presupuestoDetalleSub
 				$insertPresupuestoDetalleSub = [];
 				if (isset($post["tipoPresupuestoDetalleSub[$vd]"])) {
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);
+
 					foreach ($post["tipoPresupuestoDetalleSub[$vd]"] as $kds => $vds) {
 						$post["splitDS[$vd]"] = checkAndConvertToArray($post["splitDS[$vd]"]);
 						$post["precioUnitarioDS[$vd]"] = checkAndConvertToArray($post["precioUnitarioDS[$vd]"]);
@@ -873,11 +980,33 @@ class OrdenServicio extends MY_Controller
 								'idPresupuestoDetalleSub' => $idPresupuestoDetalleSub,
 								'idCargo' => $vc,
 								'checked' => isset($post["chkDS[$vc][$vd][$kds]"]) ? true : false,
+								'cantidad' => $post["subCantDS[$vc][$vd][$kds]"],
 								'idUsuario' => $this->idUsuario,
 								'fechaReg' => getActualDateTime()
 							];
 						}
 						$this->db->insert_batch('compras.presupuestoDetalleSubCargo', $insertPresupuestoDetalleSubCargo);
+
+						// compras.presupuestoDetalleSubElemento
+						$insertPresupuestoDetalleSubElemento = [];
+						if (isset($post["elementoPresupuesto[$vd][$kds]"])) {
+							$post["elementoPresupuesto[$vd][$kds]"] = checkAndConvertToArray($post["elementoPresupuesto[$vd][$kds]"]);
+							$post["cantidadElementos[$vd][$kds]"] = checkAndConvertToArray($post["cantidadElementos[$vd][$kds]"]);
+							$post["montoElementos[$vd][$kds]"] = checkAndConvertToArray($post["montoElementos[$vd][$kds]"]);
+							$post["subTotalElemento[$vd][$kds]"] = checkAndConvertToArray($post["subTotalElemento[$vd][$kds]"]);
+							foreach ($post["elementoPresupuesto[$vd][$kds]"] as $elmK => $elmV) {
+								$insertPresupuestoDetalleSubElemento[] = [
+									'idPresupuestoDetalleSub' => $idPresupuestoDetalleSub,
+									'idItem' => $elmV,
+									'cantidad' => $post["cantidadElementos[$vd][$kds]"][$elmK],
+									'monto' => $post["montoElementos[$vd][$kds]"][$elmK],
+									'subTotal' => $post["subTotalElemento[$vd][$kds]"][$elmK],
+									'idUsuario' => $this->idUsuario,
+									'fechaReg' => getActualDateTime()
+								];
+							}
+						}
+						if (!empty($insertPresupuestoDetalleSubElemento)) $this->db->insert_batch('compras.presupuestoDetalleSubElemento', $insertPresupuestoDetalleSubElemento);
 					}
 				}
 			}
@@ -901,8 +1030,40 @@ class OrdenServicio extends MY_Controller
 		$idPresupuesto = $post['idPresupuesto'];
 
 		$dataParaVista = [];
+		$dataParaVista['presupuesto'] = $this->db->get_where('compras.presupuesto', ['idPresupuesto' => $idPresupuesto])->row_array();
+		$dataParaVista['valorPorcentual'] = $this->db->select('osds.valorPorcentual')->from('compras.ordenServicioDetalleSub osds')->join('compras.ordenServicioDetalle osd', 'osd.idOrdenServicioDetalle = osds.idOrdenServicioDetalle')->where('osd.estado', 1)->where('osds.idTipoPresupuestoDetalle', COD_ASIGNACIONFAMILIAR)->where('osd.idOrdenServicio', $dataParaVista['presupuesto']['idOrdenServicio'])->get()->row_array()['valorPorcentual'];
+		$dataParaVista['idCuenta'] = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $dataParaVista['presupuesto']['idOrdenServicio']])->row_array()['idCuenta'];
+		$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos(['soloCargosOcupados' => true, 'idCuenta' => $dataParaVista['idCuenta']])->result_array();
+		$dataParaVista['empleados'] = $this->model->getAll_RRHHEmpleados(['activo' => true])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
+		$dataParaVista['sueldoMinimo'] = $this->db->where('fechaFin', NULL)->get('compras.sueldoMinimo')->row_array()['monto'];
+		
+		$where = [];
+		if (!empty($dataParaVista['idCuenta'])) {
+			$where['idCuenta'] = $dataParaVista['idCuenta'];
+		}
+		// Para traer presupuestoDetalleAlmacen y presupuestoDetalleAlmacenRecursos
+		$idPreDet_Almacen = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $idPresupuesto, 'idTipoPresupuesto' => COD_ALMACEN, 'estado' => 1])->row_array()['idPresupuestoDetalle'];
 
-		$dataParaVista['presupuesto'] = $this->db->get('compras.presupuesto')->row_array();
+		$arTPDA = $this->db->get_where('compras.presupuestoDetalleAlmacen', ['idPresupuestoDetalle' => $idPreDet_Almacen])->result_array();
+		foreach ($arTPDA as $v) {
+			$dataParaVista['dataTPDA'][$v['idTipoPresupuestoDetalleAlmacen']] = $v;
+		}
+
+		$arTPDAR = $this->db->get_where('compras.presupuestoDetalleAlmacenRecursos', ['idPresupuestoDetalle' => $idPreDet_Almacen])->result_array();
+		foreach ($arTPDAR as $v) {
+			$dataParaVista['dataTPDARecursos'][$v['idTipoPresupuestoDetalleAlmacen']][] = $v;
+		}
+		// Fin
+
+		// $items = $this->db->where('idTipoPresupuestoDetalle is not null')->get_where('compras.item', $where)->result_array();
+		$items = $this->model->getItemsCnPresupuesto($where)->result_array();
+		foreach ($items as $item) {
+			if (!isset($dataParaVista['item'][$item['idTipoPresupuestoDetalle']])) $dataParaVista['item'][$item['idTipoPresupuestoDetalle']] = [];
+			$dataParaVista['items'][$item['idTipoPresupuestoDetalle']][] = $item;
+		}
+		$dataParaVista['itemPrecio'] = $this->model->itemPrecios();
 
 		$presupuestoCargo = $this->model->getPresupuestoCargo($idPresupuesto)->result_array();
 		foreach ($presupuestoCargo as $k => $v) {
@@ -918,17 +1079,38 @@ class OrdenServicio extends MY_Controller
 		}
 		$dataParaVista['presupuestoDetalle'] = $this->model->getPresupuestoDetalle($idPresupuesto)->result_array();
 
+		$presupuestoDetalleSueldoAdicional = [];
 		foreach ($dataParaVista['presupuestoDetalle'] as $k => $v) {
 			$dataParaVista['presupuestoDetalleSub'][$v['idPresupuestoDetalle']] = $this->model->getPresupuestoDetalleSub($v['idPresupuestoDetalle'])->result_array();
 
+			foreach ($dataParaVista['presupuestoDetalleSub'][$v['idPresupuestoDetalle']] as $presDetSub) {
+				foreach ($this->db->get_where('compras.presupuestoDetalleSubCargo', ['idPresupuestoDetalleSub' => $presDetSub['idPresupuestoDetalleSub']])->result_array() as $prDetSbCar) {
+					$dataParaVista['presupuestoDetalleSubCargo'][$presDetSub['idPresupuestoDetalleSub']][$prDetSbCar['idCargo']] = $prDetSbCar;
+				}
+				$dataParaVista['presupuestoDetalleSubElemento'][$presDetSub['idPresupuestoDetalleSub']] = [];
+				foreach ($this->db->get_where('compras.presupuestoDetalleSubElemento', ['idPresupuestoDetalleSub' => $presDetSub['idPresupuestoDetalleSub']])->result_array() as $prDetSbElm) {
+					$dataParaVista['presupuestoDetalleSubElemento'][$presDetSub['idPresupuestoDetalleSub']][] = $prDetSbElm;
+				}
+			}
+
 			$presupuestoDetalleSueldo = $this->model->getPresupuestoDetalleSueldo($v['idPresupuestoDetalle'])->result_array();
-			foreach ($presupuestoDetalleSueldo as $k => $v) {
-				$dataParaVista['presupuestoDetalleSueldo'][$v['idPresupuestoDetalle']][$v['idTipoPresupuestoDetalle']][$v['idCargo']] = $v;
-				$dataParaVista['idCargoRef'] = $v['idCargo'];
+			foreach ($presupuestoDetalleSueldo as $pds) {
+				$dataParaVista['presupuestoDetalleSueldo'][$pds['idPresupuestoDetalle']][$pds['idTipoPresupuestoDetalle']][$pds['idCargo']] = $pds;
+				$dataParaVista['idCargoRef'] = $pds['idCargo'];
+			}
+
+			if ($v['idTipoPresupuesto'] == COD_SUELDO) $presupuestoDetalleSueldoAdicional = $this->db->get_where('compras.presupuestoDetalleSueldoAdicional', ['idPresupuestoDetalle' => $v['idPresupuestoDetalle']])->result_array();
+			if ($v['idTipoPresupuesto'] == COD_MOVILIDAD) $presupuestoDetalleMovilidad = $this->db->get_where('compras.presupuestoDetalleMovilidad', ['idPresupuestoDetalle' => $v['idPresupuestoDetalle']])->result_array();
+		}
+		$dataParaVista['presupuestoDetalleMovilidad'] = [];
+		if (!empty($presupuestoDetalleMovilidad)) {
+			foreach ($presupuestoDetalleMovilidad as $km => $vm) {
+				$dataParaVista['presupuestoDetalleMovilidad'][$vm['idTipoPresupuestoDetalleMovilidad']] = $vm;
 			}
 		}
+		$dataParaVista['presupuestoDetalleSueldoAdicional'] = $presupuestoDetalleSueldoAdicional;
 
-		foreach ($this->db->select('tpd.*, it.costo, it.idProveedor')->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')->get('compras.tipoPresupuestoDetalle tpd')->result_array() as $k => $v) {
+		foreach ($this->db->select('tpd.*, it.costo, it.idProveedor')->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')->order_by('tpd.nombre')->get('compras.tipoPresupuestoDetalle tpd')->result_array() as $k => $v) {
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
@@ -962,6 +1144,15 @@ class OrdenServicio extends MY_Controller
 		// compras.presupuesto
 		$updatePresupuesto = [
 			'idOrdenServicio' => $idOrdenServicio,
+			'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
+			'subtotal' => $post['presupuestoSubTotal'],
+			'fee1' => $post['presupuestoFee1'],
+			'totalFee1' => $post['presupuestoTotalFee1'],
+			'fee2' => $post['presupuestoFee2'],
+			'totalFee2' => $post['presupuestoTotalFee2'],
+			'fee3' => $post['presupuestoFee3'],
+			'totalFee3' => $post['presupuestoTotalFee3'],
+			'total' => $post['presupuestoTotal'],
 			'observacion' => $post['observacion'],
 			'idUsuario' => $this->idUsuario,
 			'fechaReg' => getActualDateTime()
@@ -999,8 +1190,9 @@ class OrdenServicio extends MY_Controller
 			$this->db->insert('compras.presupuestoDetalle', $insertPresupuestoDetalle);
 			$idPresupuestoDetalle = $this->db->insert_id();
 
-			// compras.presupuestoDetalleSueldo
+			// compras.presupuestoDetalleSueldo && compras.presupuestoDetalleSueldoAdicional
 			if ($vd == COD_SUELDO) {
+				// compras.presupuestoDetalleSueldo
 				$insertPresupuestoDetalleSueldo = [];
 				foreach ($post['cargoList'] as $vc) {
 					$post["monto[$vc]"] = checkAndConvertToArray($post["monto[$vc]"]);
@@ -1017,10 +1209,108 @@ class OrdenServicio extends MY_Controller
 					}
 				}
 				$this->db->insert_batch('compras.presupuestoDetalleSueldo', $insertPresupuestoDetalleSueldo);
-			}
 
-			// compras.presupuestoDetalleSub
-			if ($vd != COD_SUELDO) {
+				// compras.presupuestoDetalleSueldoAdicional
+				$insertPresupuestoDetalleSueldoAdicional = [];
+				if (isset($post['cargoSueldoAdicional'])) {
+					$post['cargoSueldoAdicional'] = checkAndConvertToArray($post['cargoSueldoAdicional']);
+					$post['empleadoSueldoAdicional'] = checkAndConvertToArray($post['empleadoSueldoAdicional']);
+					$post['montoSueldoAdicional'] = checkAndConvertToArray($post['montoSueldoAdicional']);
+					$post['movilidadSueldoAdicional'] = checkAndConvertToArray($post['movilidadSueldoAdicional']);
+
+					foreach ($post['cargoSueldoAdicional'] as $pdaK => $pda) {
+						$insertPresupuestoDetalleSueldoAdicional[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idCargo' => $pda,
+							'idEmpleado' => $post['empleadoSueldoAdicional'][$pdaK],
+							'monto' => $post['montoSueldoAdicional'][$pdaK],
+							'montoMovilidad' => $post['movilidadSueldoAdicional'][$pdaK],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleSueldoAdicional', $insertPresupuestoDetalleSueldoAdicional);
+				}
+			} else if ($vd == COD_MOVILIDAD) {
+				// compras.presupuestoDetalleMovilidad
+				$insertPresupuestoDetalleMovilidad = [];
+				if (isset($post['movOrigen'])) {
+					$post['movIdTPDM'] = checkAndConvertToArray($post['movIdTPDM']);
+					$post['movOrigen'] = checkAndConvertToArray($post['movOrigen']);
+					$post['movDestino'] = checkAndConvertToArray($post['movDestino']);
+					$post['movFrecuenciaOpc'] = checkAndConvertToArray($post['movFrecuenciaOpc']);
+					$post['movDias'] = checkAndConvertToArray($post['movDias']);
+					$post['movPrecBus'] = checkAndConvertToArray($post['movPrecBus']);
+					$post['movPrecHosp'] = checkAndConvertToArray($post['movPrecHosp']);
+					$post['movPrecViaticos'] = checkAndConvertToArray($post['movPrecViaticos']);
+					$post['movPrecMovInt'] = checkAndConvertToArray($post['movPrecMovInt']);
+					$post['movPrecTaxi'] = checkAndConvertToArray($post['movPrecTaxi']);
+					$post['movSubTotal'] = checkAndConvertToArray($post['movSubTotal']);
+					$post['movFrecuenciaCnt'] = checkAndConvertToArray($post['movFrecuenciaCnt']);
+					$post['movTotal'] = checkAndConvertToArray($post['movTotal']);
+
+					foreach ($post['movOrigen'] as $kmov => $vmov) {
+						$insertPresupuestoDetalleMovilidad[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idTipoPresupuestoDetalleMovilidad' => $post['movIdTPDM'][$kmov],
+							'origen' => $vmov,
+							'destino' => $post['movDestino'][$kmov],
+							'split' => $post['movFrecuenciaOpc'][$kmov],
+							'dias' => $post['movDias'][$kmov],
+							'precioBus' => $post['movPrecBus'][$kmov],
+							'precioHospedaje' => $post['movPrecHosp'][$kmov],
+							'precioViaticos' => $post['movPrecViaticos'][$kmov],
+							'precioMovilidadInterna' => $post['movPrecMovInt'][$kmov],
+							'precioTaxi' => $post['movPrecTaxi'][$kmov],
+							'subtotal' => $post['movSubTotal'][$kmov],
+							'frecuencia' => $post['movFrecuenciaCnt'][$kmov],
+							'total' => $post['movTotal'][$kmov],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleMovilidad', $insertPresupuestoDetalleMovilidad);
+				}
+			} else if ($vd == COD_ALMACEN) {
+				// compras.presupuestoDetalleAlmacen
+				$insertPresupuestoDetalleAlmacen = [];
+				if (isset($post['almFrecuenciaOpc'])) {
+					$post['almIdTPDA'] = checkAndConvertToArray($post['almIdTPDA']);
+					$post['almFrecuenciaOpc'] = checkAndConvertToArray($post['almFrecuenciaOpc']);
+					$post['almMonto'] = checkAndConvertToArray($post['almMonto']);
+
+					foreach ($post['almIdTPDA'] as $kalm => $valm) {
+						$insertPresupuestoDetalleAlmacen[] = [
+							'idPresupuestoDetalle' => $idPresupuestoDetalle,
+							'idTipoPresupuestoDetalleAlmacen' => $valm,
+							'split' => $post['almFrecuenciaOpc'][$kalm],
+							'monto' => $post['almMonto'][$kalm],
+							'idUsuario' => $this->idUsuario,
+							'fechaReg' => getActualDateTime()
+						];
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleAlmacen', $insertPresupuestoDetalleAlmacen);
+				}
+
+				// compras.presupuestoDetalleAlmacenRecursos
+				if (isset($post['almIdTPDAR'])) {
+					$post['almIdTPDAR'] = checkAndConvertToArray($post['almIdTPDAR']);
+					$insertPresupuestoDetalleAlmacenRecursos = [];
+					foreach ($post['fechaList'] as $kf => $vf) {
+						foreach ($post['almIdTPDAR'] as $vc) {
+							$insertPresupuestoDetalleAlmacenRecursos[] = [
+								'idPresupuestoDetalle' => $idPresupuestoDetalle,
+								'idTipoPresupuestoDetalleAlmacen' => $vc,
+								'fecha' => $vf,
+								'cantidad' => $post["almRecursos[$vc][$kf]"],
+								'idUsuario' => $this->idUsuario,
+								'fechaReg' => getActualDateTime()
+							];
+						}
+					}
+					$this->db->insert_batch('compras.presupuestoDetalleAlmacenRecursos', $insertPresupuestoDetalleAlmacenRecursos);
+				}
+			} else { // compras.presupuestoDetalleSub
 				$insertPresupuestoDetalleSub = [];
 				if (isset($post["tipoPresupuestoDetalleSub[$vd]"])) {
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);
@@ -1054,11 +1344,33 @@ class OrdenServicio extends MY_Controller
 								'idPresupuestoDetalleSub' => $idPresupuestoDetalleSub,
 								'idCargo' => $vc,
 								'checked' => isset($post["chkDS[$vc][$vd][$kds]"]) ? true : false,
+								'cantidad' => $post["subCantDS[$vc][$vd][$kds]"],
 								'idUsuario' => $this->idUsuario,
 								'fechaReg' => getActualDateTime()
 							];
 						}
 						$this->db->insert_batch('compras.presupuestoDetalleSubCargo', $insertPresupuestoDetalleSubCargo);
+
+						// compras.presupuestoDetalleSubElemento
+						$insertPresupuestoDetalleSubElemento = [];
+						if (isset($post["elementoPresupuesto[$vd][$kds]"])) {
+							$post["elementoPresupuesto[$vd][$kds]"] = checkAndConvertToArray($post["elementoPresupuesto[$vd][$kds]"]);
+							$post["cantidadElementos[$vd][$kds]"] = checkAndConvertToArray($post["cantidadElementos[$vd][$kds]"]);
+							$post["montoElementos[$vd][$kds]"] = checkAndConvertToArray($post["montoElementos[$vd][$kds]"]);
+							$post["subTotalElemento[$vd][$kds]"] = checkAndConvertToArray($post["subTotalElemento[$vd][$kds]"]);
+							foreach ($post["elementoPresupuesto[$vd][$kds]"] as $elmK => $elmV) {
+								$insertPresupuestoDetalleSubElemento[] = [
+									'idPresupuestoDetalleSub' => $idPresupuestoDetalleSub,
+									'idItem' => $elmV,
+									'cantidad' => $post["cantidadElementos[$vd][$kds]"][$elmK],
+									'monto' => $post["montoElementos[$vd][$kds]"][$elmK],
+									'subTotal' => $post["subTotalElemento[$vd][$kds]"][$elmK],
+									'idUsuario' => $this->idUsuario,
+									'fechaReg' => getActualDateTime()
+								];
+							}
+						}
+						if (!empty($insertPresupuestoDetalleSubElemento)) $this->db->insert_batch('compras.presupuestoDetalleSubElemento', $insertPresupuestoDetalleSubElemento);
 					}
 				}
 			}
@@ -1109,5 +1421,71 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
+	}
+
+	public function generarRowParaPresupuesto_1()
+	{
+
+		$post = $this->input->post();
+
+		$dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
+		$dataParaVista['cargos'] = $post['cargos'];
+
+		$dataParaVista['idTipoPresupuesto'] = $post['detalle'];
+		$dataParaVista['numeroDeFila'] = $post['contador'];
+
+		$dataParaVista['totalCargo'] = 0;
+		foreach ($post['cargos'] as $cargo) {
+			$dataParaVista['totalCargo'] += intval($cargo['cantidad']);
+		}
+
+		echo $this->load->view('modulos/OrdenServicio/Elements/rowParaPresupuesto_1', $dataParaVista, true);
+	}
+
+	public function generarRowParaPresupuesto_2()
+	{
+
+		$post = $this->input->post();
+
+		$dataParaVista['idTipoPresupuesto'] = $post['detalle'];
+		$dataParaVista['numeroDeFila'] = $post['contador'];
+		$dataParaVista['fechas'] = $post['fechas'];
+
+		echo $this->load->view('modulos/OrdenServicio/Elements/rowParaPresupuesto_2', $dataParaVista, true);
+	}
+
+	public function generarRowParaPresupuesto_3()
+	{
+		$post = $this->input->post();
+
+		$where = ['idTipoPresupuestoDetalle' => $post['idTipoPresupuestoDetalle']];
+		if (!empty($post['idCuenta'])) {
+			$where['idCuenta'] = $post['idCuenta'];
+		}
+
+		// $dataParaVista['items'] = $this->db->get_where('compras.item', $where)->result_array();
+		$dataParaVista['items'] = $this->model->getItemsCnPresupuesto($where)->result_array();
+		$dataParaVista['itemPrecio'] = $this->model->itemPrecios();
+		$dataParaVista['idTipoPresupuesto'] = $post['idTipoPresupuesto'];
+		$dataParaVista['nroFila'] = $post['nroFila'];
+
+		$rpta = '';
+		if (!empty($dataParaVista['items'])) {
+			$rpta = $this->load->view('modulos/OrdenServicio/Elements/rowParaPresupuesto_3', $dataParaVista, true);
+		}
+		echo $rpta;
+	}
+	public function generarRowAdicionalSueldo()
+	{
+		$post = $this->input->post();
+
+		$where = ['soloCargosOcupados' => true];
+		if (!empty($post['idCuenta'])) $where['idCuenta'] = $post['idCuenta'];
+
+		$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos($where)->result_array();
+
+		$dataParaVista['empleados'] = $this->model->getAll_RRHHEmpleados(['activo' => true])->result_array();
+
+		echo $this->load->view('modulos/OrdenServicio/Elements/rowAdicionalSueldo', $dataParaVista, true);
 	}
 }

@@ -242,12 +242,9 @@ class OrdenCompra extends MY_Controller
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
 
-
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-
-
 		echo json_encode($result);
 	}
 
@@ -351,11 +348,9 @@ class OrdenCompra extends MY_Controller
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
 
-
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-
 
 		echo json_encode($result);
 	}

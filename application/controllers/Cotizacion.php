@@ -369,7 +369,7 @@ class Cotizacion extends MY_Controller
 			'fechaRequerida' => !empty($post['fechaRequerida']) ? $post['fechaRequerida'] : NULL,
 			'flagIgv' => !empty($post['igvForm']) ? 1 : 0,
 			'fee' => $post['feeForm'],
-			'feePersonal' => $post['feeFormPersonal'],
+			'feePersonal' => isset($post['feeFormPersonal']) ? $post['feeFormPersonal'] : 0,
 			'total' => $post['totalForm'],
 			'total_fee' => $post['totalFormFee'],
 			'total_fee_igv' => $post['totalFormFeeIgv'],
@@ -483,18 +483,18 @@ class Cotizacion extends MY_Controller
 		$ttt = 0;
 		$n = 0; // Cantidad de items en la tabla de distribución.
 
-		if(isset($post['idTipoServicio'])) $post['idTipoServicio'] = checkAndConvertToArray($post['idTipoServicio']);
-		if(isset($post['item'])) $post['item'] = checkAndConvertToArray($post['item']);
-		if(isset($post['cantidad'])) $post['cantidad'] = checkAndConvertToArray($post['cantidad']);
-		if(isset($post['costoTSCuenta'])) $post['costoTSCuenta'] = checkAndConvertToArray($post['costoTSCuenta']);
-		if(isset($post['totalCuenta'])) $post['totalCuenta'] = checkAndConvertToArray($post['totalCuenta']);
-		if(isset($post['idItem'])) $post['idItem'] = checkAndConvertToArray($post['idItem']);
-		if(isset($post['pesoCuenta'])) $post['pesoCuenta'] = checkAndConvertToArray($post['pesoCuenta']);
-		if(isset($post['idZona'])) $post['idZona'] = checkAndConvertToArray($post['idZona']);
-		if(isset($post['dias'])) $post['dias'] = checkAndConvertToArray($post['dias']);
-		if(isset($post['gap'])) $post['gap'] = checkAndConvertToArray($post['gap']);
-		if(isset($post['pesoVisual'])) $post['pesoVisual'] = checkAndConvertToArray($post['pesoVisual']);
-		if(isset($post['costoTSVisual'])) $post['costoTSVisual'] = checkAndConvertToArray($post['costoTSVisual']);
+		if (isset($post['idTipoServicio'])) $post['idTipoServicio'] = checkAndConvertToArray($post['idTipoServicio']);
+		if (isset($post['item'])) $post['item'] = checkAndConvertToArray($post['item']);
+		if (isset($post['cantidad'])) $post['cantidad'] = checkAndConvertToArray($post['cantidad']);
+		if (isset($post['costoTSCuenta'])) $post['costoTSCuenta'] = checkAndConvertToArray($post['costoTSCuenta']);
+		if (isset($post['totalCuenta'])) $post['totalCuenta'] = checkAndConvertToArray($post['totalCuenta']);
+		if (isset($post['idItem'])) $post['idItem'] = checkAndConvertToArray($post['idItem']);
+		if (isset($post['pesoCuenta'])) $post['pesoCuenta'] = checkAndConvertToArray($post['pesoCuenta']);
+		if (isset($post['idZona'])) $post['idZona'] = checkAndConvertToArray($post['idZona']);
+		if (isset($post['dias'])) $post['dias'] = checkAndConvertToArray($post['dias']);
+		if (isset($post['gap'])) $post['gap'] = checkAndConvertToArray($post['gap']);
+		if (isset($post['pesoVisual'])) $post['pesoVisual'] = checkAndConvertToArray($post['pesoVisual']);
+		if (isset($post['costoTSVisual'])) $post['costoTSVisual'] = checkAndConvertToArray($post['costoTSVisual']);
 
 		$enviarCorreoPacking = false;
 		foreach ($post['nameItem'] as $k => $r) {
@@ -1488,7 +1488,6 @@ class Cotizacion extends MY_Controller
 
 		$almacen = $post->{'almacen'};
 
-		// $zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
 		$zonas = $this->model->getZonas(['otroAlmacen' => $almacen])->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
@@ -1503,7 +1502,6 @@ class Cotizacion extends MY_Controller
 		if (!empty($ht)) {
 			foreach ($ht as $k => $v) {
 				$datosHt[$k]['zona'] = $v->{'zona'};
-				// $datosHt[$k]['dias'] = $this->db->where('idCuenta', $idCuenta)->where('nombre', $v->{'zona'})->get('compras.zona')->row_array()['dias'];
 				$datosHt[$k]['dias'] = $this->model->getZonas(['otroAlmacen' => $almacen, 'nombre' => $v->{'zona'}])->row_array()['dias'];
 				foreach ($item as $ki => $vi) {
 					$datosHt[$k]['item' . $ki] = $v->{'item' . $ki};
@@ -1653,7 +1651,6 @@ class Cotizacion extends MY_Controller
 		$config['js']['script'] = array('assets/custom/js/registroPesos');
 		$config['data']['cotizacion'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacion')->row_array();
 		$config['data']['cotizacionDetalle'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacionDetalle')->result_array();
-		// $zz = $this->db->get('compras.zona')->result_array();
 		$zz = $this->model->getZonas()->result_array();
 
 		$config['data']['itemPacking'] = $this->db->where('flagPacking', 1)->get('compras.item')->result_array();
@@ -1787,7 +1784,6 @@ class Cotizacion extends MY_Controller
 			goto Respuesta;
 		}
 
-		// $zonas = $this->db->where('idCuenta', $idCuenta)->get('compras.zona')->result_array();
 		$zonas = $this->model->getZonas(['otroAlmacen' => $almacen])->result_array();
 		$zonas = refactorizarDataHT(["data" => $zonas, "value" => "nombre"]);
 
@@ -2140,8 +2136,6 @@ class Cotizacion extends MY_Controller
 		foreach ($cotizacionDetalleSub as $sub) {
 			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
 		}
-
-
 
 		foreach ($config['data']['cotizacionDetalle'] as $k => $v) {
 			$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idItem, isnull(peso, 0) as pesoCuenta, isnull(pesoVisual, 0) as pesoVisual, flagItemInterno')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
@@ -2949,7 +2943,6 @@ class Cotizacion extends MY_Controller
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 		$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
 		if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
-
 
 		$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
 		$n = 0; // Cantidad de items en la tabla de distribución.

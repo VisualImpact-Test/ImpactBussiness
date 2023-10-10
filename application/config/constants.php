@@ -26,10 +26,10 @@ defined('SHOW_DEBUG_BACKTRACE') or define('SHOW_DEBUG_BACKTRACE', TRUE);
 | always be used to set the mode correctly.
 |
 */
-defined('FILE_READ_MODE')  or define('FILE_READ_MODE', 0644);
+defined('FILE_READ_MODE') or define('FILE_READ_MODE', 0644);
 defined('FILE_WRITE_MODE') or define('FILE_WRITE_MODE', 0666);
-defined('DIR_READ_MODE')   or define('DIR_READ_MODE', 0755);
-defined('DIR_WRITE_MODE')  or define('DIR_WRITE_MODE', 0755);
+defined('DIR_READ_MODE') or define('DIR_READ_MODE', 0755);
+defined('DIR_WRITE_MODE') or define('DIR_WRITE_MODE', 0755);
 
 /*
 |--------------------------------------------------------------------------
@@ -39,14 +39,14 @@ defined('DIR_WRITE_MODE')  or define('DIR_WRITE_MODE', 0755);
 | These modes are used when working with fopen()/popen()
 |
 */
-defined('FOPEN_READ')                           or define('FOPEN_READ', 'rb');
-defined('FOPEN_READ_WRITE')                     or define('FOPEN_READ_WRITE', 'r+b');
-defined('FOPEN_WRITE_CREATE_DESTRUCTIVE')       or define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 'wb'); // truncates existing file data, use with care
-defined('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE')  or define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
-defined('FOPEN_WRITE_CREATE')                   or define('FOPEN_WRITE_CREATE', 'ab');
-defined('FOPEN_READ_WRITE_CREATE')              or define('FOPEN_READ_WRITE_CREATE', 'a+b');
-defined('FOPEN_WRITE_CREATE_STRICT')            or define('FOPEN_WRITE_CREATE_STRICT', 'xb');
-defined('FOPEN_READ_WRITE_CREATE_STRICT')       or define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
+defined('FOPEN_READ')									or define('FOPEN_READ', 'rb');
+defined('FOPEN_READ_WRITE')							or define('FOPEN_READ_WRITE', 'r+b');
+defined('FOPEN_WRITE_CREATE_DESTRUCTIVE')			or define('FOPEN_WRITE_CREATE_DESTRUCTIVE', 'wb'); // truncates existing file data, use with care
+defined('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE')	or define('FOPEN_READ_WRITE_CREATE_DESTRUCTIVE', 'w+b'); // truncates existing file data, use with care
+defined('FOPEN_WRITE_CREATE')							or define('FOPEN_WRITE_CREATE', 'ab');
+defined('FOPEN_READ_WRITE_CREATE')					or define('FOPEN_READ_WRITE_CREATE', 'a+b');
+defined('FOPEN_WRITE_CREATE_STRICT')				or define('FOPEN_WRITE_CREATE_STRICT', 'xb');
+defined('FOPEN_READ_WRITE_CREATE_STRICT')			or define('FOPEN_READ_WRITE_CREATE_STRICT', 'x+b');
 
 /*
 |--------------------------------------------------------------------------
@@ -73,59 +73,57 @@ defined('FOPEN_READ_WRITE_CREATE_STRICT')       or define('FOPEN_READ_WRITE_CREA
 |       http://tldp.org/LDP/abs/html/exitcodes.html
 |
 */
-defined('EXIT_SUCCESS')        or define('EXIT_SUCCESS', 0); // no errors
-defined('EXIT_ERROR')          or define('EXIT_ERROR', 1); // generic error
-defined('EXIT_CONFIG')         or define('EXIT_CONFIG', 3); // configuration error
-defined('EXIT_UNKNOWN_FILE')   or define('EXIT_UNKNOWN_FILE', 4); // file not found
-defined('EXIT_UNKNOWN_CLASS')  or define('EXIT_UNKNOWN_CLASS', 5); // unknown class
-defined('EXIT_UNKNOWN_METHOD') or define('EXIT_UNKNOWN_METHOD', 6); // unknown class member
-defined('EXIT_USER_INPUT')     or define('EXIT_USER_INPUT', 7); // invalid user input
-defined('EXIT_DATABASE')       or define('EXIT_DATABASE', 8); // database error
-defined('EXIT__AUTO_MIN')      or define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
-defined('EXIT__AUTO_MAX')      or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
-defined('RUTA_MOVIL_FOTOS')    or define('RUTA_MOVIL_FOTOS', 'http://movil.visualimpact.com.pe/fotos/impactTrade_android/');
-defined('GC_TRADICIONALES')    or define('GC_TRADICIONALES', ['Tradicional', 'TRADICIONAL', 'HFS']);
-defined('GC_MODERNOS')         or define('GC_MODERNOS', ['Moderno', 'MODERNO', 'HSM']);
-defined('GC_MAYORISTAS')       or define('GC_MAYORISTAS', ['WHLS', 'whls']);
-defined('ID_TIPOUSUARIO_TI')   or define('ID_TIPOUSUARIO_TI', 4);
-// defined('FOTOS_CONTROLADOR')   OR define('FOTOS_CONTROLADOR',base_url()+ 'ControlFoto/');
-// defined('RUTA_BAT')            OR define('RUTA_BAT','C:\apache24\PHP\php7\php.exe -f "C:\apache24\htdocs\impactTrade\index.php" ');
-defined('RUTA_BAT')            or define('RUTA_BAT', 'C:\wamp64\bin\php\php7.1.33\php-win.exe -f "C:\wamp64\www\pruebas\w7impactTrade\index.php" ');
+defined('EXIT_SUCCESS')				or define('EXIT_SUCCESS', 0); // no errors
+defined('EXIT_ERROR')				or define('EXIT_ERROR', 1); // generic error
+defined('EXIT_CONFIG')				or define('EXIT_CONFIG', 3); // configuration error
+defined('EXIT_UNKNOWN_FILE')		or define('EXIT_UNKNOWN_FILE', 4); // file not found
+defined('EXIT_UNKNOWN_CLASS')		or define('EXIT_UNKNOWN_CLASS', 5); // unknown class
+defined('EXIT_UNKNOWN_METHOD')	or define('EXIT_UNKNOWN_METHOD', 6); // unknown class member
+defined('EXIT_USER_INPUT')			or define('EXIT_USER_INPUT', 7); // invalid user input
+defined('EXIT_DATABASE')			or define('EXIT_DATABASE', 8); // database error
+defined('EXIT__AUTO_MIN')			or define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
+defined('EXIT__AUTO_MAX')			or define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
+defined('RUTA_MOVIL_FOTOS')		or define('RUTA_MOVIL_FOTOS', 'http://movil.visualimpact.com.pe/fotos/impactTrade_android/');
+defined('GC_TRADICIONALES')		or define('GC_TRADICIONALES', ['Tradicional', 'TRADICIONAL', 'HFS']);
+defined('GC_MODERNOS')				or define('GC_MODERNOS', ['Moderno', 'MODERNO', 'HSM']);
+defined('GC_MAYORISTAS')			or define('GC_MAYORISTAS', ['WHLS', 'whls']);
+defined('ID_TIPOUSUARIO_TI')		or define('ID_TIPOUSUARIO_TI', 4);
+// defined('FOTOS_CONTROLADOR')		OR define('FOTOS_CONTROLADOR',base_url()+ 'ControlFoto/');
+// defined('RUTA_BAT')					OR define('RUTA_BAT','C:\apache24\PHP\php7\php.exe -f "C:\apache24\htdocs\impactTrade\index.php" ');
+defined('RUTA_BAT')					or define('RUTA_BAT', 'C:\wamp64\bin\php\php7.1.33\php-win.exe -f "C:\wamp64\www\pruebas\w7impactTrade\index.php" ');
 
 //WASABI
-defined('RUTA_WASABI')         or define('RUTA_WASABI', 'https://s3.us-central-1.wasabisys.com/impact.business/');
-defined('FILES_WASABI')        or define('FILES_WASABI', [
-    'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
-    'vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
-    'vnd.ms-excel' => 'xls',
-    'vnd.ms-powerpoint' => 'ppt',
-    'pdf' => 'pdf',
-    'png' => 'png',
-    'jpg' => 'jpg',
-    'jpeg' => 'jpeg',
-    'xml' => 'xml',
-    'x-zip-compressed' => 'zip'
+defined('RUTA_WASABI') or define('RUTA_WASABI', 'https://s3.us-central-1.wasabisys.com/impact.business/');
+defined('FILES_WASABI') or define('FILES_WASABI', [
+	'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+	'vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
+	'vnd.ms-excel' => 'xls',
+	'vnd.ms-powerpoint' => 'ppt',
+	'pdf' => 'pdf',
+	'png' => 'png',
+	'jpg' => 'jpg',
+	'jpeg' => 'jpeg',
+	'xml' => 'xml',
+	'x-zip-compressed' => 'zip'
 ]);
 defined('FILES_TIPO_WASABI') or define('FILES_TIPO_WASABI', [
-    'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => '6',
-    'vnd.openxmlformats-officedocument.presentationml.presentation' => '5',
-    'vnd.ms-excel' => '6',
-    'vnd.ms-powerpoint' => '5',
-    'pdf' => '3',
-    'png' => '2',
-    'jpg' => '2',
-    'jpeg' => '2',
-    'xml' => '5',
-    'x-zip-compressed' => '5'
+	'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => '6',
+	'vnd.openxmlformats-officedocument.presentationml.presentation' => '5',
+	'vnd.ms-excel' => '6',
+	'vnd.ms-powerpoint' => '5',
+	'pdf' => '3',
+	'png' => '2',
+	'jpg' => '2',
+	'jpeg' => '2',
+	'xml' => '5',
+	'x-zip-compressed' => '5'
 ]);
 
-
 //Tablas
-defined('TABLA_HISTORICO_ESTADO_COTIZACION')   or define('TABLA_HISTORICO_ESTADO_COTIZACION', 'compras.cotizacionEstadoHistorico');
-
+defined('TABLA_HISTORICO_ESTADO_COTIZACION') or define('TABLA_HISTORICO_ESTADO_COTIZACION', 'compras.cotizacionEstadoHistorico');
 
 //Compras
-defined('IGV')       or define('IGV', 0.18);
+defined('IGV') or define('IGV', 0.18);
 defined('LIMITE_COMPRAS') or define('LIMITE_COMPRAS', 1000);
 defined('RUC_VISUAL') or define('RUC_VISUAL', '20467225155');
 
@@ -133,18 +131,17 @@ defined('RUC_VISUAL') or define('RUC_VISUAL', '20467225155');
 defined('GAP') or define('GAP', 15);
 defined('MONTOGAP') or define('MONTOGAP', 1500);
 
-
 //Tipos de Item
-defined('COD_ARTICULO')       or define('COD_ARTICULO', ['id' => 1, 'nombre' => 'ARTICULO']);
-defined('COD_SERVICIO')       or define('COD_SERVICIO', ['id' => 2, 'nombre' => 'SERVICIO']);
-defined('COD_COMPUTO')        or define('COD_COMPUTO', ['id' => 3, 'nombre' => 'COMPUTO']);
-defined('COD_MOVIL')          or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL']);
-defined('COD_PERSONAL')       or define('COD_PERSONAL', ['id' => 5, 'nombre' => 'PERSONAL']);
-defined('COD_EVENTO')         or define('COD_EVENTO', ['id' => 6, 'nombre' => 'EVENTO']);
-defined('COD_DISTRIBUCION')   or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
-defined('COD_TEXTILES')       or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
-defined('COD_TARJETAS_VALES') or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
-defined('COD_TRANSPORTE')     or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
+defined('COD_ARTICULO')			or define('COD_ARTICULO', ['id' => 1, 'nombre' => 'ARTICULO']);
+defined('COD_SERVICIO')			or define('COD_SERVICIO', ['id' => 2, 'nombre' => 'SERVICIO']);
+defined('COD_COMPUTO')			or define('COD_COMPUTO', ['id' => 3, 'nombre' => 'COMPUTO']);
+defined('COD_MOVIL')				or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL']);
+defined('COD_PERSONAL')			or define('COD_PERSONAL', ['id' => 5, 'nombre' => 'PERSONAL']);
+defined('COD_EVENTO')			or define('COD_EVENTO', ['id' => 6, 'nombre' => 'EVENTO']);
+defined('COD_DISTRIBUCION')	or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
+defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
+defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
+defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
 
 //Wireframe
 
@@ -218,7 +215,27 @@ defined('LIST_GENERO') or define('LIST_GENERO', [['id' => 1, 'value' => 'VARON']
 defined('RESULT_GENERO') or define('RESULT_GENERO', ['1' => 'VARON', '2' => 'DAMA', '3' => 'UNISEX']);
 
 defined('COD_SUELDO') or define('COD_SUELDO', '1'); // ImpactBussiness.compras.tipoPresupuesto
+defined('COD_GASTOSADMINISTRATIVOS') or define('COD_GASTOSADMINISTRATIVOS', '7'); // ImpactBussiness.compras.tipoPresupuesto
+defined('COD_MOVILIDAD') or define('COD_MOVILIDAD', '8'); // ImpactBussiness.compras.tipoPresupuesto
+defined('COD_ALMACEN') or define('COD_ALMACEN', '9'); // ImpactBussiness.compras.tipoPresupuesto
 defined('COD_SUELDOMINIMO') or define('COD_SUELDOMINIMO', '1'); // ImpactBussiness.compras.tipoPresupuestoDetalle
 defined('COD_ASIGNACIONFAMILIAR') or define('COD_ASIGNACIONFAMILIAR', '2'); // ImpactBussiness.compras.tipoPresupuestoDetalle
+defined('COD_SCTR') or define('COD_SCTR', '31'); // ImpactBussiness.compras.tipoPresupuestoDetalle
 
-defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', ['1' => 'MENSUAL', '2' => 'BIMENSUAL', '3' => 'SEMESTRAL', '4' => 'ANUAL', '5' => 'UNICO']);
+defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
+	['id' => 1, 'value' => 'MENSUAL'],
+	['id' => 2, 'value' => 'BIMENSUAL'],
+	['id' => 3, 'value' => 'SEMESTRAL'],
+	['id' => 4, 'value' => 'ANUAL'],
+	['id' => 5, 'value' => 'UNICO'],
+	['id' => 6, 'value' => 'FRACCIONADO'],
+]);
+
+defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', [
+	'1' => 'MENSUAL',
+	'2' => 'BIMENSUAL',
+	'3' => 'SEMESTRAL',
+	'4' => 'ANUAL',
+	'5' => 'UNICO',
+	'6' => 'FRACCIONADO'
+]);

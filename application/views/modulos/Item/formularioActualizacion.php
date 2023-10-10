@@ -1,6 +1,6 @@
 <form class="form" role="form" id="formActualizacionItems" method="post">
 	<div class="row">
-		<div class="col-md-10 child-divcenter">
+		<div class="col-md-10 child-divcenter column">
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" for="nombre" style="border:0px;">Nombre :</label>
 				<input class="form-control col-md-7" id="nombre" name="nombre" patron="requerido" value="<?= $informacionItem['item'] ?>">
@@ -8,7 +8,7 @@
 			</div>
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" for="nombre" style="border:0px;">Caracteristicas :</label>
-				<input class="form-control col-md-7" id="caracteristicas" name="caracteristicas" patron="requerido" value="<?= $informacionItem['caracteristicas'] ?>">
+				<input class="form-control col-md-7" id="caracteristicas" name="caracteristicas" value="<?= $informacionItem['caracteristicas'] ?>">
 			</div>
 			<div class="form-group child-divcenter row w-100 pb-2 divItemLogistica">
 				<label class="form-control col-md-5" for="equivalente" style="border:0px;">Equivalente en Logistica :</label>
@@ -53,13 +53,13 @@
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" for="unidadMedida" style="border:0px;">¿ Es Packing ?</label>
 				<select class="form-control col-md-7" name="flagPacking">
-					<option value="0" <?= $informacionItem['flagPacking'] == '1' ? 'selected':''; ?>>NO</option>
-					<option value="1" <?= $informacionItem['flagPacking'] == '1' ? 'selected':''; ?>>SI, EL ITEM SERÁ CONSIDERADO POR ALMACÉN</option>
+					<option value="0" <?= $informacionItem['flagPacking'] == '1' ? 'selected' : ''; ?>>NO</option>
+					<option value="1" <?= $informacionItem['flagPacking'] == '1' ? 'selected' : ''; ?>>SI, EL ITEM SERÁ CONSIDERADO POR ALMACÉN</option>
 				</select>
 			</div>
 			<div class="control-group child-divcenter row w-100">
 				<label class="form-control col-md-5" style="border:0px;">Cuenta :</label>
-				<select class="ui dropdown parentDependiente centro-visible col-md-7" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
+				<select class="ui dropdown clearable parentDependiente centro-visible col-md-7" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $informacionItem['idCuenta']]); ?>
 				</select>
 			</div>
@@ -71,6 +71,27 @@
 					<?php endforeach; ?>
 				</select>
 			</div>
+			<div class="control-group child-divcenter row w-100">
+				<label class="form-control col-md-5" style="border:0px;">Para Presupuesto :</label>
+				<select class="form-control col-md-7" name="flagParaPresupuesto" onchange="$(this).closest('.column').find('.isPresupuesto').toggleClass('d-none');">
+					<option value="0" <?= $informacionItem['flagParaPresupuesto'] == '1' ? 'selected' : ''; ?>>NO</option>
+					<option value="1" <?= $informacionItem['flagParaPresupuesto'] == '1' ? 'selected' : ''; ?>>SI, EL ITEM SERÁ CONSIDERADO PARA PRESUPUESTO</option>
+				</select>
+			</div>
+			<div class="control-group child-divcenter row w-100 isPresupuesto <?= $informacionItem['flagParaPresupuesto'] != '1' ? 'd-none' : ''; ?>">
+				<label class="form-control col-md-5" style="border:0px;">Detalle :</label>
+				<select class="ui dropdown clearable semantic-dropdown parentDependienteSemantic col-md-7" name="tipoPresupuesto" data-childDependiente="#cboSubDetallePresupuesto">
+					<?php $selected = isset($informacionItem['idTipoPresupuesto']) ? $informacionItem['idTipoPresupuesto'] : ''; ?>
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $tipoPresupuesto, 'id' => 'idTipoPresupuesto', 'value' => 'nombre', 'simple' => true, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
+			<div class="control-group child-divcenter row w-100 isPresupuesto <?= $informacionItem['flagParaPresupuesto'] != '1' ? 'd-none' : ''; ?>">
+				<label class="form-control col-md-5" style="border:0px;">Sub Detalle :</label>
+				<select class="ui dropdown clearable semantic-dropdown read-only childdependienteSemantic col-md-7" id="cboSubDetallePresupuesto" name="tipoPresupuestoDetalle">
+					<?php $selected = isset($informacionItem['idTipoPresupuestoDetalle']) ? $informacionItem['idTipoPresupuestoDetalle'] : ''; ?>
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $tipoPresupuestoDetalle, 'simple' => true, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
 		</div>
 	</div>
 	<div class="row">
@@ -78,7 +99,7 @@
 			<h2>
 				<p class="text-center">Archivos</p>
 			</h2>
-			<?php if (!empty($imagenItem)) :  ?>
+			<?php if (!empty($imagenItem)) : ?>
 				<div class="text-center">
 					<?php foreach ($imagenItem as $key => $value) : ?>
 						<figure class="figure">

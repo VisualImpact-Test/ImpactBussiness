@@ -17,7 +17,7 @@ class M_Cotizacion extends MY_Model
 
 	public function obtenerDetallePDV($id)
 	{
-		return $this->db->distinct()->select("l.*, departamento, provincia,  case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
+		return $this->db->distinct()->select("l.*, departamento, provincia, case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 		AND ISNULL(l.idDistrito , 1) = ubi_zc.cod_distrito
 		AND ubi_zc.estado = 1', 'left')
@@ -67,7 +67,7 @@ class M_Cotizacion extends MY_Model
 	public function getCotizacionProveedorArchivosSeleccionados($params = [])
 	{
 		// PARA TRAER LOS ARCHIVOS EN LAS COTIZACIONES DEL PROVEEDOR QUE HAN SIDO "SELECCIONADAS" EN LA COTIZACION
-		// PARA QUE LOGISTICA PUEDA VISUALIZAR  LOS ARCHIVOS QUE ADJUNTA EL PROVEEDOR
+		// PARA QUE LOGISTICA PUEDA VISUALIZAR LOS ARCHIVOS QUE ADJUNTA EL PROVEEDOR
 
 		$this->db
 			->select('cdpda.*')
@@ -94,7 +94,7 @@ class M_Cotizacion extends MY_Model
 		SELECT DISTINCT
 			c.idEmpresa idDependiente,
 			c.idEmpresaCanal id,
-			c.subcanal value
+			c.canal + ' - ' + c.subcanal value
 		FROM
 		rrhh.dbo.empresa_Canal c
 		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
@@ -102,12 +102,12 @@ class M_Cotizacion extends MY_Model
 		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 		WHERE
-			e.flag = 'activo'
+			e.flag = 'activo' 
+			-- Excluir canal Trade
+			AND c.idCanal not in (1)
 			AND c.subcanal IS NOT NULL
 			{$filtros}
-		ORDER BY id
-		";
-
+		ORDER BY id";
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -168,8 +168,8 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['id']) ? " AND p.idCotizacion IN (" . $params['id'] . ")" : "";
 		$filtros .= !empty($params['idDiferente']) ? " AND p.idCotizacion !=" . $params['idDiferente'] : '';
 		$filtros .= !empty($params['idUsuarioReg']) ? ' AND p.idUsuarioReg = ' . $params['idUsuarioReg'] : '';
-		$filtros .= !empty($params['fechaDesde']) ? ' AND p.fechaEmision >= Convert(date,\'' . $params['fechaDesde'] . '\') '  : '';
-		$filtros .= !empty($params['fechaHasta']) ? ' AND p.fechaEmision <= Convert(date,\'' . $params['fechaHasta'] . '\') '  : '';
+		$filtros .= !empty($params['fechaDesde']) ? ' AND p.fechaEmision >= Convert(date,\'' . $params['fechaDesde'] . '\') ' : '';
+		$filtros .= !empty($params['fechaHasta']) ? ' AND p.fechaEmision <= Convert(date,\'' . $params['fechaHasta'] . '\') ' : '';
 		$filtros .= !empty($params['ocGenerado']) ? ($params['ocGenerado'] != '0' ? " AND p.idCotizacionEstado < 8 " : '') : '';
 		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
@@ -185,7 +185,7 @@ class M_Cotizacion extends MY_Model
 				fechaReg,
 				idUsuarioReg,
 				estado,
-				ROW_NUMBER() OVER (PARTITION BY idCotizacion,idCotizacionEstado  ORDER BY idCotizacionEstado) fila
+				ROW_NUMBER() OVER (PARTITION BY idCotizacion,idCotizacionEstado ORDER BY idCotizacionEstado) fila
 				FROM
 				compras.cotizacionEstadoHistorico
 			)
@@ -210,9 +210,9 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.fee
 				, p.idCotizacionEstado
-        		, p.idPrioridad
+				, p.idPrioridad
 				, p.motivo
-        		, p.comentario
+				, p.comentario
 				, p.total
 				, p.codOrdenCompra
 				, p.motivoAprobacion
@@ -224,7 +224,7 @@ class M_Cotizacion extends MY_Model
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,fechaReg,@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
-				, (SELECT CASE WHEN COUNT(idCotizacionDetalle)>0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = 5) tipoPersonal
+				, (SELECT CASE WHEN COUNT(idCotizacionDetalle)>0 THEN 1 ELSE 0 END FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = 5) tipoPersonal
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -272,9 +272,9 @@ class M_Cotizacion extends MY_Model
 				, p.flagIgv igv
 				, p.fee
 				, p.idCotizacionEstado
-                , p.idPrioridad
+				, p.idPrioridad
 				, p.motivo
-                , p.comentario
+				, p.comentario
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemEstado = 2) nuevos
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
@@ -455,7 +455,7 @@ class M_Cotizacion extends MY_Model
 				, pd.idProveedor
 				, pr.razonSocial AS proveedor
 				, cde.nombre AS cotizacionDetalleEstado
-				, CONVERT( VARCHAR, pd.fechaCreacion, 103)  AS fechaCreacion
+				, CONVERT( VARCHAR, pd.fechaCreacion, 103) AS fechaCreacion
 				, CONVERT( VARCHAR, pd.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, pd.fechaModificacion, 108) AS fechaModificacion
 				, pd.caracteristicas
 				, pd.caracteristicasCompras
@@ -489,7 +489,7 @@ class M_Cotizacion extends MY_Model
 				,pd.asignacionFamiliar+pd.segurovidaley+pd.cts+pd.essalud+pd.vacaciones+pd.gratificacion totalCargasSociales
 				,1.4626*(pd.sueldo+pd.asignacionFamiliar)+(pd.movilidad+pd.refrigerio) totalSueldo
 				,1.4626*(pd.incentivos) totalIncentivo
-				,pd.cantidad_personal	 			   
+				,pd.cantidad_personal
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -502,7 +502,7 @@ class M_Cotizacion extends MY_Model
 			JOIN compras.itemEstado ei ON pd.idItemEstado = ei.idItemEstado
 			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
 			LEFT JOIN compras.solicitante ss ON ss.idSolicitante = p.idSolicitante
-			LEFT JOIN rrhh.dbo.CargoTrabajo ctt ON ctt.idCargoTrabajo=pd.idCargo														   																			
+			LEFT JOIN rrhh.dbo.CargoTrabajo ctt ON ctt.idCargoTrabajo=pd.idCargo 																			
 			WHERE 1 = 1
 			{$filtros}
 			ORDER BY itemTipo, pd.idCotizacionDetalle
@@ -521,7 +521,7 @@ class M_Cotizacion extends MY_Model
 	public function getImagenCotiProv($params = [])
 	{
 		$sql = "SELECT idTipoArchivo, '../cotizacion/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleArchivos WHERE idTipoArchivo = 2 AND idCotizacionDetalle = " . $params['idCotizacionDetalle'];
-		$sql .= " UNION select idTipoArchivo, '../cotizacionProveedor/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleProveedorDetalleArchivos cdpda LEFT JOIN compras.cotizacionDetalleProveedorDetalle cdpd  ON cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle ";
+		$sql .= " UNION select idTipoArchivo, '../cotizacionProveedor/' + nombre_archivo as nombre_archivo FROM compras.cotizacionDetalleProveedorDetalleArchivos cdpda LEFT JOIN compras.cotizacionDetalleProveedorDetalle cdpd ON cdpd.idCotizacionDetalleProveedorDetalle=cdpda.idCotizacionDetalleProveedorDetalle ";
 		$sql .= " LEFT JOIN compras.cotizacionDetalleProveedor cdp ON cdp.idCotizacionDetalleProveedor=cdpd.idCotizacionDetalleProveedor";
 		$sql .= " WHERE cdpd.idCotizacionDetalle =" . $params['idCotizacionDetalle'];
 		$sql .= " AND cdp.idProveedor =" . $params['idProveedor'];
@@ -680,8 +680,6 @@ class M_Cotizacion extends MY_Model
 						'extension' => $row['extension'],
 						'idUsuarioReg' => $row['idUsuarioReg'],
 						'estado' => true,
-
-
 					];
 				}
 
@@ -852,7 +850,6 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['noTipoItem']) ? " AND ( cd.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
 		$filtros .= !empty($params['noOC']) ? " AND ocd.idOrdenCompraDetalle is null " : "";
 
-
 		$sql = "
 			SELECT
 			DISTINCT
@@ -926,7 +923,6 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";
 
-
 		$sql = "
 			SELECT
 				cd.idCotizacion,
@@ -990,7 +986,6 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 		$filtros .= !empty($params['anexo']) ? " AND cda.flag_anexo = 1 " : "";
 
-
 		$sql = "
 			SELECT
 			cd.idCotizacion,
@@ -1026,7 +1021,6 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['idCotizacion']) ? " AND c.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
 		$filtros .= !empty($params['anexo']) ? " AND cda.flag_anexo = 1 " : "";
 		$filtros .= !empty($params['idTipoArchivo']) ? " AND cda.idTipoArchivo = {$params['idTipoArchivo']} " : "";
-
 
 		$sql = "
 			SELECT
@@ -1097,7 +1091,7 @@ class M_Cotizacion extends MY_Model
 				cd.nombre,
 				c.idProveedor,
 				p.razonSocial,
-				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END  FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
+				(SELECT DISTINCT CASE WHEN costo IS NOT NULL AND costo <> 0 THEN 1 ELSE 0 END FROM compras.cotizacionDetalleProveedorDetalle WHERE idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor AND idItem = cd.idItem) respuestasProveedor
 			FROM
 				compras.cotizacionDetalleProveedor c
 				JOIN compras.cotizacionDetalleProveedorDetalle cdp ON cdp.idCotizacionDetalleProveedor = c.idCotizacionDetalleProveedor
@@ -1319,8 +1313,6 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 		}
 
-
-
 		return $this->resultado;
 	}
 
@@ -1438,7 +1430,6 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-
 	public function insertarCotizacionAnexos($data = [])
 	{
 		$insert = true;
@@ -1458,8 +1449,6 @@ class M_Cotizacion extends MY_Model
 				'flag_anexo' => true,
 			];
 		}
-
-
 
 		if (!empty($insertArchivos)) {
 			$insert = $this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
@@ -1728,14 +1717,10 @@ class M_Cotizacion extends MY_Model
 			}
 		}
 
-
-
-
 		if ($queryCotizacionDetalle) {
 			$this->resultado['query'] = $queryCotizacionDetalle;
 			$this->resultado['estado'] = true;
 			$this->resultado['id'] = $this->db->insert_id();
-
 
 			if (!empty($insertArchivos)) {
 				$this->db->insert_batch('compras.cotizacionDetalleArchivos', $insertArchivos);
@@ -1794,8 +1779,6 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 		}
 
-
-
 		return $this->resultado;
 	}
 
@@ -1826,12 +1809,8 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 		}
 
-
-
 		return $this->resultado;
 	}
-
-
 
 	public function obtenerGapEmpresas($params = [])
 	{
@@ -1858,22 +1837,14 @@ class M_Cotizacion extends MY_Model
 			$this->resultado['estado'] = true;
 		}
 
-
-
 		return $this->resultado;
 	}
-
-
 
 	public function obtenerCosto($params = [])
 	{
 
 		$filtros = "";
-
-
 		$filtros .= !empty($params['id']) ? " (" . $params['id'] . ")" : "";
-
-
 
 		$sql = "
 			DECLARE @fechaInicio date = getDate()-15, @fechaFin date = getDate(), @fechaHoy date = getDate();
@@ -1891,11 +1862,10 @@ class M_Cotizacion extends MY_Model
 			WHERE 1 = 1
 
 			 AND cd.idCotizacion IN {$filtros}
-	       AND General.dbo.fn_fechaVigente(@fechaHoy,
-	        ci.fechaVigencia,@fechaInicio,@fechaFin) = 1
-	        AND flag_actual = 1
-
-	     	), lst_tarifario_det AS(
+			AND General.dbo.fn_fechaVigente(@fechaHoy,
+			ci.fechaVigencia,@fechaInicio,@fechaFin) = 1
+			AND flag_actual = 1
+			), lst_tarifario_det AS(
 			SELECT
 			lt.CostoActual,
 			lt.Vigencia,
@@ -1910,8 +1880,8 @@ class M_Cotizacion extends MY_Model
 				, diasVigencia
 			FROM listTarifario lt
 		)
-	     SELECT
-	     ls.*,
+		SELECT
+		ls.*,
 		CASE WHEN ls.diasVigencia > 0 THEN 1 ELSE 0 END cotizacionInterna
 		FROM
 		lst_tarifario_det ls
@@ -2044,7 +2014,6 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 
 		$sql = "
-
 		SELECT
 				cd.idCotizacion,
 				cd.idItemTipo,
@@ -2225,19 +2194,19 @@ class M_Cotizacion extends MY_Model
 	public function infoHistorialCotizacionDescende($id)
 	{
 		$sql = 'select top (1) 
-                    auth.fechaReg as fechaRegistro,
-                    auth.horaReg as horaRegistro,
-                    cot.nombre as nombreCotizacion,
-                    cot.codCotizacion as codigoCotizacion,
-                    cot.fechaEmision as fechaCreacion,
-                    us.nombres as nombreUsuario,
-                    us.apePaterno as apellidoUsuario,
-                    est.nombre as nombreEstado
-                    from ImpactBussiness.compras.cotizacionEstadoHistorico auth
-                    inner join ImpactBussiness.compras.cotizacion cot on auth.idCotizacion = cot.idCotizacion
-                    inner join ImpactBussiness.compras.cotizacionEstado est on cot.idCotizacionEstado= est.idCotizacionEstado
-                    inner join ImpactBussiness.sistema.usuario us on auth.idUsuarioReg = us.idUsuario 
-                    where auth.idCotizacion = 586 order by idCotizacionEstadoHistorico DESC';
+				auth.fechaReg as fechaRegistro,
+				auth.horaReg as horaRegistro,
+				cot.nombre as nombreCotizacion,
+				cot.codCotizacion as codigoCotizacion,
+				cot.fechaEmision as fechaCreacion,
+				us.nombres as nombreUsuario,
+				us.apePaterno as apellidoUsuario,
+				est.nombre as nombreEstado
+				from ImpactBussiness.compras.cotizacionEstadoHistorico auth
+				inner join ImpactBussiness.compras.cotizacion cot on auth.idCotizacion = cot.idCotizacion
+				inner join ImpactBussiness.compras.cotizacionEstado est on cot.idCotizacionEstado= est.idCotizacionEstado
+				inner join ImpactBussiness.sistema.usuario us on auth.idUsuarioReg = us.idUsuario 
+				where auth.idCotizacion = 586 order by idCotizacionEstadoHistorico DESC';
 
 		return $this->db->query($sql)->result_array();
 	}
@@ -2269,16 +2238,14 @@ class M_Cotizacion extends MY_Model
 		}
 		$sql = "
 			select idCargoTrabajo,nombre from rrhh.dbo.CargoTrabajo where 1=1 AND flag=1 $filtro
-																			
-			   
 		";
 		return $this->db->query($sql);
 	}
 
-	public function getAll_Cargos()
+	public function getAll_Cargos($params = [])
 	{
 		$this->db
-			->select('ct.idCargoTrabajo, ct.nombre as cargo, e.idEmpresa, e.nombre as empresa, ISNULL(su.sueldo, 0) as sueldo', false)
+			->select("ct.idCargoTrabajo, ct.nombre + ' / ' + a.nombre as cargo, e.idEmpresa, e.nombre as empresa, ISNULL(su.sueldo, 0) as sueldo", false)
 			->from('rrhh.dbo.CargoTrabajo ct')
 			->join('rrhh.dbo.Area a', 'ct.idArea = a.idArea', 'INNER')
 			->join('rrhh.dbo.Empresa e', 'a.idEmpresa = e.idEmpresa', 'INNER')
@@ -2288,6 +2255,15 @@ class M_Cotizacion extends MY_Model
 			->order_by('ct.nombre');
 
 		$this->db->where('ct.flag', 1);
+		if (isset($params['idCuenta'])) $this->db->where('e.idEmpresa', $params['idCuenta']);
+		if (isset($params['soloCargosOcupados'])) $this->db->where("ct.idCargoTrabajo IN (
+				SELECT DISTINCT e.idCargoTrabajo 
+				FROM rrhh.dbo.empleado e
+				INNER JOIN rrhh.dbo.empleadoCargoTrabajo ec ON e.idEmpleado=ec.idEmpleado WHERE e.flag = 'activo' AND (
+					ec.fecFin is null
+					OR ec.fecFin >= GETDATE()
+				)
+			)");
 
 		return $this->db->get();
 	}
@@ -2303,10 +2279,7 @@ class M_Cotizacion extends MY_Model
 			)';
 		}
 		$sql = "
-			SELECT *,1025*0.1 asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro				
-   
- 
-		
+			SELECT *,1025*0.1 asignacionFamiliar FROM rrhh.dbo.sueldo WHERE 1=1 $filtro
 		";
 
 		return $this->db->query($sql);
@@ -2319,12 +2292,12 @@ class M_Cotizacion extends MY_Model
 				@fecha DATE = GETDATE()
 			SELECT *,SUM(total) OVER() total_final FROM (
 			SELECT 
-				  cc.idConcepto
+				cc.idConcepto
 				, cc.nombre
 				, cc.id_campo
 				, cc.grupo
 				, ccc.costo
-				, ccc.costo*$cantidad  as total
+				, ccc.costo*$cantidad as total
 			FROM 
 				rrhh.dbo.conceptosCotizacion cc
 				JOIN rrhh.dbo.conceptosCotizacionCosto ccc

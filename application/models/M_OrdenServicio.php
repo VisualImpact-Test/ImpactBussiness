@@ -70,8 +70,52 @@ class M_OrdenServicio extends MY_Model
 			->where('idOrdenServicio', $id)
 			->where('l.estado', 1)
 			->get();
-
 		return $query->row_array();
+	}
+
+	public function getAll_RRHHEmpleados($params = [])
+	{
+		$this->db
+			->select("*, e.idCargoTrabajo idDependiente, e.idEmpleado id, e.apePaterno + ' ' + e.apeMaterno + ' ' + e.nombres as value")
+			->from('rrhh.dbo.empleado e')
+			->join('rrhh.dbo.empleadoCargoTrabajo ec', 'e.idEmpleado=ec.idEmpleado', 'INNER');
+
+		if (isset($params['activo'])) $this->db->where('e.flag', 'activo')->group_start()->where('ec.fecFin is null')->or_where('ec.fecFin >= GETDATE()')->group_end();
+		$this->db->order_by('e.apePaterno, e.apeMaterno, e.nombres');
+
+		return $this->db->get();
+	}
+
+	public function getItemsCnPresupuesto($params = [])
+	{
+		$this->db->where('estado', 1);
+		$this->db->where('idTipoPresupuestoDetalle is not null');
+
+		if (isset($params['idTipoPresupuestoDetalle'])) $this->db->where('idTipoPresupuestoDetalle', $params['idTipoPresupuestoDetalle']);
+
+		if (isset($params['idCuenta'])) {
+			$this->db->group_start()->where('idCuenta', $params['idCuenta'])->or_where('idCuenta is null')->or_where('idCuenta', 0)->group_end();
+		} else {
+			$this->db->group_start()->where('idCuenta is null')->or_where('idCuenta', 0)->group_end();
+		}
+
+		return $this->db->get('compras.item');
+	}
+	public function itemPrecios()
+	{
+		$data = $this->db
+			->or_group_start()
+			->where('fechaVigencia >=', date('Y-m-d'))
+			->or_where('fechaVigencia is null')
+			->or_where('fechaVigencia', '')
+			->group_end()
+			->get_where('compras.itemTarifario', ['estado' => 1, 'flag_actual' => 1])->result_array();
+
+		$rpta = [];
+		foreach ($data as $v) {
+			$rpta[$v['idItem']] = $v;
+		}
+		return $rpta;
 	}
 
 	public function getOrdenServicioCargo($id)

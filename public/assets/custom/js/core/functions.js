@@ -47,8 +47,6 @@ var Fn = {
 			modal += "</div>";
 
 			$("body").append(modal);
-
-
 			$("#lk-modal").attr("data-target", "#modal-loading");
 			$("#lk-modal").click();
 
@@ -240,11 +238,9 @@ var Fn = {
 		});
 	},
 
-
 	validateForm: function (config) {
 		var result = false;
 		var a = $.Deferred();
-
 
 		var id = config.id;
 
@@ -301,7 +297,6 @@ var Fn = {
 		return a.promise();
 
 	},
-
 
 	validateInputOneFull: function (id, input, title) {
 		var a = $.Deferred();
@@ -1077,8 +1072,6 @@ var Fn = {
 						$('.filtros_' + a.data.grupoCanal).removeClass('d-none');
 						$('.filtros_' + a.data.grupoCanal).find('select').attr('disabled', false);
 					}
-
-
 				}
 
 				if (a.result == 0) {
@@ -1131,7 +1124,6 @@ var Fn = {
 				a.resolve(false);
 			}
 		});
-
 
 		return a.promise();
 	},
@@ -1441,7 +1433,6 @@ var Fn = {
 			}
 		});
 
-
 		$('select.dropdown.parentDependiente').dropdown({
 			onChange: function (noc) {
 				let childDependiente = $(this).data('childdependiente');
@@ -1521,6 +1512,29 @@ var Fn = {
 		return (a * b) / (commonMultiplier * commonMultiplier);
 	},
 
+	buscarParaMultiplicar: function (t, closest, multiplicar, posResultado) {
+		let control = $(t);
+		let div = control.closest(closest);
+
+		total = $(t).val();
+		$.each(multiplicar.split(','), function (k, v) {
+			total = total * div.find(v).val();
+		});
+
+		div.find(posResultado).val(total.toFixed(2)).change();
+	},
+
+	buscarParaReemplazar: function (t, closest, data, posResultado) {
+		let control = $(t);
+		let div = control.closest(closest);
+
+		if (control[0].localName == 'select') {
+			$.each(data.split(','), function (k, v) {
+				d = control.find('option:selected').data(v);
+				div.find(posResultado.split(',')[k]).val(d).change();
+			});
+		}
+	},
 	getBase64: function (file) {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();

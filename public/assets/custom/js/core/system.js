@@ -102,7 +102,9 @@ const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
 const moneyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
 	currency: 'PEN',
-
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 4
+	
 	// These options are needed to round to whole numbers if that's what you want.
 	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
 	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
@@ -223,7 +225,6 @@ var View = {
 
 		$('.hide-parent').parent().hide();
 
-
 		$("#btn-toggle-menu").click(function (e) {
 			e.preventDefault();
 			var control = $(this);
@@ -263,7 +264,7 @@ var View = {
 			}
 		});
 
-		$(document).on('keyup paste', '.onlyNumbers', function (e) {
+		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
 			let cadenaAnalizar = $(this).val();
 			let control = $(this);
@@ -276,7 +277,7 @@ var View = {
 			let nmax = Number(control.data('max'));
 			if (nmax > 0) {
 				if (control.val() > nmax) {
-					$(this).val(nmax);
+					$(this).val(nmax).change();
 				}
 			}
 
@@ -288,10 +289,20 @@ var View = {
 				}
 			}
 
-
 			if (Fn.validators['numeros']['expr'].test(control.val())) {
 				e.preventDefault();
 			}
+		});
+		$(document).on('paste', '.onlyNumbers', function (e) {
+			t = $(this);
+			setTimeout(function () {
+				if(isNaN(parseFloat($(e.currentTarget).val()))){
+					alert('No número');
+					t.val('0').change();
+				}else{
+					t.keyup();
+				}
+			}, 0);
 		});
 
 		$(document).on('keypress', '.onlyNumbers', function (e) {
@@ -303,6 +314,11 @@ var View = {
 		$(document).on('keyup', '.keyUpChange', function (e) {
 			let control = $(this);
 			control.change();
+		});
+		$(document).on('focusout', '.onlyNumbers', function (e) {
+			if ($(this).val() == '') {
+				$(this).val('0').change();
+			}
 		});
 
 		$('.navbar-toggler').click(function (e) {
@@ -338,7 +354,6 @@ var View = {
 		// $('.ui.my_calendar').calendar({
 
 		// });
-
 
 		$('.my_select2Full').select2({
 			width: '100%',
@@ -664,7 +679,6 @@ var View = {
 			$('select[name="sl-banner"]').html(Fn.selectOption('banner', [idCadena])).selectpicker('refresh');
 		});
 
-
 		$('input[name="txt-fechas"]').daterangepicker({
 			locale: {
 				"format": "DD/MM/YYYY",
@@ -678,8 +692,6 @@ var View = {
 			showDropdowns: false,
 			autoApply: true,
 		});
-
-
 
 		$('.rango_fechas').daterangepicker({
 			locale: {
@@ -708,7 +720,6 @@ var View = {
 			showDropdowns: false,
 			autoApply: true,
 		});
-
 
 		/***********EVENTOS ADICIONALES*********/
 		if ($('.btnCollapse').length > 0) {
@@ -1412,27 +1423,30 @@ var View = {
 		$(document).on("change", '.parentDependienteSemantic', function (e) {
 			e.preventDefault();
 			let control = $(this);
-			let childDependiente = control.find('select').data('childdependiente');
-			let idParent = control.dropdown('get value');
+			let nameChildDependiente = control.find('select').data('childdependiente');
+			let childDependiente = $(nameChildDependiente);
+			if (typeof control.find('select').data('closest') !== 'undefined') {
+				childDependiente = control.closest(control.find('select').data('closest')).find(nameChildDependiente).find('select');
+			}
 
-			$("#" + childDependiente).dropdown('clear');  
-			$("#" + childDependiente).dropdown('destroy');
-			$("#" + childDependiente).closest('.dropdown').find('.menu.transition.hidden').remove();
-			$("#" + childDependiente).dropdown({
+			let idParent = control.dropdown('get value');
+			childDependiente.dropdown('clear');
+			childDependiente.dropdown('destroy');
+			childDependiente.closest('.dropdown').find('.menu.transition.hidden').remove();
+			childDependiente.dropdown({
 				className: { 'item': 'item d-none' }
 			});
-
-			$("#" + childDependiente + ' option').each(function () {
+			childDependiente.find('option').each(function () {
 				valorOpt = $(this).val();
 				if ($(this).data('parentdependiente') == idParent) {
-					$("#" + childDependiente).closest('.childdependienteSemantic').find('.menu').find('.item').each(function () {
-						if ($(this).data('value') == valorOpt){
+					childDependiente.closest('.childdependienteSemantic').find('.menu').find('.item').each(function () {
+						if ($(this).data('value') == valorOpt) {
 							$(this).removeClass('d-none')
 						}
 					})
 				}
 			})
-			$("#" + childDependiente).closest('.childdependienteSemantic').removeClass('read-only');
+			childDependiente.closest('.childdependienteSemantic').removeClass('read-only');
 		});
 	},
 	toast: (config = {}) => {
@@ -1476,7 +1490,7 @@ var View = {
 
 		var html = '';
 		html += `<div class="toast toast-${toastId}" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="10000" data-delay="${config['time']}">`;
-		html += `<div class="toast-header ${config['titleClass']}  text-white">`;
+		html += `<div class="toast-header ${config['titleClass']} text-white">`;
 		html += `<img src="../public/assets/images/icono.png" class="rounded mr-1" alt="..." style= "height: 20px !important">`;
 		html += `<strong class="mr-auto">${config['title']}</strong>`;
 		html += `<small>Hace un momento</small>`;
@@ -1552,7 +1566,7 @@ var View = {
 		var html = '';
 		html += "<form id='frm-clave' class='form-horizontal' role='form' action='control/clave'>";
 		html += "<div class='row'>";
-		html += "<div class='col-sm-12 col-md-10  col-md-offset-1'>";
+		html += "<div class='col-sm-12 col-md-10 col-md-offset-1'>";
 		html += "<div class='form-group'>";
 		html += "<label class='col-lg-5 control-label'>Clave Actual</label>";
 		html += "<div class='input-group col-lg-5'>";
@@ -1592,14 +1606,10 @@ var View = {
 		$("#lb-num-rows").html('Resultados: ' + $('.table >tbody >tr').length);
 	},
 
-
-
 }
 View.load()
 
 var Global = {
-
-
 	fechaHoraString: function () {
 		var dt = new Date();
 		var day = dt.getDate();
@@ -1677,7 +1687,6 @@ var Global = {
 		return arr_date[2] + '/' + arr_date[1] + '/' + arr_date[0];
 	}
 }
-
 
 var ExportarExcel = {
 
@@ -1870,7 +1879,7 @@ var File = {
 					File.data = results.data;
 					//
 					var idEncuesta = $('#' + Procesar.idFormEdit + ' select[name=idEncuesta_]').val();
-					var select_ = '<option  value="" >-- Ninguno --</option>';
+					var select_ = '<option value="" >-- Ninguno --</option>';
 					if (typeof (pregunta_select[idEncuesta]) == 'object') {
 						$.each(pregunta_select[idEncuesta], function (i, v) {
 							select_ += '<option value="' + i + '">' + v + '</option>';
@@ -1895,7 +1904,7 @@ var File = {
 								html += '<tr>';
 								var head = value[0].split(',');
 								$.each(head, function (ix_, value_) {
-									html += '<td><select class="form-control input-xs" name="sl_pregunta_' + ix_ + '" title="-- Ninguno --" data-actions-box="true" data-live-search="true" patron="requerido"  >' + select_ + '</select ></td>';
+									html += '<td><select class="form-control input-xs" name="sl_pregunta_' + ix_ + '" title="-- Ninguno --" data-actions-box="true" data-live-search="true" patron="requerido">' + select_ + '</select ></td>';
 								});
 								html += '</tr>';
 								html += '<tr>';

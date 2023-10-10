@@ -67,11 +67,6 @@ var Item = {
 			}
 		});
 		$(document).on('click', '.btn-descargarTarifario', function () {
-			// let idOper = $(this).closest('tr').data('idoper');
-			// if (idOper==undefined) {
-			// 	idOper = $(this).data('idoper');
-			// }
-			// let data = { idOper };
 			let jsonString = { 'data': JSON.stringify({}) };
 			Fn.download(site_url + Item.url + 'descargarTarifarioPDF', jsonString);
 		});
@@ -134,7 +129,6 @@ var Item = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			console.log(id);
 			let data = { 'idItem': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -196,7 +190,6 @@ var Item = {
 			var control = $(this);
 
 			var data = control.data();
-			// var frm = frmLiveAuditoria;
 
 			var id = '';
 			var nameImg = '';
@@ -268,15 +261,15 @@ var Item = {
 							fileApp += '<div class="ui fluid image content-lsck-capturas">';
 							fileApp += `<div class="ui sub header">${fileBase.name}</div>`;
 							fileApp += `
-                                        <div class="ui dimmer dimmer-file-detalle">
-                                            <div class="content">
-                                                <p class="ui tiny inverted header">${fileBase.name}</p>
-                                            </div>
-                                        </div>`;
+											<div class="ui dimmer dimmer-file-detalle">
+												<div class="content">
+													<p class="ui tiny inverted header">${fileBase.name}</p>
+												</div>
+											</div>`;
 							fileApp += '<a class="ui red right ribbon label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-							fileApp += '<input type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
-							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
-							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += '<input type="hidden" name="' + name + '[' + id + ']" value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']" value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']" value="' + fileBase.name + '">';
 							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
 							fileApp += '</div>';
 
@@ -460,7 +453,6 @@ var Item = {
 		Item.idImagenesAnular.push(id);
 		var control = $(t).parents('.figure');
 		control.remove();
-		console.log(Item.idImagenesAnular);
 	},
 	actualizarAutocomplete: function () {
 

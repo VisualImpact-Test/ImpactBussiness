@@ -35,7 +35,7 @@
 					</div>
 					<div class="five wide field divCu <?= $utilizaCli ? 'd-none' : ''; ?>">
 						<div class="ui sub header">Cuenta</div>
-						<select class="ui dropdown clearable semantic-dropdown parentDependienteSemantic" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente="cboCentroCosto">
+						<select class="ui dropdown clearable semantic-dropdown parentDependienteSemantic" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente="#cboCentroCosto">
 							<?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 						</select>

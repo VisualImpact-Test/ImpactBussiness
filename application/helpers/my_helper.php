@@ -19,21 +19,19 @@ function refactorizarDataHT($data = [])
 	return !empty($dataRefactorizada) ? $dataRefactorizada : [];
 }
 
-
-
 function fn_404()
 {
 	$config['css']['style'] = array();
 	$config['single'] = true;
 	$config['view'] = 'templates/404';
-	$this->view($config);
+	// $this->view($config);
 }
 
 function checkPassword($password)
 {
 	$uppercase = preg_match('@[A-Z]@', $password);
 	$lowercase = preg_match('@[a-z]@', $password);
-	$number    = preg_match('@[0-9]@', $password);
+	$number = preg_match('@[0-9]@', $password);
 
 	if (!$uppercase || !$lowercase || !$number || strlen($password) < 8) {
 		return false;
@@ -721,7 +719,7 @@ function getFiltros($get = array())
 		$attr = array($id, $class, $name);
 		$attr = implode(' ', $attr);
 
-		$selectHtml .= '<select ' . $attr . ' required ' . $multiple . '  >';
+		$selectHtml .= '<select ' . $attr . ' required ' . $multiple . ' >';
 		if ($label) {
 			$selectHtml .= '<option value="">-- ' . ($label) . ' --</option>';
 		}
@@ -847,7 +845,7 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		<hr>
 		<p style="margin: 0;float:left;text-align:justify;">Aviso: Este mensaje , así como los archivos adjuntos, ha sido elaborado únicamente para uso de la persona o entidad a la que es remitido, ya que puede contener información confidencial. Si el lector de este mensaje no es el destinatario señalado, le indicamos que cualquier divulgación , retransmisión o copia de esta comunicación, está estrictamente prohibida. Si Usted ha recibido esta comunicación por error , por favor sírvase informarlo de inmediato al remitente del correo electrónico y borrar inmediatamente el mensaje original.<br><br> Finalmente se deja establecido que el mensaje remitido a través de nuestro servidor de correo en caso no se refiera a información con nuestro giro profesional y propósitos del mismo, deberá entenderse como la opinión del remitente, bajo responsabilidad individual de éste, y sin que involucre o comprometa a nuestra organización con dicha opinión o comentario.</p>
 		<img src="https://s3.us-central-1.wasabisys.com/impact.business/email/WhatsApp%20Image%202022-06-14%20at%2010.49.59%20AM.jpeg" style="margin-top:10px;width: 150px;float:right;padding: 0.5rem;">
-    	</div>',
+		</div>',
 		'noResultados' => '<div class="alert alert-warning m-3 noResultado" role="alert">
 									<i class="fal fa-exclamation-triangle"></i> No se ha generado ningún registro.
 								</div>',
@@ -861,15 +859,15 @@ function getMensajeGestion($tipoMensaje, $input = [])
 								<i class="fas fa-check"></i> El registro se realizó correctamente.
 							</div>',
 		'noCuentaProyecto' => '<div class="alert alert-warning m-3 noResultado" role="alert">
-                                <i class="fal fa-exclamation-triangle"></i> Seleccione una Cuenta y/o Proyecto para realizar consultas.
-                            </div>',
+								<i class="fal fa-exclamation-triangle"></i> Seleccione una Cuenta y/o Proyecto para realizar consultas.
+							</div>',
 		'custom' => '<div class="' . (!empty($input['class']) ? $input['class'] : '') . '" role="alert">
 							<i class="' . (!empty($input['icono']) ? $input['icono'] : '') . '"></i> ' . (!empty($input['message']) ? $input['message'] : '') . '.
 						</div>',
 		'oops' => '
 				<div id="notfound">
 					<div class="notfound">
-						<div class="notfound-404">  <h1>Oops!</h1> </div>
+						<div class="notfound-404"> <h1>Oops!</h1> </div>
 						<h2>Error - Acceso denegado</h2>
 						<p>Asegúrese de estar en el proyecto correcto.</p>
 						<a href="../home">Volver al inicio</a>
@@ -911,7 +909,7 @@ function verificarValidacionesBasicas($elementosAValidar, $datos)
 				case 'claveOchoDigitosAlfanumerico':
 					$uppercase = preg_match('@[A-Z]@', $valor);
 					$lowercase = preg_match('@[a-z]@', $valor);
-					$number    = preg_match('@[0-9]@', $valor);
+					$number = preg_match('@[0-9]@', $valor);
 					if (!$uppercase || !$lowercase || !$number || strlen($valor) < 8) $validaciones[$idElemento][] = 'La clave debe contener mayúsculas, minúsculas, números y debe ser de al menos 8 carácteres de longitud.';
 					break;
 				case 'email':
@@ -1112,7 +1110,6 @@ function get_fecha_larga($date)
 	$nombreDia = '';
 	$nombreMes = '';
 
-
 	$fecha_ = strtotime($date);
 	$dia = date('d', $fecha_);
 	$year = date('Y', $fecha_);
@@ -1121,68 +1118,67 @@ function get_fecha_larga($date)
 
 	switch ($dateDesc) {
 		case 'Sunday':
-			$nombreDia =  "Domingo";
+			$nombreDia = "Domingo";
 			break;
 		case 'Monday':
-			$nombreDia =  "Lunes";
+			$nombreDia = "Lunes";
 			break;
 		case 'Tuesday':
-			$nombreDia =  "Martes";
+			$nombreDia = "Martes";
 			break;
 		case 'Wednesday':
-			$nombreDia =  "Miércoles";
+			$nombreDia = "Miércoles";
 			break;
 		case 'Thursday':
-			$nombreDia =  "Jueves";
+			$nombreDia = "Jueves";
 			break;
 		case 'Friday':
-			$nombreDia =  "Viernes";
+			$nombreDia = "Viernes";
 			break;
 		case 'Saturday':
-			$nombreDia =  "Sábado";
+			$nombreDia = "Sábado";
 			break;
 	}
 
 	$dateDesc = date('n', $fecha_);
 	switch ($dateDesc) {
 		case 1:
-			$nombreMes =  "Enero";
+			$nombreMes = "Enero";
 			break;
 		case 2:
-			$nombreMes =  "Febrero";
+			$nombreMes = "Febrero";
 			break;
 		case 3:
-			$nombreMes =  "Marzo";
+			$nombreMes = "Marzo";
 			break;
 		case 4:
-			$nombreMes =  "Abril";
+			$nombreMes = "Abril";
 			break;
 		case 5:
-			$nombreMes =  "Mayo";
+			$nombreMes = "Mayo";
 			break;
 		case 6:
-			$nombreMes =  "Junio";
+			$nombreMes = "Junio";
 			break;
 		case 7:
-			$nombreMes =  "Julio";
+			$nombreMes = "Julio";
 			break;
 		case 8:
-			$nombreMes =  "Agosto";
+			$nombreMes = "Agosto";
 			break;
 		case 9:
-			$nombreMes =  "Setiembre";
+			$nombreMes = "Setiembre";
 			break;
 		case 10:
-			$nombreMes =  "Octubre";
+			$nombreMes = "Octubre";
 			break;
 		case 11:
-			$nombreMes =  "Noviembre";
+			$nombreMes = "Noviembre";
 			break;
 		case 12:
-			$nombreMes =  "Diciembre";
+			$nombreMes = "Diciembre";
 			break;
 	}
-
 
 	$fechaDescripcion = $nombreDia . ' ' . $dia . ' de ' . $nombreMes . ' del ' . $year;
 	return $fechaDescripcion;
@@ -1252,9 +1248,9 @@ function htmlTableValueArray($params)
 		foreach ($cabecera as $kh => $vh) {
 			$value = $v[$kh];
 			$class = empty($params['classP']) ? '' : ($params['classP'] . $kh);
-			if (!empty($vh))  $html .= "<td>";
+			if (!empty($vh)) $html .= "<td>";
 			$html .= "<input class='$class' type='hidden' name='$kh' value=\"$value\">";
-			if (!empty($vh))  $html .= "$value</td>";
+			if (!empty($vh)) $html .= "$value</td>";
 		}
 		$html .= '</tr>';
 	}
@@ -1265,7 +1261,7 @@ function htmlTableValueArray($params)
 function htmlSelectOptionArray2($params = [])
 {
 
-	!empty($params['simple']) ?  $html = '' : $html = '<option value="">-- Seleccione --</option>';
+	!empty($params['simple']) ? $html = '' : $html = '<option value="">-- Seleccione --</option>';
 	!empty($params['query']) ? $query = $params['query'] : $query = [];
 	!empty($params['selected']) ? $idSelected = $params['selected'] : $idSelected = '';
 	!empty($params['title']) ? $html = '<option value="">' . $params['title'] . '</option>' : $html = '';
@@ -1295,7 +1291,7 @@ function htmlSelectOptionArray2($params = [])
 		}
 
 		$idDependiente = "";
-		$data_option =  '';
+		$data_option = '';
 		if (!empty($f[$idDependienteTermino])) {
 			$idDependiente = ' data-parentDependiente="' . $f[$idDependienteTermino] . '" style="display: none;"';
 		}
@@ -1320,7 +1316,7 @@ function htmlSelectOptionArray2($params = [])
 function generarCorrelativo($num, $max_cifras)
 {
 
-	$cifras = $max_cifras  - (strlen($num));
+	$cifras = $max_cifras - (strlen($num));
 	$cadena = '';
 	for ($i = 0; $i < $cifras; $i++) {
 		$cadena .= '0';
@@ -1582,9 +1578,8 @@ function getSegmentacion($input = [])
 
 				); //Columnas para la vista
 
-
 				//Columnas para la consulta a base de datos
-				$columnas_bd  .= '
+				$columnas_bd .= '
 						, d.nombre AS distribuidora
 						, ubi1.provincia AS ciudadDistribuidoraSuc
 						, ubi1.cod_ubigeo AS codUbigeoDisitrito
@@ -1645,7 +1640,7 @@ function getSegmentacion($input = [])
 				); //Columnas para la vista
 
 				//Columnas para la consulta a base de datos
-				$columnas_bd  .= '
+				$columnas_bd .= '
 						, cad.idCadena
 						, ba.idBanner
 						, ba.nombre AS banner
@@ -1709,7 +1704,6 @@ function getPermisosUsuario($params = [])
 		}
 		$string = implode(",", $arr);
 	}
-
 
 	return $string;
 }
@@ -1778,7 +1772,7 @@ function distance($lat1, $lon1, $lat2, $lon2, $unit)
 		return 0;
 	} else {
 		$theta = $lon1 - $lon2;
-		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
 		$dist = acos($dist);
 		$dist = rad2deg($dist);
 		$miles = $dist * 60 * 1.1515;
@@ -1944,7 +1938,7 @@ function checkAndConvertToArray($variable)
 function validarTiempoLimite($tiempoInicio, $tiempoFinal)
 {
 	$tiempoInicio = new \DateTime($tiempoInicio);
-	$tiempoFinal   = new \DateTime($tiempoFinal);
+	$tiempoFinal = new \DateTime($tiempoFinal);
 
 	$diferencia = (array) $tiempoFinal->diff($tiempoInicio);
 

@@ -1,5 +1,5 @@
 <div class="fields">
-	<?php if ($documentosCargados) :  ?>
+	<?php if ($documentosCargados) : ?>
 		<div class="five wide field divDocumento">
 			<div class="ui sub header">Documento</div>
 			<select class="ui dropdown cboDocumento" name="idDocumento" patron="requerido">
@@ -7,7 +7,7 @@
 			</select>
 			<input type="hidden" name="nroDocumento">
 		</div>
-	<?php else :  ?>
+	<?php else : ?>
 		<div class="five wide field">
 			<div class="ui sub header">Documento</div>
 			<input type="hidden" name="idDocumento" value="0">
@@ -26,7 +26,7 @@
 			<?= htmlSelectOptionArray2(["title" => "Seleccione", "id" => "idPersonal", "value" => "nombre", "query" => $persona, "class" => "text-titlecase", "idDependiente" => "idArea"]); ?>
 		</select>
 	</div>
-	<?php if ($documentosCargados) :  ?>
+	<?php if ($documentosCargados) : ?>
 		<div class="one wide field">
 			<div class="ui sub header text-white">.</div>
 			<a class="ui button botonDescarga" target="_blank"><i class="download icon"></i></a>

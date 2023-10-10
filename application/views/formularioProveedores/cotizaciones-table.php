@@ -131,14 +131,13 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text">S/ </span>
 									</div>
-									<input class="form-control onlyNumbers d-none" placeholder="costo" id="costo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" name="costoUnitario" value="<?= verificarEmpty($row['costoUnitario'], 2) ?>" onchange="FormularioProveedores.calcularTotal(<?= ($k + 1) ?>,<?= $row['cantidad'] ?>,value, this);" patron="requerido">
-									<input class="form-control onlyNumbers" placeholder="costo" id="costoredondo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" value="<?= number_format(verificarEmpty($row['costoUnitario'], 2), 2, '.', '') ?>" onchange="FormularioProveedores.calcularTotal(<?= ($k + 1) ?>,<?= $row['cantidad'] ?>,value, this); $('#costo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>').val(value);">
+									<input class="form-control onlyNumbers d-none" placeholder="costo" id="costo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" name="costoUnitario" value="<?= verificarEmpty($row['costoUnitario'], 4) ?>" onchange="FormularioProveedores.calcularTotal(<?= ($k + 1) ?>,<?= $row['cantidad'] ?>,value, this);" patron="requerido">
+									<input class="form-control onlyNumbers" placeholder="costo" id="costoredondo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" value="<?= number_format(verificarEmpty($row['costoUnitario'], 2), 4, '.', '') ?>" onchange="FormularioProveedores.calcularTotal(<?= ($k + 1) ?>,<?= $row['cantidad'] ?>,value, this); $('#costo_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>').val(value);">
 								</div>
 								<small id="msgCosto_<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" class="form-text text-muted d-none">
 									Costo promedio calculado del detalle
 									Valor redondeado
 								</small>
-
 							</div>
 							<div class="form-group">
 								<h4 class="mb-1">Total</h4>
@@ -146,7 +145,7 @@
 									<div class="input-group-prepend">
 										<span class="input-group-text">S/ </span>
 									</div>
-									<input class="form-control" name="costo" value="<?= number_format(verificarEmpty($row['cantidad'], 2) * verificarEmpty($row['costoUnitario'], 2), 2, '.', '') ?>" id="valorTotal<?= ($k + 1) ?>" readonly>
+									<input class="form-control" name="costo" value="<?= number_format(verificarEmpty($row['cantidad'], 2) * verificarEmpty($row['costoUnitario'], 2), 4, '.', '') ?>" id="valorTotal<?= ($k + 1) ?>" readonly>
 								</div>
 							</div>
 						</div>

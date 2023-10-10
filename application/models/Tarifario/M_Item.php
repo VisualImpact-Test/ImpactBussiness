@@ -217,16 +217,11 @@ class M_Item extends MY_Model
 		return $this->resultado;
 	}
 
-
 	//Obtener proveedor no repetido - agregado
-
 	public function obtenerProveedorNoRepetido($paramas = [])
 	{
-
 		$filtros = "";
-
 		$filtros .= !empty($paramas['proveedor']) ? ' AND p.idProveedor = ' . $paramas['proveedor'] : '';
-
 
 		$sql = "
 			SELECT DISTINCT	
@@ -257,8 +252,6 @@ class M_Item extends MY_Model
 
 	public function obteneFlagNoRepetido()
 	{
-
-
 		$sql = "
 		SELECT DISTINCT
 
@@ -271,7 +264,6 @@ class M_Item extends MY_Model
 			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			WHERE 1 = 1
-			
 		";
 
 		$query = $this->db->query($sql);
@@ -284,7 +276,6 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
-
 
 	public function obtenerItems()
 	{
@@ -301,8 +292,6 @@ class M_Item extends MY_Model
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];
 		return $result;
 	}
-
-
 
 	public function validarExistenciaItemTarifario($params = [])
 	{
@@ -333,13 +322,10 @@ class M_Item extends MY_Model
 	{
 		$filtros = "";
 		$nombre = "";
-
-
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem != ' . $params['idItem'] : '';
 
 		foreach ($params as $key => $value) {
 		}
-
 
 		$sql = "
 			SELECT
@@ -413,7 +399,6 @@ class M_Item extends MY_Model
 
 		return $this->resultado;
 	}
-
 
 	public function obtenerItemsFotos($params = [])
 	{

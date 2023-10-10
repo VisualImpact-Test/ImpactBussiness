@@ -1359,7 +1359,6 @@ class FormularioProveedor extends MY_Controller
 			$post[$k] = $v;
 		}
 
-
 		// $post['proveedor'] = json_decode($post['data'], true)['proveedor'];
 		$post['enlaces'] = explode(chr(10), json_decode($post['data'], true)['enlaces']);
 		$ids_insert = [];

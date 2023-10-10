@@ -436,7 +436,7 @@
 									</button>
 								</div>
 							<?php endif; ?>
-							
+
 							<div class="fields datosTable pt-5">
 								<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
 							</div>
@@ -557,7 +557,7 @@
                                     </div> -->
 									<div class="ui right action right labeled input">
 										<label for="amount" class="ui label">S/</label>
-										<input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo']) : '' ?>" readonly>
+										<input class="costoFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? moneda($row['costo'], false, 4) : '' ?>" readonly>
 										<input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
 									</div>
 								</div>
@@ -586,7 +586,7 @@
 									<div class="ui sub header">Subtotal</div>
 									<div class="ui right labeled input">
 										<label for="amount" class="ui label teal">S/</label>
-										<input class=" subtotalFormLabel" type="text" placeholder="0.00" patron="requerido" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal']) : '' ?>" readonly>
+										<input class=" subtotalFormLabel" type="text" placeholder="0.00" patron="requerido" value="<?= !empty($row['subtotal']) ? moneda($row['subtotal'], false, 4) : '' ?>" readonly>
 										<input class=" subtotalForm" type="hidden" patron="requerido" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>" readonly>
 
 										<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">

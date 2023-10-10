@@ -759,7 +759,7 @@ var Cotizacion = {
 			var total_sueldos = (parseFloat(total) + parseFloat(asignacionFamiliar)) * cantidad;
 			var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 			var total_final_costo = total_sueldos + parseFloat(total_adicionales);
-			$('.costoForm').val(total_final_costo.toFixed(2))
+			$('.costoForm').val(total_final_costo.toFixed(4))
 		});
 
 		$(document).on("keyup", ".cantidad_personal", function () {
@@ -815,7 +815,7 @@ var Cotizacion = {
 			var total_sueldos = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal)) * parseFloat(cantidad);
 			var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 			var total_final_costo = parseFloat(total_sueldos) + parseFloat(total_adicionales);
-			$('.costoForm').val(total_final_costo.toFixed(2))
+			$('.costoForm').val(total_final_costo.toFixed(4))
 		})
 
 
@@ -857,7 +857,7 @@ var Cotizacion = {
 			var total_sueldos = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal)) * parseFloat(cantidad);
 			var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 			var total_final_costo = parseFloat(total_sueldos) + parseFloat(total_adicionales);
-			$('.costoForm').val(total_final_costo.toFixed(2))
+			$('.costoForm').val(total_final_costo.toFixed(4))
 		})
 
 
@@ -889,7 +889,7 @@ var Cotizacion = {
 			var total_sueldos = (parseFloat(total) + parseFloat(asignacionFamiliar)) * cantidad;
 			var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 			var total_final_costo = total_sueldos + parseFloat(total_adicionales);
-			$('.costoForm').val(total_final_costo.toFixed(2))
+			$('.costoForm').val(total_final_costo.toFixed(4))
 		});
 
 
@@ -1228,14 +1228,12 @@ var Cotizacion = {
 
 			// let enteroSuperior = Math.ceil(costo);
 			// let flagRedondear = flagRedondearForm.val();
-
 			// if (flagRedondear == 1) costo = enteroSuperior;
 
 			let gap = Number(thisControl.val());
 			let precio = (costo + (costo * (gap / 100)));
 			let subTotal = Fn.multiply(cantidad, precio);
-
-			precioForm.val(precio.toFixed(2));
+			precioForm.val(precio.toFixed(4));
 			precioFormLabel.val(moneyFormatter.format(precio));
 
 			let enteroSuperior = Math.ceil(subTotal);
@@ -2291,7 +2289,7 @@ var Cotizacion = {
 					var total_sueldos = ((parseFloat(a.sueldo) + parseFloat(a.asignacionFamiliar) + parseFloat(a.incentivo)) + (parseFloat(essalud) + parseFloat(cts) + parseFloat(vacaciones) + parseFloat(gratificacion) + parseFloat(seguroVidaLey))) * cantidad;
 					var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 					var total_final_costo = total_sueldos + parseFloat(total_adicionales);
-					$('.costoForm').val(total_final_costo.toFixed(2))
+					$('.costoForm').val(total_final_costo.toFixed(4))
 				});
 
 
@@ -2436,7 +2434,7 @@ var Cotizacion = {
 
 			vt += parseFloat(Number(cc)) * parseFloat(Number(cd)) * parseFloat(Number(cm));
 		}
-		control.closest('.body-item').find('.costoForm').val(vt.toFixed(2));
+		control.closest('.body-item').find('.costoForm').val(vt.toFixed(4));
 		control.closest('.body-item').find('.cantidadForm').keyup();
 
 	},
@@ -2521,7 +2519,7 @@ var Cotizacion = {
 						</tr>
 					</tfoot>
 				`);
-				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(2));
+				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(4));
 				Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
 			} else {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });

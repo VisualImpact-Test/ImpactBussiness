@@ -99,15 +99,25 @@ var OrdenServicio = {
 				td = $('td.cantidadDeTabla');
 				for (let i = 0; i < td.length; i++) {
 					split = $(td[i]).closest('tr').find('td.splitDetalle').find('input').val();
-					valorCalc = cantidad * parseFloat(split);
-					valorCalc = Math.ceil(valorCalc);
-					$(td[i]).find('.ui.action.input').find('input').val(valorCalc).trigger('change');
+					// valorCalc = cantidad * parseFloat(split);
+					// valorCalc = Math.ceil(valorCalc);
+					$(td[i]).find('.ui.action.input').find('input').trigger('change');
 				}
 				$('.tabTiposPresupuestos').removeClass('disabled');
 			} else {
 				$('.tabTiposPresupuestos').addClass('disabled');
 			}
 		})
+
+		$(document).on('change', '.cntColmFC', function () {
+			td = $('td.cantidadDeTabla');
+			for (let i = 0; i < td.length; i++) {
+				split = $(td[i]).closest('tr').find('td.splitDetalle').find('input').val();
+				$(td[i]).find('.ui.action.input').find('input').trigger('change');
+			}
+			$('#tablaSueldo tbody tr input.keyUpChange:first').change();
+		})
+
 		$(document).on('click', '.btn-editar', function () {
 			++modalId;
 
@@ -148,6 +158,9 @@ var OrdenServicio = {
 			$(txtPrecio).val(precio).trigger('change');
 			$(txtSplit).val(split).trigger('change');
 			$(cboFrecuencia).val(frecuencia).trigger('change');
+
+			let nrofila = control.closest('tr').data('nrofila');
+			control.closest('tbody').find('tr.cantidadElementos_' + nrofila).find('table').find('tbody').html('');
 		})
 		$(document).on('click', '.btnPresupuesto', function () {
 			++modalId;
@@ -166,13 +179,16 @@ var OrdenServicio = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroPresupuesto", fn: "OrdenServicio.registrarPresupuesto()", content: "¿Esta seguro de registrar el resupuesto?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '98%' });
 
 				OrdenServicio.arrayFechas = a.data.fechas;
 				OrdenServicio.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
 				OrdenServicio.arrayCargo = a.data.cargo;
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				$('.menu .item').tab();
+				$('.submenu .item').tab({
+					context: 'submenu'
+				});
 				Fn.loadSemanticFunctions();
 
 				td = $('td.cantidadDeTabla');
@@ -206,7 +222,7 @@ var OrdenServicio = {
 				OrdenServicio.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
 				OrdenServicio.arrayCargo = a.data.cargo;
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-				$('.menu .item').tab();
+				$('.tabular.menu .item').tab();
 				Fn.loadSemanticFunctions();
 
 				td = $('td.cantidadDeTabla');
@@ -215,6 +231,9 @@ var OrdenServicio = {
 				}
 				$('.tabTiposPresupuestos').removeClass('disabled');
 				$("#calculateTablaSueldo").click();
+				OrdenServicio.calcularTotalesMovilidad();
+				$('#tablaSueldoAdicional tbody tr:first').find('.movilidadSueldoAdicional').change();
+				$('#tablaAlmacenMonto tbody tr').find('select').change();
 			});
 		});
 		$(document).on('click', '.btnAprobar', function () {
@@ -267,18 +286,18 @@ var OrdenServicio = {
 			$('#cboDistrito').html(html);
 			Fn.selectOrderOption('cboDistrito');
 		});
-		$(document).on('click', '#btnCrearTabla', function () {
-			let jsonString = { 'nroFecha': $('#nroFecha').val(), 'nroPersona': $('#nroPersona').val() };
-			let config = { 'url': OrdenServicio.url + 'formTablaParaLlenado', 'data': jsonString };
-			$.when(Fn.ajax(config)).then((a) => {
-				$('#divTabla').html(a.data.html);
-				$('#divSueldo').html(a.data.htmlSueldo);
-				$('.menu .item').tab();
-				Fn.loadSemanticFunctions();
-				OrdenServicio.sueldoConteo = 0;
-				OrdenServicio.arrayPersona = a.data.personal;
-			});
-		})
+		// $(document).on('click', '#btnCrearTabla', function () {
+		// 	let jsonString = { 'nroFecha': $('#nroFecha').val(), 'nroPersona': $('#nroPersona').val() };
+		// 	let config = { 'url': OrdenServicio.url + 'formTablaParaLlenado', 'data': jsonString };
+		// 	$.when(Fn.ajax(config)).then((a) => {
+		// 		$('#divTabla').html(a.data.html);
+		// 		$('#divSueldo').html(a.data.htmlSueldo);
+		// 		$('.menu .item').tab();
+		// 		Fn.loadSemanticFunctions();
+		// 		OrdenServicio.sueldoConteo = 0;
+		// 		OrdenServicio.arrayPersona = a.data.personal;
+		// 	});
+		// })
 		$(document).on('click', '#btnSueldo', function () {
 			var rowCount = $('#tablaFechaPersona >tbody >tr').length;
 			OrdenServicio.sueldoConteo++;
@@ -304,32 +323,32 @@ var OrdenServicio = {
 			$('#bodySueldo').append(html);
 			Fn.loadSemanticFunctions();
 		})
-		$(document).on('click', '#btnBeneficio', function () {
-			var rowCount = $('#tablaFechaPersona >tbody >tr').length;
-			OrdenServicio.sueldoConteo++;
-			let html = `
-			<tr>
-				<td><input class="form-control tipoSueldo" value="4"></td>
-				<td>
-					<select class="ui search dropdown semantic-dropdown cboBeneficio">
-						<option value="">-</option>
-						<option value="1" data-porcentaje="9">EsSalud</option>
-						<option value="2" data-porcentaje="9.7">CTS</option>
-						<option value="3" data-porcentaje="9.1">Vacaciones</option>
-						<option value="4" data-porcentaje="18.2">Gratificación</option>
-						<option value="5" data-porcentaje="0.26">Seguro vida ley</option>
-					</select>
-				</td>
-				<td><input class="form-control porcentajeSueldo" value=""></td>
-				`;
+		// $(document).on('click', '#btnBeneficio', function () {
+		// 	var rowCount = $('#tablaFechaPersona >tbody >tr').length;
+		// 	OrdenServicio.sueldoConteo++;
+		// 	let html = `
+		// 	<tr>
+		// 		<td><input class="form-control tipoSueldo" value="4"></td>
+		// 		<td>
+		// 			<select class="ui search dropdown semantic-dropdown cboBeneficio">
+		// 				<option value="">-</option>
+		// 				<option value="1" data-porcentaje="9">EsSalud</option>
+		// 				<option value="2" data-porcentaje="9.7">CTS</option>
+		// 				<option value="3" data-porcentaje="9.1">Vacaciones</option>
+		// 				<option value="4" data-porcentaje="18.2">Gratificación</option>
+		// 				<option value="5" data-porcentaje="0.26">Seguro vida ley</option>
+		// 			</select>
+		// 		</td>
+		// 		<td><input class="form-control porcentajeSueldo" value=""></td>
+		// 		`;
 
-			for (let i = 0; i < rowCount; i++) {
-				html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + OrdenServicio.sueldoConteo + '" value="0"></td>';
-			}
-			html += '</tr>';
-			$('#bodyBeneficio').append(html);
-			Fn.loadSemanticFunctions();
-		})
+		// 	for (let i = 0; i < rowCount; i++) {
+		// 		html += '<td><input class="form-control dSueldo" data-persona="' + i + '" data-sueldo="' + OrdenServicio.sueldoConteo + '" value="0"></td>';
+		// 	}
+		// 	html += '</tr>';
+		// 	$('#bodyBeneficio').append(html);
+		// 	Fn.loadSemanticFunctions();
+		// })
 		$(document).on('change', '.cboSueldo', function () {
 			let tipo = $(this).find(':selected').data('tipo');
 			let tipoSueldo = $(this).parent('td').parent('tr').find('input.tipoSueldo');
@@ -414,111 +433,63 @@ var OrdenServicio = {
 	},
 	addRow: function (t) {
 		let detalle = $(t).data('detalle');
-		let contador = $("#tb_LD" + detalle + "> tbody > tr").length;
-		let html = '';
-		html += `
-		<tr>
-			<td>
-				<select class="ui fluid search dropdown dropdownSingleAditions cboTPD keyUpChange" name="tipoPresupuestoDetalleSub[${detalle}]" onchange="$('#textDescripcionDetalle_${detalle}_${contador}').html(this.options[this.selectedIndex].text);">
-					<option value=""></option>`;
-		for (let i = 0; i < OrdenServicio.arrayTipoPresupuestoDetalle[detalle].length; i++) {
-			let tpd = OrdenServicio.arrayTipoPresupuestoDetalle[detalle][i];
-			html += `<option value="${tpd.idTipoPresupuestoDetalle}" data-preciounitario="${tpd.costo}" data-split="${tpd.split}" data-frecuencia="${tpd.frecuencia}">${tpd.nombre}</option>`;
+		var contador = $("#tb_LD" + detalle + " tbody tr.dataItem").length;
+		Fn.showLoading(true);
+		let post1 = $.post(
+			site_url + OrdenServicio.url + 'generarRowParaPresupuesto_1', {
+			'detalle': detalle,
+			'contador': contador,
+			'cargos': OrdenServicio.arrayCargo,
+		});
 
+		post1.done(function (data) {
+			$('#tabla' + detalle + ' > tbody').append(data);
+			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+			Fn.loadSemanticFunctions();
+		}).always(function () {
+			let post2 = $.post(
+				site_url + OrdenServicio.url + 'generarRowParaPresupuesto_2', {
+				'detalle': detalle,
+				'contador': contador,
+				'fechas': OrdenServicio.arrayFechas
+			});
+
+			post2.done(function (data) {
+				$('#tb_LD' + detalle + ' > tbody').append(data);
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			}).always(function () {
+				Fn.showLoading(false);
+			});
+		});
+
+	},
+	evaluarSubTotalElemento: function (t) {
+		let this_ = $(t);
+		let control = this_.closest('tbody');
+
+		let nroFila = control.data('nrofila');
+
+		let cantMax = control.closest('table').closest('tbody').find('tr.detalleTr_' + nroFila).find('.cantidadDeTabla').find('input').val();
+		let inpSubTotal = control.closest('table').closest('tbody').find('tr.detalleTr_' + nroFila).find('.precioUnitarioDetalle').find('input');
+		let cantTot = 0;
+		let subTot = 0;
+		control.find('.cantidadElemento').each(function () {
+			cantTot += parseFloat($(this).val());
+		});
+
+		if (parseFloat(cantMax).toFixed(2) == parseFloat(cantTot).toFixed(2)) {
+			control.find('.subTotalElemento').each(function () {
+				subTot += parseFloat($(this).val());
+			});
+			inpSubTotal.val((subTot / parseFloat(cantTot)).toFixed(4)).change();
+		} else {
+			inpSubTotal.val('0.00').change();
 		}
-		let totalCargo = 0;
-		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
-			let lCx = OrdenServicio.arrayCargo[i];
-			totalCargo += parseInt(lCx.cantidad);
-		}
-		html += `
-				</select>
-			</td>
-			<td class="splitDetalle">
-				<div class="ui input" style="width: 80px;">
-					<input type="text" class="onlyNumbers keyUpChange" name="splitDS[${detalle}]" value="1" onchange="OrdenServicio.cantidadSplitCargo(this);">
-				</div>
-			</td>
-			<td class="precioUnitarioDetalle">
-				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right keyUpChange" name="precioUnitarioDS[${detalle}]" value="0"  onchange="OrdenServicio.cantidadSplitCargo(this);">
-				</div>
-			</td>
-			<td class="gapDetalle">
-				<div class="ui input" style="width: 80px;">
-					<input type="text" class="text-right keyUpChange" name="gapDS[${detalle}]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
-				</div>
-			</td>
-			<td class="cantidadDeTabla">
-				<div class="ui action input" style="width: 80px;">
-					<input type="text" value="${totalCargo}" readonly name="cantidadDS[${detalle}]" onchange="OrdenServicio.calcularSTotal(this);" data-detallesub="${contador}" data-detalle="${detalle}">
-					<a class="ui button" onclick="$(this).closest('td.cantidadDeTabla').find('div.listCheck').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
-				</div>
-				<div class="listCheck mt-3 d-none">`
-
-		for (let i = 0; i < OrdenServicio.arrayCargo.length; i++) {
-			let lC = OrdenServicio.arrayCargo[i];
-			html += `
-					<div class="fields">
-						<div class="ui checkbox">
-							<input type="checkbox" name="chkDS[${lC.idCargo}][${detalle}][${contador}]" data-cargo="${i}" checked onchange="OrdenServicio.cantidadSplitCargo(this);">
-							<label style="font-size: 1.5em;">${lC.cargo}</label>
-						</div>
-					</div>
-			`;
-		}
-		html += `
-				</div>
-			</td >
-			<td>
-				<div class="ui input transparent totalCantidadSplit" style="width: 80px;">
-					<input type="text" class="text-right" value="0" readonly name="montoDS[${detalle}]">
-				</div>
-			</td>
-			<td class="frecuenciaDetalle">
-				<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[${detalle}]" patron="requerido">
-					<option value="">Frecuencia</option>
-					<option value="1">MENSUAL</option>
-					<option value="2">BIMENSUAL</option>
-					<option value="3">SEMESTRAL</option>
-					<option value="4">ANUAL</option>
-					<option value="5">UNICO</option>
-				</select>
-			</td>
-		</tr > `;
-		$('#tabla' + detalle).find('tbody').append(html);
-
-		let nhtml = '';
-		nhtml += `
-		<tr>
-			<td id="textDescripcionDetalle_${detalle}_${contador}"></td>`;
-		for (let i = 0; i < OrdenServicio.arrayFechas.length; i++) {
-			let lF = OrdenServicio.arrayFechas[i];
-			nhtml += `
-			<td>
-				<div class="ui input transparent" style="width: 80px;">
-					<input class="text-right" type="text" value="0" readonly id="montoLDS_${detalle}_${contador}_${i}">
-				</div>
-			</td>
-			`;
-		}
-		nhtml += `
-			<td>
-				<div class="ui input transparent" style="width: 80px;">
-					<input class="text-right keyUpChange" type="text" value="0" readonly id="totalLineaDS_${detalle}_${contador}" data-detalle="${detalle}" onchange="OrdenServicio.calcularTotalColumna(this);">
-				</div>
-			</td>
-		</tr>`;
-
-		$('#tb_LD' + detalle).find('tbody').append(nhtml);
-
-		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-		Fn.loadSemanticFunctions();
 	},
 	addDocumento: function (tipo = 1) {
 		Fn.showLoading(true);
 		documentoGenerado = tipo == 1 ? 0 : 1;
-		console.log(documentoGenerado);
 		post = $.post(site_url + OrdenServicio.url + 'addDocumento', {
 			'id': OrdenServicio.documentoCont,
 			'documentoGenerado': documentoGenerado
@@ -565,13 +536,28 @@ var OrdenServicio = {
 			this_.closest('.fields').find('.divCu').find('select').attr('patron', 'requerido');
 			this_.closest('.fields').find('.divCl').find('select').removeAttr('patron');
 			$('#btn-addCargo').addClass('disabled');
-
 		} else {
 			this_.closest('.fields').find('input.chkUtilizarCliente').val('1');
 			this_.closest('.fields').find('.divCl').find('select').attr('patron', 'requerido');
 			this_.closest('.fields').find('.divCu').find('select').removeAttr('patron');
 			$('#btn-addCargo').removeClass('disabled');
 		}
+	},
+	addSueldoCargoAdicional: function () {
+		let bodyTable = $('#tablaSueldoAdicional').find('tbody');
+		Fn.showLoading(true);
+		post = $.post(
+			site_url + OrdenServicio.url + 'generarRowAdicionalSueldo', {
+			'idCuenta': $('#idCuenta').val()
+		});
+
+		post.done(function (data) {
+			bodyTable.append(data);
+			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+			Fn.loadSemanticFunctions();
+		}).always(function () {
+			Fn.showLoading(false);
+		});
 	},
 	addCargo: function () {
 		html = '';
@@ -652,6 +638,60 @@ var OrdenServicio = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	calcularMontoDeAlmacen: function (t) {
+		let tr = $(t).closest('tr')
+
+		let monto = tr.find('.tbAlm_monto').val();
+		let frecuenciaOpcion = tr.find('.tbAlm_freOpc').dropdown('get value');
+		let nro = 0;
+
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			if (frecuenciaOpcion == '1') {
+				rpta = monto;
+
+			} else if (frecuenciaOpcion == '2') {
+				nro += 0.5;
+				if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+					rpta = monto;
+					nro = 0;
+				} else {
+					rpta = 0;
+				}
+			} else if (frecuenciaOpcion == '3') {
+				nro += 0.34;
+				if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+					rpta = monto;
+					nro = 0;
+				} else {
+					rpta = 0;
+				}
+			}
+			$(tr.find('.tbAlm_MontoXFecha')[k]).val(rpta);
+			$(tr.find('.tbAlm_MontoXFecha')[k]).closest('div').find('label').html(rpta);
+		});
+
+		OrdenServicio.calcularMontoTotalDeAlmacen();
+	},
+	calcularMontoTotalDeAlmacen: function () {
+		let tot = [];
+		$('#tablaAlmacenMonto tbody tr').each(function () {
+			let tr = $(this);
+			$.each(OrdenServicio.arrayFechas, function (k, v) {
+				if (typeof tot[k] === 'undefined') tot[k] = 0;
+				let m = $(tr.find('.tbAlm_MontoXFecha')[k]).val();
+				tot[k] += parseFloat(m);
+			});
+		})
+
+		let tfoot = $('#tablaAlmacenMonto tfoot tr');
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			$(tfoot.find('.tbAlm_TotalMontoXFecha')[k]).val(tot[k]);
+			$(tfoot.find('.tbAlm_TotalMontoXFecha')[k]).closest('div').find('label').html(tot[k]);
+			$('#totalColumna_9_' + k).val((tot[k] * 1.348).toFixed(2));
+		});
+		OrdenServicio.calcularTotalFinal();
+
+	},
 	validarCheckbox: function () {
 		$('.list .master.checkbox').checkbox({
 			onChecked: function () {
@@ -695,15 +735,16 @@ var OrdenServicio = {
 	},
 	cantidadSplitCargo: function (t) {
 		var control = $(t).closest('tr').find('td.cantidadDeTabla');
-		var divChecks = control.find('div.listCheck').find('.fields');
+		let trChecks = $(t).closest('tr').data('nrofila');
+		var divChecks = control.closest('tbody').find('tr.cantidadCargo_' + trChecks).find('.listCheck').find('.fields');
 		var split = control.closest('tr').find('.splitDetalle').find('input').val();
-		// var precioUnitario = control.closest('tr').find('.precioUnitarioDetalle').html();
 
 		cantidad = 0;
 		for (let i = 0; i < divChecks.length; i++) {
 			var check = $(divChecks[i]).find('.ui.checkbox').checkbox('is checked');
+			var cantCheck = $(divChecks[i]).closest('tr').find('.subCantDS').val();
 			if (check) {
-				cantidad += parseInt($('#cargoCantidad_' + i).val());
+				cantidad += parseInt(cantCheck); //parseInt($('#cargoCantidad_' + i).val());
 			}
 		}
 		valorCalc = cantidad * parseFloat(split);
@@ -714,55 +755,159 @@ var OrdenServicio = {
 		var control = $(t).closest('td.cantidadDeTabla');
 		var detalle = $(t).data('detalle');
 		var detalleSub = $(t).data('detallesub');
-		var precioUnitario = control.closest('tr').find('.precioUnitarioDetalle').find('input').val();
+		let split = control.closest('tr').find('td.splitDetalle').find('input').val();
+		var precioUnitario = parseFloat(control.closest('tr').find('.precioUnitarioDetalle').find('input').val()) * parseFloat(split);
 		var gapT = control.closest('tr').find('.gapDetalle').find('input').val();
 		var gap = 1 + (parseFloat(gapT) / 100);
+
+		// Inicio: Calcular valor por columna
+		let nrofila = $(t).closest('tr').data('nrofila');
+		let trCantCarg = $(t).closest('tbody').find('.cantidadCargo_' + nrofila);
+
+		let valorPorColumna = [];
+		trCantCarg.find('table > tbody.listCheck > tr').each(function () {
+			indexCargo = $(this).find('.ui.checkbox').find('input').data('cargo');
+			validarCheck = $(this).find('.ui.checkbox').checkbox('is checked');
+			cantidadAsigChk = $(this).find('.subCantDS ').val();
+
+			trHome = $('#tablaFechaPersona > tbody > tr');
+
+			$(trHome[indexCargo]).find('input').each(function (idx) {
+				if (validarCheck) {
+					cnC = $(this).val();
+					if (parseFloat(cnC) > parseFloat(cantidadAsigChk)) cnC = cantidadAsigChk;
+				} else {
+					cnC = 0;
+				}
+
+				if (typeof valorPorColumna[idx] === 'undefined') {
+					valorPorColumna[idx] = parseFloat(cnC);
+				} else {
+					valorPorColumna[idx] += parseFloat(cnC);
+				}
+
+			});
+		});
+		// Fin: Calcular el valor por columna
+
 		valorCalc = parseFloat($(t).val());
-		totalFinal = (valorCalc * gap * parseFloat(precioUnitario)).toFixed(2);
+		totalFinal = (valorCalc * gap * parseFloat(precioUnitario) / split).toFixed(2);
 		control.closest('tr').find('.totalCantidadSplit').find('input').val(totalFinal);
 		frecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('.frecuenciaID').dropdown('get value');
 		totalFinalAcumulado = 0;
-		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
-			totalFinalAcumulado += parseFloat(totalFinal);
-			if (frecuencia == 1) { // MENSUAL
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
-				f = f + 0;
-			} else if (frecuencia == 2) { // BIMENSUAL
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
-				f = f + 1;
-			} else if (frecuencia == 3) { // SEMESTRAL
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
-				f = f + 5;
-			} else if (frecuencia == 4) { // ANUAL
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinal).trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 5)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 6)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 7)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 8)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 9)).val('0.00').trigger('change');
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 10)).val('0.00').trigger('change');
-				f = f + 11;
-			} else if (frecuencia == 5) { // UNICO
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + 0).val(totalFinal).trigger('change');
-				f = 9999999;
+		let firstUnico = true;
+		if (frecuencia == 5) { // UNICO
+			let entregado = 0;
+			let maxColV = 0;
+
+			for (let id = 0; id < valorPorColumna.length; id++) {
+				valCol = valorPorColumna[id];
+				if (valCol > maxColV) maxColV = valCol;
+			}
+
+			for (let ix = 0; ix < valorPorColumna.length; ix++) {
+				cM = valorPorColumna[ix];
+				if (cM > maxColV) parseFloat(cM) = parseFloat(maxColV);
+
+				rs = parseFloat(cM) - parseFloat(entregado);
+				if (rs < 0) rs = 0;
+
+				entregado += parseFloat(rs);
+				if (entregado > maxColV) entregado = maxColV;
+
+				totalFinalClm = (rs * gap * parseFloat(precioUnitario)).toFixed(2);
+
+				totalFinalAcumulado += parseFloat(totalFinalClm);
+
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm).change();
+			}
+		} else if (frecuencia == 6) { // FRACCIONADO
+			let maxColV = 0;
+
+			for (let id = 0; id < valorPorColumna.length; id++) {
+				valCol = valorPorColumna[id];
+				if (valCol > maxColV) maxColV = valCol;
+			}
+
+			for (let ix = 0; ix < valorPorColumna.length; ix++) {
+				totalFinalClm = (totalFinal / valorPorColumna.length).toFixed(2);
+				totalFinalAcumulado += parseFloat(totalFinalClm);
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm).change();
+			}
+		} else {
+			for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
+				if (frecuencia == 1) { // MENSUAL
+					totalFinalClm = (valorPorColumna[f] * gap * parseFloat(precioUnitario)).toFixed(2);
+					totalFinalAcumulado += parseFloat(totalFinalClm);
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					f = f + 0;
+				} else if (frecuencia == 2) { // BIMENSUAL
+					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
+					maxFor = 2;
+					if (valorPorColumna.length - f < maxFor) maxFor = valorPorColumna.length - f;
+					valMaxCol = 0;
+					for (let id = 0; id < valorPorColumna.length; id++) {
+						valCol = valorPorColumna[id + f];
+						if (valCol > valMaxCol) valMaxCol = valCol;
+					}
+					// Fin: Calcular el valor máximo dentro del rango de tiempo.
+					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
+					totalFinalAcumulado += parseFloat(totalFinalClm);
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+					f = f + 1;
+				} else if (frecuencia == 3) { // SEMESTRAL
+					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
+					maxFor = 6;
+					if (valorPorColumna.length - f < maxFor) maxFor = valorPorColumna.length - f;
+					valMaxCol = 0;
+					for (let id = 0; id < valorPorColumna.length; id++) {
+						valCol = valorPorColumna[id + f];
+						if (valCol > valMaxCol) valMaxCol = valCol;
+					}
+					// Fin: Calcular el valor máximo dentro del rango de tiempo.
+					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
+					totalFinalAcumulado += parseFloat(totalFinalClm);
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 5)).val('0.00').trigger('change');
+					f = f + 5;
+				} else if (frecuencia == 4) { // ANUAL
+					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
+					maxFor = 12;
+					if (valorPorColumna.length - f < maxFor) maxFor = valorPorColumna.length - f;
+					valMaxCol = 0;
+					for (let id = 0; id < valorPorColumna.length; id++) {
+						valCol = valorPorColumna[id + f];
+						if (valCol > valMaxCol) valMaxCol = valCol;
+					}
+					// Fin: Calcular el valor máximo dentro del rango de tiempo.
+					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
+					totalFinalAcumulado += parseFloat(totalFinalClm);
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 4)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 5)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 6)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 7)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 8)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 9)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 10)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 11)).val('0.00').trigger('change');
+					f = f + 11;
+				}
 			}
 		}
-		// totalFinalAcumulado
 		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado.toFixed(2)).trigger('change');
 
 	},
 	calcularTotalColumna: function (t) {
 		let control = $(t).closest('table').find('tbody').find('tr');
-		// let columna = $(t).data('columna');
 		let detalle = $(t).data('detalle');
 		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
@@ -771,6 +916,7 @@ var OrdenServicio = {
 			}
 			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
 		}
+		OrdenServicio.calcularTotalFinal();
 	},
 	calcularTotalColumnaSueldo: function (t) {
 		let control = $(t).closest('table').find('tbody').find('tr');
@@ -784,8 +930,40 @@ var OrdenServicio = {
 			}
 			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
 		}
+		OrdenServicio.calcularTotalFinal();
+	},
+	calcularTotalColumnaMovilidad: function () {
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			viaje = parseFloat($('#movilidadViajes_' + k).val());
+			adicional = parseFloat($('#movilidadAdicionales_' + k).val());
+			tot = parseFloat(viaje) + parseFloat(adicional);
+			$('#totalColumna_8_' + k).val(tot.toFixed(2));
+		});
+		OrdenServicio.calcularTotalFinal();
+	},
+	calcularMovilidad: function () {
+		let rpta = 0;
+		$('#tablaSueldoAdicional').find('tbody').find('.movilidadSueldoAdicional').each(function () {
+			rpta += parseFloat($(this).val());
+		});
+		let total = 0;
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			$('#movilidadAdicionales_' + k).val(rpta);
+			total += rpta;
+		})
+		$('#totalMovilidadAdicional').val(total);
+		OrdenServicio.calcularTotalColumnaMovilidad();
 	},
 	calcularTablaSueldo: function () {
+		// Inicio Calcular Incentivo Adicional
+		let trAd = $('#tablaSueldoAdicional > tbody > tr');
+		let totalIncentivoAdicional = 0;
+		trAd.each(function (i) {
+			totalIncentivoAdicional += parseFloat($(this).find('.montoSueldoAdicional').val());
+		});
+		$('#txtIncentivoAdicionalTotal').val(totalIncentivoAdicional.toFixed(2));
+		// Fin: Calcular Incentivo Adicional
+
 		let tr = $('#tablaSueldo > tbody > tr');
 		let nroPersonal = $('#tablaSueldo').data('personal');
 		let montoPersonal = [];
@@ -802,7 +980,6 @@ var OrdenServicio = {
 			let row = $(tr[r]).data('row');
 
 			let tipo = $('#rowTipo_Sueldo' + row).val();
-			// let cl = $('#rowPorCL_Sueldo' + row).val();
 
 			for (let p = 0; p < nroPersonal; p++) {
 				montoPersonal[p].push($('#rowMonto_Sueldo' + row + '-' + p).val());
@@ -814,14 +991,39 @@ var OrdenServicio = {
 				}
 			}
 		}
+		totSctr = [];
 		for (let i = 0; i < montoPersonal.length; i++) {
 			calc = 0;
 			for (let n = 0; n < montoPersonal[i].length; n++) {
 				calc += parseFloat(montoPersonal[i][n]);
 			}
 			$('#sTotalSueldo_' + i).val(calc);
-		}
 
+			valorSCTR = 0;
+			if ($('#txtVSctr').length == 1) {
+				valorSCTR = ((calc + parseFloat($('#restoSueldoMinimo').val())) * parseFloat($('#txtVSctr').val()) / 100);
+				$('#txtSctr_' + i).val(valorSCTR.toFixed(4));
+			}
+
+			$('#tablaFechaPersona > tbody > tr').each(function () {
+				if ($(this).find('input:first').data('personal') == i) {
+					tr = $(this);
+
+					$.each(OrdenServicio.arrayFechas, function (k, v) {
+						if (typeof totSctr[k] === 'undefined') totSctr[k] = 0;
+						valorCant = $(tr.find('input.cntColmFC')[k]).val();
+						totSctr[k] += parseFloat(valorCant) * valorSCTR;
+					})
+				}
+			});
+		}
+		tot = 0;
+		let fila = $('.inputSctr:first').data('sctr');
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			$('#montoLDS_7_' + fila + '_' + k).val(totSctr[k].toFixed(2));
+			tot += totSctr[k];
+		})
+		$('#totalLineaDS_7_' + fila).val(tot.toFixed(2));
 
 		let tf = $('#tablaSueldo > tfoot > tr');
 		for (let i = 0; i < montoParaBono.length; i++) {
@@ -836,48 +1038,223 @@ var OrdenServicio = {
 				let cl = $('#rowPorCL_Sueldo' + fRow).val();
 
 				if (fRow != undefined) {
-					nuevoCalc = (calc * parseFloat(cl) / 100).toFixed(2);
+					nuevoCalc = (calc * parseFloat(cl) / 100).toFixed(4);
 					$('#rowMontoBeneficio_Sueldo' + fRow + '_' + i).val(nuevoCalc);
 					acumulado += parseFloat($('#rowMontoBeneficio_Sueldo' + fRow + '_' + i).val());
 				}
 			}
-			totalTotal = (parseFloat($('#sTotalSueldo_' + i).val()) + acumulado).toFixed(2);
+			totalTotal = (parseFloat($('#sTotalSueldo_' + i).val()) + acumulado).toFixed(4);
 			$('#totalSueldo_' + i).val(totalTotal);
 		}
 
-		let totalIncentivo = 0;
 		let totalTotalSueldo = 0;
 		let totalTotalIncentivo = 0;
+		let cantInc = [];
 		for (let i = 0; i < montoIncentivo.length; i++) {
 			calc = 0;
 			for (let n = 0; n < montoIncentivo[i].length; n++) {
 				calc += parseFloat(montoIncentivo[i][n]);
 			}
-			incentivo = (calc * (parseFloat($('#totalPorcentaje').html()) + 100) / 100).toFixed(2);
+			incentivo = (calc * (parseFloat($('#totalPorcentaje').html()) + 100) / 100).toFixed(4);
 			$('#txtIncentivo_' + i).val(incentivo);
 
-			sueldo = ($('#totalSueldo_' + i).val() - parseFloat(incentivo)).toFixed(2);
+			sueldo = ($('#totalSueldo_' + i).val() - parseFloat(incentivo)).toFixed(4);
 			$('#txtSueldo_' + i).val(sueldo);
 
-			incentivoPorCantidad = (parseFloat(incentivo) * parseFloat($('#cantidadIncentivo_' + i).html())).toFixed(2);
-			$('#txtIncentivoCantidad_' + i).val(incentivoPorCantidad);
-			totalIncentivo += parseFloat(incentivoPorCantidad);
-
-			sueldoPorCantidad = (parseFloat(sueldo) * parseFloat($('#cantidadSueldo_' + i).html())).toFixed(2);
-			$('#txtSueldoCantidad_' + i).val(sueldoPorCantidad);
 			totalTotalSueldo = 0;
 			totalTotalIncentivo = 0;
+
 			for (let f = 0; f < (OrdenServicio.arrayFechas).length; f++) {
+				cntSuel = $(($(($('#tablaFechaPersona > tbody').find('tr'))[i]).find('td'))[f + 1]).find('input').val();
+				sueldoPorCantidad = (parseFloat(sueldo) * parseFloat(cntSuel)).toFixed(2);
+
+				$('#txtSueldoCantidad_' + i).val(sueldoPorCantidad);
+
 				$("#montoSueldo_" + i + "_" + f).val(sueldoPorCantidad).trigger('change');
-				$('#montoIncentivo_' + f).val(totalIncentivo.toFixed(2)).trigger('change');
 				totalTotalSueldo += parseFloat(sueldoPorCantidad);
-				totalTotalIncentivo += parseFloat(totalIncentivo);
+
+				if (typeof cantInc[f] === 'undefined') cantInc[f] = 0;
+				cantInc[f] += (parseFloat(incentivo) * parseFloat(cntSuel));
+				incentivoPorCantidad = (parseFloat(incentivo) * parseFloat(cntSuel)).toFixed(2);
+				$('#txtIncentivoCantidad_' + i).val(incentivoPorCantidad);
+
+				$('#montoIncentivo_' + f).val((parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional)).toFixed(2));
+
+				totalTotalIncentivo += parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional);
 			}
+
 			$('#totalLineaSueldo_' + i).val(totalTotalSueldo.toFixed(2));
 			$('#totalLineaIncentivo').val(totalTotalIncentivo.toFixed(2)).trigger('change');
 		}
 
-	}
+	},
+	addElemento: function (t) {
+		let control = $(t);
+		let bodyTable = control.closest('table').find('tbody');
+		let nroFila = control.data('nrofila');
+		let tpd = $(t).closest('table').closest('tr').closest('table').find('.detalleTr_' + nroFila).find('.cboTPD').dropdown('get value');
+		let detalle = $(t).data('detalle');
+		Fn.showLoading(true);
+
+		let post = $.post(
+			site_url + OrdenServicio.url + 'generarRowParaPresupuesto_3', {
+			'idTipoPresupuesto': detalle,
+			'idTipoPresupuestoDetalle': tpd,
+			'idCuenta': $('#idCuenta').val(),
+			'nroFila': nroFila
+		});
+
+		post.done(function (data) {
+			bodyTable.append(data);
+			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+			Fn.loadSemanticFunctions();
+		}).always(function () {
+			Fn.showLoading(false);
+		});
+
+	},
+	calcularTotalesMovilidad: function () {
+		let totAcumulado = 0;
+		let html = '';
+		let arT = [];
+		$('#tablaMovilidad tbody tr.data').each(function (i) {
+			dias = parseFloat($(this).find('.tbMov_dias').val());
+			frecuencia = parseFloat($(this).find('.tbMov_fre').val());
+			frecuenciaOpcion = $(this).find('.tbMov_freOpc').dropdown('get value');
+
+			inpOrigen = $(this).find('.tbMov_origen');
+			inpDestin = $(this).find('.tbMov_destino');
+			inpPreBus = $(this).find('.tbMov_bus');
+			inpPreHsp = $(this).find('.tbMov_hosp');
+			inpPreVia = $(this).find('.tbMov_viat');
+			inpPreInt = $(this).find('.tbMov_movInt');
+			inpPreTxi = $(this).find('.tbMov_taxi');
+			inpPreSbT = $(this).find('.tbMov_sbto');
+			inpPreTot = $(this).find('.tbMov_tot');
+
+			sbt = dias == 0 ? 0 : parseFloat(inpPreBus.val());
+
+			cal = parseFloat(inpPreHsp.data('costobase')) * dias; sbt += cal;
+			inpPreHsp.val(cal.toFixed(2));
+			cal = parseFloat(inpPreVia.data('costobase')) * dias; sbt += cal;
+			inpPreVia.val(cal.toFixed(2));
+			cal = parseFloat(inpPreInt.data('costobase')) * dias; sbt += cal;
+			inpPreInt.val(cal.toFixed(2));
+			cal = parseFloat(inpPreTxi.data('costobase')) * dias; sbt += cal;
+			inpPreTxi.val(cal.toFixed(2));
+
+			inpPreSbT.val(sbt.toFixed(2));
+
+			tot = sbt * frecuencia;
+			inpPreTot.val(tot.toFixed(2));
+
+			if (tot > 0) {
+				html += `<tr>
+							<td>${inpOrigen.val()} → ${inpDestin.val()}</td>`;
+
+				nro = 0;
+
+				console.log(OrdenServicio.arrayFechas);
+				$.each(OrdenServicio.arrayFechas, function (k, v) {
+					if (typeof arT[k] === 'undefined') arT[k] = 0;
+
+					if (frecuenciaOpcion == '1') {
+						rpta = tot;
+
+					} else if (frecuenciaOpcion == '2') {
+						nro += 0.5;
+						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+							rpta = tot;
+							nro = 0;
+						} else {
+							rpta = 0;
+						}
+					} else if (frecuenciaOpcion == '3') {
+						nro += 0.34;
+						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+							rpta = tot;
+							nro = 0;
+						} else {
+							rpta = 0;
+						}
+					}
+
+					arT[k] += rpta;
+					console.log(arT);
+					html += `<td class="text-center">${rpta}</td>`;
+
+
+				});
+				html += `</tr>`;
+			}
+
+			totAcumulado += tot;
+		});
+
+		$('#totalTbMovilidad').val(totAcumulado.toFixed(2));
+		$('#tbResumenMovilidad tbody').html(html);
+
+		totV = 0;
+		$.each(OrdenServicio.arrayFechas, function (k, v) {
+			if (typeof arT[k] === 'undefined') arT[k] = 0;
+			$('#movilidadViajes_' + k).val(arT[k]);
+			totV += arT[k];
+		});
+		$('#totalMovilidadViajes').val(totV);
+		OrdenServicio.calcularTotalColumnaMovilidad();
+	},
+	calcularTotalFinal: function () {
+		totF = [];
+		$('.idTP').each(function () {
+			valor = $(this).val();
+			$.each(OrdenServicio.arrayFechas, function (k, v) {
+				tc = $('#totalColumna_' + valor + '_' + k).val();
+				if (isNaN(tc)) tc = 0;
+				if (typeof totF[k] === 'undefined') totF[k] = 0;
+				totF[k] += parseFloat(tc);
+			});
+		});
+
+		let sumSubTotal = 0;
+		let sumFee1 = 0;
+		let sumFee2 = 0;
+		let sumFee3 = 0;
+		// let toFin = [];
+		let sumTotal = 0;
+
+		$.each(totF, function (k, v) {
+			$('#subtotalFinal_' + k).val(v.toFixed(2));
+			sumSubTotal += v;
+
+			tS = parseFloat($('#totalColumna_1_' + k).val());
+			fee1 = parseFloat($('.fee1V').val());
+			if (isNaN(fee1)) fee1 = 0;
+			$('#fee1_' + k).val((tS * fee1 / 100).toFixed(2));
+			sumFee1 += (tS * fee1 / 100);
+
+			fee2 = parseFloat($('.fee2V').val());
+			if (isNaN(fee2)) fee2 = 0;
+			$('#fee2_' + k).val((tS * fee2 / 100).toFixed(2));
+			sumFee2 += (tS * fee2 / 100);
+
+			tF = v - tS;
+			fee3 = parseFloat($('.fee3V').val());
+			if (isNaN(fee3)) fee3 = 0;
+			$('#fee3_' + k).val((tF * fee3 / 100).toFixed(2));
+			sumFee3 += (tF * fee3 / 100);
+
+			// if (typeof toFin[k] === 'undefined') toFin[k] = 0;
+			tt = (v + (tS * fee1 / 100) + (tS * fee2 / 100) + (tF * fee3 / 100));
+			$('#totalFinal_' + k).val(tt.toFixed(2));
+			sumTotal += tt;
+		});
+
+		$('#sumaSubtotalFinal').val(sumSubTotal.toFixed(2));
+		$('#sumaFee1Final').val(sumFee1.toFixed(2));
+		$('#sumaFee2Final').val(sumFee2.toFixed(2));
+		$('#sumaFee3Final').val(sumFee3.toFixed(2));
+		$('#sumaTotalFinal').val(sumTotal.toFixed(2));
+	},
 }
 
 OrdenServicio.load();

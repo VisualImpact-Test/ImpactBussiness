@@ -5,19 +5,9 @@
 </style>
 <div class="ui form attached fluid segment p-4">
 	<form class="ui form" role="form" id="formRegistroItems" method="post" autocomplete="off">
-		<h4 class="ui dividing header">DETALLE DE LOS ITEMS</h4>
+		<!-- <h4 class="ui dividing header">DETALLE DE LOS ITEMS</h4> -->
 		<div class="default-item">
 			<div class="ui segment body-item nuevo">
-				<!-- <div class="ui right floated header">
-					<div class="ui icon menu">
-						<a class="item btn-bloquear-detalle-item" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
-							<i class="lock icon"></i>
-						</a>
-						<a class="item btn-eliminar-detalle-item btneliminarfila">
-							<i class="trash icon"></i>
-						</a>
-					</div>
-				</div> -->
 				<div class="ui left floated header">
 					<span class="ui medium text ">Item N. <span class="title-n-detalle">00001</span></span>
 				</div>
@@ -101,6 +91,38 @@
 									<?= htmlSelectOptionArray2(['title' => 'TODAS LOS CENTROS DE COSTO', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 								</select>
 							</div>
+							<div class="four wide field">
+								<div class="ui sub header">¿ Considerar Item para Presupuesto ?</div>
+								<select class="ui dropdown simpleDropdown" name="flagParaPresupuesto" onchange="$(this).closest('.column').find('.isPresupuesto').toggleClass('d-none');">
+									<option value="0" selected>NO</option>
+									<option value="1">SI, EL ITEM SERÁ CONSIDERADO AL GENERAR EL PRESUPUESTO</option>
+								</select>
+							</div>
+						</div>
+						<div class="fields isPresupuesto d-none">
+							<div class="sixteen wide field">
+								<h3 class="ui header">
+									<i class="settings icon"></i>
+									<div class="content">
+										Detalle del Presupuesto
+										<div class="sub header">Indicar en que detalle del presupuesto se encontrará el item que esta registrando.</div>
+									</div>
+								</h3>
+							</div>
+						</div>
+						<div class="fields isPresupuesto d-none">
+							<div class="four wide field">
+								<div class="ui sub header">Detalle</div>
+								<select class="ui dropdown clearable semantic-dropdown parentDependienteSemantic" name="tipoPresupuesto" data-childDependiente="#cboSubDetallePresupuesto">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoPresupuesto, 'id' => 'idTipoPresupuesto', 'value' => 'nombre', 'simple' => true, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="four wide field">
+								<div class="ui sub header">Sub Detalle</div>
+								<select class="ui dropdown clearable semantic-dropdown read-only childdependienteSemantic" id="cboSubDetallePresupuesto" name="tipoPresupuestoDetalle">
+									<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoPresupuestoDetalle, 'simple' => true, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
 						</div>
 						<div class="fields">
 							<div class="two wide field">
@@ -140,8 +162,7 @@
 				</div>
 			</div>
 		</div>
-</div>
-</form>
+	</form>
 </div>
 
 <!-- FAB -->
@@ -155,9 +176,6 @@
 			<span class="float-element tooltip-left btn-send-item" data-message="Registrar" onclick='Fn.showConfirm({ idForm: "formRegistroItems", fn: "Item.registrarItem()", content: "¿Esta seguro de registrar este item?" });'>
 				<i class="send icon"></i>
 			</span>
-			<!-- <span class="float-element tooltip-left btn-add-detalle-item btn-add-row" onclick="" data-message="Agregar Item">
-                <i class="plus icon"></i>
-            </span> -->
 		</a>
 	</div>
 </div>

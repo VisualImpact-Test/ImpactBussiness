@@ -266,7 +266,6 @@ class M_Proveedor extends MY_Model
 			{$filtros}
 		";
 
-
 		$query = $this->db->query($sql);
 
 		if ($query) {

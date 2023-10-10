@@ -43,6 +43,7 @@ class M_Item extends MY_Model
 				, nombre AS value
 			FROM compras.itemMarca
 			WHERE estado = 1
+			ORDER BY nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -63,6 +64,7 @@ class M_Item extends MY_Model
 				, nombre AS value
 			FROM compras.itemCategoria
 			WHERE estado = 1
+			order by nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -83,6 +85,7 @@ class M_Item extends MY_Model
 				, nombre AS value
 			FROM compras.itemSubCategoria
 			WHERE estado = 1
+			ORDER BY nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -163,6 +166,9 @@ class M_Item extends MY_Model
 				, a.idUnidadMedida
 				, a.idCuenta
 				, a.flagPacking
+				, a.flagParaPresupuesto
+				, a.idTipoPresupuesto
+				, a.idTipoPresupuestoDetalle
 			FROM compras.item a
 			JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			LEFT JOIN compras.itemMarca ma ON a.idItemMarca = ma.idItemMarca
@@ -172,7 +178,7 @@ class M_Item extends MY_Model
 			LEFT JOIN visualImpact.logistica.articulo a_l ON a.idItemLogistica = a_l.idArticulo
 			WHERE 1 = 1
 			{$filtros}
-			ORDER BY a.nombre
+			ORDER BY a.estado desc, a.nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -247,7 +253,7 @@ class M_Item extends MY_Model
 	{
 		$sql = "
 			SELECT DISTINCT
-				  a.idArticulo AS value
+				a.idArticulo AS value
 				, ISNULL(a.codigo + ' - ','') + a.nombre AS label
 				, ISNULL(a.peso,0) as pesoLogistica
 				, um.idUnidadMedida AS idum
@@ -266,7 +272,7 @@ class M_Item extends MY_Model
 	{
 		$sql = "
 			SELECT DISTINCT
-				  a.idArticulo AS id
+				a.idArticulo AS id
 				, a.nombre AS value
 				, ISNULL(a.peso,0) as pesoLogistica
 				, um.idUnidadMedida AS idum
@@ -439,7 +445,7 @@ class M_Item extends MY_Model
 	{
 		$filtro = '';
 		if (!empty($idArticulo)) {
-			$filtro = '  AND  a.idArticulo=' . $idArticulo;
+			$filtro = ' AND a.idArticulo=' . $idArticulo;
 		}
 		$sql = "
 		SELECT DISTINCT
@@ -450,7 +456,7 @@ class M_Item extends MY_Model
 		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
-		WHERE mc.idCuenta='" . $idCuenta . "'  $filtro
+		WHERE mc.idCuenta='" . $idCuenta . "' $filtro
 		";
 		return $query = $this->db->query($sql);
 	}
@@ -458,7 +464,7 @@ class M_Item extends MY_Model
 	{
 		$filtro = '';
 		if (!empty($articulo)) {
-			$filtro = "  AND  a.nombre='" . $articulo . "'";
+			$filtro = " AND a.nombre='" . $articulo . "'";
 		}
 		$sql = "
 		SELECT DISTINCT
@@ -470,7 +476,7 @@ class M_Item extends MY_Model
 		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
-		WHERE mc.idCuenta='" . $idCuenta . "'  $filtro
+		WHERE mc.idCuenta='" . $idCuenta . "' $filtro
 		ORDER BY 2";
 		return $query = $this->db->query($sql);
 	}
