@@ -100,7 +100,7 @@
 										<div class="ui sub header">Costo</div>
 										<div class="ui right labeled input">
 											<label for="amount" class="ui label">S/</label>
-											<input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= moneda($rowDetalle['costo']) ?>" readonly>
+											<input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= moneda($rowDetalle['costo'], false, 4) ?>" readonly>
 										</div>
 									</div>
 
