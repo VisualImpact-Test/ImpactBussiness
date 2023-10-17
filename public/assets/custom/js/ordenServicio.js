@@ -920,7 +920,6 @@ var OrdenServicio = {
 	},
 	calcularTotalColumnaSueldo: function (t) {
 		let control = $(t).closest('table').find('tbody').find('tr');
-		// let columna = $(t).data('columna');
 		let detalle = $(t).data('detalle');
 		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
@@ -1023,7 +1022,7 @@ var OrdenServicio = {
 			$('#montoLDS_7_' + fila + '_' + k).val(totSctr[k].toFixed(2));
 			tot += totSctr[k];
 		})
-		$('#totalLineaDS_7_' + fila).val(tot.toFixed(2));
+		$('#totalLineaDS_7_' + fila).val(tot.toFixed(2)).change();
 
 		let tf = $('#tablaSueldo > tfoot > tr');
 		for (let i = 0; i < montoParaBono.length; i++) {
@@ -1180,7 +1179,6 @@ var OrdenServicio = {
 					}
 
 					arT[k] += rpta;
-					console.log(arT);
 					html += `<td class="text-center">${rpta}</td>`;
 
 
