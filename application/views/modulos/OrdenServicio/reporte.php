@@ -27,7 +27,9 @@
 					<td class="td-center">
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar Orden de Servicio"><i class="fa fa-lg fa-edit"></i></a>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
-						<!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btnAprobar" title="Aprobar Orden de Servicio"><i class="fa fa-lg fa-check"></i></a> -->
+						<?php if ($row['chkPresupuesto']) : ?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>
+						<?php endif; ?>
 					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>

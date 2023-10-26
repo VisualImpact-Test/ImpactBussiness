@@ -147,6 +147,34 @@ var OrdenServicio = {
 		});
 		$(document).on('change', '.cboTPD', function () {
 			let control = $(this);
+			// Validar que no se repite el valor
+			let cantidadEncontrado = 0;
+			let datoARevisar = $(this).dropdown('get value');
+			control.closest('table').find('.cboTPD').each(function () {
+				if ($(this).dropdown('get value') == datoARevisar) {
+					cantidadEncontrado++;
+					if (cantidadEncontrado > 1) {
+						Fn.showLoading(true);
+						message = Fn.message({ type: 3, message: 'Se ha repetido la opción indicada' });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+						
+						setTimeout(function () {
+							control.dropdown('clear');
+							Fn.showLoading(false);
+						}, 500);
+						return false;
+					}
+				}
+			});
+
+			// Fin: Validar que no se repite el valor
+
 			let precio = control.find('option:selected').data('preciounitario') || 0;
 			let split = control.find('option:selected').data('split') || 1;
 			let frecuencia = control.find('option:selected').data('frecuencia');
@@ -203,6 +231,7 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('presupuesto');
+			console.log(id);
 			let data = { 'idPresupuesto': id, 'formularioValidar': false };
 
 			let jsonString = { 'data': JSON.stringify(data) };

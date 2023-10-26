@@ -881,7 +881,8 @@ class Cotizacion extends MY_Controller
 			'smtp_port' => 465,
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
-			'mailtype' => 'html'
+			'mailtype' => 'html',
+			'smtp_timeout' => 20
 		);
 
 		$this->load->library('email', $config);
@@ -924,9 +925,11 @@ class Cotizacion extends MY_Controller
 			'protocol' => 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
 			'smtp_port' => 465,
+			// 'smtp_host' => 'aspmx.l.google.com',
+			// 'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
-			'mailtype' => 'html'
+			'mailtype' => 'html',
 		);
 
 		$this->load->library('email', $config);
