@@ -26,6 +26,7 @@
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar Orden de Servicio"><i class="fa fa-lg fa-edit"></i></a>
+						<button class="btn btn-outline-secondary border-0 btn-copyOrdenServicio"><i class="icon copy"></i></button>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
 						<?php if ($row['chkPresupuesto']) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>

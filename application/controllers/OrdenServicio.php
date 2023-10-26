@@ -138,7 +138,6 @@ class OrdenServicio extends MY_Controller
 		$presupuestoCargoFecha = $this->db->get_where('compras.presupuestoCargo', ['idPresupuesto' => $id, 'estado' => 1])->result_array();
 		$dataParaVista['cantidadPorCargoFecha'] = $presupuestoCargoFecha = changeKeyInArray($presupuestoCargoFecha, 'idCargo', 'fecha');
 
-		log_message('error', $this->db->last_query());
 		$tipoPresupuesto = $this->db->get_where('compras.tipoPresupuesto', ['estado' => 1])->result_array();
 		$dataParaVista['tiposPresupuesto'] = changeKeyInArray($tipoPresupuesto, 'idTipoPresupuesto');
 
@@ -154,9 +153,6 @@ class OrdenServicio extends MY_Controller
 
 		$presupuestoDetSueldo = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get_where('compras.presupuestoDetalleSueldo', ['estado' => 1])->result_array();
 		$dataParaVista['presupuestoDetalleSueldo'] = $presupuestoDetSueldo = changeKeyInArray($presupuestoDetSueldo, 'idPresupuestoDetalle', 'idCargo', 'idTipoPresupuestoDetalle');
-
-		// log_message('error', $this->db->last_query());
-		// log_message('error', json_encode($presupuestoDetSueldo));
 
 		$presDetMovilidad = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('dias >', 0)->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$presDetAlmacen = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('monto >', 0)->get_where('compras.presupuestoDetalleAlmacen', ['estado' => 1])->result_array();
@@ -342,7 +338,7 @@ class OrdenServicio extends MY_Controller
 
 		// foreach ($contenido as $v) echo $v; // Esta linea es para verlo desde HTML sin estar descargando a cada rato xd
 
-		
+
 		require APPPATH . '/vendor/autoload.php';
 		// $orientation = '';
 		// if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
@@ -373,7 +369,7 @@ class OrdenServicio extends MY_Controller
 		$mpdf->Output("$title.pdf", 'D');
 
 		// $this->aSessTrack[] = ['idAccion' => 9];
-		
+
 	}
 
 	public function formularioRegistroOrdenServicio()
@@ -441,6 +437,14 @@ class OrdenServicio extends MY_Controller
 		$idCliente = null;
 		$idCuenta = null;
 		$idCentroCosto = null;
+
+		$buscarDuplicado = $this->db->get_where('compras.ordenServicio', ['estado' => 1, 'nombre' => $post['nombre']])->result_array();
+		if (!empty($buscarDuplicado)) {
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Advertencia!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Ya existe un registro con el mismo nombre']);
+			goto respuesta;
+		}
 		if ($post['chkUtilizarCliente']) {
 			if (!is_numeric($post['clienteForm'])) {
 				$insertCliente = [
@@ -674,7 +678,8 @@ class OrdenServicio extends MY_Controller
 		$result['data']['distrito'] = $distrito;
 		$result['data']['cargo'] = $dataParaVista['cargo'];
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Actualizar OrdenServicio';
+		$result['msg']['title'] = 'Actualizar Orden de Servicio';
+		if (isset($post['formato'])) if ($post['formato'] == 'duplicar') $result['msg']['title'] = 'Duplicando Orden de Servicio';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioRegistroOrdenServicio", $dataParaVista, true);
 
 		echo json_encode($result);
@@ -1704,6 +1709,7 @@ class OrdenServicio extends MY_Controller
 		}
 		echo $rpta;
 	}
+
 	public function generarRowAdicionalSueldo()
 	{
 		$post = $this->input->post();

@@ -122,7 +122,7 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': jsonString };
@@ -145,6 +145,37 @@ var OrdenServicio = {
 				OrdenServicio.validarCheckbox();
 			});
 		});
+
+		$(document).on('click', '.btn-copyOrdenServicio', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idOrdenServicio': id, 'formato': 'duplicar' };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formDuplicarOrdenServicio", fn: "OrdenServicio.registrarOrdenServicio()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+
+				OrdenServicio.provincia = a.data.provincia;
+				OrdenServicio.distrito = a.data.distrito;
+				OrdenServicio.arrayCargo = a.data.cargo;
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				OrdenServicio.addFechas();
+				Fn.loadSemanticFunctions();
+				OrdenServicio.validarCheckbox();
+			});
+		});
+		
 		$(document).on('change', '.cboTPD', function () {
 			let control = $(this);
 			// Validar que no se repite el valor
@@ -194,7 +225,7 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioRegistroPresupuesto', 'data': jsonString };
@@ -232,7 +263,7 @@ var OrdenServicio = {
 
 			let id = $(this).parents('tr:first').data('presupuesto');
 			console.log(id);
-			let data = { 'idPresupuesto': id, 'formularioValidar': false };
+			let data = { 'idPresupuesto': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioEditarPresupuesto', 'data': jsonString };
