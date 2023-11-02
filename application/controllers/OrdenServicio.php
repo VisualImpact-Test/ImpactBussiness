@@ -365,7 +365,7 @@ class OrdenServicio extends MY_Controller
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
-		$title = 'Titulo de pruebita';
+		$title = $oS['nombre'];
 		$mpdf->Output("$title.pdf", 'D');
 
 		// $this->aSessTrack[] = ['idAccion' => 9];

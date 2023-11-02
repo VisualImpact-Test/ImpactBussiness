@@ -838,6 +838,8 @@ class SolicitudCotizacion extends MY_Controller
 			'protocol' => 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
 			'smtp_port' => 465,
+			// 'smtp_host' => 'aspmx.l.google.com',
+			// 'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'
@@ -898,7 +900,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		$dataParaVista = [];
 		foreach (checkAndConvertToArray($post['proveedorSolicitudForm']) as $idPro) {
-			$datoExistente = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $idPro, 'idCotizacion' => $post['idCotizacion']])->result_array();
+			$datoExistente = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $idPro, 'idCotizacion' => $post['idCotizacion'], 'estado' => 1])->result_array();
 			if (!empty($datoExistente)) {
 				$result['result'] = 1;
 				$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Ya se asignó previamente al proveedor con esta cotización.']);
@@ -943,9 +945,7 @@ class SolicitudCotizacion extends MY_Controller
 		foreach ($usuariosCompras as $usuario) {
 			$ccCompras[] = $usuario['email'];
 		}
-
 		foreach ($post['proveedorSolicitudForm'] as $idProveedor) {
-
 			if (empty($cotizacionProveedor[$idProveedor])) {
 				$data['tabla'] = 'compras.cotizacionDetalleProveedor';
 				$data['insert'] = [

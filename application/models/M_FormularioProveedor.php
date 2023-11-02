@@ -319,6 +319,7 @@ class M_FormularioProveedor extends MY_Model
 		JOIN compras.itemTipo it ON it.idItemTipo = cd.idItemTipo
 		JOIN compras.itemEstado ei ON cd.idItemEstado = ei.idItemEstado
 		$filtros
+		AND cdp.estado = 1
 		";
 		return $this->db->query($sql);
 	}

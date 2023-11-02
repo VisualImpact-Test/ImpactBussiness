@@ -265,14 +265,14 @@
 						<p><?= moneda(($cabecera['fee_prc'])) ?></p>
 					</td>
 				</tr>
-				<tr class="height:100px" style="background-color: #F6FAFD;">
+				<!-- <tr class="height:100px" style="background-color: #F6FAFD;">
 					<td colspan="<?= $col1; ?>" class="text-right bold">
 						<p>FEE <?= !empty($cabecera['feePersonal']) ? $cabecera['feePersonal'] . '%' : '0%' ?></p>
 					</td>
 					<td class="text-right">
 						<p><?= moneda(($cabecera['fee_personal'])) ?></p>
 					</td>
-				</tr>
+				</tr> -->
 				<tr class="height:100px" style="background-color: #FFE598;">
 					<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
 						<p>TOTAL</p>
