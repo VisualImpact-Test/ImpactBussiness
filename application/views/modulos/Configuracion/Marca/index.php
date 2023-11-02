@@ -24,7 +24,7 @@
 		<i class="fal fa-cog fa-lg fa-spin"></i>
 	</a>
 	<div class="customizer-content p-2 ps-container ps-theme-dark" data-ps-id="aca1f25c-4ed9-a04b-d154-95a5d6494748">
-		<form id="frm-marca">
+		<form id="frm-marca" autocomplete="off">
 			<div class="card-header" style="margin-bottom: 14px;justify-content: center;">
 				<h4>CONFIGURACIÓN</h4>
 			</div>

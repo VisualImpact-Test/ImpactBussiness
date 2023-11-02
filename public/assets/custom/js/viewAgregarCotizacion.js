@@ -3000,7 +3000,8 @@ var Cotizacion = {
 		if (igvForm.is(":checked")) {
 			igv = IGV_SYSTEM;
 		}
-		let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion;
+		// let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion; -- Antes: distribucion no tenia FEE
+		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100)));
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
 		$('.totalFormLabel').val(moneyFormatter.format(Number(totalFeeIgv)));

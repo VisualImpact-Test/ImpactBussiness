@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistroProveedores" method="post">
+<form class="form" role="form" id="formRegistroProveedores" method="post" autocomplete="off">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -9,7 +9,7 @@
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" for="ruc" style="border:0px;">RUC :</label>
-					<input class="form-control col-md-8" id="ruc" name="ruc" patron="requerido,ruc">
+					<input class="form-control col-md-8 onlyNumbers" id="ruc" name="ruc" patron="requerido,ruc">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" for="rubro" style="border:0px;">Actividad :</label>
@@ -159,7 +159,7 @@
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
-					<input class="form-control col-md-8" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
+					<input class="form-control col-md-8 onlyNumbers" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
 				</div>
 				<div class="mb-2 input-group control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
@@ -178,7 +178,7 @@
 				<legend class="scheduler-border">Costo</legend>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Costo (S/) :</label>
-					<input class="form-control col-md-8" id="costo" name="costo" patron="numeros" value="0">
+					<input class="form-control col-md-8 onlyNumbers" id="costo" name="costo" patron="numeros" value="0">
 				</div>
 			</fieldset>
 		</div>

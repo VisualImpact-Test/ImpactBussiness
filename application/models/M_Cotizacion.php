@@ -90,24 +90,25 @@ class M_Cotizacion extends MY_Model
 		!empty($params['estadoCentroCosto']) ? $filtros .= " AND c.estado_centro = 1" : "";
 
 		$sql = "
-		DECLARE @hoy DATE = GETDATE();
-		SELECT DISTINCT
-			c.idEmpresa idDependiente,
-			c.idEmpresaCanal id,
-			c.canal + ' - ' + c.subcanal value
-		FROM
-		rrhh.dbo.empresa_Canal c
-		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
-			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
-		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
-		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
-		WHERE
-			e.flag = 'activo' 
-			-- Excluir canal Trade
-			AND c.idCanal not in (1)
-			AND c.subcanal IS NOT NULL
-			{$filtros}
-		ORDER BY id";
+			DECLARE @hoy DATE = GETDATE();
+			SELECT DISTINCT
+				c.idEmpresa idDependiente,
+				c.idEmpresaCanal id,
+				c.canal + ' - ' + c.subcanal value
+			FROM
+			rrhh.dbo.empresa_Canal c
+			JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
+				AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
+			JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
+			JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
+			WHERE
+				e.flag = 'activo' 
+				-- Excluir canal Trade -- Se quito la exclusiòn por el correo de margarita 2023-11-02
+				-- AND c.idCanal not in (1)
+				AND c.subcanal IS NOT NULL
+				{$filtros}
+			ORDER BY id
+		";
 		$query = $this->db->query($sql);
 
 		if ($query) {
