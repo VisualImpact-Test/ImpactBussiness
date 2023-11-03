@@ -52,7 +52,7 @@ class M_OrdenServicio extends MY_Model
 					AND ISNULL(l.idDistrito , 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 					AND ubi_zc.estado = 1', 'LEFT')
 			->join('compras.cliente cli', 'cli.idCliente = l.idCliente', 'LEFT')
-			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio', 'LEFT')
+			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio and pr.estado = 1', 'LEFT')
 			->join('rrhh.dbo.Empresa c', 'l.idCuenta = c.idEmpresa', 'LEFT')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = l.idCentroCosto', 'LEFT')
 			->order_by('l.idOrdenServicio desc');
@@ -176,7 +176,6 @@ class M_OrdenServicio extends MY_Model
 			->select('pc.*, c.nombre as cargo')
 			->from('compras.presupuestoCargo pc')
 			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = pc.idCargo', 'LEFT')
-			// ->join('compras.cargo c', 'c.idCargo = pc.idCargo')
 			->where('pc.estado', 1)
 			->where('pc.idPresupuesto', $id)
 			->get();

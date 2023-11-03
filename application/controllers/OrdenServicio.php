@@ -27,6 +27,7 @@ class OrdenServicio extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/languages/all',
 			'assets/libs/handsontable@7.4.2/dist/moment/moment',
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
+			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
 			'assets/custom/js/ordenServicio'
 		);
@@ -107,6 +108,268 @@ class OrdenServicio extends MY_Controller
 		];
 
 		echo json_encode($result);
+	}
+
+	public function generarPdf($id)
+	{
+		$data = [];
+		require_once('../mpdf/mpdf.php');
+		// ini_set('memory_limit', '1024M');
+		// set_time_limit(0);
+
+		// $post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+
+		$dataParaVista['presupuesto'] = $pr = $this->db->get_where('compras.presupuesto', ['idPresupuesto' => $id])->row_array();
+		$dataParaVista['ordenServicio'] = $oS = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $pr['idOrdenServicio']])->row_array();
+
+		$idOSD_AF_Porcentaje = $this->db->get_where('compras.ordenServicioDetalle', ['estado' => 1, 'idOrdenServicio' => $pr['idOrdenServicio'], 'idTipoPresupuesto' => COD_SUELDO])->row_array()['idOrdenServicioDetalle'];
+		$AsignacionFamiliarPorcentaje = $this->db->get_where('compras.ordenServicioDetalleSub', ['idOrdenServicioDetalle' => $idOSD_AF_Porcentaje, 'estado' => 1, 'idTipoPresupuestoDetalle' => COD_ASIGNACIONFAMILIAR])->row_array()['valorPorcentual'];
+
+		$fechas = $this->db->get_where('compras.ordenServicioFecha', ['idOrdenServicio' => $pr['idOrdenServicio'], 'estado' => 1])->result_array();
+		$dataParaVista['fechas'] = $fechas = changeKeyInArray($fechas, 'fecha');
+
+		$cargos = $this->mCotizacion->getAll_Cargos()->result_array();
+		$dataParaVista['cargos'] = changeKeyInArray($cargos, 'idCargoTrabajo');
+
+		$cargos = $this->db->get_where('compras.ordenServicioCargo', ['idOrdenServicio' => $pr['idOrdenServicio'], 'estado' => 1])->result_array();
+		$dataParaVista['cargosOS'] = changeKeyInArray($cargos, 'idCargo');
+
+		$presupuestoCargoFecha = $this->db->get_where('compras.presupuestoCargo', ['idPresupuesto' => $id, 'estado' => 1])->result_array();
+		$dataParaVista['cantidadPorCargoFecha'] = $presupuestoCargoFecha = changeKeyInArray($presupuestoCargoFecha, 'idCargo', 'fecha');
+
+		$tipoPresupuesto = $this->db->get_where('compras.tipoPresupuesto', ['estado' => 1])->result_array();
+		$dataParaVista['tiposPresupuesto'] = changeKeyInArray($tipoPresupuesto, 'idTipoPresupuesto');
+
+		$tipoPresupuestoDetalle = $this->db->get_where('compras.tipoPresupuestoDetalle', ['estado' => 1])->result_array();
+		$dataParaVista['tiposPresupuestoDetalle'] = $tipoPresupuestoDetalle = changeKeyInArray($tipoPresupuestoDetalle, 'idTipoPresupuestoDetalle');
+
+		$presupuestoDet = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id, 'estado' => 1])->result_array();
+		$dataParaVista['presupuestoDetalle'] = $pd = changeKeyInArray($presupuestoDet, 'idPresupuestoDetalle');
+		$whereIdPreDet = obtenerDatosCabecera($presupuestoDet, 'idPresupuestoDetalle');
+
+		$presupuestoDetSub = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get_where('compras.presupuestoDetalleSub', ['estado' => 1])->result_array();
+		$dataParaVista['presupuestoDetalleSub'] = $presupuestoDetSub = changeKeyInArray($presupuestoDetSub, 'idPresupuestoDetalle', 'idTipoPresupuestoDetalle');
+
+		$presupuestoDetSueldo = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get_where('compras.presupuestoDetalleSueldo', ['estado' => 1])->result_array();
+		$dataParaVista['presupuestoDetalleSueldo'] = $presupuestoDetSueldo = changeKeyInArray($presupuestoDetSueldo, 'idPresupuestoDetalle', 'idCargo', 'idTipoPresupuestoDetalle');
+
+		$presDetMovilidad = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('dias >', 0)->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$presDetAlmacen = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('monto >', 0)->get_where('compras.presupuestoDetalleAlmacen', ['estado' => 1])->result_array();
+
+		$calculoCargoFechaServicio = [];
+		$sueldoTotalPorCargo = [];
+		$incentivoTotalPorCargo = [];
+		$porcentajeTotalPorCargo = [];
+
+		foreach ($presupuestoDetSub as $k1 => $v1) { // $k1 = idPresupuestoDetalle
+			if ($pd[$k1]['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS) $idPreDe_GastAdmi = $k1;
+			foreach ($v1 as $k2 => $v2) { // $k2 = idTipoPresupuestoDetalle
+				$presupuestoDetalleSubCargo = $this->db->get_where('compras.presupuestoDetalleSubCargo', ['idPresupuestoDetalleSub' => $v2['idPresupuestoDetalleSub'], 'checked' => 1])->result_array();
+				$presupuestoDetalleSubCargo = changeKeyInArray($presupuestoDetalleSubCargo, 'idCargo');
+
+				$valorMax = [];
+				$acumulado = [];
+				$keyCode = '';
+				$nroMes = 0;
+				foreach ($fechas as $kf => $vf) {
+					if (!isset($calculoCargoFechaServicio[$k1][$k2][$kf])) $calculoCargoFechaServicio[$k1][$k2][$kf] = 0;
+					$nroMes++;
+
+					foreach ($presupuestoDetalleSubCargo as $kc => $vc) {
+						if (!isset($acumulado[$kc])) $acumulado[$kc] = 0;
+						if (!isset($valorMax[$kc])) $valorMax[$kc] = 0;
+
+						$montoTot = floatval($v2['monto']);
+						if ($v2['idFrecuencia'] == '1') { // MENSUAL
+							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+						} elseif ($v2['idFrecuencia'] == '2') { // BIMENSUAL
+							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $keyCode = $kf;
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
+								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+
+							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
+								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
+
+							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+						} elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
+							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $keyCode = $kf;
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
+								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+
+							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
+								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
+
+							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+						} elseif ($v2['idFrecuencia'] == '4') { // ANUAL
+							if ($nroMes == 1 || ($nroMes - 1) % 12 == 0) $keyCode = $kf;
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
+								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+
+							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
+								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
+
+							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+						} elseif ($v2['idFrecuencia'] == '5') { // UNICO
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc]) $valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+							if ($acumulado[$kc] > $valorMax[$kc]) $acumulado[$kc] = $valorMax[$kc];
+
+							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) - $acumulado[$kc]);
+
+							$acumulado[$kc] += (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) - $acumulado[$kc]); // No borrar.
+						} elseif ($v2['idFrecuencia'] == '6') { // FRACCIONADO
+							$calculoCargoFechaServicio[$k1][$k2][$kf] = $montoTot / count($fechas);
+						} else {
+							$calculoCargoFechaServicio[$k1][$k2][$kf] = $v2['idFrecuencia'];
+						}
+					}
+				}
+			}
+		}
+
+		if (!empty($presDetAlmacen)) {
+			foreach ($presDetAlmacen as $k => $v) {
+				$nroMes = 0;
+				foreach ($fechas as $kf => $vf) {
+					$nroMes++;
+
+					if (!isset($calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['almacen'][$kf])) $calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['almacen'][$kf] = 0;
+					if ($v['split'] == 1) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['almacen'][$kf] += $v['monto'] * 1.348;
+					} else if ($v['split'] == 2 && ($nroMes % 2 == 0 || count($fechas) == $nroMes)) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['almacen'][$kf] += $v['monto'] * 1.348;
+					} else if ($v['split'] == 3 && ($nroMes % 3 == 0 || count($fechas) == $nroMes)) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['almacen'][$kf] += $v['monto'] * 1.348;
+					}
+				}
+			}
+		}
+
+		if (!empty($presDetMovilidad)) {
+			$movilidadAdicionalTotal = $this->db->select_sum('montoMovilidad')->where_in('idPresupuestoDetalle', $whereIdPreDet)->get('compras.presupuestoDetalleSueldoAdicional')->row_array()['montoMovilidad'];
+			foreach ($presDetMovilidad as $k => $v) {
+				$nroMes = 0;
+				foreach ($fechas as $kf => $vf) {
+					$nroMes++;
+
+					if (!isset($calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['viajes'][$kf])) $calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['viajes'][$kf] = 0;
+					if ($v['split'] == 1) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['viajes'][$kf] += $v['total'];
+					} else if ($v['split'] == 2 && ($nroMes % 2 == 0 || count($fechas) == $nroMes)) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['viajes'][$kf] += $v['total'];
+					} else if ($v['split'] == 3 && ($nroMes % 3 == 0 || count($fechas) == $nroMes)) {
+						$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['viajes'][$kf] += $v['total'];
+					}
+
+					$calculoCargoFechaServicio[$v['idPresupuestoDetalle']]['movAdicional'][$kf] = $movilidadAdicionalTotal;
+				}
+			}
+		}
+
+		foreach ($presupuestoDetSueldo as $k1 => $v1) { // $k1 = idPresupuestoDetalle	
+			foreach ($v1 as $k2 => $v2) { // $k2 = idCargo
+				foreach ($fechas as $kf => $vf) {
+					$sueldoTotalPorCargo[$k1][$k2] = 0;
+					$sueldoAdTotalPorCargo[$k1][$k2] = 0;
+					$incentivoTotalPorCargo[$k1][$k2] = 0;
+					$porcentajeTotalPorCargo[$k1][$k2] = 0;
+					$montoParaSCTR[$k2] = 0;
+
+					foreach ($v2 as $k3 => $v3) { // $k3 = idTipoPresupuestoDetalle
+						if ($tipoPresupuestoDetalle[$k3]['tipo'] == '1') $sueldoTotalPorCargo[$k1][$k2] += $v3['monto'];
+						if ($tipoPresupuestoDetalle[$k3]['tipo'] == '2') $sueldoAdTotalPorCargo[$k1][$k2] += $v3['monto'];
+						if ($tipoPresupuestoDetalle[$k3]['tipo'] == '3') $incentivoTotalPorCargo[$k1][$k2] += $v3['monto'];
+						if ($tipoPresupuestoDetalle[$k3]['tipo'] == '4') $porcentajeTotalPorCargo[$k1][$k2] += $v3['porCL'];
+						if ($tipoPresupuestoDetalle[$k3]['tipo'] == '1' || $tipoPresupuestoDetalle[$k3]['tipo'] == '2' || $tipoPresupuestoDetalle[$k3]['tipo'] == '3') {
+							if ($k3 == COD_ASIGNACIONFAMILIAR) $montoParaSCTR[$k2] += ($v3['monto'] * 100 / $AsignacionFamiliarPorcentaje);
+							else $montoParaSCTR[$k2] += $v3['monto'];
+						}
+						if (!isset($calculoCargoFechaServicio[$k1][$k2][$kf])) $calculoCargoFechaServicio[$k1][$k2][$kf] = 0;
+						$calculoCargoFechaServicio[$k1][$k2][$kf] = ($sueldoTotalPorCargo[$k1][$k2] * (100 + $porcentajeTotalPorCargo[$k1][$k2]) / 100 + $sueldoAdTotalPorCargo[$k1][$k2]) * floatval($presupuestoCargoFecha[$k2][$kf]['cantidad']);
+					}
+
+					if (!isset($calculoCargoFechaServicio[$k1]['incentivo'][$kf])) $calculoCargoFechaServicio[$k1]['incentivo'][$kf] = 0;
+					$calculoCargoFechaServicio[$k1]['incentivo'][$kf] += ($incentivoTotalPorCargo[$k1][$k2] * (100 + $porcentajeTotalPorCargo[$k1][$k2]) / 100) * floatval($presupuestoCargoFecha[$k2][$kf]['cantidad']);
+					if ($pr['sctr'] > 0) {
+						$calculoCargoFechaServicio[$idPreDe_GastAdmi]['sctr'][$kf] += ($montoParaSCTR[$k2] * $pr['sctr'] / 100) * floatval($presupuestoCargoFecha[$k2][$kf]['cantidad']);
+					}
+				}
+			}
+		}
+
+		$sueldoAdicionalTotal = $this->db->select_sum('monto')->where_in('idPresupuestoDetalle', $whereIdPreDet)->get('compras.presupuestoDetalleSueldoAdicional')->row_array()['monto'];
+		$sueldoAdicionalTotal = floatval($sueldoAdicionalTotal);
+
+		if (!empty($calculoCargoFechaServicio[$k1]['incentivo'])) {
+			foreach ($calculoCargoFechaServicio[$k1]['incentivo'] as $k => $v) {
+				$calculoCargoFechaServicio[$k1]['incentivo'][$k] += $sueldoAdicionalTotal;
+			}
+		}
+		$dataParaVista['calculoCargoFechaServicio'] = $calculoCargoFechaServicio;
+
+		$totalCargoFechaServicio = [];
+		foreach ($calculoCargoFechaServicio as $k1 => $v1) { // $k1 = idPresupuestoDetalle
+			foreach ($v1 as $k2 => $v2) { // $k2 = idTipoPresupuestoDetalle
+				foreach ($v2 as $k3 => $v3) { // $k3 = fecha
+					if (!isset($totalCargoFechaServicio[$k1][$k3])) $totalCargoFechaServicio[$k1][$k3] = 0;
+					$totalCargoFechaServicio[$k1][$k3] += $v3;
+
+					if (!isset($totalCargoFechaServicio['acumuladoPorFecha'][$k3])) $totalCargoFechaServicio['acumuladoPorFecha'][$k3] = 0;
+					$totalCargoFechaServicio['acumuladoPorFecha'][$k3] += $v3;
+
+					if (!isset($totalCargoFechaServicio['acumuladoTotal'])) $totalCargoFechaServicio['acumuladoTotal'] = 0;
+					$totalCargoFechaServicio['acumuladoTotal'] += $v3;
+
+					if (!isset($totalCargoFechaServicio['totalFinal'][$k1])) $totalCargoFechaServicio['totalFinal'][$k1] = 0;
+					$totalCargoFechaServicio['totalFinal'][$k1] += $v3;
+
+					if (!isset($totalCargoFechaServicio['totalServicio'][$k2])) $totalCargoFechaServicio['totalServicio'][$k2] = 0;
+					$totalCargoFechaServicio['totalServicio'][$k2] += $v3;
+				}
+			}
+		}
+		$dataParaVista['totalCargoFechaServicio'] = $totalCargoFechaServicio;
+
+
+		$contenido['style'] = $this->load->view("modulos/OrdenServicio/pdf/oper_style", [], true);
+		$contenido['header'] = $this->load->view("modulos/OrdenServicio/pdf/header", ['title' => $oS['nombre'] /*, 'codigo' => 'COD: SIG-OPE-FOR-???' */], true);
+		$contenido['body'] = $this->load->view("modulos/OrdenServicio/pdf/body", $dataParaVista, true);
+		$contenido['footer'] = $this->load->view("modulos/OrdenServicio/pdf/footer", ['solicitante' => ''], true);
+
+		// foreach ($contenido as $v) echo $v; // Esta linea es para verlo desde HTML sin estar descargando a cada rato xd
+
+
+		require APPPATH . '/vendor/autoload.php';
+		// $orientation = '';
+		// if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
+		// 	$orientation = 'L';
+		// }
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			'orientation' => 'L', // $orientation
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
+		$mpdf->SetDisplayMode('fullpage');
+		$mpdf->SetHTMLHeader($contenido['header']);
+		$mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
+
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+		$title = $oS['nombre'];
+		$mpdf->Output("$title.pdf", 'D');
+
+		// $this->aSessTrack[] = ['idAccion' => 9];
+
 	}
 
 	public function formularioRegistroOrdenServicio()
@@ -365,6 +628,14 @@ class OrdenServicio extends MY_Controller
 		$idCliente = null;
 		$idCuenta = null;
 		$idCentroCosto = null;
+
+		$buscarDuplicado = $this->db->get_where('compras.ordenServicio', ['estado' => 1, 'nombre' => $post['nombre']])->result_array();
+		if (!empty($buscarDuplicado)) {
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Advertencia!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Ya existe un registro con el mismo nombre']);
+			goto respuesta;
+		}
 		if ($post['chkUtilizarCliente']) {
 			if (!is_numeric($post['clienteForm'])) {
 				$insertCliente = [
@@ -598,7 +869,8 @@ class OrdenServicio extends MY_Controller
 		$result['data']['distrito'] = $distrito;
 		$result['data']['cargo'] = $dataParaVista['cargo'];
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Actualizar OrdenServicio';
+		$result['msg']['title'] = 'Actualizar Orden de Servicio';
+		if (isset($post['formato'])) if ($post['formato'] == 'duplicar') $result['msg']['title'] = 'Duplicando Orden de Servicio';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioRegistroOrdenServicio", $dataParaVista, true);
 
 		echo json_encode($result);
@@ -902,45 +1174,6 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
-	// public function formTablaParaLlenado()
-	// {
-	// 	$result = $this->result;
-	// 	$post = $this->input->post();
-
-	// 	if (empty($post['nroFecha'])) {
-	// 		$result['data']['html'] = 'No hay cantidad de Fechas';
-	// 		goto resultado;
-	// 	}
-	// 	if (empty($post['nroFecha'])) {
-	// 		$result['data']['html'] = 'No hay cantidad de Personas';
-	// 		goto resultado;
-	// 	}
-	// 	$result['result'] = 1;
-	// 	$result['msg']['title'] = '';
-	// 	$persona = [
-	// 		0 => [
-	// 			'id' => 1, 'nombre' => 'Persona A'
-	// 		],
-	// 		1 => [
-	// 			'id' => 2, 'nombre' => 'Persona B'
-	// 		],
-	// 		2 => [
-	// 			'id' => 3, 'nombre' => 'Persona C'
-	// 		]
-	// 	];
-	// 	$personaList = [];
-	// 	foreach ($persona as $k => $v) {
-	// 		$personaList[$v['id']] = $v;
-	// 	}
-	// 	$dataParaVista = $post;
-	// 	$dataParaVista['persona'] = $persona;
-	// 	$result['data']['persona'] = $personaList;
-	// 	$result['data']['html'] = $this->load->view('modulos/OrdenServicio/tablaParaRegistro', $dataParaVista, true);
-	// 	$result['data']['htmlSueldo'] = $this->load->view('modulos/OrdenServicio/tablaSueldo', $dataParaVista, true);
-	// 	resultado:
-	// 	echo json_encode($result);
-	// }
-
 	public function registrarPresupuesto()
 	{
 		$this->db->trans_start();
@@ -980,7 +1213,7 @@ class OrdenServicio extends MY_Controller
 			foreach ($post['cargoList'] as $vc) {
 				$insertPresupuestoCargo[] = [
 					'idPresupuesto' => $idPresupuesto,
-					'fecha' => $vf,
+					'fecha' => date_change_format_bd($vf),
 					'idCargo' => $vc,
 					'cantidad' => $post["cantidadCargoFecha[$vc][$kf]"],
 					'idUsuario' => $this->idUsuario,
@@ -1229,7 +1462,7 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
 		$dataParaVista['sueldoMinimo'] = $this->db->where('fechaFin', NULL)->get('compras.sueldoMinimo')->row_array()['monto'];
-		
+
 		$where = [];
 		if (!empty($dataParaVista['idCuenta'])) {
 			$where['idCuenta'] = $dataParaVista['idCuenta'];
@@ -1348,10 +1581,11 @@ class OrdenServicio extends MY_Controller
 			'idUsuario' => $this->idUsuario,
 			'fechaReg' => getActualDateTime()
 		];
+		$updatePresupuesto['estado'] = 1;
 		$this->db->update('compras.presupuesto', $updatePresupuesto, ['idPresupuesto' => $idPresupuesto]);
 
 		$updatePresupuesto['idPresupuesto'] = $idPresupuesto;
-		$updatePresupuesto['estado'] = 1;
+
 		$this->db->insert('compras.presupuestoHistorico', $updatePresupuesto);
 
 		// compras.presupuestoCargo
@@ -1360,7 +1594,7 @@ class OrdenServicio extends MY_Controller
 			foreach ($post['cargoList'] as $vc) {
 				$insertPresupuestoCargo[] = [
 					'idPresupuesto' => $idPresupuesto,
-					'fecha' => $vf,
+					'fecha' => date_change_format_bd($vf),
 					'idCargo' => $vc,
 					'cantidad' => $post["cantidadCargoFecha[$vc][$kf]"],
 					'idUsuario' => $this->idUsuario,
@@ -1666,6 +1900,7 @@ class OrdenServicio extends MY_Controller
 		}
 		echo $rpta;
 	}
+
 	public function generarRowAdicionalSueldo()
 	{
 		$post = $this->input->post();

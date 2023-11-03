@@ -122,7 +122,7 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': jsonString };
@@ -145,8 +145,67 @@ var OrdenServicio = {
 				OrdenServicio.validarCheckbox();
 			});
 		});
+
+		$(document).on('click', '.btn-copyOrdenServicio', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idOrdenServicio': id, 'formato': 'duplicar' };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formDuplicarOrdenServicio", fn: "OrdenServicio.registrarOrdenServicio()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+
+				OrdenServicio.provincia = a.data.provincia;
+				OrdenServicio.distrito = a.data.distrito;
+				OrdenServicio.arrayCargo = a.data.cargo;
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				OrdenServicio.addFechas();
+				Fn.loadSemanticFunctions();
+				OrdenServicio.validarCheckbox();
+			});
+		});
+		
 		$(document).on('change', '.cboTPD', function () {
 			let control = $(this);
+			// Validar que no se repite el valor
+			let cantidadEncontrado = 0;
+			let datoARevisar = $(this).dropdown('get value');
+			control.closest('table').find('.cboTPD').each(function () {
+				if ($(this).dropdown('get value') == datoARevisar) {
+					cantidadEncontrado++;
+					if (cantidadEncontrado > 1) {
+						Fn.showLoading(true);
+						message = Fn.message({ type: 3, message: 'Se ha repetido la opción indicada' });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+						
+						setTimeout(function () {
+							control.dropdown('clear');
+							Fn.showLoading(false);
+						}, 500);
+						return false;
+					}
+				}
+			});
+
+			// Fin: Validar que no se repite el valor
+
 			let precio = control.find('option:selected').data('preciounitario') || 0;
 			let split = control.find('option:selected').data('split') || 1;
 			let frecuencia = control.find('option:selected').data('frecuencia');
@@ -166,7 +225,7 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idOrdenServicio': id, 'formularioValidar': false };
+			let data = { 'idOrdenServicio': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioRegistroPresupuesto', 'data': jsonString };
@@ -203,7 +262,8 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('presupuesto');
-			let data = { 'idPresupuesto': id, 'formularioValidar': false };
+			console.log(id);
+			let data = { 'idPresupuesto': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formularioEditarPresupuesto', 'data': jsonString };

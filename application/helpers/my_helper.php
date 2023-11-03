@@ -52,6 +52,7 @@ function getHashedPassword($password)
 
 function date_change_format($fecha)
 {
+	if (strpos($fecha, "Mes") !== false) return $fecha;
 	if (empty($fecha)) return '';
 	$fecha = new DateTime($fecha);
 	return $fecha->format('d/m/Y');
@@ -59,6 +60,7 @@ function date_change_format($fecha)
 
 function date_change_format_bd($fecha)
 {
+	if (strpos($fecha, "Mes") !== false) return $fecha;
 	$result = NULL;
 	if (!empty($fecha)) {
 		$array_fecha = explode('/', $fecha);
@@ -2024,6 +2026,34 @@ function decrypt($string)
 	$iv = base64_decode("C8fBxl1g7EWtYTL1/M8jfstw==");
 
 	return openssl_decrypt($string, $method, SECRET_KEY_GET, false, $iv);
+}
+
+function changeKeyInArray($array, $new_key, $new_key2 = '', $new_key3 = '')
+{
+	if (empty($array)) return $array;
+
+	$n_array = [];
+	foreach ($array as $v) {
+		if (!empty($new_key3)){
+			$n_array[$v[$new_key]][$v[$new_key2]][$v[$new_key3]] = $v;
+		}
+		else if (!empty($new_key2)){
+			$n_array[$v[$new_key]][$v[$new_key2]] = $v;
+		}
+		else {
+			$n_array[$v[$new_key]] = $v;
+		}
+	}
+	return $n_array;
+}
+function obtenerDatosCabecera($array, $head)
+{
+	if (empty($array)) return $array;
+	$ar = [];
+	foreach ($array as $v) {
+		$ar[] = $v[$head];
+	}
+	return $ar;
 }
 
 class Encriptar

@@ -545,7 +545,7 @@
 								<div class="four wide field">
 									<div class="ui sub header">Almacén</div>
 									<select class="ui basic floating dropdown button simpleDropdown flagOtrosPuntos" name="flagOtrosPuntos">
-										<?php if ($row['idItemTipo'] == COD_DISTRIBUCION['id']) :  ?>
+										<?php if ($row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
 											<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
 											<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
 											<?php else: ?>
@@ -618,7 +618,7 @@
 								?>
 							</div>
 							<!-- TRANSPORTE -->
-							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) :  ?>
+							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) : ?>
 								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
 									<div class="content-body-sub-item">
 										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']] as $dataSubItem) : ?>
@@ -632,33 +632,40 @@
 												</div>
 												<div class="three wide field">
 													<div class="ui sub header">Provincia</div>
-													<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarTipoTransporte(this);">
+													<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarDistritos(this);">
 														<option value>Seleccione</option>
 														<option selected value="<?= $dataSubItem['cod_provincia']; ?>"><?= $dataSubItem['provincia']; ?></option>
 													</select>
 												</div>
+												<div class="three wide field">
+													<div class="ui sub header">Distrito</div>
+													<select class="ui simpleDropdown disT formTransporte distrito_transporte" name="distritoTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarTipoTransporte(this);">
+														<option value>Seleccione</option>
+														<option selected value="<?= $dataSubItem['cod_distrito']; ?>"><?= $dataSubItem['distrito']; ?></option>
+													</select>
+												</div>
 												<div class="two wide field">
-													<div class="ui sub header">Tipo Transporte</div>
+													<div class="ui sub header">Tipo</div>
 													<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarCosto(this);">
 														<option value>Seleccione</option>
 														<option selected value="<?= $dataSubItem['idTipoServicioUbigeo']; ?>"><?= $dataSubItem['tipoServicioUbigeo']; ?></option>
 													</select>
 												</div>
 												<div class="two wide field">
-													<div class="ui sub header">Costo Visual</div>
+													<div class="ui sub header">Csto Visual</div>
 													<input class="inpCostoVisual formTransporte costoVisual_transporte" name="costoVisualTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costoVisual'], 2) ?>" readonly>
 												</div>
 												<div class="two wide field">
-													<div class="ui sub header">Costo Cliente</div>
-													<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costoSubItem']) ?>" readonly onchange="Cotizacion.calcularValorTransporte(this);">
+													<div class="ui sub header">Csto Cliente</div>
+													<input class="inpCosto formTransporte costoCliente_transporte keyUpChange onlyNumbers" name="costoClienteTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['costoSubItem']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
 												</div>
-												<div class="two wide field">
-													<div class="ui sub header">Cant días</div>
-													<input class="formTransporte dias_transporte keyUpChange" name="diasTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['dias']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
+												<div class="one wide field">
+													<div class="ui sub header">Días</div>
+													<input class="formTransporte dias_transporte keyUpChange onlyNumbers" name="diasTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['dias']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
 												</div>
-												<div class="two wide field">
-													<div class="ui sub header">Cant moviles</div>
-													<input class="formTransporte cantidad_transporte keyUpChange" name="cantidadTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['cantidad']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
+												<div class="one wide field">
+													<div class="ui sub header">Moviles</div>
+													<input class="formTransporte cantidad_transporte keyUpChange onlyNumbers" name="cantidadTransporte[<?= $row['idCotizacionDetalle'] ?>]" placeholder="0" value="<?= verificarEmpty($dataSubItem['cantidad']) ?>" onchange="Cotizacion.calcularValorTransporte(this);">
 												</div>
 												<div class="one wide field">
 													<div class="ui sub header">Eliminar</div>
@@ -694,7 +701,7 @@
 							<!-- Servicios -->
 
 							<!-- Distribucion -->
-							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) :  ?>
+							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) : ?>
 								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
 									<!-- <?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
 									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $distribucion['idCotizacionDetalleSub'] ?>">
@@ -834,12 +841,12 @@
 								<div class="fields ">
 									<div class="sixteen wide field">
 										<div class="ui small images content-lsck-files">
-											<?php if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) :  ?>
+											<?php if (!empty($cotizacionDetalleArchivos[$row['idCotizacionDetalle']])) : ?>
 												<?php foreach ($cotizacionDetalleArchivos[$row['idCotizacionDetalle']] as $archivo) : ?>
-													<?php if ($archivo['idTipoArchivo'] != TIPO_IMAGEN) :  ?>
-														<?php $icon = 'file';  ?>
-														<?php $icon = $archivo['idTipoArchivo'] == TIPO_PDF ? 'pdf' : $icon;  ?>
-														<?php $icon = $archivo['idTipoArchivo'] == TIPO_EXCEL ? 'xlsx' : $icon;  ?>
+													<?php if ($archivo['idTipoArchivo'] != TIPO_IMAGEN) : ?>
+														<?php $icon = 'file'; ?>
+														<?php $icon = $archivo['idTipoArchivo'] == TIPO_PDF ? 'pdf' : $icon; ?>
+														<?php $icon = $archivo['idTipoArchivo'] == TIPO_EXCEL ? 'xlsx' : $icon; ?>
 														<?php $rutaFile = RUTA_WIREFRAME . $icon . ".png"; ?>
 														<div class="ui fluid image content-lsck-capturas">
 															<div class="ui dimmer dimmer-file-detalle">
@@ -963,7 +970,7 @@
 	</div>
 	<div class="element-container">
 		<a href="javascript:;">
-			<?php if ($btnEnviar) :  ?>
+			<?php if ($btnEnviar) : ?>
 				<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.actualizarCotizacionView(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
 					<i class="send icon"></i>
 				</span>

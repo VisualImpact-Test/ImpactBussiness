@@ -90,24 +90,25 @@ class M_Cotizacion extends MY_Model
 		!empty($params['estadoCentroCosto']) ? $filtros .= " AND c.estado_centro = 1" : "";
 
 		$sql = "
-		DECLARE @hoy DATE = GETDATE();
-		SELECT DISTINCT
-			c.idEmpresa idDependiente,
-			c.idEmpresaCanal id,
-			c.canal + ' - ' + c.subcanal value
-		FROM
-		rrhh.dbo.empresa_Canal c
-		JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
-			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
-		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
-		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
-		WHERE
-			e.flag = 'activo' 
-			-- Excluir canal Trade
-			AND c.idCanal not in (1)
-			AND c.subcanal IS NOT NULL
-			{$filtros}
-		ORDER BY id";
+			DECLARE @hoy DATE = GETDATE();
+			SELECT DISTINCT
+				c.idEmpresa idDependiente,
+				c.idEmpresaCanal id,
+				c.canal + ' - ' + c.subcanal value
+			FROM
+			rrhh.dbo.empresa_Canal c
+			JOIN rrhh.dbo.empleadoCanalSubCanal ec ON ec.idEmpresa = c.idEmpresa
+				AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
+			JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
+			JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
+			WHERE
+				e.flag = 'activo' 
+				-- Excluir canal Trade -- Se quito la exclusiòn por el correo de margarita 2023-11-02
+				-- AND c.idCanal not in (1)
+				AND c.subcanal IS NOT NULL
+				{$filtros}
+			ORDER BY id
+		";
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -736,6 +737,7 @@ class M_Cotizacion extends MY_Model
 						//
 						'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : null,
 						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : null,
+						'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : null,
 						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
 					];
 				}
@@ -1601,6 +1603,7 @@ class M_Cotizacion extends MY_Model
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 
 						];
@@ -1640,6 +1643,7 @@ class M_Cotizacion extends MY_Model
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 						];
 					}
@@ -2051,6 +2055,7 @@ class M_Cotizacion extends MY_Model
 				cds.costoVisual,
 				cds.cod_departamento,
 				cds.cod_provincia,
+				cds.cod_distrito,
 				cds.idTipoServicioUbigeo
 			FROM
 			compras.cotizacion c
