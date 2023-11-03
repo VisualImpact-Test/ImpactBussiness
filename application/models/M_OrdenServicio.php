@@ -250,4 +250,26 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
+
+	public function obtenerDetalleAlmacen()
+	{
+		$query = $this->db
+			->select('*')
+			->from('compras.tipoPresupuestoDetalleAlmacen')
+			->get();
+		return $query;
+	}
+
+	public function obtenerDetalleMovilidad()
+	{
+		$query = $this->db
+			->select('*')
+			->from('compras.tipoPresupuestoDetalleMovilidad')
+			->get();
+		return $query;
+	}
+
+
+
+	
 }

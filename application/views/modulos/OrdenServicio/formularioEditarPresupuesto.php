@@ -549,7 +549,12 @@
 							</div>
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
+					
+						<div style="display: flex;flex-direction: row-reverse;">
+						<a class="ui whatsapp button"  onclick="OrdenServicio.listado_movilidad();">Listado</a>
+						<a class="ui blue button"  onclick="OrdenServicio.agregar_movilidad();">Agregar</a></div>
 						<div class="ui table">
+						
 							<table class="ui celled table" id="tablaMovilidad" data-personal="<?= count($cargoDelPre); ?>">
 								<thead>
 									<tr>
@@ -661,10 +666,16 @@
 							</table>
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_ALMACEN) : ?>
+						<div style="display: flex;flex-direction: row-reverse;">
+							<a class="ui whatsapp button"  onclick="OrdenServicio.listado_almacen();">Listado</a>
+							<a class="ui blue button"  onclick="OrdenServicio.agregar_almacen();">Agregar</a>
+						</div>
 						<div class="ui top attached tabular menu">
 							<a class="item active" data-tab="<?= $vd['idTipoPresupuesto']; ?>/a">RECURSOS</a>
 							<a class="item" data-tab="<?= $vd['idTipoPresupuesto']; ?>/b">MONTO</a>
 						</div>
+						
+						
 						<div class="ui bottom attached tab segment active" data-tab="<?= $vd['idTipoPresupuesto']; ?>/a">
 							<div class="ui table">
 								<table class="ui celled table" id="tablaAlmacen">

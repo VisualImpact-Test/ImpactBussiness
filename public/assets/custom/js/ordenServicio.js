@@ -559,6 +559,150 @@ var OrdenServicio = {
 			Fn.showLoading(false);
 		});
 	},
+	
+	agregar_movilidad: function () {
+		//console.log("hola");
+		++modalId;
+			let btn = [];
+			let fn = [];
+			html = '<form class="ui form" role="form" id="form_movil_save" method="post" autoComplete="off">';
+			html += '<div class="row">';
+			html +='<div class="col-6"><div class="ui sub header">Origen</div><input class="form-control" type="text" name="origen"  patron="requerido"></div>';
+			html +='<div class="col-6"><div class="ui sub header">Destino</div><input class="form-control" type="text" name="destino" patron="requerido"></div>';
+			html +='</div> <br>';
+			html +='<div class="row">';
+			html +='<div class="col-4"><div class="ui sub header">Split</div><select class="form-control" name="split">';
+			html +='<option selected value="1">1 vez por mes</option>';
+			html +='<option value="2">1 vez cada 2 meses</option>';
+			html +='<option value="3">1 vez cada 3 meses</option>';
+			html +='</select>';
+		  	html +='</div>';
+			html +='<div class="col-4"><div class="ui sub header">Prec. Bus</div><input class="form-control onlyNumbers" value="0" type="number" name="prec_bus" patron="requerido"></div>';
+			html +='<div class="col-4"><div class="ui sub header">Prec. Hospedaje</div><input class="form-control onlyNumbers" value="0"type="number" name="prec_hospedaje" patron="requerido"></div>';
+			html +='</div> <br>';
+			html +='<div class="row">';
+			html +='<div class="col-4"><div class="ui sub header">Prec. Viaticos</div><input class="form-control onlyNumbers" value="0" type="number" name="prec_viaticos" patron="requerido"></div>';
+			html +='<div class="col-4"><div class="ui sub header">Prec. Movilidad Int.</div><input class="form-control onlyNumbers" value="0" type="number" name="prec_movilidad" patron="requerido"></div>';
+			html +='<div class="col-4"><div class="ui sub header">Prec. Taxi.</div><input class="form-control onlyNumbers" value="0" type="number" name="prec_taxi" patron="requerido"></div>';
+			html +='</div> <br>';
+			html +='</form>';
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			fn[1] = 'Fn.showConfirm({ idForm: "form_movil_save", fn: "OrdenServicio.save_movilidad()", content: "¿Esta seguro de registrar esta movilidad?" });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			btn[1] = { title: 'Agregar', fn: fn[1] };
+			Fn.showModal({ id: modalId, show: true, title: "Movilidad", frm: html, btn: btn, width: '40%' });
+		
+	},
+	agregar_almacen: function () {
+	//console.log("hola");
+	++modalId;
+		let btn = [];
+		let fn = [];
+		html = '<form class="ui form" role="form" id="form_almacen_save" method="post" autoComplete="off"><div class="row">';
+		html +='<div class="col-6"><div class="ui sub header">Zona</div><input class="form-control" type="text" name="name_zona" patron="requerido"></div>';
+		html +='<div class="col-6"><div class="ui sub header">Zona2</div><input class="form-control" type="text" name="name_zona2" patron="requerido"></div>';
+		html +='</div> <br>';
+		html +='<div class="row">';
+		html +='<div class="col-6"><div class="ui sub header">Ciudad</div><input class="form-control" type="text" name="name_ciudad" patron="requerido"></div>';
+		html +='</div></form>';	
+		fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		fn[1] = 'Fn.showConfirm({ idForm: "form_almacen_save", fn: "OrdenServicio.save_almacen()", content: "¿Esta seguro de registrar un nuevo Almacen?" });';
+		btn[0] = { title: 'Cerrar', fn: fn[0] };
+		btn[1] = { title: 'Agregar', fn: fn[1] };
+		Fn.showModal({ id: modalId, show: true, title: "Almacen", frm: html, btn: btn, width: '70%' });
+	
+	},
+	
+	listado_almacen: function () {
+		
+		++modalId;
+		let data = {};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': OrdenServicio.url + 'listadoAlmacenes', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(5)", content: "¿Esta seguro de enviar esta cotizacion?" });';
+			// btn[1] = { title: 'Aprobar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+
+		
+		});
+	
+		},
+		listado_movilidad: function () {
+		
+			++modalId;
+			let data = {};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'listadoMovilidad', 'data': jsonString };
+	
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(5)", content: "¿Esta seguro de enviar esta cotizacion?" });';
+				// btn[1] = { title: 'Aprobar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+	
+			
+			});
+		
+			},
+	save_movilidad: function () {
+				
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('form_movil_save')) };
+		let url = OrdenServicio.url + "registrarNuevaMovilidad";
+		let config = { url: url, data: jsonString };
+		//console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				console.log("todo bien");
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				if (a.result == 1) {
+					fn[0] = 'Fn.closeModals(' + modalId + ');';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			
+			}
+		});
+	},
+	save_almacen: function () {
+				
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('form_almacen_save')) };
+		let url = OrdenServicio.url + "registrarNuevoAlmacen";
+		let config = { url: url, data: jsonString };
+		//console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				console.log("todo bien");
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				if (a.result == 1) {
+					fn[0] = 'Fn.closeModals(' + modalId + ');';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			
+			}
+		});
+	},
 	addCargo: function () {
 		html = '';
 		html +=
@@ -1252,6 +1396,138 @@ var OrdenServicio = {
 		$('#sumaFee2Final').val(sumFee2.toFixed(2));
 		$('#sumaFee3Final').val(sumFee3.toFixed(2));
 		$('#sumaTotalFinal').val(sumTotal.toFixed(2));
+	},
+	
+	uptEstado_almacenDetalle: function (id , est) {
+
+	var jsonData = { idTipoPresupuestoDetalleAlmacen : id , estado:est };
+	++modalId;
+	let jsonString = { 'data': JSON.stringify(jsonData) };
+	let config = { 'url': OrdenServicio.url + 'uptEstado_almacenDetalle', 'data': jsonString };
+
+	$.when(Fn.ajax(config)).then(function (a) {
+		if (a.result == 1) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		}
+		var html = '';
+		var html2 = '<a href="javascript:;" class="btn btn-outline-secondary border-0" onclick="OrdenServicio.uptEstado_almacenDetalle(\''+id+'\',\''+a.estado+'\');">';
+
+		if( a.estado == 1){
+			html =' <span class="badge badge-success">Activo</span>';
+			html2 += '<i class="fal fa-lg fa-toggle-on"></i>';
+		}else{
+			html =' <span class="badge badge-danger">Inactivo</span>';
+			html2 += '<i class="fal fa-lg fa-toggle-off"></i>';
+		}
+		html2 += '</a>';
+		console.log(html2);
+		$('#est_almacen_'+id).html(html);
+		$('#upt_almacen_'+id).html(html2);
+	});
+	},
+	uptEstado_movilidad: function (id , est) {
+
+		var jsonData = { idTipoPresupuestoDetalleMovilidad : id , estado:est };
+		++modalId;
+		let jsonString = { 'data': JSON.stringify(jsonData) };
+		let config = { 'url': OrdenServicio.url + 'uptEstado_movilidad', 'data': jsonString };
+	
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			}
+			var html = '';
+			var html2 = '<a href="javascript:;" class="btn btn-outline-secondary border-0" onclick="OrdenServicio.uptEstado_movilidad(\''+id+'\',\''+a.estado+'\');">';
+	
+			if( a.estado == 1){
+				html =' <span class="badge badge-success">Activo</span>';
+				html2 += '<i class="fal fa-lg fa-toggle-on"></i>';
+			}else{
+				html =' <span class="badge badge-danger">Inactivo</span>';
+				html2 += '<i class="fal fa-lg fa-toggle-off"></i>';
+			}
+			html2 += '</a>';
+			console.log(html2);
+			$('#est_movili_'+id).html(html);
+			$('#upt_mov_'+id).html(html2);
+		});
+		},
+	save_almacenDetalle: function (id) {
+		var zona = $('#up_zona_'+id).val();
+		var zona2 = $('#up_zona2_'+id).val();
+		var ciudad = $('#up_ciudad_'+id).val();
+		var jsonData = {
+			zona: zona,
+			zona2: zona2,
+			ciudad: ciudad,
+			idTipoPresupuestoDetalleAlmacen : id
+		  };
+		  ++modalId;
+		let jsonString = { 'data': JSON.stringify(jsonData) };
+		let config = { 'url': OrdenServicio.url + 'save_almacenDetalle', 'data': jsonString };
+		 // console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			}
+		});
+	},
+	save_udtMovilidadDetalle: function (id) {
+		var origen = $('#up_origen_'+id).val();
+		var destino = $('#up_destino_'+id).val();
+		//var split = $('#up_split_'+id).val();
+		var split = $('select[name="up_split_'+id+'"]').val();
+		
+		//console.log(split);
+		var prebus = $('#up_preBus_'+id).val();
+		var prehosp = $('#up_preHosp_'+id).val();
+		var previa = $('#up_preVia_'+id).val();
+		var premov = $('#up_preMov_'+id).val();
+		var pretaxi = $('#up_preTaxi_'+id).val();
+
+		var jsonData = {
+			origen: origen,
+			destino: destino,
+			split: split,
+			precioBus:prebus,
+			precioHospedaje:prehosp,
+			precioViaticos:previa,
+			precioMovilidadInterna:premov,
+			precioTaxi:pretaxi,
+			idTipoPresupuestoDetalleMovilidad : id
+		  };
+		  ++modalId;
+		let jsonString = { 'data': JSON.stringify(jsonData) };
+		let config = { 'url': OrdenServicio.url + 'save_udtMovilidadDetalle', 'data': jsonString };
+		 console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			}
+		});
 	},
 }
 

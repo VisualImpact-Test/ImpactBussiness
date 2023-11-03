@@ -166,6 +166,197 @@ class OrdenServicio extends MY_Controller
 		echo $this->load->view('modulos/OrdenServicio/addDocumento', $dataParaVista, true);
 	}
 
+	public function registrarNuevoAlmacen()
+	{
+		$this->db->trans_start();
+		$post = json_decode($this->input->post('data'), true);
+		$usuarioa = $this->idUsuario;
+		
+		$insertAlmacen = [
+			'zona' => $post['name_zona'],
+			'zona2' => $post['name_zona2'],
+			'ciudad' => $post['name_ciudad'],
+			'idUsuario' => $this->idUsuario,
+			'fechaReg' => getActualDateTime()
+		];
+		$this->db->insert('compras.tipoPresupuestoDetalleAlmacen', $insertAlmacen);
+		$idAlmacen = $this->db->insert_id();
+		
+		if ($idAlmacen) {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+
+	}
+	
+	public function listadoMovilidad()
+	{
+		$result = $this->result;
+		$dataParaVista = [];
+
+		$dataParaVista['detalleMovilidad'] = $this->model->obtenerDetalleMovilidad()->result_array();
+		//var_dump($dataParaVista['detalleAlmacen']);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar Movilidad';
+		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioEditarEditarMovilidad", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+	
+	public function listadoAlmacenes()
+	{
+		$result = $this->result;
+		$dataParaVista = [];
+
+		$dataParaVista['detalleAlmacen'] = $this->model->obtenerDetalleAlmacen()->result_array();
+		//var_dump($dataParaVista['detalleAlmacen']);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar Almacenes';
+		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioEditarEditarAlmacen", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+	
+	public function save_almacenDetalle()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$data = [];
+
+		$updateAlmacenDetalle = [
+			'zona' => $post['zona'],
+			'zona2' => $post['zona2'],
+			'ciudad' => $post['ciudad'],
+		];
+
+		$this->db->update('compras.tipoPresupuestoDetalleAlmacen', $updateAlmacenDetalle, ['idTipoPresupuestoDetalleAlmacen' => $post['idTipoPresupuestoDetalleAlmacen']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+		
+	}
+	public function save_udtMovilidadDetalle()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$data = [];
+
+		$updateMovilidadDetalle = [
+			'origen' => $post['origen'],
+			'destino' => $post['destino'],
+			'split' => $post['split'],
+			'precioBus' => $post['precioBus'],
+			'precioHospedaje' => $post['precioHospedaje'],
+			'precioViaticos' => $post['precioViaticos'],
+			'precioMovilidadInterna' => $post['precioMovilidadInterna'],
+			'precioTaxi' => $post['precioTaxi'],
+		];
+
+		$this->db->update('compras.tipoPresupuestoDetalleMovilidad', $updateMovilidadDetalle, ['idTipoPresupuestoDetalleMovilidad' => $post['idTipoPresupuestoDetalleMovilidad']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+		
+	}
+
+
+
+	public function uptEstado_almacenDetalle()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		//var_dump($post);
+		if($post['estado'] == 1){
+			$estado = 0;
+		}else{
+			$estado = 1;
+		}
+		$this->db->update('compras.tipoPresupuestoDetalleAlmacen', ['estado' => $estado], ['idTipoPresupuestoDetalleAlmacen' => $post['idTipoPresupuestoDetalleAlmacen']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		$result['estado'] = $estado;
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+		
+	}
+	public function uptEstado_movilidad()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		//var_dump($post);
+		if($post['estado'] == 1){
+			$estado = 0;
+		}else{
+			$estado = 1;
+		}
+		$this->db->update('compras.tipoPresupuestoDetalleMovilidad', ['estado' => $estado], ['idTipoPresupuestoDetalleMovilidad' => $post['idTipoPresupuestoDetalleMovilidad']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		$result['estado'] = $estado;
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+		
+	}
+
+	public function registrarNuevaMovilidad()
+	{
+		$this->db->trans_start();
+		$post = json_decode($this->input->post('data'), true);
+		$usuarioa = $this->idUsuario;
+		$insertMovilidad = [
+			'origen' => $post['origen'],
+			'destino' => $post['destino'],
+			'split' => $post['split'],
+			'precioBus' => $post['prec_bus'],
+			'precioHospedaje' => $post['prec_hospedaje'],
+			'precioViaticos' => $post['prec_viaticos'],
+			'precioMovilidadInterna' => $post['prec_movilidad'],
+			'precioTaxi' => $post['prec_taxi'],
+			'frecuencia' => 1,
+			'idUsuario' => $this->idUsuario,
+			'fechaReg' => getActualDateTime()
+		];
+		$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $insertMovilidad);
+		$idMovilidad = $this->db->insert_id();
+		
+		if ($idMovilidad) {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
+
 	public function registrarOrdenServicio()
 	{
 		$this->db->trans_start();
