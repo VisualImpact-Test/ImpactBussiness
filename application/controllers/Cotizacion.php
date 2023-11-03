@@ -96,10 +96,10 @@ class Cotizacion extends MY_Controller
 			$item = $_SESSION['item'];
 
 			$post['id'] = $item;
-			$datoDeseado =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			$datoDeseado = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 			unset($post['id']);
 			$post['idDiferente'] = $item;
-			$datoRestante =  $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
+			$datoRestante = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 			$dataParaVista = array_merge($datoDeseado, $datoRestante);
 		} else {
 			$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
@@ -113,7 +113,7 @@ class Cotizacion extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['views']['idContentCotizacion']['datatable'] = 'tb-cotizacion';
 		$result['data']['views']['idContentCotizacion']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -160,7 +160,7 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		foreach ($itemServicio as $key => $row) {
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
@@ -515,7 +515,7 @@ class Cotizacion extends MY_Controller
 			// Fin: UM
 
 			if (empty($idItem)) { // si es nuevo verificamos y lo registramos
-				$validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem, 'nombre' =>  $nameItem]);
+				$validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem, 'nombre' => $nameItem]);
 				$item = $validacionExistencia['query']->row_array();
 
 				if (empty($item)) {
@@ -553,7 +553,7 @@ class Cotizacion extends MY_Controller
 				'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
 				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
-				'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2  : $post['idEstadoItemForm'][$k],
+				'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2 : $post['idEstadoItemForm'][$k],
 				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 1,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
@@ -600,6 +600,7 @@ class Cotizacion extends MY_Controller
 					$data['subDetalle'][$k] = getDataRefactorizada([
 						'cod_departamento' => $post["departamentoTransporte[$k]"],
 						'cod_provincia' => $post["provinciaTransporte[$k]"],
+						'cod_distrito' => $post["distritoTransporte[$k]"],
 						'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
 						'costo' => $post["costoClienteTransporte[$k]"],
 						'costoVisual' => $post["costoVisualTransporte[$k]"],
@@ -727,6 +728,7 @@ class Cotizacion extends MY_Controller
 					'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : 0,
 					'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : 0,
 					'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : 0,
+					'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : 0,
 					'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : 0,
 				];
 			}
@@ -883,8 +885,7 @@ class Cotizacion extends MY_Controller
 			// 'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
-			'mailtype' => 'html',
-			'smtp_timeout' => 20
+			'mailtype' => 'html'
 		);
 
 		$this->load->library('email', $config);
@@ -923,28 +924,14 @@ class Cotizacion extends MY_Controller
 	}
 	public function enviarCorreo($params = [])
 	{
-		$config = array(
-			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			// 'smtp_host' => 'aspmx.l.google.com',
-			// 'smtp_port' => '25',
-			'smtp_user' => 'teamsystem@visualimpact.com.pe',
-			'smtp_pass' => '#nVi=0sN0ti$',
-			'mailtype' => 'html',
-		);
-
-		$this->load->library('email', $config);
-		$this->email->clear(true);
-		$this->email->set_newline("\r\n");
+		$email = [];
 
 		$data = [];
 		$dataParaVista = [];
 		$cc = !empty($params['cc']) ? $params['cc'] : [];
 
-		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to($params['to']);
-		$this->email->cc($cc);
+		$email['to'] = $params['to'];
+		$email['cc'] = $cc;
 
 		$data = $this->model->obtenerInformacionCotizacionDetalle($params)['query']->result_array();
 
@@ -966,18 +953,16 @@ class Cotizacion extends MY_Controller
 			'eder.alata@visualimpact.com.pe',
 			'luis.durand@visualimpact.com.pe'
 		);
-		$this->email->bcc($bcc);
+		$email['bcc'] = $bcc;
 
-		$this->email->subject('IMPACTBUSSINESS - NUEVA COTIZACION GENERADA');
+		$email['asunto'] = 'IMPACTBUSSINESS - NUEVA COTIZACION GENERADA';
+
 		$html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
 		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
-		$this->email->message($correo);
+	
+		$email['contenido'] = $correo;
 
-		$estadoEmail = $this->email->send();
-
-		if (!$estadoEmail) {
-			$mensaje = $this->email->print_debugger();
-		}
+		$estadoEmail = email($email);
 
 		return $estadoEmail;
 	}
@@ -1095,10 +1080,10 @@ class Cotizacion extends MY_Controller
 			if (!empty($dataParaVista['cabecera']['total_fee_igv'])) {
 				$total = $dataParaVista['cabecera']['total'];
 				if (!empty($totalFee)) {
-					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($totalFee * $dataParaVista['cabecera']['igv'] ? IGV : 0);
+					$dataParaVista['cabecera']['igv_prc'] = $igv = ($totalFee * $dataParaVista['cabecera']['igv'] ? IGV : 0);
 					$dataParaVista['cabecera']['total_fee_igv'] = $totalFee + $igv;
 				} else if (empty($totalFee) && $dataParaVista['cabecera']['igv']) {
-					$dataParaVista['cabecera']['igv_prc'] =  $igv =  ($total * $dataParaVista['cabecera']['igv'] ? IGV : 0);
+					$dataParaVista['cabecera']['igv_prc'] = $igv = ($total * $dataParaVista['cabecera']['igv'] ? IGV : 0);
 					$dataParaVista['cabecera']['total_fee_igv'] = $total + $igv;
 				}
 			}
@@ -1304,7 +1289,7 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$dataParaVista['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		foreach ($itemServicio as $key => $row) {
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
@@ -1398,7 +1383,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['periodo'] = $this->model->obtenerPeriodo()->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		if (!empty($itemServicio)) {
 			foreach ($itemServicio as $key => $row) {
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
@@ -1456,14 +1441,23 @@ class Cotizacion extends MY_Controller
 		}
 		echo json_encode($provincias);
 	}
+	public function getAllDistritos()
+	{
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, cod_distrito as value, distrito as name')->where('estado', 1)->order_by('distrito')->get('General.dbo.ubigeo')->result_array();
+		$distritos = [];
+		foreach ($data as $k => $v) {
+			$distritos[$v['cod_departamento']][$v['cod_provincia']][] = $v;
+		}
+		echo json_encode($distritos);
+	}
 	public function getAllTiposDeTransporte()
 	{
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, cod_distrito, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
 			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
 
 		$tarifarioZona = [];
 		foreach ($data as $k => $v) {
-			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][] = $v;
+			$tarifarioZona[$v['cod_departamento']][$v['cod_provincia']][$v['cod_distrito']][] = $v;
 		}
 		echo json_encode($tarifarioZona);
 	}
@@ -2132,7 +2126,7 @@ class Cotizacion extends MY_Controller
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
-		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
+		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion
 			]
@@ -2158,7 +2152,7 @@ class Cotizacion extends MY_Controller
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSVisual'] = strval(round($vz['costoVisual'], 2));
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSCuenta'] = strval(round($vz['costo'], 2));
 
-				foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']]  as $ki => $vi) {
+				foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] as $ki => $vi) {
 					$cantItm = $this->db->where('idItem', $vi['idItem'])->where('idZona', $vz['idZona'])->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->row_array()['cantidad'];
 
 					$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['item' . $ki] = $cantItm;
@@ -2179,7 +2173,7 @@ class Cotizacion extends MY_Controller
 				$i++;
 			}
 
-			foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']]  as $ki => $vi) {
+			foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] as $ki => $vi) {
 				$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']][$ki]['itemLogistica'] = $this->db->where('idArticulo', $vi['idItem'])->get('VisualImpact.logistica.articulo')->row_array()['nombre'];
 			}
 		}
@@ -2193,12 +2187,12 @@ class Cotizacion extends MY_Controller
 				$dcds[$kCds]['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 				$dcds[$kCds]['item'] = $vCds['nombre'];
 				$dcds[$kCds]['tipoServicio'] = $this->db->where('idTipoServicio', $vCds['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
-				$dcds[$kCds]['pesoTotalVisual'] = floatval($vCds['pesoVisual']) *  floatval($vCds['cantidad']);
+				$dcds[$kCds]['pesoTotalVisual'] = floatval($vCds['pesoVisual']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapVisual'] = floatval($dcds[$kCds]['pesoTotalVisual']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSVisual'] = $vCds['costoVisual'];
 				$dcds[$kCds]['totalVisual'] = floatval($dcds[$kCds]['pesoGapVisual']) * floatval($vCds['costoVisual']);
 				$dcds[$kCds]['pesoCuenta'] = $vCds['peso'];
-				$dcds[$kCds]['pesoTotalCuenta'] = floatval($vCds['peso']) *  floatval($vCds['cantidad']);
+				$dcds[$kCds]['pesoTotalCuenta'] = floatval($vCds['peso']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapCuenta'] = floatval($dcds[$kCds]['pesoTotalCuenta']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSCuenta'] = $vCds['costo'];
 				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']);
@@ -2253,7 +2247,7 @@ class Cotizacion extends MY_Controller
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
 		}
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		if (!empty($itemServicio)) {
 			foreach ($itemServicio as $key => $row) {
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
@@ -2425,7 +2419,7 @@ class Cotizacion extends MY_Controller
 
 			$config = [
 				'to' => $toOperaciones,
-				'cc' =>  $toCompras,
+				'cc' => $toCompras,
 				'asunto' => 'Generación de Oper',
 				'contenido' => $correo,
 			];
@@ -3056,6 +3050,7 @@ class Cotizacion extends MY_Controller
 								// 'costoVisual' => $post["costoVisualTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'cod_departamento' => $post["departamentoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'cod_provincia' => $post["provinciaTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+								'cod_distrito' => $post["distritoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'idTipoServicioUbigeo' => $post["tipoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 							]);
 							break;
@@ -3175,6 +3170,7 @@ class Cotizacion extends MY_Controller
 							'costoDistribucion' => null,
 							'cod_departamento' => $post["departamentoTransporte[$k]"],
 							'cod_provincia' => $post["provinciaTransporte[$k]"],
+							'cod_distrito' => $post["distritoTransporte[$k]"],
 							'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
 						]);
 						break;
@@ -3213,8 +3209,8 @@ class Cotizacion extends MY_Controller
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
-
 						];
 					}
 				}
@@ -3375,7 +3371,7 @@ class Cotizacion extends MY_Controller
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 
-		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
+		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion,
 				// 'cotizacionInterna' => true
@@ -3398,7 +3394,7 @@ class Cotizacion extends MY_Controller
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSVisual'] = strval(round($vz['costoVisual'], 2));
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSCuenta'] = strval(round($vz['costo'], 2));
 
-				foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']]  as $ki => $vi) {
+				foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] as $ki => $vi) {
 					$cantItm = $this->db->where('idItem', $vi['idItem'])->where('idZona', $vz['idZona'])->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->row_array()['cantidad'];
 
 					$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['item' . $ki] = $cantItm;
@@ -3419,7 +3415,7 @@ class Cotizacion extends MY_Controller
 				$i++;
 			}
 
-			foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']]  as $ki => $vi) {
+			foreach ($config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] as $ki => $vi) {
 				$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']][$ki]['itemLogistica'] = $this->db->where('idArticulo', $vi['idItem'])->get('VisualImpact.logistica.articulo')->row_array()['nombre'];
 			}
 		}
@@ -3428,6 +3424,10 @@ class Cotizacion extends MY_Controller
 			$sub['provincia'] = '';
 			if (!empty($sub['cod_provincia'])) {
 				$sub['provincia'] = $this->db->get_where('General.dbo.ubigeo', ['cod_departamento' => $sub['cod_departamento'], 'cod_provincia' => $sub['cod_provincia']])->row_array()['provincia'];
+			}
+			$sub['distrito'] = '';
+			if (!empty($sub['cod_distrito'])) {
+				$sub['distrito'] = $this->db->get_where('General.dbo.ubigeo', ['cod_departamento' => $sub['cod_departamento'], 'cod_provincia' => $sub['cod_provincia'], 'cod_distrito' => $sub['cod_distrito']])->row_array()['distrito'];
 			}
 			$sub['tipoServicioUbigeo'] = '';
 			if (!empty($sub['idTipoServicioUbigeo'])) {
@@ -3442,12 +3442,12 @@ class Cotizacion extends MY_Controller
 				$dcds[$kCds]['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 				$dcds[$kCds]['item'] = $vCds['nombre'];
 				$dcds[$kCds]['tipoServicio'] = $this->db->where('idTipoServicio', $vCds['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
-				$dcds[$kCds]['pesoTotalVisual'] = floatval($vCds['pesoVisual']) *  floatval($vCds['cantidad']);
+				$dcds[$kCds]['pesoTotalVisual'] = floatval($vCds['pesoVisual']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapVisual'] = floatval($dcds[$kCds]['pesoTotalVisual']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSVisual'] = $vCds['costoVisual'];
 				$dcds[$kCds]['totalVisual'] = floatval($dcds[$kCds]['pesoGapVisual']) * floatval($vCds['costoVisual']);
 				$dcds[$kCds]['pesoCuenta'] = $vCds['peso'];
-				$dcds[$kCds]['pesoTotalCuenta'] = floatval($vCds['peso']) *  floatval($vCds['cantidad']);
+				$dcds[$kCds]['pesoTotalCuenta'] = floatval($vCds['peso']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapCuenta'] = floatval($dcds[$kCds]['pesoTotalCuenta']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSCuenta'] = $vCds['costo'];
 				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']);
@@ -3498,7 +3498,7 @@ class Cotizacion extends MY_Controller
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
 		}
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		if (!empty($itemServicio)) {
 			foreach ($itemServicio as $key => $row) {
 				$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
@@ -3570,7 +3570,7 @@ class Cotizacion extends MY_Controller
 		// $cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion'=> $idCotizacion,'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
-		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSubdis(
+		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion,
 				'cotizacionInterna' => true
@@ -3597,7 +3597,7 @@ class Cotizacion extends MY_Controller
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
 		}
 
-		$itemServicio =  $this->model_item->obtenerItemServicio();
+		$itemServicio = $this->model_item->obtenerItemServicio();
 		foreach ($itemServicio as $key => $row) {
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['value'] = $row['value'];
 			$data['itemServicio'][1][$row['tipo'] . '-' . $row['value']]['label'] = $row['label'];
@@ -3622,7 +3622,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['message'] = 'Lista de Cotizacions';
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
-		$config['data']['nombre'] = '  [copia]';
+		$config['data']['nombre'] = ' [copia]';
 		$config['data']['repetido'] = 1;
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
@@ -3751,7 +3751,7 @@ class Cotizacion extends MY_Controller
 				'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
 				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
-				'idItemEstado' => !empty($post['idItemForm'][$k]) ? 2  : $post['idEstadoItemForm'][$k],
+				'idItemEstado' => !empty($post['idItemForm'][$k]) ? 2 : $post['idEstadoItemForm'][$k],
 				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 1,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
@@ -3914,7 +3914,7 @@ class Cotizacion extends MY_Controller
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 		$post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
-		//  $post['feeForm'] = checkAndConvertToArray($post['feeForm']);
+		// $post['feeForm'] = checkAndConvertToArray($post['feeForm']);
 		$post['gapForm'] = checkAndConvertToArray($post['gapForm']);
 		$post['precioForm'] = checkAndConvertToArray($post['precioForm']);
 		$post['linkForm'] = checkAndConvertToArray($post['linkForm']);
@@ -3926,7 +3926,7 @@ class Cotizacion extends MY_Controller
 			$nameItem = $r;
 			$itemsSinProveedor = [];
 			if (empty($idItem)) { // si es nuevo verificamos y lo registramos
-				$validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem, 'nombre' =>  $nameItem]);
+				$validacionExistencia = $this->model_item->validarExistenciaItem(['idItem' => $idItem, 'nombre' => $nameItem]);
 				$item = $validacionExistencia['query']->row_array();
 
 				if (empty($item)) {
@@ -3959,10 +3959,10 @@ class Cotizacion extends MY_Controller
 				'cantidad' => $post['cantidadForm'][$k],
 				'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
 				'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
-				//  'fee' => !empty($post['feeForm'][$k]) ? $post['feeForm'][$k] : NULL,
+				// 'fee' => !empty($post['feeForm'][$k]) ? $post['feeForm'][$k] : NULL,
 				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
-				'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2  : $post['idEstadoItemForm'][$k],
+				'idItemEstado' => !empty($itemsSinProveedor[$idItem]) ? 2 : $post['idEstadoItemForm'][$k],
 				'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 				'idCotizacionDetalleEstado' => 1,
 				'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
@@ -4164,7 +4164,7 @@ class Cotizacion extends MY_Controller
 		$idCotizacion = json_decode($this->input->post('data'));
 		$item = $this->model->infoHistorialCotizacionDescende($idCotizacion);
 		if (!empty($item)) {
-			$dataParaVista['data']  = [
+			$dataParaVista['data'] = [
 				'nombreCotizacion' => $item[0]['nombreCotizacion'],
 				'codigoCotizacion' => $item[0]['codigoCotizacion'],
 				'fechaCreacion' => $item[0]['fechaCreacion'],
@@ -4216,7 +4216,7 @@ class Cotizacion extends MY_Controller
 	public function cargos()
 	{
 
-		$data =  json_decode($this->input->post('data'), true);
+		$data = json_decode($this->input->post('data'), true);
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
 		$result = $this->result;
@@ -4238,7 +4238,7 @@ class Cotizacion extends MY_Controller
 	public function obtener_sueldos()
 	{
 
-		$data =  json_decode($this->input->post('data'), true);
+		$data = json_decode($this->input->post('data'), true);
 
 		$idCuenta = $data['idCuenta'];
 		$idCentro = $data['idCentro'];
@@ -4278,7 +4278,7 @@ class Cotizacion extends MY_Controller
 	public function obtener_conceptos_adicionales()
 	{
 
-		$data =  json_decode($this->input->post('data'), true);
+		$data = json_decode($this->input->post('data'), true);
 		$id = $data['id'];
 		$cantidad = $data['cantidad'];
 		$adicionales = $this->model->obtener_conceptos_adicionales($id, $cantidad)->result_array();

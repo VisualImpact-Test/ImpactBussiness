@@ -210,6 +210,7 @@ var Cotizacion = {
 	pesosTemp: [],
 	almacenTemp: null,
 	provincias: [],
+	distritos: [],
 	tipoTransporte: [],
 	costosTransportes: [],
 	// solicitanteData: [],
@@ -275,6 +276,11 @@ var Cotizacion = {
 			if (Cotizacion.provincias = []) {
 				$.post(site_url + Cotizacion.url + 'getAllProvincias', {}, function (d) {
 					Cotizacion.provincias = jQuery.parseJSON(d);
+				});
+			}
+			if (Cotizacion.distritos = []) {
+				$.post(site_url + Cotizacion.url + 'getAllDistritos', {}, function (d) {
+					Cotizacion.distritos = jQuery.parseJSON(d);
 				});
 			}
 			if (Cotizacion.tipoTransporte = []) {
@@ -2377,17 +2383,41 @@ var Cotizacion = {
 		$(cbP).dropdown({ values: arData });
 		$(cbP).dropdown("refresh");
 	},
-	buscarTipoTransporte: function (t) {
+	buscarDistritos: function (t) {
 		let control = $(t);
 		let div = control.closest('.body-sub-item');
 		let dep = div.find('.depT').dropdown('get value');
 		let pro = div.find('.provT').dropdown('get value');
 
+		let cb = div.find('.disT');
+
+		$(cb).dropdown("destroy");
+		$(cb).dropdown("remove selected");
+		let arData = Cotizacion.distritos?.[dep]?.[pro];
+		if (typeof arData === "undefined") {
+			arData = [];
+		}
+		$(cb).dropdown({ values: arData });
+		$(cb).dropdown("refresh");
+
+	},
+	buscarTipoTransporte: function (t) {
+		let control = $(t);
+		let div = control.closest('.body-sub-item');
+		let dep = div.find('.depT').dropdown('get value');
+		let pro = div.find('.provT').dropdown('get value');
+		let dis = div.find('.disT').dropdown('get value');
+
 		let cb = div.find('.tipoT');
 
 		$(cb).dropdown("destroy");
 		$(cb).dropdown("remove selected");
-		let arData = Cotizacion.tipoTransporte?.[dep]?.[pro];
+		console.log(dep);
+		console.log(pro);
+		console.log(dis);
+		console.log(Cotizacion.tipoTransporte?.[dep]?.[pro]);
+		let arData = Cotizacion.tipoTransporte?.[dep]?.[pro]?.[dis];
+		console.log(arData);
 		if (typeof arData === "undefined") {
 			arData = [];
 		}
@@ -3203,6 +3233,7 @@ var Cotizacion = {
 		// TRANSPORTE
 		let departamentoF = parent.find('.departamento_transporte').find('select');
 		let provinciaF = parent.find('.provincia_transporte').find('select');
+		let distritoF = parent.find('.distrito_transporte').find('select');
 		let tipoTransporteF = parent.find('.tipoTransporte_transporte').find('select');
 		let costoVisualF = parent.find('.costoVisual_transporte');
 		let costoClienteF = parent.find('.costoCliente_transporte');
@@ -3249,6 +3280,7 @@ var Cotizacion = {
 		// TRANSPORTE
 		departamentoF.attr('name', `departamentoTransporte[${number}]`);
 		provinciaF.attr('name', `provinciaTransporte[${number}]`);
+		distritoF.attr('name', `distritoTransporte[${number}]`);
 		tipoTransporteF.attr('name', `tipoTransporte[${number}]`);
 		costoVisualF.attr('name', `costoVisualTransporte[${number}]`);
 		costoClienteF.attr('name', `costoClienteTransporte[${number}]`);

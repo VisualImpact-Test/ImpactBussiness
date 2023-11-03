@@ -737,6 +737,7 @@ class M_Cotizacion extends MY_Model
 						//
 						'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : null,
 						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : null,
+						'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : null,
 						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
 					];
 				}
@@ -1602,6 +1603,7 @@ class M_Cotizacion extends MY_Model
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 
 						];
@@ -1641,6 +1643,7 @@ class M_Cotizacion extends MY_Model
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
 						];
 					}
@@ -2052,6 +2055,7 @@ class M_Cotizacion extends MY_Model
 				cds.costoVisual,
 				cds.cod_departamento,
 				cds.cod_provincia,
+				cds.cod_distrito,
 				cds.idTipoServicioUbigeo
 			FROM
 			compras.cotizacion c

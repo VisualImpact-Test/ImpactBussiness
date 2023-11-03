@@ -338,7 +338,7 @@
 										<div style="padding:15px;">
 											<div class="ui sub header">Cargo</div>
 											<div class="cargo_rrhh" style="width:100%;">
-												<select class="ui clearable dropdown simpleDropdown change_data cargo_personal" id="cargo_personal" name="cargo_personal"  data-obligatorio="1"></select>
+												<select class="ui clearable dropdown simpleDropdown change_data cargo_personal" id="cargo_personal" name="cargo_personal" data-obligatorio="1"></select>
 											</div>
 										</div>
 									</td>
@@ -529,31 +529,37 @@
 									</div>
 									<div class="three wide field">
 										<div class="ui sub header">Provincia</div>
-										<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
+										<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarDistritos(this);">
+											<option value>Seleccione</option>
+										</select>
+									</div>
+									<div class="three wide field">
+										<div class="ui sub header">Distrito</div>
+										<select class="ui simpleDropdown disT formTransporte distrito_transporte" name="distritoTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
 											<option value>Seleccione</option>
 										</select>
 									</div>
 									<div class="two wide field">
-										<div class="ui sub header">Tipo Transporte</div>
+										<div class="ui sub header">Tipo</div>
 										<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
 											<option value>Seleccione</option>
 										</select>
 									</div>
 									<div class="two wide field">
-										<div class="ui sub header">Costo Visual</div>
-										<input class="inpCostoVisual formTransporte costoVisual_transporte" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>
+										<div class="ui sub header">Csto Visual</div>
+										<input class="inpCostoVisual formTransporte costoVisual_transporte onlyNumbers" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>
 									</div>
 									<div class="two wide field">
-										<div class="ui sub header">Costo Cliente</div>
-										<input class="inpCosto formTransporte costoCliente_transporte" name="costoClienteTransporte[0]" placeholder="0" value="" readonly onchange="Cotizacion.calcularValorTransporte(this);">
+										<div class="ui sub header">Csto Cliente</div>
+										<input class="inpCosto formTransporte costoCliente_transporte keyUpChange onlyNumbers" name="costoClienteTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
-									<div class="two wide field">
-										<div class="ui sub header">Cant días</div>
-										<input class="formTransporte dias_transporte keyUpChange" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+									<div class="one wide field">
+										<div class="ui sub header">Días</div>
+										<input class="formTransporte dias_transporte keyUpChange onlyNumbers" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
-									<div class="two wide field">
-										<div class="ui sub header">Cant moviles</div>
-										<input class="formTransporte cantidad_transporte keyUpChange" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+									<div class="one wide field">
+										<div class="ui sub header">Moviles</div>
+										<input class="formTransporte cantidad_transporte keyUpChange onlyNumbers" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Eliminar</div>
