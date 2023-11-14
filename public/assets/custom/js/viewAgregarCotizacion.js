@@ -1597,12 +1597,17 @@ var Cotizacion = {
 					for (var i = 0; i < num; ++i) {
 						file = control.get(0).files[i];
 						Fn.getBase64(file).then(function (fileBase) {
-
 							if (fileBase.type.split('/')[0] == 'image') {
 								imgFile = fileBase.base64;
 								contenedor = content;
 							} else if (fileBase.type.split('/')[1] == 'pdf') {
 								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							} else if (
+								fileBase.type.split('/')[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+								fileBase.type.split('/')[1] == 'vnd.ms-excel.sheet.macroEnabled.12'
+							) {
+								imgFile = `${RUTA_WIREFRAME}xlsx.png`;
 								contenedor = content_files;
 							} else {
 								imgFile = `${RUTA_WIREFRAME}file.png`;
@@ -2881,10 +2886,6 @@ var Cotizacion = {
 					<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data[i].nombre_archivo}" class="img-responsive img-thumbnail">
 				</div>
 				`;
-				// control.parents('.nuevo').find('.dimmer-file-detalle')
-				// 	.dimmer({
-				// 		on: 'click'
-				// 	});
 
 			}
 			content.html(fileApp);

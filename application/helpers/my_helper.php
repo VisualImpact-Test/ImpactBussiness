@@ -1314,6 +1314,15 @@ function htmlSelectOptionArray2($params = [])
 
 	return $html;
 }
+function imagenDeArchivo($name, $tipo, $ruta)
+{
+	if ($tipo == TIPO_IMAGEN) return RUTA_WASABI . $ruta . $name;
+	else {
+		if ($tipo == TIPO_PDF) return RUTA_WIREFRAME . 'pdf.png';
+		else if ($tipo == TIPO_EXCEL) return RUTA_WIREFRAME . 'xlsx.png';
+		else return RUTA_WIREFRAME . 'file.png';
+	}
+}
 function htmlSemanticCargaDeArchivos($params = [])
 { // Se puede mejorar, pero hasta aqui funciona.
 
@@ -1348,7 +1357,7 @@ function htmlSemanticCargaDeArchivos($params = [])
 	$html .= '		</div>';
 	$html .= '	</div>';
 	$html .= '</div>';
-	
+
 	return $html;
 }
 function generarCorrelativo($num, $max_cifras)
@@ -2065,7 +2074,8 @@ function decrypt($string)
 
 	return openssl_decrypt($string, $method, SECRET_KEY_GET, false, $iv);
 }
-function logError($data = []){
+function logError($data = [])
+{
 	log_message('error', json_encode($data));
 }
 function changeKeyInArray($array, $new_key, $new_key2 = '', $new_key3 = '')
@@ -2074,13 +2084,11 @@ function changeKeyInArray($array, $new_key, $new_key2 = '', $new_key3 = '')
 
 	$n_array = [];
 	foreach ($array as $v) {
-		if (!empty($new_key3)){
+		if (!empty($new_key3)) {
 			$n_array[$v[$new_key]][$v[$new_key2]][$v[$new_key3]] = $v;
-		}
-		else if (!empty($new_key2)){
+		} else if (!empty($new_key2)) {
 			$n_array[$v[$new_key]][$v[$new_key2]] = $v;
-		}
-		else {
+		} else {
 			$n_array[$v[$new_key]] = $v;
 		}
 	}

@@ -300,11 +300,13 @@ class Cotizacion extends MY_Controller
 					$tipoArchivo = explode('/', $archivo['type']);
 					$insertArchivos[] = [
 						'idCotizacion' => $post['idCotizacion'],
-						'idTipoArchivo' => TIPO_ORDEN_COMPRA,
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						// 'idTipoArchivo' => TIPO_ORDEN_COMPRA,
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => $tipoArchivo[1],
+						// 'extension' => $tipoArchivo[1],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
 						'estado' => true,
 						'idUsuarioReg' => $this->idUsuario
 					];
@@ -1241,7 +1243,7 @@ class Cotizacion extends MY_Controller
 
 		$data['insert'] = [
 			'idCotizacion' => $post['idCotizacion'],
-			'idTipoArchivo' => 1, // Orden de COmpra
+			'idTipoArchivo' => 1, // Orden de Compra
 			'nombre_unico' => $post['nombreUnico'],
 			'nombre_archivo' => $post['nombreOriginal'],
 			'extension' => $post['ext'],

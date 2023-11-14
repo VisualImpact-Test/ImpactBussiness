@@ -1441,11 +1441,13 @@ class M_Cotizacion extends MY_Model
 			$tipoArchivo = explode('/', $archivo['type']);
 			$insertArchivos[] = [
 				'idCotizacion' => $data['idCotizacion'],
-				'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+				// 'idTipoArchivo' => $tipoArchivo[0] == 'image' ? TIPO_IMAGEN : TIPO_PDF,
+				'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 				'nombre_inicial' => $archivo['name'],
 				'nombre_archivo' => $archivoName,
 				'nombre_unico' => $archivo['nombreUnico'],
-				'extension' => $tipoArchivo[1],
+				// 'extension' => $tipoArchivo[1],
+				'extension' => FILES_WASABI[$tipoArchivo[1]],
 				'estado' => true,
 				'idUsuarioReg' => $this->idUsuario,
 				'flag_anexo' => true,

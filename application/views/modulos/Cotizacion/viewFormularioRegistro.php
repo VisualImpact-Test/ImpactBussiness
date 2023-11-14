@@ -100,7 +100,7 @@
 			<div class="eight wide field anexos">
 				<div class="ui sub header">Anexos</div>
 				<div class="ui small images content-lsck-capturas">
-					<div class="content-lsck-galeria">
+					<div class="content-lsck-galeria content-lsck-files">
 						<div class="ui small image text-center btn-add-file">
 							<div class="ui dimmer">
 								<div class="content">
@@ -111,7 +111,7 @@
 							</div>
 							<img class="ui image" src="<?= IMG_WIREFRAME ?>">
 						</div>
-						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*, .xlsx, .pdf" multiple="">
+						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*, .xlsx, .pdf, .xlsm" multiple="">
 					</div>
 				</div>
 			</div>

@@ -91,7 +91,7 @@
 			<div class="eight wide field anexos">
 				<div class="ui sub header">Anexos</div>
 				<div class="ui small images content-lsck-capturas">
-					<div class="content-lsck-galeria">
+					<div class="content-lsck-galeria content-lsck-files">
 						<div class="ui small image text-center btn-add-file">
 							<div class="ui dimmer">
 								<div class="content">
@@ -102,8 +102,8 @@
 							</div>
 							<img class="ui image" src="<?= IMG_WIREFRAME ?>">
 						</div>
-						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*" multiple="">
-						<? foreach ($anexos as $anexo) { ?>
+						<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*, .xlsx, .pdf, .xlsm" multiple="">
+						<?php foreach ($anexos as $anexo) : ?>
 							<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?>">
 								<div class="ui dimmer dimmer-file-detalle">
 									<div class="content">
@@ -111,14 +111,16 @@
 									</div>
 								</div>
 								<a class="ui red right corner label img-lsck-anexos-delete"><i class="trash icon"></i></a>
-								<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+								<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="ui blue left corner label">
+									<i class="eye icon"></i>
+								</a>
 								<input type="hidden" name="idCotizacionDetalleArchivo" value="<?= $anexo['idCotizacionDetalleArchivo'] ?>">
 								<input type="hidden" name="anexo-file" value="<? $anexo['nombre_archivo'] ?>">
 								<input type="hidden" name="anexo-type" value="image/<?= $anexo['extension'] ?>">
 								<input type="hidden" name="anexo-name" value="<?= $anexo['nombre_inicial'] ?>">
-								<img height="100" src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+								<img height="100" src="<?= imagenDeArchivo($anexo['nombre_archivo'], $anexo['idTipoArchivo'], 'cotizacion/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 							</div>
-						<? } ?>
+						<?php endforeach; ?>
 					</div>
 				</div>
 			</div>
@@ -177,9 +179,7 @@
 											</div>
 										</div>
 									</div>
-
 									<input class="codItems" type='hidden' name='idItemForm'>
-
 									<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
 									<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">

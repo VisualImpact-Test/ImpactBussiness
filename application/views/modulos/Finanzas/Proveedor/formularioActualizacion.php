@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formActualizacionProveedores" method="post">
+<form class="form" role="form" id="formActualizacionProveedores" method="post" autocomplete="off">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -16,27 +16,17 @@
 					<div class="control-group child-divcenter row" style="width:85%">
 						<label class="form-control col-md-4" for="rubro" style="border:0px;">Actividad :</label>
 						<select class="form-control col-md-8 my_select2" id="rubro" name="rubro" patron="requerido" multiple data-live-search="true">
-							<?
-							foreach ($listadoRubros as $rubro) {
-							?>
+							<?php foreach ($listadoRubros as $rubro) : ?>
 								<option value="<?= $rubro['id']  ?>" <?= !empty($proveedorRubro[$rubro['id']]) ? "selected" : ""  ?>> <?= $rubro['value'] ?></option>
-							<?
-							}
-
-							?>
+							<?php endforeach; ?>
 						</select>
 					</div>
 					<div class="control-group child-divcenter row" style="width:85%">
 						<label class="form-control col-md-4" for="metodoPago" style="border:0px;">Forma de pago :</label>
 						<select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" patron="requerido" multiple data-live-search="true">
-							<?
-							foreach ($listadoMetodosPago as $pagos) {
-							?>
+							<?php foreach ($listadoMetodosPago as $pagos) : ?>
 								<option value="<?= $pagos['id']  ?>" <?= !empty($proveedorMetodoPago[$pagos['id']]) ? "selected" : ""  ?>> <?= $pagos['value'] ?></option>
-							<?
-							}
-
-							?>
+							<?php endforeach; ?>
 						</select>
 					</div>
 					<div class="control-group child-divcenter row" style="width:85%">
@@ -59,13 +49,9 @@
 					<div class="control-group child-divcenter row" style="width:85%">
 						<label class="form-control col-md-4" for="region" style="border:0px;">Región :</label>
 						<select class="form-control col-md-8" id="region" name="region" patron="requerido">
-							<?
-							foreach ($listadoDepartamentos as $k_dp => $v_dp) {
-							?>
+							<?php foreach ($listadoDepartamentos as $k_dp => $v_dp) : ?>
 								<option value="<?= $k_dp ?>" <?= ($k_dp == $cod_departamento) ? "selected" : "" ?>><?= $v_dp['nombre'] ?></option>;
-							<?
-							}
-							?>
+							<?php endforeach; ?>
 						</select>
 					</div>
 					<div class="control-group child-divcenter row" style="width:85%">
@@ -107,13 +93,9 @@
 						<tr class="d-none trParent ">
 							<td class="w-25">
 								<select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido" disabled>
-									<?
-									foreach ($listadoDepartamentos as $k_dp => $v_dp) {
-									?>
+									<?php foreach ($listadoDepartamentos as $k_dp => $v_dp) : ?>
 										<option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
-									<?
-									}
-									?>
+									<?php endforeach; ?>
 								</select>
 							</td>
 							<td class="w-25">
@@ -130,7 +112,7 @@
 								<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
 							</td>
 						</tr>
-						<? foreach ($zonasProveedor as $key => $row) { ?>
+						<?php foreach ($zonasProveedor as $key => $row) : ?>
 							<tr class="trChildren <?= ($disabled) ? "disabled" : "" ?>">
 								<td>
 
@@ -149,7 +131,7 @@
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-eliminar-zona" title="Eliminar Zona"><i class="fa fa-lg fa-trash"></i></a>
 								</td>
 							</tr>
-						<? } ?>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
 				<!-- <div class="<?= ($disabled) ? "disabled" : "" ?>">
@@ -237,6 +219,49 @@
 						<input class="form-control col-md-8" id="costo" name="costo" patron="numeros" value="<?= verificarEmpty($costo, 2) ?>">
 					</div>
 				</div>
+				<?php $chk = $chkDetraccion ? 'checked' : ''; ?>
+				<?php $hdn = $chkDetraccion ? '' : 'd-none'; ?>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">Incluir Detracción</label>
+					<div class="ui test toggle checkbox">
+						<input class="chkDetraccion" name="chkDetraccion" type="checkbox" <?= $chk ?>>
+					</div>
+				</div>
+				<div class="control-group child-divcenter row detraccion <?= $hdn ?>" style="width:85%">
+					<label class="form-control border-0 col-md-4">Banco</label>
+					<select class="form-control col-md-8 simpleDropdown" name="banco">
+						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase', 'selected' => $idBanco]); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row detraccion <?= $hdn ?>" style="width:85%">
+					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
+						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase', 'selected' => $idTipoCuentaBanco]); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row pt-2 detraccion <?= $hdn ?>" style="width:85%">
+					<label class="form-control border-0 col-md-4">Cuenta detracción</label>
+					<input class="form-control col-md-8 cuentaDetraccion" name="cuentaDetraccion" value="<?= $cuenta ?>">
+				</div>
+				<div class="control-group child-divcenter row pt-2 detraccion <?= $hdn ?>" style="width:85%">
+					<label class="form-control border-0 col-md-4">Cuenta captura</label>
+					<div class="divParaCarga col-md-8 pl-0" style="width:85%">
+						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf']) ?>
+						<?php if (!empty($adjunto)) : ?>
+							<div class="ui fluid image content-lsck-capturas" data-id="<?= $adjunto['idProveedorArchivo'] ?>">
+								<div class="ui dimmer dimmer-file-detalle">
+									<div class="content">
+										<p class="ui tiny inverted header">jlkjlkjlkj</p>
+									</div>
+								</div>
+								<input class="file-considerarAdjunto" type="hidden">
+								<a target="_blank" href="<?= RUTA_WASABI . 'proveedorAdjuntos/' . $adjunto['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+								<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+								<img height="50" src="<?= RUTA_WASABI . 'proveedorAdjuntos/' . $adjunto['nombre_archivo'] ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+							</div>
+						<?php endif; ?>
+					</div>
+				</div>
 			</fieldset>
 		</div>
 	</div>
@@ -265,10 +290,14 @@
 	<div class="row">
 		<div class="col-md-10 child-divcenter" style="text-align:center;">
 			<div class="ui checkbox">
+				<input type="checkbox" onchange="($(this).is(':checked')) ? $('#datosValidos, #contribuyenteValido').prop( 'checked', true) : $('#datosValidos, #contribuyenteValido').prop( 'checked', false);">
+				<label>Datos Validos</label>
+			</div>
+			<div class="ui checkbox d-none">
 				<input type="checkbox" name="datosValidos" id="datosValidos" patron="requerido">
 				<label>Datos Validos</label>
 			</div>
-			<div class="ui checkbox">
+			<div class="ui checkbox d-none">
 				<input type="checkbox" name="contribuyenteValido" id="contribuyenteValido" patron="requerido">
 				<label>Contribuyente Valido</label>
 			</div>

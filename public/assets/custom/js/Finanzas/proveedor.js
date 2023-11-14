@@ -87,12 +87,11 @@ var Proveedor = {
 			distritoCobertura.html(html);
 
 			// $.each(idDepartamento, function (i_departamento, v_departamento) {
-				if (typeof (provincia[idDepartamento]) == 'object') {
-					$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
-						// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-						html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-					});
-				}
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
+					html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+				});
+			}
 			// });
 			let provinciaCobertura = $(this).closest("tr").find(".provinciaCobertura");
 			provinciaCobertura.html(html);
@@ -126,15 +125,15 @@ var Proveedor = {
 			let tbody = $(".tb-zona-cobertura > tbody");
 			let trParent = tbody.find(".trParent");
 
-			let combosZona = trParent.find("select").prop("disabled",false);
+			let combosZona = trParent.find("select").prop("disabled", false);
 			tbody.append(`<tr class="trChildren">${trParent.html()}</tr>`);
-			trParent.find("select").prop("disabled",true);
+			trParent.find("select").prop("disabled", true);
 
 		});
 		$(document).on('click', '.btn-eliminar-zona', function (e) {
 			let tr = $(this).closest("tr");
 
-			if($(".trChildren").length <= 1){
+			if ($(".trChildren").length <= 1) {
 				// $(".trChildren").first().find(".regionCobertura").css("border","solid 1px red");
 				// setTimeout($(".trChildren").first().find(".regionCobertura").css("border","solid 1px black"), 5000);
 				return false
@@ -163,10 +162,18 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		});
-
+		$(document).on("change", ".chkDetraccion", function () {
+			let this_ = $(this);
+			let check = this_.is(':checked');
+			if (check) {
+				$('.detraccion').removeClass('d-none');
+				$('.cuentaDetraccion').attr('patron', 'requerido')
+			} else {
+				$('.detraccion').addClass('d-none');
+				$('.cuentaDetraccion').removeAttr('patron')
+			}
+		});
 		$(document).on('click', '.btn-validar', function () {
-
-
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
@@ -228,13 +235,13 @@ var Proveedor = {
 		});
 
 		$(document).on('click', '.btnAddCorreo', function (e) {
-			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">'+
-									'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>'+
-									'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">'+
-									'<div class="input-group-append">'+
-										'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>'+
-									'</div>'+
-								'</div>';
+			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">' +
+				'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>' +
+				'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">' +
+				'<div class="input-group-append">' +
+				'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>' +
+				'</div>' +
+				'</div>';
 			$('#extraCorreo').append(div);
 		});
 
@@ -330,17 +337,17 @@ var Proveedor = {
 				++modalId;
 				let btn = [];
 				let fn = [];
-				let message1 = Fn.message({"type":2, "message":"Debe llenar la respuesta."});
+				let message1 = Fn.message({ "type": 2, "message": "Debe llenar la respuesta." });
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				Fn.showModal({ id: modalId, show: true, title: "Alerta", frm: message1, btn: btn, width: '40%' });
 				return false;
 			}
-		}else{
+		} else {
 			msgValidar = "¿Esta seguro de <b>VALIDAR</b> el proveedor?"
 			idEstado = 2;
 		}
-		Fn.showConfirm({ fn: "Proveedor.validarProveedor("+idEstado+","+datosValidos+","+contribuyenteValido+")", content: msgValidar});
+		Fn.showConfirm({ fn: "Proveedor.validarProveedor(" + idEstado + "," + datosValidos + "," + contribuyenteValido + ")", content: msgValidar });
 	}
 }
 

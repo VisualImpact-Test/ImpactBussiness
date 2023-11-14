@@ -346,7 +346,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['link'] = base_url() . index_page() . 'proveedor';
 		$bcc = [];
 		// $bcc = array(
-		//     'team.sistemas@visualimpact.com.pe',
+		//		'team.sistemas@visualimpact.com.pe',
 		// );
 		// $this->email->bcc($bcc);
 		//$bcc = array('luis.durand@visualimpact.com.pe');
@@ -505,10 +505,10 @@ class FormularioProveedor extends MY_Controller
 		// verificar la respuesta
 		if ($arrResponse["success"] == '1' && $arrResponse["action"] == $action && $arrResponse["score"] >= 0.5) {
 			// Si entra aqui, es un humano, puedes procesar el formulario
-			$msj =  1;
+			$msj = 1;
 		} else {
 			// Si entra aqui, es un robot....
-			$msj =  0;
+			$msj = 0;
 		}
 
 		return $msj;
@@ -692,7 +692,7 @@ class FormularioProveedor extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
 		$result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -946,7 +946,7 @@ class FormularioProveedor extends MY_Controller
 
 		$this->db->update('compras.validacionArte', ['flagRevisado' => 1, 'flagAprobado' => $get['ne']], ['idValidacionArte' => $get['det'], 'idProveedor' => $get['pro'], 'idCotizacion' => $get['cot']]);
 
-		echo  "<script type='text/javascript'>";
+		echo "<script type='text/javascript'>";
 		echo "window.close();";
 		echo "</script>";
 	}
@@ -1504,7 +1504,7 @@ class FormularioProveedor extends MY_Controller
 		$result = $this->result;
 
 		$fechaHoy = date_change_format_bd(getFechaActual());
-		$hora =  strtotime(time_change_format(getActualDateTime()));
+		$hora = strtotime(time_change_format(getActualDateTime()));
 
 		$horaLimiteMin = strtotime('09:00:00');
 		$horaLimiteMax = strtotime('13:00:00');
@@ -1761,7 +1761,7 @@ class FormularioProveedor extends MY_Controller
 		$result['result'] = 1;
 		// $result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
 		$result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>

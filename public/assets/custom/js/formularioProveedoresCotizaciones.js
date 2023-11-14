@@ -4,7 +4,6 @@ var FormularioProveedores = {
 	url: 'FormularioProveedor/',
 	divPropuesta: '',
 	load: function () {
-
 		$(document).ready(function () {
 			if ($('#idCotizacion').val()) {
 				FormularioProveedores.actualizarTable();
@@ -84,8 +83,6 @@ var FormularioProveedores = {
 					});
 				}
 			});
-
-
 		});
 		$(document).on("click", ".eliminarDatos", function () {
 			$(this).parents('.contenido').remove();
@@ -165,20 +162,19 @@ var FormularioProveedores = {
 							}
 
 							var fileApp = '';
-							fileApp += '<div class="col-md-2 text-center">';
+							fileApp += '<div class="col-md-2 text-center contentImagen">';
 							fileApp += `
-                      		<div class="ui dimmer dimmer-file-detalle">
-	                          <div class="content">
-	                            <p class="ui tiny inverted header">${fileBase.name}</p>
-	                          </div>
-                      		</div>`;
+									<div class="ui dimmer dimmer-file-detalle">
+										<div class="content">
+											<p class="ui tiny inverted header">${fileBase.name}</p>
+										</div>
+									</div>`;
 							fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-							fileApp += '<input type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
-							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
-							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += '<input type="hidden" name="' + name + '[' + id + ']" value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '[' + id + ']" value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '[' + id + ']" value="' + fileBase.name + '">';
 							fileApp += `<img src="${imgFile}" class="rounded img-lsck-capturas img-responsive img-thumbnail">`;
 							fileApp += '</div>';
-							console.log(fileApp);
 							contenedor.append(fileApp);
 							control.parents('.nuevo').find('.dimmer-file-detalle').dimmer({ on: 'click' });
 						});
@@ -251,7 +247,7 @@ var FormularioProveedores = {
 		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
-			control.parents('.content-lsck-capturas:first').remove();
+			control.parents('.contentImagen:first').remove();
 		});
 		$(document).on("click", ".btnVolverProveedor", () => {
 			Fn.goToUrl(site_url + 'FormularioProveedor/cotizacionesLista');

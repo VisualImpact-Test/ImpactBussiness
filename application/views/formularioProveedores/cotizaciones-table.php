@@ -7,8 +7,7 @@
 </style>
 
 <div class="card-datatable">
-	<!-- ///////////////////////////////////// -->
-	<form id="frmCotizacionesProveedor">
+	<form id="frmCotizacionesProveedor" autocomplete="off">
 		<input type="hidden" name="idProveedor" value="<?= $idProveedor ?>">
 		<input type="hidden" name="idCotizacion" id="idCotizacion" value="<?= $idCotizacion ?>">
 		<p class="font-weight-bold">Datos de la Cotizacion</p>
@@ -24,27 +23,26 @@
 					<?php $i = 0; ?>
 					<input type="hidden" name="idCotizacionDetalleProveedorDetalle" value="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>">
 					<input type="hidden" class="form-control" name="idItem" readonly value="<?= $row['idItem'] ?>">
-
 					<h4><?= verificarEmpty($row['item'], 3) . empty($row['unidadMedida'] ? '' : (' ( ' . $row['unidadMedida'] . ' )')) ?></h4>
 					<div class="row">
 						<div class="col-md-10 row justify-content-start">
 							<div class="col-md-2">
 								<div class="form-label-group">
 									<input type="text" class="form-control" autofocus value="<?= verificarEmpty($row['tipoItem'], 3) ?>" readonly>
-									<label>TIPO ITEM</label>
+									<label>Tipo Item</label>
 								</div>
 							</div>
 							<div class="col-md-8">
 								<div class="form-label-group">
 									<input type="text" class="form-control" autofocus value="<?= $row['caracteristicasProveedor'] ?>" readonly>
-									<label>COMENTARIO DE COMPRAS</label>
+									<label>Comentario de Compras</label>
 								</div>
 							</div>
 							<div class="col-md-2">
 								<div class="btn-group" role="group">
 									<button class="form-control imgShow btnContraoferta" type="button" name="button" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" title="Agregar Contraoferta"><i class="handshake outline icon"></i></button>
-									<button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none');  $('.imgShow').addClass('d-none')" title="Mostrar Archivos"><i class="folder open outline icon"></i></button>
-									<?php if (!empty($cotizacionIMG[$row['idCotizacionDetalle']])) :  ?>
+									<button class="form-control imgShow" type="button" name="button" onclick="$('.imgCotizacion').removeClass('d-none'); $('.imgShow').addClass('d-none')" title="Mostrar Archivos"><i class="folder open outline icon"></i></button>
+									<?php if (!empty($cotizacionIMG[$row['idCotizacionDetalle']])) : ?>
 										<div class="floating ui teal label"><?= count($cotizacionIMG[$row['idCotizacionDetalle']]); ?></div>
 									<?php endif; ?>
 									<button class="form-control imgCotizacion d-none" type="button" name="button" onclick="$('.imgCotizacion').addClass('d-none'); $('.imgShow').removeClass('d-none');" title="Ocultar Archivos"><i class="folder closed outline icon"></i></button>
@@ -71,7 +69,7 @@
 									</div>
 								<?php endif; ?>
 							</div>
-							<?php if (!empty($row['enlaces'])) :  ?>
+							<?php if (!empty($row['enlaces'])) : ?>
 								<div class="col-sm-12 row">
 									<div class="col-sm-12">
 										<div class="form-group">
@@ -87,34 +85,34 @@
 								<div class="col-sm-2">
 									<div class="form-group">
 										<div class="form-group">
-											<h4 class="mb-1">DIAS DE VALIDEZ</h4>
-											<input class="form-control" placeholder="días" name="diasValidez" patron="requerido,numerico" id="dv_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="<?= !isset($row['diasValidez']) ? '10' : $row['diasValidez']; ?>" <?= (!empty($row['diasValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['diasValidez'])) :  ?> onkeyup="FormularioProveedores.calcularFecha(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+											<h4 class="mb-1">Días Validez</h4>
+											<input class="form-control" placeholder="días" name="diasValidez" patron="requerido,numerico" id="dv_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' value="<?= !isset($row['diasValidez']) ? '10' : $row['diasValidez']; ?>" <?= (!empty($row['diasValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['diasValidez'])) : ?> onkeyup="FormularioProveedores.calcularFecha(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
 										</div>
 									</div>
 								</div>
 								<div class="col-sm-2">
 									<div class="form-group">
-										<h4 class="mb-1">FECHA VALIDEZ</h4>
-										<input type="date" class="form-control" name="fechaValidez" value="<?= !isset($row['diasValidez']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : date_change_format_bd($row['fechaValidez'])  ?>" id="fechaValidez<?= ($k + 1) ?>" <?= (!empty($row['fechaValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['fechaValidez'])) :  ?> onkeyup="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" <?php endif; ?>>
+										<h4 class="mb-1">Fecha Validez</h4>
+										<input type="date" class="form-control" name="fechaValidez" value="<?= !isset($row['diasValidez']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : date_change_format_bd($row['fechaValidez']) ?>" id="fechaValidez<?= ($k + 1) ?>" <?= (!empty($row['fechaValidez'])) ? 'readonly' : ''; ?> <?php if (empty($row['fechaValidez'])) : ?> onkeyup="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasValidez(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" <?php endif; ?>>
 									</div>
 								</div>
 								<div class="col-sm-2">
 									<div class="form-group">
 										<div class="form-group">
-											<h4 class="mb-1">DIAS DE ENTREGA</h4>
-											<input class="form-control" placeholder="días" name="diasEntrega" patron="requerido,numerico" id="de_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' <?= (!empty($row['diasEntrega'])) ? 'readonly' : ''; ?> value="<?= !isset($row['diasEntrega']) ? '10' : $row['diasEntrega']; ?>" <?php if (empty($row['diasEntrega'])) :  ?> onkeyup="FormularioProveedores.calcularFechaEntrega(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
+											<h4 class="mb-1">Días Entrega</h4>
+											<input class="form-control" placeholder="días" name="diasEntrega" patron="requerido,numerico" id="de_input<?= ($k + 1) ?>" onkeypress='return event.charCode >= 48 && event.charCode <= 57' <?= (!empty($row['diasEntrega'])) ? 'readonly' : ''; ?> value="<?= !isset($row['diasEntrega']) ? '10' : $row['diasEntrega']; ?>" <?php if (empty($row['diasEntrega'])) : ?> onkeyup="FormularioProveedores.calcularFechaEntrega(<?= ($k + 1) ?>,this.value, '<?= date_change_format_bd(getFechaActual(0)); ?>');" <?php endif; ?>>
 										</div>
 									</div>
 								</div>
 								<div class="col-sm-2 d-none">
 									<div class="form-group">
-										<h4 class="mb-1">FECHA ENTREGA</h4>
+										<h4 class="mb-1">Fecha Entrega</h4>
 										<input type="date" class="form-control" name="fechaEntrega" value="<?= empty($row['fechaEntrega']) ? ($this->model->calcularDiasHabiles(['dias' => '10'])['fecha']) : $row['fechaEntrega'] ?>" id="fechaEntrega<?= ($k + 1) ?>" <?= (!empty($row['fechaEntrega'])) ? 'readonly' : ''; ?> onkeyup="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')" onchange="FormularioProveedores.calcularDiasEntrega(<?= ($k + 1) ?>, this, '<?= date_change_format_bd(getFechaActual(0)); ?>')">
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="form-group">
-										<h4 class="mb-1">RESPUESTA</h4>
+										<h4 class="mb-1">Respuesta</h4>
 										<input class="form-control" name="comentario" value="<?= verificarEmpty($row['comentario']); ?>">
 									</div>
 								</div>
@@ -153,7 +151,7 @@
 
 					<div class="row justify-content-start">
 						<div class="col-md-10 row divDetalle">
-							<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+							<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) : ?>
 								<!-- <div class="col-md-12"> -->
 								<!-- <a class="btn btn-lg btn-outline-success" onclick="FormularioProveedores.agregarDetalleServicio(this, <?= $row['idCotizacionDetalleProveedorDetalle'] ?>) "><i class="fa fa-plus"></i> Detalle </a> -->
 								<button data-form="FormularioProveedor/getFormCargaMasivaCotizacionProveedorDetalleSub" data-save="FormularioProveedor/guardarCargaMasivaCotizacionProveedorDetalleSub" data-tdata="<?= $row['idCotizacionDetalleProveedorDetalle']; ?>" data-id="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" type="button" class="btn btn-lg btn-outline-success btn-CustomCargaMasiva" id="" title="Carga Masiva Tarifario">
@@ -255,7 +253,7 @@
 									</div>
 								<?php endforeach; ?>
 							</div>
-							<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) :  ?>
+							<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) : ?>
 								<div class="col-md-12 row py-4">
 									<table class="ui table">
 										<thead>
@@ -271,14 +269,14 @@
 											</tr>
 										</thead>
 										<tbody>
-											<?php if (!empty($subdatos[$row['idCotizacionDetalleProveedorDetalle']])) :  ?>
+											<?php if (!empty($subdatos[$row['idCotizacionDetalleProveedorDetalle']])) : ?>
 												<?php $var1 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['sucursal']; ?>
 												<?php $var2 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['razonSocial']; ?>
 												<?php $var3 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['tipoElemento']; ?>
 												<?php $var4 = $subdatos[$row['idCotizacionDetalleProveedorDetalle']][0]['marca']; ?>
 												<?php $costoTotal = 0; ?>
 												<?php foreach ($subdatos[$row['idCotizacionDetalleProveedorDetalle']] as $key => $value) : ?>
-													<?php if (!($var1 == $value['sucursal'] && $var2 == $value['razonSocial'] && $var3 == $value['tipoElemento'] && $var4 == $value['marca'])) :  ?>
+													<?php if (!($var1 == $value['sucursal'] && $var2 == $value['razonSocial'] && $var3 == $value['tipoElemento'] && $var4 == $value['marca'])) : ?>
 														<?php $var1 = $value['sucursal']; ?>
 														<?php $var2 = $value['razonSocial']; ?>
 														<?php $var3 = $value['tipoElemento']; ?>
@@ -323,11 +321,11 @@
 								<input type="file" name="capturas" class="file-lsck-capturas form-control input-sm d-none" placeholder="Cargar Imagen" data-row="<?= $row['idCotizacionDetalleProveedorDetalle'] ?>" accept="image/*,.pdf,.xlsx" multiple="">
 								<div class="fields ">
 									<div class="container sixteen wide field">
-										<div class="row content-lsck-galeria content-lsck-capturas">
+										<div class="row content-lsck-galeria content-lsck-files">
 											<?php if (!empty($archivos)) : ?>
 												<?php foreach ($archivos as $k => $archivo) : ?>
 													<?php if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']) : ?>
-														<div class="col-md-2 text-center">
+														<div class="col-md-2 text-center contentImagen">
 															<div class="ui dimmer dimmer-file-detalle">
 																<div class="content">
 																	<p class="ui tiny inverted header"> <?= $archivo['nombre_inicial'] ?> </p>
@@ -342,14 +340,7 @@
 															<input type="hidden" name="file-item[0]" value="">
 															<input type="hidden" name="file-type[0]" value="image/<?= $archivo['extension'] ?>">
 															<input type="hidden" name="file-name[0]" value="<?= $archivo['nombre_inicial'] ?>">
-															<?php if ($archivo['extension'] == 'pdf') {
-																$ruta = RUTA_WIREFRAME . "pdf.png";
-															} else if ($archivo['extension'] == 'xlsx') {
-																$ruta = RUTA_WIREFRAME . "xlsx.png";
-															} else {
-																$ruta = RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}";
-															} ?>
-															<img src="<?= $ruta ?>" class="rounded img-lsck-capturas img-responsive img-thumbnail">
+															<img src="<?= imagenDeArchivo($archivo['nombre_archivo'], $archivo['idTipoArchivo'], 'cotizacionProveedor/'); ?>" class="rounded img-lsck-capturas img-responsive img-thumbnail">
 														</div>
 													<?php endif; ?>
 												<?php endforeach; ?>
@@ -357,63 +348,30 @@
 										</div>
 									</div>
 								</div>
-								<div class="fields ">
+								<!-- <div class="fields ">
 									<div class="sixteen wide field">
 										<div class="ui images content-lsck-files">
-											<!-- <?php if (!empty($archivos)) :  ?>
-												<?php foreach ($archivos as $archivo) : ?>
-													<?php if ($archivo['idCotizacionDetalleProveedorDetalle'] == $row['idCotizacionDetalleProveedorDetalle']) :  ?>
-														<?php if ($archivo['idTipoArchivo'] == TIPO_PDF) :  ?>
-															<div class="content-lsck-capturas">
-																<div class="ui dimmer dimmer-file-detalle">
-																	<div class="content">
-																		<p class="ui tiny inverted header"> <?= $archivo['nombre_inicial'] ?> </p>
-																	</div>
-																</div>
-																<a class="ui red right corner label img-lsck-capturas-delete">
-																	<i class="trash icon"></i>
-																</a>
-																<a target="_blank" href="
-        														<?= RUTA_WASABI . "cotizacionProveedor/{$archivo['nombre_archivo']}" ?>" class="ui blue left corner label">
-																	<i class="eye icon"></i>
-																</a>
-																<input type="hidden" name="file-item[
-        														<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="">
-																<input type="hidden" name="file-type[
-        															<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="application/
-        															<?= $archivo['extension'] ?>">
-																<input type="hidden" name="file-name[
-        																<?= $row['idCotizacionDetalleProveedorDetalle'] ?>]" value="
-        																<?= $archivo['nombre_inicial'] ?>">
-																<img height="100" src="
-        																	<?= RUTA_WIREFRAME . "pdf.png" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-															</div>
-														<?php endif; ?>
-													<?php endif; ?>
-												<?php endforeach; ?>
-											<?php endif; ?> -->
 										</div>
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div>
 					<hr class="featurette-divider">
 				</div>
-
 			<?php endforeach; ?>
 		</div>
 
 		<!-- Validar Btn de Guardado -->
 		<?php $mostrarBtnGuardar = true; ?>
 		<?php foreach ($datos as $kp => $vp) : ?>
-			<?php if ($vp['flag_activo'] == '0') :  ?>
+			<?php if ($vp['flag_activo'] == '0') : ?>
 				<?php $mostrarBtnGuardar = true; ?>
 			<?php endif; ?>
 		<?php endforeach; ?>
 
 		<div class="container">
-			<?php if ($mostrarBtnGuardar) :  ?>
+			<?php if ($mostrarBtnGuardar) : ?>
 				<div class="ui right floated small primary labeled icon button btnGuardarCotizacion">
 					<i class="save icon"></i> <span class="">Guardar</span>
 				</div>
@@ -431,6 +389,5 @@
 		<div class="ui bottom attached warning message">
 			<i class="icon warning"></i>Los costos indicados NO incluyen el IGV.
 		</div>
-
 	</form>
 </div>
