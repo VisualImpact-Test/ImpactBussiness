@@ -1,7 +1,10 @@
 var FormularioProveedores = {
 
 	load: function () {
-
+		$(document).ready(function () {
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
+		});
 
 		$(document).on('change', '#region', function (e) {
 			e.preventDefault();
@@ -46,12 +49,12 @@ var FormularioProveedores = {
 			distritoCobertura.html(html);
 
 			// $.each(idDepartamento, function (i_departamento, v_departamento) {
-				if (typeof (provincia[idDepartamento]) == 'object') {
-					$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
-						// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-						html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-					});
-				}
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
+					// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+					html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+				});
+			}
 			// });
 			let provinciaCobertura = $(this).closest("tr").find(".provinciaCobertura");
 			provinciaCobertura.html(html);
@@ -85,15 +88,15 @@ var FormularioProveedores = {
 			let tbody = $(".tb-zona-cobertura > tbody");
 			let trParent = tbody.find(".trParent");
 
-			let combosZona = trParent.find("select").prop("disabled",false);
+			let combosZona = trParent.find("select").prop("disabled", false);
 			tbody.append(`<tr class="trChildren">${trParent.html()}</tr>`);
-			trParent.find("select").prop("disabled",true);
+			trParent.find("select").prop("disabled", true);
 
 		});
 		$(document).on('click', '.btn-eliminar-zona', function (e) {
 			let tr = $(this).closest("tr");
 
-			if($(".trChildren").length <= 1){
+			if ($(".trChildren").length <= 1) {
 				// $(".trChildren").first().find(".regionCobertura").css("border","solid 1px red");
 				// setTimeout($(".trChildren").first().find(".regionCobertura").css("border","solid 1px black"), 5000);
 				return false
@@ -101,13 +104,13 @@ var FormularioProveedores = {
 			tr.remove();
 		});
 		$(document).on('click', '.btnAddCorreo', function (e) {
-			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">'+
-									'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>'+
-									'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">'+
-									'<div class="input-group-append">'+
-										'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>'+
-									'</div>'+
-								'</div>';
+			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">' +
+				'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>' +
+				'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">' +
+				'<div class="input-group-append">' +
+				'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>' +
+				'</div>' +
+				'</div>';
 			$('#extraCorreo').append(div);
 		});
 		$(document).on('click', '.btnEliminarCorreo', function (e) {
@@ -115,6 +118,28 @@ var FormularioProveedores = {
 			tr.remove();
 		});
 
+		$(document).off('click', '.option-semantic-delete').on('click', '.option-semantic-delete', function (e) {
+			e.preventDefault();
+			var control = $(this);
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idEliminado = parent.data('id');
+			if (idEliminado) {
+				Proveedor.archivoEliminado.push(idEliminado);
+			}
+			control.parents('.content-lsck-capturas:first').remove();
+		});
+		
+		$(document).on("change", ".chkDetraccion", function () {
+			let this_ = $(this);
+			let check = this_.is(':checked');
+			if (check) {
+				$('.detraccion').removeClass('d-none');
+				$('.cuentaDetraccion').attr('patron', 'requerido')
+			} else {
+				$('.detraccion').addClass('d-none');
+				$('.cuentaDetraccion').removeAttr('patron')
+			}
+		});
 
 		$(document).on('click', '#btnEnviar', function (e) {
 			e.preventDefault();
@@ -141,7 +166,7 @@ var FormularioProveedores = {
 			});
 		});
 
-		$(document).on("click",".btnLoginProveedor", ()=>{
+		$(document).on("click", ".btnLoginProveedor", () => {
 			let idForm = 'frmLoginProveedor';
 			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
 				if (a === true) {

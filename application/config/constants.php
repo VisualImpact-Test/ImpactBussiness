@@ -94,6 +94,7 @@ defined('RUTA_BAT')					or define('RUTA_BAT', 'C:\wamp64\bin\php\php7.1.33\php-w
 
 //WASABI
 defined('RUTA_WASABI') or define('RUTA_WASABI', 'https://s3.us-central-1.wasabisys.com/impact.business/');
+// defined('RUTA_WASABI') or define('RUTA_WASABI', 'http://s3.us-central-1.wasabisys.com/impact.business/');
 defined('FILES_WASABI') or define('FILES_WASABI', [
 	'vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
 	'vnd.openxmlformats-officedocument.presentationml.presentation' => 'pptx',
@@ -238,4 +239,19 @@ defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', [
 	'4' => 'ANUAL',
 	'5' => 'UNICO',
 	'6' => 'FRACCIONADO'
+]);
+
+defined('NOMBRE_MES') or define('NOMBRE_MES', [
+	'01' => 'ENERO',
+	'02' => 'FEBRERO',
+	'03' => 'MARZO',
+	'04' => 'ABRIL',
+	'05' => 'MAYO',
+	'06' => 'JUNIO',
+	'07' => 'JULIO',
+	'08' => 'AGOSTO',
+	'09' => 'SEPTIEMBRE',
+	'10' => 'OCTUBRE',
+	'11' => 'NOVIEMBRE',
+	'12' => 'DICIEMBRE'
 ]);

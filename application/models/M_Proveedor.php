@@ -59,8 +59,8 @@ class M_Proveedor extends MY_Model
 	{
 		$this->db
 		->select('*')
-		->from('compras.proveedorTipoServicio');
-
+		->from('compras.proveedorTipoServicio')
+		->order_by('nombre');
 		return $this->db->get();
 	}
 
@@ -215,6 +215,10 @@ class M_Proveedor extends MY_Model
 				, ts.nombre as tipoServicio
 				, cp.idComprobante
 				, cp.nombre as comprobante
+				, p.cuenta
+				, p.idBanco
+				, p.idTipoCuentaBanco
+				, p.chkDetraccion
 			FROM  compras.proveedor p
 			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
@@ -342,7 +346,6 @@ class M_Proveedor extends MY_Model
 		// Todo a estado 0
 		$this->db->update('compras.proveedorProveedorTipoServicio', ['estado' => 0], ['idProveedor' => $params[0]['idProveedor']]);
 
-		
 		foreach ($params as $key => $value) {
 			$query = $this->db->get_where('compras.proveedorProveedorTipoServicio', $value);
 			$data = $query->row_array();

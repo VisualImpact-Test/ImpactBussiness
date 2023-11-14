@@ -4,35 +4,35 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="razonSocial" style="border:0px;">Razón Social :</label>
+					<label class="form-control border-0 col-md-4">Razón Social :</label>
 					<input class="form-control col-md-8" id="razonSocial" name="razonSocial" patron="requerido">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="ruc" style="border:0px;">RUC :</label>
+					<label class="form-control border-0 col-md-4">RUC :</label>
 					<input class="form-control col-md-8 onlyNumbers" id="ruc" name="ruc" patron="requerido,ruc">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="rubro" style="border:0px;">Actividad :</label>
+					<label class="form-control border-0 col-md-4">Actividad :</label>
 					<select class="form-control col-md-8 my_select2" id="rubro" name="rubro" patron="requerido" multiple data-live-search="true">
-						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $rubro, 'class' => 'text-titlecase', 'data-option' => ['codigoSunat']] ); ?>
+						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $rubro, 'class' => 'text-titlecase', 'data-option' => ['codigoSunat']]); ?>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="metodoPago" style="border:0px;">Forma de pago :</label>
+					<label class="form-control border-0 col-md-4">Forma de pago :</label>
 					<select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" patron="requerido" multiple data-live-search="true">
 						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $metodoPago, 'class' => 'text-titlecase']); ?>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="tipoServicio" style="border:0px;">Tipo de Servicio :</label>
+					<label class="form-control border-0 col-md-4">Tipo de Servicio :</label>
 					<select class="form-control col-md-8 my_select2" name="tipoServicio" patron="requerido" multiple data-live-search="true">
-						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipoServicio, 'class' => 'text-titlecase', 'id' => 'idProveedorTipoServicio', 'value' => 'nombre'] ); ?>
+						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipoServicio, 'class' => 'text-titlecase', 'id' => 'idProveedorTipoServicio', 'value' => 'nombre']); ?>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="rubro" style="border:0px;">Tipo de comprobante :</label>
+					<label class="form-control border-0 col-md-4">Tipo de comprobante :</label>
 					<select class="form-control col-md-8 my_select2" id="comprobante" name="comprobante" patron="requerido" multiple data-live-search="true">
-						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $comprobante, 'class' => 'text-titlecase', 'data-option' => ['idComprobante']] ); ?>
+						<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $comprobante, 'class' => 'text-titlecase', 'data-option' => ['idComprobante']]); ?>
 					</select>
 				</div>
 			</fieldset>
@@ -43,32 +43,28 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Dirección</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="region" style="border:0px;">Región :</label>
+					<label class="form-control border-0 col-md-4">Región :</label>
 					<select class="form-control col-md-8" id="region" name="region">
 						<option value="">Seleccione</option>
-						<?
-						foreach ($departamento as $k_dp => $v_dp) {
-						?>
-							<option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>;
-						<?
-						}
-						?>
+						<?php foreach ($departamento as $k_dp => $v_dp) : ?>
+							<option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
+						<?php endforeach ?>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="provincia" style="border:0px;">Provincia :</label>
+					<label class="form-control border-0 col-md-4">Provincia :</label>
 					<select class="form-control col-md-8" id="provincia" name="provincia" patron="requerido">
 						<option value="">Seleccione</option>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="distrito" style="border:0px;">Distrito :</label>
+					<label class="form-control border-0 col-md-4">Distrito :</label>
 					<select class="form-control col-md-8" id="distrito" name="distrito" patron="requerido">
 						<option value="">Seleccione</option>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="direccion" style="border:0px;">Dirección :</label>
+					<label class="form-control border-0 col-md-4">Dirección :</label>
 					<input class="form-control col-md-8" id="direccion" name="direccion">
 				</div>
 			</fieldset>
@@ -93,17 +89,13 @@
 						<tr class="d-none trParent">
 							<td class="w-25">
 								<select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido" disabled>
-									<?
-									foreach ($departamento as $k_dp => $v_dp) {
-									?>
+									<?php foreach ($departamento as $k_dp => $v_dp) : ?>
 										<option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
-									<?
-									}
-									?>
+									<?php endforeach ?>
 								</select>
 							</td>
 							<td class="w-25">
-								<select class="form-control  w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
+								<select class="form-control w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
 									<option value="">Seleccione</option>
 								</select>
 							</td>
@@ -120,17 +112,13 @@
 							<td class="w-25">
 								<select class="form-control w-100 regionCobertura" name="regionCobertura" data-live-search="true" patron="requerido">
 									<option value="">Seleccione</option>
-									<?
-									foreach ($departamento as $k_dp => $v_dp) {
-									?>
+									<?php foreach ($departamento as $k_dp => $v_dp) : ?>
 										<option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
-									<?
-									}
-									?>
+									<?php endforeach ?>
 								</select>
 							</td>
 							<td class="w-25">
-								<select class="form-control  w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true">
+								<select class="form-control w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true">
 									<option value="">Seleccione</option>
 								</select>
 							</td>
@@ -145,7 +133,6 @@
 						</tr>
 					</tbody>
 				</table>
-
 			</fieldset>
 		</div>
 	</div>
@@ -154,15 +141,15 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Contacto</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="nombreContacto" style="border:0px;">Nombre :</label>
+					<label class="form-control border-0 col-md-4">Nombre :</label>
 					<input class="form-control col-md-8" id="nombreContacto" name="nombreContacto" patron="requerido">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="numeroContacto" style="border:0px;">Número :</label>
+					<label class="form-control border-0 col-md-4">Número :</label>
 					<input class="form-control col-md-8 onlyNumbers" id="numeroContacto" name="numeroContacto" patron="requerido,numeros">
 				</div>
 				<div class="mb-2 input-group control-group child-divcenter row" style="width:85%">
-					<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo :</label>
+					<label class="form-control border-0 col-md-4">Correo :</label>
 					<input class="form-control col-md-8" id="correoContacto" name="correoContacto" patron="requerido,email">
 					<div class="input-group-append" id="button-addon4">
 						<button class="btn btn-outline-success btnAddCorreo" type="button"><i class="fa fa-plus"></i></button>
@@ -177,8 +164,36 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Costo</legend>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
-					<label class="form-control col-md-4" style="border:0px;">Costo (S/) :</label>
+					<label class="form-control border-0 col-md-4">Costo (S/) :</label>
 					<input class="form-control col-md-8 onlyNumbers" id="costo" name="costo" patron="numeros" value="0">
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">Incluir Detracción</label>
+					<div class="ui test toggle checkbox">
+						<input class="chkDetraccion" name="chkDetraccion" type="checkbox">
+					</div>
+				</div>
+				<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
+					<label class="form-control border-0 col-md-4">Banco</label>
+					<select class="form-control col-md-8 simpleDropdown" name="banco">
+						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase']); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
+					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
+						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase']); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
+					<label class="form-control border-0 col-md-4">Cuenta detracción</label>
+					<input class="form-control col-md-8 cuentaDetraccion" name="cuentaDetraccion">
+				</div>
+				<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
+					<label class="form-control border-0 col-md-4">Cuenta captura</label>
+					<div class="divParaCarga col-md-8 pl-0" style="width:85%">
+						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf']) ?>
+					</div>
 				</div>
 			</fieldset>
 		</div>

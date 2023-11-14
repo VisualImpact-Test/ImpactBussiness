@@ -592,7 +592,10 @@ var Fn = {
 
 				a.resolve(result);
 			},
-			error: function () {
+			error: function (ax) {
+				console.log('error en Fn.ajax2');
+				// Quita el comentario a la siguiente linea para validar el error
+				// console.log(ax.responseText);
 				$.when(Fn.showLoading(false)).then(function () {
 					var id = ++modalId;
 					var btn = new Array();
@@ -992,12 +995,11 @@ var Fn = {
 		var data = Fn.formSerializeObject(config.idFrm);
 		var jsonString = { 'data': JSON.stringify(data) };
 		var configAjax = { 'url': config.url, 'data': jsonString };
-
 		$.when(Fn.ajax_new(configAjax)).then(function (a) {
-			if (a['status'] == null) {
+			if (a['status'] === null) {
 				return false;
 			}
-
+			console.log(a);
 			if (typeof a.data.views !== 'undefined') {
 				$.each(a.data.views, function (id, value) {
 					$('#' + id).html('');
@@ -1405,6 +1407,32 @@ var Fn = {
 		return check;
 	},
 
+	obtenerHTML: function (ruta, datos = []) {
+		Fn.showLoading(true);
+
+		rpta = [];
+		let post = $.post(
+			site_url + 'Control/get_HTML', {
+			'ruta': ruta,
+			'data': datos
+		});
+
+		rpta['success'] = false;
+
+		post.done(function (data) {
+			data = jQuery.parseJSON(data);
+			console.log(data);
+			// bodyTable.append(data);
+			// Fn.loadSemanticFunctions();
+			rpta['success'] = true;
+			rpta['view'] = data.msg.content;
+		});
+
+		post.always(function () {
+			Fn.showLoading(false);
+		});
+	},
+
 	exportarExcelDataTable: function (idWrapper) {
 		let tablas = $('#' + idWrapper + '_wrapper').find('.table');
 		let header = $(tablas[0]).find('thead')[0].innerHTML;
@@ -1425,6 +1453,7 @@ var Fn = {
 	},
 
 	loadSemanticFunctions: function () {
+		$('.simpleDropdown').dropdown();
 		$('select.semantic-dropdown').dropdown();
 		$('div.semantic-dropdown').dropdown();
 		$('div.boton-dropdown').dropdown({
@@ -1495,14 +1524,21 @@ var Fn = {
 						day = '0' + day;
 					}
 					$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
+					if ($(this).data('fechainicio'))$($(this).data('fechainicio')).calendar('set startDate', date);
+					if ($(this).data('fechafinal')) $($(this).data('fechafinal')).calendar('set maxDate', date);
 				} else {
 					$(this).siblings('.date-semantic-value').val('').trigger('change');
+					if ($(this).data('fechainicio'))$($(this).data('fechainicio')).calendar('set startDate', new Date('2000-01-01'));
+					if ($(this).data('fechafinal')) $($(this).data('fechafinal')).calendar('set maxDate', new Date('2100-12-31'));
 				}
 			}
 		});
 		$('.ui.checkbox').checkbox();
 	},
 
+	loadDimmerHover: function () {
+		$('.hover').dimmer({ on: 'hover' });
+	},
 	multiply: function (a, b) {
 		var commonMultiplier = 1000000;
 

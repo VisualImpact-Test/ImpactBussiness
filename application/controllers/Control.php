@@ -95,6 +95,13 @@ class Control extends MY_Controller{
 		echo json_encode($result);
 	}
 
+	public function get_HTML() {
+		$post = $this->input->post();
+		$result = $this->result;
+		$result['result'] = 1;
+		$result['msg']['content'] = $this->load->view($post['ruta'], [], true);
+		echo json_encode($result);
+	}
 	public function get_elemento_iniciativa_HT(){
 		$result = $this->result;
 
@@ -319,4 +326,3 @@ class Control extends MY_Controller{
 	}
 	
 }
-?>

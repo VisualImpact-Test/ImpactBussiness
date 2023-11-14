@@ -2728,7 +2728,9 @@ class Cotizacion extends MY_Controller
 
 		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 		$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra", $dataParaVista, true);
-
+		$mpdf->curlAllowUnsafeSslRequests = true;
+		$mpdf->showImageErrors = true;
+		$mpdf->debug = true;
 		$mpdf->SetHTMLHeader($contenido['header']);
 		$mpdf->SetHTMLFooter($contenido['footer']);
 		$mpdf->AddPage();

@@ -1291,6 +1291,104 @@ var View = {
 			$('.customizer.border-left-blue-grey.border-left-lighten-4.d-xl-block').removeClass('open');
 		});
 
+		$(document).off('change', '.file-semantic-upload').on('change', '.file-semantic-upload', function (e) {
+			var control = $(this);
+			var data = control.data();
+
+			let cantidadMaximaDeCarga = MAX_ARCHIVOS;
+			if (data.maxfiles) cantidadMaximaDeCarga = parseInt(data.maxfiles);
+
+			let mostrarVistaPrevia = true;
+			if (data.vistaprevia) mostrarVistaPrevia = data.vistaprevia;
+
+			var id = '';
+			if (data.id) id = '[' + data.id + ']';
+
+			let name = 'file-item';
+			let nameType = 'file-type';
+			let nameFile = 'file-name';
+
+			if (control.val()) {
+				var content = control.parents('.content-upload:first').find('.content-img');
+				var content_files = control.parents('.content-upload:first').find('.content-files');
+				var num = control.get(0).files.length;
+
+				list: {
+					var total = $('input[name="' + name + id + '"]').length;
+					total += $('input.file-considerarAdjunto').length;
+					if ((num + total) > cantidadMaximaDeCarga) {
+						var message = Fn.message({ type: 2, message: `Solo se permiten ${cantidadMaximaDeCarga} archivo(s) como máximo` });
+						Fn.showModal({
+							'id': ++modalId,
+							'show': true,
+							'title': 'Alerta',
+							'frm': message,
+							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+						});
+						break list;
+					}
+
+					for (var i = 0; i < num; ++i) {
+						var size = control.get(0).files[i].size;
+						size = Math.round((size / 1024));
+
+						if (size > KB_MAXIMO_ARCHIVO) {
+							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo` });
+							Fn.showModal({
+								'id': ++modalId,
+								'show': true,
+								'title': 'Alerta',
+								'frm': message,
+								'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
+							});
+							break list;
+						}
+					}
+
+					let file = '';
+					let imgFile = '';
+					let contenedor = '';
+					for (var i = 0; i < num; ++i) {
+						file = control.get(0).files[i];
+						Fn.getBase64(file).then(function (fileBase) {
+							if (fileBase.type.split('/')[0] == 'image') {
+								imgFile = fileBase.base64;
+								contenedor = content;
+							} else if (fileBase.type.split('/')[1] == 'pdf') {
+								imgFile = `${RUTA_WIREFRAME}pdf.png`;
+								contenedor = content_files;
+							} else {
+								imgFile = `${RUTA_WIREFRAME}file.png`;
+								contenedor = content_files;
+							}
+
+							if (mostrarVistaPrevia) {
+								var fileApp = '';
+								fileApp += '<div class="ui fluid image content-lsck-capturas">';
+								fileApp += `	<div class="ui dimmer dimmer-file-detalle">
+														<div class="content">
+															<p class="ui tiny inverted header">${fileBase.name}</p>
+														</div>
+													</div>`;
+								fileApp += '	<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>';
+								fileApp += '	<input class="' + name + '" type="hidden" name="' + name + id + '"  value="' + fileBase.base64 + '">';
+								fileApp += '	<input class="' + nameType + '" type="hidden" name="' + nameType + id + '"  value="' + fileBase.type + '">';
+								fileApp += '	<input class="' + nameFile + '" type="hidden" name="' + nameFile + id + '"  value="' + fileBase.name + '">';
+								fileApp += `	<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
+								fileApp += '</div>';
+
+								contenedor.append(fileApp);
+							}
+
+						});
+
+					}
+				}
+
+				control.val('');
+			}
+		});
+		
 		$(document).on("click", '#btn-anuncios', function (e) {
 			e.preventDefault();
 			var config = { 'url': 'control/' + 'getAnuncios' };

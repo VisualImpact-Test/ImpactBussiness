@@ -3,6 +3,7 @@ var Proveedor = {
 	frm: 'frm-proveedor',
 	contentDetalle: 'idContentProveedor',
 	url: 'Proveedor/',
+	archivoEliminado: [],
 
 	load: function () {
 
@@ -41,6 +42,8 @@ var Proveedor = {
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
 			});
 		});
 
@@ -79,6 +82,17 @@ var Proveedor = {
 			Fn.selectOrderOption('distrito');
 		});
 
+		$(document).off('click', '.option-semantic-delete').on('click', '.option-semantic-delete', function (e) {
+			e.preventDefault();
+			var control = $(this);
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idEliminado = parent.data('id');
+			if (idEliminado) {
+				Proveedor.archivoEliminado.push(idEliminado);
+			}
+			control.parents('.content-lsck-capturas:first').remove();
+		});
+
 		$(document).on('change', '.regionCobertura', function (e) {
 			e.preventDefault();
 			let idDepartamento = $(this).val();
@@ -87,12 +101,12 @@ var Proveedor = {
 			distritoCobertura.html(html);
 
 			// $.each(idDepartamento, function (i_departamento, v_departamento) {
-				if (typeof (provincia[idDepartamento]) == 'object') {
-					$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
-						// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-						html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
-					});
-				}
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
+					// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+					html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+				});
+			}
 			// });
 			let provinciaCobertura = $(this).closest("tr").find(".provinciaCobertura");
 			provinciaCobertura.html(html);
@@ -141,7 +155,8 @@ var Proveedor = {
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-				//$('#regionCobertura').change();
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
 			});
 
 		});
@@ -165,6 +180,8 @@ var Proveedor = {
 				btn[1] = { title: 'Validar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
 			});
 		});
 
@@ -181,6 +198,19 @@ var Proveedor = {
 			$.when(Fn.ajax(config)).then((a) => {
 				$("#btn-filtrarProveedor").click();
 			});
+		});
+
+		$(document).on("change", ".chkDetraccion", function(){
+			let this_ = $(this);
+			let check = this_.is(':checked');
+			if(check){
+				$('.detraccion').removeClass('d-none');
+				$('.cuentaDetraccion').attr('patron', 'requerido')
+			}else{
+				$('.detraccion').addClass('d-none');
+				$('.cuentaDetraccion').removeAttr('patron')
+			}
+
 		});
 
 		$(document).on("click", "#btn-masivoCarteraObjetivo", function () {
@@ -210,15 +240,15 @@ var Proveedor = {
 			let tbody = $(".tb-zona-cobertura > tbody");
 			let trParent = tbody.find(".trParent");
 
-			let combosZona = trParent.find("select").prop("disabled",false);
+			let combosZona = trParent.find("select").prop("disabled", false);
 			tbody.append(`<tr class="trChildren">${trParent.html()}</tr>`);
-			trParent.find("select").prop("disabled",true);
+			trParent.find("select").prop("disabled", true);
 
 		});
 		$(document).on('click', '.btn-eliminar-zona', function (e) {
 			let tr = $(this).closest("tr");
 
-			if($(".trChildren").length <= 1){
+			if ($(".trChildren").length <= 1) {
 				$('.btn-agregar-zona').click();
 				// $(".trChildren").first().find(".regionCobertura").css("border","solid 1px red");
 				// setTimeout($(".trChildren").first().find(".regionCobertura").css("border","solid 1px black"), 5000);
@@ -227,13 +257,13 @@ var Proveedor = {
 			tr.remove();
 		});
 		$(document).on('click', '.btnAddCorreo', function (e) {
-			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">'+
-									'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>'+
-									'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">'+
-									'<div class="input-group-append">'+
-										'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>'+
-									'</div>'+
-								'</div>';
+			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">' +
+				'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>' +
+				'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">' +
+				'<div class="input-group-append">' +
+				'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>' +
+				'</div>' +
+				'</div>';
 			$('#extraCorreo').append(div);
 		});
 		$(document).on('click', '.btnEliminarCorreo', function (e) {
@@ -293,7 +323,7 @@ var Proveedor = {
 		++modalId;
 		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
 		dataFn.idProveedorEstado = '1';
-
+		dataFn.idProveedorArchivoEliminado = Proveedor.archivoEliminado;
 		let jsonString = { 'data': JSON.stringify(dataFn) };
 		// let config = { 'url': Proveedor.url + 'validarProveedor', 'data': jsonString };
 		let config = { 'url': Proveedor.url + 'actualizarProveedor', 'data': jsonString };

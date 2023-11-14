@@ -9,6 +9,7 @@ class FormularioProveedor extends MY_Controller
 		parent::__construct();
 		$this->load->model('M_FormularioProveedor', 'model');
 		$this->load->model('M_cotizacion', 'm_cotizacion');
+		$this->load->model('M_proveedor', 'm_proveedor');
 		$proveedor = $this->session->userdata('proveedor');
 	}
 
@@ -82,7 +83,6 @@ class FormularioProveedor extends MY_Controller
 
 	public function signup()
 	{
-
 		$config['css']['style'] = array();
 		$config['js']['script'] = array('assets/custom/js/FormularioProveedores');
 		$config['view'] = 'formularioProveedores';
@@ -90,6 +90,10 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
 		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$config['data']['tipoServicio'] = $this->m_proveedor->obtenerProveedorTipoServicio()->result_array();
+		$config['data']['comprobante'] = $this->m_proveedor->obtenerComprobante()['query']->result_array();
+		$config['data']['bancos'] = $this->db->get_where('dbo.banco')->result_array();
+		$config['data']['tiposCuentaBanco'] = $this->db->get_where('dbo.tipoCuentaBanco')->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
 		$config['data']['departamento'] = [];
@@ -102,7 +106,6 @@ class FormularioProveedor extends MY_Controller
 			$config['data']['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
 			$config['data']['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
 		}
-
 		$config['single'] = true;
 
 		$this->view($config);
@@ -128,7 +131,11 @@ class FormularioProveedor extends MY_Controller
 			'idProveedorEstado' => 5,
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
-			'numeroContacto' => $post['numeroContacto']
+			'numeroContacto' => $post['numeroContacto'],
+			'cuenta' => empty($post['cuentaDetraccion']) ? NULL : $post['cuentaDetraccion'],
+			'idBanco' => empty($post['banco']) ? NULL : $post['banco'],
+			'idTipoCuentaBanco' => empty($post['tipoCuenta']) ? NULL : $post['tipoCuenta'],
+			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
@@ -202,6 +209,28 @@ class FormularioProveedor extends MY_Controller
 		$fourth_insert = $this->model->insertarMasivo("compras.proveedorRubro", $data['insert']);
 		$data = [];
 
+		foreach (checkAndConvertToArray($post['comprobante']) as $key => $value) {
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idComprobante' => $value,
+			];
+		}
+
+		$fourth_insert = $this->model->insertarMasivo("compras.proveedorComprobante", $data['insert']);
+		$data = [];
+
+		// tipoServicio
+		foreach (checkAndConvertToArray($post['tipoServicio']) as $key => $value) {
+			$data['insert'][] = [
+				'idProveedor' => $insert['id'],
+				'idProveedorTipoServicio' => $value,
+			];
+		}
+
+		$tipoServicio_insert = $this->model->insertarMasivo("compras.proveedorProveedorTipoServicio", $data['insert']);
+		$data = [];
+
+		$fifth_insert = true;
 		if (isset($post['correoAdicional'])) {
 			foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
 				$data['insert'][] = [
@@ -209,12 +238,43 @@ class FormularioProveedor extends MY_Controller
 					'correo' => $value,
 				];
 			}
+			$fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
 		}
-		$fifth_insert = $this->model->insertarMasivo("compras.proveedorCorreo", $data['insert']);
+		$data = [];
 
-		// $estadoEmail = $this->enviarCorreo($insert['id']);
+		if (!isset($post['file-item'])) $post['file-item'] = [];
+		if (!isset($post['file-name'])) $post['file-name'] = [];
+		if (!isset($post['file-type'])) $post['file-type'] = [];
 
-		// $estadoEmail=true;
+		$post['file-item'] = checkAndConvertToArray($post['file-item']);
+		$post['file-name'] = checkAndConvertToArray($post['file-name']);
+		$post['file-type'] = checkAndConvertToArray($post['file-type']);
+
+		if (!empty($post['file-item'])) {
+			$insertArchivos = [];
+			foreach ($post['file-item'] as $k => $v) {
+				$archivo = [
+					'base64' => $post['file-item'][$k],
+					'name' => $post['file-name'][$k],
+					'type' => $post['file-type'][$k],
+					'carpeta' => 'proveedorAdjuntos',
+					'nombreUnico' => 'DETRACCION_' . $insert['id'] . '_' . str_replace(':', '', $this->hora) . '_' . $k,
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+				$insertArchivos[] = [
+					'idProveedor' => $insert['id'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+					'idUsuarioReg' => $this->idUsuario
+				];
+			}
+			if (!empty($insertArchivos)) $this->db->insert_batch('compras.proveedorArchivo', $insertArchivos);
+		}
 
 		if (!$insert['estado'] || !$second_insert['estado'] /*|| !$estadoEmail*/ || !$third_insert || !$fourth_insert || !$fifth_insert) {
 			$result['result'] = 0;
