@@ -1652,12 +1652,30 @@ class Cotizacion extends MY_Controller
 		$config['js']['script'] = array('assets/custom/js/registroPesos');
 		$config['data']['cotizacion'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacion')->row_array();
 		$config['data']['cotizacionDetalle'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacionDetalle')->result_array();
-		$zz = $this->model->getZonas()->result_array();
+		
+		$config['data']['zona'] = [];
+
+		
+		foreach($config['data']['cotizacionDetalle'] as $v){
+			if($v['flagPackingSolicitado'] == '1'){
+				$cds = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
+
+				foreach($cds as $f){
+					$zona = $this->model->getZonas(['otroAlmacen' => $f['flagOtrosPuntos'], 'idZona' => $f['idZona']])->row_array();
+					$config['data']['zona'][$zona['idAlmacen']] = $zona['nombre'];
+				}
+
+			}
+			// $config['data']['zona'][]
+			// $zz = $this->model->getZonas(['otroAlmacen' => $vz['flagOtrosPuntos'], 'idZona' => $vz['idZona']])->result_array();
+
+		}
+
 
 		$config['data']['itemPacking'] = $this->db->where('flagPacking', 1)->get('compras.item')->result_array();
-		foreach ($zz as $k => $v) {
-			$config['data']['zona'][$v['idAlmacen']] = $v['nombre'];
-		}
+		// foreach ($zz as $k => $v) {
+		// 	$config['data']['zona'][$v['idAlmacen']] = $v['nombre'];
+		// }
 		foreach ($config['data']['cotizacionDetalle'] as $k => $v) {
 			$config['data']['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 		}
