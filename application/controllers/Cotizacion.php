@@ -1603,7 +1603,7 @@ class Cotizacion extends MY_Controller
 		$header[] = 'PESO GAP VISUAL';
 		$column[] = ['data' => 'pesoGapVisual', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 
-		$header[] = 'TOTAL VISUAL';
+		$header[] = 'COSTO TOTAL VISUAL';
 		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
 
 		$header[] = 'COSTO TS CUENTA';
@@ -1619,7 +1619,7 @@ class Cotizacion extends MY_Controller
 		$header[] = 'PESO GAP CUENTA';
 		$column[] = ['data' => 'pesoGapCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 
-		$header[] = 'TOTAL CUENTA';
+		$header[] = 'COSTO TOTAL CUENTA';
 		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
 		// FIN: HEADER & COLUMN
 
@@ -1860,7 +1860,7 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'pesoGapVisual', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 		$datosHt[$nro]['pesoGapVisual'] = null;
 
-		$header[] = 'TOTAL VISUAL';
+		$header[] = 'COSTO TOTAL VISUAL';
 		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
 		$datosHt[$nro]['totalFinalVisual'] = null;
 
@@ -1881,7 +1881,7 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'pesoGapCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 		$datosHt[$nro]['pesoGapCuenta'] = null;
 
-		$header[] = 'TOTAL CUENTA';
+		$header[] = 'COSTO TOTAL CUENTA';
 		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
 		$datosHt[$nro]['totalFinalCuenta'] = null;
 
@@ -2031,12 +2031,12 @@ class Cotizacion extends MY_Controller
 				'pesoTotalVisual' => 'PESO TOTAL VISUAL',
 				'pesoGapVisual' => 'PESO GAP VISUAL',
 				'costoTSVisual' => 'COSTO TS VISUAL',
-				'totalVisual' => 'TOTAL VISUAL',
+				'totalVisual' => 'COSTO TOTAL VISUAL',
 				'pesoCuenta' => 'PESO CUENTA',
 				'pesoTotalCuenta' => 'PESO TOTAL CUENTA',
 				'pesoGapCuenta' => 'PESO GAP CUENTA',
 				'costoTSCuenta' => 'COSTO TS CUENTA',
-				'totalCuenta' => 'TOTAL CUENTA',
+				'totalCuenta' => 'COSTO TOTAL CUENTA',
 			],
 			'datos' => $arrayDatos,
 			'classP' => 'tb_data_'
@@ -2234,12 +2234,12 @@ class Cotizacion extends MY_Controller
 						'pesoTotalVisual' => 'PESO TOTAL VISUAL',
 						'pesoGapVisual' => 'PESO GAP VISUAL',
 						'costoTSVisual' => 'COSTO TS VISUAL',
-						'totalVisual' => 'TOTAL VISUAL',
+						'totalVisual' => 'COSTO TOTAL VISUAL',
 						'pesoCuenta' => 'PESO CUENTA',
 						'pesoTotalCuenta' => 'PESO TOTAL CUENTA',
 						'pesoGapCuenta' => 'PESO GAP CUENTA',
 						'costoTSCuenta' => 'COSTO TS CUENTA',
-						'totalCuenta' => 'TOTAL CUENTA',
+						'totalCuenta' => 'COSTO TOTAL CUENTA',
 					],
 					'datos' => $dcds,
 					'classP' => 'tb_data_'
@@ -3491,12 +3491,12 @@ class Cotizacion extends MY_Controller
 						'pesoTotalVisual' => 'PESO TOTAL VISUAL',
 						'pesoGapVisual' => 'PESO GAP VISUAL',
 						'costoTSVisual' => 'COSTO TS VISUAL',
-						'totalVisual' => 'TOTAL VISUAL',
+						'totalVisual' => 'COSTO TOTAL VISUAL',
 						'pesoCuenta' => 'PESO CUENTA',
 						'pesoTotalCuenta' => 'PESO TOTAL CUENTA',
 						'pesoGapCuenta' => 'PESO GAP CUENTA',
 						'costoTSCuenta' => 'COSTO TS CUENTA',
-						'totalCuenta' => 'TOTAL CUENTA',
+						'totalCuenta' => 'COSTO TOTAL CUENTA',
 					],
 					'datos' => $dcds,
 					'classP' => 'tb_data_'
