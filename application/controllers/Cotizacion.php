@@ -1604,7 +1604,7 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'pesoGapVisual', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 
 		$header[] = 'COSTO TOTAL VISUAL';
-		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
+		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 200, 'readOnly' => true];
 
 		$header[] = 'COSTO TS CUENTA';
 		$column[] = ['data' => 'costoTSCuenta', 'type' => 'numeric', 'placeholder' => 'Costo TS Cuenta', 'width' => 200, 'readOnly' => true];
@@ -1620,7 +1620,7 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'pesoGapCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Gap', 'width' => 150, 'readOnly' => true];
 
 		$header[] = 'COSTO TOTAL CUENTA';
-		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
+		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 200, 'readOnly' => true];
 		// FIN: HEADER & COLUMN
 
 		//ARMANDO HANDSONTABLE
@@ -1861,7 +1861,7 @@ class Cotizacion extends MY_Controller
 		$datosHt[$nro]['pesoGapVisual'] = null;
 
 		$header[] = 'COSTO TOTAL VISUAL';
-		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
+		$column[] = ['data' => 'totalFinalVisual', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 200, 'readOnly' => true];
 		$datosHt[$nro]['totalFinalVisual'] = null;
 
 		$header[] = 'COSTO TS CUENTA';
@@ -1882,7 +1882,7 @@ class Cotizacion extends MY_Controller
 		$datosHt[$nro]['pesoGapCuenta'] = null;
 
 		$header[] = 'COSTO TOTAL CUENTA';
-		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 100, 'readOnly' => true];
+		$column[] = ['data' => 'totalFinalCuenta', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 200, 'readOnly' => true];
 		$datosHt[$nro]['totalFinalCuenta'] = null;
 
 		// FIN: HEADER & COLUMN
