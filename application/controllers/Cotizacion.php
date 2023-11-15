@@ -459,10 +459,14 @@ class Cotizacion extends MY_Controller
 		$post['itemTextoPdf'] = checkAndConvertToArray($post['itemTextoPdf']);
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 		$post['flagPackingSolicitado'] = checkAndConvertToArray($post['flagPackingSolicitado']);
+		$post['costoPacking'] = checkAndConvertToArray($post['costoPacking']);
+		$post['flagMovilidadSolicitado'] = checkAndConvertToArray($post['flagMovilidadSolicitado']);
+		$post['costoMovilidad'] = checkAndConvertToArray($post['costoMovilidad']);
+		$post['flagPersonalSolicitado'] = checkAndConvertToArray($post['flagPersonalSolicitado']);
+		$post['costoPersonal'] = checkAndConvertToArray($post['costoPersonal']);
 		$post['flagMostrarDetalle'] = checkAndConvertToArray($post['flagMostrarDetalle']);
 		$post['flagOtrosPuntos'] = checkAndConvertToArray($post['flagOtrosPuntos']);
 		// $post['flagDetallePDV'] = checkAndConvertToArray($post['flagDetallePDV']);
-
 		$post['sueldo_personal'] = checkAndConvertToArray($post['sueldo_personal']);
 		$post['asignacion_familiar_personal'] = checkAndConvertToArray($post['asignacion_familiar_personal']);
 		$post['movilidad_personal'] = checkAndConvertToArray($post['movilidad_personal']);
@@ -576,6 +580,11 @@ class Cotizacion extends MY_Controller
 				'tsCosto' => !empty($post['tsCosto'][$k]) ? $post['tsCosto'][$k] : NULL,
 				// 'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : NULL,
 				'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
+				'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : 0,
+				'flagMovilidadSolicitado' => !empty($post['flagMovilidadSolicitado'][$k]) ? $post['flagMovilidadSolicitado'][$k] : 0,
+				'costoMovilidad' => !empty($post['costoMovilidad'][$k]) ? $post['costoMovilidad'][$k] : 0,
+				'flagPersonalSolicitado' => !empty($post['flagPersonalSolicitado'][$k]) ? $post['flagPersonalSolicitado'][$k] : 0,
+				'costoPersonal' => !empty($post['costoPersonal'][$k]) ? $post['costoPersonal'][$k] : 0,
 				'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 				'sueldo' => !empty($post['sueldo_personal'][$k]) ? $post['sueldo_personal'][$k] : 0,
 				'asignacionFamiliar' => !empty($post['asignacion_familiar_personal'][$k]) ? $post['asignacion_familiar_personal'][$k] : 0,
@@ -612,6 +621,12 @@ class Cotizacion extends MY_Controller
 					break;
 
 				case COD_DISTRIBUCION['id']:
+					if (!isset($post['cantidadDatosTabla'])) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Alerta!';
+						$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Debe indicar items con su cantidad y costo en la cotización de distribución']);
+						goto respuesta;
+					}
 					$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
 					$cantidad = intval($post['cantidadDatosTabla'][$k]);
 					$data['subDetalle'][$k] = [];
@@ -881,10 +896,10 @@ class Cotizacion extends MY_Controller
 	{
 		$config = array(
 			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			// 'smtp_host' => 'aspmx.l.google.com',
-			// 'smtp_port' => '25',
+			// 'smtp_host' => 'ssl://smtp.googlemail.com',
+			// 'smtp_port' => 465,
+			'smtp_host' => 'aspmx.l.google.com',
+			'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'
@@ -961,7 +976,7 @@ class Cotizacion extends MY_Controller
 
 		$html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
 		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'Cotizacion'], true);
-	
+
 		$email['contenido'] = $correo;
 
 		$estadoEmail = email($email);
@@ -1652,19 +1667,18 @@ class Cotizacion extends MY_Controller
 		$config['js']['script'] = array('assets/custom/js/registroPesos');
 		$config['data']['cotizacion'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacion')->row_array();
 		$config['data']['cotizacionDetalle'] = $this->db->where('idCotizacion', $id)->get('compras.cotizacionDetalle')->result_array();
-		
+
 		$config['data']['zona'] = [];
 
-		
-		foreach($config['data']['cotizacionDetalle'] as $v){
-			if($v['flagPackingSolicitado'] == '1'){
+
+		foreach ($config['data']['cotizacionDetalle'] as $v) {
+			if ($v['flagPackingSolicitado'] == '1') {
 				$cds = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
 
-				foreach($cds as $f){
+				foreach ($cds as $f) {
 					$zona = $this->model->getZonas(['otroAlmacen' => $f['flagOtrosPuntos'], 'idZona' => $f['idZona']])->row_array();
 					$config['data']['zona'][$zona['idAlmacen']] = $zona['nombre'];
 				}
-
 			}
 			// $config['data']['zona'][]
 			// $zz = $this->model->getZonas(['otroAlmacen' => $vz['flagOtrosPuntos'], 'idZona' => $vz['idZona']])->result_array();
@@ -2960,6 +2974,11 @@ class Cotizacion extends MY_Controller
 		$post['precioForm'] = checkAndConvertToArray($post['precioForm']);
 		$post['linkForm'] = checkAndConvertToArray($post['linkForm']);
 		$post['flagPackingSolicitado'] = checkAndConvertToArray($post['flagPackingSolicitado']);
+		$post['costoPacking'] = checkAndConvertToArray($post['costoPacking']);
+		$post['flagMovilidadSolicitado'] = checkAndConvertToArray($post['flagMovilidadSolicitado']);
+		$post['costoMovilidad'] = checkAndConvertToArray($post['costoMovilidad']);
+		$post['flagPersonalSolicitado'] = checkAndConvertToArray($post['flagPersonalSolicitado']);
+		$post['costoPersonal'] = checkAndConvertToArray($post['costoPersonal']);
 		$post['flagMostrarDetalle'] = checkAndConvertToArray($post['flagMostrarDetalle']);
 		$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 		$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
@@ -2992,6 +3011,11 @@ class Cotizacion extends MY_Controller
 					'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 					'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
 					'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
+					'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : 0,
+					'flagMovilidadSolicitado' => !empty($post['flagMovilidadSolicitado'][$k]) ? $post['flagMovilidadSolicitado'][$k] : 0,
+					'costoMovilidad' => !empty($post['costoMovilidad'][$k]) ? $post['costoMovilidad'][$k] : 0,
+					'flagPersonalSolicitado' => !empty($post['flagPersonalSolicitado'][$k]) ? $post['flagPersonalSolicitado'][$k] : 0,
+					'costoPersonal' => !empty($post['costoPersonal'][$k]) ? $post['costoPersonal'][$k] : 0,
 					'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 					'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
 					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
@@ -3128,6 +3152,11 @@ class Cotizacion extends MY_Controller
 					'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 					'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
+					'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : 0,
+					'flagMovilidadSolicitado' => !empty($post['flagMovilidadSolicitado'][$k]) ? $post['flagMovilidadSolicitado'][$k] : 0,
+					'costoMovilidad' => !empty($post['costoMovilidad'][$k]) ? $post['costoMovilidad'][$k] : 0,
+					'flagPersonalSolicitado' => !empty($post['flagPersonalSolicitado'][$k]) ? $post['flagPersonalSolicitado'][$k] : 0,
+					'costoPersonal' => !empty($post['costoPersonal'][$k]) ? $post['costoPersonal'][$k] : 0,
 					'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 					'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
 

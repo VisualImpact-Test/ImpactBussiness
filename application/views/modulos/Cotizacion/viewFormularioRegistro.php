@@ -211,14 +211,6 @@
 								<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
 							</div>
 							<div class="three wide field">
-								<div class="ui sub header">Costo Packing</div>
-								<select class="ui basic floating dropdown button simpleDropdown" name="flagPackingSolicitado">
-									<option value="0" selected>No requerido</option>
-									<option value="1">Requerido</option>
-								</select>
-								<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
-							</div>
-							<div class="three wide field">
 								<div class="ui sub header">¿ Requiere OC ?</div>
 								<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
 									<option value="0" selected>NO generar</option>
@@ -238,6 +230,41 @@
 									<option value="0" selected>Almacén Visual</option>
 									<option value="1">Otros Puntos</option>
 								</select>
+							</div>
+						</div>
+						<div class="fields cantPDV d-none">
+							<div class="three wide field">
+								<div class="ui sub header">Costo Packing</div>
+								<select name="flagPackingSolicitado" onchange="$('.divCostoPacking').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="two wide field divCostoPacking d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoPacking" value="0">
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo Movilidad</div>
+								<select name="flagMovilidadSolicitado" onchange="$('.divCostoMovilidad').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="two wide field divCostoMovilidad d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoMovilidad" value="0">
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo Personal</div>
+								<select name="flagPersonalSolicitado" onchange="$('.divCostoPersonal').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="three wide field divCostoPersonal d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoPersonal" value="0">
 							</div>
 						</div>
 						<div class="baseUbigeoSelects cantidadPDVDetallado d-none">
