@@ -1994,6 +1994,11 @@ class M_Cotizacion extends MY_Model
 				AS semaforoVigencia,
 				lt.cantPdv,
 				lt.flagPackingSolicitado,
+				lt.costoPacking,
+				lt.flagMovilidadSolicitado,
+				lt.costoMovilidad,
+				lt.flagPersonalSolicitado,
+				lt.costoPersonal,
 				lt.flagMostrarDetalle,
 				lt.requiereOrdenCompra
 
