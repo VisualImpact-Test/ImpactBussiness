@@ -261,9 +261,9 @@
 										<option value="1" <?= $row['flagPackingSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
 									</select>
 								</div>
-								<div class="two wide field divCostoPacking d-none">
+								<div class="two wide field divCostoPacking <?= $row['flagPackingSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers" name="costoPacking" value="<?= $row['costoPacking']; ?>">
+									<input class="onlyNumbers costoPacking" name="costoPacking" value="<?= $row['costoPacking']; ?>" readonly>
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Movilidad</div>
@@ -272,9 +272,9 @@
 										<option value="1" <?= $row['flagMovilidadSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
 									</select>
 								</div>
-								<div class="two wide field divCostoMovilidad d-none">
+								<div class="two wide field divCostoMovilidad <?= $row['flagMovilidadSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>">
+									<input class="onlyNumbers costoMovilidad" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>" readonly>
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Personal</div>
@@ -283,9 +283,9 @@
 										<option value="1" <?= $row['flagPersonalSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
 									</select>
 								</div>
-								<div class="two wide field divCostoPersonal d-none">
+								<div class="two wide field divCostoPersonal <?= $row['flagPersonalSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers" name="costoPersonal" value="<?= $row['costoPersonal']; ?>">
+									<input class="onlyNumbers costoPersonal" name="costoPersonal" value="<?= $row['costoPersonal']; ?>" readonly>
 								</div>
 							</div>
 							<!-- Textiles -->

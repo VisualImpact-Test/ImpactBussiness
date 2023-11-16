@@ -242,7 +242,7 @@
 							</div>
 							<div class="two wide field divCostoPacking d-none">
 								<div class="ui sub header">.</div>
-								<input class="onlyNumbers" name="costoPacking" value="0">
+								<input class="onlyNumbers costoPacking keyUpChange" name="costoPacking" value="0">
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Costo Movilidad</div>
@@ -253,7 +253,7 @@
 							</div>
 							<div class="two wide field divCostoMovilidad d-none">
 								<div class="ui sub header">.</div>
-								<input class="onlyNumbers" name="costoMovilidad" value="0">
+								<input class="onlyNumbers costoMovilidad keyUpChange" name="costoMovilidad" value="0">
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Costo Personal</div>
@@ -264,7 +264,7 @@
 							</div>
 							<div class="three wide field divCostoPersonal d-none">
 								<div class="ui sub header">.</div>
-								<input class="onlyNumbers" name="costoPersonal" value="0">
+								<input class="onlyNumbers costoPersonal keyUpChange" name="costoPersonal" value="0">
 							</div>
 						</div>
 						<div class="baseUbigeoSelects cantidadPDVDetallado d-none">

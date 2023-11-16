@@ -138,9 +138,9 @@
 						<td class="text-center" rowspan="1"><?= $value[0]['cantidad']; ?></td>
 						<?php if ($cabecera['mostrarPrecio']) :  ?>
 							<?php if ($redondear) :  ?>
-								<td class="text-center" rowspan="1"><?= ceil($value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
+								<td class="text-center" rowspan="1"><?= moneda(ceil($value[0]['costo'] * ($row['gap'] + 100) / 100)); ?></td>
 							<?php else : ?>
-								<td class="text-center" rowspan="1"><?= $value[0]['costo'] * ($row['gap'] + 100) / 100; ?></td>
+								<td class="text-center" rowspan="1"><?= moneda($value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
 							<?php endif; ?>
 						<?php endif; ?>
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
@@ -265,14 +265,6 @@
 						<p><?= moneda(($cabecera['fee_prc'])) ?></p>
 					</td>
 				</tr>
-				<!-- <tr class="height:100px" style="background-color: #F6FAFD;">
-					<td colspan="<?= $col1; ?>" class="text-right bold">
-						<p>FEE <?= !empty($cabecera['feePersonal']) ? $cabecera['feePersonal'] . '%' : '0%' ?></p>
-					</td>
-					<td class="text-right">
-						<p><?= moneda(($cabecera['fee_personal'])) ?></p>
-					</td>
-				</tr> -->
 				<tr class="height:100px" style="background-color: #FFE598;">
 					<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
 						<p>TOTAL</p>

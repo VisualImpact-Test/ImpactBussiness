@@ -227,7 +227,6 @@ var Cotizacion = {
 			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 			Cotizacion.itemServicio = $.parseJSON($('#itemsServicio').val());
 			// Cotizacion.tachadoDistribucion = $.parseJSON($('#tachadoDistribucion').val());
-
 			// Cotizacion.htmlG = $('.default-item').html();
 
 			if ($('#gapEmpresas').val()) {
@@ -262,11 +261,11 @@ var Cotizacion = {
 			});
 			$('.unidadMed').dropdown({ allowAdditions: true });
 			$('.flagRedondearForm').change();
-			// $.each($('.btnPopupPropuestaItem'), function(i,v){    
+			// $.each($('.btnPopupPropuestaItem'), function(i,v){
 			// 	var id = $(v).data('id');
 			// 	$(v).popup({
-			// 		popup : $(`.popup-propuesta-${id}`),
-			// 		on    : 'click'
+			// 		popup	: $(`.popup-propuesta-${id}`),
+			// 		on		: 'click'
 			// 	})
 			// });
 			// Cotizacion.solicitanteData = $.parseJSON($('#solicitantes').val());
@@ -437,7 +436,6 @@ var Cotizacion = {
 			childInserted.find('.incentivo_personal').attr('data-sueldo', childInsertedNumber);
 			childInserted.find('.cantidad_personal').attr('data-cantidad', childInsertedNumber);
 
-
 			//FIN PERSONAl
 			childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5));
 			childInserted.find('.file-lsck-capturas').attr('data-row', childInserted.index());
@@ -454,7 +452,6 @@ var Cotizacion = {
 			Cotizacion.actualizarOnAddRow(childInserted);
 			Cotizacion.actualizarOnAddRowCampos(childInserted);
 			$('.ui.checkbox').checkbox();
-
 
 			Fn.loadSemanticFunctions();
 			$('.unidadMed').dropdown({ allowAdditions: true });
@@ -474,7 +471,7 @@ var Cotizacion = {
 		// $("#centroCosto_visible .item").click(function(){
 		// 	alert("go");
 		// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
-		//   });
+		//	});
 
 		$(document).on('click', '#centroCosto_visible .item', function () {
 			$("#centroCosto_oculto .item").removeAttr("style", "display");
@@ -683,8 +680,6 @@ var Cotizacion = {
 
 					Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
 
-
-
 				}
 				//////////////////
 
@@ -731,11 +726,7 @@ var Cotizacion = {
 			allFeatures.addClass('d-none');
 			divFeature.removeClass('d-none');
 			$("input").remove("#identificador");
-
-
 		});
-
-
 
 		$(document).on("keyup", ".cantidad_dias_personal", function () {
 			var dias = $(this).val();
@@ -824,7 +815,6 @@ var Cotizacion = {
 			$('.costoForm').val(total_final_costo.toFixed(4))
 		})
 
-
 		$(document).on("keyup", ".incentivo_personal", function () {
 			var incentivo_personal = $(this).val();
 			var idDiv = $(this).attr('data-sueldo');
@@ -866,8 +856,6 @@ var Cotizacion = {
 			$('.costoForm').val(total_final_costo.toFixed(4))
 		})
 
-
-
 		$(document).on("keyup", ".pago_diario_personal", function () {
 			var pago = $(this).val();
 			var idDiv = $(this).attr('data-pago');
@@ -897,7 +885,6 @@ var Cotizacion = {
 			var total_final_costo = total_sueldos + parseFloat(total_adicionales);
 			$('.costoForm').val(total_final_costo.toFixed(4))
 		});
-
 
 		$(document).on('change', '#prioridadForm', function (e) {
 			let prioridad = $(this).val();
@@ -988,8 +975,6 @@ var Cotizacion = {
 
 				thisCostoFormLabel.val('S/ ' + newCost.toFixed(4));
 			}
-
-
 
 			let costoRedondeadoForm = thisControlParents.find('.costoRedondeadoForm'); // sirve Para el subtotal
 			let costoNoRedondeadoForm = thisControlParents.find('.costoNoRedondeadoForm'); // Sirve para el subtotal
@@ -1086,7 +1071,6 @@ var Cotizacion = {
 			}
 			costoPacking = parseFloat(thisControl.closest('.div-features').find('.costoPacking').val());
 			cantidadTipoServicio = cantidadCalculada;
-
 
 			let costoTipoServicio = Number(costoTipoServicioForm.val());
 
@@ -1522,15 +1506,15 @@ var Cotizacion = {
 							var fileApp = '';
 							fileApp += '<div class="ui fluid image content-lsck-capturas">';
 							fileApp += `
-                                        <div class="ui dimmer dimmer-file-detalle">
-                                            <div class="content">
-                                                <p class="ui tiny inverted header">${fileBase.name}</p>
-                                            </div>
-                                        </div>`;
+												<div class="ui dimmer dimmer-file-detalle">
+													<div class="content">
+														<p class="ui tiny inverted header">${fileBase.name}</p>
+													</div>
+												</div>`;
 							fileApp += '<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>';
-							fileApp += '<input class="' + name + '" type="hidden" name="' + name + '[' + id + ']"  value="' + fileBase.base64 + '">';
-							fileApp += '<input class="' + nameType + '" type="hidden" name="' + nameType + '[' + id + ']"  value="' + fileBase.type + '">';
-							fileApp += '<input class="' + nameFile + '" type="hidden" name="' + nameFile + '[' + id + ']"  value="' + fileBase.name + '">';
+							fileApp += '<input class="' + name + '" type="hidden" name="' + name + '[' + id + ']" value="' + fileBase.base64 + '">';
+							fileApp += '<input class="' + nameType + '" type="hidden" name="' + nameType + '[' + id + ']" value="' + fileBase.type + '">';
+							fileApp += '<input class="' + nameFile + '" type="hidden" name="' + nameFile + '[' + id + ']" value="' + fileBase.name + '">';
 							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
 							fileApp += '</div>';
 
@@ -1617,15 +1601,15 @@ var Cotizacion = {
 							var fileApp = '';
 							fileApp += '<div class="ui fluid image content-lsck-capturas">';
 							fileApp += `
-                                        <div class="ui dimmer dimmer-file-detalle">
-                                            <div class="content">
-                                                <p class="ui tiny inverted header">${fileBase.name}</p>
-                                            </div>
-                                        </div>`;
+												<div class="ui dimmer dimmer-file-detalle">
+													<div class="content">
+														<p class="ui tiny inverted header">${fileBase.name}</p>
+													</div>
+												</div>`;
 							fileApp += '<a class="ui red right corner label img-lsck-anexos-delete"><i class="trash icon"></i></a>';
-							fileApp += '<input type="hidden" name="' + name + '"  value="' + fileBase.base64 + '">';
-							fileApp += '<input type="hidden" name="' + nameType + '"  value="' + fileBase.type + '">';
-							fileApp += '<input type="hidden" name="' + nameFile + '"  value="' + fileBase.name + '">';
+							fileApp += '<input type="hidden" name="' + name + '" value="' + fileBase.base64 + '">';
+							fileApp += '<input type="hidden" name="' + nameType + '" value="' + fileBase.type + '">';
+							fileApp += '<input type="hidden" name="' + nameFile + '" value="' + fileBase.name + '">';
 							fileApp += `<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
 							fileApp += '</div>';
 
@@ -2034,8 +2018,6 @@ var Cotizacion = {
 			if (tipo == COD_TRANSPORTE.id) {
 				parent.find('.dias_transporte').change();
 			}
-
-
 		});
 		$(document).on('change', '.tipoServicioForm', function () {
 			let control = $(this);
@@ -2156,6 +2138,21 @@ var Cotizacion = {
 
 		$(document).on('change', '#cuentaCentroCostoForm', function () {
 			$('#tipoItemForm').change();
+		});
+		$(document).on('change', '.costoPacking, .costoMovilidad, .costoPersonal', function () {
+			let _this = $(this);
+			let control = _this.closest('.body-item');
+
+			let cantidadTabla = 0;
+			if (typeof control.find('.totalTablaDeDistribucion').val() !== 'undefined') cantidadTabla = parseFloat(control.find('.totalTablaDeDistribucion').val());
+			// let cantidadTabla = parseFloat(control.find('.totalTablaDeDistribucion').val());
+			let costoPacking = parseFloat(control.find('.costoPacking').val());
+			let costoMovilidad = parseFloat(control.find('.costoMovilidad').val());
+			let costoPersonal = parseFloat(control.find('.costoPersonal').val());
+
+			let costoTotal = cantidadTabla + costoPacking + costoMovilidad + costoPersonal;
+			control.find('.costoForm').val(costoTotal);
+
 		});
 
 		$(document).on('click', '.btnPopupPropuestaItem', function () {
@@ -2302,8 +2299,6 @@ var Cotizacion = {
 					var total_final_costo = total_sueldos + parseFloat(total_adicionales);
 					$('.costoForm').val(total_final_costo.toFixed(4))
 				});
-
-
 
 			} else if (id == 1) {
 				$('.personal_' + idDiv + ' .cantidad_dias').show();
@@ -2553,8 +2548,14 @@ var Cotizacion = {
 							<td>${totalC.toFixed(2)}</td>
 						</tr>
 					</tfoot>
+					<input type="hidden" class="totalTablaDeDistribucion" value="${totalC.toFixed(2)}">
 				`);
-				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalC.toFixed(4));
+				let costoPacking = parseFloat(Cotizacion.temp.closest('.body-item').find('.costoPacking').val());
+				let costoMovilidad = parseFloat(Cotizacion.temp.closest('.body-item').find('.costoMovilidad').val());
+				let costoPersonal = parseFloat(Cotizacion.temp.closest('.body-item').find('.costoPersonal').val());
+
+				let totalParaCosto = costoPacking + costoMovilidad + costoPersonal + totalC;
+				Cotizacion.temp.closest('.body-item').find('.costoForm').val(totalParaCosto.toFixed(4));
 				Cotizacion.temp.closest('.body-item').find('.cantidadForm').val('1').keyup();
 			} else {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
@@ -3091,8 +3092,6 @@ var Cotizacion = {
 				content: 'Bloquear Detalle',
 			});
 		}
-
-
 		//Boton Ver leyenda
 		$('.btn-leyenda')
 			.popup({
@@ -3378,9 +3377,6 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
-
-
 }
 
 Cotizacion.load();

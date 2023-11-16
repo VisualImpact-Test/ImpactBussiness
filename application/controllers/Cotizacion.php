@@ -1529,7 +1529,7 @@ class Cotizacion extends MY_Controller
 				$ts = $this->db->where('nombre', $v->{'tipoServicio'})->get('compras.tipoServicio')->row_array();
 
 				$datosHt[$k]['tipoServicio'] = $v->{'tipoServicio'};
-
+				$datosHt[$k]['reembarque'] = $v->{'reembarque'};
 				$datosHt[$k]['costoTSVisual'] = $ts['costoVisual'];
 
 				$pesoTotal = 0;
@@ -1539,7 +1539,7 @@ class Cotizacion extends MY_Controller
 				}
 				$datosHt[$k]['pesoTotalVisual'] = strval($pesoTotal);
 				$datosHt[$k]['pesoGapVisual'] = strval((floatval($v->{'gap'}) + 100) * $pesoTotal / 100);
-				$datosHt[$k]['totalFinalVisual'] = strval(floatval($datosHt[$k]['costoTSVisual']) * floatval($datosHt[$k]['pesoGapVisual']));
+				$datosHt[$k]['totalFinalVisual'] = strval((floatval($datosHt[$k]['costoTSVisual']) * floatval($datosHt[$k]['pesoGapVisual'])) + floatval($datosHt[$k]['reembarque']));
 
 				$datosHt[$k]['costoTSCuenta'] = $ts['costo'];
 
@@ -1550,7 +1550,7 @@ class Cotizacion extends MY_Controller
 				}
 				$datosHt[$k]['pesoTotalCuenta'] = strval($pesoTotal);
 				$datosHt[$k]['pesoGapCuenta'] = strval((floatval($v->{'gap'}) + 100) * $pesoTotal / 100);
-				$datosHt[$k]['totalFinalCuenta'] = strval(floatval($datosHt[$k]['costoTSCuenta']) * floatval($datosHt[$k]['pesoGapCuenta']));
+				$datosHt[$k]['totalFinalCuenta'] = strval((floatval($datosHt[$k]['costoTSCuenta']) * floatval($datosHt[$k]['pesoGapCuenta'])) + floatval($datosHt[$k]['reembarque']));
 			}
 		} else {
 			$datosHt[0]['zona'] = null;
@@ -1604,6 +1604,9 @@ class Cotizacion extends MY_Controller
 
 		$header[] = 'TIPO SERVICIO *';
 		$column[] = ['data' => 'tipoServicio', 'type' => 'myDropdown', 'placeholder' => 'Tipo Servicio', 'width' => 300, 'source' => $tipoServicio];
+
+		$header[] = 'REEMBARQUE *';
+		$column[] = ['data' => 'reembarque', 'type' => 'numeric', 'placeholder' => 'REEMBARQUE', 'width' => 150];
 
 		$header[] = 'COSTO TS VISUAL';
 		$column[] = ['data' => 'costoTSVisual', 'type' => 'numeric', 'placeholder' => 'Costo TS Visual', 'width' => 200, 'readOnly' => true];
@@ -1825,7 +1828,7 @@ class Cotizacion extends MY_Controller
 
 		$header = [];
 		$column = [];
-		// $datosHt = [];
+
 		$datosHt = $dataPrevia;
 		$nro = count($datosHt);
 		// HEADER & COLUMN & DATOS
@@ -1856,6 +1859,10 @@ class Cotizacion extends MY_Controller
 		$header[] = 'TIPO SERVICIO *';
 		$column[] = ['data' => 'tipoServicio', 'type' => 'myDropdown', 'placeholder' => 'Tipo Servicio', 'width' => 300, 'source' => $tipoServicio];
 		$datosHt[$nro]['tipoServicio'] = null;
+
+		$header[] = 'REEMBARQUE *';
+		$column[] = ['data' => 'reembarque', 'type' => 'numeric', 'placeholder' => 'REEMBARQUE', 'width' => 150];
+		$datosHt[$nro]['reembarque'] = null;
 
 		$header[] = 'COSTO TS VISUAL';
 		$column[] = ['data' => 'costoTSVisual', 'type' => 'numeric', 'placeholder' => 'Costo TS Visual', 'width' => 200, 'readOnly' => true];
