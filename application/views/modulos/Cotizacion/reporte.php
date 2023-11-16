@@ -31,9 +31,10 @@
 									<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
 										<i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
 									</a>
+									<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="file pdf icon large" title="Generar PDF cotizacion"></i></a>
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS /*ESTADO_ENVIADO_CLIENTE*/) :  ?>
-									<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="file pdf icon large" title="Generar PDF cotizacion"></i></a>
+									<!-- <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="file pdf icon large" title="Generar PDF cotizacion"></i></a> -->
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
