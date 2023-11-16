@@ -886,6 +886,10 @@ class M_Cotizacion extends MY_Model
 			cd.requiereOrdenCompra,
 			cd.tsCosto,
 			cd.costoPacking,
+			cd.flagMovilidadSolicitado,
+			cd.costoMovilidad,
+			cd.flagPersonalSolicitado,
+			cd.costoPersonal,
 			ts.idUnidadMedida as umTs,
 			umts.nombre as umTipoServicio,
 			cd.flagDetallePDV,
@@ -1939,6 +1943,11 @@ class M_Cotizacion extends MY_Model
 					cd.flagRedondear,
 					cd.cantPdv,
 					cd.flagPackingSolicitado,
+					cd.costoPacking,
+					cd.flagMovilidadSolicitado,
+					cd.costoMovilidad,
+					cd.flagPersonalSolicitado,
+					cd.costoPersonal,
 					cd.flagMostrarDetalle,
 					cd.requiereOrdenCompra
 				FROM

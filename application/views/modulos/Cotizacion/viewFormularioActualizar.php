@@ -214,14 +214,6 @@
 								<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()">
 							</div>
 							<div class="three wide field">
-								<div class="ui sub header">Costo Packing</div>
-								<select class="ui basic floating dropdown button simpleDropdown" name="flagPackingSolicitado">
-									<option value="0" selected>No requerido</option>
-									<option value="1">Requerido</option>
-								</select>
-								<!-- <input class="costoPacking" name="costoPacking" value="0"> -->
-							</div>
-							<div class="three wide field">
 								<div class="ui sub header">¿ Requiere OC ?</div>
 								<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
 									<option value="0" selected>NO generar</option>
@@ -241,6 +233,41 @@
 									<option value="0" selected>Almacén Visual</option>
 									<option value="1">Otros Puntos</option>
 								</select>
+							</div>
+						</div>
+						<div class="fields cantPDV d-none">
+							<div class="three wide field">
+								<div class="ui sub header">Costo Packing</div>
+								<select name="flagPackingSolicitado" onchange="$('.divCostoPacking').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="two wide field divCostoPacking d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoPacking" value="0">
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo Movilidad</div>
+								<select name="flagMovilidadSolicitado" onchange="$('.divCostoMovilidad').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="two wide field divCostoMovilidad d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoMovilidad" value="0">
+							</div>
+							<div class="three wide field">
+								<div class="ui sub header">Costo Personal</div>
+								<select name="flagPersonalSolicitado" onchange="$('.divCostoPersonal').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+									<option value="0" selected>No requerido</option>
+									<option value="1">Requerido</option>
+								</select>
+							</div>
+							<div class="three wide field divCostoPersonal d-none">
+								<div class="ui sub header">.</div>
+								<input class="onlyNumbers" name="costoPersonal" value="0">
 							</div>
 						</div>
 						<!-- Textiles -->
@@ -522,13 +549,6 @@
 									<input class="cantidadPDV" name="cantidadPDV" onkeyup="$(this).closest('.nuevo').find('.cantidadForm').keyup()" value="<?= verificarEmpty($row['cantPdv']); ?>">
 								</div>
 								<div class="three wide field">
-									<div class="ui sub header">Costo Packing</div>
-									<select class="ui basic floating dropdown button simpleDropdown" name="flagPackingSolicitado">
-										<option value="0" <?= $row['flagPackingSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
-										<option value="1" <?= $row['flagPackingSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
-									</select>
-								</div>
-								<div class="three wide field">
 									<div class="ui sub header">¿ Requiere OC ?</div>
 									<select class="ui basic floating dropdown button simpleDropdown" name="flagGenerarOC">
 										<option value="0" <?= $row['requiereOrdenCompra'] == '0' ? 'selected' : ''; ?>>NO generar</option>
@@ -548,11 +568,46 @@
 										<?php if ($row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
 											<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
 											<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
-											<?php else: ?>
-												<option value="0" selected>Almacén Visual</option>
-												<option value="1" >Otros Puntos</option>
-											<?php endif; ?>
+										<?php else : ?>
+											<option value="0" selected>Almacén Visual</option>
+											<option value="1">Otros Puntos</option>
+										<?php endif; ?>
 									</select>
+								</div>
+							</div>
+							<div class="fields cantPDV <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
+								<div class="three wide field">
+									<div class="ui sub header">Costo Packing</div>
+									<select name="flagPackingSolicitado" onchange="$('.divCostoPacking').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+										<option value="0" <?= $row['flagPackingSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
+										<option value="1" <?= $row['flagPackingSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
+									</select>
+								</div>
+								<div class="two wide field divCostoPacking d-none">
+									<div class="ui sub header">.</div>
+									<input class="onlyNumbers" name="costoPacking" value="<?= $row['costoPacking']; ?>">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Costo Movilidad</div>
+									<select name="flagMovilidadSolicitado" onchange="$('.divCostoMovilidad').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+										<option value="0" <?= $row['flagMovilidadSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
+										<option value="1" <?= $row['flagMovilidadSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
+									</select>
+								</div>
+								<div class="two wide field divCostoMovilidad d-none">
+									<div class="ui sub header">.</div>
+									<input class="onlyNumbers" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>">
+								</div>
+								<div class="three wide field">
+									<div class="ui sub header">Costo Personal</div>
+									<select name="flagPersonalSolicitado" onchange="$('.divCostoPersonal').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+										<option value="0" <?= $row['flagPersonalSolicitado'] == '0' ? 'selected' : ''; ?>>No requerido</option>
+										<option value="1" <?= $row['flagPersonalSolicitado'] == '1' ? 'selected' : ''; ?>>Requerido</option>
+									</select>
+								</div>
+								<div class="two wide field divCostoPersonal d-none">
+									<div class="ui sub header">.</div>
+									<input class="onlyNumbers" name="costoPersonal" value="<?= $row['costoPersonal']; ?>">
 								</div>
 							</div>
 							<!-- Textiles -->
@@ -627,7 +682,7 @@
 												<div class="three wide field">
 													<div class="ui sub header">Departamento</div>
 													<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[<?= $row['idCotizacionDetalle'] ?>]" onchange="Cotizacion.buscarProvincias(this);">
-														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected'=> $dataSubItem['cod_departamento'], 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
+														<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $dataSubItem['cod_departamento'], 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
 													</select>
 												</div>
 												<div class="three wide field">
