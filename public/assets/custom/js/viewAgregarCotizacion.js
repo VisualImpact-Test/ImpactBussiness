@@ -2412,12 +2412,7 @@ var Cotizacion = {
 
 		$(cb).dropdown("destroy");
 		$(cb).dropdown("remove selected");
-		console.log(dep);
-		console.log(pro);
-		console.log(dis);
-		console.log(Cotizacion.tipoTransporte?.[dep]?.[pro]);
 		let arData = Cotizacion.tipoTransporte?.[dep]?.[pro]?.[dis];
-		console.log(arData);
 		if (typeof arData === "undefined") {
 			arData = [];
 		}
@@ -2439,11 +2434,15 @@ var Cotizacion = {
 		}
 		$(inp).val(data).change();
 		let inpV = div.find('.inpCostoVisual');
+		let inpC = div.find('.inpCosto');
 		let dataV = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.costoVisual;
 		if (typeof dataV === "undefined") {
 			dataV = 0;
 		}
 		$(inpV).val(dataV).change();
+		$(inpC).val(dataV).change();
+
+		$(inpC).data('min', dataV);
 
 	},
 	calcularValorTransporte: function (t) {

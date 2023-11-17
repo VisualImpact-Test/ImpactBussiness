@@ -281,13 +281,7 @@ var View = {
 				}
 			}
 
-			let nmin = Number(control.data('min'));
-			if (nmin !== typeof undefined) {
-				if (control.val() < nmin) {
-					// $(this).val(nmin); // Comentado para que no escriba automaticamente el valor minimo.
-					$(this).val('');
-				}
-			}
+
 
 			if (Fn.validators['numeros']['expr'].test(control.val())) {
 				e.preventDefault();
@@ -313,11 +307,26 @@ var View = {
 		});
 		$(document).on('keyup', '.keyUpChange', function (e) {
 			let control = $(this);
-			control.change();
+			let tiempoEspera = 0;
+			if (parseFloat(control.data('min')) > 50) tiempoEspera = 1500;
+
+			setTimeout(function () {
+				control.change();
+			}, tiempoEspera);
+
 		});
 		$(document).on('focusout', '.onlyNumbers', function (e) {
+			let control = $(this);
 			if ($(this).val() == '') {
 				$(this).val('0').change();
+			}
+
+			let nmin = Number(control.data('min'));
+			if (nmin !== typeof undefined) {
+				if (control.val() < nmin) {
+					$(this).val(nmin).change(); // Comentado para que no escriba automaticamente el valor minimo.
+					// $(this).val('');
+				}
 			}
 		});
 
@@ -1388,7 +1397,7 @@ var View = {
 				control.val('');
 			}
 		});
-		
+
 		$(document).on("click", '#btn-anuncios', function (e) {
 			e.preventDefault();
 			var config = { 'url': 'control/' + 'getAnuncios' };

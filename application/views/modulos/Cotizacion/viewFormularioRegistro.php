@@ -578,7 +578,7 @@
 									</div>
 									<div class="two wide field">
 										<div class="ui sub header">Csto Cliente</div>
-										<input class="inpCosto formTransporte costoCliente_transporte keyUpChange onlyNumbers" name="costoClienteTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+										<input class="inpCosto formTransporte costoCliente_transporte onlyNumbers" name="costoClienteTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
 									</div>
 									<div class="one wide field">
 										<div class="ui sub header">Días</div>
