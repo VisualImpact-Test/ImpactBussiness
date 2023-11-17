@@ -497,6 +497,7 @@ class Cotizacion extends MY_Controller
 		if (isset($post['idItem'])) $post['idItem'] = checkAndConvertToArray($post['idItem']);
 		if (isset($post['pesoCuenta'])) $post['pesoCuenta'] = checkAndConvertToArray($post['pesoCuenta']);
 		if (isset($post['idZona'])) $post['idZona'] = checkAndConvertToArray($post['idZona']);
+		if (isset($post['reembarque'])) $post['reembarque'] = checkAndConvertToArray($post['reembarque']);
 		if (isset($post['dias'])) $post['dias'] = checkAndConvertToArray($post['dias']);
 		if (isset($post['gap'])) $post['gap'] = checkAndConvertToArray($post['gap']);
 		if (isset($post['pesoVisual'])) $post['pesoVisual'] = checkAndConvertToArray($post['pesoVisual']);
@@ -641,6 +642,7 @@ class Cotizacion extends MY_Controller
 							'idItemLogistica' => strval($post['idItem'][$n]), // idItem ... el modal esta con ese KEY por eso le pongo asi.
 							'peso' => strval($post['pesoCuenta'][$n]),
 							'idZona' => strval($post['idZona'][$n]),
+							'reembarque' => strval($post['reembarque'][$n]),
 							'dias' => strval($post['dias'][$n]),
 							'gap' => strval($post['gap'][$n]),
 							'pesoVisual' => strval($post['pesoVisual'][$n]),
@@ -737,6 +739,7 @@ class Cotizacion extends MY_Controller
 					'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : 0,
 					'peso' => !empty($subItem['peso']) ? $subItem['peso'] : 0,
 					'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+					'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 					'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 					'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 					'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
@@ -1741,6 +1744,9 @@ class Cotizacion extends MY_Controller
 		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
 		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
 
+		$itemLogisticaCod = $this->model_item->obtenerItemsCuenta2($idCuenta, null, false)->result_array();
+		$itemLogisticaCod = refactorizarDataHT(["data" => $itemLogisticaCod, "value" => "label"]);
+
 		$header = [];
 		$column = [];
 		$datosHt = [];
@@ -1748,24 +1754,39 @@ class Cotizacion extends MY_Controller
 		// DATOS
 		if (!empty($ht)) {
 			foreach ($ht as $k => $v) {
-				if (empty($v->{'itemLogistica'})) {
+				if (empty($v->{'itemLogistica'}) && empty($v->{'codigoItemLogistica'})) {
 					$result['result'] = 0;
 					$result['msg']['title'] = 'Item Logistica sin indicar';
 					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Indicar Item Logistica']);
 					goto Respuesta;
 				}
-				$itm = $this->model_item->obtenerItemsCuenta2($idCuenta, $v->{'itemLogistica'})->row_array();
-				$datosHt[$k]['itemLogistica'] = $itm['label'];
+				
+				$buscarPorNombre = true;
+				$fil = $v->{'itemLogistica'};
+				if (!empty($v->{'codigoItemLogistica'})) {
+					$buscarPorNombre = false;
+					$fil = $v->{'codigoItemLogistica'};
+				}
+
+				$itm = $this->model_item->obtenerItemsCuenta2($idCuenta, $fil, $buscarPorNombre)->row_array();
+
+				$datosHt[$k]['itemLogistica'] = $itm['nombre'];
+				$datosHt[$k]['codigoItemLogistica'] = $itm['codigo'];
 				$datosHt[$k]['pesoCuenta'] = round($itm['pesoCuenta'], 4);
 				$datosHt[$k]['pesoVisual'] = round($itm['pesoLogistica'], 4);
 			}
 		} else {
+			$datosHt[0]['codigoItemLogistica'] = null;
 			$datosHt[0]['itemLogistica'] = null;
 			$datosHt[0]['pesoCuenta'] = null;
 			$datosHt[0]['pesoVisual'] = null;
 		}
 
 		// HEADER & COLUMN & DATOS
+		$header[] = 'COD ITEM LOGISTICA*';
+		$column[] = ['data' => 'codigoItemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Item', 'width' => 150, 'source' => $itemLogisticaCod];
+		// $datosHt[$nro]['codigoItemLogistica'] = null;
+
 		$header[] = 'ITEM LOGISTICA*';
 		$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Zona', 'width' => 700, 'source' => $itemLogistica];
 		// $datosHt[$nro]['zona'] = null;
@@ -1941,12 +1962,20 @@ class Cotizacion extends MY_Controller
 
 		$itemLogistica = $this->model_item->obtenerItemsCuenta2($idCuenta)->result_array();
 		$itemLogistica = refactorizarDataHT(["data" => $itemLogistica, "value" => "label"]);
+
+		$itemLogisticaCod = $this->model_item->obtenerItemsCuenta2($idCuenta, null, false)->result_array();
+		$itemLogisticaCod = refactorizarDataHT(["data" => $itemLogisticaCod, "value" => "label"]);
+
 		$header = [];
 		$column = [];
 		$datosHt = $dataPrevia;
 		$nro = count($datosHt);
 
 		// HEADER & COLUMN & DATOS
+		$header[] = 'COD ITEM LOGISTICA*';
+		$column[] = ['data' => 'codigoItemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Item', 'width' => 150, 'source' => $itemLogisticaCod];
+		$datosHt[$nro]['codigoItemLogistica'] = null;
+
 		$header[] = 'ITEM LOGISTICA*';
 		$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Item', 'width' => 700, 'source' => $itemLogistica];
 		$datosHt[$nro]['itemLogistica'] = null;
@@ -2022,6 +2051,7 @@ class Cotizacion extends MY_Controller
 				$arrayDatos[$n]['item'] = $this->db->where('idArticulo', $vi)->get('VisualImpact.logistica.articulo')->row_array()['nombre'];
 				$arrayDatos[$n]['cantidad'] = $v['item' . $ki];
 				$arrayDatos[$n]['gap'] = $v['gap'];
+				$arrayDatos[$n]['reembarque'] = $v['reembarque'];
 				$arrayDatos[$n]['idTipoServicio'] = $this->db->where('nombre', $v['tipoServicio'])->get('compras.tipoServicio')->row_array()['idTipoServicio'];
 				$arrayDatos[$n]['tipoServicio'] = $v['tipoServicio'];
 				$arrayDatos[$n]['pesoVisual'] = $pesoReal[$ki];
@@ -2046,6 +2076,7 @@ class Cotizacion extends MY_Controller
 				'item' => 'ITEM',
 				'cantidad' => 'CANTIDAD',
 				'gap' => 'GAP',
+				'reembarque' => 'REEMBARQUE',
 				'idTipoServicio' => 'ID TS',
 				'tipoServicio' => 'TIPO SERVICIO',
 				'pesoVisual' => 'PESO VISUAL',

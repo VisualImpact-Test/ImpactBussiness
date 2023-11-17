@@ -2542,7 +2542,7 @@ var Cotizacion = {
 				Cotizacion.temp.closest('.div-features').find('.datosTable').find('.table').append(`
 					<tfoot>
 						<tr>
-							<td colspan="13"></td>
+							<td colspan="14"></td>
 							<td>${totalV.toFixed(2)}</td>
 							<td colspan="4"></td>
 							<td>${totalC.toFixed(2)}</td>

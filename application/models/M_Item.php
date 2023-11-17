@@ -460,24 +460,30 @@ class M_Item extends MY_Model
 		";
 		return $query = $this->db->query($sql);
 	}
-	public function obtenerItemsCuenta2($idCuenta, $articulo = null)
+	public function obtenerItemsCuenta2($idCuenta, $articulo = null, $nombre = true)
 	{
+		$selectOpc = $nombre ? 'a.nombre' : 'a.codigo';
+
 		$filtro = '';
 		if (!empty($articulo)) {
-			$filtro = " AND a.nombre='" . $articulo . "'";
+			$filtro = " AND $selectOpc='" . $articulo . "'";
 		}
+		// REVISANDO QUE LA BUSQUEDA SEA POR CODIGO O NOMBRE DEL ITEM PE1010110016-- ESE FALLA
 		$sql = "
 		SELECT DISTINCT
 				a.idArticulo AS value
-			, a.nombre AS label
+			, $selectOpc AS label
 			, ISNULL(a.peso,0) as pesoLogistica
 			, ISNULL(a.pesoCosto,0) as pesoCuenta
+			, a.nombre
+			, a.codigo
 		FROM visualimpact.logistica.articulo a
 		LEFT JOIN visualimpact.logistica.articulo_det ad ON a.idArticulo = ad.idArticulo
 		LEFT JOIN visualimpact.logistica.unidad_medida um ON ad.idUnidadMedida = um.idUnidadMedida
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
-		WHERE mc.idCuenta='" . $idCuenta . "' $filtro
+		WHERE a.codigo is not null AND mc.idCuenta='" . $idCuenta . "' $filtro
 		ORDER BY 2";
+		logError($sql);
 		return $query = $this->db->query($sql);
 	}
 }

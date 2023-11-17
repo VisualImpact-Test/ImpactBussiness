@@ -727,6 +727,7 @@ class M_Cotizacion extends MY_Model
 						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : '0',
 						//
 						'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
+						'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 						'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 						'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 						'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,

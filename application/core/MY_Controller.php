@@ -47,7 +47,7 @@ class MY_Controller extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->version = '1.1.48';
+		$this->version = '1.1.49';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
@@ -472,6 +472,8 @@ class MY_Controller extends CI_Controller
 				'protocol' => 'smtp',
 				'smtp_host' => 'ssl://smtp.googlemail.com',
 				'smtp_port' => 465,
+				// 'smtp_host' => 'aspmx.l.google.com',
+				// 'smtp_port' => '25',
 				'smtp_user' => 'teamsystem@visualimpact.com.pe',
 				'smtp_pass' => '#nVi=0sN0ti$',
 				'mailtype' => 'html',
