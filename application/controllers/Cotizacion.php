@@ -87,6 +87,34 @@ class Cotizacion extends MY_Controller
 		$this->view($config);
 	}
 
+	public function formularioIndicarGR()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+
+		$dataParaVista['idCotizacion'] = $post['idCotizacion'];
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Indicar GR';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioIndicarGR", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	public function registrarGR()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$result['result'] = 0;
+		$result['msg']['title'] = 'Información actualizada';
+		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
+
+		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr']], ['idCotizacion' => $post['idCotizacion']]))
+			$result['result'] = 1;
+
+		echo json_encode($result);
+	}
 	public function reporte()
 	{
 		$result = $this->result;
@@ -1760,7 +1788,7 @@ class Cotizacion extends MY_Controller
 					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Indicar Item Logistica']);
 					goto Respuesta;
 				}
-				
+
 				$buscarPorNombre = true;
 				$fil = $v->{'itemLogistica'};
 				if (!empty($v->{'codigoItemLogistica'})) {
@@ -3131,7 +3159,6 @@ class Cotizacion extends MY_Controller
 								'costoVisual' => $post["costoVisualTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'costoDistribucion' => null,
 								'dias' => $post["diasTransporte[{$post['idCotizacionDetalle'][$k]}]"],
-								// 'costoVisual' => $post["costoVisualTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'cod_departamento' => $post["departamentoTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'cod_provincia' => $post["provinciaTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 								'cod_distrito' => $post["distritoTransporte[{$post['idCotizacionDetalle'][$k]}]"],

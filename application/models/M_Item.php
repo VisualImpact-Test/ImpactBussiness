@@ -483,7 +483,6 @@ class M_Item extends MY_Model
 		JOIN visualImpact.logistica.articulo_marca_cuenta mc ON mc.idMarca=a.idMarca
 		WHERE a.codigo is not null AND mc.idCuenta='" . $idCuenta . "' $filtro
 		ORDER BY 2";
-		logError($sql);
 		return $query = $this->db->query($sql);
 	}
 }

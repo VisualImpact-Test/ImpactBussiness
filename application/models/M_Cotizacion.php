@@ -226,6 +226,7 @@ class M_Cotizacion extends MY_Model
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
 				, (SELECT CASE WHEN COUNT(idCotizacionDetalle)>0 THEN 1 ELSE 0 END FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = 5) tipoPersonal
+				, p.numeroGR
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
