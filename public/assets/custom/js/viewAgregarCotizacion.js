@@ -1858,7 +1858,6 @@ var Cotizacion = {
 		});
 
 		$(document).on('click', '.btn-add-sub-item', function () {
-			debugger;
 			let control = $(this);
 			let parent = control.closest('.div-features');
 			let tipo = parent.data('tipo');
@@ -2448,15 +2447,19 @@ var Cotizacion = {
 	calcularValorTransporte: function (t) {
 		control = $(t);
 		control.closest('.body-item').find('.cantidadForm').val('1');
-
 		divFeature = control.closest('.div-feature-' + COD_TRANSPORTE.id);
 
+		porc = divFeature.find('.inpPorcTransporte');
+		costoVisual = divFeature.find('.costoVisual_transporte');
 		costoCliente = divFeature.find('.costoCliente_transporte');
 		cantidadDias = divFeature.find('.dias_transporte');
 		cantidadMoviles = divFeature.find('.cantidad_transporte');
 
 		let vt = 0;
-		for (let i = 0; i < costoCliente.length; i++) {
+		for (let i = 0; i < costoVisual.length; i++) {
+			cv = $(costoVisual[i]).val();
+			prc = parseFloat($(porc[i]).val());
+			$(costoCliente[i]).val(cv * (100 + prc) / 100);
 			cc = $(costoCliente[i]).val();
 			cd = $(cantidadDias[i]).val();
 			cm = $(cantidadMoviles[i]).val();
@@ -3235,6 +3238,7 @@ var Cotizacion = {
 		let distritoF = parent.find('.distrito_transporte').find('select');
 		let tipoTransporteF = parent.find('.tipoTransporte_transporte').find('select');
 		let costoVisualF = parent.find('.costoVisual_transporte');
+		let porcAd = parent.find('.inpPorcTransporte');
 		let costoClienteF = parent.find('.costoCliente_transporte');
 		let diasF = parent.find('.dias_transporte');
 		let cantidadF = parent.find('.cantidad_transporte');
@@ -3273,7 +3277,6 @@ var Cotizacion = {
 		proveedorDistribucion.attr('name', `proveedorDistribucionSubItem[${number}]`);
 		cantidadReal.attr('name', `cantidadRealSubItem[${number}]`);
 		costoSubItem.attr('name', `costoSubItem[${number}]`);
-		// costoSubItemForm.attr('name', `costoSubItemForm[${number}]`);
 		idCotizacionDetalle.attr('name', `idCotizacionDetalleSub[${number}]`);
 
 		// TRANSPORTE
@@ -3282,6 +3285,7 @@ var Cotizacion = {
 		distritoF.attr('name', `distritoTransporte[${number}]`);
 		tipoTransporteF.attr('name', `tipoTransporte[${number}]`);
 		costoVisualF.attr('name', `costoVisualTransporte[${number}]`);
+		porcAd.attr('name', `porcAdicionalTransporte[${number}]`);
 		costoClienteF.attr('name', `costoClienteTransporte[${number}]`);
 		diasF.attr('name', `diasTransporte[${number}]`);
 		cantidadF.attr('name', `cantidadTransporte[${number}]`);

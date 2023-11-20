@@ -613,30 +613,12 @@ class M_Cotizacion extends MY_Model
 			if (!empty($params['archivos'][$k])) {
 				foreach ($params['archivos'][$k] as $archivo) {
 					$tipoArchivo = explode('/', $archivo['type']);
-
-					// $extension = '';
-
-					// if ($tipoArchivo[0] == 'image') {
-					// 	$extension = $tipoArchivo[1];
-					// } else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-					// 	$extension = 'xlsx';
-					// } else if ($tipoArchivo[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
-					// 	$extension = 'pptx';
-					// } else if ($tipoArchivo[1] == 'vnd.ms-excel') {
-					// 	$extension = 'xls';
-					// } else if ($tipoArchivo[1] == 'vnd.ms-powerpoint') {
-					// 	$extension = 'ppt';
-					// } else if ($tipoArchivo[1] == 'pdf') {
-					// 	$extension = 'pdf';
-					// }
-
-					// $archivo['extensionVisible'] = $extension;
 					$archivoName = $this->saveFileWasabi($archivo);
 
 					$insertArchivos[] = [
 						'idCotizacion' => $insert['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
-						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]], // ($tipoArchivo[0] == 'image' ? TIPO_IMAGEN : ($extension == 'pdf' ? TIPO_PDF : TIPO_OTROS)),
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
@@ -671,7 +653,6 @@ class M_Cotizacion extends MY_Model
 				$archivosExistentes = [];
 
 				foreach ($query as $row) {
-
 					$archivosExistentes[] = [
 						'idCotizacion' => $params['idCotizacion'],
 						'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -733,6 +714,7 @@ class M_Cotizacion extends MY_Model
 						'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 						'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 						'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+						'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 						//
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : '0',
 						'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : '0',
@@ -1609,6 +1591,7 @@ class M_Cotizacion extends MY_Model
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 							'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
@@ -1647,6 +1630,7 @@ class M_Cotizacion extends MY_Model
 							'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 							'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
@@ -1721,6 +1705,7 @@ class M_Cotizacion extends MY_Model
 							'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 							'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 							'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+							'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 						];
@@ -2074,7 +2059,8 @@ class M_Cotizacion extends MY_Model
 				cds.cod_departamento,
 				cds.cod_provincia,
 				cds.cod_distrito,
-				cds.idTipoServicioUbigeo
+				cds.idTipoServicioUbigeo,
+				cds.porcentajeParaCosto
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion

@@ -95,7 +95,6 @@
 			<div class="eight wide field">
 				<div class="ui sub header">Comentario</div>
 				<textarea name="comentarioForm" id="comentarioForm" cols="30" rows="6"><?= !empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?></textarea>
-				<!-- <input id="comentarioForm" name="comentarioForm" placeholder="Comentario" value="<?= !empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?>"> -->
 			</div>
 			<div class="eight wide field anexos">
 				<div class="ui sub header">Anexos</div>
@@ -181,7 +180,6 @@
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<!--<button class="personal btn btn-trade-visual d-none">Añadir</button>-->
 							<div class="four wide field no-personal">
 								<div class="ui sub header">Unidad Medida</div>
 								<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
@@ -434,9 +432,9 @@
 										<div style="padding:15px;">
 											<div class="ui sub header">Mes Inicio</div>
 											<select class="mes_inicio_personal" id="mes_inicio_personal" name="mes_inicio_personal" data-obligatorio="1">
-												<? foreach ($periodo as $row_p) { ?>
+												<?php foreach ($periodo as $row_p) : ?>
 													<option value="<?= $row_p['periodo'] ?>"><?= $row_p['periodo'] ?></option>
-												<? } ?>
+												<?php endforeach; ?>
 											</select>
 										</div>
 									</td>
@@ -444,9 +442,9 @@
 										<div style="padding:15px;">
 											<div class="ui sub header">Mes Fin</div>
 											<select class="mes_fin_personal" id="mes_fin_personal" name="mes_fin_personal" data-obligatorio="1">
-												<? foreach ($periodo as $row_p) { ?>
+												<?php foreach ($periodo as $row_p) : ?>
 													<option value="<?= $row_p['periodo'] ?>"><?= $row_p['periodo'] ?></option>
-												<? } ?>
+												<?php endforeach; ?>
 											</select>
 										</div>
 									</td>
@@ -533,7 +531,6 @@
 											<input value="" class="seguro_vida_personal" name="seguro_vida_personal" id="seguro_vida_personal" readonly value="0">
 										</div>
 									</td>
-
 								</tr>
 							</table>
 							<input class="total_sueldo" type="hidden" value="0">
@@ -547,53 +544,67 @@
 						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_TRANSPORTE['id'] ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
 							<h4 class="ui dividing header">SUB ITEMS</h4>
 							<div class="content-body-sub-item">
-								<div class="fields body-sub-item body-sub-item-servicio">
-									<div class="three wide field">
-										<div class="ui sub header">Departamento</div>
-										<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[0]" onchange="Cotizacion.buscarProvincias(this);">
-											<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
-										</select>
+								<div class="body-sub-item body-sub-item-servicio">
+									<div class="fields">
+										<div class="four wide field">
+											<div class="ui sub header">Departamento</div>
+											<select class="ui simpleDropdown depT formTransporte departamento_transporte" name="departamentoTransporte[0]" onchange="Cotizacion.buscarProvincias(this);">
+												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_departamento', 'value' => 'departamento', 'query' => $departamento, 'class' => 'text-titlecase']); ?>
+											</select>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Provincia</div>
+											<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarDistritos(this);">
+												<option value>Seleccione</option>
+											</select>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Distrito</div>
+											<select class="ui simpleDropdown disT formTransporte distrito_transporte" name="distritoTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
+												<option value>Seleccione</option>
+											</select>
+										</div>
+										<div class="four wide field">
+											<div class="ui sub header">Tipo</div>
+											<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
+												<option value>Seleccione</option>
+											</select>
+										</div>
 									</div>
-									<div class="three wide field">
-										<div class="ui sub header">Provincia</div>
-										<select class="ui simpleDropdown provT formTransporte provincia_transporte" name="provinciaTransporte[0]" onchange="Cotizacion.buscarDistritos(this);">
-											<option value>Seleccione</option>
-										</select>
+									<div class="fields">
+										<div class="three wide field">
+											<div class="ui sub header">Csto Visual</div>
+											<input class="inpCostoVisual formTransporte costoVisual_transporte onlyNumbers" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>
+										</div>
+										<div class="two wide field">
+											<div class="ui sub header">% Adic.</div>
+											<div class="ui right labeled input">
+												<input class="inpPorcTransporte keyUpChange formTransporte onlyNumbers" name="porcAdicionalTransporte[0]" placeholder="0" value="0" onchange="Cotizacion.calcularValorTransporte(this);">
+												<div class="ui basic label">
+													%
+												</div>
+											</div>
+										</div>
+										<div class="three wide field">
+											<div class="ui sub header">Csto Cliente</div>
+											<input class="inpCosto formTransporte costoCliente_transporte onlyNumbers" name="costoClienteTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);" readonly>
+										</div>
+										<div class="two wide field">
+											<div class="ui sub header">Días</div>
+											<input class="formTransporte dias_transporte keyUpChange onlyNumbers" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+										</div>
+										<div class="two wide field">
+											<div class="ui sub header">Moviles</div>
+											<input class="formTransporte cantidad_transporte keyUpChange onlyNumbers" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
+										</div>
+										<div class="two wide field">
+											<div class="ui sub header">Eliminar</div>
+											<button type="button" class="ui button btn-eliminar-sub-item red">
+												<i class="trash icon"></i>
+											</button>
+										</div>
 									</div>
-									<div class="three wide field">
-										<div class="ui sub header">Distrito</div>
-										<select class="ui simpleDropdown disT formTransporte distrito_transporte" name="distritoTransporte[0]" onchange="Cotizacion.buscarTipoTransporte(this);">
-											<option value>Seleccione</option>
-										</select>
-									</div>
-									<div class="two wide field">
-										<div class="ui sub header">Tipo</div>
-										<select class="ui simpleDropdown tipoT formTransporte tipoTransporte_transporte" name="tipoTransporte[0]" onchange="Cotizacion.buscarCosto(this);">
-											<option value>Seleccione</option>
-										</select>
-									</div>
-									<div class="two wide field">
-										<div class="ui sub header">Csto Visual</div>
-										<input class="inpCostoVisual formTransporte costoVisual_transporte onlyNumbers" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>
-									</div>
-									<div class="two wide field">
-										<div class="ui sub header">Csto Cliente</div>
-										<input class="inpCosto formTransporte costoCliente_transporte onlyNumbers" name="costoClienteTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
-									</div>
-									<div class="one wide field">
-										<div class="ui sub header">Días</div>
-										<input class="formTransporte dias_transporte keyUpChange onlyNumbers" name="diasTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
-									</div>
-									<div class="one wide field">
-										<div class="ui sub header">Moviles</div>
-										<input class="formTransporte cantidad_transporte keyUpChange onlyNumbers" name="cantidadTransporte[0]" placeholder="0" value="" onchange="Cotizacion.calcularValorTransporte(this);">
-									</div>
-									<div class="one wide field">
-										<div class="ui sub header">Eliminar</div>
-										<button type="button" class="ui button btn-eliminar-sub-item red">
-											<i class="trash icon"></i>
-										</button>
-									</div>
+									<div class="ui divider"></div>
 								</div>
 							</div>
 							<button type="button" class="ui button btn-add-sub-item teal">
@@ -765,7 +776,6 @@
 				</div>
 			</div>
 			<div class="column">
-				<!-- <div class="ui sub header">Total</div> -->
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
 					<input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
@@ -773,13 +783,6 @@
 						%
 					</div>
 				</div>
-				<!--<div class="ui right labeled input" style="margin-top:10px;">
-					<label for="feeFormPersonal" class="ui label">Fee Personal: </label>
-					<input style="width:100px;" data-max='100' data-min='0' type="number" id="feeFormPersonal" class="onlyNumbers" name="feeFormPersonal" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
-					<div class="ui basic label">
-						%
-					</div>
-				</div>-->
 			</div>
 			<div class="column">
 				<div class="ui right labeled input">
@@ -793,8 +796,6 @@
 		</div>
 	</form>
 </div>
-
-<!-- FAB -->
 <!-- <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> -->
 <div class="floating-container">
 	<div class="floating-button">

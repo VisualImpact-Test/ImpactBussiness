@@ -258,7 +258,7 @@ class ProveedorDocumento extends MY_Controller
 				->setCellValue('M' . $nIni, $v['monto'] * (1 + ($v['igv'] / 100)))
 				->setCellValue('N' . $nIni, $v['nombreMoneda'])
 				->setCellValue('O' . $nIni, $v['poCliente'])
-				->setCellValue('P' . $nIni, 'PENDIENTE')
+				->setCellValue('P' . $nIni, $v['numeroGR'])
 				->setCellValue('Q' . $nIni, '')
 				->setCellValue('R' . $nIni, '')
 				->setCellValue('S' . $nIni, '');

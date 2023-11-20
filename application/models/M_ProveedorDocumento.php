@@ -11,13 +11,14 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzas($params = [])
 	{
 		$this->db
-			->select("	ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, oc.idProveedor, 
+			->select("ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, oc.idProveedor, 
 						pr.razonSocial, pr.nroDocumento as rucProveedor, 
 						/* cd.subtotal, */
 						cd.cantidad * ISNULL(cd.costo, 0) as subtotal, 
 						mon.nombreMoneda,
 						c.idCotizacion, op.requerimiento as oper, op.idOper,
 						c.nombre as cotizacion, c.idCuenta, c.idCentroCosto, c.codOrdenCompra as poCliente, c.motivoAprobacion as desTracking,
+						ISNULL(c.numeroGR, 'PENDIENTE') as numeroGR,
 						ISNULL(oc.igv, 0) as igv,
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
 			->from('compras.ordenCompraDetalle ocd')
