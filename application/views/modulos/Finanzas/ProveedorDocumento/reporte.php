@@ -49,7 +49,7 @@
 					<td class="td-right"><?= moneda($row['monto'] * (1 + ($row['igv'] / 100))); ?></td>
 					<td class="td-center"><?= $row['nombreMoneda']; ?></td>
 					<td class="td-center"><?= $row['poCliente']; ?></td>
-					<td class="td-center"> PENDIENTE </td>
+					<td class="td-center"><?= $row['numeroGR']; ?></td>
 					<td>
 						<?php if (empty($row['adjuntosCargados'])) : ?>
 							<span class="ui grey large label">
