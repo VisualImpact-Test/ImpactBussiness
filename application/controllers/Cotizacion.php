@@ -3057,10 +3057,12 @@ class Cotizacion extends MY_Controller
 		foreach ($post['nameItem'] as $k => $r) {
 			$idCot = $post['idCotizacionDetalle'][$k];
 			if ($post['idCotizacionDetalle'][$k] != '0') {
+				$idItem = $post['idItemForm'][$k];
+				if (empty($idItem)) $idItem = $this->model->generarBuscarItem($r, $post['tipoItemForm'][$k]);
 				$data['update'][$k] = [
 					'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
 					'idCotizacion' => $post['idCotizacion'],
-					'idItem' => (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL,
+					'idItem' => $idItem,
 					'idItemTipo' => $post['tipoItemForm'][$k],
 					'nombre' => $post['nameItem'][$k],
 					'cantidad' => $post['cantidadForm'][$k],
@@ -3291,6 +3293,7 @@ class Cotizacion extends MY_Controller
 							'cod_departamento' => $post["departamentoTransporte[$k]"],
 							'cod_provincia' => $post["provinciaTransporte[$k]"],
 							'cod_distrito' => $post["distritoTransporte[$k]"],
+							'dias' => $post["diasTransporte[$k]"],
 							'idTipoServicioUbigeo' => $post["tipoTransporte[$k]"],
 						]);
 						break;

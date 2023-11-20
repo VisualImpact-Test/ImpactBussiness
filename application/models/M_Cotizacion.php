@@ -1500,6 +1500,17 @@ class M_Cotizacion extends MY_Model
 		return $insert;
 	}
 
+	public function generarBuscarItem($nombre, $tipo)
+	{
+		$busqueda = $this->db->get_where('compras.item', ['nombre' => $nombre, 'idItemTipo' => $tipo])->result_array();
+		if (!empty($busqueda)) {
+			$this->db->update('compras.item', ['estado' => 1], ['idItem' => $busqueda[0]['idItem']]);
+			return $busqueda[0]['idItem'];
+		}
+
+		$this->db->insert('compras.item', ['nombre' => $nombre, 'idItemTipo' => $tipo, 'estado' => 1]);
+		return $this->db->insert_id();
+	}
 	public function actualizarCotizacionDetalleArchivos($params = [])
 	{
 
@@ -1554,6 +1565,10 @@ class M_Cotizacion extends MY_Model
 						'tipoElemento' => !empty($subItem['tipoElemento']) ? $subItem['tipoElemento'] : NULL,
 						'marca' => !empty($subItem['marca']) ? $subItem['marca'] : NULL,
 						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : NULL,
+						'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
+						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+						'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
+						'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
 						'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 					];
 				}
