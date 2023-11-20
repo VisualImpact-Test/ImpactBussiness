@@ -505,7 +505,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN compras.proveedor pr ON pd.idProveedor = pr.idProveedor
 			LEFT JOIN compras.solicitante ss ON ss.idSolicitante = p.idSolicitante
 			LEFT JOIN rrhh.dbo.CargoTrabajo ctt ON ctt.idCargoTrabajo=pd.idCargo 																			
-			WHERE 1 = 1
+			WHERE 1 = 1 and pd.estado = 1
 			{$filtros}
 			ORDER BY itemTipo, pd.idCotizacionDetalle
 		";
@@ -1723,6 +1723,7 @@ class M_Cotizacion extends MY_Model
 							'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
+							'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 						];
 					}
 				}

@@ -824,8 +824,8 @@
 							<!-- Distribucion -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) : ?>
 								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
+									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $row['idCotizacionDetalle'] ?>">
 									<!-- <?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
-									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $distribucion['idCotizacionDetalleSub'] ?>">
 									<div class="<?= ($distribucion['requiereOrdenCompra'] == '0') ? 'd-none ' : ''; ?> fields divAddParaOC">
 										<div class="eight wide field">
 											<div class="ui sub header">Proveedor</div>

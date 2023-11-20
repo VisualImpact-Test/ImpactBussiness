@@ -3091,7 +3091,7 @@ class Cotizacion extends MY_Controller
 					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 
 				];
-
+				
 				if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
 					switch ($post['tipoItemForm'][$k]) {
 						case COD_SERVICIO['id']:
@@ -3233,12 +3233,6 @@ class Cotizacion extends MY_Controller
 				];
 
 				switch ($post['tipoItemForm'][$k]) {
-						// case COD_SERVICIO['id']:
-						// 	$subDetalleInsert[$k] = getDataRefactorizada([
-						// 		'nombre' => $post["nombreSubItemServicio[$k]"],
-						// 		'cantidad' => $post["cantidadSubItemServicio[$k]"],
-						// 	]);
-						// 	break;
 					case COD_DISTRIBUCION['id']:
 						///////////// Ini
 						$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
@@ -3318,6 +3312,7 @@ class Cotizacion extends MY_Controller
 							'subTotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : NULL,
 							'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 							'idItem' => !empty($subItem['idItem']) ? $subItem['idItem'] : NULL,
+							'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 							'idDistribucionTachado' => !empty($subItem['idDistribucionTachado']) ? $subItem['idDistribucionTachado'] : NULL,
 							'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : NULL,
 							'idProveedorDistribucion' => !empty($subItem['idProveedorDistribucion']) ? $subItem['idProveedorDistribucion'] : NULL,
