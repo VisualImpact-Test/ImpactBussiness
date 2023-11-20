@@ -581,7 +581,7 @@
 								</div>
 								<div class="two wide field divCostoPacking <?= $row['flagPackingSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoPacking" name="costoPacking" value="<?= $row['costoPacking']; ?>" readonly>
+									<input class="onlyNumbers costoPacking" name="costoPacking" value="<?= $row['costoPacking']; ?>">
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Movilidad</div>
@@ -592,7 +592,7 @@
 								</div>
 								<div class="two wide field divCostoMovilidad <?= $row['flagMovilidadSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoMovilidad" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>" readonly>
+									<input class="onlyNumbers costoMovilidad" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>">
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Personal</div>
@@ -603,7 +603,7 @@
 								</div>
 								<div class="two wide field divCostoPersonal <?= $row['flagPersonalSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoPersonal" name="costoPersonal" value="<?= $row['costoPersonal']; ?>" readonly>
+									<input class="onlyNumbers costoPersonal" name="costoPersonal" value="<?= $row['costoPersonal']; ?>">
 								</div>
 							</div>
 							<!-- Textiles -->

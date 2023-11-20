@@ -3501,7 +3501,7 @@ class Cotizacion extends MY_Controller
 
 		foreach ($config['data']['cotizacionTarifario'] as $k => $v) {
 			$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idItem, isnull(peso, 0) as pesoCuenta, isnull(pesoVisual, 0) as pesoVisual, flagItemInterno')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
-			$config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idZona, flagOtrosPuntos, isnull(dias, 0) as dias, gap, costo, idTipoServicio, costoVisual')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			$config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idZona, flagOtrosPuntos, isnull(dias, 0) as dias, gap, costo, idTipoServicio, costoVisual, reembarque')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 
 			$i = 0;
 			foreach ($config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] as $kz => $vz) {
@@ -3511,6 +3511,7 @@ class Cotizacion extends MY_Controller
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['zona'] = $this->model->getZonas(['otroAlmacen' => $vz['flagOtrosPuntos'], 'idZona' => $vz['idZona']])->row_array()['nombre'];
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['dias'] = $vz['dias'];
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['gap'] = $vz['gap'];
+				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['reembarque'] = $vz['reembarque'];
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['tipoServicio'] = $this->db->where('idTipoServicio', $vz['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSVisual'] = strval(round($vz['costoVisual'], 2));
 				$config['data']['cotizacionDetalleSubMix'][$v['idCotizacionDetalle']][$i]['costoTSCuenta'] = strval(round($vz['costo'], 2));
