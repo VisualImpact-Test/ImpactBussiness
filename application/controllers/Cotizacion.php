@@ -1042,13 +1042,13 @@ class Cotizacion extends MY_Controller
 			}
 			$dataParaVista['detalleDistribucion'] = [];
 			$dataParaVista['detalleSubT'] = [];
+			if (!empty($data)) $dataParaVista['cabecera']['incluyeTransporte'] = false;
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
 				$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 				$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
 				$dataParaVista['cabecera']['comentario'] = $row['comentario'];
-				// $dataParaVista['cabecera']['tipoCotizacion'] = $row['tipoCotizacion'];
 				$dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
@@ -1060,6 +1060,9 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['solicitante'] = $row['solicitante'];
 				$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
 				$dataParaVista['cabecera']['mostrarPrecio'] = $row['mostrarPrecio'];
+				// Para cabeceras del PDF
+				if (!$dataParaVista['cabecera']['incluyeTransporte'])
+					$dataParaVista['cabecera']['incluyeTransporte'] = ($row['idItemTipo'] == COD_TRANSPORTE['id']);
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -3091,7 +3094,7 @@ class Cotizacion extends MY_Controller
 					'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 
 				];
-				
+
 				if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
 					switch ($post['tipoItemForm'][$k]) {
 						case COD_SERVICIO['id']:

@@ -3,7 +3,7 @@
 		<tr>
 			<td style="height:50px;"><b><?= $cabecera['cotizacion'] ?></b></td>
 		</tr>
-		<?php if (empty($cabecera['igv'])) :  ?>
+		<?php if (empty($cabecera['igv'])) : ?>
 			<tr>
 				<td style="margin-left: 3px; padding-top: -2px; height: 15px; color:#CE3A3A;"><b>No Incluye IGV</b></td>
 			</tr>
@@ -28,7 +28,6 @@
 			<td style="height: 20px;"><b>FECHA: </b></td>
 			<td><?= ($cabecera['fecha']) ?></td>
 		</tr>
-
 	</table>
 </div>
 <?php $idItemTipo = ''; ?>
@@ -37,21 +36,29 @@
 <?php $totalPacking = 0; ?>
 <?php foreach ($detalle as $key => $row) : ?>
 	<!-- PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
+	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_TEXTILES['id']) : ?>
 		<?php $idItemTipo = COD_TEXTILES['id'] ?>
 	<?php endif; ?>
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_ARTICULO['id']) :  ?>
+	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_ARTICULO['id']) : ?>
 		<?php $idItemTipo = COD_ARTICULO['id'] ?>
 	<?php endif; ?>
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_ARTICULO['id']) && $row['idItemTipo'] == COD_MOVIL['id']) :  ?>
+	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_ARTICULO['id']) && $row['idItemTipo'] == COD_MOVIL['id']) : ?>
 		<?php $idItemTipo = COD_MOVIL['id'] ?>
 	<?php endif; ?>
-	<?php if (($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_TEXTILES['id']) && $row['idItemTipo'] == COD_DISTRIBUCION['id']) :  ?>
+	<?php if (($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_TEXTILES['id']) && $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
 		<?php $idItemTipo = COD_DISTRIBUCION['id'] ?>
 	<?php endif; ?>
 	<!-- FIN: PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
+	<!-- PARA UTILIZAR TRANSPORTE Y DISTRIBUCION BAJO EL MISMO FORMATO -->
+	<?php if (($idItemTipo == COD_TRANSPORTE['id']) && $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
+		<?php $idItemTipo = COD_DISTRIBUCION['id'] ?>
+	<?php endif; ?>
+	<?php if (($idItemTipo == COD_DISTRIBUCION['id']) && $row['idItemTipo'] == COD_TRANSPORTE['id']) : ?>
+		<?php $idItemTipo = COD_TRANSPORTE['id'] ?>
+	<?php endif; ?>
+	<!-- FIN: PARA UTILIZAR TRANSPORTE Y DISTRIBUCION BAJO EL MISMO FORMATO -->
 	<?php if ($idItemTipo != $row['idItemTipo']) : ?>
-		<?php if ($key != 0) :  ?>
+		<?php if ($key != 0) : ?>
 			</tbody>
 			<tfoot class="full-widtd">
 				<tr style="height:100px; background-color: #FFE598;">
@@ -69,16 +76,16 @@
 		<br>
 		<table class="tb-detalle" style="width: 100%; margin-bottom: 10px;">
 			<thead>
-				<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
+				<?php if ($idItemTipo == COD_TRANSPORTE['id']) : ?>
 					<?php $col1 = 3; ?>
 					<tr style="background-color: #FFE598;">
 						<th style="width: 10%;">ITEM</th>
-						<th style="width: 50%;">DESCRIPCIÓN</th>
-						<th style="width: 25%;">CANTIDAD</th>
+						<th style="width: 55%;" colspan="4">DESCRIPCIÓN</th>
+						<th style="width: 20%;">CANTIDAD</th>
 						<th style="width: 15%;">TOTAL</th>
 					</tr>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
+				<?php if ($idItemTipo == COD_SERVICIO['id']) : ?>
 					<?php $col1 = 7; ?>
 					<tr style="background-color: #FFE598;">
 						<th>ITEM</th>
@@ -88,20 +95,20 @@
 						<th>MARCA</th>
 						<th>DETALLES DE SERVICIO</th>
 						<th>CANTIDAD</th>
-						<?php if ($cabecera['mostrarPrecio']) :  ?>
+						<?php if ($cabecera['mostrarPrecio']) : ?>
 							<?php $col1++; ?>
 							<th>COSTO</th>
 						<?php endif; ?>
 						<th>TOTAL</th>
 					</tr>
 				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) :  ?>
+				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) : ?>
 					<?php $col1 = 6; ?>
 					<tr style="background-color: #FFE598;">
 						<th width="7%">ITEM</th>
 						<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
 						<th width="15%" class="text-center">
-							<?php if ($idItemTipo != COD_DISTRIBUCION['id']) :  ?>
+							<?php if ($idItemTipo != COD_DISTRIBUCION['id'] || ($idItemTipo == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte'])) : ?>
 								CANTIDAD
 							<?php endif; ?>
 						</th>
@@ -112,15 +119,15 @@
 			<tbody>
 			<?php endif; ?>
 			<!-- <tr style="background-color: #F6FAFD;"> -->
-			<?php if ($idItemTipo == COD_SERVICIO['id']) :  ?>
+			<?php if ($idItemTipo == COD_SERVICIO['id']) : ?>
 				<?php
 				$cont = 0;
 				$datos = [];
 				?>
-				<?php $redondear = $row['flagRedondear'] == '1' ? true :  false; ?>;
+				<?php $redondear = $row['flagRedondear'] == '1' ? true : false; ?>;
 				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $ord => $value) : ?>
 					<?php $datos[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']][] = $value; ?>
-					<?php if ($redondear) :  ?>
+					<?php if ($redondear) : ?>
 						<?php $total[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']] += ceil(floatval($value['cantidad'] * $value['costo'] * ($row['gap'] + 100) / 100)); ?>
 					<?php else : ?>
 						<?php $total[$value['sucursal'] . $value['razonSocial'] . $value['tipoElemento'] . $value['marca']] += floatval($value['cantidad'] * $value['costo'] * ($row['gap'] + 100) / 100); ?>
@@ -136,8 +143,8 @@
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
 						<td class="text-center" rowspan="1"><?= $value[0]['nombre']; ?></td>
 						<td class="text-center" rowspan="1"><?= $value[0]['cantidad']; ?></td>
-						<?php if ($cabecera['mostrarPrecio']) :  ?>
-							<?php if ($redondear) :  ?>
+						<?php if ($cabecera['mostrarPrecio']) : ?>
+							<?php if ($redondear) : ?>
 								<td class="text-center" rowspan="1"><?= moneda(ceil($value[0]['costo'] * ($row['gap'] + 100) / 100)); ?></td>
 							<?php else : ?>
 								<td class="text-center" rowspan="1"><?= moneda($value[0]['costo'] * ($row['gap'] + 100) / 100); ?></td>
@@ -146,12 +153,12 @@
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= moneda($total[$key]); ?></td>
 					</tr>
 					<?php foreach ($value as $k => $v) : ?>
-						<?php if ($k != 0) :  ?>
+						<?php if ($k != 0) : ?>
 							<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 								<td class="text-center" rowspan="1"><?= $v['nombre']; ?></td>
 								<td class="text-center" rowspan="1"><?= $v['cantidad']; ?></td>
-								<?php if ($cabecera['mostrarPrecio']) :  ?>
-									<?php if ($redondear) :  ?>
+								<?php if ($cabecera['mostrarPrecio']) : ?>
+									<?php if ($redondear) : ?>
 										<td class="text-center" rowspan="1"><?= ceil($v['costo'] * ($row['gap'] + 100) / 100); ?></td>
 									<?php else : ?>
 										<td class="text-center" rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
@@ -162,7 +169,7 @@
 					<?php endforeach; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_PERSONAL['id']) :  ?>
+			<?php if ($idItemTipo == COD_PERSONAL['id']) : ?>
 				<?php $rowspan = 1; ?>
 				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 					<td class="text-center"><?= $key + 1 ?></td>
@@ -170,7 +177,7 @@
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_TRANSPORTE['id']) :  ?>
+			<?php if ($idItemTipo == COD_TRANSPORTE['id']) : ?>
 				<?php $rowspan = 1; ?>
 				<?php $cantidadMoviles = 0; ?>
 				<?php $cantidadDias = 0; ?>
@@ -178,32 +185,34 @@
 					<?php $cantidadMoviles += $v['cantidad']; ?>
 					<?php $cantidadDias += $v['dias']; ?>
 				<?php endforeach; ?>
-				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
+				<tr style="background-color: #F6FAFD;">
 					<td class="text-center"><?= $key + 1 ?></td>
-					<td class="text-left bold"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
-					<td class="text-left bold"> <?= $cantidadMoviles; ?> MOVILES X <?= $cantidadDias; ?> DÍAS</td>
+					<td class="text-left" colspan="4"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
+					<td class="text-left" style="font-size: 11px;"> <?= $cantidadMoviles; ?> MOV. X <?= $cantidadDias; ?> DÍAS</td>
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) :  ?>
+			<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) : ?>
 				<tr class="bg-gray">
 					<td class="text-center"><?= $key + 1 ?></td>
 					<td class="text-left" colspan="4">
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
 					<td class="text-center">
-						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) :  ?>
+						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) : ?>
 							<?= verificarEmpty($row['cantidad'], 1) ?>
 						<?php endif; ?>
 					</td>
 					<td class="text-right">
-						<?php if (!empty($row['costoPacking'])) :  ?>
-							<?php $totalPacking += 0; //floatval($row['costoPacking']); ?>
+						<?php if (!empty($row['costoPacking'])) : ?>
+							<?php $totalPacking += 0; //floatval($row['costoPacking']); 
+							?>
 						<?php endif; ?>
-						<?= empty($row['subtotal']) ? "-" : moneda(floatval($row['subtotal']) + 0); //floatval($row['costoPacking'])); ?>
+						<?= empty($row['subtotal']) ? "-" : moneda(floatval($row['subtotal']) + 0); //floatval($row['costoPacking'])); 
+						?>
 					</td>
 				</tr>
-				<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) :  ?>
+				<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) : ?>
 					<?php $dataTextil = []; ?>
 					<?php $dataTalla = []; ?>
 					<?php $dataGenero = []; ?>
@@ -215,13 +224,13 @@
 					<tr style="background-color: #F6FAFD;">
 						<td></td>
 						<td class="text-right bold">Talla</td>
-						<?php if (count($dataGenero) == 1) :  ?>
+						<?php if (count($dataGenero) == 1) : ?>
 							<td colspan="3" class="text-center bold">Cantidad</td>
 						<?php else : ?>
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
 								<td class="text-center bold"><?= $vg; ?></td>
 							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) :  ?>
+							<?php if (3 - count($dataGenero) > 0) : ?>
 								<td colspan="<?= 3 - count($dataGenero); ?>" class="bold"></td>
 							<?php endif; ?>
 						<?php endif; ?>
@@ -235,7 +244,7 @@
 							<?php foreach ($dataGenero as $kg => $vg) : ?>
 								<td class="text-center"><?= verificarEmpty($dataTextil[$vt][$kg]['cantidad'], 2); ?></td>
 							<?php endforeach; ?>
-							<?php if (3 - count($dataGenero) > 0) :  ?>
+							<?php if (3 - count($dataGenero) > 0) : ?>
 								<td colspan="<?= 3 - count($dataGenero); ?>"></td>
 							<?php endif; ?>
 							<td></td>
@@ -280,7 +289,7 @@
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
 			</label>
 		</div>
-		<?php if (!empty($detalleSubT)) :  ?>
+		<?php if (!empty($detalleSubT)) : ?>
 			<table id="customers">
 				<thead>
 					<tr>
@@ -295,8 +304,8 @@
 						<?php $pr = '' ?>
 						<?php $totalD = 0 ?>
 						<?php foreach ($dataD as $k => $v) : ?>
-							<?php if ($dp != $v['cod_departamento'] || $pr != $v['cod_provincia']) :  ?>
-								<?php if ($k != 0) :  ?>
+							<?php if ($dp != $v['cod_departamento'] || $pr != $v['cod_provincia']) : ?>
+								<?php if ($k != 0) : ?>
 									<tr>
 										<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
 										<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
@@ -318,9 +327,9 @@
 				</tbody>
 			</table>
 		<?php endif; ?>
-		<?php if (!empty($detalleDistribucionZonas)) :  ?>
+		<?php if (!empty($detalleDistribucionZonas)) : ?>
 			<?php foreach ($detalle as $kd => $vd) : ?>
-				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') :  ?>
+				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') : ?>
 					<table id="customers">
 						<thead>
 							<tr>
@@ -380,7 +389,7 @@
 				<?php endif; ?>
 			<?php endforeach; ?>
 		<?php endif; ?>
-		<?php if (!empty($anexos)) :  ?>
+		<?php if (!empty($anexos)) : ?>
 			<h3>Anexos</h3>
 			<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
 				<?php foreach ($anexos as $anexo) : ?>
