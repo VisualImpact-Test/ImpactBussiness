@@ -31,7 +31,7 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.Empresa emp', 'emp.idEmpresa = c.idCuenta')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = c.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
-			->where('ocd.estado', 1)
+			->where('ocd.estado', 1)->where('c.idUsuarioReg != 1')
 			->order_by('ocd.idOrdenCompra desc');
 
 		if (!empty($params['idProveedor'])) $this->db->where('oc.idProveedor', $params['idProveedor']);
