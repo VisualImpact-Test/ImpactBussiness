@@ -198,9 +198,9 @@
 					</td>
 					<td class="text-right">
 						<?php if (!empty($row['costoPacking'])) :  ?>
-							<?php $totalPacking += floatval($row['costoPacking']); ?>
+							<?php $totalPacking += 0; //floatval($row['costoPacking']); ?>
 						<?php endif; ?>
-						<?= empty($row['subtotal']) ? "-" : moneda(floatval($row['subtotal']) + floatval($row['costoPacking'])); ?>
+						<?= empty($row['subtotal']) ? "-" : moneda(floatval($row['subtotal']) + 0); //floatval($row['costoPacking'])); ?>
 					</td>
 				</tr>
 				<?php if ($row['idItemTipo'] == COD_TEXTILES['id'] && count($detalleSub[$row['idCotizacionDetalle']]) > 0) :  ?>
