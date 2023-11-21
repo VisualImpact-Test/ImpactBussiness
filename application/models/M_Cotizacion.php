@@ -442,6 +442,7 @@ class M_Cotizacion extends MY_Model
 				, cc.nombre AS cuentaCentroCosto
 				, p.codCotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
+				, CONVERT(VARCHAR, p.fechaRequerida, 103) AS fechaRequerida
 				, ce.nombre AS cotizacionEstado
 				, it.idItemTipo
 				, it.nombre AS itemTipo

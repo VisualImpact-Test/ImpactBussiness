@@ -1049,7 +1049,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 				$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
 				$dataParaVista['cabecera']['comentario'] = $row['comentario'];
-				$dataParaVista['cabecera']['fecha'] = $row['fechaCreacion'];
+				$dataParaVista['cabecera']['fecha'] = $row['fechaRequerida'];
 				$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
 				$dataParaVista['cabecera']['feePersonal'] = $row['feePersonal'];
