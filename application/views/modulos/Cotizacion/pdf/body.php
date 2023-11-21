@@ -200,7 +200,9 @@
 					</td>
 					<td class="text-center">
 						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) : ?>
-							<?= verificarEmpty($row['cantidad'], 1) ?>
+							<?= verificarEmpty($row['cantidad'], 3) ?>
+						<?php elseif ($idItemTipo == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte']) : ?>
+							-
 						<?php endif; ?>
 					</td>
 					<td class="text-right">
