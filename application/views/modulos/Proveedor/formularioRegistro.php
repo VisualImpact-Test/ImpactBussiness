@@ -171,7 +171,7 @@
 		</div>
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
-				<legend class="scheduler-border">Banco</legend>
+				<legend class="scheduler-border">Información Bancaria</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control border-0 col-md-4">Banco</label>
 					<select class="form-control col-md-8 simpleDropdown" name="banco" patron="requerido">
