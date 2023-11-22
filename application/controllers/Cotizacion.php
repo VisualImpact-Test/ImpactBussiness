@@ -929,10 +929,10 @@ class Cotizacion extends MY_Controller
 	{
 		$config = array(
 			'protocol' => 'smtp',
-			// 'smtp_host' => 'ssl://smtp.googlemail.com',
-			// 'smtp_port' => 465,
-			'smtp_host' => 'aspmx.l.google.com',
-			'smtp_port' => '25',
+			'smtp_host' => 'ssl://smtp.googlemail.com',
+			'smtp_port' => 465,
+			// 'smtp_host' => 'aspmx.l.google.com',
+			// 'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'
