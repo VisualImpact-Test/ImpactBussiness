@@ -17,7 +17,7 @@
 						<label class="form-control col-md-4" for="rubro" style="border:0px;">Actividad :</label>
 						<select class="form-control col-md-8 my_select2" id="rubro" name="rubro" patron="requerido" multiple data-live-search="true">
 							<?php foreach ($listadoRubros as $rubro) : ?>
-								<option value="<?= $rubro['id']  ?>" <?= !empty($proveedorRubro[$rubro['id']]) ? "selected" : ""  ?>> <?= $rubro['value'] ?></option>
+								<option value="<?= $rubro['id'] ?>" <?= !empty($proveedorRubro[$rubro['id']]) ? "selected" : "" ?>> <?= $rubro['value'] ?></option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -25,7 +25,7 @@
 						<label class="form-control col-md-4" for="metodoPago" style="border:0px;">Forma de pago :</label>
 						<select class="form-control col-md-8 my_select2" id="metodoPago" name="metodoPago" patron="requerido" multiple data-live-search="true">
 							<?php foreach ($listadoMetodosPago as $pagos) : ?>
-								<option value="<?= $pagos['id']  ?>" <?= !empty($proveedorMetodoPago[$pagos['id']]) ? "selected" : ""  ?>> <?= $pagos['value'] ?></option>
+								<option value="<?= $pagos['id'] ?>" <?= !empty($proveedorMetodoPago[$pagos['id']]) ? "selected" : "" ?>> <?= $pagos['value'] ?></option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -33,7 +33,7 @@
 						<label class="form-control col-md-4" for="ruc" style="border:0px;">Tipo Servicio :</label>
 						<select class="form-control col-md-8 my_select2" id="tipoServicio" name="tipoServicio" multiple data-live-search="true" patron="requerido">
 							<?php foreach ($listTipoServicio as $key => $value) : ?>
-								<option value="<?= $value['idProveedorTipoServicio'] ?>" <?= isset($proveedorTipoServicio[$value['idProveedorTipoServicio']]) ? "selected" : ""  ?>> <?= $value['nombre'] ?></option>
+								<option value="<?= $value['idProveedorTipoServicio'] ?>" <?= isset($proveedorTipoServicio[$value['idProveedorTipoServicio']]) ? "selected" : "" ?>> <?= $value['nombre'] ?></option>
 							<?php endforeach; ?>
 						</select>
 					</div>
@@ -99,7 +99,7 @@
 								</select>
 							</td>
 							<td class="w-25">
-								<select class="form-control  w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
+								<select class="form-control w-100 provinciaCobertura" name="provinciaCobertura" data-live-search="true" disabled>
 									<option value="">Seleccione</option>
 								</select>
 							</td>
@@ -134,46 +134,6 @@
 						<?php endforeach; ?>
 					</tbody>
 				</table>
-				<!-- <div class="<?= ($disabled) ? "disabled" : "" ?>">
-                    <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="regionCobertura" style="border:0px;">Region :</label>
-                        <select class="form-control col-md-8 my_select2" id="regionCobertura" name="regionCobertura" multiple data-live-search="true" patron="requerido">
-                            <?
-										foreach ($listadoDepartamentos as $k_dp => $v_dp) {
-										?>
-                                <option value="<?= $k_dp ?>" <?= (isset($departamentosCobertura[strtoupper($v_dp['nombre'])])) ? "selected" : "" ?>><?= $v_dp['nombre'] ?></option>
-                            <?
-										}
-										?>
-                        </select>
-                    </div>
-                    <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="provinciaCobertura" style="border:0px;">Provincia :</label>
-                        <select class="form-control col-md-8 my_select2" id="provinciaCobertura" name="provinciaCobertura" multiple data-live-search="true">
-                            <option value="">Seleccione</option>
-                            <?
-										foreach ($provinciasCobertura as $k_p => $v_p) {
-										?>
-                                <option value="<?= $k_p ?>" selected><?= textopropio($v_p) ?></option>
-                            <?
-										}
-										?>
-                        </select>
-                    </div>
-                    <div class="control-group child-divcenter row" style="width:85%">
-                        <label class="form-control col-md-4" for="distritoCobertura" style="border:0px;">Distrito :</label>
-                        <select class="form-control col-md-8 my_select2" id="distritoCobertura" name="distritoCobertura" multiple data-live-search="true">
-                            <option value="">Seleccione</option>
-                            <?
-										foreach ($distritosCobertura as $k_d => $v_d) {
-										?>
-                                <option value="<?= $k_d ?>" selected><?= textopropio($v_d) ?></option>
-                            <?
-										}
-										?>
-                        </select>
-                    </div>
-                </div> -->
 			</fieldset>
 		</div>
 	</div>
@@ -199,9 +159,6 @@
 							<div class="input-group control-group child-divcenter row correoAdd" style="width:85%">
 								<label class="form-control col-md-4" style="border:0px;">Correo Adicional:</label>
 								<input class="form-control col-md-8" value="<?= $value['correo'] ?>">
-								<!-- <div class="input-group-append">
-        										<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>
-        									</div> -->
 							</div>
 						<?php endforeach; ?>
 					</div>
@@ -219,6 +176,31 @@
 						<input class="form-control col-md-8" id="costo" name="costo" patron="numeros" value="<?= verificarEmpty($costo, 2) ?>">
 					</div>
 				</div>
+			</fieldset>
+		</div>
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Banco</legend>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control border-0 col-md-4">Banco</label>
+					<select class="form-control col-md-8 simpleDropdown" name="banco">
+						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase', 'selected' => $idBanco]); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
+						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase', 'selected' => $idTipoCuentaBanco]); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">Nº de Cuenta</label>
+					<input class="form-control col-md-8" name="cuentaPrincipal" patron="requerido" value="">
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">CCI</label>
+					<input class="form-control col-md-8" name="cuentaInterbancariaPrincipal" patron="requerido" value="">
+				</div>
 				<?php $chk = $chkDetraccion ? 'checked' : ''; ?>
 				<?php $hdn = $chkDetraccion ? '' : 'd-none'; ?>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
@@ -226,18 +208,6 @@
 					<div class="ui test toggle checkbox">
 						<input class="chkDetraccion" name="chkDetraccion" type="checkbox" <?= $chk ?>>
 					</div>
-				</div>
-				<div class="control-group child-divcenter row detraccion <?= $hdn ?>" style="width:85%">
-					<label class="form-control border-0 col-md-4">Banco</label>
-					<select class="form-control col-md-8 simpleDropdown" name="banco">
-						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase', 'selected' => $idBanco]); ?>
-					</select>
-				</div>
-				<div class="control-group child-divcenter row detraccion <?= $hdn ?>" style="width:85%">
-					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
-					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
-						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase', 'selected' => $idTipoCuentaBanco]); ?>
-					</select>
 				</div>
 				<div class="control-group child-divcenter row pt-2 detraccion <?= $hdn ?>" style="width:85%">
 					<label class="form-control border-0 col-md-4">Cuenta detracción</label>
@@ -251,7 +221,7 @@
 							<div class="ui fluid image content-lsck-capturas" data-id="<?= $adjunto['idProveedorArchivo'] ?>">
 								<div class="ui dimmer dimmer-file-detalle">
 									<div class="content">
-										<p class="ui tiny inverted header">jlkjlkjlkj</p>
+										<p class="ui tiny inverted header">.</p>
 									</div>
 								</div>
 								<input class="file-considerarAdjunto" type="hidden">

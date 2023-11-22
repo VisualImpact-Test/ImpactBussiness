@@ -1323,28 +1323,43 @@ function imagenDeArchivo($name, $tipo, $ruta)
 		else return RUTA_WIREFRAME . 'file.png';
 	}
 }
-function htmlSemanticCargaDeArchivos($params = [])
+function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 { // Se puede mejorar, pero hasta aqui funciona.
 
 	$divPrincipal = !empty($params['classDivBase']) ? $params['classDivBase'] : 'divBase';
 	$maxFiles = !empty($params['maxFiles']) ? $params['maxFiles'] : '1';
 	$centrado = !empty($params['centrado']) ? 'centered' : '';
+	$name = !empty($params['name']) ? $params['name'] : '';
 	$archivosPermitidos = !empty($params['archivosPermitidos']) ? $params['archivosPermitidos'] : ARCHIVOS_PERMITIDOS;
 	// $archivosPermitidos = ARCHIVOS_PERMITIDOS;
 	$rutaImagenCarga = IMG_WIREFRAME;
 
-	$html  = "<div class='ui $centrado small image hover text-center'>";
-	$html .= '	<div class="ui dimmer">';
-	$html .= '		<div class="content">';
-	$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
-	$html .= '				Agregar';
-	$html .= '			</div>';
-	$html .= '		</div>';
-	$html .= '	</div>';
-	$html .= "	<img class='ui image' src='$rutaImagenCarga'>";
-	$html .= '</div>';
+	if ($tipo = 1) {
+		$html  = "<div class='ui $centrado small image hover text-center'>";
+		$html .= '	<div class="ui dimmer">';
+		$html .= '		<div class="content">';
+		$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
+		$html .= '				Agregar';
+		$html .= '			</div>';
+		$html .= '		</div>';
+		$html .= '	</div>';
+		$html .= "	<img class='ui image' src='$rutaImagenCarga'>";
+		$html .= '</div>';
+	}
+	if ($tipo = 2) {
+		$html  = "<div class='ui $centrado small image hover text-center'>";
+		$html .= '	<div class="ui dimmer">';
+		$html .= '		<div class="content">';
+		$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
+		$html .= '				Agregar';
+		$html .= '			</div>';
+		$html .= '		</div>';
+		$html .= '	</div>';
+		$html .= "	<img class='ui image' src='$rutaImagenCarga'>";
+		$html .= '</div>';
+	}
 	$html .= '<div class="content-upload">';
-	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' class='file-semantic-upload form-control input-sm d-none'";
+	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='file-semantic-upload form-control input-sm d-none'";
 	$html .= "		placeholder='Cargar Imagen' data-row='0' accept='$archivosPermitidos' multiple>";
 	$html .= '	<div class="fields">';
 	$html .= '		<div class="sixteen wide field">';
@@ -1426,10 +1441,10 @@ function email($email = array())
 
 		$config = array(
 			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			// 'smtp_host' => 'aspmx.l.google.com',
-			// 'smtp_port' => '25',
+			// 'smtp_host' => 'ssl://smtp.googlemail.com',
+			// 'smtp_port' => 465,
+			'smtp_host' => 'aspmx.l.google.com',
+			'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html',

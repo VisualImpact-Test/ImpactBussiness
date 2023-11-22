@@ -1303,7 +1303,7 @@ var View = {
 		$(document).off('change', '.file-semantic-upload').on('change', '.file-semantic-upload', function (e) {
 			var control = $(this);
 			var data = control.data();
-
+			let prefi_name = data.name;
 			let cantidadMaximaDeCarga = MAX_ARCHIVOS;
 			if (data.maxfiles) cantidadMaximaDeCarga = parseInt(data.maxfiles);
 
@@ -1313,9 +1313,9 @@ var View = {
 			var id = '';
 			if (data.id) id = '[' + data.id + ']';
 
-			let name = 'file-item';
-			let nameType = 'file-type';
-			let nameFile = 'file-name';
+			let name = prefi_name + 'File-item';
+			let nameType = prefi_name + 'File-type';
+			let nameFile = prefi_name + 'File-name';
 
 			if (control.val()) {
 				var content = control.parents('.content-upload:first').find('.content-img');
@@ -1323,8 +1323,8 @@ var View = {
 				var num = control.get(0).files.length;
 
 				list: {
-					var total = $('input[name="' + name + id + '"]').length;
-					total += $('input.file-considerarAdjunto').length;
+					var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
+					total += control.closest('.content-upload').find('input.file-considerarAdjunto').length;
 					if ((num + total) > cantidadMaximaDeCarga) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${cantidadMaximaDeCarga} archivo(s) como máximo` });
 						Fn.showModal({

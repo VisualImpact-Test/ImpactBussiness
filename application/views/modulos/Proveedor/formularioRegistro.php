@@ -167,32 +167,51 @@
 					<label class="form-control border-0 col-md-4">Costo (S/) :</label>
 					<input class="form-control col-md-8 onlyNumbers" id="costo" name="costo" patron="numeros" value="0">
 				</div>
+			</fieldset>
+		</div>
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Banco</legend>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control border-0 col-md-4">Banco</label>
+					<select class="form-control col-md-8 simpleDropdown" name="banco" patron="requerido">
+						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase']); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
+						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase']); ?>
+					</select>
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">Nº de Cuenta</label>
+					<input class="form-control col-md-8" name="cuentaPrincipal" patron="requerido" value="">
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">CCI</label>
+					<input class="form-control col-md-8" name="cuentaInterbancariaPrincipal" patron="requerido" value="">
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:85%">
+					<label class="form-control border-0 col-md-4">Captura de Cuenta</label>
+					<div class="divImgCuenta col-md-8 pl-0" style="width:85%">
+						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divImgCuenta', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal']) ?>
+					</div>
+				</div>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
 					<label class="form-control border-0 col-md-4">Incluir Detracción</label>
 					<div class="ui test toggle checkbox">
 						<input class="chkDetraccion" name="chkDetraccion" type="checkbox">
 					</div>
 				</div>
-				<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
-					<label class="form-control border-0 col-md-4">Banco</label>
-					<select class="form-control col-md-8 simpleDropdown" name="banco">
-						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase']); ?>
-					</select>
-				</div>
-				<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
-					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
-					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
-						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase']); ?>
-					</select>
-				</div>
 				<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
-					<label class="form-control border-0 col-md-4">Cuenta detracción</label>
+					<label class="form-control border-0 col-md-4">Nº Cuenta Detracción</label>
 					<input class="form-control col-md-8 cuentaDetraccion" name="cuentaDetraccion">
 				</div>
 				<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
-					<label class="form-control border-0 col-md-4">Cuenta captura</label>
+					<label class="form-control border-0 col-md-4">Captura de Cuenta Detracción</label>
 					<div class="divParaCarga col-md-8 pl-0" style="width:85%">
-						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf']) ?>
+						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaDetraccion']) ?>
 					</div>
 				</div>
 			</fieldset>
