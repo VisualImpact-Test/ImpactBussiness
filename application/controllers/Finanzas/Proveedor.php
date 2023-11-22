@@ -179,11 +179,14 @@ class Proveedor extends MY_Controller
 				'costo' => $row['costo'],
 				'idProveedorTipoServicio' => $row['idProveedorTipoServicio'],
 				'tipoServicio' => $row['tipoServicio'],
-				'cuenta' => empty($row['cuenta']) ? NULL : $row['cuenta'],
+				'cuentaPrincipal' => empty($row['cuenta']) ? NULL : $row['cuenta'],
+				'cci' => empty($row['cci']) ? NULL : $row['cci'],
+				'cuentaDetraccion' => empty($row['cuentaDetraccion']) ? NULL : $row['cuentaDetraccion'],
 				'idBanco' => empty($row['idBanco']) ? NULL : $row['idBanco'],
 				'idTipoCuentaBanco' => empty($row['idTipoCuentaBanco']) ? NULL : $row['idTipoCuentaBanco'],
 				'chkDetraccion' => isset($row["chkDetraccion"]) ? 1 : 0,
-				'adjunto' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor']])->row_array()
+				'adjuntoPrincipal' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor'], 'flagPrincipal' => 1])->row_array(),
+				'adjuntoDetraccion' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor'], 'flagPrincipal' => 0])->row_array()
 			];
 
 			if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];

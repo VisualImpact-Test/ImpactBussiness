@@ -175,13 +175,16 @@ class Proveedor extends MY_Controller
 				'costo' => $row['costo'],
 				'idProveedorTipoServicio' => $row['idProveedorTipoServicio'],
 				'tipoServicio' => $row['tipoServicio'],
+				'cuentaPrincipal' => empty($row['cuenta']) ? NULL : $row['cuenta'],
+				'cci' => empty($row['cci']) ? NULL : $row['cci'],
+				'cuentaDetraccion' => empty($row['cuentaDetraccion']) ? NULL : $row['cuentaDetraccion'],
 				'idComprobante' => $row['idComprobante'],
 				'comprobante' => $row['comprobante'],
-				'cuenta' => $row['cuenta'],
 				'idBanco' => $row['idBanco'],
 				'idTipoCuentaBanco' => $row['idTipoCuentaBanco'],
 				'chkDetraccion' => $row['chkDetraccion'],
-				'adjunto' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor']])->row_array()
+				'adjuntoPrincipal' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor'], 'flagPrincipal' => 1])->row_array(),
+				'adjuntoDetraccion' => $this->db->get_where('compras.proveedorArchivo', ['estado' => 1, 'idProveedor' => $row['idProveedor'], 'flagPrincipal' => 0])->row_array()
 			];
 
 			if (!empty($row['zc_departamento'])) $departamentosCobertura[trim($row['zc_departamento'])] = $row['zc_departamento'];
@@ -288,7 +291,7 @@ class Proveedor extends MY_Controller
 			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta']);
 			goto respuesta;
 		}
-		// → Captura Detraccion: Opcional
+		// → Captura Detraccion: Obligatorio si marca el check
 		if (
 			isset($post["chkDetraccion"]) &&
 			(
@@ -487,11 +490,9 @@ class Proveedor extends MY_Controller
 		$this->db->trans_start();
 
 		$result = $this->result;
-
 		$post = json_decode($this->input->post('data'), true);
 
 		$data = [];
-
 		$enviarCorreo = false;
 		$rptaCorreo = true;
 
@@ -506,10 +507,12 @@ class Proveedor extends MY_Controller
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto'],
 			'costo' => $post['costo'],
-			'cuenta' => empty($post['cuentaDetraccion']) ? NULL : $post['cuentaDetraccion'],
-			'idBanco' => empty($post['banco']) ? NULL : $post['banco'],
-			'idTipoCuentaBanco' => empty($post['tipoCuenta']) ? NULL : $post['tipoCuenta'],
-			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0
+			'cuenta' => verificarEmpty($post['cuentaPrincipal'], 4),
+			'cci' => verificarEmpty($post['cuentaInterbancariaPrincipal'], 4),
+			'idBanco' => verificarEmpty($post['banco'], 4),
+			'idTipoCuentaBanco' => verificarEmpty($post['tipoCuenta'], 4),
+			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0,
+			'cuentaDetraccion' => verificarEmpty($post['cuentaDetraccion'], 4),
 		];
 
 		if (isset($post['idProveedorEstado'])) {
@@ -533,33 +536,84 @@ class Proveedor extends MY_Controller
 			'idProveedor' => $post['idProveedor']
 		];
 
+		// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
+		// → Captura Principal: Obligatorio
+		$buscarAdjunto = $this->db->get_where('compras.proveedorArchivo', ['idProveedor' => $post['idProveedor'], 'estado' => 1, 'flagPrincipal' => 1])->result_array();
+		logError($post['idProveedorArchivoEliminadoP']);
+		if (
+			(!empty($post['idProveedorArchivoEliminadoP']) || empty($buscarAdjunto)) &&
+			(
+				!isset($post['cuentaPrincipalFile-item']) ||
+				!isset($post['cuentaPrincipalFile-name']) ||
+				!isset($post['cuentaPrincipalFile-type'])
+			)
+		) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta']);
+			goto respuesta;
+		}
+		// → Captura Detraccion: Obligatorio si marca el check
+		$buscarAdjunto = $this->db->get_where('compras.proveedorArchivo', ['idProveedor' => $post['idProveedor'], 'estado' => 1, 'flagPrincipal' => 0])->result_array();
+		if (
+			isset($post["chkDetraccion"]) &&
+			(!empty($post['idProveedorArchivoEliminadoD']) || empty($buscarAdjunto)) &&
+			(
+				!isset($post['cuentaDetraccionFile-item']) ||
+				!isset($post['cuentaDetraccionFile-name']) ||
+				!isset($post['cuentaDetraccionFile-type'])
+			)
+		) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta Detracción']);
+			goto respuesta;
+		}
+		// Fin
+
+		$post['cuentaPrincipalFile-item'] = checkAndConvertToArray(
+			isset($post['cuentaPrincipalFile-item']) ? $post['cuentaPrincipalFile-item'] : []
+		);
+		$post['cuentaPrincipalFile-name'] = checkAndConvertToArray(
+			isset($post['cuentaPrincipalFile-name']) ? $post['cuentaPrincipalFile-name'] : []
+		);
+		$post['cuentaPrincipalFile-type'] = checkAndConvertToArray(
+			isset($post['cuentaPrincipalFile-type']) ? $post['cuentaPrincipalFile-type'] : []
+		);
+		$post['cuentaDetraccionFile-item'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-item']) ? $post['cuentaDetraccionFile-item'] : []
+		);
+		$post['cuentaDetraccionFile-name'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-name']) ? $post['cuentaDetraccionFile-name'] : []
+		);
+		$post['cuentaDetraccionFile-type'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-type']) ? $post['cuentaDetraccionFile-type'] : []
+		);
+
 		$insert = $this->model->actualizarProveedor($data);
 
-		if (isset($post['idProveedorArchivoEliminado'])) {
-			if (!empty($post['idProveedorArchivoEliminado'])) {
-				// Update para desactivar imagen
-				foreach ($post['idProveedorArchivoEliminado'] as $idProveedorArchivo_update) {
-					$this->db->update('compras.proveedorArchivo', ['estado' => 0], ['idProveedorArchivo' => $idProveedorArchivo_update]);
-				}
+		if (!empty($post['idProveedorArchivoEliminadoP'])) {
+			foreach ($post['idProveedorArchivoEliminadoP'] as $idProveedorArchivo_update) {
+				$this->db->update('compras.proveedorArchivo', ['estado' => 0], ['idProveedorArchivo' => $idProveedorArchivo_update]);
 			}
 		}
-		// insertando nueva imagen
-		if (!isset($post['file-item'])) $post['file-item'] = [];
-		if (!isset($post['file-name'])) $post['file-name'] = [];
-		if (!isset($post['file-type'])) $post['file-type'] = [];
-		$post['file-item'] = checkAndConvertToArray($post['file-item']);
-		$post['file-name'] = checkAndConvertToArray($post['file-name']);
-		$post['file-type'] = checkAndConvertToArray($post['file-type']);
+		if (!empty($post['idProveedorArchivoEliminadoD'])) {
+			foreach ($post['idProveedorArchivoEliminadoD'] as $idProveedorArchivo_update) {
+				$this->db->update('compras.proveedorArchivo', ['estado' => 0], ['idProveedorArchivo' => $idProveedorArchivo_update]);
+			}
+		}
 
-		if (!empty($post['file-item'])) {
-			$insertArchivos = [];
-			foreach ($post['file-item'] as $k => $v) {
+		// INICIO: Para subir archivos del proveedor → Funciona con multiples archivos.
+		$insertArchivos = [];
+		// → Archivo cuenta principal
+		if (!empty($post['cuentaPrincipalFile-item'])) {
+			foreach ($post['cuentaPrincipalFile-item'] as $k => $v) {
 				$archivo = [
-					'base64' => $post['file-item'][$k],
-					'name' => $post['file-name'][$k],
-					'type' => $post['file-type'][$k],
+					'base64' => $post['cuentaPrincipalFile-item'][$k],
+					'name' => $post['cuentaPrincipalFile-name'][$k],
+					'type' => $post['cuentaPrincipalFile-type'][$k],
 					'carpeta' => 'proveedorAdjuntos',
-					'nombreUnico' => 'DETRACCION_' . $post['idProveedor'] . '_' . str_replace(':', '', $this->hora) . '_' . $k,
+					'nombreUnico' => 'Cuenta_' . $post['idProveedor'] . '_' . str_replace(':', '', $this->hora) . '_' . $k,
 				];
 				$archivoName = $this->saveFileWasabi($archivo);
 				$tipoArchivo = explode('/', $archivo['type']);
@@ -571,11 +625,38 @@ class Proveedor extends MY_Controller
 					'nombre_unico' => $archivo['nombreUnico'],
 					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'estado' => true,
-					'idUsuarioReg' => $this->idUsuario
+					'idUsuarioReg' => $this->idUsuario,
+					'flagPrincipal' => true,
 				];
 			}
-			if (!empty($insertArchivos)) $this->db->insert_batch('compras.proveedorArchivo', $insertArchivos);
 		}
+		// → Archivo cuenta detracción
+		if (!empty($post['cuentaDetraccionFile-item'])) {
+			foreach ($post['cuentaDetraccionFile-item'] as $k => $v) {
+				$archivo = [
+					'base64' => $post['cuentaDetraccionFile-item'][$k],
+					'name' => $post['cuentaDetraccionFile-name'][$k],
+					'type' => $post['cuentaDetraccionFile-type'][$k],
+					'carpeta' => 'proveedorAdjuntos',
+					'nombreUnico' => 'CuentaDetraccion_' . $post['idProveedor'] . '_' . str_replace(':', '', $this->hora) . '_' . $k,
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+				$insertArchivos[] = [
+					'idProveedor' => $post['idProveedor'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+					'idUsuarioReg' => $this->idUsuario,
+					'flagPrincipal' => false,
+				];
+			}
+		}
+		if (!empty($insertArchivos)) $this->db->insert_batch('compras.proveedorArchivo', $insertArchivos);
+		// FIN: Para subir archivos del proveedor
 
 		$data = [];
 		$data['tabla'] = 'compras.zonaCobertura';

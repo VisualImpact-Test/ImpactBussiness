@@ -3,7 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class FormularioProveedor extends MY_Controller
 {
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -15,7 +14,6 @@ class FormularioProveedor extends MY_Controller
 
 	public function index()
 	{
-
 		$proveedor = $this->session->userdata('proveedor');
 
 		if (!empty($proveedor)) {
@@ -124,7 +122,6 @@ class FormularioProveedor extends MY_Controller
 			'razonSocial' => $post['razonSocial'],
 			'idTipoDocumento' => 3,
 			'nroDocumento' => $post['ruc'],
-			// 'idRubro' => $post['rubro'],
 			'cod_ubigeo' => $post['distrito'],
 			'direccion' => $post['direccion'],
 			'informacionAdicional' => verificarEmpty($post['informacionAdicional'], 4),
@@ -132,10 +129,12 @@ class FormularioProveedor extends MY_Controller
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto'],
-			'cuenta' => empty($post['cuentaDetraccion']) ? NULL : $post['cuentaDetraccion'],
-			'idBanco' => empty($post['banco']) ? NULL : $post['banco'],
-			'idTipoCuentaBanco' => empty($post['tipoCuenta']) ? NULL : $post['tipoCuenta'],
-			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0
+			'cuenta' => verificarEmpty($post['cuentaPrincipal'], 4),
+			'cci' => verificarEmpty($post['cuentaInterbancariaPrincipal'], 4),
+			'idBanco' => verificarEmpty($post['banco'], 4),
+			'idTipoCuentaBanco' => verificarEmpty($post['tipoCuenta'], 4),
+			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0,
+			'cuentaDetraccion' => verificarEmpty($post['cuentaDetraccion'], 4),
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaProveedor($data['insert']);
@@ -149,7 +148,50 @@ class FormularioProveedor extends MY_Controller
 
 		$data['tabla'] = 'compras.proveedor';
 
+		// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
+		// → Captura Principal: Obligatorio
+		if (
+			!isset($post['cuentaPrincipalFile-item']) ||
+			!isset($post['cuentaPrincipalFile-name']) ||
+			!isset($post['cuentaPrincipalFile-type'])
+		) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta']);
+			goto respuesta;
+		}
+		// → Captura Detraccion: Obligatorio si marca el check
+		if (
+			isset($post["chkDetraccion"]) &&
+			(
+				!isset($post['cuentaDetraccionFile-item']) ||
+				!isset($post['cuentaDetraccionFile-name']) ||
+				!isset($post['cuentaDetraccionFile-type'])
+			)
+		) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta Detracción']);
+			goto respuesta;
+		}
+		// Fin
+
+		$post['cuentaPrincipalFile-item'] = checkAndConvertToArray($post['cuentaPrincipalFile-item']);
+		$post['cuentaPrincipalFile-name'] = checkAndConvertToArray($post['cuentaPrincipalFile-name']);
+		$post['cuentaPrincipalFile-type'] = checkAndConvertToArray($post['cuentaPrincipalFile-type']);
+
+		$post['cuentaDetraccionFile-item'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-item']) ? $post['cuentaDetraccionFile-item'] : []
+		);
+		$post['cuentaDetraccionFile-name'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-name']) ? $post['cuentaDetraccionFile-name'] : []
+		);
+		$post['cuentaDetraccionFile-type'] = checkAndConvertToArray(
+			isset($post['cuentaDetraccionFile-type']) ? $post['cuentaDetraccionFile-type'] : []
+		);
+
 		$insert = $this->model->insertarProveedor($data);
+		$idProveedor = $insert['id'];
 		$data = [];
 
 		$zonasCobertura = [
@@ -174,10 +216,10 @@ class FormularioProveedor extends MY_Controller
 			if (!empty($zonasInsertadas[$idRegion][$idProvincia][$idDistrito])) continue;
 
 			$data['insert'][] = [
-				'idProveedor' => $insert['id'],
-				'cod_departamento' => !empty($value['regionCobertura']) ? $value['regionCobertura'] : NULL,
-				'cod_provincia' => !empty($value['provinciaCobertura']) ? $value['provinciaCobertura'] : NULL,
-				'cod_distrito' => !empty($value['distritoCobertura']) ? $value['distritoCobertura'] : NULL
+				'idProveedor' => $idProveedor,
+				'cod_departamento' => verificarEmpty($value['regionCobertura'], 4),
+				'cod_provincia' => verificarEmpty($value['provinciaCobertura'], 4),
+				'cod_distrito' => verificarEmpty($value['distritoCobertura'], 4),
 			];
 
 			$zonasInsertadas[$idRegion][$idProvincia][$idDistrito] = 1;
@@ -190,7 +232,7 @@ class FormularioProveedor extends MY_Controller
 
 		foreach (checkAndConvertToArray($post['metodoPago']) as $key => $value) {
 			$data['insert'][] = [
-				'idProveedor' => $insert['id'],
+				'idProveedor' => $idProveedor,
 				'idMetodoPago' => $value,
 
 			];
@@ -201,7 +243,7 @@ class FormularioProveedor extends MY_Controller
 
 		foreach (checkAndConvertToArray($post['rubro']) as $key => $value) {
 			$data['insert'][] = [
-				'idProveedor' => $insert['id'],
+				'idProveedor' => $idProveedor,
 				'idRubro' => $value,
 			];
 		}
@@ -211,7 +253,7 @@ class FormularioProveedor extends MY_Controller
 
 		foreach (checkAndConvertToArray($post['comprobante']) as $key => $value) {
 			$data['insert'][] = [
-				'idProveedor' => $insert['id'],
+				'idProveedor' => $idProveedor,
 				'idComprobante' => $value,
 			];
 		}
@@ -222,7 +264,7 @@ class FormularioProveedor extends MY_Controller
 		// tipoServicio
 		foreach (checkAndConvertToArray($post['tipoServicio']) as $key => $value) {
 			$data['insert'][] = [
-				'idProveedor' => $insert['id'],
+				'idProveedor' => $idProveedor,
 				'idProveedorTipoServicio' => $value,
 			];
 		}
@@ -234,7 +276,7 @@ class FormularioProveedor extends MY_Controller
 		if (isset($post['correoAdicional'])) {
 			foreach (checkAndConvertToArray($post['correoAdicional']) as $key => $value) {
 				$data['insert'][] = [
-					'idProveedor' => $insert['id'],
+					'idProveedor' => $idProveedor,
 					'correo' => $value,
 				];
 			}
@@ -242,39 +284,60 @@ class FormularioProveedor extends MY_Controller
 		}
 		$data = [];
 
-		if (!isset($post['file-item'])) $post['file-item'] = [];
-		if (!isset($post['file-name'])) $post['file-name'] = [];
-		if (!isset($post['file-type'])) $post['file-type'] = [];
-
-		$post['file-item'] = checkAndConvertToArray($post['file-item']);
-		$post['file-name'] = checkAndConvertToArray($post['file-name']);
-		$post['file-type'] = checkAndConvertToArray($post['file-type']);
-
-		if (!empty($post['file-item'])) {
-			$insertArchivos = [];
-			foreach ($post['file-item'] as $k => $v) {
+		// INICIO: Para subir archivos del proveedor → Funciona con multiples archivos.
+		$insertArchivos = [];
+		// → Archivo cuenta principal
+		if (!empty($post['cuentaPrincipalFile-item'])) {
+			foreach ($post['cuentaPrincipalFile-item'] as $k => $v) {
 				$archivo = [
-					'base64' => $post['file-item'][$k],
-					'name' => $post['file-name'][$k],
-					'type' => $post['file-type'][$k],
+					'base64' => $post['cuentaPrincipalFile-item'][$k],
+					'name' => $post['cuentaPrincipalFile-name'][$k],
+					'type' => $post['cuentaPrincipalFile-type'][$k],
 					'carpeta' => 'proveedorAdjuntos',
-					'nombreUnico' => 'DETRACCION_' . $insert['id'] . '_' . str_replace(':', '', $this->hora) . '_' . $k,
+					'nombreUnico' => 'Cuenta_' . $idProveedor . '_' . str_replace(':', '', $this->hora) . '_' . $k,
 				];
 				$archivoName = $this->saveFileWasabi($archivo);
 				$tipoArchivo = explode('/', $archivo['type']);
 				$insertArchivos[] = [
-					'idProveedor' => $insert['id'],
+					'idProveedor' => $idProveedor,
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
 					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'estado' => true,
-					'idUsuarioReg' => $this->idUsuario
+					'idUsuarioReg' => $this->idUsuario,
+					'flagPrincipal' => true,
 				];
 			}
-			if (!empty($insertArchivos)) $this->db->insert_batch('compras.proveedorArchivo', $insertArchivos);
 		}
+		// → Archivo cuenta detracción
+		if (!empty($post['cuentaDetraccionFile-item'])) {
+			foreach ($post['cuentaDetraccionFile-item'] as $k => $v) {
+				$archivo = [
+					'base64' => $post['cuentaDetraccionFile-item'][$k],
+					'name' => $post['cuentaDetraccionFile-name'][$k],
+					'type' => $post['cuentaDetraccionFile-type'][$k],
+					'carpeta' => 'proveedorAdjuntos',
+					'nombreUnico' => 'CuentaDetraccion_' . $idProveedor . '_' . str_replace(':', '', $this->hora) . '_' . $k,
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+				$insertArchivos[] = [
+					'idProveedor' => $idProveedor,
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+					'idUsuarioReg' => $this->idUsuario,
+					'flagPrincipal' => false,
+				];
+			}
+		}
+		if (!empty($insertArchivos)) $this->db->insert_batch('compras.proveedorArchivo', $insertArchivos);
+		// FIN: Para subir archivos del proveedor
 
 		if (!$insert['estado'] || !$second_insert['estado'] /*|| !$estadoEmail*/ || !$third_insert || !$fourth_insert || !$fifth_insert) {
 			$result['result'] = 0;
@@ -298,8 +361,10 @@ class FormularioProveedor extends MY_Controller
 	{
 		$config = array(
 			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
+			// 'smtp_host' => 'ssl://smtp.googlemail.com',
+			// 'smtp_port' => 465,
+			'smtp_host' => 'aspmx.l.google.com',
+			'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'

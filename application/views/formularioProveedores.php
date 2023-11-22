@@ -171,33 +171,47 @@
 				<div class="row">
 					<div class="col-md-8 child-divcenter">
 						<fieldset class="scheduler-border">
-							<legend class="scheduler-border">Costo</legend>
+							<legend class="scheduler-border">Banco</legend>
+							<div class="control-group child-divcenter row" style="width:85%">
+								<label class="form-control border-0 col-md-4">Banco</label>
+								<select class="form-control col-md-8 simpleDropdown" name="banco" patron="requerido">
+									<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="control-group child-divcenter row" style="width:85%">
+								<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+								<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta" patron="requerido">
+									<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase']); ?>
+								</select>
+							</div>
+							<div class="control-group child-divcenter row pt-2" style="width:85%">
+								<label class="form-control border-0 col-md-4">Nº de Cuenta</label>
+								<input class="form-control col-md-8" name="cuentaPrincipal" patron="requerido" value="">
+							</div>
+							<div class="control-group child-divcenter row pt-2" style="width:85%">
+								<label class="form-control border-0 col-md-4">CCI</label>
+								<input class="form-control col-md-8" name="cuentaInterbancariaPrincipal" patron="requerido" value="">
+							</div>
+							<div class="control-group child-divcenter row pt-2" style="width:85%">
+								<label class="form-control border-0 col-md-4">Captura de Cuenta</label>
+								<div class="divParaCarga col-md-8 pl-0" style="width:85%">
+									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal']) ?>
+								</div>
+							</div>
 							<div class="control-group child-divcenter row pt-2" style="width:85%">
 								<label class="form-control border-0 col-md-4">Incluir Detracción</label>
 								<div class="ui test toggle checkbox">
 									<input class="chkDetraccion" name="chkDetraccion" type="checkbox">
 								</div>
 							</div>
-							<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
-								<label class="form-control border-0 col-md-4">Banco</label>
-								<select class="form-control col-md-8 simpleDropdown" name="banco">
-									<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase']); ?>
-								</select>
-							</div>
-							<div class="control-group child-divcenter row detraccion d-none" style="width:85%">
-								<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
-								<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta">
-									<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase']); ?>
-								</select>
-							</div>
 							<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
 								<label class="form-control border-0 col-md-4">Cuenta detracción</label>
 								<input class="form-control col-md-8 cuentaDetraccion" name="cuentaDetraccion">
 							</div>
 							<div class="control-group child-divcenter row pt-2 detraccion d-none" style="width:85%">
-								<label class="form-control border-0 col-md-4">Cuenta captura</label>
-								<div class="divParaCarga col-md-8 pl-0" style="width:85%">
-									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf']) ?>
+								<label class="form-control border-0 col-md-4">Captura de Cuenta Detracción</label>
+								<div class="divParaCargaDetraccion col-md-8 pl-0" style="width:85%">
+									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCargaDetraccion', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaDetraccion']) ?>
 								</div>
 							</div>
 						</fieldset>

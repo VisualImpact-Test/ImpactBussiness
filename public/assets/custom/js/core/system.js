@@ -1324,7 +1324,7 @@ var View = {
 
 				list: {
 					var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
-					total += control.closest('.content-upload').find('input.file-considerarAdjunto').length;
+					total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
 					if ((num + total) > cantidadMaximaDeCarga) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${cantidadMaximaDeCarga} archivo(s) como máximo` });
 						Fn.showModal({

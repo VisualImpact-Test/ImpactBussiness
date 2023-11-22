@@ -3,7 +3,8 @@ var Proveedor = {
 	frm: 'frm-proveedor',
 	contentDetalle: 'idContentProveedor',
 	url: 'Proveedor/',
-	archivoEliminado: [],
+	archivoEliminadoPrincipal: [],
+	archivoEliminadoDetraccion: [],
 
 	load: function () {
 
@@ -86,9 +87,13 @@ var Proveedor = {
 			e.preventDefault();
 			var control = $(this);
 			let parent = $(this).closest(".content-lsck-capturas");
-			let idEliminado = parent.data('id');
-			if (idEliminado) {
-				Proveedor.archivoEliminado.push(idEliminado);
+			let idEliminadoP = parent.data('idprincipal');
+			if (idEliminadoP) {
+				Proveedor.archivoEliminadoPrincipal.push(idEliminadoP);
+			}
+			let idEliminadoD = parent.data('iddetraccion');
+			if (idEliminadoD) {
+				Proveedor.archivoEliminadoDetraccion.push(idEliminadoD);
 			}
 			control.parents('.content-lsck-capturas:first').remove();
 		});
@@ -323,7 +328,8 @@ var Proveedor = {
 		++modalId;
 		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
 		dataFn.idProveedorEstado = '1';
-		dataFn.idProveedorArchivoEliminado = Proveedor.archivoEliminado;
+		dataFn.idProveedorArchivoEliminadoP = Proveedor.archivoEliminadoPrincipal;
+		dataFn.idProveedorArchivoEliminadoD = Proveedor.archivoEliminadoDetraccion;
 		let jsonString = { 'data': JSON.stringify(dataFn) };
 		// let config = { 'url': Proveedor.url + 'validarProveedor', 'data': jsonString };
 		let config = { 'url': Proveedor.url + 'actualizarProveedor', 'data': jsonString };
