@@ -1087,7 +1087,6 @@ class SolicitudCotizacion extends MY_Controller
 		$config = array();
 
 		$this->load->library('Mobile_Detect');
-
 		$detect = $this->mobile_detect;
 
 		$config['data']['col_dropdown'] = 'four column';
@@ -1159,7 +1158,7 @@ class SolicitudCotizacion extends MY_Controller
 
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2, 'order_by' => 'razonSocial ASC'])['query']->result_array();
+		$proveedores = $this->model_proveedor->obtenerInformacionProveedores([/*'estadoProveedor' => 2, */'order_by' => 'razonSocial ASC'])['query']->result_array();
 
 		foreach ($proveedores as $proveedor) {
 			$config['data']['proveedores'][$proveedor['idProveedor']] = $proveedor;
