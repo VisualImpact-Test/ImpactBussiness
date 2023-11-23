@@ -58,9 +58,9 @@ class M_Proveedor extends MY_Model
 	public function obtenerProveedorTipoServicio($params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.proveedorTipoServicio')
-		->order_by('nombre');
+			->select('*')
+			->from('compras.proveedorTipoServicio')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
@@ -117,8 +117,8 @@ class M_Proveedor extends MY_Model
 	public function obtenerProveedorDistribucion($param = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.proveedor');
+			->select('*')
+			->from('compras.proveedor');
 
 		$this->db->where('visibleDistribucion', '1');
 
@@ -176,9 +176,12 @@ class M_Proveedor extends MY_Model
 		$filtros .= !empty($params['rubroProveedor']) ? ' AND pr.idRubro = ' . $params['rubroProveedor'] : '';
 		$filtros .= !empty($params['metodoPagoProveedor']) ? ' AND at.idMetodoPago = ' . $params['metodoPagoProveedor'] : '';
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
+		if ($this->idUsuario != '1') {
+			$filtros .= ' AND p.demo != 1';
+		}
 
 		$orden = !empty($params['order_by']) ? 'ORDER BY ' . $params['order_by'] : "ORDER BY p.idProveedor DESC";
-		
+
 
 		$sql = "
 			SELECT DISTINCT
@@ -354,7 +357,7 @@ class M_Proveedor extends MY_Model
 
 			if (empty($data)) { // Registramos los faltantes.
 				$this->db->insert('compras.proveedorProveedorTipoServicio', $value);
-			}else{ // Activamos con 1 los ya registrados.
+			} else { // Activamos con 1 los ya registrados.
 				$this->db->update('compras.proveedorProveedorTipoServicio', ['estado' => 1], ['idProveedorProveedorTipoServicio' => $data['idProveedorProveedorTipoServicio']]);
 			}
 		}
