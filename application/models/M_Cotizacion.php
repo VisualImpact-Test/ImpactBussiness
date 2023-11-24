@@ -239,6 +239,8 @@ class M_Cotizacion extends MY_Model
 			ORDER BY p.idCotizacion DESC
 		";
 		$query = $this->db->query($sql);
+		// echo $this->db->last_query();
+		// exit();
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
@@ -1221,6 +1223,27 @@ class M_Cotizacion extends MY_Model
 				, nombre AS value
 			FROM compras.solicitante
 			WHERE estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+
+	public function obtenerOrdenServicio($params = [])
+	{
+		$sql = "
+		SELECT idOrdenServicio AS id ,    idCuenta , 
+		CONVERT(varchar, idOrdenServicio) + ' - ' + nombre AS value
+		from compras.ordenservicio
+		WHERE estado = 1
+		ORDER BY idOrdenServicio DESC
 		";
 
 		$query = $this->db->query($sql);
