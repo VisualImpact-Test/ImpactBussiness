@@ -445,6 +445,7 @@ class M_Cotizacion extends MY_Model
 				, p.codCotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, CONVERT(VARCHAR, ISNULL(p.fechaRequerida, p.fechaEmision), 103) AS fechaRequerida
+				, DATEADD (DAY , diasValidez, fechaEmision) as fechaValido
 				, ce.nombre AS cotizacionEstado
 				, it.idItemTipo
 				, it.nombre AS itemTipo
