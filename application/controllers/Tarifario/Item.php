@@ -388,7 +388,7 @@ class Item extends MY_Controller
 				'ESTE ITEM ES EL ACTUAL (*)',
 			],
 			'columns' => [
-				['data' => 'item', 'type' => 'myDropdown', 'placeholder' => 'item', 'width' => 200, 'source' => $itemNombre],
+				['data' => 'item', 'type' => 'myDropdown', 'placeholder' => 'item', 'width' => 600, 'source' => $itemNombre],
 				['data' => 'proveedor', 'type' => 'myDropdown', 'placeholder' => 'proveedor', 'width' => 200, 'source' => $proveedores],
 				['data' => 'costo', 'type' => 'numeric', 'placeholder' => 'costo', 'width' => 200],
 				['data' => 'fecha', 'type' => 'myDate', 'placeholder' => 'fecha', 'width' => 200],
