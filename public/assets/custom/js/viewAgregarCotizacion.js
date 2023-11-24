@@ -2131,6 +2131,24 @@ var Cotizacion = {
 		$(document).on('change', '#cuentaForm', function () {
 			let control = $(this);
 			let cod = control.val();
+			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
+			var datt = $('#ordenServicioDatos').val();
+			
+			var dataArray = JSON.parse(datt);
+			var idCuentaFilter = parseInt(cod); // Valor de idCuenta a filtrar
+			var filteredArray = dataArray.filter(function(element) {
+			return element.idCuenta === idCuentaFilter;
+			});
+			$('#ordenServicioSelect').empty();
+			$.each(filteredArray, function(index, element) {
+				$('#ordenServicioSelect').append($('<option></option>').val(element.id).text(element.value));
+			  });
+
+		});
+
+		$(document).on('change', '#cuentaForm', function () {
+			let control = $(this);
+			let cod = control.val();
 			let gap = 0;
 
 			$.each(Cotizacion.gapEmpresas, (k, v) => {

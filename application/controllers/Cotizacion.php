@@ -309,6 +309,7 @@ class Cotizacion extends MY_Controller
 					'codOrdenCompra' => !empty($post['codigo_oc']) ? $post['codigo_oc'] : NULL,
 					'montoOrdenCompra' => !empty($post['monto_oc']) ? $post['monto_oc'] : NULL,
 					'motivoAprobacion' => !empty($post['motivo']) ? $post['motivo'] : NULL,
+					'fechaClienteOC' => !empty($post['fechaClienteOC']) ? $post['fechaClienteOC'] : NULL,
 				];
 				$data['where'] = [
 					'idCotizacion' => $post['idCotizacion'],
@@ -1485,6 +1486,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
+		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		$config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();

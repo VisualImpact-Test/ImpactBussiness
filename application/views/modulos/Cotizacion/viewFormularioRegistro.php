@@ -67,7 +67,7 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm" >
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
@@ -91,6 +91,15 @@
 			</div>
 
 		</div>
+		<div class="fields d-none">
+		<div class="five wide field">
+				<div class="ui sub header">Presupuestos</div>
+				<select id="ordenServicioSelect" name="prioridadForm" class="ui read-only fluid search clearable dropdown dropdownSingleAditions" patron="requerido" >
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
+			</div>
+
 		<div class="fields">
 			<div class="eight wide field">
 				<div class="ui sub header">Comentario</div>
@@ -894,3 +903,4 @@
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
 <input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>
 <input id="solicitantes" type="hidden" value='<?= json_encode($solicitantes) ?>'>
+<input id="ordenServicioDatos" type="hidden" value='<?= json_encode($ordenServicio) ?>'>
