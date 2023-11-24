@@ -175,6 +175,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
 		$filtros .= ($this->idTipoUsuario != '1') ? ' AND p.demo != 1 ' : '';
 		$tipoDistribucion = COD_DISTRIBUCION['id'];
+		$tipoPersonal = COD_PERSONAL['id'];
 		$sql = "
 			SELECT 
 				tfa.idItemTarifario
@@ -194,6 +195,7 @@ class M_Item extends MY_Model
 				, tfa.flag_actual
 				, tfa.estado
 				, tfa.fechaVigencia
+				, case when tfa.fechaVigencia > GETDATE() then 1 else 0 end as estaVigente
 				, a.caracteristicas
 			FROM compras.itemTarifario tfa
 			JOIN compras.proveedor p ON tfa.idProveedor = p.idProveedor
@@ -202,10 +204,10 @@ class M_Item extends MY_Model
 			LEFT JOIN compras.itemCategoria ca ON a.idItemCategoria = ca.idItemCategoria
 			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
-			WHERE 1 = 1 AND a.idItemTipo != {$tipoDistribucion}
+			WHERE 1 = 1 AND a.idItemTipo != {$tipoDistribucion} AND a.idItemTipo != {$tipoPersonal}
 			{$filtros}
 		";
-
+		log_message('error', $sql);
 		$query = $this->db->query($sql);
 
 		if ($query) {
