@@ -94,7 +94,7 @@
 		<div class="fields d-none">
 		<div class="five wide field">
 				<div class="ui sub header">Presupuestos</div>
-				<select id="ordenServicioSelect" name="prioridadForm" class="ui read-only fluid search clearable dropdown dropdownSingleAditions" patron="requerido" >
+				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui ead-only dropdown clearable semantic-dropdown centro-ocultado"  >
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>

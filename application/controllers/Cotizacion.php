@@ -406,6 +406,7 @@ class Cotizacion extends MY_Controller
 			'total_fee_igv' => $post['totalFormFeeIgv'],
 			'idPrioridad' => $post['prioridadForm'],
 			'motivo' => $post['motivoForm'],
+			'idOrdenServicio' => $post['ordenServicioSelect'],
 			'comentario' => $post['comentarioForm'],
 			'diasValidez' => $post['diasValidez'],
 			'idCotizacionEstado' => ESTADO_REGISTRADO,

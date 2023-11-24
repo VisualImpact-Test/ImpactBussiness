@@ -20,7 +20,7 @@
 				</div>
 			</div>
 			<div class="fields">
-				<div class="sixteen wide field">
+				<div class="sixteen wide field" style="display: flex;flex-direction: row;align-items: center;">
 					<div class="ui labeled button" tabindex="0">
 						<div class="ui blue button" onclick="$('.file-lsck-capturas').click();">
 							<i class="paperclip icon"></i> Adjuntar
@@ -29,6 +29,18 @@
 							Orden Compra
 						</a>
 					</div>
+				
+			
+				<div class="four wide field">
+					<div class="ui sub header">FECHA OC</div>
+					<div class="ui calendar date-semantic">
+						<div class="ui input left icon">
+							<i class="calendar icon"></i>
+							<input type="text" placeholder="FECHA OC" value="">
+						</div>
+					</div>
+					<input type="hidden" class="date-semantic-value" name="fechaClienteOC" placeholder="FECHA OC" value="">
+				</div>
 				</div>
 			</div>
 			<div class="fields">

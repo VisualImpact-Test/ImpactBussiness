@@ -2185,6 +2185,7 @@ var Cotizacion = {
 			return element.idCuenta === idCuentaFilter;
 			});
 			$('#ordenServicioSelect').empty();
+			$('#ordenServicioSelect').append($('<option></option>').val("").text("SELECCIONE"));
 			$.each(filteredArray, function(index, element) {
 				$('#ordenServicioSelect').append($('<option></option>').val(element.id).text(element.value));
 			  });
