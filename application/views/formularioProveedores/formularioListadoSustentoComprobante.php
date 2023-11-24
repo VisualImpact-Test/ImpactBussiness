@@ -3,7 +3,7 @@
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
-				<legend class="scheduler-border">Artes</legend>
+				<legend class="scheduler-border">Consultar Comprobante</legend>
 				<table class="ui celled table" id="listaItemsPresupuesto" width="100%" class="tabla">
 					<thead class="thead-light">
 						<tr class="row_data">
