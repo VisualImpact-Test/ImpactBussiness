@@ -2079,9 +2079,9 @@ class Cotizacion extends MY_Controller
 				if (empty($v['zona'])) {
 					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Zona']);
 				}
-				if (empty($v['item' . $ki])) {
-					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Cantidad']);
-				}
+				// if (empty($v['item' . $ki])) {
+				// 	$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Cantidad']);
+				// }
 				if (empty($v['tipoServicio'])) {
 					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Tipo de Servicio']);
 				}
@@ -4437,7 +4437,7 @@ class Cotizacion extends MY_Controller
 		foreach ($adicionales as $row) {
 			$html .= "<tr>";
 			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
-			$html .= '<td><div style="padding:15px;"><select name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+			$html .= '<td><div style="padding:15px;"><select class="consideracionPersonal" name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
 			$html .= '<td><div style="padding:15px;"><input class="cntPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
 			$html .= '<td>
 							<div style="padding:15px;">
