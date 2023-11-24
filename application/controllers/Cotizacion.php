@@ -1069,6 +1069,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['solicitante'] = $row['solicitante'];
 				$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
 				$dataParaVista['cabecera']['mostrarPrecio'] = $row['mostrarPrecio'];
+				$dataParaVista['cabecera']['fechaValido'] = $row['fechaValido'];
 				// Para cabeceras del PDF
 				if (!$dataParaVista['cabecera']['incluyeTransporte'])
 					$dataParaVista['cabecera']['incluyeTransporte'] = ($row['idItemTipo'] == COD_TRANSPORTE['id']);

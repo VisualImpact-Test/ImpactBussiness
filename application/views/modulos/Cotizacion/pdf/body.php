@@ -287,6 +287,14 @@
 			</tfoot>
 		</table>
 		<div>
+			<table>
+				<tr>
+					<td style="height: 20px;"><b>Fecha Vigencia: </b></td>
+					<td><?= date_change_format($cabecera['fechaValido']); ?></td>
+				</tr>
+			</table>
+		</div>
+		<div>
 			<label>
 				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
 			</label>
