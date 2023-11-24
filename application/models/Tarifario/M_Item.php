@@ -205,9 +205,9 @@ class M_Item extends MY_Model
 			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			WHERE 1 = 1 AND a.idItemTipo != {$tipoDistribucion} AND a.idItemTipo != {$tipoPersonal}
+			AND a.idItemTipo in (1, 9) AND a.estado = 1 AND p.idProveedorEstado = 2
 			{$filtros}
 		";
-		log_message('error', $sql);
 		$query = $this->db->query($sql);
 
 		if ($query) {
