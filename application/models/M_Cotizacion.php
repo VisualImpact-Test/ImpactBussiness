@@ -493,6 +493,10 @@ class M_Cotizacion extends MY_Model
 				,1.4626*(pd.sueldo+pd.asignacionFamiliar)+(pd.movilidad+pd.refrigerio) totalSueldo
 				,1.4626*(pd.incentivos) totalIncentivo
 				,pd.cantidad_personal
+				,pd.fee1Por
+				,pd.fee2Por
+				,pd.fee1Monto
+				,pd.fee2Monto
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -909,7 +913,7 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? " AND cd.idCotizacion IN (" . $params['idCotizacion'] . ")" : "";
-		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado = {$params['idItemEstado']}" : "";
+		$filtros .= !empty($params['idItemEstado']) ? " AND cd.idItemEstado not in ({$params['idItemEstado']})" : "";
 		$filtros .= !empty($params['idCotizacionDetalle']) ? " AND cd.idCotizacionDetalle IN ({$params['idCotizacionDetalle']})" : "";
 		$filtros .= !empty($params['cotizacionInterna']) ? " AND cd.cotizacionInterna = 1 " : "";
 		$filtros .= !empty($params['noTipoItem']) ? " AND ( cds.requiereOrdenCompra = 1 OR cd.idItemTipo NOT IN({$params['noTipoItem']}) )" : "";

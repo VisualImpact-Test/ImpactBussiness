@@ -323,7 +323,7 @@ var Cotizacion = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de registrar esta cotizacion?" });';
 				// btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
-				if ($('#cargo_personal').val() > 0) {
+				if ($('#cargo_personal').dropdown('get value') > 0) {
 					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(3)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });';
 					btn[1] = { title: 'Enviar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 				} else {
@@ -344,7 +344,6 @@ var Cotizacion = {
 						allowAdditions: true
 					})
 					;
-
 			});
 		});
 
@@ -566,7 +565,6 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#tipoItemForm', function (e) {
-
 			let control = $(this);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
@@ -586,6 +584,8 @@ var Cotizacion = {
 			allFeatures.find('input.formTransporte').removeAttr("patron");
 			allFeatures.find('div.formTransporte').find('select').removeAttr("patron");
 
+			// ocultar fee de personal
+			control.closest('.body-item').find('.fieldPersonal').addClass('d-none');
 			if (idTipo == COD_DISTRIBUCION.id) {
 				$('.no-personal').removeClass('d-none');
 
@@ -653,6 +653,7 @@ var Cotizacion = {
 				Cotizacion.cleanDetalle(parent);
 
 			} else if (idTipo == COD_PERSONAL.id) {
+				control.closest('.body-item').find('.fieldPersonal').removeClass('d-none');
 				$('.no-personal').addClass('d-none');
 				$('.personal').removeClass('d-none');
 				control.closest('.body-item').find('.cantidadForm').val('1');
@@ -666,6 +667,7 @@ var Cotizacion = {
 					var config = { url: url, data: jsonString };
 					$.when(Fn.ajax(config)).then(function (a) {
 						$('.cargo_rrhh').html(a.data);
+						Fn.loadSemanticFunctions();
 					});
 				} else {
 					let btn = [];
@@ -762,8 +764,8 @@ var Cotizacion = {
 		$(document).on("keyup", ".cantidad_personal", function () {
 			var idDiv = $(this).attr('data-cantidad');
 			var cantidad = $(this).val();
-			var idCargo = $('.personal_' + idDiv + ' .cargo_personal').val();
-			var periodoContrato = $('.personal_' + idDiv + ' .cargo_personal').val();
+			var idCargo = $('.personal_' + idDiv + ' .cargo_personal').dropdown('get value');
+			var periodoContrato = $('.personal_' + idDiv + ' .cargo_personal').dropdown('get value');
 
 			if (idCargo != 0 && periodoContrato != 0) {
 
@@ -796,7 +798,6 @@ var Cotizacion = {
 				$('.personal_' + idDiv + ' .movilidad_personal').val(0);
 				$('.personal_' + idDiv + ' .asignacion_familiar_personal').val(asignacion_familiar_personal.toFixed(2));
 			} else {
-
 				cts = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal) + parseFloat(incentivo_personal)) * 0.097;
 				vacaciones = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal) + parseFloat(incentivo_personal)) * 0.091;
 				gratificacion = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal) + parseFloat(incentivo_personal)) * 0.1820;
@@ -812,7 +813,8 @@ var Cotizacion = {
 			var total_sueldos = (parseFloat(pago_final) + parseFloat(asignacion_familiar_personal)) * parseFloat(cantidad);
 			var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 			var total_final_costo = parseFloat(total_sueldos) + parseFloat(total_adicionales);
-			$('.costoForm').val(total_final_costo.toFixed(4))
+			$(this).closest('.body-item').find('.costoForm').val(total_final_costo.toFixed(4));
+			$(this).closest('.body-item').find('.cantidadForm').keyup();
 		})
 
 		$(document).on("keyup", ".incentivo_personal", function () {
@@ -1046,6 +1048,18 @@ var Cotizacion = {
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
 			Cotizacion.actualizarTotal();
+
+			// PARA EL FEE DE PERSONAL
+			let fee1 = thisControlParents.find('.fee1Form').val();
+			let fee2 = thisControlParents.find('.fee2Form').val();
+			let fee1Result = thisControlParents.find('.fee1FormTotal');
+			let fee2Result = thisControlParents.find('.fee2FormTotal');
+
+			//.closest('.body-item')
+			totalParaElFee2 = thisControlParents.closest('.body-item').find('.total_adicionales').val();
+			fee1Result.val((subTotal * fee1 / 100).toFixed(4));
+			fee2Result.val((totalParaElFee2 * fee2 / 100).toFixed(4));
+
 		});
 		$(document).on('keyup', '.cantidadSubItemDistribucion', function (e) {
 			e.preventDefault();
@@ -2247,18 +2261,19 @@ var Cotizacion = {
 		$(document).on('change', '.periodo_contrato_personal', function (e) {
 			//$(document).on('change','.change_data', function(e){
 			e.preventDefault();
-			//var id=$(this).val();
+			var id = $(this).val();
 			var idDiv = $(this).attr('data-obligatorio');
 			var idCuenta = $('#cuentaForm').val();
 			var idCentro = $('#cuentaCentroCostoForm').val();
 			var periodoContrato = $('.personal_' + idDiv + ' .periodo_contrato_personal').val();
-			var idCargo = $('.personal_' + idDiv + ' .cargo_personal').val();
+			var idCargo = $('.personal_' + idDiv + ' .cargo_personal').dropdown('get value');
 			var total_final_costo = 0;
 			var cantidad = $('.personal_' + idDiv + ' .cantidad_personal').val();
 			var data = { 'idCuenta': idCuenta, 'idCentro': idCentro, 'idCargo': idCargo };
 			if (id == 2) {
 				$('.personal_' + idDiv + ' .cantidad_dias').hide();
 				$('.personal_' + idDiv + ' .pago_diario').hide();
+				$('.personal_' + idDiv + ' .sueldo_personal').prop('readonly', false);
 
 				var jsonString = { 'data': JSON.stringify(data) };
 				var url = Cotizacion.url + 'obtener_sueldos';
@@ -2296,13 +2311,15 @@ var Cotizacion = {
 					var total_sueldos = ((parseFloat(a.sueldo) + parseFloat(a.asignacionFamiliar) + parseFloat(a.incentivo)) + (parseFloat(essalud) + parseFloat(cts) + parseFloat(vacaciones) + parseFloat(gratificacion) + parseFloat(seguroVidaLey))) * cantidad;
 					var total_adicionales = $('.personal_' + idDiv + ' .total_adicionales').val();
 					var total_final_costo = total_sueldos + parseFloat(total_adicionales);
-					$('.costoForm').val(total_final_costo.toFixed(4))
+					$('.costoForm').val(total_final_costo.toFixed(4));
+					$('.personal_' + idDiv + ' .sueldo_personal').keyup();
 				});
 
 			} else if (id == 1) {
 				$('.personal_' + idDiv + ' .cantidad_dias').show();
 				$('.personal_' + idDiv + ' .pago_diario').show();
 				$('.personal_' + idDiv + ' .pago_mensual_personal').val(0);
+				$('.personal_' + idDiv + ' .sueldo_personal').prop('readonly', true);
 				var essalud = 0;
 				var cts = 0;
 				var vacaciones = 0;
@@ -2317,7 +2334,6 @@ var Cotizacion = {
 				$('.personal_' + idDiv + ' .seguro_vida_personal').val(seguroVidaLey.toFixed(2));
 				$('.personal_' + idDiv + ' .movilidad_personal').val(0);
 				$('.personal_' + idDiv + ' .sueldo_personal').val(0);
-
 			}
 
 			var id = $(this).val()
@@ -2334,8 +2350,9 @@ var Cotizacion = {
 				$('.personal_' + idDiv + ' .total_adicionales').val(a.total_adicional);
 			});
 
+
 		});
-		////FIN COTIZACION PERSONAL
+		// FIN COTIZACION PERSONAL
 	},
 	buscarPesos: function (idModalHT) {
 		var data = Fn.formSerializeObject('formCargaMasiva');
@@ -2672,7 +2689,6 @@ var Cotizacion = {
 
 		Fn.closeModals(modalId);
 	},
-
 	restaurarCosto: function (costoAnterior) {
 		Cotizacion.controlesOC.costoForm.val(costoAnterior);
 		Cotizacion.controlesOC.costoFormLabel.val(costoAnterior);
@@ -2772,7 +2788,6 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
 	actualizarAutocomplete: function () {
 		let tipo = 1;
 		let items = [];
@@ -2913,12 +2928,10 @@ var Cotizacion = {
 			minLength: 3,
 		});
 	},
-
 	generarRequerimientoPDF: function (id) {
 		var url = site_url + '/Cotizacion/generarCotizacionPDF/' + id;
 		window.open(url, '_blank');
 	},
-
 	registrarItem: function (idCotizacion) {
 		let formValues = Fn.formSerializeObject('formRegistroItems');
 		formValues.idCotizacion = idCotizacion;
@@ -2939,7 +2952,6 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
 	registrarCotizacion: function (tipoRegistro = 1) {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
 		formValues.tipoRegistro = tipoRegistro;
@@ -2962,7 +2974,6 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
 	frmSendToCliente: function () {
 		let formValues = Fn.formSerializeObject('formRegistroCotizacion');
 		let jsonString = { 'data': JSON.stringify(formValues) };
@@ -2986,7 +2997,6 @@ var Cotizacion = {
 			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 		});
 	},
-
 	sendToCliente: function () {
 		let formValues = Fn.formSerializeObject('formSendToCliente');
 		formValues.formRegistro = Fn.formSerializeObject('formRegistroCotizacion');
@@ -3009,33 +3019,36 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: b.data.width });
 		});
 	},
-
 	actualizarTotal: function () {
-
 		let total = 0;
 		let totalDistribucion = 0;
-
+		let feePersonal = 0;
+		let totalPersonal = 0;
 		$.each($('.subtotalForm'), function (index, value) {
 			// Distribucion no se le agrega al FEE
-			if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() != COD_DISTRIBUCION.id) {
-				total = Number(total) + Number($(value).val());
-				// totalSinDistribucion = Number(totalSinDistribucion) + Number($(value).val());
-			}
 			if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_DISTRIBUCION.id) {
 				totalDistribucion = Number(totalDistribucion) + Number($(value).val());
-			}
+			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_PERSONAL.id) {
+				valorDePersonal = parseFloat($(value).closest('.body-item').find('.fee1FormTotal').val());
+				valorDePersonal += parseFloat($(value).closest('.body-item').find('.fee2FormTotal').val());
+				feePersonal = Number(feePersonal) + Number(valorDePersonal);
 
+				totalPersonal = Number(totalDistribucion) + Number($(value).val());
+				// total = Number(total) + Number($(value).val());
+			} else { // != COD_DISTRIBUCION.id
+				total = Number(total) + Number($(value).val());
+			}
 		})
 		let fee = Number($("#feeForm").val());
 		let igvForm = $('.igvForm');
-
 		let igv = 0;
 
 		if (igvForm.is(":checked")) {
 			igv = IGV_SYSTEM;
 		}
 		// let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion; -- Antes: distribucion no tenia FEE
-		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100)));
+		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100))) + totalPersonal;
+		totalFee += feePersonal;
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
 		$('.totalFormLabel').val(moneyFormatter.format(Number(totalFeeIgv)));
@@ -3044,7 +3057,6 @@ var Cotizacion = {
 		$('.totalFormFee').val(totalFee);
 		$('.totalForm').val(total + totalDistribucion);
 	},
-
 	actualizarPopupsTitle: () => {
 		//Boton enviar
 		$('.btn-send')
@@ -3155,7 +3167,6 @@ var Cotizacion = {
 				}
 			);
 	},
-
 	actualizarOnAddRow: (childInserted) => {
 
 		$('.btn-add-file').dimmer({ on: 'hover' });
@@ -3186,7 +3197,6 @@ var Cotizacion = {
 				}
 			);
 	},
-
 	actualizarOnAddRowCampos: (parent) => {
 		let number = '';
 		if (parent.data('id') !== undefined) {
@@ -3291,7 +3301,6 @@ var Cotizacion = {
 		cantidadF.attr('name', `cantidadTransporte[${number}]`);
 		// FIN: TRANSPORTE
 	},
-
 	cleanDetalle: (parent) => {
 		let tipoForm = parent.find('#tipoItemForm');
 		let costoForm = parent.find('.costoForm');
@@ -3328,7 +3337,6 @@ var Cotizacion = {
 		// tachadoDistribucion.find('tbody').html('');
 		// tachadoDistribucion.addClass('d-none');
 	},
-
 	actualizarCotizacionView: function (updateEstado) {
 		let formValues = Fn.formSerializeObject('formActualizarCotizacion');
 		formValues.archivosEliminados = Cotizacion.archivoEliminado;
@@ -3359,7 +3367,6 @@ var Cotizacion = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-
 	duplicarCotizacionView: function (idCotizacion) {
 		let formValues = Fn.formSerializeObject('formDuplicarCotizacion');
 
@@ -3379,6 +3386,26 @@ var Cotizacion = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
+	},
+	multiplicarCantidadCostoPersonal: function (t) {
+		let _this = $(t);
+		let cantidad = _this.closest('tr').find('.cntPersonal').val();
+		if (typeof cantidad === 'undefined') cantidad = 0;
+		let costo = _this.closest('tr').find('.cstPersonal').val();
+		let montoCalculado = parseFloat(cantidad) * parseFloat(costo);
+
+		_this.closest('tr').find('.sbtPersonal').val(montoCalculado.toFixed(2));
+
+		let total_adicional = 0;
+		_this.closest('table').find('tr').each(function () {
+			cantidad = 0;
+			if (typeof $(this).find('.sbtPersonal').val() !== 'undefined') {
+				cantidad = $(this).find('.sbtPersonal').val();
+			}
+			total_adicional += parseFloat(cantidad);
+		});
+		// '.total_adicionales'
+		_this.closest('.personal_detalle').find('.total_adicionales').val(total_adicional);
 	},
 }
 

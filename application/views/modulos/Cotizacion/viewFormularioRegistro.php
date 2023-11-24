@@ -707,7 +707,7 @@
 								</div>
 								<div class="ui-widget">
 									<div class="ui right action input w-100">
-										<input class="cantidadForm" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+										<input class="cantidadForm onlyNumbers" data-min="1" type="number" name="cantidadForm" placeholder="0" patron="requerido,numerico" min="1" step="1" onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
 									</div>
 								</div>
 							</div>
@@ -727,7 +727,7 @@
 									GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
 								</div>
 								<div class="ui right labeled input">
-									<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm gapFormOperaciones" name="gapForm" placeholder="Gap" value="<?= GAP ?>">
+									<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' id="gapForm" class="onlyNumbers gapForm gapFormOperaciones" name="gapForm" placeholder="Gap" value="<?= GAP ?>">
 									<div class="ui basic label">
 										%
 									</div>
@@ -761,6 +761,36 @@
 
 										</div>
 									</div>
+								</div>
+							</div>
+						</div>
+						<div class="fields fieldPersonal d-none">
+							<div class="eight wide field">
+								<div class="ui sub header">FEE 1</div>
+								<div class="ui right labeled input">
+									<input data-max='100' data-min='0' class="onlyNumbers fee1Form keyUpChange" name="fee1" value="0" onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();">
+									<div class="ui basic label">%</div>
+								</div>
+							</div>
+							<div class="eight wide field">
+								<div class="ui sub header">TOTAL FEE 1</div>
+								<div class="ui right labeled input">
+									<input class="onlyNumbers fee1FormTotal" name="fee1Item" value="0" readonly>
+								</div>
+							</div>
+						</div>
+						<div class="fields fieldPersonal d-none">
+							<div class="eight wide field">
+								<div class="ui sub header">FEE 2</div>
+								<div class="ui right labeled input">
+									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2" value="0" onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();">
+									<div class="ui basic label">%</div>
+								</div>
+							</div>
+							<div class="eight wide field">
+								<div class="ui sub header">TOTAL FEE 2</div>
+								<div class="ui right labeled input">
+									<input data-max='100' data-min='0' class="onlyNumbers fee2FormTotal" name="fee2Item" value="0">
 								</div>
 							</div>
 						</div>

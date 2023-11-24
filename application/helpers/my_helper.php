@@ -158,10 +158,10 @@ function colorCuenta()
 	return $return;
 }
 
-function moneda($valor, $igv = false, $dec = 2)
+function moneda($valor, $igv = false, $dec = 2, $forzar = false)
 {
 	if ($igv) $valor = $valor / 1.18;
-	if (is_string($valor)) return $valor;
+	if (is_string($valor) && !$forzar) return $valor;
 	else {
 		$valor = 'S/ ' . number_format($valor, $dec, '.', ',');
 		return $valor;

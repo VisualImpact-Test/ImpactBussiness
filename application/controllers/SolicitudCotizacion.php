@@ -1114,7 +1114,7 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion([
 			'idCotizacion' => $idCotizacion,
 			'cotizacionInterna' => true,
-			'noTipoItem' => COD_DISTRIBUCION['id']
+			'noTipoItem' => COD_DISTRIBUCION['id'] . ',' . COD_PERSONAL['id']
 		])['query']->result_array();
 
 		$cotizacionDetalleSub =  $this->model->obtenerInformacionDetalleCotizacionSub(

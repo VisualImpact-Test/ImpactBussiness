@@ -476,6 +476,10 @@ class Cotizacion extends MY_Controller
 		$post['caracteristicasCompras'] = checkAndConvertToArray($post['caracteristicasCompras']);
 		$post['caracteristicasProveedor'] = checkAndConvertToArray($post['caracteristicasProveedor']);
 		$post['costoForm'] = checkAndConvertToArray($post['costoForm']);
+		$post['fee1'] = checkAndConvertToArray($post['fee1']);
+		$post['fee2'] = checkAndConvertToArray($post['fee2']);
+		$post['fee1Item'] = checkAndConvertToArray($post['fee1Item']);
+		$post['fee2Item'] = checkAndConvertToArray($post['fee2Item']);
 		$post['subtotalForm'] = checkAndConvertToArray($post['subtotalForm']);
 		$post['idProveedorForm'] = checkAndConvertToArray($post['idProveedorForm']);
 		$post['gapForm'] = checkAndConvertToArray($post['gapForm']);
@@ -585,6 +589,10 @@ class Cotizacion extends MY_Controller
 				'nombre' => trim($nameItem),
 				'cantidad' => $post['cantidadForm'][$k],
 				'costo' => !empty($post['costoForm'][$k]) ? $post['costoForm'][$k] : NULL,
+				'fee1Por' => !empty($post['fee1'][$k]) ? $post['fee1'][$k] : NULL,
+				'fee2Por' => !empty($post['fee2'][$k]) ? $post['fee2'][$k] : NULL,
+				'fee1Monto' => !empty($post['fee1Item'][$k]) ? $post['fee1Item'][$k] : NULL,
+				'fee2Monto' => !empty($post['fee2Item'][$k]) ? $post['fee2Item'][$k] : NULL,
 				'gap' => !empty($post['gapForm'][$k]) ? $post['gapForm'][$k] : NULL,
 				'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 				'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
@@ -1063,6 +1071,8 @@ class Cotizacion extends MY_Controller
 				// Para cabeceras del PDF
 				if (!$dataParaVista['cabecera']['incluyeTransporte'])
 					$dataParaVista['cabecera']['incluyeTransporte'] = ($row['idItemTipo'] == COD_TRANSPORTE['id']);
+				if (!$dataParaVista['cabecera']['incluyePersonal'])
+					$dataParaVista['cabecera']['incluyePersonal'] = ($row['idItemTipo'] == COD_PERSONAL['id']);
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -1100,6 +1110,11 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['mesInicio'] = $row['mesInicio'];
 				$dataParaVista['detalle'][$key]['mesFin'] = $row['mesFin'];
 				$dataParaVista['detalle'][$key]['cantidad_personal'] = $row['cantidad_personal'];
+				$dataParaVista['detalle'][$key]['fee1Por'] = $row['fee1Por'];
+				$dataParaVista['detalle'][$key]['fee2Por'] = $row['fee2Por'];
+				$dataParaVista['detalle'][$key]['fee1Monto'] = $row['fee1Monto'];
+				$dataParaVista['detalle'][$key]['fee2Monto'] = $row['fee2Monto'];
+				logError($row['fee2Monto']);
 
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
@@ -1152,6 +1167,9 @@ class Cotizacion extends MY_Controller
 			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
 			$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 
+			if ($dataParaVista['cabecera']['incluyePersonal']) {
+				$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/bodyPersonal", $dataParaVista, true);
+			}
 			require APPPATH . '/vendor/autoload.php';
 			$orientation = '';
 			if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
@@ -4360,7 +4378,6 @@ class Cotizacion extends MY_Controller
 
 	public function obtener_sueldos()
 	{
-
 		$data = json_decode($this->input->post('data'), true);
 
 		$idCuenta = $data['idCuenta'];
@@ -4375,7 +4392,7 @@ class Cotizacion extends MY_Controller
 		$refrigerio = 0;
 		$incentivo = 0;
 		$tipo_cargo_sueldo = 0;
-		$asignacionFamiliar = 0;
+		$asignacionFamiliar = 102.5;
 		if ($total == 1) {
 			foreach ($data as $row) {
 				$tipo_cargo_sueldo = 0;
@@ -4394,7 +4411,6 @@ class Cotizacion extends MY_Controller
 		$result['movilidad'] = $movilidad;
 		$result['incentivo'] = $incentivo;
 		$result['asignacionFamiliar'] = $asignacionFamiliar;
-
 		echo json_encode($result);
 	}
 
@@ -4422,7 +4438,7 @@ class Cotizacion extends MY_Controller
 			$html .= "<tr>";
 			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
 			$html .= '<td><div style="padding:15px;"><select name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
-			$html .= '<td><div style="padding:15px;"><input name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="cntPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
 			$html .= '<td>
 							<div style="padding:15px;">
 								<select name="frecuencia_' . $row['id_campo'] . '" id="frecuencia_' . $row['id_campo'] . '">
@@ -4434,8 +4450,8 @@ class Cotizacion extends MY_Controller
 								</select>
 							</div>
 						</td>';
-			$html .= '<td><div style="padding:15px;"><input name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '" readonly></div></td>';
-			$html .= '<td><div style="padding:15px;"><input name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '" readonly></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="cstPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="sbtPersonal" name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '" readonly></div></td>';
 			$html .= "</tr>";
 			$total_adicional = $row['total_final'];
 		}
