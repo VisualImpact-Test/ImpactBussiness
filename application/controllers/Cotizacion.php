@@ -2089,7 +2089,7 @@ class Cotizacion extends MY_Controller
 					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Debe procesar la información para cargar los pesos']);
 				}
 
-				if (empty($v['zona']) || empty($v['item' . $ki]) || empty($v['tipoServicio']) || $v['pesoTotalVisual' . $ki] == null) {
+				if (empty($v['zona']) /*|| empty($v['item' . $ki])*/ || empty($v['tipoServicio']) || $v['pesoTotalVisual' . $ki] == null) {
 					$result['result'] = 0;
 					goto Respuesta;
 				}
