@@ -68,9 +68,19 @@
 							<div class="ui pointing red basic label">
 								Cotizacion no válida
 							</div>
-						<?php elseif ($row['idCotizacionEstado'] >= ESTADO_COTIZACION_APROBADA && empty($row['numeroGR'])) : ?>
+						<?php elseif (
+							$row['estado'] &&
+							$row['idCotizacionEstado'] >= ESTADO_COTIZACION_APROBADA &&
+							(
+								empty($row['numeroGR']) ||
+								empty($row['codOrdenCompra']) ||
+								empty($row['motivoAprobacion']) ||
+								empty($row['montoOrdenCompra'])
+							)
+						) : ?>
 							<br>
 							<button class="ui pointing red basic label btnAsignarGR">
+								<!-- Falta indicar datos -->
 								Sin indicar GR
 							</button>
 						<?php endif; ?>
