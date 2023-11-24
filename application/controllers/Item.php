@@ -848,7 +848,7 @@ class Item extends MY_Controller
 				['data' => 'subcategoria', 'type' => 'myDropdown', 'placeholder' => 'subCategoria', 'width' => 200, 'source' => $subcategoriaItem],
 				['data' => 'item', 'type' => 'text', 'placeholder' => 'item', 'width' => 200, 'source'],
 				['data' => 'caracteristicas', 'type' => 'text', 'placeholder' => 'caracteristicas', 'width' => 200],
-				['data' => 'logistica', 'type' => 'myDropdown', 'placeholder' => 'logistica', 'width' => 200, 'source' => $logisticaItem],
+				['data' => 'logistica', 'type' => 'myDropdown', 'placeholder' => 'logistica', 'width' => 600, 'source' => $logisticaItem],
 				['data' => 'talla', 'type' => 'text', 'placeholder' => 'talla', 'width' => 200, 'source'],
 				['data' => 'tela', 'type' => 'text', 'placeholder' => 'tela', 'width' => 200, 'source'],
 				['data' => 'color', 'type' => 'text', 'placeholder' => 'color', 'width' => 200, 'source'],

@@ -1,4 +1,4 @@
-<form class="ui form" role="form" id="formRegistroOperValidado" method="post">
+<form class="ui form" role="form" id="formRegistroOperValidado" method="post" autocomplete="off">
 	<div class="ui form attached fluid segment p-4">
 		<h4 class="ui dividing header text-uppercase">DATOS OPER </h4>
 		<input type="hidden" name="idOper" value="<?= $dataOper['idOper'] ?>">
@@ -9,7 +9,7 @@
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Concepto OC</div>
-				<input type="text" name="concepto" value="<?= $dataOper['concepto'] ?>" readonly patron="requerido">
+				<input type="text" name="concepto" value="<?= $dataOper['concepto'] ?>">
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Asunto para Correo</div>
