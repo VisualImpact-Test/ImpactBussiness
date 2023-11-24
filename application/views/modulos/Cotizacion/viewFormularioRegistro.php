@@ -353,13 +353,13 @@
 						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">
 							<table style="width: 100%;">
 								<tr>
-									<td style="width:20%;">
+									<td style="width:18%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Cantidad</div>
 											<input name="cantidad_personal" class="cantidad_personal" id="cantidad_personal" data-cantidad="1" value="0">
 										</div>
 									</td>
-									<td style="width:20%;">
+									<td style="width:18%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Cargo</div>
 											<div class="cargo_rrhh" style="width:100%;">
@@ -367,7 +367,7 @@
 											</div>
 										</div>
 									</td>
-									<td style="width:20%;">
+									<td style="width:18%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Tipo de Contrato</div>
 											<select class="tipo_contrato_personal" name="tipo_contrato_personal" data-obligatorio="1">
@@ -377,7 +377,7 @@
 											</select>
 										</div>
 									</td>
-									<td style="width:20%;">
+									<td style="width:18%;">
 										<div style="padding:15px;">
 											<div class="ui sub header">Tipo Jornada</div>
 											<select class="tipo_jornada_personal" name="tipo_jornada_personal">
@@ -387,7 +387,8 @@
 											</select>
 										</div>
 									</td>
-									<td style="width:20%;"></td>
+									<td style="width:18%;"></td>
+									<td style="width:10%;"></td>
 								</tr>
 								<tr>
 									<td>
@@ -418,10 +419,11 @@
 											<input value="0" class="pago_mensual_personal" id="pago_mensual_personal" name="pago_mensual_personal" readonly>
 										</div>
 									</td>
-									<td style="width:20%;"></td>
+									<td></td>
+									<td></td>
 								</tr>
 								<tr>
-									<td colspan="5">
+									<td colspan="6">
 										<div style="padding:15px;">
 											<div class="ui sub header">Periodo</div>
 										</div>
@@ -450,7 +452,7 @@
 									</td>
 								</tr>
 								<tr>
-									<td colspan="5">
+									<td colspan="6">
 										<div style="padding:15px;">
 											<div class="ui sub header">Estructura Salarial</div>
 										</div>
@@ -460,38 +462,42 @@
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Sueldo</div>
-											<input value="" class="sueldo_personal" name="sueldo_personal" id="sueldo_personal" data-sueldo="1" value="0">
+											<input class="sueldo_personal" name="sueldo_personal" id="sueldo_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Asignacion Familiar</div>
-											<input value="" class="asignacion_familiar_personal" name="asignacion_familiar_personal" id="asignacion_familiar_personal" value="0" readonly>
+											<input class="asignacion_familiar_personal" name="asignacion_familiar_personal" id="asignacion_familiar_personal" value="0" readonly>
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Movilidad</div>
-											<input value="" class="movilidad_personal" name="movilidad_personal" id="movilidad_personal" data-sueldo="1" value="0">
+											<input class="movilidad_personal keyUpChange onlyNumbers" onchange="$(this).closest('tr').find('.sueldo_personal').change();" name="movilidad_personal" id="movilidad_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
 											<div class="ui sub header">Refrigerio</div>
-											<input value="" class="refrigerio_personal" name="refrigerio_personal" id="refrigerio_personal" data-sueldo="1" value="0">
+											<input class="refrigerio_personal keyUpChange onlyNumbers" onchange="$(this).closest('tr').find('.sueldo_personal').change();" name="refrigerio_personal" id="refrigerio_personal" data-sueldo="1" value="0">
 										</div>
 									</td>
 									<td>
 										<div style="padding:15px;">
-
-
 											<div class="ui sub header">Incentivo</div>
-											<input value="" class="incentivo_personal" name="incentivo_personal" id="incentivo_personal" value="0" data-sueldo="1">
+											<input class="incentivo_personal keyUpChange onlyNumbers" onchange="$(this).closest('tr').find('.sueldo_personal').change();" name="incentivo_personal" id="incentivo_personal" value="0" data-sueldo="1">
+										</div>
+									</td>
+									<td>
+										<div style="padding:0px;">
+											<div class="ui sub header">Total</div>
+											<input class="total1Personal keyUpChange onlyNumbers" value="0">
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td colspan="5">
+									<td colspan="6">
 										<div style="padding:15px;">
 											<div class="ui sub header">Cargas Sociales</div>
 										</div>
@@ -512,15 +518,12 @@
 									</td>
 									<td>
 										<div style="padding:15px;">
-
 											<div class="ui sub header">Vacaciones 9.1%</div>
 											<input value="" class="vacaciones_personal" name="vacaciones_personal" id="vacaciones_personal" readonly value="0">
 										</div>
-
 									</td>
 									<td>
 										<div style="padding:15px;">
-
 											<div class="ui sub header">Gratificacion 18.20%</div>
 											<input value="" class="gratificacion_personal" name="gratificacion_personal" id="gratificacion_personal" readonly value="0">
 										</div>
@@ -531,13 +534,17 @@
 											<input value="" class="seguro_vida_personal" name="seguro_vida_personal" id="seguro_vida_personal" readonly value="0">
 										</div>
 									</td>
+									<td>
+										<div style="padding:0px;">
+											<div class="ui sub header">Total</div>
+											<input class="total2Personal keyUpChange onlyNumbers" value="0">
+										</div>
+									</td>
 								</tr>
 							</table>
 							<input class="total_sueldo" type="hidden" value="0">
 							<input class="total_adicionales" type="hidden" value="0" name="total_adicionales">
 							<div class="campos_adicionales">
-
-
 							</div>
 						</div>
 						<!-- Transporte -->
@@ -766,14 +773,14 @@
 						</div>
 						<div class="fields fieldPersonal d-none">
 							<div class="eight wide field">
-								<div class="ui sub header">FEE 1</div>
+								<div class="ui sub header">FEE SUELDO</div>
 								<div class="ui right labeled input">
 									<input data-max='100' data-min='0' class="onlyNumbers fee1Form keyUpChange" name="fee1" value="0" onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();">
 									<div class="ui basic label">%</div>
 								</div>
 							</div>
 							<div class="eight wide field">
-								<div class="ui sub header">TOTAL FEE 1</div>
+								<div class="ui sub header">TOTAL FEE SUELDO</div>
 								<div class="ui right labeled input">
 									<input class="onlyNumbers fee1FormTotal" name="fee1Item" value="0" readonly>
 								</div>
@@ -781,14 +788,14 @@
 						</div>
 						<div class="fields fieldPersonal d-none">
 							<div class="eight wide field">
-								<div class="ui sub header">FEE 2</div>
+								<div class="ui sub header">FEE OPERACION</div>
 								<div class="ui right labeled input">
 									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2" value="0" onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();">
 									<div class="ui basic label">%</div>
 								</div>
 							</div>
 							<div class="eight wide field">
-								<div class="ui sub header">TOTAL FEE 2</div>
+								<div class="ui sub header">TOTAL FEE OPERACION</div>
 								<div class="ui right labeled input">
 									<input data-max='100' data-min='0' class="onlyNumbers fee2FormTotal" name="fee2Item" value="0">
 								</div>
