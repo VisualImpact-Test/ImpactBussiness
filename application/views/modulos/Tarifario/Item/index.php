@@ -17,7 +17,6 @@
 		</div>
 	</div>
 </div>
-
 <div class="customizer border-left-blue-grey border-left-lighten-4 d-none d-xl-block">
 	<a href="javascript:;" class="customizer-close"><i class="fal fa-times"></i></a>
 	<a href="javascript:;" class="customizer-toggle box-shadow-3 bg-trade-visual-grad-left text-white">
@@ -42,11 +41,11 @@
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
 				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
-                    <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
-                </button>
+					<i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
+				</button>
 				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
-                    <i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
-                </button>
+					<i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
@@ -104,11 +103,23 @@
 							<div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
 								<label class="btn btn-outline-secondary custom_tooltip">
 									<span class="tooltiptextButton">Mostrar solo los de uso actual</span>
-									<input type="radio" name="chMostrar" class="chMostrar" value="1"> Actual </i>
+									<input type="radio" name="chMostrar" class="chMostrar" value="1"> Flag Actual </i>
 								</label>
-								<label class="btn btn-outline-secondary  custom_tooltip">
+								<label class="btn btn-outline-secondary custom_tooltip">
 									<span class="tooltiptextButton">Mostrar todos</span>
 									<input type="radio" name="chMostrar" class="chMostrar" checked="checked" value="0"> Todos </i>
+								</label>
+							</div>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group chk_quiebres">
+							<div class="btn-group btn-group-toggle w-100" data-toggle="buttons">
+								<label class="btn btn-outline-secondary custom_tooltip">
+									<span class="tooltiptextButton">Mostrar solo con los precios vigentes</span>
+									<input type="radio" name="chMostrarVigentes" class="chMostrar" value="1"> Vigentes </i>
+								</label>
+								<label class="btn btn-outline-secondary custom_tooltip">
+									<span class="tooltiptextButton">Mostrar todos</span>
+									<input type="radio" name="chMostrarVigentes" class="chMostrar" checked="checked" value="0"> Todos </i>
 								</label>
 							</div>
 						</div>
@@ -119,10 +130,10 @@
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<h4><i class="fas fa-lg fa-circle" style="color: red;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vencido</span></i></h4>
+							<h4><i class="fas fa-lg fa-circle" style="color: red;"> <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Vencido</span></i></h4>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<h4><i class="fa fa-lg fa-circle" style="color: green;">  <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Actual</span></i></h4>
+							<h4><i class="fa fa-lg fa-circle" style="color: green;"> <span style="font-family:Lato,'Helvetica Neue',Arial,Helvetica,sans-serif;font-size:initial;"> Actual</span></i></h4>
 						</div>
 					</div>
 				</div>
@@ -136,7 +147,6 @@
 		</form>
 	</div>
 </div>
-
 <div class="main-card mb-3 card">
 	<div class="card-body p-0">
 		<div class="tab-content" id="content-auditoria">
