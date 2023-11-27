@@ -140,7 +140,7 @@ class SolicitudCotizacion extends MY_Controller
 		$dataParaVista['cotizacion']['cuenta'] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $coti['idCuenta']])->row_array()['nombre'];
 		$dataParaVista['cotizacion']['centroCosto'] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $coti['idCentroCosto']])->row_array()['subcanal'];
 
-		$dataParaVista['cotizacionDetalle'] = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $coti['idCotizacion']])->result_array();
+		$dataParaVista['cotizacionDetalle'] = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $coti['idCotizacion'], 'idItemTipo' => COD_TRANSPORTE['id']])->result_array();
 
 		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
 			$dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();

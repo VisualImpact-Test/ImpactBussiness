@@ -1117,7 +1117,6 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['fee2Por'] = $row['fee2Por'];
 				$dataParaVista['detalle'][$key]['fee1Monto'] = $row['fee1Monto'];
 				$dataParaVista['detalle'][$key]['fee2Monto'] = $row['fee2Monto'];
-				logError($row['fee2Monto']);
 
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
@@ -2260,6 +2259,9 @@ class Cotizacion extends MY_Controller
 		)['query']->result_array();
 
 		foreach ($cotizacionDetalleSub as $sub) {
+			$sub['provincia'] = $this->db->distinct()->select('provincia')->get_where('General.dbo.ubigeo', ['cod_departamento' => $sub['cod_departamento'], 'cod_provincia' => $sub['cod_provincia']])->row_array()['provincia'];
+			$sub['distrito'] = $this->db->distinct()->select('distrito')->get_where('General.dbo.ubigeo', ['cod_departamento' => $sub['cod_departamento'], 'cod_provincia' => $sub['cod_provincia'], 'cod_distrito' => $sub['cod_distrito']])->row_array()['distrito'];
+			$sub['tipoServicioUbigeo'] = $this->db->get_where('compras.tipoServicioUbigeo', ['idTipoServicioUbigeo' => $sub['idTipoServicioUbigeo']])->row_array()['nombreAlternativo'];
 			$config['data']['cotizacionDetalleSub'][$sub['idCotizacionDetalle']][$sub['idItemTipo']][] = $sub;
 		}
 
@@ -2407,7 +2409,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
-
+		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}

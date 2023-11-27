@@ -589,6 +589,7 @@ var Cotizacion = {
 			let idRepetido2 = parent.find("#distribucion");
 			let buscado2 = idRepetido2.find("#distribucion2");
 			let elementoBuscado2 = buscado2.data('id');
+			let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 
 			// EN CASO NO SEA TRANSPORTE QUITAR LA ETIQUETA DE OBLIGATORIO
 			allFeatures.find('input.formTransporte').removeAttr("patron");
@@ -619,7 +620,6 @@ var Cotizacion = {
 					(parent.find('.cCompras')).addClass('d-none');
 					(parent.find('.cantPDV')).removeClass('d-none');
 
-					let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 					cotizacionInternaForm.val(0); //Sin cotizacion Interna
 					var empresas = [1, 2, 11, 13, 36, 52, 54];
 					for (let i = 0; i < empresas.length; i++) {
@@ -663,6 +663,7 @@ var Cotizacion = {
 				Cotizacion.cleanDetalle(parent);
 
 			} else if (idTipo == COD_PERSONAL.id) {
+				cotizacionInternaForm.val(0); //Sin cotizacion Interna
 				control.closest('.body-item').find('.fieldPersonal').removeClass('d-none');
 				$('.no-personal').addClass('d-none');
 				$('.personal').removeClass('d-none');
@@ -691,10 +692,7 @@ var Cotizacion = {
 					btn[0] = { title: 'Aceptar', fn: fn[0] };
 
 					Fn.showModal({ id: modalId, show: true, title: 'Alerta', frm: message, btn: btn, width: '40%' });
-
 				}
-				//////////////////
-
 			} else if (idTipo == COD_TRANSPORTE.id) {
 				if (Cotizacion.provincias = []) {
 					$.post(site_url + Cotizacion.url + 'getAllProvincias', {}, function (d) {
@@ -2178,17 +2176,17 @@ var Cotizacion = {
 			let cod = control.val();
 			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
 			var datt = $('#ordenServicioDatos').val();
-			
+
 			var dataArray = JSON.parse(datt);
 			var idCuentaFilter = parseInt(cod); // Valor de idCuenta a filtrar
-			var filteredArray = dataArray.filter(function(element) {
-			return element.idCuenta === idCuentaFilter;
+			var filteredArray = dataArray.filter(function (element) {
+				return element.idCuenta === idCuentaFilter;
 			});
 			$('#ordenServicioSelect').empty();
 			$('#ordenServicioSelect').append($('<option></option>').val("").text("SELECCIONE"));
-			$.each(filteredArray, function(index, element) {
+			$.each(filteredArray, function (index, element) {
 				$('#ordenServicioSelect').append($('<option></option>').val(element.id).text(element.value));
-			  });
+			});
 
 		});
 

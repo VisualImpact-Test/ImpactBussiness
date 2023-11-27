@@ -68,7 +68,38 @@
 				<p><?= moneda($montoSub); ?></p>
 			</td>
 		</tr>
-		<tr class="height:100px" style="background-color: #F6FAFD;">
+		<?php $fee = []; ?>
+		<?php
+		if (!empty($detalle[$keyDelPersonal]['fee1Por'])) {
+			if (!isset($fee[$detalle[$keyDelPersonal]['fee1Por']])) {
+				$fee[$detalle[$keyDelPersonal]['fee1Por']] = 0;
+			}
+			$fee[$detalle[$keyDelPersonal]['fee1Por']] += $detalle[$keyDelPersonal]['fee1Monto'];
+		}
+		if (!empty($detalle[$keyDelPersonal]['fee2Por'])) {
+			if (!isset($fee[$detalle[$keyDelPersonal]['fee2Por']])) {
+				$fee[$detalle[$keyDelPersonal]['fee2Por']] = 0;
+			}
+			$fee[$detalle[$keyDelPersonal]['fee2Por']] += $detalle[$keyDelPersonal]['fee2Monto'];
+		}
+		if (!empty($cabecera['fee'])) {
+			if (!isset($fee[$cabecera['fee']])) {
+				$fee[$cabecera['fee']] = 0;
+			}
+			$fee[$cabecera['fee']] += $cabecera['fee_prc'];
+		}
+		?>
+		<?php foreach ($fee as $k => $v) : ?>
+			<tr class="height:100px" style="background-color: #F6FAFD;">
+				<td colspan="5" class="text-right bold">
+					<p>FEE <?= $k . '%' ?></p>
+				</td>
+				<td class="text-right">
+					<p><?= moneda($v, false, 2, true) ?></p>
+				</td>
+			</tr>
+		<?php endforeach; ?>
+		<!-- <tr class="height:100px" style="background-color: #F6FAFD;">
 			<td colspan="5" class="text-right bold">
 				<p>FEE <?= verificarEmpty($detalle[$keyDelPersonal]['fee1Por'], 2) . '%' ?></p>
 			</td>
@@ -91,7 +122,7 @@
 			<td class="text-right">
 				<p><?= moneda(($cabecera['fee_prc'])) ?></p>
 			</td>
-		</tr>
+		</tr> -->
 		<tr class="height:100px" style="background-color: #FFE598;">
 			<td colspan="5" class="text-right bold" style="color:black">
 				<p>TOTAL</p>
