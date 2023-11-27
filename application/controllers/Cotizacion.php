@@ -110,7 +110,7 @@ class Cotizacion extends MY_Controller
 		$result['msg']['title'] = 'Información actualizada';
 		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
 
-		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr']], ['idCotizacion' => $post['idCotizacion']]))
+		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr'],'fechaGR' => $post['fechaGR']], ['idCotizacion' => $post['idCotizacion']]))
 			$result['result'] = 1;
 
 		echo json_encode($result);
