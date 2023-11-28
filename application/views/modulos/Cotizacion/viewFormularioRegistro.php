@@ -242,7 +242,7 @@
 						<div class="fields cantPDV d-none">
 							<div class="three wide field">
 								<div class="ui sub header">Costo Packing</div>
-								<select name="flagPackingSolicitado" onchange="$('.divCostoPacking').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+								<select name="flagPackingSolicitado" onchange="$(this).closest('.body-item').find('.divCostoPacking').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
 									<option value="0" selected>No requerido</option>
 									<option value="1">Requerido</option>
 								</select>
@@ -253,7 +253,7 @@
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Costo Movilidad</div>
-								<select name="flagMovilidadSolicitado" onchange="$('.divCostoMovilidad').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+								<select name="flagMovilidadSolicitado" onchange="$(this).closest('.body-item').find('.divCostoMovilidad').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
 									<option value="0" selected>No requerido</option>
 									<option value="1">Requerido</option>
 								</select>
@@ -264,7 +264,7 @@
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Costo Personal</div>
-								<select name="flagPersonalSolicitado" onchange="$('.divCostoPersonal').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
+								<select name="flagPersonalSolicitado" onchange="$(this).closest('.body-item').find('.divCostoPersonal').toggleClass('d-none');" class="ui basic floating dropdown button simpleDropdown">
 									<option value="0" selected>No requerido</option>
 									<option value="1">Requerido</option>
 								</select>
