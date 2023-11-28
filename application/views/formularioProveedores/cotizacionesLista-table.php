@@ -26,9 +26,11 @@
 							<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $row['idCotizacionDetalleProveedor'] ?>">
 						</td>
 						<td>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>">
-								<i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
-							</a>
+							<?php if (!empty($row['idCotizacionDetalleProveedor'])) : ?>
+								<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>">
+									<i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
+								</a>
+							<?php endif; ?>
 							<?php if (!empty($row['ocGen'])) :  ?>
 								<?php foreach ($row['ocGen'] as $koc => $voc) : ?>
 									<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $voc['idOrdenCompra'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">

@@ -218,7 +218,7 @@ class M_Item extends MY_Model
 		)
 		select 
 			i.idItem as value,
-			i.nombre + ' ' + i.caracteristicas as label,
+			i.nombre + ' ' + ISNULL(i.caracteristicas, '') as label,
 			it.costo,
 			it.idProveedor,
 			pr.razonSocial as proveedor,
