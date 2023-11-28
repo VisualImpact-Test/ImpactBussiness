@@ -1098,11 +1098,11 @@ var Cotizacion = {
 			let fee1Result = thisControlParents.find('.fee1FormTotal');
 			let fee2Result = thisControlParents.find('.fee2FormTotal');
 
-			//.closest('.body-item')
 			totalParaElFee2 = thisControlParents.closest('.body-item').find('.total_adicionales').val();
+			// Se le quita el total_adicional a personal para calcular el fee1 correctamente;
+			if (tipoItem.val() == COD_PERSONAL.id) subTotal = subTotal - parseFloat(thisControl.closest('.body-item').find('.total_adicionales').val());
 			fee1Result.val((subTotal * fee1 / 100).toFixed(4));
 			fee2Result.val((totalParaElFee2 * fee2 / 100).toFixed(4));
-
 		});
 		$(document).on('keyup', '.cantidadSubItemDistribucion', function (e) {
 			e.preventDefault();
