@@ -37,7 +37,7 @@
 								<?php if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS && $row['cantidadTransporte'] == '0') :  ?>
 									<a href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) :  ?>
@@ -46,6 +46,9 @@
 								<?php if ($row['idCotizacionEstado'] == 1 || $row['idCotizacionEstado'] == 2 || $row['idCotizacionEstado'] == 3) :  ?>
 									<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
 								<?php endif; ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) :  ?>
+									<a href="javascript:;" class="btn d-none btn-outline-secondary border-0 btn-completarDatos btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-glasses" title="Ver Detalle de Cotizacion"></i></a>
+								<?php endif; ?>	
 							</div>
 						<?php endif; ?>
 					</td>
