@@ -694,8 +694,12 @@ class Cotizacion extends MY_Controller
 				case COD_PERSONAL['id']:
 					$tienePersonal = true;
 					$data['subDetalle'][$k] = getDataRefactorizada([
-						'sueldo' => $post["sueldo_personal"],
-						'asignacionFamiliar' => $post["asignacion_familiar_personal"]
+						'idConcepto' => $post["idCampoPersonal[$k]"],
+						'flagConcepto' => $post["incluirCampoPersonal[$k]"],
+						'cantidad' => $post["cantidadCampoPersonal[$k]"],
+						'frecuencia' => $post["frecuenciaCampoPersonal[$k]"],
+						'costo' => $post["costoCampoPersonal[$k]"],
+						'subtotal' => $post["costoTotalCampoPersonal[$k]"]
 					]);
 					break;
 					// Revisar que el sueldo se guarde....
@@ -4460,6 +4464,8 @@ class Cotizacion extends MY_Controller
 		$data = json_decode($this->input->post('data'), true);
 		$id = $data['id'];
 		$cantidad = $data['cantidad'];
+		$posicion = $data['posicion'];
+		// Emplear la posicion para modificar los name del subdetalle;
 		$adicionales = $this->model->obtener_conceptos_adicionales($id, $cantidad)->result_array();
 		$html = "";
 		$total_adicional = 0;
@@ -4476,22 +4482,22 @@ class Cotizacion extends MY_Controller
 			";
 		foreach ($adicionales as $row) {
 			$html .= "<tr>";
-			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '</div></td>';
-			$html .= '<td><div style="padding:15px;"><select class="consideracionPersonal" name="seleccionar_' . $row['id_campo'] . '" id="seleccionar_' . $row['id_campo'] . '"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
-			$html .= '<td><div style="padding:15px;"><input class="cntPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="cantidad_' . $row['id_campo'] . '" id="' . $row['id_campo'] . '" value="' . $cantidad . '"></div></td>';
+			$html .= '<td><div style="padding:15px;">' . $row['nombre'] . '<input type="hidden" name="idCampoPersonal[' . $posicion . ']" value="' . $row['idConcepto'] . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><select class="consideracionPersonal" name="incluirCampoPersonal[' . $posicion . ']"><option value="1">SI</option><option value="2">NO</option></select></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="cntPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="cantidadCampoPersonal[' . $posicion . ']" value="' . $cantidad . '"></div></td>';
 			$html .= '<td>
 							<div style="padding:15px;">
-								<select name="frecuencia_' . $row['id_campo'] . '" id="frecuencia_' . $row['id_campo'] . '">
-									<option value="1">mensual</option>
-									<option value="2">bimestral</option>
+								<select name="frecuenciaCampoPersonal[' . $posicion . ']">
+									<option value="1">Mensual</option>
+									<option value="2">Bimestral</option>
 									<option value="3">Trimestral</option>
-									<option value="4">semestral</option>
-									<option value="5">anual</option>
+									<option value="4">Semestral</option>
+									<option value="5">Anual</option>
 								</select>
 							</div>
 						</td>';
-			$html .= '<td><div style="padding:15px;"><input class="cstPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="costo_' . $row['id_campo'] . '" id="costo_' . $row['id_campo'] . '" value="' . $row['costo'] . '"></div></td>';
-			$html .= '<td><div style="padding:15px;"><input class="sbtPersonal" name="costo_total_' . $row['id_campo'] . '" id="costo_total_' . $row['id_campo'] . '" value="' . $row['total'] . '" readonly></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="cstPersonal keyUpChange onlyNumbers" onchange="Cotizacion.multiplicarCantidadCostoPersonal(this);" name="costoCampoPersonal[' . $posicion . ']" value="' . $row['costo'] . '"></div></td>';
+			$html .= '<td><div style="padding:15px;"><input class="sbtPersonal" name="costoTotalCampoPersonal[' . $posicion . ']" value="' . $row['total'] . '" readonly></div></td>';
 			$html .= "</tr>";
 			$total_adicional = $row['total_final'];
 		}

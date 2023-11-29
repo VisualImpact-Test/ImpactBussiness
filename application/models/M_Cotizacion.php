@@ -1640,7 +1640,9 @@ class M_Cotizacion extends MY_Model
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
-
+							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						];
 					} else {
 						$insertSubItem[] = [
@@ -1681,6 +1683,9 @@ class M_Cotizacion extends MY_Model
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
+							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						];
 					}
 				}
