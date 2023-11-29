@@ -100,7 +100,7 @@
 											</a>
 										</div>
 									<?php else : ?>
-										<?php if (!empty($row['adjuntoFechaEjecucion'])) : ?>
+										<?php if (!empty($row['adjuntoFechaEjecucion'][0]['nombre_archivo'])) : ?>
 											<a class="ui button" href="<?= RUTA_WASABI . 'fechaEjecucion/' . $row['adjuntoFechaEjecucion'][0]['nombre_archivo']; ?>" target="_blank">
 											<?php endif; ?>
 											<?php if ($row['fechaInicio'] == '1900-01-01') : ?>
@@ -108,7 +108,7 @@
 											<?php else : ?>
 												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
 											<?php endif; ?>
-											<?php if (!empty($row['adjuntoFechaEjecucion'])) : ?>
+											<?php if (!empty($row['adjuntoFechaEjecucion'][0]['nombre_archivo'])) : ?>
 											</a>
 										<?php endif; ?>
 									<?php endif; ?>
@@ -120,12 +120,12 @@
 					<td>
 						<?php if ($row['status'] == 'Aprobado' && $row['solicitarFecha'] == '1' && $row['flagFechaRegistro'] == '1') :  ?>
 							<?php if (empty($row['sustentoComp'][$row['idCotizacionDetalleProveedor']])) :  ?>
-								<a class="ui basic button formSustServ" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+								<a class="ui basic button formSustServ" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
 									<i class="icon upload"></i>
 									Indicar Sustento
 								</a>
 							<?php else : ?>
-								<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+								<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>"  data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
 									<i class="icon search"></i>
 									Sustento Enviado
 								</a>
@@ -145,7 +145,7 @@
 												</a>
 											</div>
 										<?php else : ?>
-											<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>">
+											<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
 												<i class="icon search"></i>
 												Sustento enviado correctamente
 											</a>

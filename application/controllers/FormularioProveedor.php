@@ -634,7 +634,13 @@ class FormularioProveedor extends MY_Controller
 			foreach ($st as $vt) {
 				if (!empty($vt['tituloParaOC'])) $title[] = $vt['tituloParaOC'];
 				if ($vt['idItemTipo'] == COD_SERVICIO['id'] || $vt['idItemTipo'] == COD_DISTRIBUCION['id']) $dataParaVista[$k]['requiereGuia'] = 0;
-				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->get_where('compras.cotizacionDetalleProveedorFechaEjecucion', ['idCotizacionDetalleProveedor' => $v['idCotizacionDetalleProveedor']])->result_array();
+				if (!empty($v['idCotizacionDetalleProveedor']))
+					$where = ['idCotizacionDetalleProveedor' =>  $v['idCotizacionDetalleProveedor']];
+				else
+					$where = ['idCotizacion' =>  $v['idCotizacion'], 'idProveedor' =>  $v['idProveedor']];
+
+				$dataParaVista[$k]['adjuntoFechaEjecucion'] = $this->db->get_where('compras.cotizacionDetalleProveedorFechaEjecucion', $where)->result_array();
+				// log_message('error', $this->db->last_query());
 			}
 			if (!empty($title)) {
 				$dataParaVista[$k]['title'] = 'COTIZACIÓN - ' . implode(', ', $title);
@@ -731,6 +737,12 @@ class FormularioProveedor extends MY_Controller
 				}
 			} else {
 				$dataParaVista[$k]['status'] = 'Aprobado';
+				$fechaEjecCargado = $this->db->get_where('compras.cotizacionDetalleProveedorFechaEjecucion', ['idCotizacion' => $v['idCotizacion'], 'idProveedor' => $v['idProveedor'], 'estado' => 1])->result_array();
+				if (!empty($fechaEjecCargado)) {
+					$dataParaVista[$k]['flagFechaRegistro'] = '1';
+					$dataParaVista[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
+					$dataParaVista[$k]['fechaFinal'] = $fechaEjecCargado[0]['fechaFinal'];
+				}
 			}
 			$dataParaVista[$k]['ocGen'] = $this->model->getDistinctOC(['idCotizacion' => $v['idCotizacion'], 'idProveedor' => $proveedor['idProveedor']])->result_array();
 
@@ -846,7 +858,20 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
-		$dataParaVista['sustentosCargados'] = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedor' => $post['id'], 'estado' => '1'])->result_array();
+		$dataParaVista['idCotizacion'] = $post['idcot'];
+		$dataParaVista['idProveedor'] = $post['idpro'];
+
+		if (!empty($post['id']))
+			$where = ['idCotizacionDetalleProveedor' => $post['id'], 'estado' => '1'];
+		else
+			$where = ['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro'], 'estado' => '1'];
+
+		$dataParaVista['sustentosCargados'] = $this->db
+			->get_where(
+				'compras.cotizacionDetalleProveedorSustentoCompra',
+				$where
+			)
+			->result_array();
 		// $dataParaVista['cotizacion'] = $post['cotizacion'];
 		// $dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
 		$result['result'] = 1;
@@ -868,9 +893,17 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
-		$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacionDetalleProveedor' => $post['id']])->row_array();
-		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')->get_where('compras.sustentoAdjunto', ['idProveedor' => $dc['idProveedor'], 'idCotizacion' => $dc['idCotizacion'], 'estado' => '1'])->result_array();
-		$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(['idCotizacion' => $dc['idCotizacion'], 'idProveedor' => $dc['idProveedor']])->result_array();
+		$dataParaVista['idCotizacion'] = $post['idcot'];
+		$dataParaVista['idProveedor'] = $post['idpro'];
+
+		if (!empty($post['id']))
+			$where = ['idCotizacionDetalleProveedor' => $post['id']];
+		else
+			$where = ['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']];
+		$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', $where)->row_array();
+		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')->get_where('compras.sustentoAdjunto', ['idProveedor' => $post['idpro'], 'idCotizacion' => $post['idcot'], 'estado' => '1'])->result_array();
+
+		$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']])->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Sustentos Cargados';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoSustentoComprobante", $dataParaVista, true);
@@ -997,6 +1030,8 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
+		$dataParaVista['idCotizacion'] = $post['idcot'];
+		$dataParaVista['idProveedor'] = $post['idpro'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroSustentoServicio", $dataParaVista, true);
@@ -1387,19 +1422,6 @@ class FormularioProveedor extends MY_Controller
 		}
 		// Fin: Validaciones anti-errores
 
-		// $data = [
-		// 	'fechaInicio' => $post['fechaIni'],
-		// 	'fechaFinal' => $post['fechaFin'],
-		// 	'flagRevisado' => 1,
-		// 	'flagFechaRegistro' => 1
-		// ];
-		// $where = [
-		// 	'idCotizacion' => $post['cotizacion'],
-		// 	'idProveedor' => $post['proveedor'],
-		// 	'flagAprobado' => 1
-		// ];
-		// $this->db->update('compras.validacionArte', $data, $where);
-
 		$ids_insert = [];
 		$post['base64Adjunto'] = checkAndConvertToArray($post['base64Adjunto']);
 		$post['nameAdjunto'] = checkAndConvertToArray($post['nameAdjunto']);
@@ -1422,6 +1444,8 @@ class FormularioProveedor extends MY_Controller
 				$insertArchivos = [];
 				$insertArchivos = [
 					'idCotizacionDetalleProveedor' => $cdp,
+					'idCotizacion' => $post['cotizacion'],
+					'idProveedor' => $post['proveedor'],
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
 					'nombre_archivo' => $archivoName,
@@ -1439,6 +1463,8 @@ class FormularioProveedor extends MY_Controller
 		} else {
 			$insertArchivos = [
 				'idCotizacionDetalleProveedor' => $cdp,
+				'idCotizacion' => $post['cotizacion'],
+				'idProveedor' => $post['proveedor'],
 				'idTipoArchivo' => null,
 				'nombre_inicial' => null,
 				'nombre_archivo' => null,
@@ -1495,7 +1521,9 @@ class FormularioProveedor extends MY_Controller
 			foreach ($post['enlaces'] as $k => $v) {
 				if (!empty($v)) {
 					$insertArchivos = [
-						'idCotizacionDetalleProveedor' => $post['idCotizacionDetalleProveedor'],
+						'idCotizacionDetalleProveedor' => verificarEmpty($post['idCotizacionDetalleProveedor'], 4),
+						'idCotizacion' => $post['idCotizacion'],
+						'idProveedor' => $post['idProveedor'],
 						'idTipoArchivo' => TIPO_ENLACE,
 						'extension' => '',
 						'nombre_inicial' => 'Enlace',
@@ -1527,7 +1555,9 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos = [];
 				$insertArchivos = [
-					'idCotizacionDetalleProveedor' => $post['idCotizacionDetalleProveedor'],
+					'idCotizacionDetalleProveedor' => verificarEmpty($post['idCotizacionDetalleProveedor'], 4),
+					'idCotizacion' => $post['idCotizacion'],
+					'idProveedor' => $post['idProveedor'],
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
@@ -1541,19 +1571,6 @@ class FormularioProveedor extends MY_Controller
 				$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insertArchivos);
 				$ids_insert[] = $this->db->insert_id();
 			}
-
-			// if (!empty($ids_insert)) {
-			// 	$df = $this->db->where_in('idCotizacionDetalleProveedorSustentoCompra', $ids_insert)->get('compras.cotizacionDetalleProveedorSustentoCompra')->result_array();
-			// 	$d = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idCotizacionDetalleProveedor' => $post['idCotizacionDetalleProveedor']])->row_array();
-			// 	$pro = $this->db->get_where('compras.proveedor', ['idProveedor' => $d['idProveedor']])->row_array();
-			// 	$cot = $this->db->get_where('compras.cotizacion', ['idCotizacion' => $d['idCotizacion']])->row_array();
-			// if (!empty($df)) {
-			// 	$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
-			// 	$cfg['asunto'] = 'IMPACT BUSSINESS - ';
-			// 	$cfg['contenido'] = $this->load->view("email/arteGenerado", ['data' => $df, 'proveedor' => $pro, 'cotizacion' => $cot], true);
-			// 	$this->sendEmail($cfg);
-			// }
-			// }
 		}
 
 		$result['result'] = 1;

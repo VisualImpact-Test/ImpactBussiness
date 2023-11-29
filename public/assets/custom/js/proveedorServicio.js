@@ -262,6 +262,8 @@ var ProveedorServicio = {
 			++modalId;
 			var dataForm = {};
 			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.idcot = $(this).data('idcot');
+			dataForm.idpro = $(this).data('idpro');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
@@ -284,6 +286,8 @@ var ProveedorServicio = {
 			// let id = 
 			var dataForm = {};
 			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.idcot = $(this).data('idcot');
+			dataForm.idpro = $(this).data('idpro');
 			dataForm.mostrarOpcionesExt = '1';
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
@@ -351,6 +355,8 @@ var ProveedorServicio = {
 			++modalId;
 			var dataForm = {};
 			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.idcot = $(this).data('idcot');
+			dataForm.idpro = $(this).data('idpro');
 			dataForm.mostrarOpcionesExt = '1';
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };

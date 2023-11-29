@@ -33,29 +33,32 @@
 							</tr>
 						<?php endforeach; ?>
 						<?php foreach ($sustentosCargados as $k => $row) : ?>
-							<?php $direccion = RUTA_WASABI . 'sustentoServicio/' . verificarEmpty($row['nombre_archivo'], 3); ?>
+							<?php
+							$Carpeta = '-';
+							switch ($row['idFormatoDocumento']) {
+								case '1':
+									$Carpeta = 'Guia';
+									break;
+								case '2':
+									$Carpeta = 'Factura';
+									break;
+								case '3':
+									$Carpeta = 'Xml';
+									break;
+								case '4':
+									$Carpeta = 'Adicional';
+									break;
+								default:
+									$Carpeta = '-';
+									break;
+							}
+							?>
+							<?php $direccion = RUTA_WASABI . 'sustento' . $Carpeta . '/' . verificarEmpty($row['nombre_archivo'], 3); ?>
 							<tr class="default">
 								<td><?= $k + 1 + count($ocGenerado) ?></td>
 								<td>
-									<?php
-									switch ($row['idFormatoDocumento']) {
-										case '1':
-											echo 'Guia';
-											break;
-										case '2':
-											echo 'Factura';
-											break;
-										case '3':
-											echo 'Xml';
-											break;
-										case '4':
-											echo 'Documentos Adicionales';
-											break;
-										default:
-											echo '-';
-											break;
-									}
-									?>
+									<?= $Carpeta; ?>
+
 								</td>
 								<td class="tdEstado">
 									<?php if ($row['flagRevisado'] == '1') :  ?>
