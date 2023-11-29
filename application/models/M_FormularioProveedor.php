@@ -398,6 +398,7 @@ class M_FormularioProveedor extends MY_Model
 			->group_by('cd.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre, cd.idProveedor')
 			->order_by('cp.idCotizacionDetalleProveedor desc');
 
+		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
 		isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
 		return $this->db->get();
 	}
