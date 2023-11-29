@@ -79,13 +79,21 @@
 			</div>
 		</div>
 		<div class="fields">
-			<div class="five wide field">
+			<div class="four wide field">
 				<div class="ui sub header">Prioridad</div>
 				<select class="ui dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
-			<div class="eleven wide field">
+			<div class="three wide field">
+				<div class="ui sub header">Tipo Servicio</div>
+				<select class="ui dropdown semantic-dropdown" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">
+						var_dump($tipoServicioCotizacion);
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicioCotizacion, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
+
+			<div class="six wide field">
 				<div class="ui sub header">Motivo</div>
 				<input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?= !empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
 			</div>

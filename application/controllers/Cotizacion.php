@@ -441,6 +441,7 @@ class Cotizacion extends MY_Controller
 			'diasValidez' => $post['diasValidez'],
 			'idCotizacionEstado' => ESTADO_REGISTRADO,
 			'idUsuarioReg' => $this->idUsuario,
+			'idTipoServicioCotizacion' => $post['tipoServicioCotizacion'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 		];
 
@@ -1522,7 +1523,9 @@ class Cotizacion extends MY_Controller
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['periodo'] = $this->model->obtenerPeriodo()->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
-
+		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
+		//echo $this->db->last_query(); exit();
+		//var_dump($config['data']['tipoServicioCotizacion']);
 		$itemServicio = $this->model_item->obtenerItemServicio();
 		if (!empty($itemServicio)) {
 			foreach ($itemServicio as $key => $row) {

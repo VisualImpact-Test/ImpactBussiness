@@ -138,6 +138,24 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	
+	public function obtenerTipoServicioCotizacion($params = [])
+	{
+		$sql = "
+			select idTipoServicioCotizacion AS id
+			, nombre AS value 
+			from compras.tipoServicioCotizacion where estado = 1
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
 
 	public function obtenerPrioridadCotizacion($params = [])
 	{
