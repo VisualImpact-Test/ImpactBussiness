@@ -823,6 +823,10 @@ class Cotizacion extends MY_Controller
 					'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : 0,
 					'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : 0,
 					'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : 0,
+					'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+					'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+					'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
+					'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : NULL,
 				];
 			}
 
