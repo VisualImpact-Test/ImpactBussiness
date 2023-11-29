@@ -22,12 +22,12 @@
 				<textarea name="enlaces" placeholder="Ingrese los enlaces aquí " rows="6" class="w-100"><?= !empty($dataOper['enlaces']) ? $dataOper['enlaces'] : '' ?></textarea>
 			</div>
 		</div>
-		<? foreach ($data['idCotizacion'] as $idCotizacion) { ?>
+		<?php foreach ($data['idCotizacion'] as $idCotizacion) : ?>
 			<input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
-		<? } ?>
+		<?php endforeach; ?>
 	</div>
 	<div id="accordion">
-		<? foreach ($dataOrden as $k => $orden) { ?>
+		<?php foreach ($dataOrden as $k => $orden) : ?>
 			<div class="ui form attached fluid segment p-4">
 				<button type="button" class="btn px-0 py-2" data-toggle="collapse" data-target="#collapseOne<?= $k ?>" aria-expanded="true" aria-controls="collapseOne<?= $k ?>">
 					<h4 class="ui dividing header text-uppercase">ORDEN COMPRA <?= $orden['proveedor'] ?></h4>
@@ -61,11 +61,11 @@
 								<i class="dropdown icon"></i>
 								<div class="default text">Moneda</div>
 								<div class="menu">
-									<? foreach ($monedas as $moneda) { ?>
+									<?php foreach ($monedas as $moneda) : ?>
 										<div class="item" data-value="<?= $moneda['idMoneda'] ?>">
 											<i class="<?= $moneda['icono'] ?>"></i><?= $moneda['moneda'] ?>
 										</div>
-									<? } ?>
+									<?php endforeach; ?>
 								</div>
 							</div>
 						</div>
@@ -76,9 +76,7 @@
 								<label class="custom-control-label" for="igvOrden"></label>
 							</div>
 						</div>
-
 					</div>
-
 					<div class="fields">
 						<div class="four wide field">
 							<div class="ui sub header">Fecha de entrega</div>
@@ -142,9 +140,7 @@
 					<h5 class="ui dividing header">
 						DETALLE ITEMS
 					</h5>
-					<? foreach ($dataOrdenDet[$orden['idProveedorForm']] as $rowDetalle) {
-					?>
-
+					<?php foreach ($dataOrdenDet[$orden['idProveedorForm']] as $rowDetalle) : ?>
 						<div class="ui grid">
 							<input type="hidden" name="idCotizacionDetalle[<?= $k ?>]" value="<?= $rowDetalle['idCotizacionDetalle'] ?>">
 							<div class="sixteen wide column">
@@ -193,9 +189,7 @@
 										endif;
 										?>
 									</div>
-
 								</div>
-
 								<!-- Monto S/ -->
 								<div class="disabled disabled-visible fields <?= $rowDetalle['tipoItemForm'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
 									<?
@@ -211,7 +205,6 @@
 									endif;
 									?>
 								</div>
-
 								<!-- Servicios -->
 								<div class="disabled disabled-visible ui form attached fluid segment my-3 <?= $rowDetalle['tipoItemForm'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 									<h4 class="ui dividing header">SUB ITEMS</h4>
@@ -223,7 +216,7 @@
 											<?php $var4 = $subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']][0]['marca']; ?>
 											<?php $costoTotal = 0; ?>
 											<?php foreach ($subDetalleOrden[$rowDetalle['idCotizacionDetalle']][COD_SERVICIO['id']] as $dataSubItem) : ?>
-												<?php if (!($var1 == $dataSubItem['sucursal'] && $var2 == $dataSubItem['razonSocial'] && $var3 == $dataSubItem['tipoElemento'] && $var4 == $dataSubItem['marca'])) :  ?>
+												<?php if (!($var1 == $dataSubItem['sucursal'] && $var2 == $dataSubItem['razonSocial'] && $var3 == $dataSubItem['tipoElemento'] && $var4 == $dataSubItem['marca'])) : ?>
 													<?php $var1 = $dataSubItem['sucursal']; ?>
 													<?php $var2 = $dataSubItem['razonSocial']; ?>
 													<?php $var3 = $dataSubItem['tipoElemento']; ?>
@@ -287,7 +280,6 @@
 										<?php endif; ?>
 									</div>
 								</div>
-
 								<!-- Distribucion -->
 								<div class="disabled disabled-visible fields <?= $rowDetalle['tipoItemForm'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_DISTRIBUCION['id'] ?>">
 									<?
@@ -322,7 +314,6 @@
 									endif;
 									?>
 								</div>
-
 								<div class="fields">
 									<div class="five wide field">
 										<div class="ui sub header">Cantidad</div>
@@ -346,11 +337,10 @@
 								</div>
 							</div>
 						</div>
-					<? } ?>
+					<?php endforeach; ?>
 				</div>
-
 			</div>
-		<? } ?>
+		<?php endforeach; ?>
 	</div>
 </form>
 <script>
