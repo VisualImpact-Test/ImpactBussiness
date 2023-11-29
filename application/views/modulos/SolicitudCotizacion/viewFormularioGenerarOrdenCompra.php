@@ -174,6 +174,7 @@
 							</div>
 
 							<!-- Servicios -->
+							<?php $costoTotServ = 0; ?>
 							<div class="disabled disabled-visible ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
 								<div class="content-body-sub-item">
@@ -201,6 +202,7 @@
 												<?php $costoTotal = 0; ?>
 											<?php endif; ?>
 											<?php $costoTotal += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
+											<?php $costoTotServ += (floatval($dataSubItem['cantidad']) * floatval($dataSubItem['costo'])) ?>
 											<input type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 											<div class="fields body-sub-item body-sub-item-servicio">
 												<div class="three wide field">
@@ -303,8 +305,9 @@
 									</div>
 									<div class="ui right labeled input <?= !empty($autorizaciones[$row['idCotizacionDetalle']]) ? 'disabled disabled-visible' : '' ?>">
 										<label for="amount" class="ui label">S/</label>
-										<input class="costoFormLabelEditable costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($row['costo']) ? number_format($row['costo'], 2, '.', ',') : '' ?>">
-										<input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($row['costo']) ? ($row['costo']) : '' ?>" readonly>
+										<?php $montoParaCosto = $costoTotServ != 0 ? $costoTotServ : $row['costo'] ?>
+										<input class="costoFormLabelEditable costoFormLabel onlyNumbers" type="text" placeholder="0.00" value="<?= !empty($montoParaCosto) ? number_format($montoParaCosto, 2, '.', ',') : '' ?>">
+										<input class="costoForm" type="hidden" name="costoForm" patron="requerido" placeholder="0.00" value="<?= !empty($montoParaCosto) ? ($montoParaCosto) : '' ?>" readonly>
 									</div>
 								</div>
 								<div class="three wide field">
