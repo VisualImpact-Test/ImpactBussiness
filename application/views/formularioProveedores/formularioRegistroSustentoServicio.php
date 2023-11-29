@@ -1,5 +1,7 @@
 <form class="form" role="form" id="formRegistroSustentoServicio" method="post">
-	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor?>">
+	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor ?>">
+	<input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
+	<input type="hidden" name="idProveedor" value="<?= $idProveedor ?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

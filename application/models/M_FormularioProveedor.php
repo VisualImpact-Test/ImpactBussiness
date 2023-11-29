@@ -94,12 +94,13 @@ class M_FormularioProveedor extends MY_Model
 		return $this->db->get();
 	}
 
-	function getDistinctOC($params = []) {
+	function getDistinctOC($params = [])
+	{
 		$this->db->distinct()
-		->select('ocd.idOrdenCompra')
-		->from('compras.ordenCompraDetalle ocd')
-		->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle')
-		->join('compras.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra');
+			->select('ocd.idOrdenCompra')
+			->from('compras.ordenCompraDetalle ocd')
+			->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle')
+			->join('compras.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra');
 
 		if (isset($params['idCotizacion'])) {
 			$this->db->where('cd.idCotizacion', $params['idCotizacion']);
@@ -354,6 +355,7 @@ class M_FormularioProveedor extends MY_Model
 
 	public function obtenerListaCotizaciones($params)
 	{
+		/* TODO: BORRAR CUANDO NO HAYA OBSERVACIONES DE INFORMACION - COMENTADO EL 2023-11-28
 		$this->db
 			->select('DISTINCT
 							CONVERT(VARCHAR, min(cdpd.fechaEntrega), 103) AS fechaEntrega,
@@ -371,11 +373,33 @@ class M_FormularioProveedor extends MY_Model
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
 			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor')
-			// ->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = cdpd.idCotizacionDetalle', 'INNER')
-			->where('cp.estado', '1') // ->where('c.idCotizacion', 366)
+			->where('cp.estado', '1')
 			->group_by('cp.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre, cp.idProveedor')
 			->order_by('cp.idCotizacionDetalleProveedor desc');
-		isset($params['idProveedor']) ? $this->db->where('cp.idProveedor', $params['idProveedor']) : '';
+			isset($params['idProveedor']) ? $this->db->where('cp.idProveedor', $params['idProveedor']) : '';
+		*/
+		$this->db
+			->distinct()
+			->select('
+				CONVERT(VARCHAR, min(cdpd.fechaEntrega), 103) AS fechaEntrega,
+				cd.idCotizacion,
+				cp.idCotizacionDetalleProveedor,
+				CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
+				c.nombre, c.motivo, c.total,
+				cc.nombre AS cuentaCentroCosto,
+				cu.nombre AS cuenta, cd.idProveedor')
+			->from('compras.cotizacionDetalle cd')
+			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
+			->join('compras.cotizacionDetalleProveedor cp', 'c.idCotizacion = cp.idCotizacion', 'LEFT')
+			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
+			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
+			->join('compras.cotizacionDetalleProveedorDetalle cdpd', 'cp.idCotizacionDetalleProveedor = cdpd.idCotizacionDetalleProveedor AND cd.idCotizacionDetalle = cdpd.idCotizacionDetalle', 'LEFT')
+			->where('cd.estado', '1')
+			->group_by('cd.idCotizacion, cp.idCotizacionDetalleProveedor, CONVERT(VARCHAR, c.fechaEmision, 103), c.nombre, c.motivo, c.total, cc.nombre, cu.nombre, cd.idProveedor')
+			->order_by('cp.idCotizacionDetalleProveedor desc');
+
+		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
+		isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
 		return $this->db->get();
 	}
 

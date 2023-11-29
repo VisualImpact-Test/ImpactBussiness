@@ -515,10 +515,14 @@ class M_Cotizacion extends MY_Model
 				,pd.fee2Por
 				,pd.fee1Monto
 				,pd.fee2Monto
+<<<<<<< HEAD
 				,p.fechaSustento 
 				, p.fechaEnvioFinanzas 
 				, p.aprovador 
 				, p.montoSincerado
+=======
+				,pd.idCotizacionDetallePersonal
+>>>>>>> 5dceefdc2d58cfc030d4ece7bebb044158f63f9d
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -1254,11 +1258,10 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-
 	public function obtenerOrdenServicio($params = [])
 	{
 		$sql = "
-		SELECT idOrdenServicio AS id ,    idCuenta , 
+		SELECT idOrdenServicio AS id , idCuenta , 
 		CONVERT(varchar, idOrdenServicio) + ' - ' + nombre AS value
 		from compras.ordenservicio
 		WHERE estado = 1
@@ -2372,11 +2375,11 @@ class M_Cotizacion extends MY_Model
 				, ccc.costo
 				, ccc.costo*$cantidad as total
 			FROM 
-				rrhh.dbo.conceptosCotizacion cc
-				JOIN rrhh.dbo.conceptosCotizacionCosto ccc
+				compras.conceptosCotizacion cc
+				JOIN compras.conceptosCotizacionCosto ccc
 					ON ccc.idConcepto=cc.idConcepto
 					AND @fecha BETWEEN ccc.fecIni AND ISNULL(ccc.fecFin,@fecha)
-				JOIN rrhh.dbo.conceptosCotizacionTipo cct
+				JOIN compras.conceptosCotizacionTipo cct
 					ON cct.idConcepto=cc.idConcepto
 			WHERE
 				cct.idTipo=$idTipo

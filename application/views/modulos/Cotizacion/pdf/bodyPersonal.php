@@ -41,11 +41,42 @@
 		</tr>
 	</thead>
 	<tbody>
-		<?php $montoSub = 0; ?>
-		<?php $keyDelPersonal = NULL; ?>
+		<?php $montoSub = []; ?>
+		<?php $montoTotal = 0; ?>
+		<?php $fee = []; ?>
+		<?php // SEPARO EL CALCULO DEL FEE DE CABECERA PARA QUE NO SE ACUMULE EN EL FOREACH
+		if (!empty($cabecera['fee'])) {
+			$fee[$cabecera['fee']] = floatval($cabecera['fee_prc']);
+		}
+		?>
+		<!-- PARA CALCULAR LOS MONTOS DE PERSONAL -->
 		<?php foreach ($detalle as $key => $row) : ?>
-			<?php $montoSub += floatval($row['subtotal']); ?>
+			<?php if ($row['idItemTipo'] == COD_PERSONAL['id']) : ?>
+				<?php if (!isset($montoSub[$row['idCotizacionDetalle']])) $montoSub[$row['idCotizacionDetalle']] = 0; ?>
+				<?php $montoSub[$row['idCotizacionDetalle']] += floatval($row['subtotal']) ?>
+				<!-- PARA EL FEE QUE SE REGISTRA EN PERSONAL -->
+				<?php
+				if (!empty($row['fee1Por'])) {
+					if (!isset($fee[$row['fee1Por']])) {
+						$fee[$row['fee1Por']] = 0;
+					}
+					$fee[$row['fee1Por']] += $row['fee1Monto'];
+				}
+				if (!empty($row['fee2Por'])) {
+					if (!isset($fee[$row['fee2Por']])) {
+						$fee[$row['fee2Por']] = 0;
+					}
+					$fee[$row['fee2Por']] += $row['fee2Monto'];
+				}
+				?>
+				<!--FIN:PARA EL FEE QUE SE REGISTRA EN PERSONAL -->
+			<?php else : ?>
+				<?php if (!isset($montoSub[$row['idCotizacionDetallePersonal']])) $montoSub[$row['idCotizacionDetallePersonal']] = 0; ?>
+				<?php $montoSub[$row['idCotizacionDetallePersonal']] += floatval($row['subtotal']) ?>
+			<?php endif; ?>
+			<?php $montoTotal += floatval($row['subtotal']); ?>
 		<?php endforeach; ?>
+
 		<?php foreach ($detalle as $key => $row) : ?>
 			<?php if ($row['idItemTipo'] == COD_PERSONAL['id']) : ?>
 				<?php $keyDelPersonal = $key; ?>
@@ -54,7 +85,7 @@
 					<td colspan="4">
 						<?= 'Recursos: ' . $row['cantidad_personal'] . ' ' . $row['cargo'] . ' ' . $row['mesInicio'] ?>
 					</td>
-					<td class="text-right"><?= moneda($montoSub) ?></td>
+					<td class="text-right"><?= moneda($montoSub[$row['idCotizacionDetalle']]) ?></td>
 				</tr>
 			<?php endif; ?>
 		<?php endforeach; ?>
@@ -65,40 +96,26 @@
 				<p>SUB TOTAL</p>
 			</td>
 			<td class="text-right bold" style="color:black">
-				<p><?= moneda($montoSub); ?></p>
+				<p><?= moneda($montoTotal); ?></p>
 			</td>
 		</tr>
-		<tr class="height:100px" style="background-color: #F6FAFD;">
-			<td colspan="5" class="text-right bold">
-				<p>FEE <?= verificarEmpty($detalle[$keyDelPersonal]['fee1Por'], 2) . '%' ?></p>
-			</td>
-			<td class="text-right">
-				<p><?= moneda(verificarEmpty($detalle[$keyDelPersonal]['fee1Monto'], 2), false, 2, true) ?></p>
-			</td>
-		</tr>
-		<tr class="height:100px" style="background-color: #F6FAFD;">
-			<td colspan="5" class="text-right bold">
-				<p>FEE <?= verificarEmpty($detalle[$keyDelPersonal]['fee2Por'], 2) . '%' ?></p>
-			</td>
-			<td class="text-right">
-				<p><?= moneda(verificarEmpty($detalle[$keyDelPersonal]['fee2Monto'], 2), false, 2, true) ?></p>
-			</td>
-		</tr>
-		<tr class="height:100px" style="background-color: #F6FAFD;">
-			<td colspan="5" class="text-right bold">
-				<p>FEE <?= !empty($cabecera['fee']) ? $cabecera['fee'] . '%' : '0%' ?></p>
-			</td>
-			<td class="text-right">
-				<p><?= moneda(($cabecera['fee_prc'])) ?></p>
-			</td>
-		</tr>
+		<?php foreach ($fee as $k => $v) : ?>
+			<tr class="height:100px" style="background-color: #F6FAFD;">
+				<td colspan="5" class="text-right bold">
+					<p>FEE <?= $k . '%' ?></p>
+				</td>
+				<td class="text-right">
+					<p><?= moneda($v, false, 2, true) ?></p>
+				</td>
+			</tr>
+		<?php endforeach; ?>
 		<tr class="height:100px" style="background-color: #FFE598;">
 			<td colspan="5" class="text-right bold" style="color:black">
 				<p>TOTAL</p>
 			</td>
 			<td class="text-right bold" style="color:black">
 				<p>
-					<?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc']) +
+					<?= moneda(floatval($montoTotal) + floatval($cabecera['fee_prc']) +
 						floatval($detalle[$keyDelPersonal]['fee1Monto']) + floatval($detalle[$keyDelPersonal]['fee2Monto'])); ?>
 				</p>
 			</td>
