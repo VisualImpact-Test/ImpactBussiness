@@ -213,6 +213,36 @@ class Cotizacion extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioCompletarDatos()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = $this->model->obtenerInformacionCotizacionDetalle($post)['query']->result_array();
+		foreach ($data as $key => $row) {
+			$oper = ($this->db->where('idCotizacion', $row['idCotizacion'])->get('compras.operDetalle'))->row_array();
+			$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
+			$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
+			$dataParaVista['cabecera']['idOper'] = $oper['idOper'];
+			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
+			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+			$dataParaVista['cabecera']['codCotizacion'] = $row['codCotizacion'];
+			$dataParaVista['cabecera']['cotizacionEstado'] = $row['cotizacionEstado'];
+			$dataParaVista['cabecera']['fechaEmision'] = $row['fechaEmision'];
+			$dataParaVista['cabecera']['fechaSustento'] = $row['fechaSustento'];
+			$dataParaVista['cabecera']['fechaEnvioFinanzas'] = $row['fechaEnvioFinanzas'];
+			$dataParaVista['cabecera']['aprovador'] = $row['aprovador'];
+			$dataParaVista['cabecera']['montoSincerado'] = $row['montoSincerado'];
+		}
+		$dataParaVista['linea'] = $this->model->obtenerDetalleLinea($post)['query']->result_array();
+		
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Visualizar Cotizacion';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioCompletarDatos", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function formularioVisualizacionCotizacion()
 	{
 		$result = $this->result;
@@ -4494,4 +4524,36 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+	function guardarCompletarDatos()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$result['result'] = 0;
+		$result['msg']['title'] = 'Información actualizada';
+		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
+
+		if ($this->db->update('compras.cotizacion', ['fechaSustento' => $post['fechaSustento'],'fechaEnvioFinanzas' => $post['fechaEnvioFinanzas'],'aprovador' => $post['aprovador'],'montoSincerado' => $post['montoSincerado']], ['idCotizacion' => $post['idCotizacion']]))
+			$result['result'] = 1;
+
+
+		$insertLinea = [];
+		if (is_array($post['lineaNum'])) {
+		foreach ($post['lineaNum'] as $item) {
+			$insertLinea[] = [
+			'idCotizacion' => $post['idCotizacion'],
+			'cantidad' => $item
+			];
+		}
+		} else {
+			$insertLinea[] = [
+				'idCotizacion' => $post['idCotizacion'],
+				'cantidad' => $post['lineaNum']
+			];
+		}
+
+		$this->model->insertarMasivo('compras.cotizacionLinea', $insertLinea);
+		echo json_encode($result);
+	}
+	
 }

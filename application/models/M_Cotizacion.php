@@ -424,6 +424,21 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerDetalleLinea($params = [])
+	{
+		$sql = "select * from compras.cotizacionLinea
+		where idCotizacion = '".$params['idCotizacion']."'";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerInformacionCotizacionDetalle($params = [])
 	{
 		$filtros = "";
@@ -500,6 +515,10 @@ class M_Cotizacion extends MY_Model
 				,pd.fee2Por
 				,pd.fee1Monto
 				,pd.fee2Monto
+				,p.fechaSustento 
+				, p.fechaEnvioFinanzas 
+				, p.aprovador 
+				, p.montoSincerado
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo

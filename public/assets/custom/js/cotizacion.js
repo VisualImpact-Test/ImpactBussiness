@@ -757,11 +757,58 @@ var Cotizacion = {
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-
+		
 		$(document).on('click', '.btn-finalizarCotizacion', function () {
 			let idCotizacion = $(this).closest('tr').data('id');
 			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion(" + idCotizacion + ")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
 		});
+
+		$(document).on('click', '.btn-completarDatos', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idCotizacion': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioCompletarDatos', 'data': jsonString };
+			//console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formCompletarDatos", fn: "Cotizacion.guardarCompletarDatos()", content: "¿Esta seguro de guardar datos?" });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '55%' });
+
+				Cotizacion.actualizarAutocomplete();
+			});
+
+
+		});
+
+		$(document).on('click', '#btn-añadir-linea', function (e) {
+			e.preventDefault();
+			let lineaNum = $('input[name="agregarLineaNum"]').val();
+			//console.log(lineaNum);
+			if(lineaNum > 0){
+				var html="";
+				html+='<tr>';
+				html+='<td class="text-center">';
+				html+='<input type="text" class="form-control form-control-sm read-only" name="mail_enviar" value="LINEA" >';
+				html+='</td>';
+				html+='<td width="5%">';
+				html+='<input type="text" class="form-control form-control-sm read-only" name="lineaNum" value="'+lineaNum+'" >';
+				html+='</td>';
+				html+='</tr>';
+			$('#tbLineaNum tr:last').after(html);
+			}
+			$('input[name="agregarLineaNum"]').val("");	
+		});
+
+
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
 			if (idOper == undefined) {
@@ -1102,6 +1149,27 @@ var Cotizacion = {
 		});
 		$('.totalForm').val(total);
 		$('.totalFormLabel').val(formatter.format(Number(total)));
+	},
+
+	guardarCompletarDatos: function () {
+		let formValues = Fn.formSerializeObject('formCompletarDatos');
+
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "guardarCompletarDatos";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
 	}
 }
 
