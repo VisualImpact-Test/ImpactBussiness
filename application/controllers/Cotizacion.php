@@ -110,7 +110,7 @@ class Cotizacion extends MY_Controller
 		$result['msg']['title'] = 'Información actualizada';
 		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
 
-		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr'],'fechaGR' => $post['fechaGR']], ['idCotizacion' => $post['idCotizacion']]))
+		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr'], 'fechaGR' => $post['fechaGR']], ['idCotizacion' => $post['idCotizacion']]))
 			$result['result'] = 1;
 
 		echo json_encode($result);
@@ -500,12 +500,10 @@ class Cotizacion extends MY_Controller
 		$post['costoPersonal'] = checkAndConvertToArray($post['costoPersonal']);
 		$post['flagMostrarDetalle'] = checkAndConvertToArray($post['flagMostrarDetalle']);
 		$post['flagOtrosPuntos'] = checkAndConvertToArray($post['flagOtrosPuntos']);
-		// $post['flagDetallePDV'] = checkAndConvertToArray($post['flagDetallePDV']);
 		$post['sueldo_personal'] = checkAndConvertToArray($post['sueldo_personal']);
 		$post['asignacion_familiar_personal'] = checkAndConvertToArray($post['asignacion_familiar_personal']);
 		$post['movilidad_personal'] = checkAndConvertToArray($post['movilidad_personal']);
 		$post['refrigerio_personal'] = checkAndConvertToArray($post['refrigerio_personal']);
-		$post['asignacion_familiar_personal'] = checkAndConvertToArray($post['asignacion_familiar_personal']);
 		$post['essalud_personal'] = checkAndConvertToArray($post['essalud_personal']);
 		$post['cts_personal'] = checkAndConvertToArray($post['cts_personal']);
 		$post['vacaciones_personal'] = checkAndConvertToArray($post['vacaciones_personal']);
@@ -538,6 +536,7 @@ class Cotizacion extends MY_Controller
 		if (isset($post['costoTSVisual'])) $post['costoTSVisual'] = checkAndConvertToArray($post['costoTSVisual']);
 
 		$enviarCorreoPacking = false;
+		$tienePersonal = false;
 		foreach ($post['nameItem'] as $k => $r) {
 			$dataItem = [];
 			$idItem = (!empty($post['idItemForm'][$k])) ? $post['idItemForm'][$k] : NULL;
@@ -693,14 +692,13 @@ class Cotizacion extends MY_Controller
 					}
 					break;
 				case COD_PERSONAL['id']:
-
+					$tienePersonal = true;
 					$data['subDetalle'][$k] = getDataRefactorizada([
 						'sueldo' => $post["sueldo_personal"],
 						'asignacionFamiliar' => $post["asignacion_familiar_personal"]
 					]);
-
 					break;
-
+					// Revisar que el sueldo se guarde....
 				case COD_TEXTILES['id']:
 					$search_textil = [];
 					foreach (checkAndConvertToArray($post["cantidadTextil[$k]"]) as $ixT => $cantT) {
@@ -880,14 +878,50 @@ class Cotizacion extends MY_Controller
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+			if ($tienePersonal) {
+				$dpv['otros'] = $this->db->where('idItemTipo !=', COD_PERSONAL['id'])->get_where('compras.cotizacionDetalle', ['idCotizacion' => $insert['id']])->result_array();
+
+				if (!empty($dpv['otros'])) {
+					$result['result'] = 2;
+					$result['data']['idCotizacion'] = $insert['id'];
+
+					$dpv['personal'] = $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $insert['id'], 'idItemTipo' => COD_PERSONAL['id']])->result_array();
+					$result['msg']['content'] = $this->load->view('modulos/Cotizacion/formularioParaPersonal', $dpv, true);
+				}
+			}
 			$this->db->trans_complete();
 		}
 
 		respuesta:
-
 		echo json_encode($result);
 	}
 
+	public function actualizarCotizacion_personal()
+	{
+		$result = $this->result;
+		$this->db->trans_start();
+		$post = json_decode($this->input->post('data'), true);
+
+		$post['idCotizacionDetallePersonal'] = checkAndConvertToArray($post['idCotizacionDetallePersonal']);
+		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
+
+		$dataParaActualizar = [];
+		foreach ($post['idCotizacionDetallePersonal'] as $k => $v) {
+			$dataParaActualizar[] = [
+				'idCotizacionDetalle' => $post['idCotizacionDetalle'][$k],
+				'idCotizacionDetallePersonal' => $v
+			];
+		}
+		if (!empty($dataParaActualizar)) $this->db->update_batch('compras.cotizacionDetalle', $dataParaActualizar, 'idCotizacionDetalle');
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
 	public function insertarCotizacionDetalleSub($params)
 	{
 		$dataDetalle = $params['data'];
@@ -1076,7 +1110,10 @@ class Cotizacion extends MY_Controller
 					$dataParaVista['cabecera']['incluyeTransporte'] = ($row['idItemTipo'] == COD_TRANSPORTE['id']);
 				if (!$dataParaVista['cabecera']['incluyePersonal'])
 					$dataParaVista['cabecera']['incluyePersonal'] = ($row['idItemTipo'] == COD_PERSONAL['id']);
+				if (!$dataParaVista['cabecera']['incluyeServicio'])
+					$dataParaVista['cabecera']['incluyeServicio'] = ($row['idItemTipo'] == COD_SERVICIO['id']);
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
+				$dataParaVista['detalle'][$key]['idCotizacionDetallePersonal'] = $row['idCotizacionDetallePersonal'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
 				$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
 				$dataParaVista['detalle'][$key]['costo'] = $row['costo'];
@@ -1174,7 +1211,7 @@ class Cotizacion extends MY_Controller
 			}
 			require APPPATH . '/vendor/autoload.php';
 			$orientation = '';
-			if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
+			if ($dataParaVista['cabecera']['incluyeServicio']) {
 				$orientation = 'L';
 			}
 			$mpdf = new \Mpdf\Mpdf([
@@ -1730,7 +1767,6 @@ class Cotizacion extends MY_Controller
 
 		$config['data']['zona'] = [];
 
-
 		foreach ($config['data']['cotizacionDetalle'] as $v) {
 			if ($v['flagPackingSolicitado'] == '1') {
 				$cds = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
@@ -1744,7 +1780,6 @@ class Cotizacion extends MY_Controller
 			// $zz = $this->model->getZonas(['otroAlmacen' => $vz['flagOtrosPuntos'], 'idZona' => $vz['idZona']])->result_array();
 
 		}
-
 
 		$config['data']['itemPacking'] = $this->db->where('flagPacking', 1)->get('compras.item')->result_array();
 		// foreach ($zz as $k => $v) {
@@ -3636,7 +3671,6 @@ class Cotizacion extends MY_Controller
 		foreach ($cotizacionProveedoresVista as $cotizacionProveedorVista) {
 			$config['data']['cotizacionProveedorVista'][$cotizacionProveedorVista['idCotizacionDetalle']][] = $cotizacionProveedorVista;
 		}
-
 		$config['data']['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 		$proveedores = $this->model_proveedor->obtenerInformacionProveedores(['estadoProveedor' => 2])['query']->result_array();
