@@ -81,8 +81,10 @@
 			<?php $indexT = 0 ?>
 			<?php foreach ($detalle as $k => $row) : ?>
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad'] * $row['costo']; ?>
-				<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
-				<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0)); ?>
+				<?php ''; // $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); 
+				?>
+				<?php ''; // $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0)); 
+				?>
 				<?php $mostrarSubDetalle = false; ?>
 				<?php $rowS = 1; ?>
 				<?php if ($row['idItemTipo'] == COD_TEXTILES['id']) :  ?>
@@ -96,6 +98,8 @@
 					<?php $v4 = $subDetalleItem[$row['idItem']][0]['marca'] ?>
 					<?php $costoTotal = 0; ?>
 					<?php foreach ($subDetalleItem[$row['idItem']] as $ks => $vs) : ?>
+						<?php $total += (floatval($vs['cantidad']) * floatval($vs['costo'])); ?>
+						<?php $igv_total += ((floatval($vs['cantidad']) * floatval($vs['costo'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0)); ?>
 						<?php if (!($v1 == $vs['sucursal'] && $v2 == $vs['razonSocial'] && $v3 == $vs['tipoElemento'] && $v4 == $vs['marca'])) :  ?>
 							<tr>
 								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
@@ -142,6 +146,8 @@
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['simboloMoneda']]); ?></td>
 					</tr>
 				<?php else :  ?>
+					<?php $total += (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']); ?>
+					<?php $igv_total += (((($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0)); ?>
 					<tr style="border-bottom: none;">
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>

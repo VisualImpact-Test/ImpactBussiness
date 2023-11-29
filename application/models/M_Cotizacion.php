@@ -446,7 +446,7 @@ class M_Cotizacion extends MY_Model
 	public function obtenerDetalleLinea($params = [])
 	{
 		$sql = "select * from compras.cotizacionLinea
-		where idCotizacion = '".$params['idCotizacion']."'";
+		where idCotizacion = '" . $params['idCotizacion'] . "'";
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -533,14 +533,11 @@ class M_Cotizacion extends MY_Model
 				,pd.fee2Por
 				,pd.fee1Monto
 				,pd.fee2Monto
-<<<<<<< HEAD
 				,p.fechaSustento 
 				, p.fechaEnvioFinanzas 
 				, p.aprovador 
 				, p.montoSincerado
-=======
 				,pd.idCotizacionDetallePersonal
->>>>>>> 5dceefdc2d58cfc030d4ece7bebb044158f63f9d
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
@@ -1680,7 +1677,9 @@ class M_Cotizacion extends MY_Model
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
-
+							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						];
 					} else {
 						$insertSubItem[] = [
@@ -1721,6 +1720,9 @@ class M_Cotizacion extends MY_Model
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
 							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
+							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						];
 					}
 				}

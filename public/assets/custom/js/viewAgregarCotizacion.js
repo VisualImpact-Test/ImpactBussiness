@@ -2400,8 +2400,8 @@ var Cotizacion = {
 
 			var id = $(this).val()
 			var cantidad = _this.closest('.body-item').find('.personal_' + idDiv + ' .cantidad_personal').val();
-
-			var data_adicional = { 'id': id, 'cantidad': cantidad };
+			let index = _this.closest('.body-item').index();
+			var data_adicional = { 'id': id, 'cantidad': cantidad, 'posicion': index };
 
 			var jsonString = { 'data': JSON.stringify(data_adicional) };
 			var url = Cotizacion.url + 'obtener_conceptos_adicionales';
@@ -3024,9 +3024,33 @@ var Cotizacion = {
 			++modalId;
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
 			if (b.result == 1) {
+				if (tipoRegistro == 3) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
+				if (tipoRegistro == 2 || tipoRegistro == 1) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
+			}
 
+			// Para asignar articulos y textiles en personal.
+			if (b.result == 2) {
+				if (b.data.idCotizacion) {
+					fn = 'Fn.showConfirm({ idForm: "formAsignarItemEnPersonal", fn: "Cotizacion.actualizarCotizacion_personal(' + tipoRegistro + ')", content: "¿Esta seguro de registrar los datos indicados?" });';
+				}
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	actualizarCotizacion_personal: function (tipoRegistro) {
+		let form = Fn.formSerializeObject('formAsignarItemEnPersonal');
+		let jsonString = { 'data': JSON.stringify(form) };
+		let url = Cotizacion.url + "actualizarCotizacion_personal";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (b.result == 1) {
 				if (tipoRegistro == 3) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`SolicitudCotizacion/`); $("#btn-filtrarCotizacion").click();';
 				if (tipoRegistro == 2 || tipoRegistro == 1) fn = 'Fn.closeModals(' + modalId + ');Fn.loadPage(`Cotizacion/`); $("#btn-filtrarCotizacion").click();';
 			}
@@ -3315,6 +3339,10 @@ var Cotizacion = {
 		let cantidadF = parent.find('.cantidad_transporte');
 		// FIN: TRANSPORTE
 
+		// PERSONAL
+		let sueldo_personal = parent.find('.sueldo_personal');
+		let asignacion_familiar_personal = parent.find('.asignacion_familiar_personal');
+		// FIN: PERSONAL
 		let idCotizacionDetalle = parent.find('.idCotizacionDetalleSubForm');
 
 		fileItem.attr('name', `file-item[${number}]`);
@@ -3361,6 +3389,11 @@ var Cotizacion = {
 		diasF.attr('name', `diasTransporte[${number}]`);
 		cantidadF.attr('name', `cantidadTransporte[${number}]`);
 		// FIN: TRANSPORTE
+
+		// PERSONAL
+		// sueldo_personal.attr('name', `sueldo_personal[${number}]`);
+		// asignacion_familiar_personal.attr('name', `asignacion_familiar_personal[${number}]`);
+		// FIN: PERSONAL
 	},
 	cleanDetalle: (parent) => {
 		let tipoForm = parent.find('#tipoItemForm');
