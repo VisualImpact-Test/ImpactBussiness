@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistroOper" method="post">
+<form class="form" role="form" id="formRegistroOper" method="post" autocomplete="off">
 	<div class="row">
 		<div class="col-md-12 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -28,11 +28,15 @@
 						<label class="font-weight-bold">Concepto:</label>
 						<input class="form-control" name="concepto" patron="requerido">
 					</div>
-					<div class="form-group col-md-3">
+					<div class="form-group col-md-2">
+						<label class="font-weight-bold">Número PO/OC:</label>
+						<input type="text" class="form-control" name="numeroPO">
+					</div>
+					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Fecha Requerimiento:</label>
 						<input type="date" class="form-control" name="fechaRequerimiento" patron="requerido">
 					</div>
-					<div class="form-group col-md-3">
+					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Fecha Entrega:</label>
 						<input type="date" class="form-control" name="fechaEntrega" patron="requerido">
 					</div>
@@ -96,7 +100,7 @@
 							<label class="font-weight-bold">Costo:</label>
 							<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
 						</div>
-						
+
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label class="font-weight-bold">GAP:</label>

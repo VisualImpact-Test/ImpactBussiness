@@ -162,10 +162,10 @@ class Oper extends MY_Controller
 		}
 
 		$insertData = [
-			// 'requerimiento' => $post['requerimiento'],
 			'fechaEntrega' => $post['fechaEntrega'],
 			'fechaRequerimiento' => $post['fechaRequerimiento'],
 			'concepto' => $post['concepto'],
+			'numeroOC' => $post['numeroPO'],
 			'idcuenta' => $post['cuentaForm'],
 			'idCentroCosto' => $post['cuentaCentroCostoForm'],
 			'idUsuarioReceptor' => $post['usuarioReceptor'],
@@ -270,6 +270,7 @@ class Oper extends MY_Controller
 			'fechaEntrega' => $post['fechaEntrega'],
 			'fechaRequerimiento' => $post['fechaRequerimiento'],
 			'concepto' => $post['concepto'],
+			'numeroOC' => $post['numeroPO'],
 			'idcuenta' => $post['cuentaForm'],
 			'idCentroCosto' => $post['cuentaCentroCostoForm'],
 			'idUsuarioReceptor' => $post['usuarioReceptor'],
@@ -359,14 +360,12 @@ class Oper extends MY_Controller
 			$idt = $v['idOper'];
 		}
 		$idOper = implode(",", $ids);
-		$dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idt])['query']->result_array();
-		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idoper' => $idt, 'cotizacionInterna' => false])['query']->result_array();
+		$dataParaVista['oper'] = $this->model->obtenerInformacionOperPdf(['id' => $idt])['query']->result_array();
+		$dataParaVista['operDetalle'] = $this->model->obtenerInformacionDetalleOper(['idoper' => $idt, 'cotizacionInterna' => false])['query']->result_array();
 
-		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
-
-			$dataParaVista['cotizacionDetalleSub'][$v['idOperDetalle']] = $this->db->get_where('orden.operDetalleSub', ['idOperDetalle' => $v['idOperDetalle']])->result_array();
-
-			foreach ($dataParaVista['cotizacionDetalleSub'][$v['idOperDetalle']] as $kd => $vd) {
+		foreach ($dataParaVista['operDetalle'] as $k => $v) {
+			$dataParaVista['operDetalleSub'][$v['idOperDetalle']] = $this->db->get_where('orden.operDetalleSub', ['idOperDetalle' => $v['idOperDetalle']])->result_array();
+			foreach ($dataParaVista['operDetalleSub'][$v['idOperDetalle']] as $kd => $vd) {
 				$dataParaVista['detalleSubTalla'][$v['idOperDetalle']][$vd['talla']][$vd['genero']] = $vd;
 			}
 		}

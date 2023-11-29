@@ -18,17 +18,17 @@ class M_Oper extends MY_Model
 	public function obtenerInformacionComprasOper($params = [])
 	{
 		$this->db
-		->select('od.*')
-		->from('compras.operDetalle od')
-		->join('compras.oper o', 'o.idOper = od.idOper', 'LEFT');
+			->select('od.*')
+			->from('compras.operDetalle od')
+			->join('compras.oper o', 'o.idOper = od.idOper', 'LEFT');
 
-		if(isset($params['idCotizacion'])) $this->db->where('od.idCotizacion', $params['idCotizacion']);
-		if(isset($params['idOper'])) $this->db->where('od.idOper', $params['idOper']);
+		if (isset($params['idCotizacion'])) $this->db->where('od.idCotizacion', $params['idCotizacion']);
+		if (isset($params['idOper'])) $this->db->where('od.idOper', $params['idOper']);
 	}
 	public function obtenerInformacionOper($params = [])
 	{
 		$this->db
-		->select("o.*,
+			->select("o.*,
 							od.idOperDetalle,
 							od.idItem,
 							od.idTipo,
@@ -43,29 +43,29 @@ class M_Oper extends MY_Model
 							cu.nombre AS cuenta,
 							cc.subcanal AS centroCosto
 							")
-		->from('orden.oper o')
-		->join('orden.operDetalle od', 'od.idOper = o.idOper and od.estado=1')
-		->join('compras.item i', 'i.idItem = od.idItem', 'LEFT')
-		->join('sistema.usuario ue', 'ue.idUsuario = o.idUsuarioReg', 'LEFT')
-		->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=o.idCuenta', 'LEFT')
-		->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=o.idCentroCosto', 'LEFT');
+			->from('orden.oper o')
+			->join('orden.operDetalle od', 'od.idOper = o.idOper and od.estado=1')
+			->join('compras.item i', 'i.idItem = od.idItem', 'LEFT')
+			->join('sistema.usuario ue', 'ue.idUsuario = o.idUsuarioReg', 'LEFT')
+			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=o.idCuenta', 'LEFT')
+			->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=o.idCentroCosto', 'LEFT');
 		// Where
-		if(isset($params['idOper'])){
+		if (isset($params['idOper'])) {
 			$this->db->where('o.idOper', $params['idOper']);
 		}
 
-		$this->db->order_by('o.idOper','DESC');
+		$this->db->order_by('o.idOper', 'DESC');
 		return $this->db->get();
 	}
 
 	public function obtenerInformacionOperSubItem($params = [])
 	{
 		$this->db
-		->select('ods.*, um.nombre as unidadMedida')
-		->from('orden.operDetalleSub ods')
-		->join('compras.unidadMedida um', 'um.idUnidadMedida = ods.idUnidadMedida', 'left');
+			->select('ods.*, um.nombre as unidadMedida')
+			->from('orden.operDetalleSub ods')
+			->join('compras.unidadMedida um', 'um.idUnidadMedida = ods.idUnidadMedida', 'left');
 		// Where
-		if(isset($params['idOperDetalle'])){
+		if (isset($params['idOperDetalle'])) {
 			$this->db->where('ods.idOperDetalle', $params['idOperDetalle']);
 		}
 		return $this->db->get();
@@ -74,44 +74,44 @@ class M_Oper extends MY_Model
 	public function obtenerCuenta(array $params = [])
 	{
 		$this->db
-		->select('*')
-		->from('rrhh.dbo.empresa')
-		->where('estado','1')
-		->order_by('nombre');
+			->select('*')
+			->from('rrhh.dbo.empresa')
+			->where('estado', '1')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
 	public function obtenerCentroCosto(array $params = [])
 	{
 		$this->db
-		->select('*, idEmpresa as idDependiente')
-		->from('rrhh.dbo.empresa_canal')
-		// ->where('estado','1')
-		->order_by('canal');
+			->select('*, idEmpresa as idDependiente')
+			->from('rrhh.dbo.empresa_canal')
+			// ->where('estado','1')
+			->order_by('canal');
 		return $this->db->get();
 	}
 	public function obtenerItem(array $params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.item')
-		->where('estado','1')
-		->order_by('nombre');
+			->select('*')
+			->from('compras.item')
+			->where('estado', '1')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
 	public function obtenerTipo(array $params = [])
 	{
 		$this->db
-		->select('*')
-		->from('compras.itemTipo')
-		->where('estado','1')
-		->order_by('nombre');
+			->select('*')
+			->from('compras.itemTipo')
+			->where('estado', '1')
+			->order_by('nombre');
 		return $this->db->get();
 	}
 
 
-	public function obtenerInformacionCotizacion($params = [])
+	public function obtenerInformacionOperPdf($params = [])
 	{
 
 		$sql = "
@@ -124,7 +124,7 @@ class M_Oper extends MY_Model
 		   LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg 
 		   LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
 		   LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
-		   WHERE o.idOper = ".$params['id']." ORDER BY o.idOper DESC
+		   WHERE o.idOper = " . $params['id'] . " ORDER BY o.idOper DESC
 		";
 		$query = $this->db->query($sql);
 		if ($query) {
@@ -139,26 +139,28 @@ class M_Oper extends MY_Model
 
 
 
-	public function obtenerInformacionDetalleCotizacion($params = [])
+	public function obtenerInformacionDetalleOper($params = [])
 	{
 
 		$sql = "
-		SELECT o.*, od.idOperDetalle, od.idItem,
-		od.idTipo, od.costoUnitario AS costo_item,
-		od.cantidad AS cantidad_item, od.gap AS gap_item,
-		od.costoSubTotal AS cs_item, od.costoSubTotalGap AS csg_item,
-		i.nombre AS item, 'Coordinadora de compras' AS usuarioReceptor,
-		ue.nombres + ' ' + ISNULL(ue.apePaterno, '') + ' ' + ISNULL(ue.apeMaterno, '') AS usuarioRegistro,
-		cu.nombre AS cuenta, cc.subcanal AS centroCosto 
-		, um.nombre as unidadMedida FROM orden.oper o 
-		JOIN orden.operDetalle od ON od.idOper = o.idOper and od.estado = 1 
-		LEFT JOIN compras.item i ON i.idItem = od.idItem 
-		LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg 
-		LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
-		LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
-		LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = od.idTipo
-		WHERE o.idOper = ".$params['idoper']." ORDER BY o.idOper DESC
-		";
+			SELECT 
+				o.*, od.idOperDetalle, od.idItem,
+				od.idTipo, od.costoUnitario AS costo_item,
+				od.cantidad AS cantidad_item, od.gap AS gap_item,
+				od.costoSubTotal AS cs_item, od.costoSubTotalGap AS csg_item,
+				i.nombre AS item, 'Coordinadora de compras' AS usuarioReceptor,
+				ue.nombres + ' ' + ISNULL(ue.apePaterno, '') + ' ' + ISNULL(ue.apeMaterno, '') AS usuarioRegistro,
+				cu.nombre AS cuenta, cc.subcanal AS centroCosto 
+				, um.nombre as unidadMedida
+			FROM orden.oper o 
+			JOIN orden.operDetalle od ON od.idOper = o.idOper and od.estado = 1 
+			LEFT JOIN compras.item i ON i.idItem = od.idItem 
+			LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg 
+			LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
+			LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
+			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = od.idTipo
+			WHERE o.idOper = " . $params['idoper'] . " ORDER BY o.idOper DESC
+			";
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -185,5 +187,4 @@ class M_Oper extends MY_Model
 
 		return $this->resultado;
 	}
-
 }
