@@ -179,7 +179,13 @@ class Oper extends MY_Controller
 		];
 		$this->db->insert('orden.oper', $insertData);
 		$idOper = $this->db->insert_id();
-		$this->db->update('orden.oper', ['requerimiento' => 'OPER' . generarCorrelativo($idOper, 6)], ['idOper' => $idOper]);
+		$this->db->update(
+			'orden.oper',
+			[
+				'requerimiento' => 'OPER' . $this->model->generarCorrelativo(OPER_SERIADO)
+			],
+			['idOper' => $idOper]
+		);
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;

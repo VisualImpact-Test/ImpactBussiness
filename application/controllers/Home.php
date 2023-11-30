@@ -12,7 +12,6 @@ class Home extends MY_Controller
 
 	public function index()
 	{
-
 		$estado = '';
 		if (!empty($query)) $estado = $query[0]['estado'];
 

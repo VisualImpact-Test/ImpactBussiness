@@ -3,7 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class MY_Model extends CI_Model
 {
-
 	var $insertId;
 	var $tablas;
 
@@ -12,14 +11,12 @@ class MY_Model extends CI_Model
 		$update = $this->db->update_batch($table, $input, $where);
 		return $update;
 	}
-
 	public function deleteMasivo($table, $columna, $ids)
 	{
 		$this->db->where_in($columna, $ids);
 		$delete = $this->db->delete($table);
 		return $delete;
 	}
-
 	public function verificarRepetido($tabla, $where)
 	{
 		$this->db->where($where);
@@ -44,7 +41,6 @@ class MY_Model extends CI_Model
 			return true;
 		}
 	}
-
 	public function getWhereJoinMultiple($tabla, $where, $select = '*', $join = [], $orden = '')
 	{
 		// Las abreviaturas de las tablas deben estar definidas en las variables.
@@ -66,7 +62,6 @@ class MY_Model extends CI_Model
 		}
 		return $this->db->get();
 	}
-
 	public function calcularDiasHabiles($data)
 	{
 		//Fecha debe estar en formato YYYY-MM-DD, de ser necesario agregar un conversor en el codigo.
@@ -104,7 +99,6 @@ class MY_Model extends CI_Model
 		// Si se necesitan más retornos agregar datos al array de $rpta.
 		return $rpta;
 	}
-
 	public function contarDiasHabiles($data)
 	{
 		// Fecha debe estar en formato YYYY-MM-DD, de ser necesario agregar un conversor en el codigo.
@@ -148,12 +142,10 @@ class MY_Model extends CI_Model
 		// Si se necesitan más retornos agregar datos al array de $rpta.
 		return $rpta;
 	}
-
 	public function insertarMasivo($table, $input)
 	{
 		return $this->db->insert_batch($table, $input);
 	}
-
 	public function saveFileWasabi($config = [])
 	{
 		if (empty($config['base64'])) return "";
@@ -201,28 +193,29 @@ class MY_Model extends CI_Model
 		unlink($file_url);
 		return $nombreUnico . "_WASABI.{$extensionForName}";
 	}
-
-    /**Gestión Configuración Comprobante**/
-    public function getDatos($tabla,$id){
-        $this->db->select('*');
-        $this->db->from($tabla);
-        $this->db->order_by($id, 'DESC');
-        return $this->db->get()->result_array();
-    }
-
-
-    public function insert($table = '', $values = ''){
-
-        if(empty($table) || empty($values)) return false;
-        return $this->db->insert($table,$values);
-    }
-
-    public function actualizarSimple($tabla, $where, $datos)
-    {
-        $this->db->update($tabla, $datos, $where);
-        return $this->db->affected_rows();
-    }
-
-
-
+	/**Gestión Configuración Comprobante**/
+	public function getDatos($tabla, $id)
+	{
+		$this->db->select('*');
+		$this->db->from($tabla);
+		$this->db->order_by($id, 'DESC');
+		return $this->db->get()->result_array();
+	}
+	public function insert($table = '', $values = '')
+	{
+		if (empty($table) || empty($values)) return false;
+		return $this->db->insert($table, $values);
+	}
+	public function actualizarSimple($tabla, $where, $datos)
+	{
+		$this->db->update($tabla, $datos, $where);
+		return $this->db->affected_rows();
+	}
+	public function obtenerSeriado($id)
+	{
+		$data = $this->db->get_where('compras.seriadoDocumento', ['idSeriadoDocumento', $id])->row_array();
+		$nroSeriado = str_pad($data['numeroSeriado'], 6, "0", STR_PAD_LEFT);
+		$this->db->update('compras.seriadoDocumento', ['numeroSeriado' => $data['numeroSeriado'] + 1], ['idSeriadoDocumento', $id]);
+		return $nroSeriado;
+	}
 }

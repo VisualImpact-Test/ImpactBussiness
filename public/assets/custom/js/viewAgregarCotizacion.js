@@ -2337,6 +2337,11 @@ var Cotizacion = {
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_diario').hide();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .sueldo_personal').prop('readonly', false);
 
+				
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .periodo').show();
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_inicio').show();
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_fin').show();
+
 				var jsonString = { 'data': JSON.stringify(data) };
 				var url = Cotizacion.url + 'obtener_sueldos';
 				var config = { url: url, data: jsonString };
@@ -2378,6 +2383,11 @@ var Cotizacion = {
 				});
 
 			} else if (id == 1) {
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .periodo').hide();
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_inicio').hide();
+				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_fin').hide();
+
+
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .cantidad_dias').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_diario').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_mensual_personal').val(0);

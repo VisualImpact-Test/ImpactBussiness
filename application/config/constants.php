@@ -225,6 +225,10 @@ defined('COD_SUELDOMINIMO') or define('COD_SUELDOMINIMO', '1'); // ImpactBussine
 defined('COD_ASIGNACIONFAMILIAR') or define('COD_ASIGNACIONFAMILIAR', '2'); // ImpactBussiness.compras.tipoPresupuestoDetalle
 defined('COD_SCTR') or define('COD_SCTR', '31'); // ImpactBussiness.compras.tipoPresupuestoDetalle
 
+// IDs SERIADOS
+defined("OPER_SERIADO") or define("OPER_SERIADO", 1);
+
+
 defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 	['id' => 1, 'value' => 'MENSUAL'],
 	['id' => 2, 'value' => 'BIMENSUAL'],
