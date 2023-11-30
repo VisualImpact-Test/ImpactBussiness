@@ -31,6 +31,10 @@
 						<?php if ($row['chkPresupuesto']) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>
 						<?php endif; ?>
+						
+						<?php if ($row['chkPresupuesto']) : ?>
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-version-presupuesto" title="Versiones Presupuesto"><i class="fa fa-lg fa-book"></i></a>
+						<?php endif; ?>	
 					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>

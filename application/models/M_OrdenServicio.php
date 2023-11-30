@@ -158,6 +158,32 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
+	public function getVersionesAnteriores($idOrdenServicio)
+	{
+		$query = $this->db
+			->select('psp.idPresupuesto ,
+			osv.chkUtilizarCliente , 
+			osv.nombre as nombreOrdenServicio , 
+			emp.nombre as nombreCuenta,
+			emc.subcanal as centroCosto,
+			clt.nombre as nombreCliente ,
+			psp.total as total,
+			CAST(psp.fechaReg AS date) AS Fecha ,
+			ROW_NUMBER() OVER (ORDER BY psp.idPresupuesto ASC) AS versionPresupuesto,
+			usu.nombres as usuario')
+			->from('compras.presupuesto as psp')
+			->join('compras.ordenServicio as osv', 'psp.idOrdenServicio = osv.idOrdenServicio', 'LEFT')
+			->join('compras.cliente as clt', 'osv.idCliente = clt.idCliente', 'LEFT')
+			->join('rrhh.dbo.Empresa as emp', 'osv.idCuenta = emp.idEmpresa', 'LEFT')
+			->join('rrhh.dbo.empresa_Canal as emc', 'emc.idEmpresaCanal = osv.idCentroCosto', 'LEFT')
+			->join('sistema.usuario as usu', 'usu.idUsuario = psp.idUsuario', 'LEFT')
+			//	->where('psp.estado', 1)
+			->where('psp.idOrdenServicio', $idOrdenServicio)
+			->order_by('psp.idPresupuesto desc')
+			->get();
+		return $query;
+	}
+	
 	public function getPresupuestoDetalle($id)
 	{
 		$query = $this->db
