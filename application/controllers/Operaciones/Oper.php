@@ -182,7 +182,7 @@ class Oper extends MY_Controller
 		$this->db->update(
 			'orden.oper',
 			[
-				'requerimiento' => 'OPER' . $this->model->generarCorrelativo(OPER_SERIADO)
+				'requerimiento' => 'OPER' . $this->model->obtenerSeriado(OPER_SERIADO)
 			],
 			['idOper' => $idOper]
 		);

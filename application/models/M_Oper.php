@@ -110,21 +110,19 @@ class M_Oper extends MY_Model
 		return $this->db->get();
 	}
 
-
 	public function obtenerInformacionOperPdf($params = [])
 	{
-
 		$sql = "
 		SELECT o.*,
-		'Coordinadora de compras' AS usuarioReceptor,
-		   ue.nombres + ' ' + ISNULL(ue.apePaterno, '') + ' ' + ISNULL(ue.apeMaterno, '') AS usuarioRegistro,
-		   cu.nombre AS cuenta, cc.subcanal AS centroCosto 
-		   FROM orden.oper o 
-   
-		   LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg 
-		   LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
-		   LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
-		   WHERE o.idOper = " . $params['id'] . " ORDER BY o.idOper DESC
+			'Coordinadora de compras' AS usuarioReceptor,
+			ue.nombres + ' ' + ISNULL(ue.apePaterno, '') + ' ' + ISNULL(ue.apeMaterno, '') AS usuarioRegistro,
+			cu.nombre AS cuenta, cc.subcanal AS centroCosto 
+			FROM orden.oper o 
+
+			LEFT JOIN sistema.usuario ue ON ue.idUsuario = o.idUsuarioReg 
+			LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
+			LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
+			WHERE o.idOper = " . $params['id'] . " ORDER BY o.idOper DESC
 		";
 		$query = $this->db->query($sql);
 		if ($query) {
@@ -136,12 +134,8 @@ class M_Oper extends MY_Model
 		return $this->resultado;
 	}
 
-
-
-
 	public function obtenerInformacionDetalleOper($params = [])
 	{
-
 		$sql = "
 			SELECT 
 				o.*, od.idOperDetalle, od.idItem,
@@ -171,10 +165,8 @@ class M_Oper extends MY_Model
 		return $this->resultado;
 	}
 
-
 	public function obtenerOperDetalleSub($params = [])
 	{
-
 		$sql = "
 		SELECT * FROM orden.operDetalleSub WHERE idOperDetalle = '3'
 		";

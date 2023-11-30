@@ -214,6 +214,7 @@ var Oper = {
 						<input type="hidden" name="subItem_costo" value="">
 						<input type="hidden" name="subItem_cantidadPdv" value="">
 						<input type="hidden" name="subItem_monto" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
@@ -259,6 +260,7 @@ var Oper = {
 						<input type="hidden" name="subItem_tela" value="">
 						<input type="hidden" name="subItem_color" value="">
 						<input type="hidden" name="subItem_monto" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
@@ -273,7 +275,7 @@ var Oper = {
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Genero:</label>
 							<select class="form-control" name="subItem_genero">
-								<option class="item-4" value="">SELECCIONE</option>
+								<option class="item" value="">SELECCIONE</option>
 								<option class="item" value="1">VARON</option>
 								<option class="item" value="2">DAMA</option>
 								<option class="item" value="3">UNISEX</option>
@@ -344,6 +346,7 @@ var Oper = {
 						<input type="hidden" name="subItem_costo" value="">
 						<input type="hidden" name="subItem_cantidad" value="">
 						<input type="hidden" name="subItem_cantidadPdv" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
