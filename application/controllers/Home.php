@@ -13,7 +13,7 @@ class Home extends MY_Controller
 	public function index()
 	{
 
-		$estado = '';
+		$estado = '';//
 		if (!empty($query)) $estado = $query[0]['estado'];
 
 		$usuario = array();
