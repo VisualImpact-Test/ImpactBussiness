@@ -79,10 +79,23 @@
 			</div>
 		</div>
 		<div class="fields">
-			<div class="four wide field">
+			<div class="five wide field">
 				<div class="ui sub header">Prioridad</div>
 				<select class="ui dropdown semantic-dropdown" id="prioridadForm" name="prioridadForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $prioridadCotizacion, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
+			<div class="eleven wide field">
+				<div class="ui sub header">Motivo</div>
+				<input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?= !empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
+			</div>
+
+		</div>
+		<div class="fields">
+			<div class="five d-none wide field">
+				<div class="ui sub header">Presupuestos</div>
+				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui ead-only dropdown clearable semantic-dropdown centro-ocultado"  >
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
 			<div class="three wide field">
@@ -92,21 +105,7 @@
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicioCotizacion, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
-
-			<div class="six wide field">
-				<div class="ui sub header">Motivo</div>
-				<input id="motivoForm" name="motivoForm" placeholder="Motivo" value="<?= !empty($cotizacion['motivo']) ? $cotizacion['motivo'] : '' ?>">
-			</div>
-
 		</div>
-		<div class="fields d-none">
-		<div class="five wide field">
-				<div class="ui sub header">Presupuestos</div>
-				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui ead-only dropdown clearable semantic-dropdown centro-ocultado"  >
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
-				</select>
-			</div>
-			</div>
 
 		<div class="fields">
 			<div class="eight wide field">
