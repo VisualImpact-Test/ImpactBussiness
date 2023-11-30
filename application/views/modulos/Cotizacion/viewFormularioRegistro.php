@@ -440,14 +440,14 @@
 								</tr>
 								<tr>
 									<td colspan="6">
-										<div style="padding:15px;">
+										<div style="padding:15px;display:none;" class="periodo">
 											<div class="ui sub header">Periodo</div>
 										</div>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<div style="padding:15px;">
+										<div style="padding:15px;display:none;" class="mes_inicio">
 											<div class="ui sub header">Mes Inicio</div>
 											<select class="mes_inicio_personal" id="mes_inicio_personal" name="mes_inicio_personal" data-obligatorio="1">
 												<?php foreach ($periodo as $row_p) : ?>
@@ -457,7 +457,7 @@
 										</div>
 									</td>
 									<td>
-										<div style="padding:15px;">
+										<div style="padding:15px;display:none;" class="mes_fin">
 											<div class="ui sub header">Mes Fin</div>
 											<select class="mes_fin_personal" id="mes_fin_personal" name="mes_fin_personal" data-obligatorio="1">
 												<?php foreach ($periodo as $row_p) : ?>
