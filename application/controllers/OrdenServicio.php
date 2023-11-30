@@ -812,6 +812,22 @@ class OrdenServicio extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+	
+	public function formatoVersionesAnteriores()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$idOrdenServicio = $post['idOrdenServicio'];
+
+		$dataParaVista = [];
+		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Versiones Anteriores - Presupuesto';
+		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formatoVersionesAnteriores", $dataParaVista, true);
+
+		echo json_encode($result);
+	
+	}
 
 	public function formularioActualizacionOrdenServicio()
 	{
