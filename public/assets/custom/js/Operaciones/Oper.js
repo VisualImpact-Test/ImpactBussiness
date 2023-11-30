@@ -4,7 +4,7 @@ var Oper = {
 	contentDetalle: 'idContentOPER',
 	url: 'Operaciones/Oper/',
 	tipo: '',
-	divItemData : '',
+	divItemData: '',
 	itemsData: [],
 	modalId: 0,
 
@@ -36,15 +36,15 @@ var Oper = {
 		$(document).on('focusout', '.items', function () {
 			let control = $(this);
 			let val = control.val();
-			if(val != '' && val != undefined && val != null){
+			if (val != '' && val != undefined && val != null) {
 				control.attr('readonly', 'readonly');
 			}
 			id = control.closest('.divItem').find('.codItems').val();
-			if( id == '' || id == undefined || id == null){
+			if (id == '' || id == undefined || id == null) {
 				control.closest('.divItem').find('.codItems').val('0');
 			}
 		});
-		$(document).on('click', '.btn-editar', function(){
+		$(document).on('click', '.btn-editar', function () {
 			let id = $(this).parents('tr:first').data('id');
 			++modalId;
 			let jsonString = { 'data': id };
@@ -60,9 +60,9 @@ var Oper = {
 				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOper", fn: "Oper.editarOper()", content: "¿Esta seguro de realizar cambios en OPER?" });';
 				btn[2] = { title: 'Guardar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-				Oper.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
+				Oper.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
 				$('#divItemData').html('');
-				Oper.itemsData =   $.parseJSON($('#itemsData').val());
+				Oper.itemsData = $.parseJSON($('#itemsData').val());
 				Oper.modalId = modalId;
 				Oper.itemInputComplete('all');
 			});
@@ -72,11 +72,11 @@ var Oper = {
 			++modalId;
 			let jsonString = { 'data': '' };
 			let config = { 'url': Oper.url + 'formularioRegistroOper' + Oper.tipo, 'data': jsonString };
-			
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-				
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Oper.agregarItem();';
@@ -84,8 +84,8 @@ var Oper = {
 				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Oper.registrarOper()", content: "¿Esta seguro de registrar OPER?" });';
 				btn[2] = { title: 'Registrar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-				Oper.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
-				Oper.itemsData =   $.parseJSON($('#itemsData').val());
+				Oper.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
+				Oper.itemsData = $.parseJSON($('#itemsData').val());
 				Oper.modalId = modalId;
 				Oper.itemInputComplete(0);
 			});
@@ -154,7 +154,7 @@ var Oper = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	editarOper: function(){
+	editarOper: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOper')) };
 		let url = Oper.url + "editarOper" + Oper.tipo;
 		let config = { url: url, data: jsonString };
@@ -172,18 +172,18 @@ var Oper = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	agregarItem: function(t){
+	agregarItem: function (t) {
 		$('.extraItem').append(Oper.divItemData);
 		console.log(Oper.divItemData);
 		// $('.my_select2').select2();
 		tot = $('.items').length - 1;
 		Oper.itemInputComplete(tot);
 	},
-	quitarItem: function(t,v){
+	quitarItem: function (t, v) {
 		div = t.closest('div.itemData');
 		$(div).remove();
 	},
-	generarSubItem: function(t,v) {
+	generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
 		espacio = t.closest('div.itemData');
 
@@ -193,7 +193,7 @@ var Oper = {
 		let tS = $('#divTipoServicio');
 		btnAd = $(t).closest('.divItem').find('.btnAdicionar');
 		btnAd.hide();
-		if(tipo == '2'){
+		if (tipo == '2') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-6">
@@ -220,7 +220,7 @@ var Oper = {
 			`;
 			btnAd.show();
 		}
-		if(tipo == '7'){
+		if (tipo == '7') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-6">
@@ -265,7 +265,7 @@ var Oper = {
 				</div>
 			`;
 		}
-		if(tipo == '9'){
+		if (tipo == '9') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-1">
@@ -274,25 +274,25 @@ var Oper = {
 					</div>
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Genero:</label>
-							<select class="form-control" name="subItem_genero">
-								<option class="item" value="">SELECCIONE</option>
-								<option class="item" value="1">VARON</option>
-								<option class="item" value="2">DAMA</option>
-								<option class="item" value="3">UNISEX</option>
-							</select>
+						<select class="form-control" name="subItem_genero">
+							<option class="item" value="">SELECCIONE</option>
+							<option class="item" value="1">VARON</option>
+							<option class="item" value="2">DAMA</option>
+							<option class="item" value="3">UNISEX</option>
+						</select>
+					</div>
+					<div class=" col-md-3" style="display: flex;">
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+							<label class="font-weight-bold">Tela:</label>
+							<input class="form-control" name="subItem_tela" patron="requerido">
 						</div>
-					<div class=" col-md-3" style="DISPLAY: flex;">
-					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
-						<label class="font-weight-bold">Tela:</label>
-						<input class="form-control" name="subItem_tela" patron="requerido">
-					</div>
-					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
-					<label class="font-weight-bold">Color:</label>
-					<input class="form-control" name="subItem_color" patron="requerido">
-					</div>
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+						<label class="font-weight-bold">Color:</label>
+						<input class="form-control" name="subItem_color" patron="requerido">
+						</div>
 					</div>
 
-					<div class=" col-md-3" style="DISPLAY: flex;">
+					<div class=" col-md-3" style="display: flex;">
 					<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 					<label class="font-weight-bold">Cantidad:</label>
 					<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido"
@@ -328,7 +328,7 @@ var Oper = {
 			`;
 			btnAd.show();
 		}
-		if(tipo == '10'){
+		if (tipo == '10') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-12">
@@ -356,40 +356,40 @@ var Oper = {
 		let cantidadSubItems = $(div).find('.subItemSpace').length;
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 	},
-	cantidadPorItem: function(t){
+	cantidadPorItem: function (t) {
 		div = $(t).closest('.itemData').find('div.itemValor');
-		cantidad = parseFloat($(div).find('input.item_cantidad').val()||'0');
-		costo = parseFloat($(div).find('input.item_costo').val()||'0');
-		gap = parseFloat($(div).find('input.item_GAP').val()||'0');
+		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
+		costo = parseFloat($(div).find('input.item_costo').val() || '0');
+		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
 		cantPDV = 0;
-		if($(t).closest('.itemData').find('input.cantidadPDV').length > 0){
-			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val()||'0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
+		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
+			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
 		$(div).find('input.item_precio').val(precio.toFixed(2));
 
 		Oper.cantidadTotal();
 	},
-	cantidadTotal: function(){
+	cantidadTotal: function () {
 		let dd = $('input.item_precio');
 		let xd = $('.item_tipo');
 		let total = 0;
 		let totalNoFee = 0;
 		for (var i = 0; i < dd.length; i++) {
-			if(xd[i].value == '7'){
+			if (xd[i].value == '7') {
 				totalNoFee += parseFloat(dd[i].value);
-			}else{
+			} else {
 				total += parseFloat(dd[i].value);
 			}
 		};
 		$('#total').val(total.toFixed(2));
-		fee = parseFloat($('#fee').val()||'0');
+		fee = parseFloat($('#fee').val() || '0');
 		$('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
 		igv = parseFloat($('#valorIGV').val()) / 100;
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
 		$('#totalFinal').val(totalFinal.toFixed(2));
 	},
-	itemInputComplete: function(ord){
+	itemInputComplete: function (ord) {
 		let tipo = 1;
 		let items = [];
 		let nro = 0;
@@ -403,9 +403,9 @@ var Oper = {
 		if (ord == 'all') {
 			i = 0;
 			limit = $('.items').length;
-		}else{
+		} else {
 			i = ord;
-			limit = ord +1;
+			limit = ord + 1;
 		}
 
 		for (i; i < limit; i++) {
@@ -432,15 +432,15 @@ var Oper = {
 
 
 	},
-	cleanDetalle: function(parent){
+	cleanDetalle: function (parent) {
 		parent.find('.codItems').val('');
 	},
-	editItemValue: function(t){
+	editItemValue: function (t) {
 		control = $(t);
-		control.closest('.divItem').find('.items').attr('readonly',false);
+		control.closest('.divItem').find('.items').attr('readonly', false);
 		control.closest('.divItem').find('.codItems').val('');
 	},
-	calcularTextilPrecio: function(t){
+	calcularTextilPrecio: function (t) {
 		control = t.closest('.divItem');
 		total = 0;
 		cantidad = 0;
@@ -453,7 +453,7 @@ var Oper = {
 		$(control).closest('.itemData').find('.item_cantidad').val(cantidad);
 		$(control).closest('.itemData').find('.item_costo').val(total / cantidad).trigger('change');
 	},
-	cantidadServicio: function(t){
+	cantidadServicio: function (t) {
 		control = t.closest('.divItem');
 		cantidad = 0;
 		ct = $(control).find('.SbItCantidad');
