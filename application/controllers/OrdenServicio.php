@@ -1223,6 +1223,10 @@ class OrdenServicio extends MY_Controller
 		$this->db->insert('compras.presupuesto', $insertPresupuesto);
 		$idPresupuesto = $this->db->insert_id();
 
+		$insertPresupuesto['idPresupuesto'] = $idPresupuesto;
+		$insertPresupuesto['estado'] = '1';
+		$this->db->insert('compras.presupuestoHistorico', $insertPresupuesto);
+
 		// compras.presupuestoCargo
 		$insertPresupuestoCargo = [];
 		foreach ($post['fechaList'] as $kf => $vf) {
