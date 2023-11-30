@@ -133,6 +133,7 @@ class M_Item extends MY_Model
 
 		return $this->db->get();
 	}
+
 	public function obtenerInformacionItems($params = [])
 	{
 		$filtros = "";
@@ -142,6 +143,9 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['subcategoriaItem']) ? ' AND a.idItemSubCategoria = ' . $params['subcategoriaItem'] : '';
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
+		if ($this->idUsuario != 1) {
+		$filtros .= ' AND a.demo = 0';
+		}
 
 		$sql = "
 			SELECT
@@ -186,7 +190,6 @@ class M_Item extends MY_Model
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
 		return $this->resultado;
