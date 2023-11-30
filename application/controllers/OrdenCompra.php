@@ -3,7 +3,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class OrdenCompra extends MY_Controller
 {
-
 	public function __construct()
 	{
 		parent::__construct();
@@ -48,7 +47,6 @@ class OrdenCompra extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
-
 		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
 		foreach ($data as $key => $row) {
 			$dataParaVista[$row['idOrdenCompra']] = [
@@ -80,7 +78,7 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['views']['idContentOCLibre']['datatable'] = 'tb-oc';
 		$result['data']['views']['idContentOCLibre']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -121,12 +119,10 @@ class OrdenCompra extends MY_Controller
 	}
 	public function formularioRegistroOCLibre()
 	{
-
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
-
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array(); //
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
 		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
@@ -362,19 +358,33 @@ class OrdenCompra extends MY_Controller
 		set_time_limit(0);
 
 		$post = json_decode($this->input->post('data'), true);
-		$dataParaVista['dataOc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $post['idOC']])->result_array();
+		$dataParaVista['detalle'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $post['idOC']])->result_array();
 		$ids = [];
-		foreach ($dataParaVista['dataOc'] as $key => $value) {
-			$dataParaVista['dataOc'][$key]['fechaEntrega'] = date_change_format($value['fechaEntrega']);
-		}
+		$dataParaVista['data'] = $dataParaVista['detalle'][0];
 
 		require APPPATH . '/vendor/autoload.php';
-		$mpdf = new \Mpdf\Mpdf();
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			// 'orientation' => '',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
 
-		$contenido['header'] = $this->load->view("modulos/OrdenCompra/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-001'], true);
+		$mpdf->curlAllowUnsafeSslRequests = true;
+		$mpdf->showImageErrors = true;
+		$mpdf->debug = true;
+
+		$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-001'], true);
 		$contenido['footer'] = $this->load->view("modulos/OrdenCompra/pdf/footer", array(), true);
 
-		$contenido['style'] = $this->load->view("modulos/OrdenCompra/pdf/oper_style", [], true);
+		// $contenido['style'] = $this->load->view("modulos/OrdenCompra/pdf/oper_style", [], true);
+		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
 		$contenido['body'] = $this->load->view("modulos/OrdenCompra/pdf/orden_compra", $dataParaVista, true);
 		$mpdf->SetHTMLHeader($contenido['header']);
 		$mpdf->SetHTMLFooter($contenido['footer']);

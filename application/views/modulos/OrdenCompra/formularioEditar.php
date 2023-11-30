@@ -13,7 +13,7 @@
     <div class="form-group col-md-6">
       <label class="font-weight-bold">Tipo:</label>
       <select class="form-control tipo clearSubItem item_tipo" name="tipo" patron="requerido" data-live-search="true">
-        <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'nombre']); ?>
+        <?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'tipo']); ?>
       </select>
     </div>
     <div class="form-row col-md-12 subItem"></div>

@@ -38,7 +38,7 @@ class M_OrdenCompra extends MY_Model
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
 			->join('compras.item i', 'i.idItem = ocd.idItem', 'LEFT')
-			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=oc.idCuenta', 'LEFT')
+			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa = oc.idCuenta', 'LEFT')
 			->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=oc.idCentroCosto', 'LEFT')
 			->join('compras.proveedor pro', 'pro.idProveedor = oc.idProveedor', 'LEFT')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda', 'LEFT')
