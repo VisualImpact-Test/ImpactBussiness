@@ -235,7 +235,7 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['cabecera']['montoSincerado'] = $row['montoSincerado'];
 		}
 		$dataParaVista['linea'] = $this->model->obtenerDetalleLinea($post)['query']->result_array();
-		
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Visualizar Cotizacion';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioCompletarDatos", $dataParaVista, true);
@@ -2565,7 +2565,15 @@ class Cotizacion extends MY_Controller
 		];
 
 		$oper = $this->model->insertar(['tabla' => 'compras.oper', 'insert' => $insertOper]);
-		$operUpdate = $this->model->actualizarCotizacion(['tabla' => 'compras.oper', 'update' => ['requerimiento' => "OP" . generarCorrelativo($oper['id'], 6)], 'where' => ['idOper' => $oper['id']]]);
+		$operUpdate = $this->model->actualizarCotizacion(
+			[
+				'tabla' => 'compras.oper',
+				'update' => [
+					'requerimiento' => "OP" . $this->model->obtenerSeriado(OPER_SERIADO)
+				],
+				'where' => ['idOper' => $oper['id']]
+			]
+		);
 
 		$post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
 
@@ -2654,7 +2662,13 @@ class Cotizacion extends MY_Controller
 		];
 
 		$oper = $this->model->insertar(['tabla' => 'compras.oper', 'insert' => $insertOper]);
-		$operUpdate = $this->model->actualizarCotizacion(['tabla' => 'compras.oper', 'update' => ['requerimiento' => "OP" . generarCorrelativo($oper['id'], 6)], 'where' => ['idOper' => $oper['id']]]);
+		$operUpdate = $this->model->actualizarCotizacion([
+			'tabla' => 'compras.oper',
+			'update' =>	[
+				'requerimiento' => "TEMPORAL"
+			],
+			'where' => ['idOper' => $oper['id']]
+		]);
 
 		$post['idCotizacion'] = checkAndConvertToArray($post['idCotizacion']);
 
@@ -4582,18 +4596,18 @@ class Cotizacion extends MY_Controller
 		$result['msg']['title'] = 'Información actualizada';
 		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
 
-		if ($this->db->update('compras.cotizacion', ['fechaSustento' => $post['fechaSustento'],'fechaEnvioFinanzas' => $post['fechaEnvioFinanzas'],'aprovador' => $post['aprovador'],'montoSincerado' => $post['montoSincerado']], ['idCotizacion' => $post['idCotizacion']]))
+		if ($this->db->update('compras.cotizacion', ['fechaSustento' => $post['fechaSustento'], 'fechaEnvioFinanzas' => $post['fechaEnvioFinanzas'], 'aprovador' => $post['aprovador'], 'montoSincerado' => $post['montoSincerado']], ['idCotizacion' => $post['idCotizacion']]))
 			$result['result'] = 1;
 
 
 		$insertLinea = [];
 		if (is_array($post['lineaNum'])) {
-		foreach ($post['lineaNum'] as $item) {
-			$insertLinea[] = [
-			'idCotizacion' => $post['idCotizacion'],
-			'cantidad' => $item
-			];
-		}
+			foreach ($post['lineaNum'] as $item) {
+				$insertLinea[] = [
+					'idCotizacion' => $post['idCotizacion'],
+					'cantidad' => $item
+				];
+			}
 		} else {
 			$insertLinea[] = [
 				'idCotizacion' => $post['idCotizacion'],
@@ -4604,5 +4618,4 @@ class Cotizacion extends MY_Controller
 		$this->model->insertarMasivo('compras.cotizacionLinea', $insertLinea);
 		echo json_encode($result);
 	}
-	
 }
