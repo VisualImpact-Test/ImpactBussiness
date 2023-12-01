@@ -89,7 +89,7 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Datos de Item<small>(s)</small></legend>
 				<div class="row itemData" id="divItemData">
-					<div class="form-row col-md-8 order-md-1 divItem pt-3 border-bottom">
+					<div class="form-row col-md-9 order-md-1 divItem pt-3 border-bottom">
 						<div class="form-group col-md-6">
 							<label class="font-weight-bold">Item:</label>
 							<div class="input-group mb-3">
@@ -116,7 +116,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4 order-md-2 pt-3 border-bottom itemValor">
+					<div class="col-md-3 order-md-2 pt-3 border-bottom itemValor">
 						<div class="form-group">
 							<label class="font-weight-bold">Cantidad:</label>
 							<input class="form-control item_cantidad" name="cantidad" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">

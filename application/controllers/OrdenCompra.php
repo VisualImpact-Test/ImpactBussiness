@@ -440,6 +440,10 @@ class OrdenCompra extends MY_Controller
 		$ids = [];
 		$dataParaVista['data'] = $dataParaVista['detalle'][0];
 
+		foreach ($dataParaVista['detalle'] as $k => $v) {
+			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
+		}
+		
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',

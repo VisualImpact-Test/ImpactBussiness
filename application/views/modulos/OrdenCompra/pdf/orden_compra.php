@@ -74,11 +74,11 @@
 				<?php $row['subTotalOrdenCompra'] = $row['cantidad_item'] * $row['costo_item']; ?>
 				<?php $mostrarSubDetalle = false; ?>
 				<?php $rowS = 1; ?>
-				<?php if ($row['idItemTipo'] == COD_TEXTILES['id']) : ?>
-					<?php $mostrarSubDetalle = false; /*true;*/ ?>
+				<?php if ($row['idTipo'] == COD_TEXTILES['id']) : ?>
+					<?php $mostrarSubDetalle = true; ?>
 					<?php $rowS = count($subDetalleItem[$row['idItem']]) + 1; ?>
 				<?php endif; ?>
-				<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) : ?>
+				<?php if ($row['idTipo'] == COD_SERVICIO['id']) : ?>
 					<?php $v1 = $subDetalleItem[$row['idItem']][0]['sucursal'] ?>
 					<?php $v2 = $subDetalleItem[$row['idItem']][0]['razonSocial'] ?>
 					<?php $v3 = $subDetalleItem[$row['idItem']][0]['tipoElemento'] ?>
@@ -135,7 +135,7 @@
 							<?= !empty($row['costo_item']) ? monedaNew(['valor' => $row['costo_item'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
 						<td class="text-right" rowspan="<?= $rowS ?>">
-							<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idItemTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
+							<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
 					</tr>
 					<?php if ($mostrarSubDetalle) : ?>

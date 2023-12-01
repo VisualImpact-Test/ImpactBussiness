@@ -4,7 +4,7 @@ var Oc = {
 	contentDetalle: 'idContentOC',
 	url: 'OrdenCompra/',
 	tipo: '',
-	divItemData : '',
+	divItemData: '',
 	itemsData: [],
 	modalId: 0,
 
@@ -36,15 +36,15 @@ var Oc = {
 		$(document).on('focusout', '.items', function () {
 			let control = $(this);
 			let val = control.val();
-			if(val != '' && val != undefined && val != null){
+			if (val != '' && val != undefined && val != null) {
 				control.attr('readonly', 'readonly');
 			}
 			id = control.closest('.divItem').find('.codItems').val();
-			if( id == '' || id == undefined || id == null){
+			if (id == '' || id == undefined || id == null) {
 				control.closest('.divItem').find('.codItems').val('0');
 			}
 		});
-		$(document).on('click', '.btn-editar', function(){
+		$(document).on('click', '.btn-editar', function () {
 			let id = $(this).parents('tr:first').data('id');
 			++modalId;
 			let jsonString = { 'data': id };
@@ -60,9 +60,9 @@ var Oc = {
 				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOC", fn: "Oc.editarOC()", content: "¿Esta seguro de realizar cambios en OC?" });';
 				btn[2] = { title: 'Guardar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-				Oc.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
+				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
 				$('#divItemData').html('');
-				Oc.itemsData =   $.parseJSON($('#itemsData').val());
+				Oc.itemsData = $.parseJSON($('#itemsData').val());
 				Oc.modalId = modalId;
 				Oc.itemInputComplete('all');
 			});
@@ -91,8 +91,8 @@ var Oc = {
 				// fn[3] = 'Oc.agregarOperDat();';
 				// btn[3] = { title: 'Oper', fn: fn[3], class: 'btn-danger' };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-				Oc.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
-				Oc.itemsData =   $.parseJSON($('#itemsData').val());
+				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
+				Oc.itemsData = $.parseJSON($('#itemsData').val());
 				Oc.modalId = modalId;
 				Oc.itemInputComplete(0);
 			});
@@ -178,7 +178,7 @@ var Oc = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	agregarItem: function(t){
+	agregarItem: function (t) {
 		$('.extraItem').append(Oc.divItemData);
 		console.log(Oc.divItemData);
 		tot = $('.items').length - 1;
@@ -232,7 +232,7 @@ var Oc = {
 		div = t.closest('div.itemData');
 		$(div).remove();
 	},
-	generarSubItem: function(t,v) {
+	generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
 		espacio = t.closest('div.itemData');
 
@@ -242,7 +242,7 @@ var Oc = {
 		let tS = $('#divTipoServicio');
 		btnAd = $(t).closest('.divItem').find('.btnAdicionar');
 		btnAd.hide();
-		if(tipo == '2'){
+		if (tipo == '2') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-6">
@@ -263,12 +263,13 @@ var Oc = {
 						<input type="hidden" name="subItem_costo" value="">
 						<input type="hidden" name="subItem_cantidadPdv" value="">
 						<input type="hidden" name="subItem_monto" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
 			btnAd.show();
 		}
-		if(tipo == '7'){
+		if (tipo == '7') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-6">
@@ -308,11 +309,12 @@ var Oc = {
 						<input type="hidden" name="subItem_tela" value="">
 						<input type="hidden" name="subItem_color" value="">
 						<input type="hidden" name="subItem_monto" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
 		}
-		if(tipo == '9'){
+		if (tipo == '9') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-1">
@@ -320,26 +322,39 @@ var Oc = {
 						<input class="form-control" name="subItem_talla" patron="requerido">
 					</div>
 					<div class="form-group col-md-2">
-						<label class="font-weight-bold">Tela:</label>
-						<input class="form-control" name="subItem_tela" patron="requerido">
+						<label class="font-weight-bold">Genero:</label>
+						<select class="form-control" name="subItem_genero">
+							<option class="item" value="">SELECCIONE</option>
+							<option class="item" value="1">VARON</option>
+							<option class="item" value="2">DAMA</option>
+							<option class="item" value="3">UNISEX</option>
+						</select>
 					</div>
-					<div class="form-group col-md-2">
-					<label class="font-weight-bold">Color:</label>
-					<input class="form-control" name="subItem_color" patron="requerido">
+					<div class=" col-md-3" style="display: flex;">
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+							<label class="font-weight-bold">Tela:</label>
+							<input class="form-control" name="subItem_tela" patron="requerido">
+						</div>
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+							<label class="font-weight-bold">Color:</label>
+							<input class="form-control" name="subItem_color" patron="requerido">
+						</div>
 					</div>
-					<div class="form-group col-md-2">
-					<label class="font-weight-bold">Cantidad:</label>
-					<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido"
-								 onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
-								 onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
-					>
-					</div>
-					<div class="form-group col-md-2">
+					<div class=" col-md-3" style="display: flex;">
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+							<label class="font-weight-bold">Cantidad:</label>
+							<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido"
+										onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
+										onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
+							>
+						</div>
+						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 						<label class="font-weight-bold">Costo:</label>
 						<input class="form-control SbItCosto" name="subItem_costo" patron="requerido"
 									 onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 									 onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
 						>
+						</div>
 					</div>
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold">Sb Tot:</label>
@@ -361,7 +376,7 @@ var Oc = {
 			`;
 			btnAd.show();
 		}
-		if(tipo == '10'){
+		if (tipo == '10') {
 			htmlAdd = `
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-12">
@@ -379,6 +394,7 @@ var Oc = {
 						<input type="hidden" name="subItem_costo" value="">
 						<input type="hidden" name="subItem_cantidad" value="">
 						<input type="hidden" name="subItem_cantidadPdv" value="">
+						<input type="hidden" name="subItem_genero" value="">
 					</div>
 				</div>
 			`;
@@ -388,29 +404,29 @@ var Oc = {
 		let cantidadSubItems = $(div).find('.subItemSpace').length;
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 	},
-	cantidadPorItem: function(t){
+	cantidadPorItem: function (t) {
 		div = $(t).closest('.itemData').find('div.itemValor');
-		cantidad = parseFloat($(div).find('input.item_cantidad').val()||'0');
-		costo = parseFloat($(div).find('input.item_costo').val()||'0');
-		gap = parseFloat($(div).find('input.item_GAP').val()||'0');
+		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
+		costo = parseFloat($(div).find('input.item_costo').val() || '0');
+		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
 		cantPDV = 0;
-		if($(t).closest('.itemData').find('input.cantidadPDV').length > 0){
-			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val()||'0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
+		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
+			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
 		$(div).find('input.item_precio').val(precio.toFixed(2));
 
 		Oc.cantidadTotal();
 	},
-	cantidadTotal: function(){
+	cantidadTotal: function () {
 		let dd = $('input.item_precio');
 		let xd = $('.item_tipo');
 		let total = 0;
 		let totalNoFee = 0;
 		for (var i = 0; i < dd.length; i++) {
-			if(xd[i].value == '7'){
+			if (xd[i].value == '7') {
 				totalNoFee += parseFloat(dd[i].value);
-			}else{
+			} else {
 				total += parseFloat(dd[i].value);
 			}
 		};
@@ -422,7 +438,7 @@ var Oc = {
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
 		$('#totalFinal').val(totalFinal.toFixed(2));
 	},
-	itemInputComplete: function(ord){
+	itemInputComplete: function (ord) {
 		let tipo = 1;
 		let items = [];
 		let nro = 0;
@@ -434,9 +450,9 @@ var Oc = {
 		if (ord == 'all') {
 			i = 0;
 			limit = $('.items').length;
-		}else{
+		} else {
 			i = ord;
-			limit = ord +1;
+			limit = ord + 1;
 		}
 
 		for (i; i < limit; i++) {
@@ -463,15 +479,15 @@ var Oc = {
 
 
 	},
-	cleanDetalle: function(parent){
+	cleanDetalle: function (parent) {
 		parent.find('.codItems').val('');
 	},
-	editItemValue: function(t){
+	editItemValue: function (t) {
 		control = $(t);
-		control.closest('.divItem').find('.items').attr('readonly',false);
+		control.closest('.divItem').find('.items').attr('readonly', false);
 		control.closest('.divItem').find('.codItems').val('');
 	},
-	calcularTextilPrecio: function(t){
+	calcularTextilPrecio: function (t) {
 		control = t.closest('.divItem');
 		total = 0;
 		cantidad = 0;
@@ -484,7 +500,7 @@ var Oc = {
 		$(control).closest('.itemData').find('.item_cantidad').val(cantidad);
 		$(control).closest('.itemData').find('.item_costo').val(total / cantidad).trigger('change');
 	},
-	cantidadServicio: function(t){
+	cantidadServicio: function (t) {
 		control = t.closest('.divItem');
 		cantidad = 0;
 		ct = $(control).find('.SbItCantidad');
