@@ -68,6 +68,11 @@ var Oc = {
 			});
 
 		});
+
+		$(document).on('click', '#btn-operSinCotizar', function () {
+			Oc.agregarOperDat();
+		});
+
 		$(document).on('click', '#btn-registrarOC', function () {
 			++modalId;
 			let jsonString = { 'data': '' };
@@ -83,6 +88,8 @@ var Oc = {
 				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
 				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar OC?" });';
 				btn[2] = { title: 'Registrar', fn: fn[2] };
+				// fn[3] = 'Oc.agregarOperDat();';
+				// btn[3] = { title: 'Oper', fn: fn[3], class: 'btn-danger' };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oc.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
 				Oc.itemsData =   $.parseJSON($('#itemsData').val());
@@ -150,6 +157,9 @@ var Oc = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+
+
+
 	editarOC: function(){
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOC')) };
 		let url = Oc.url + "editarOC" + Oc.tipo;
@@ -174,6 +184,50 @@ var Oc = {
 		tot = $('.items').length - 1;
 		Oc.itemInputComplete(tot);
 	},
+
+	agregarOperDat: function(t){
+		++modalId;
+			let jsonString = { 'data': '' };
+			let config = { 'url': Oc.url + 'modalOperSinCotizar' , 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
+			
+			});
+	},
+	
+	agregarOpersinCotizar: function(t){
+		console.log(t);
+			let id = t;
+			++modalId;
+			let jsonString = { 'data': id };
+			let config = { 'url': Oc.url + 'formularioOperSinCotizarCarga', 'data': jsonString };
+			console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Oc.agregarItem();';
+				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Oper?" });';
+				btn[2] = { title: 'Guardar', fn: fn[2] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
+				Oc.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
+				$('#divItemData').html('');
+				Oc.itemsData =   $.parseJSON($('#itemsData').val());
+				Oc.modalId = modalId;
+				Oc.itemInputComplete('all');
+			});
+	},
+	
 	quitarItem: function(t,v){
 		div = t.closest('div.itemData');
 		$(div).remove();

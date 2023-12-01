@@ -12,6 +12,7 @@ class OrdenCompra extends MY_Controller
 		$this->load->model('M_Moneda', 'mMoneda');
 		$this->load->model('M_Proveedor', 'mProveedor');
 		$this->load->model('M_FormularioProveedor', 'mFormProveedor');
+		$this->load->model('M_Oper', 'mOper');
 		$this->load->model('Configuracion/M_Tipo', 'mTipo');
 	}
 
@@ -92,6 +93,37 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioOperSinCotizarCarga()
+	{
+		$result = $this->result;
+		$idOC = json_decode($this->input->post('data'), true);
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
+		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
+		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
+		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
+		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
+		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
+		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
+		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+
+		//$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
+		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOC])->result_array();
+		//echo $this->db->last_query(); exit();
+		foreach ($dataParaVista['oc'] as $key => $value) {
+			$dataParaVista['ocSubItem'][$value['idOperDetalle']] = $this->model->obtenerInformacionOperSinCotSubItem(['idOperDetalle' => $value['idOperDetalle']])->result_array();
+			//var_dump($value['idOperDetalle']);
+		}
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar OC';
+		//$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
+		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/Oper/formularioOperSinCotizar", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function formularioEditarOCLibre()
 	{
 		$result = $this->result;
@@ -139,7 +171,50 @@ class OrdenCompra extends MY_Controller
 
 		echo json_encode($result);
 	}
+	
+	public function modalOperSinCotizar()
+	{	$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
 
+		$dataParaVista = [];
+
+		$data = $this->mOper->obtenerInformacionOper($post)->result_array();
+		foreach ($data as $key => $row) {
+			$dataParaVista[$row['idOper']] = [
+				'idOper' => $row['idOper'],
+				'concepto' => $row['concepto'],
+				'requerimiento' => $row['requerimiento'],
+				'fechaRequerimiento' => date_change_format($row['fechaRequerimiento']),
+				'fechaEntrega' => date_change_format($row['fechaEntrega']),
+				'total' => $row['total'],
+				'feePorcentaje' => $row['feePorcentaje'],
+				'totalFee' => $row['totalFee'],
+				'IGVPorcentaje' => $row['IGVPorcentaje'],
+				'totalFeeIGV' => $row['totalFeeIGV'],
+				'observacion' => $row['observacion'],
+				'estado' => $row['estado']
+			];
+			$item[$row['idOper']][$row['idItem']] = $row['idItem'];
+		}
+
+		foreach ($dataParaVista as $key => $row) {
+			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
+		// var_dump($dataParaVista[$key]['item']);
+		}
+		
+		
+		$html = getMensajeGestion('noRegistros');
+		if (!empty($dataParaVista)) {
+			$html = $this->load->view("modulos/OrdenCompra/Oper/listaOperSinCotizar", ['datos' => $dataParaVista], true);
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Seleccionar Oper';
+		$result['data']['html'] = $html;
+	
+
+		echo json_encode($result);
+	}
 	public function registrarOCLibre()
 	{
 		$result = $this->result;
@@ -183,7 +258,8 @@ class OrdenCompra extends MY_Controller
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
 			'totalIGV' => $post['totalIGV'],
 			'idUsuarioReg' => $this->idUsuario,
-			'observacion' => $post['observacion']
+			'observacion' => $post['observacion'],
+			'idOper' => $post['idOper']
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -243,6 +319,8 @@ class OrdenCompra extends MY_Controller
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
 		echo json_encode($result);
 	}
+
+	
 
 	public function editarOCLibre()
 	{

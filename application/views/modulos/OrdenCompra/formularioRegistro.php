@@ -5,6 +5,7 @@
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="form-row pt-3">
 					<div class="form-group col-md-4">
+					<input type="hidden" name="idOper" value = "">
 						<label class="font-weight-bold">Proveedor:</label>
 						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>

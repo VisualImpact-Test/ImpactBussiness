@@ -56,19 +56,19 @@
     </div>
   </div>
 </div>
-<form class="form" role="form" id="formEditarOC" method="post">
+<form class="form" role="form" id="formRegistroOC" method="post">
   <div class="row">
     <div class="col-md-12 child-divcenter">
       <fieldset class="scheduler-border">
         <legend class="scheduler-border">Datos Generales</legend>
         <div class="form-row pt-3">
           <div class="form-group col-md-4">
-          <input type="hidden" name="idOper" value = "">
+            <input type="hidden" name="idOper" value = "<?= $oc[0]['idOper'] ?>">
             <label class="font-weight-bold">Proveedor:</label>
             <select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
-              <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor', 'selected' => $oc[0]['idProveedor']]); ?>
+              <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>
             </select>
-            <input type="hidden" name="idOc" value="<?= $oc[0]['idOrdenCompra'] ?>">
+            <input type="hidden" name="idOc" value="">
           </div>
           <div class="form-group col-md-4">
             <label class="font-weight-bold">Cuenta:</label>
@@ -102,7 +102,7 @@
             <label class="font-weight-bold">Moneda:</label>
             <!-- Revisar https://fomantic-ui.com/modules/dropdown.html -->
             <div class="ui fluid search selection dropdown simpleDropdown semantic-dropdown ">
-              <input type="hidden" name="moneda" value="<?= $oc[0]['idMoneda'] ?>" patron="requerido">
+              <input type="hidden" name="moneda" value="" patron="requerido">
               <i class="dropdown icon"></i>
               <div class="default text">Moneda</div>
               <div class="menu">
@@ -119,7 +119,7 @@
         <div class="form-row">
           <div class="form-group col-md-3">
             <label class="font-weight-bold">Lugar de Entrega:</label>
-            <input class="form-control" name="entrega" value="<?= $oc[0]['entrega'] ?>">
+            <input class="form-control" name="entrega" value="">
           </div>
           <div class="form-group col-md-3">
             <label class="font-weight-bold">Fecha Entrega:</label>
@@ -127,7 +127,7 @@
           </div>
           <div class="form-group col-md-3">
             <label class="font-weight-bold">Comentario:</label>
-            <input class="form-control" name="comentario" value="<?= $oc[0]['comentario'] ?>">
+            <input class="form-control" name="comentario" value="">
           </div>
           <div class="form-group col-md-3">
             <label class="font-weight-bold">Concepto:</label>
@@ -168,7 +168,7 @@
                   </select>
                 </div>
                 <div class="form-row col-md-12 subItem">
-                  <?php foreach ($ocSubItem[$value['idOrdenCompraDetalle']] as $si_k => $si_v): ?>
+                  <?php foreach ($ocSubItem[$value['idOperDetalle']] as $si_k => $si_v): ?>
                     <?php if ($value['idTipo'] == '2'): ?>
                       <div class="form-row subItemSpace col-md-12 border-bottom pt-2">
               					<div class="form-group col-md-6">
@@ -339,7 +339,7 @@
                 </div>
                 <div class="form-group d-none">
                   <label class="font-weight-bold">CantidadSubItem:</label>
-                  <input class="form-control cantidadSubItem" name="cantidadSubItem" patron="requerido" value="<?= count($ocSubItem[$value['idOrdenCompraDetalle']]) ?>">
+                  <input class="form-control cantidadSubItem" name="cantidadSubItem" patron="requerido" value="<?= count($ocSubItem[$value['idOperDetalle']]) ?>">
                 </div>
                 <div class="form-group">
                   <label class="font-weight-bold">Costo:</label>
@@ -380,7 +380,7 @@
           </div>
           <div class="form-group col-md-4">
             <label class="font-weight-bold">Total:</label>
-            <input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= $value['totalIGV'] ?>">
+            <input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= $value['totalFeeIGV'] ?>">
           </div>
         </div>
       </fieldset>
