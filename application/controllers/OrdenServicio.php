@@ -136,7 +136,8 @@ class OrdenServicio extends MY_Controller
 		$cargos = $this->db->get_where('compras.ordenServicioCargo', ['idOrdenServicio' => $pr['idOrdenServicio'], 'estado' => 1])->result_array();
 		$dataParaVista['cargosOS'] = changeKeyInArray($cargos, 'idCargo');
 
-		$presupuestoCargoFecha = $this->db->get_where('compras.presupuestoCargo', ['idPresupuesto' => $id, 'estado' => 1])->result_array();
+		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
+		$presupuestoCargoFecha = $this->db->get_where('compras.presupuestoCargo', ['idPresupuesto' => $id])->result_array();
 		$dataParaVista['cantidadPorCargoFecha'] = $presupuestoCargoFecha = changeKeyInArray($presupuestoCargoFecha, 'idCargo', 'fecha');
 
 		$tipoPresupuesto = $this->db->get_where('compras.tipoPresupuesto', ['estado' => 1])->result_array();
@@ -145,7 +146,8 @@ class OrdenServicio extends MY_Controller
 		$tipoPresupuestoDetalle = $this->db->get_where('compras.tipoPresupuestoDetalle', ['estado' => 1])->result_array();
 		$dataParaVista['tiposPresupuestoDetalle'] = $tipoPresupuestoDetalle = changeKeyInArray($tipoPresupuestoDetalle, 'idTipoPresupuestoDetalle');
 
-		$presupuestoDet = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id, 'estado' => 1])->result_array();
+		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
+		$presupuestoDet = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id])->result_array();
 		$dataParaVista['presupuestoDetalle'] = $pd = changeKeyInArray($presupuestoDet, 'idPresupuestoDetalle');
 		$whereIdPreDet = obtenerDatosCabecera($presupuestoDet, 'idPresupuestoDetalle');
 
@@ -183,7 +185,7 @@ class OrdenServicio extends MY_Controller
 
 						$montoTot = floatval($v2['monto']);
 						if ($v2['idFrecuencia'] == '1') { // MENSUAL
-							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100 * floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
 						} elseif ($v2['idFrecuencia'] == '2') { // BIMENSUAL
 							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
@@ -191,8 +193,7 @@ class OrdenServicio extends MY_Controller
 
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
-
-							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
 						} elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
 							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
@@ -200,22 +201,18 @@ class OrdenServicio extends MY_Controller
 
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
-
-							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
 						} elseif ($v2['idFrecuencia'] == '4') { // ANUAL
 							if ($nroMes == 1 || ($nroMes - 1) % 12 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
 								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
-
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
-
-							$calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']);
+							if ($nroMes == 1 || ($nroMes - 1) % 12 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] += $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
 						} elseif ($v2['idFrecuencia'] == '5') { // UNICO
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc]) $valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
 							if ($acumulado[$kc] > $valorMax[$kc]) $acumulado[$kc] = $valorMax[$kc];
-
-							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) - $acumulado[$kc]);
+							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100 * (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) - $acumulado[$kc]);
 
 							$acumulado[$kc] += (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) - $acumulado[$kc]); // No borrar.
 						} elseif ($v2['idFrecuencia'] == '6') { // FRACCIONADO
@@ -455,6 +452,11 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function aprobarVersion()
+	{
+		$post = json_decode($this->input->post('data'), true);
+	}
+
 	public function listadoMovilidad()
 	{
 		$result = $this->result;
@@ -665,7 +667,7 @@ class OrdenServicio extends MY_Controller
 		];
 
 		$this->db->insert('compras.ordenServicio', $insertOrdenServicio);
-		
+
 		$idOrdenServicio = $this->db->insert_id();
 
 		$insertOrdenServicioHistorico = $insertOrdenServicio;
@@ -1449,7 +1451,7 @@ class OrdenServicio extends MY_Controller
 			}
 		}
 
-		$this->db->update('compras.ordenServicio', ['chkPresupuesto' => true, 'fechaPresupuesto' => getActualDateTime(),'idOrdenServicioEstado'=> '2'], ['idOrdenServicio' => $idOrdenServicio]);
+		$this->db->update('compras.ordenServicio', ['chkPresupuesto' => true, 'fechaPresupuesto' => getActualDateTime(), 'idOrdenServicioEstado' => '2'], ['idOrdenServicio' => $idOrdenServicio]);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
