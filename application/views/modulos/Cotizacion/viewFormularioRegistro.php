@@ -806,7 +806,7 @@
 							<div class="eight wide field">
 								<div class="ui sub header">FEE OPERACION</div>
 								<div class="ui right labeled input">
-									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2Form" value="0" onchange="$(this).closest('.body-item').find('.tipoItemForm').keyup();">
+									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2" value="0" onchange="$(this).closest('.body-item').find('.tipoItemForm').keyup();">
 									<div class="ui basic label">%</div>
 								</div>
 							</div>
