@@ -48,15 +48,7 @@
 					<td class="td-left"><?= verificarEmpty($row['documento'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['cargo'], 3); ?></td>
 					<td class="text-center style-icons">
-						<?php if ($row['estado'] == 1) : ?>
-							<?php if ($row['chkAprobado']) : ?>
-								<span class="badge badge-success" id="spanEstado-<?= $row['estado']; ?>">Aprobado</span>
-							<?php else : ?>
-								<span class="badge badge-secondary" id="spanEstado-<?= $row['estado']; ?>">Pendiente</span>
-							<?php endif; ?>
-						<?php else : ?>
-							<span class="badge badge-danger" id="spanEstado-<?= $row['estado']; ?>">Inactivo</span>
-						<?php endif; ?>
+						<span class="ui <?= verificarEmpty($row['colorEstado'], 3); ?> inverted  large label" id="spanEstado"><?= $row['estadoServicio']; ?></span>
 					</td>
 				</tr>
 				<? $ix++; ?>
