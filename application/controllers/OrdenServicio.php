@@ -1219,13 +1219,14 @@ class OrdenServicio extends MY_Controller
 		$insertPresupuesto['idPresupuesto'] = $idPresupuesto;
 		$insertPresupuesto['estado'] = '1';
 		$this->db->insert('compras.presupuestoHistorico', $insertPresupuesto);
-
+		$idPresupuestoHistorico = $this->db->insert_id();
 		// compras.presupuestoCargo
 		$insertPresupuestoCargo = [];
 		foreach ($post['fechaList'] as $kf => $vf) {
 			foreach ($post['cargoList'] as $vc) {
 				$insertPresupuestoCargo[] = [
 					'idPresupuesto' => $idPresupuesto,
+					'idPresupuestoHistorico' => $idPresupuestoHistorico,
 					'fecha' => date_change_format_bd($vf),
 					'idCargo' => $vc,
 					'cantidad' => $post["cantidadCargoFecha[$vc][$kf]"],
@@ -1240,6 +1241,7 @@ class OrdenServicio extends MY_Controller
 		foreach ($post['idTipoPresupuesto'] as $vd) {
 			$insertPresupuestoDetalle = [
 				'idPresupuesto' => $idPresupuesto,
+				'idPresupuestoHistorico' => $idPresupuestoHistorico,
 				'idTipoPresupuesto' => $vd,
 				'idUsuario' => $this->idUsuario,
 				'fechaReg' => getActualDateTime()
@@ -1600,13 +1602,14 @@ class OrdenServicio extends MY_Controller
 		$updatePresupuesto['idPresupuesto'] = $idPresupuesto;
 
 		$this->db->insert('compras.presupuestoHistorico', $updatePresupuesto);
-
+		$idPresupuestoHistorico = $this->db->insert_id();
 		// compras.presupuestoCargo
 		$insertPresupuestoCargo = [];
 		foreach ($post['fechaList'] as $kf => $vf) {
 			foreach ($post['cargoList'] as $vc) {
 				$insertPresupuestoCargo[] = [
 					'idPresupuesto' => $idPresupuesto,
+					'idPresupuestoHistorico' => $idPresupuestoHistorico,
 					'fecha' => date_change_format_bd($vf),
 					'idCargo' => $vc,
 					'cantidad' => $post["cantidadCargoFecha[$vc][$kf]"],
@@ -1621,6 +1624,7 @@ class OrdenServicio extends MY_Controller
 		foreach ($post['idTipoPresupuesto'] as $vd) {
 			$insertPresupuestoDetalle = [
 				'idPresupuesto' => $idPresupuesto,
+				'idPresupuestoHistorico' => $idPresupuestoHistorico,
 				'idTipoPresupuesto' => $vd,
 				'idUsuario' => $this->idUsuario,
 				'fechaReg' => getActualDateTime()
