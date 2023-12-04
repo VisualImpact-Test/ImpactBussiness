@@ -143,6 +143,6 @@
 				<td class="text-right bold"><?= moneda($totalFinalFecha[$kF]) ?></td>
 			<?php endforeach ?>
 			<td class="text-right bold"><?= moneda($totalFinal) ?></td>
-			</tr>
+		</tr>
 	</table>
 </div>

@@ -332,7 +332,7 @@
 														<td>
 															<div class="ui input">
 																<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
-																<?php if ($v1['idTipoPresupuestoDetalle']  == COD_ASIGNACIONFAMILIAR) :  ?>
+																<?php if ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) : ?>
 																	<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) ?>">
 																<?php endif; ?>
 															</div>
@@ -764,7 +764,7 @@
 													</td>
 													<td colspan="4"></td>
 												</tr>
-											<?php else :  ?>
+											<?php else : ?>
 												<tr class="detalleTr_<?= $key ?>" data-nrofila="<?= $key ?>">
 													<td>
 														<div class="ui action input fluid">

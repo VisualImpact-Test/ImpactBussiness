@@ -110,7 +110,7 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function generarPdf($id)
+	public function generarPdf($id, $version = 0)
 	{
 		$data = [];
 		require_once('../mpdf/mpdf.php');
@@ -120,7 +120,8 @@ class OrdenServicio extends MY_Controller
 		// $post = json_decode($this->input->post('data'), true);
 		$dataParaVista = [];
 
-		$dataParaVista['presupuesto'] = $pr = $this->db->get_where('compras.presupuesto', ['idPresupuesto' => $id])->row_array();
+		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
+		$dataParaVista['presupuesto'] = $pr = $this->db->get_where('compras.presupuestoHistorico', ['idPresupuesto' => $id])->row_array();
 		$dataParaVista['ordenServicio'] = $oS = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $pr['idOrdenServicio']])->row_array();
 
 		$idOSD_AF_Porcentaje = $this->db->get_where('compras.ordenServicioDetalle', ['estado' => 1, 'idOrdenServicio' => $pr['idOrdenServicio'], 'idTipoPresupuesto' => COD_SUELDO])->row_array()['idOrdenServicioDetalle'];
@@ -330,14 +331,12 @@ class OrdenServicio extends MY_Controller
 		}
 		$dataParaVista['totalCargoFechaServicio'] = $totalCargoFechaServicio;
 
-
 		$contenido['style'] = $this->load->view("modulos/OrdenServicio/pdf/oper_style", [], true);
 		$contenido['header'] = $this->load->view("modulos/OrdenServicio/pdf/header", ['title' => $oS['nombre'] /*, 'codigo' => 'COD: SIG-OPE-FOR-???' */], true);
 		$contenido['body'] = $this->load->view("modulos/OrdenServicio/pdf/body", $dataParaVista, true);
 		$contenido['footer'] = $this->load->view("modulos/OrdenServicio/pdf/footer", ['solicitante' => ''], true);
 
 		// foreach ($contenido as $v) echo $v; // Esta linea es para verlo desde HTML sin estar descargando a cada rato xd
-
 
 		require APPPATH . '/vendor/autoload.php';
 		// $orientation = '';
@@ -434,7 +433,7 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$post = json_decode($this->input->post('data'), true);
 		$usuarioa = $this->idUsuario;
-		
+
 		$insertAlmacen = [
 			'zona' => $post['name_zona'],
 			'zona2' => $post['name_zona2'],
@@ -444,7 +443,7 @@ class OrdenServicio extends MY_Controller
 		];
 		$this->db->insert('compras.tipoPresupuestoDetalleAlmacen', $insertAlmacen);
 		$idAlmacen = $this->db->insert_id();
-		
+
 		if ($idAlmacen) {
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
@@ -454,9 +453,8 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-
 	}
-	
+
 	public function listadoMovilidad()
 	{
 		$result = $this->result;
@@ -470,7 +468,7 @@ class OrdenServicio extends MY_Controller
 
 		echo json_encode($result);
 	}
-	
+
 	public function listadoAlmacenes()
 	{
 		$result = $this->result;
@@ -484,7 +482,7 @@ class OrdenServicio extends MY_Controller
 
 		echo json_encode($result);
 	}
-	
+
 	public function save_almacenDetalle()
 	{
 		$this->db->trans_start();
@@ -507,7 +505,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-		
 	}
 	public function save_udtMovilidadDetalle()
 	{
@@ -536,10 +533,7 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-		
 	}
-
-
 
 	public function uptEstado_almacenDetalle()
 	{
@@ -547,9 +541,9 @@ class OrdenServicio extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		//var_dump($post);
-		if($post['estado'] == 1){
+		if ($post['estado'] == 1) {
 			$estado = 0;
-		}else{
+		} else {
 			$estado = 1;
 		}
 		$this->db->update('compras.tipoPresupuestoDetalleAlmacen', ['estado' => $estado], ['idTipoPresupuestoDetalleAlmacen' => $post['idTipoPresupuestoDetalleAlmacen']]);
@@ -562,7 +556,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-		
 	}
 	public function uptEstado_movilidad()
 	{
@@ -570,9 +563,9 @@ class OrdenServicio extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		//var_dump($post);
-		if($post['estado'] == 1){
+		if ($post['estado'] == 1) {
 			$estado = 0;
-		}else{
+		} else {
 			$estado = 1;
 		}
 		$this->db->update('compras.tipoPresupuestoDetalleMovilidad', ['estado' => $estado], ['idTipoPresupuestoDetalleMovilidad' => $post['idTipoPresupuestoDetalleMovilidad']]);
@@ -585,7 +578,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-		
 	}
 
 	public function registrarNuevaMovilidad()
@@ -608,7 +600,7 @@ class OrdenServicio extends MY_Controller
 		];
 		$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $insertMovilidad);
 		$idMovilidad = $this->db->insert_id();
-		
+
 		if ($idMovilidad) {
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
@@ -814,7 +806,7 @@ class OrdenServicio extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-	
+
 	public function formatoVersionesAnteriores()
 	{
 		$result = $this->result;
@@ -824,11 +816,10 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Versiones Anteriores - Presupuesto';
+		$result['msg']['title'] = 'Versiones Presupuesto';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formatoVersionesAnteriores", $dataParaVista, true);
 
 		echo json_encode($result);
-	
 	}
 
 	public function formularioActualizacionOrdenServicio()
