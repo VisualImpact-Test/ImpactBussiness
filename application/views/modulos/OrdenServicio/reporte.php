@@ -48,7 +48,12 @@
 					<td class="td-left"><?= verificarEmpty($row['documento'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['cargo'], 3); ?></td>
 					<td class="text-center style-icons">
+						<?php if($row['estado'] == 1){ ?> 
 						<span class="ui <?= verificarEmpty($row['colorEstado'], 3); ?> inverted  large label" id="spanEstado"><?= $row['estadoServicio']; ?></span>
+						<?php } else { ?> 
+							<span class="ui red inverted  large label" id="spanEstado">Anulado</span>
+						<?php } ?>
+						
 					</td>
 				</tr>
 				<? $ix++; ?>
