@@ -213,6 +213,7 @@ var Cotizacion = {
 	distritos: [],
 	tipoTransporte: [],
 	costosTransportes: [],
+	feeCuenta: [],
 	// solicitanteData: [],
 
 	load: function () {
@@ -314,6 +315,7 @@ var Cotizacion = {
 			$.when(Fn.ajax(config)).then((a) => {
 				if (a.data.existe == 0) {
 					Cotizacion.itemServicio = a.data.itemServicio;
+					Cotizacion.feeCuenta = a.data.feeCuenta;
 				}
 
 				let btn = [];
@@ -574,7 +576,58 @@ var Cotizacion = {
 			}
 		});
 
+
+
+
+
 		$(document).on('change', '#tipoItemForm', function (e) {
+			//ACTUALIZAR FEE
+			var idCuenta = $('#cuentaForm').val();
+			var idCosto = $('#cuentaCentroCostoForm').val();
+			var jsonData = JSON.stringify(idCuenta);
+			//alert(idCuenta + idCosto);
+			var jsonString = { jsonData: jsonData };
+			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
+				'data': jsonString };
+
+				$.when(Fn.ajax(config1)).then((exa) => {
+				if (exa.data.existe == 0) {
+				Cotizacion.feeCuenta = exa.data.feeCuenta;
+				}
+					//alert(JSON.stringify(Cotizacion.feeCuenta));
+					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+					var parsedResponse = JSON.parse(jsonResponse);
+					console.log(parsedResponse);
+					var idCuentaF;
+					var fee;
+					var fee2;
+					for (var i = 0; i < parsedResponse.length; i++) {
+						idCuentaF = parsedResponse[i].idCuenta;
+						fee = parsedResponse[i].fee;
+					}
+					fee2 = parsedResponse[0].fee;
+					
+					if (idCuenta == 2) {
+						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
+							$('.feeForm').val(fee);
+							$('.fee2Form').val(fee2);
+						} else {
+							$('.feeForm').val(0);
+							$('.fee2Form').val(0);
+						}
+					} else if (idCuenta == 11) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee2);
+					} else if (idCuenta == idCuentaF) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee);
+					} else {
+						$('.feeForm').val(0);
+						$('.fee2Form').val(0);
+					}
+				});
+				//////
+				
 			let control = $(this);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
@@ -594,6 +647,7 @@ var Cotizacion = {
 			// EN CASO NO SEA TRANSPORTE QUITAR LA ETIQUETA DE OBLIGATORIO
 			allFeatures.find('input.formTransporte').removeAttr("patron");
 			allFeatures.find('div.formTransporte').find('select').removeAttr("patron");
+
 
 			// ocultar fee de personal
 			control.closest('.body-item').find('.fieldPersonal').addClass('d-none');
@@ -670,6 +724,7 @@ var Cotizacion = {
 				control.closest('.body-item').find('.cantidadForm').val('1');
 				var idCuenta = $('#cuentaForm').val();
 				var idCentro = $('#cuentaCentroCostoForm').val();
+
 				//////////////////
 				if (idCuenta != '' && idCentro != '') {
 					var data = { 'idCuenta': idCuenta, 'idCentro': idCentro };
@@ -738,6 +793,7 @@ var Cotizacion = {
 			$("input").remove("#identificador");
 		});
 
+		
 		$(document).on("keyup", ".cantidad_dias_personal", function () {
 			let _this = $(this);
 			var dias = $(this).val();
@@ -770,6 +826,55 @@ var Cotizacion = {
 			_this.closest('.body-item').find('.costoForm').val(total_final_costo.toFixed(4))
 		});
 
+		$(document).on("keyup", ".tipoItemForm", function () {
+			//ACTUALIZAR FEE
+			var idCuenta = $('#cuentaForm').val();
+			var idCosto = $('#cuentaCentroCostoForm').val();
+			var jsonData = JSON.stringify(idCuenta);
+			//alert(idCuenta + idCosto);
+			var jsonString = { jsonData: jsonData };
+			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
+				'data': jsonString };
+
+				$.when(Fn.ajax(config1)).then((exa) => {
+				if (exa.data.existe == 0) {
+				Cotizacion.feeCuenta = exa.data.feeCuenta;
+				}
+					//alert(JSON.stringify(Cotizacion.feeCuenta));
+					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+					var parsedResponse = JSON.parse(jsonResponse);
+
+					var idCuentaF;
+					var fee;
+					var fee2;
+					for (var i = 0; i < parsedResponse.length; i++) {
+						idCuentaF = parsedResponse[i].idCuenta;
+						fee = parsedResponse[i].fee;
+					}
+					fee2 = parsedResponse[0].fee;
+					
+					if (idCuenta == 2) {
+						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
+							$('.feeForm').val(fee);
+							$('.fee2Form').val(fee2);
+						} else {
+							$('.feeForm').val(0);
+							$('.fee2Form').val(0);
+						}
+					} else if (idCuenta == 11) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee2);
+					} else if (idCuenta == idCuentaF) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee);
+					} else {
+						$('.feeForm').val(0);
+						$('.fee2Form').val(0);
+					}
+				});
+				//////
+		})
+
 		$(document).on("keyup", ".cantidad_personal", function () {
 			var idDiv = $(this).attr('data-cantidad');
 			var cantidad = $(this).val();
@@ -782,7 +887,7 @@ var Cotizacion = {
 		})
 
 		$('#cargo_personal').on("change", function () {
-
+			
 		})
 
 		$(document).on("keyup", ".sueldo_personal", function () {
@@ -808,6 +913,9 @@ var Cotizacion = {
 			} else {
 				essalud = (parseFloat(pago_final) + asignacion_familiar_personal + parseFloat(incentivo_personal)) * 0.09;
 			}
+			
+			
+
 			essalud = parseFloat(essalud.toFixed(2));
 
 			let cts = 0;
@@ -2171,7 +2279,60 @@ var Cotizacion = {
 			}
 		});
 
+		$(document).on('change', '#cuentaCentroCostoForm', function () {
+			var idCuenta = $('#cuentaForm').val();
+			var idCosto = $('#cuentaCentroCostoForm').val();
+			var jsonData = JSON.stringify(idCuenta);
+			//alert(idCuenta + idCosto);
+			var jsonString = { jsonData: jsonData };
+			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
+				'data': jsonString };
+
+				$.when(Fn.ajax(config1)).then((exa) => {
+				if (exa.data.existe == 0) {
+				Cotizacion.feeCuenta = exa.data.feeCuenta;
+				}
+					//alert(JSON.stringify(Cotizacion.feeCuenta));
+					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+					var parsedResponse = JSON.parse(jsonResponse);
+
+					var idCuentaF;
+					var fee;
+					var fee2;
+					for (var i = 0; i < parsedResponse.length; i++) {
+						idCuentaF = parsedResponse[i].idCuenta;
+						fee = parsedResponse[i].fee;
+					}
+					fee2 = parsedResponse[0].fee;
+					
+					if (idCuenta == 2) {
+						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
+							$('.feeForm').val(fee);
+							$('.fee2Form').val(fee2);
+						} else {
+							$('.feeForm').val(0);
+							$('.fee2Form').val(0);
+						}
+					} else if (idCuenta == 11) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee2);
+					} else if (idCuenta == idCuentaF) {
+						$('.feeForm').val(fee);
+						$('.fee2Form').val(fee);
+					} else {
+						$('.feeForm').val(0);
+						$('.fee2Form').val(0);
+					}
+				});
+
+			$('#tipoItemForm').change();
+		});
+
+
 		$(document).on('change', '#cuentaForm', function () {
+			$('.feeForm').val(0);
+			$('.fee2Form').val(0);
+
 			let control = $(this);
 			let cod = control.val();
 			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
@@ -2207,13 +2368,13 @@ var Cotizacion = {
 			} else {
 				$('.gapForm').val('');
 			}
-
+			
 			$('#tipoItemForm').change();
 		});
 
-		$(document).on('change', '#cuentaCentroCostoForm', function () {
+		/*$(document).on('change', '#cuentaCentroCostoForm', function () {
 			$('#tipoItemForm').change();
-		});
+		});*/
 		$(document).on('change', '.costoPacking, .costoMovilidad, .costoPersonal', function () {
 			let _this = $(this);
 			let control = _this.closest('.body-item');

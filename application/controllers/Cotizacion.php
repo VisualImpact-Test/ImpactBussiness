@@ -2994,6 +2994,8 @@ class Cotizacion extends MY_Controller
 		$data['tabla'] = 'compras.cotizacion';
 		$data['update'] = [
 			'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE,
+			'fechaEnvioCliente' =>  getActualDateTime(),
+			'usurioEnvioCliente' => $this->idUsuario,
 		];
 		$data['where'] = [
 			'idCotizacion' => $post['idCotizacion'],

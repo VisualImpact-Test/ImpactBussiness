@@ -17,12 +17,14 @@ class M_Cotizacion extends MY_Model
 
 	public function obtenerDetallePDV($id)
 	{
-		return $this->db->distinct()->select("l.*, departamento, provincia, case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
+		return $this->db->distinct()
+			->select("l.*, departamento, provincia, case when l.idDistrito is null then '' else distrito end as distrito")->where('idCotizacionDetalle', $id)
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 		AND ISNULL(l.idDistrito , 1) = ubi_zc.cod_distrito
 		AND ubi_zc.estado = 1', 'left')
 			->get('compras.cotizacionDetalleUbigeo l')->result_array();
 	}
+
 	public function obtenerCuenta($params = [])
 	{
 		$sql = "
@@ -40,6 +42,31 @@ class M_Cotizacion extends MY_Model
 			AND emp.estado = 1
 		ORDER BY emp.razonSocial
 		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerFeeCuenta($id)
+	{
+		$sql = "DECLARE @hoy DATE = GETDATE();
+		SELECT DISTINCT
+			a.idCuenta,
+			a.fee
+		FROM
+		rrhh.dbo.feeCuenta a
+		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = a.idCuenta
+		WHERE
+			a.estado = 1 AND a.idCuenta = ".$id;
+
+			//var_dump($sql);
+			//exit;
 
 		$query = $this->db->query($sql);
 
@@ -138,7 +165,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-	
+
 	public function obtenerTipoServicioCotizacion($params = [])
 	{
 		$sql = "
@@ -354,12 +381,15 @@ class M_Cotizacion extends MY_Model
 			->join('compras.cotizacionDetalleSub cds', 'cd.idItemTipo = 7 AND cds.idCotizacionDetalle = cd.idCotizacionDetalle', 'LEFT')
 			->join('compras.proveedor', 'proveedor.idProveedor = isNull(cd.idProveedor, cds.idProveedorDistribucion)', 'LEFT');
 
-		if (isset($params['idProveedor'])) $this->db->join('compras.itemTarifario itf', 'itf.idItem = i.idItem AND itf.estado = 1 AND itf.idProveedor = ' . $params['idProveedor'], 'LEFT');
+		if (isset($params['idProveedor']))
+			$this->db->join('compras.itemTarifario itf', 'itf.idItem = i.idItem AND itf.estado = 1 AND itf.idProveedor = ' . $params['idProveedor'], 'LEFT');
 
-		if (isset($params['idCotizacion'])) $this->db->where("c.idCotizacion in ({$params['idCotizacion']})");
+		if (isset($params['idCotizacion']))
+			$this->db->where("c.idCotizacion in ({$params['idCotizacion']})");
 		// if (isset($params['idProveedor'])) $this->db->where('proveedor.idProveedor', $params['idProveedor']);
 
-		if (isset($params['idCotizacionDetalle'])) $this->db->where("cd.idCotizacionDetalle in ({$params['idCotizacionDetalle']})");
+		if (isset($params['idCotizacionDetalle']))
+			$this->db->where("cd.idCotizacionDetalle in ({$params['idCotizacionDetalle']})");
 		return $this->db->get();
 	}
 
@@ -376,7 +406,8 @@ class M_Cotizacion extends MY_Model
 			->join('compras.tipoServicio ts', 'ts.idTipoServicio = cds.idTipoServicio', 'LEFT')
 			->join('compras.item il', 'il.idItem = cds.idItem', 'LEFT');
 
-		if (isset($params['idCotizacionDetalle'])) $this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']);
+		if (isset($params['idCotizacionDetalle']))
+			$this->db->where('cds.idCotizacionDetalle', $params['idCotizacionDetalle']);
 		return $this->db->get();
 	}
 
@@ -421,6 +452,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->db->get();
 	}
+	
 	public function obtenerMaxDiasEntrega($params = [])
 	{
 		$filtros = "";
@@ -2351,8 +2383,10 @@ class M_Cotizacion extends MY_Model
 			->order_by('ct.nombre');
 
 		$this->db->where('ct.flag', 1);
-		if (isset($params['idCuenta'])) $this->db->where('e.idEmpresa', $params['idCuenta']);
-		if (isset($params['soloCargosOcupados'])) $this->db->where("ct.idCargoTrabajo IN (
+		if (isset($params['idCuenta']))
+			$this->db->where('e.idEmpresa', $params['idCuenta']);
+		if (isset($params['soloCargosOcupados']))
+			$this->db->where("ct.idCargoTrabajo IN (
 				SELECT DISTINCT e.idCargoTrabajo 
 				FROM rrhh.dbo.empleado e
 				INNER JOIN rrhh.dbo.empleadoCargoTrabajo ec ON e.idEmpleado=ec.idEmpleado WHERE e.flag = 'activo' AND (
@@ -2367,8 +2401,10 @@ class M_Cotizacion extends MY_Model
 	public function obtener_sueldos($idCuenta, $idCentro, $idCargo)
 	{
 		$filtro = '';
-		if (!empty($idCuenta)) $filtro .= 'AND idEmpresa=' . $idCuenta;
-		if (!empty($idCargo)) $filtro .= 'AND idCargoTrabajo=' . $idCargo;
+		if (!empty($idCuenta))
+			$filtro .= 'AND idEmpresa=' . $idCuenta;
+		if (!empty($idCargo))
+			$filtro .= 'AND idCargoTrabajo=' . $idCargo;
 		if (!empty($idCentro)) {
 			$filtro .= 'AND idSubcanal IN (
 				SELECT idSubcanal FROM rrhh.dbo.empresa_Canal WHERE idEmpresaCanal=' . $idCentro . '

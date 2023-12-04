@@ -73,7 +73,7 @@
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
@@ -806,7 +806,7 @@
 							<div class="eight wide field">
 								<div class="ui sub header">FEE OPERACION</div>
 								<div class="ui right labeled input">
-									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2" value="0" onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();">
+									<input data-max='100' data-min='0' class="onlyNumbers fee2Form keyUpChange" name="fee2Form" value="0" onchange="$(this).closest('.body-item').find('.tipoItemForm').keyup();">
 									<div class="ui basic label">%</div>
 								</div>
 							</div>
@@ -831,7 +831,7 @@
 			<div class="column">
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
-					<input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
+					<input data-max='100' data-min='0' type="number" id="feeForm" class="feeForm onlyNumbers" name="feeForm" placeholder="Fee" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
