@@ -661,9 +661,11 @@ class OrdenServicio extends MY_Controller
 			'chkAprobado' => false,
 			'chkUtilizarCliente' => $post['chkUtilizarCliente'],
 			'chkPresupuesto' => false,
+			'idOrdenServicioEstado' => '1',
 		];
 
 		$this->db->insert('compras.ordenServicio', $insertOrdenServicio);
+		
 		$idOrdenServicio = $this->db->insert_id();
 
 		$insertOrdenServicioHistorico = $insertOrdenServicio;
@@ -1447,7 +1449,7 @@ class OrdenServicio extends MY_Controller
 			}
 		}
 
-		$this->db->update('compras.ordenServicio', ['chkPresupuesto' => true, 'fechaPresupuesto' => getActualDateTime()], ['idOrdenServicio' => $idOrdenServicio]);
+		$this->db->update('compras.ordenServicio', ['chkPresupuesto' => true, 'fechaPresupuesto' => getActualDateTime(),'idOrdenServicioEstado'=> '2'], ['idOrdenServicio' => $idOrdenServicio]);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
