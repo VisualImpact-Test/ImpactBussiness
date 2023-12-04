@@ -77,7 +77,7 @@
 		<table class="tb-detalle" style="width: 100%; margin-bottom: 10px;">
 			<thead>
 				<?php if ($idItemTipo == COD_TRANSPORTE['id']) : ?>
-					<?php $col1 = 3; ?>
+					<?php $col1 = 6; ?>
 					<tr style="background-color: #FFE598;">
 						<th style="width: 10%;">ITEM</th>
 						<th style="width: 55%;" colspan="4">DESCRIPCIÓN</th>
