@@ -63,11 +63,8 @@ class M_Cotizacion extends MY_Model
 		rrhh.dbo.feeCuenta a
 		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = a.idCuenta
 		WHERE
-			a.estado = 1 AND a.idCuenta = ".$id;
-
-			//var_dump($sql);
-			//exit;
-
+			a.estado = 1 AND a.idCuenta = " . $id;
+			
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -452,7 +449,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->db->get();
 	}
-	
+
 	public function obtenerMaxDiasEntrega($params = [])
 	{
 		$filtros = "";
@@ -510,7 +507,7 @@ class M_Cotizacion extends MY_Model
 				, p.codCotizacion
 				, CONVERT(VARCHAR, p.fechaEmision, 103) AS fechaEmision
 				, CONVERT(VARCHAR, ISNULL(p.fechaRequerida, p.fechaEmision), 103) AS fechaRequerida
-				, DATEADD (DAY , diasValidez, fechaEmision) as fechaValido
+				, DATEADD (DAY , diasValidez, ISNULL(p.fechaRequerida, p.fechaEmision)) as fechaValido
 				, ce.nombre AS cotizacionEstado
 				, it.idItemTipo
 				, it.nombre AS itemTipo
