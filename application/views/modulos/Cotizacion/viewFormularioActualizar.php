@@ -428,7 +428,7 @@
 										<tr>
 											<th></th>
 											<th class="thCustomNameItem"></th>
-											<th>Tiempo tachado (días)</th>
+											<th>Tiempo Tachado (días)</th>
 											<th>Personas para tachado</th>
 											<th>Costo por día</th>
 											<th>Total de costo</th>
