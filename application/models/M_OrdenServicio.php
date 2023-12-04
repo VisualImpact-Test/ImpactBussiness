@@ -171,7 +171,7 @@ class M_OrdenServicio extends MY_Model
 			CAST(psp.fechaReg AS date) AS Fecha ,
 			ROW_NUMBER() OVER (ORDER BY psp.idPresupuesto ASC) AS versionPresupuesto,
 			usu.nombres as usuario')
-			->from('compras.presupuesto as psp')
+			->from('compras.presupuestoHistorico as psp')
 			->join('compras.ordenServicio as osv', 'psp.idOrdenServicio = osv.idOrdenServicio', 'LEFT')
 			->join('compras.cliente as clt', 'osv.idCliente = clt.idCliente', 'LEFT')
 			->join('rrhh.dbo.Empresa as emp', 'osv.idCuenta = emp.idEmpresa', 'LEFT')

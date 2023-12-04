@@ -213,9 +213,9 @@ class MY_Model extends CI_Model
 	}
 	public function obtenerSeriado($id)
 	{
-		$data = $this->db->get_where('compras.seriadoDocumento', ['idSeriadoDocumento', $id])->row_array();
+		$data = $this->db->get_where('compras.seriadoDocumento', ['idSeriadoDocumento' => $id])->row_array();
 		$nroSeriado = str_pad($data['numeroSeriado'], 6, "0", STR_PAD_LEFT);
-		$this->db->update('compras.seriadoDocumento', ['numeroSeriado' => $data['numeroSeriado'] + 1], ['idSeriadoDocumento', $id]);
+		$this->db->update('compras.seriadoDocumento', ['numeroSeriado' => $data['numeroSeriado'] + 1], ['idSeriadoDocumento' => $id]);
 		return $nroSeriado;
 	}
 }

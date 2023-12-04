@@ -5,6 +5,7 @@
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="form-row pt-3">
 					<div class="form-group col-md-4">
+					<input type="hidden" name="idOper" value = "">
 						<label class="font-weight-bold">Proveedor:</label>
 						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>
@@ -88,7 +89,7 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Datos de Item<small>(s)</small></legend>
 				<div class="row itemData" id="divItemData">
-					<div class="form-row col-md-8 order-md-1 divItem pt-3 border-bottom">
+					<div class="form-row col-md-9 order-md-1 divItem pt-3 border-bottom">
 						<div class="form-group col-md-6">
 							<label class="font-weight-bold">Item:</label>
 							<div class="input-group mb-3">
@@ -115,7 +116,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-md-4 order-md-2 pt-3 border-bottom itemValor">
+					<div class="col-md-3 order-md-2 pt-3 border-bottom itemValor">
 						<div class="form-group">
 							<label class="font-weight-bold">Cantidad:</label>
 							<input class="form-control item_cantidad" name="cantidad" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">

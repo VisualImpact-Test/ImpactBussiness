@@ -81,7 +81,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Cuenta</div>
-								<select class="ui dropdown parentDependiente centro-visible" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
+								<select class="ui dropdown parentDependiente centro-visible clearable" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCostoForm">
 									<?= htmlSelectOptionArray2(['title' => 'TODAS LAS CUENTAS', 'query' => $cuenta, 'class' => 'text-titlecase']); ?>
 								</select>
 							</div>

@@ -29,7 +29,7 @@ class M_Tipo extends MY_Model
 				, a.nombre AS tipo
 				, a.estado
 			FROM compras.itemTipo a
-			WHERE 1 = 1
+			WHERE 1 = 1 AND a.estado = 1
 			{$filtros}
 		";
 

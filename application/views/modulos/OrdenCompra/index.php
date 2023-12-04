@@ -38,6 +38,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarOC" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="oper" id="btn-operSinCotizar" title="oper">
+					<i class="fas fa-money-check-edit-alt"></i> <span class="txt_filtro"></span>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">

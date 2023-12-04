@@ -38,7 +38,7 @@ class M_OrdenCompra extends MY_Model
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
 			->join('compras.item i', 'i.idItem = ocd.idItem', 'LEFT')
-			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=oc.idCuenta', 'LEFT')
+			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa = oc.idCuenta', 'LEFT')
 			->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=oc.idCentroCosto', 'LEFT')
 			->join('compras.proveedor pro', 'pro.idProveedor = oc.idProveedor', 'LEFT')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda', 'LEFT')
@@ -65,4 +65,51 @@ class M_OrdenCompra extends MY_Model
 		}
 		return $this->db->get();
 	}
+	public function obtenerInformacionOperSinCotSubItem($params = [])
+	{
+		$this->db
+			->select('ocds.*, um.nombre as unidadMedida')
+			->from('orden.operDetalleSub ocds')
+			->join('compras.unidadMedida um', 'um.idUnidadMedida = ocds.idUnidadMedida', 'left');
+
+		if (isset($params['idOperDetalle'])) {
+			$this->db->where('ocds.idOperDetalle', $params['idOperDetalle']);
+		}
+		return $this->db->get();
+	}
+
+	public function obtenerInformacionOperSinCot($params = [])
+	{
+		$this->db
+			->select("o.*,
+							od.idOperDetalle,
+							od.idItem,
+							od.idTipo,
+							od.costoUnitario AS costo_item,
+							od.cantidad AS cantidad_item,
+							od.gap AS gap_item,
+							od.costoSubTotal AS cs_item,
+							od.costoSubTotalGap AS csg_item,
+							i.nombre AS item,
+							'Coordinadora de compras' AS usuarioReceptor,
+							ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') AS usuarioRegistro,
+							cu.nombre AS cuenta,
+							cc.subcanal AS centroCosto,
+							o.numeroOC as poCliente
+							")
+			->from('orden.oper o')
+			->join('orden.operDetalle od', 'od.idOper = o.idOper and od.estado=1')
+			->join('compras.item i', 'i.idItem = od.idItem', 'LEFT')
+			->join('sistema.usuario ue', 'ue.idUsuario = o.idUsuarioReg', 'LEFT')
+			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=o.idCuenta', 'LEFT')
+			->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=o.idCentroCosto', 'LEFT');
+		// Where
+		if (isset($params['idOper'])) {
+			$this->db->where('o.idOper', $params['idOper']);
+		}
+
+		$this->db->order_by('o.idOper', 'DESC');
+		return $this->db->get();
+	}
+
 }

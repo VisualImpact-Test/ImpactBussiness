@@ -14,6 +14,7 @@
     .w-5 {
         width: 5%;
     }
+
     .w-10 {
         width: 10%;
     }
@@ -55,4 +56,7 @@
         font-size: 12px;
     }
 
+    .bold {
+        font-weight: bold;
+    }
 </style>
