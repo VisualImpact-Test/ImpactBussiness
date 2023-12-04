@@ -45,9 +45,10 @@ class M_OrdenServicio extends MY_Model
 	{
 		$this->db
 			->select('l.idOrdenServicio, l.idCliente, l.estado, l.observacion, l.chkAprobado, mon.nombreMoneda as moneda, ubi_zc.departamento, ubi_zc.provincia, l.idDistrito, c.nombre as cuenta, cc.subcanal as centroCosto, 
-			ubi_zc.distrito, cli.nombre as cliente, l.chkPresupuesto, pr.idPresupuesto, l.chkUtilizarCliente, l.nombre')
+			ubi_zc.distrito, cli.nombre as cliente, l.chkPresupuesto, pr.idPresupuesto, l.chkUtilizarCliente, l.nombre , ose.idOrdenServicioEstado , ose.nombre as estadoServicio , ose.color as colorEstado')
 			->from('compras.ordenServicio l')
 			->join('compras.moneda mon', 'mon.idMoneda = l.idMoneda', 'LEFT')
+			->join('compras.ordenServicioEstado ose', 'ose.idOrdenServicioEstado = l.idOrdenServicioEstado', 'LEFT')
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 					AND ISNULL(l.idDistrito , 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 					AND ubi_zc.estado = 1', 'LEFT')
