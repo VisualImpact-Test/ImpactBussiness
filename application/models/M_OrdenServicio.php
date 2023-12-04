@@ -49,7 +49,7 @@ class M_OrdenServicio extends MY_Model
 			->from('compras.ordenServicio l')
 			->join('compras.moneda mon', 'mon.idMoneda = l.idMoneda', 'LEFT')
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
-					AND ISNULL(l.idDistrito , 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
+					AND ISNULL(l.idDistrito, 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 					AND ubi_zc.estado = 1', 'LEFT')
 			->join('compras.cliente cli', 'cli.idCliente = l.idCliente', 'LEFT')
 			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio and pr.estado = 1', 'LEFT')
@@ -65,7 +65,7 @@ class M_OrdenServicio extends MY_Model
 			->select('l.*, ubi_zc.provincia, ubi_zc.distrito')
 			->from('compras.ordenServicio l')
 			->join('General.dbo.ubigeo ubi_zc', 'l.idDepartamento = ubi_zc.cod_departamento AND ISNULL(l.idProvincia, 1) = (CASE WHEN l.idProvincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
-				AND ISNULL(l.idDistrito , 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
+				AND ISNULL(l.idDistrito, 1) = (CASE WHEN l.idDistrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 				AND ubi_zc.estado = 1', 'LEFT')
 			->where('idOrdenServicio', $id)
 			->where('l.estado', 1)
@@ -161,16 +161,17 @@ class M_OrdenServicio extends MY_Model
 	public function getVersionesAnteriores($idOrdenServicio)
 	{
 		$query = $this->db
-			->select('psp.idPresupuesto ,
-			osv.chkUtilizarCliente , 
-			osv.nombre as nombreOrdenServicio , 
-			emp.nombre as nombreCuenta,
-			emc.subcanal as centroCosto,
-			clt.nombre as nombreCliente ,
-			psp.total as total,
-			CAST(psp.fechaReg AS date) AS Fecha ,
-			ROW_NUMBER() OVER (ORDER BY psp.idPresupuesto ASC) AS versionPresupuesto,
-			usu.nombres as usuario')
+			->select('psp.idPresupuesto,
+				psp.idPresupuestoHistorico,
+				osv.chkUtilizarCliente, 
+				osv.nombre as nombreOrdenServicio, 
+				emp.nombre as nombreCuenta,
+				emc.subcanal as centroCosto,
+				clt.nombre as nombreCliente,
+				psp.total as total,
+				CAST(psp.fechaReg AS date) AS Fecha,
+				ROW_NUMBER() OVER (ORDER BY psp.idPresupuesto ASC) AS versionPresupuesto,
+				usu.nombres as usuario')
 			->from('compras.presupuestoHistorico as psp')
 			->join('compras.ordenServicio as osv', 'psp.idOrdenServicio = osv.idOrdenServicio', 'LEFT')
 			->join('compras.cliente as clt', 'osv.idCliente = clt.idCliente', 'LEFT')
@@ -183,7 +184,7 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
-	
+
 	public function getPresupuestoDetalle($id)
 	{
 		$query = $this->db
@@ -293,8 +294,4 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
-
-
-
-	
 }
