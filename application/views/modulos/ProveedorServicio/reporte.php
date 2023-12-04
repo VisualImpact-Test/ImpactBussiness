@@ -37,8 +37,9 @@
 					<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
 					<td><?= verificarEmpty($row['title'], 3) ?></td>
 					<td>
-						<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
-						<!-- <a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion" data-id="<?= $row['idCotizacion']; ?>"><i class="icon eye" title="Generar PDF cotizacion"></i></a> -->
+						<?php if (!empty($row['idCotizacionDetalleProveedor'])) : ?>
+							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+						<?php endif; ?>
 					</td>
 					<td><?= verificarEmpty($row['status'], 3) ?></td>
 					<td>
@@ -125,7 +126,7 @@
 									Indicar Sustento
 								</a>
 							<?php else : ?>
-								<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>"  data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
+								<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
 									<i class="icon search"></i>
 									Sustento Enviado
 								</a>
