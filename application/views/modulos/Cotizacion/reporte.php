@@ -26,7 +26,10 @@
 						<?php if ($row['estado'] == 1) :  ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
 							<div class="<?= (!$row['cotizacionValidaCliente']) ? 'disabled' : '' ?>">
-								<?php if (($row['idCotizacionEstado'] < ESTADO_CONFIRMADO_COMPRAS) || ($row['cantDetalle'] == $row['cantidadTransporte'] && $row['idCotizacionEstado'] <= ESTADO_CONFIRMADO_COMPRAS)) :  ?>
+								<?php
+								// Borrar el "== ESTADO_CONFIRMADO_COMPRAS" cuando se corrija que la opción de enviar se pueda actualizar; 
+								?>
+								<?php if (($row['idCotizacionEstado'] < ESTADO_CONFIRMADO_COMPRAS || $row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) || ($row['cantDetalle'] == $row['cantidadTransporte'] && $row['idCotizacionEstado'] <= ESTADO_CONFIRMADO_COMPRAS)) :  ?>
 									<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
 										<i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
 									</a>
@@ -48,7 +51,7 @@
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-completarDatos btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-glasses" title="Ver Detalle de Cotizacion"></i></a>
-								<?php endif; ?>	
+								<?php endif; ?>
 							</div>
 						<?php endif; ?>
 					</td>
