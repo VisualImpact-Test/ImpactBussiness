@@ -26,17 +26,21 @@
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
 					<?php if($row['estado'] == 1){ ?> 
+						<?php if($row['idOrdenServicioEstado'] != 2  && $row['idOrdenServicioEstado'] != 3){ ?> 	
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar Orden de Servicio"><i class="fa fa-lg fa-edit"></i></a>
+						<?php } ?> 
 						<button class="btn btn-outline-secondary border-0 btn-copyOrdenServicio"><i class="icon copy"></i></button>
-						<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
+						<?php if($row['idOrdenServicioEstado'] != 3){ ?> 	
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
+						<?php } ?> 
 						<?php if ($row['chkPresupuesto']) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>
 						<?php endif; ?>
-						
 						<?php if ($row['chkPresupuesto']) : ?>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-version-presupuesto" title="Versiones Presupuesto"><i class="fa fa-lg fa-book"></i></a>
 						<?php endif; ?>	
 						<?php } ?> 
+						
 					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>
