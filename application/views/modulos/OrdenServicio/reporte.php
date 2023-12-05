@@ -22,7 +22,7 @@
 		<tbody>
 			<? $ix = 1; ?>
 			<?php foreach ($ordenServicio as $key => $row) : ?>
-				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>">
+				<tr data-id="<?= $key ?>" data-estado="<?= $row['idOrdenServicioEstado'] ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
 					<?php if($row['estado'] == 1){ ?> 
