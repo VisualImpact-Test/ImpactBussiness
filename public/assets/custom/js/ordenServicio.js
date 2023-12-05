@@ -146,6 +146,23 @@ var OrdenServicio = {
 			});
 		});
 
+		$(document).on('click', '.btn-aprobarPresupuesto', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let version = $(this).parents('tr:first').data('version');
+			let data = { 'idPresupuesto': id, 'idPresupuestoHistorico': version };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'aprobarVersion', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.closeModals(2); $("#btn-filtrarOrdenServicio").click()';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '40%' });
+			});
+		});
 		$(document).on('click', '.btn-version-presupuesto', function () {
 			++modalId;
 
@@ -160,8 +177,6 @@ var OrdenServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				// fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionOrdenServicio", fn: "OrdenServicio.actualizarOrdenServicio()", content: "¿Esta seguro de actualizar la Orden de Servicio?" });';
-				// btn[1] = { title: 'Actualizar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 			});
