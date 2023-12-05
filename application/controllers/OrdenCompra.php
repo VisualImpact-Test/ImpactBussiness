@@ -138,7 +138,8 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
-
+		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
+		
 		$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
@@ -164,6 +165,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar OC';
