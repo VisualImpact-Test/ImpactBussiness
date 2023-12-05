@@ -2267,7 +2267,7 @@ class FormularioProveedor extends MY_Controller
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 
-		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+		$cod_oc = $dataParaVista['data']['seriado'];
 		// $mpdf->Output('OPER.pdf', 'D');
 		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}

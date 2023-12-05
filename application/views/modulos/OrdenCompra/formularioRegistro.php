@@ -5,7 +5,7 @@
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="form-row pt-3">
 					<div class="form-group col-md-4">
-					<input type="hidden" name="idOper" value = "">
+						<input type="hidden" name="idOper" value="">
 						<label class="font-weight-bold">Proveedor:</label>
 						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>
@@ -59,26 +59,33 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-3">
-						<label class="font-weight-bold">Lugar de Entrega:</label>
-						<input class="form-control" name="entrega">
-					</div>
-					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Fecha Entrega:</label>
 						<input type="date" class="form-control" name="fechaEntrega" patron="requerido">
-					</div>
-					<div class="form-group col-md-3">
-						<label class="font-weight-bold">Comentario:</label>
-						<input class="form-control" name="comentario">
 					</div>
 					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Concepto:</label>
 						<input class="form-control" name="concepto">
 					</div>
+					<div class="form-group col-md-3">
+						<label class="font-weight-bold">Lugar de Entrega:</label>
+						<input class="form-control" name="entrega">
+					</div>
+					<div class="form-group col-md-3">
+						<label class="font-weight-bold">Comentario:</label>
+						<input class="form-control" name="comentario">
+					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-12">
+					<div class="form-group col-md-2">
+						<label class="font-weight-bold">Mostrar Observación</label>
+						<div class="custom-control custom-switch custom-switch-md">
+							<input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion" onchange="$('.divObs').toggleClass('d-none');">
+							<label class="custom-control-label" for="mostrar_observacion"></label>
+						</div>
+					</div>
+					<div class="form-group col-md-10 divObs d-none">
 						<label class="font-weight-bold">Observación:</label>
-						<input class="form-control" name="observacion">
+						<input class="form-control" name="observacion" value="En caso de incumplimiento en fecha de entrega, se estará ejecutando penalidad del 1% por cada día de retraso.">
 					</div>
 				</div>
 			</fieldset>
@@ -130,11 +137,11 @@
 							<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="0">
 						</div>
 						<div class="form-row">
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-6 d-none">
 								<label class="font-weight-bold">GAP:</label>
-								<input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oc.cantidadPorItem(this);" value="15">
+								<input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oc.cantidadPorItem(this);" value="0">
 							</div>
-							<div class="form-group col-md-6">
+							<div class="form-group col-md-12">
 								<label class="font-weight-bold">Sub Total:</label>
 								<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
 							</div>

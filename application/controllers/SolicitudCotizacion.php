@@ -1430,6 +1430,7 @@ class SolicitudCotizacion extends MY_Controller
 				'mostrar_imagenesCoti' => !empty($row['mostrar_imagenesCoti']) ? $row['mostrar_imagenesCoti'] : NULL,
 				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
 				'enlaces' => !empty($row['enlaces']) ? $row['enlaces'] : NULL,
+				'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
 			];
 
 			$rs_oc = $this->model->insertar(['tabla' => 'compras.ordenCompra', 'insert' => $insert_oc]);
@@ -1644,7 +1645,7 @@ class SolicitudCotizacion extends MY_Controller
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 
-		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+		$cod_oc = $dataParaVista['data']['seriado'];
 
 		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}

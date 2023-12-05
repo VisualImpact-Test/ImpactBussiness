@@ -227,6 +227,7 @@ defined('COD_SCTR') or define('COD_SCTR', '31'); // ImpactBussiness.compras.tipo
 
 // IDs SERIADOS
 defined("OPER_SERIADO") or define("OPER_SERIADO", 1);
+defined("OC_SERIADO") or define("OC_SERIADO", 2);
 
 
 defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
