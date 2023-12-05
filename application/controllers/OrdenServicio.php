@@ -337,10 +337,6 @@ class OrdenServicio extends MY_Controller
 		// foreach ($contenido as $v) echo $v; // Esta linea es para verlo desde HTML sin estar descargando a cada rato xd
 
 		require APPPATH . '/vendor/autoload.php';
-		// $orientation = '';
-		// if ($dataParaVista['detalle'][0]['idItemTipo'] == COD_SERVICIO['id']) {
-		// 	$orientation = 'L';
-		// }
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',
 			'setAutoTopMargin' => 'stretch',

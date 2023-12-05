@@ -64,7 +64,7 @@ class M_Cotizacion extends MY_Model
 		JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = a.idCuenta
 		WHERE
 			a.estado = 1 AND a.idCuenta = " . $id;
-			
+
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -1099,10 +1099,9 @@ class M_Cotizacion extends MY_Model
 			compras.cotizacion c
 			LEFT JOIN compras.cotizacionDetalleArchivos cda ON cda.idCotizacion = c.idCotizacion
 			WHERE
-			1 = 1 AND cda.nombre_archivo is not null
+			1 = 1 AND cda.nombre_archivo is not null and cda.estado = 1 
 			{$filtros}
 		";
-
 		$query = $this->db->query($sql);
 
 		if ($query) {
