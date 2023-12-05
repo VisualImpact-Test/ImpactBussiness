@@ -921,6 +921,7 @@ class OrdenServicio extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
+		$dataParaVista['idOrdenServicioEstado'] = $post['idOrdenServicioEstado'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Versiones Presupuesto';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formatoVersionesAnteriores", $dataParaVista, true);
