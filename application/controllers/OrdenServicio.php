@@ -110,7 +110,7 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function generarPdf($id, $version = 0)
+	public function generarPdf($id, $version = 0, $saveData = false)
 	{
 		$data = [];
 		require_once('../mpdf/mpdf.php');
@@ -151,14 +151,14 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['presupuestoDetalle'] = $pd = changeKeyInArray($presupuestoDet, 'idPresupuestoDetalle');
 		$whereIdPreDet = obtenerDatosCabecera($presupuestoDet, 'idPresupuestoDetalle');
 
-		$presupuestoDetSub = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get_where('compras.presupuestoDetalleSub', ['estado' => 1])->result_array();
+		$presupuestoDetSub = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get('compras.presupuestoDetalleSub')->result_array();
 		$dataParaVista['presupuestoDetalleSub'] = $presupuestoDetSub = changeKeyInArray($presupuestoDetSub, 'idPresupuestoDetalle', 'idTipoPresupuestoDetalle');
 
-		$presupuestoDetSueldo = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get_where('compras.presupuestoDetalleSueldo', ['estado' => 1])->result_array();
+		$presupuestoDetSueldo = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get('compras.presupuestoDetalleSueldo')->result_array();
 		$dataParaVista['presupuestoDetalleSueldo'] = $presupuestoDetSueldo = changeKeyInArray($presupuestoDetSueldo, 'idPresupuestoDetalle', 'idCargo', 'idTipoPresupuestoDetalle');
 
-		$presDetMovilidad = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('dias >', 0)->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
-		$presDetAlmacen = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('monto >', 0)->get_where('compras.presupuestoDetalleAlmacen', ['estado' => 1])->result_array();
+		$presDetMovilidad = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('dias >', 0)->get('compras.presupuestoDetalleMovilidad')->result_array();
+		$presDetAlmacen = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->where('monto >', 0)->get('compras.presupuestoDetalleAlmacen')->result_array();
 
 		$calculoCargoFechaServicio = [];
 		$sueldoTotalPorCargo = [];
@@ -333,6 +333,7 @@ class OrdenServicio extends MY_Controller
 		$contenido['body'] = $this->load->view("modulos/OrdenServicio/pdf/body", $dataParaVista, true);
 		$contenido['footer'] = $this->load->view("modulos/OrdenServicio/pdf/footer", ['solicitante' => ''], true);
 
+		if ($saveData) return $dataParaVista;
 		// foreach ($contenido as $v) echo $v; // Esta linea es para verlo desde HTML sin estar descargando a cada rato xd
 
 		require APPPATH . '/vendor/autoload.php';
@@ -454,7 +455,110 @@ class OrdenServicio extends MY_Controller
 
 	public function aprobarVersion()
 	{
+		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		// Estoy tomando los calculos que estan en el PDF para no volver a formular todo.
+		$datos = $this->generarPdf($post['idPresupuesto'], $post['idPresupuestoHistorico'], true);
+		$this->db->trans_start();
+		$this->db->insert('compras.presupuestoValido', [
+			'idPresupuesto' => $post['idPresupuesto'],
+			'idPresupuestoHistorico' => $post['idPresupuestoHistorico'],
+			'idUsuario' => $this->idUsuario,
+			'fechaValidacion' => getActualDateTime(),
+			'fee1' =>  $datos['presupuesto']['fee1'],
+			'fee2' =>  $datos['presupuesto']['fee2'],
+			'fee3' =>  $datos['presupuesto']['fee3']
+		]);
+		$idPresupuestoValido = $this->db->insert_id();
+
+		// Detalle
+		$dataInsert = [];
+		foreach ($datos['fechas'] as $k1 => $v1) {
+			foreach ($datos['presupuestoDetalle'] as $k2 => $v2) {
+				// Para sueldo
+				if ($v2['idTipoPresupuesto'] == COD_SUELDO) {
+					foreach ($datos['cargosOS'] as $k3 => $v3) {
+						$datos['calculoCargoFechaServicio'];
+						$dataInsert[] = [
+							'idPresupuestoValido' => $idPresupuestoValido,
+							'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+							'idTipoPresupuestoDetalle' => $k3,
+							'descripcionTipoPresupuestoDetalle' => $datos['cargos'][$k3]['cargo'],
+							'fecha' => $k1,
+							'monto' => $datos['calculoCargoFechaServicio'][$k2][$k3][$k1],
+						];
+					}
+					// El de INCENTIVOS ya que no esta en el foreach de cargos
+					$dataInsert[] = [
+						'idPresupuestoValido' => $idPresupuestoValido,
+						'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+						'idTipoPresupuestoDetalle' => 0,
+						'descripcionTipoPresupuestoDetalle' => 'INCENTIVO',
+						'fecha' => $k1,
+						'monto' => $datos['calculoCargoFechaServicio'][$k2]['incentivo'][$k1],
+					];
+				}
+				// Para movilidad
+				if ($v2['idTipoPresupuesto'] == COD_MOVILIDAD) {
+					$dataInsert[] = [
+						'idPresupuestoValido' => $idPresupuestoValido,
+						'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+						'idTipoPresupuestoDetalle' => 0,
+						'descripcionTipoPresupuestoDetalle' => 'VIAJES SUPERVISIÓN',
+						'fecha' => $k1,
+						'monto' => $datos['calculoCargoFechaServicio'][$k2]['viajes'][$k1],
+					];
+					$dataInsert[] = [
+						'idPresupuestoValido' => $idPresupuestoValido,
+						'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+						'idTipoPresupuestoDetalle' => 0,
+						'descripcionTipoPresupuestoDetalle' => 'ADICIONALES',
+						'fecha' => $k1,
+						'monto' => $datos['calculoCargoFechaServicio'][$k2]['movAdicional'][$k1],
+					];
+				}
+				if (!empty($datos['presupuestoDetalleSub'][$k2])) {
+					foreach ($datos['presupuestoDetalleSub'][$k2] as $k3 => $v3) {
+						$dataInsert[] = [
+							'idPresupuestoValido' => $idPresupuestoValido,
+							'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+							'idTipoPresupuestoDetalle' => $k3,
+							'descripcionTipoPresupuestoDetalle' => $datos['tiposPresupuestoDetalle'][$k3]['nombre'],
+							'fecha' => $k1,
+							'monto' => $datos['calculoCargoFechaServicio'][$k2][$k3][$k1],
+						];
+					}
+					if ($v2['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $datos['presupuesto']['sctr'] > 0) {
+						$dataInsert[] = [
+							'idPresupuestoValido' => $idPresupuestoValido,
+							'idTipoPresupuesto' => $v2['idTipoPresupuesto'],
+							'idTipoPresupuestoDetalle' => 0,
+							'descripcionTipoPresupuestoDetalle' => 'SCTR ' . $datos['presupuesto']['sctr'] . '%',
+							'fecha' => $k1,
+							'monto' => $datos['calculoCargoFechaServicio'][$k2]['sctr'][$k1],
+						];
+					}
+				}
+			}
+		}
+
+		if ($this->db->insert_batch('compras.presupuestoValidoDetalle', $dataInsert)) {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Registro Erroneo!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			goto respuesta;
+		}
+
+		$ph = $this->db->get_where('compras.presupuestoHistorico', ['idPresupuesto' => $post['idPresupuesto'], 'idPresupuestoHistorico' => $post['idPresupuestoHistorico']])->row_array();
+		$this->db->update('compras.ordenServicio', ['idOrdenServicioEstado' => 3], ['idOrdenServicio' => $ph['idOrdenServicio']]);
+		
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
 	}
 
 	public function listadoMovilidad()

@@ -1,5 +1,5 @@
 <div class="ui table">
-	<table class="ui celled table" id="tablaMovilidad" data-personal="">
+	<table class="ui celled table" id="tablaMovilidad">
 		<thead>
 			<tr>
 				<th class="one wide">Versión</th>
@@ -12,7 +12,7 @@
 		</thead>
 		<tbody>
 			<?php foreach ($versionesAnteriores as $key => $row) : ?>
-				<tr class="data">
+				<tr class="data" data-id="<?= $row['idPresupuesto']; ?>" data-version="<?= $row['idPresupuestoHistorico']; ?>">
 					<td class="center aligned"><?= verificarEmpty($row['versionPresupuesto'], 3); ?></td>
 					<td><?= verificarEmpty($row['nombreOrdenServicio'], 3); ?></td>
 					<?php if ($row['chkUtilizarCliente'] == 1) : ?>

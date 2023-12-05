@@ -172,7 +172,8 @@ class M_OrdenServicio extends MY_Model
 				psp.total as total,
 				CAST(psp.fechaReg AS date) AS Fecha,
 				ROW_NUMBER() OVER (ORDER BY psp.idPresupuesto ASC) AS versionPresupuesto,
-				usu.nombres as usuario')
+				usu.nombres as usuario,
+				psp.estado')
 			->from('compras.presupuestoHistorico as psp')
 			->join('compras.ordenServicio as osv', 'psp.idOrdenServicio = osv.idOrdenServicio', 'LEFT')
 			->join('compras.cliente as clt', 'osv.idCliente = clt.idCliente', 'LEFT')
