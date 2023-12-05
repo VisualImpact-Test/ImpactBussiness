@@ -1433,6 +1433,7 @@ class M_Cotizacion extends MY_Model
 				, o.mostrar_imagenes
 				, o.mostrar_imagenesCoti
 				, o.enlaces
+				, o.seriado
 			FROM compras.ordenCompra o
 			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
