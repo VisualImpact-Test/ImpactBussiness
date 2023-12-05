@@ -171,9 +171,10 @@ class OrdenCompra extends MY_Controller
 
 		echo json_encode($result);
 	}
-	
+
 	public function modalOperSinCotizar()
-	{	$result = $this->result;
+	{
+		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
@@ -199,10 +200,10 @@ class OrdenCompra extends MY_Controller
 
 		foreach ($dataParaVista as $key => $row) {
 			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
-		// var_dump($dataParaVista[$key]['item']);
+			// var_dump($dataParaVista[$key]['item']);
 		}
-		
-		
+
+
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/OrdenCompra/Oper/listaOperSinCotizar", ['datos' => $dataParaVista], true);
@@ -211,7 +212,7 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Seleccionar Oper';
 		$result['data']['html'] = $html;
-	
+
 
 		echo json_encode($result);
 	}
@@ -259,7 +260,8 @@ class OrdenCompra extends MY_Controller
 			'totalIGV' => $post['totalIGV'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
-			'idOper' => $post['idOper']
+			'idOper' => $post['idOper'],
+			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO)
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -320,7 +322,7 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
-	
+
 
 	public function editarOCLibre()
 	{
@@ -443,7 +445,7 @@ class OrdenCompra extends MY_Controller
 		foreach ($dataParaVista['detalle'] as $k => $v) {
 			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
 		}
-		
+
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',

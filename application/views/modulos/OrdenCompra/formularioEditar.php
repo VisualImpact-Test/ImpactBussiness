@@ -47,7 +47,7 @@
     <div class="form-row">
       <div class="form-group col-md-6">
         <label class="font-weight-bold">GAP:</label>
-        <input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oc.cantidadPorItem(this);" value="15">
+        <input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oc.cantidadPorItem(this);" value="0">
       </div>
       <div class="form-group col-md-6">
         <label class="font-weight-bold">Sub Total:</label>
@@ -346,11 +346,11 @@
                   <input class="form-control item_costo" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['costo_item']?>">
                 </div>
                 <div class="form-row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6 d-none">
                     <label class="font-weight-bold">GAP:</label>
                     <input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['gap_item']?>">
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-12">
                     <label class="font-weight-bold">Sub Total:</label>
                     <input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item']?>">
                   </div>
