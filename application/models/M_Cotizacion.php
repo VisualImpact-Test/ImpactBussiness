@@ -490,6 +490,7 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion = ' . $params['idCotizacion'] : '';
+		$filtros .= !empty($params['notIdItemTipo']) ? ' AND it.idItemTipo != ' . $params['notIdItemTipo'] : '';
 		$filtros .= !empty($params['idsCotizacion']) ? ' AND p.idCotizacion IN(' . $params['idsCotizacion'] . ')' : '';
 
 		$sql = "
