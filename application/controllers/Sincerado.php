@@ -83,18 +83,51 @@ class Sincerado extends MY_Controller
 		];
 		echo json_encode($result);
 	}
-	public function formularioRegistroSincerado()
+	public function formularioListaParaSincerar()
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
 		$dataParaVista = [];
-		// $dataParaVista['cliente'] = $this->db->get('compras.cliente')->result_array();
-		// $dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
-		// $dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
-		// $dataParaVista['moneda'] = $this->db->where('estado', 1)->get('compras.moneda')->result_array();
+		$datos = $this->model->obtenerInformacionDelPresupuestoValido()->result_array(); // db->get_where('compras.presupuestoValido', ['estado' => 1])->result_array();
 
-		$dataParaVista['datos'] = $this->db->get_where('compras.presupuestoValido', ['estado' => 1])->result_array();
+		foreach ($datos as $k => $v) {
+			$dataParaVista['datos'][$k] = $v;
+			if ($v['chkUtilizarCliente']) {
+				$dataParaVista['datos'][$k]['cuenta_cliente'] = $this->db->get_where('compras.cliente', ['idCliente' => $v['idCliente']])->row_array()['nombre'];
+			} else {
+				$cuenta = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $v['idCuenta']])->row_array()['nombre'];
+				$centroCosto = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $v['idCentroCosto']])->row_array()['subcanal'];
+				$dataParaVista['datos'][$k]['cuenta_cliente'] = $cuenta . ' / ' . $centroCosto;
+			}
+		}
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Presupuestos Validados';
+		$result['data']['html'] = $this->load->view("modulos/Sincerado/formularioListaParaSincerado", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	public function formularioRegistrarSincerado()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+		
+		$dataParaVista = [];
+		$dataParaVista['cliente'] = $this->db->get('compras.cliente')->result_array();
+		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
+		$dataParaVista['moneda'] = $this->db->where('estado', 1)->get('compras.moneda')->result_array();
+		$datos = $this->model->obtenerInformacionDelPresupuestoValido(['idPresupuestoValido' => $post['idPresupuestoValido']])->result_array();
+		foreach ($datos as $k => $v) {
+			$dataParaVista['datos'][$k] = $v;
+			if ($v['chkUtilizarCliente']) {
+				$dataParaVista['datos'][$k]['cuenta_cliente'] = $this->db->get_where('compras.cliente', ['idCliente' => $v['idCliente']])->row_array()['nombre'];
+			} else {
+				$cuenta = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $v['idCuenta']])->row_array()['nombre'];
+				$centroCosto = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $v['idCentroCosto']])->row_array()['subcanal'];
+				$dataParaVista['datos'][$k]['cuenta_cliente'] = $cuenta . ' / ' . $centroCosto;
+			}
+		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sincerado';
 		$result['data']['html'] = $this->load->view("modulos/Sincerado/formularioRegistroSincerado", $dataParaVista, true);
