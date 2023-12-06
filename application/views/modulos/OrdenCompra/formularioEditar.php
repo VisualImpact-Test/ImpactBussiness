@@ -133,7 +133,7 @@
 						<label class="font-weight-bold mb-0">Lugar de entrega:</label>
 						<select class="form-control ui fluid search dropdown semantic-dropdown" name="idAlmacen" onchange="$('.inpEntrega').val($(this).find('option:selected').data('direccion'));">
 							<option>-</option>
-							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $almacenes, 'id' => 'idAlmacen', 'value' => 'nombre', 'class' => 'text-titlecase', 'data-option' => ['direccion']]); ?>
+							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $almacenes, 'id' => 'idAlmacen', 'value' => 'nombre', 'class' => 'text-titlecase', 'data-option' => ['direccion'], 'selected' => $oc[0]['idAlmacen']]); ?>
 						</select>
 					</div>
 					<div class="form-group col-md-5">
@@ -149,7 +149,8 @@
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold mb-0">Mostrar Observación</label>
 						<div class="custom-control custom-switch custom-switch-lg">
-							<input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion">
+						<?php $chk = $oc[0]['mostrar_observacion'] == 1 ? 'checked' : ''; ?>
+							<input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion" <?= $chk ?>>
 							<label class="custom-control-label" for="mostrar_observacion"></label>
 						</div>
 					</div>

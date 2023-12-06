@@ -185,7 +185,7 @@
 					</td>
 				</tr>
 			<? } ?>
-
+			<?php if ($data['mostrar_observacion'] == 1) : ?>
 			<? if (!empty($data['observacion'])) { ?>
 				<tr>
 					<td colspan="2" class="bold">Observación :</td>
@@ -196,6 +196,7 @@
 					</td>
 				</tr>
 			<? } ?>
+			<?php endif; ?>
 			<? if (!empty($data['comentario'])) : ?>
 				<tr>
 					<td colspan="<?= $incluirImagen ? 9 : 8; ?>" class="text-left">
@@ -214,7 +215,7 @@
 					Observaciones
 				</td>
 				<td class="text-center bold" colspan="4" style="border-bottom: none; height: 55px; vertical-align: middle;">
-					<?= !empty($data['pocliente']) ? $data['pocliente'] : '' ?>
+					<?= !empty($data['poCliente']) ? $data['poCliente'] : '' ?>
 				</td>
 			</tr>
 		</tfoot>
