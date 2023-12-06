@@ -244,6 +244,10 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
+		$mostrar_observacion = 0;
+		if(isset($post['mostrar_observacion']) == 'on'){
+			$mostrar_observacion = 1;
+		}
 
 		$insertData = [
 			'requerimiento' => $post['requerimiento'],
@@ -263,7 +267,9 @@ class OrdenCompra extends MY_Controller
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'idOper' => $post['idOper'],
-			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO)
+			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
+			'mostrar_observacion' => $mostrar_observacion,
+			'idAlmacen' => $post['idAlmacen']
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -351,7 +357,10 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
-
+		$mostrar_observacion = 0;
+		if(isset($post['mostrar_observacion']) == 'on'){
+			$mostrar_observacion = 1;
+		}
 		$updateData[0] = [
 			'idOrdenCompra' => $post['idOc'],
 			'requerimiento' => $post['requerimiento'],
@@ -369,7 +378,9 @@ class OrdenCompra extends MY_Controller
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
 			'totalIGV' => $post['totalIGV'],
 			'idUsuarioReg' => $this->idUsuario,
-			'observacion' => $post['observacion']
+			'observacion' => $post['observacion'],
+			'mostrar_observacion' => $mostrar_observacion,
+			'idAlmacen' => $post['idAlmacen']
 		];
 		$rpta = $this->model->actualizarMasivo('orden.ordenCompra', $updateData, 'idOrdenCompra');
 		$idOC = $updateData[0]['idOrdenCompra'];

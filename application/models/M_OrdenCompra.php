@@ -33,7 +33,9 @@ class M_OrdenCompra extends MY_Model
 							mon.nombreMoneda as monedaPlural,
 							mp.nombre as metodoPago,
 							uf.nombre_archivo as dirFirma,
-							md.valor AS monedaCambio
+							md.valor AS monedaCambio,
+							oc.idAlmacen,
+							oc.mostrar_observacion
 							')
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
