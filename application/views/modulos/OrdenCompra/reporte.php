@@ -4,6 +4,7 @@
 			<tr>
 				<th>#</th>
 				<th>OPCIONES</th>
+				<th>NRO OC</th>
 				<th>CONCEPTO</th>
 				<th>REQUERIMIENTO</th>
 				<th>PROVEEDOR</th>
@@ -29,6 +30,7 @@
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar OC"><i class="fa fa-lg fa-edit"></i></a>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOC" title="Imprimir OC"><i class="fa fa-lg fa-file-pdf"></i></a>
 					</td>
+					<td class="td-center"><?= verificarEmpty($row['seriado'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['concepto'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['requerimiento'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['proveedor'], 3); ?></td>

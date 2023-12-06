@@ -62,7 +62,8 @@ class OrdenCompra extends MY_Controller
 				'totalIGV' => $row['totalIGV'],
 				'observacion' => $row['observacion'],
 				'estado' => $row['estado'],
-				'monedaCambio' => $row['monedaCambio']
+				'monedaCambio' => $row['monedaCambio'],
+				'seriado' => $row['seriado']
 			];
 			$item[$row['idOrdenCompra']][$row['item']] = $row['item'];
 		}
