@@ -77,7 +77,7 @@ var Oc = {
 			++modalId;
 			let jsonString = { 'data': '' };
 			let config = { 'url': Oc.url + 'formularioRegistroOC' + Oc.tipo, 'data': jsonString };
-			
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
@@ -110,7 +110,7 @@ var Oc = {
 			let costo = control.find('option:selected').data('costo');
 			let unidadMedida = control.find('option:selected').data('unidadmedida');
 			let idUnidadMedida = control.find('option:selected').data('idunidadmedida');
-			
+
 
 			let costoForm = parent.find('.costoSubItem');
 			let unidadMedidaForm = parent.find('.umSubItem');
@@ -141,16 +141,12 @@ var Oc = {
 		$(document).on('change', '#proveedor', function () {
 			$("#metodoPago").empty();
 			var idProveedor = $('#proveedor').val();
-			
-
 			var obj = {
 				id: idProveedor
 			}
 			var jsonString = {
 				'data': JSON.stringify(obj)
 			};
-			
-			
 			var config = {
 				url: Oc.url + "metodoPago",
 				data: jsonString
@@ -161,10 +157,10 @@ var Oc = {
 				if (a.data.metodo && a.data.metodo.length > 0) {
 					// Obtén la referencia al elemento select
 					var selectElement = $('#metodoPago');
-			
+
 					// Limpiar opciones anteriores si es necesario
 					selectElement.empty();
-			
+
 					// Itera sobre los datos y agrega opciones al select
 					$.each(a.data.metodo, function (i, m) {
 						// Agrega una opción al select por cada elemento en a.data.metodo
@@ -199,7 +195,7 @@ var Oc = {
 
 
 
-	editarOC: function(){
+	editarOC: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOC')) };
 		let url = Oc.url + "editarOC" + Oc.tipo;
 		let config = { url: url, data: jsonString };
@@ -224,51 +220,51 @@ var Oc = {
 		Oc.itemInputComplete(tot);
 	},
 
-	agregarOperDat: function(t){
+	agregarOperDat: function (t) {
 		++modalId;
-			let jsonString = { 'data': '' };
-			let config = { 'url': Oc.url + 'modalOperSinCotizar' , 'data': jsonString };
+		let jsonString = { 'data': '' };
+		let config = { 'url': Oc.url + 'modalOperSinCotizar', 'data': jsonString };
 
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
 
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-			
-			});
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
+
+		});
 	},
-	
-	agregarOpersinCotizar: function(t){
+
+	agregarOpersinCotizar: function (t) {
 		console.log(t);
-			let id = t;
-			++modalId;
-			let jsonString = { 'data': id };
-			let config = { 'url': Oc.url + 'formularioOperSinCotizarCarga', 'data': jsonString };
-			console.log(config);
+		let id = t;
+		++modalId;
+		let jsonString = { 'data': id };
+		let config = { 'url': Oc.url + 'formularioOperSinCotizarCarga', 'data': jsonString };
+		console.log(config);
 
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
 
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Oc.agregarItem();';
-				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Oper?" });';
-				btn[2] = { title: 'Guardar', fn: fn[2] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
-				Oc.divItemData = '<div class="row itemData">'+$('#divItemData').html()+'</div>';
-				$('#divItemData').html('');
-				Oc.itemsData =   $.parseJSON($('#itemsData').val());
-				Oc.modalId = modalId;
-				Oc.itemInputComplete('all');
-			});
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			fn[1] = 'Oc.agregarItem();';
+			btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
+			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Oper?" });';
+			btn[2] = { title: 'Guardar', fn: fn[2] };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
+			Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
+			$('#divItemData').html('');
+			Oc.itemsData = $.parseJSON($('#itemsData').val());
+			Oc.modalId = modalId;
+			Oc.itemInputComplete('all');
+		});
 	},
-	
-	quitarItem: function(t,v){
+
+	quitarItem: function (t, v) {
 		div = t.closest('div.itemData');
 		$(div).remove();
 	},

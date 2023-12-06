@@ -192,7 +192,7 @@ class M_Item extends MY_Model
 				, a.nombre AS item
 				, p.idProveedor
 				, UPPER(p.razonSocial) AS proveedor
-				, tfa.costo
+				, ROUND(tfa.costo, 3) as costo
 				, tfa.flag_actual
 				, tfa.estado
 				, tfa.fechaVigencia

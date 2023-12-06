@@ -5,9 +5,7 @@
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="form-row pt-3">
 					<div class="form-group col-md-4">
-					<input type="hidden" name="idOper" value = "">
-						<label class="font-weight-bold">Proveedor:</label>
-						<select id="proveedor" name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						<input type="hidden" name="idOper" value="">
 						<label class="font-weight-bold mb-0">Requerimiento:</label>
 						<input class="form-control" name="requerimiento" patron="requerido">
 					</div>
@@ -18,9 +16,8 @@
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-4">
-						<input type="hidden" name="idOper" value="">
 						<label class="font-weight-bold mb-0">Proveedor:</label>
-						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						<select id="proveedor" name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>
 						</select>
 					</div>
@@ -38,22 +35,9 @@
 					</div>
 				</div>
 				<div class="form-row">
-					<div class="form-group col-md-3">
-						<label class="font-weight-bold">Requerimiento:</label>
-						<input class="form-control" name="requerimiento" patron="requerido">
-					</div>
-					<div class="form-group col-md-3">
-						<label class="font-weight-bold">PO Cliente:</label>
-						<input class="form-control" name="poCliente" patron="requerido">
-					</div>
-					<div class="form-group col-md-3">
-						<label class="font-weight-bold">Metodo Pago:</label>
-						<select id="metodoPago" name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
-						
 					<div class="form-group col-md-5">
 						<label class="font-weight-bold mb-0">Metodo Pago:</label>
-						<select name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
-							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $metodoPago, 'class' => 'text-titlecase']); ?>
+						<select id="metodoPago" name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 						</select>
 					</div>
 					<div class="form-group col-md-5">
@@ -81,6 +65,7 @@
 						</div>
 					</div>
 				</div>
+
 				<div class="form-row">
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold mb-0">Fecha Entrega:</label>
