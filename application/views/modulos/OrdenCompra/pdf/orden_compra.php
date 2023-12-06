@@ -8,7 +8,7 @@
 			<td class="text-left bold" width="<?= $w1 ?>">RUC: <?= RUC_VISUAL ?> </td>
 			<td class="text-right bold" width="<?= $w2 ?>">N° DE RQ </td>
 			<td class="text-center" width="<?= $w3 ?>"><?= verificarEmpty($data['requerimiento'], 3) ?></td>
-			<td class="text-left bold" width="<?= $w4 ?>">N° DE ORDEN: <span style="margin-left: 50px"> OC<?= generarCorrelativo($data['idOrdenCompra'], 6) ?></span></td>
+			<td class="text-left bold" width="<?= $w4 ?>">N° DE ORDEN: <span style="margin-left: 50px"> <?= $data['seriado'] ?></span></td>
 		</tr>
 		<tr>
 			<td class="text-left bold" width="<?= $w1 ?>" rowspan="2">Unidad de Negocio</td>

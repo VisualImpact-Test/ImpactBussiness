@@ -490,6 +490,7 @@ class M_Cotizacion extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idCotizacion']) ? ' AND p.idCotizacion = ' . $params['idCotizacion'] : '';
+		$filtros .= !empty($params['notIdItemTipo']) ? ' AND it.idItemTipo != ' . $params['notIdItemTipo'] : '';
 		$filtros .= !empty($params['idsCotizacion']) ? ' AND p.idCotizacion IN(' . $params['idsCotizacion'] . ')' : '';
 
 		$sql = "
@@ -1433,6 +1434,7 @@ class M_Cotizacion extends MY_Model
 				, o.mostrar_imagenes
 				, o.mostrar_imagenesCoti
 				, o.enlaces
+				, o.seriado
 			FROM compras.ordenCompra o
 			JOIN compras.moneda m ON m.idMoneda = o.idMoneda
 			JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda

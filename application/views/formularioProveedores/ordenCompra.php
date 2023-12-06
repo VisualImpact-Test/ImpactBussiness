@@ -22,7 +22,7 @@
 							<input type="hidden" name="idOrdenCompra" id="idOrdenCompra" value="<?= $idOrdenCompra ?>">
 							<h5 class="mb-0">
 								<button type="button" class="btn " data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-									<i class="fas fa-solid fa-caret-right"></i> N° DE ORDEN <?= !empty($cabecera['idOrdenCompra']) ? generarCorrelativo($cabecera['idOrdenCompra'], 6) : '-' ?>
+									<i class="fas fa-solid fa-caret-right"></i> N° DE ORDEN <?= verificarEmpty($cabecera['seriado'], 3); ?>
 								</button>
 							</h5>
 						</div>

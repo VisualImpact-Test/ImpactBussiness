@@ -2505,7 +2505,7 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$ids = implode(',', $post['ids']);
 		$cotizaciones = $this->model->obtenerInformacionCotizacion(['id' => $ids])['query']->result_array();
-		$cotizacionDetalle = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids])['query']->result_array();
+		$cotizacionDetalle = $this->model->obtenerInformacionCotizacionDetalle(['idsCotizacion' => $ids, 'notIdItemTipo' => COD_DISTRIBUCION['id']])['query']->result_array();
 		$diasMax = ($this->model->obtenerMaxDiasEntrega(['idsCotizacion' => $ids])['query']->row_array())['diasEntrega'];
 		$dataParaVista = [];
 		$dataParaVista['totalOper'] = 0;

@@ -513,7 +513,8 @@ class M_FormularioProveedor extends MY_Model
 				cp.subtotal as cotizacionSubTotal,
 				cp.idItem,
 				i.caracteristicas as caracteristicaItem,
-				cp.caracteristicasCompras
+				cp.caracteristicasCompras,
+				o.seriado
 			FROM
 			compras.ordenCompra o
 			JOIN compras.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra

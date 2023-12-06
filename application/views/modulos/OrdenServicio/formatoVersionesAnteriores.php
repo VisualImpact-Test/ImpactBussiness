@@ -11,6 +11,7 @@
 			</tr>
 		</thead>
 		<tbody>
+			
 			<?php foreach ($versionesAnteriores as $key => $row) : ?>
 				<tr class="data" data-id="<?= $row['idPresupuesto']; ?>" data-version="<?= $row['idPresupuestoHistorico']; ?>">
 					<td class="center aligned"><?= verificarEmpty($row['versionPresupuesto'], 3); ?></td>
@@ -26,9 +27,11 @@
 						<button class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>/<?= $row['idPresupuestoHistorico'] ?>" title="Imprimir">
 							<i class="icon file pdf"></i>
 						</button>
+					<?php if ($idOrdenServicioEstado < 3) : ?>	
 						<button class="btn btn-outline-secondary border-0 btn-aprobarPresupuesto" title="Aprobar">
 							<i class="icon check"></i>
 						</button>
+					<?php endif; ?>
 					</td>
 				</tr>
 			<?php endforeach; ?>

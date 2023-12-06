@@ -167,7 +167,9 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idOrdenServicio': id };
+			let estado = $(this).parents('tr:first').data('estado');
+			//console.log(estado);
+			let data = { 'idOrdenServicio': id , 'idOrdenServicioEstado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formatoVersionesAnteriores', 'data': jsonString };
