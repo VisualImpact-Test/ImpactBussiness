@@ -77,7 +77,7 @@ var Oc = {
 			++modalId;
 			let jsonString = { 'data': '' };
 			let config = { 'url': Oc.url + 'formularioRegistroOC' + Oc.tipo, 'data': jsonString };
-
+			
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
@@ -110,6 +110,7 @@ var Oc = {
 			let costo = control.find('option:selected').data('costo');
 			let unidadMedida = control.find('option:selected').data('unidadmedida');
 			let idUnidadMedida = control.find('option:selected').data('idunidadmedida');
+			
 
 			let costoForm = parent.find('.costoSubItem');
 			let unidadMedidaForm = parent.find('.umSubItem');
@@ -118,9 +119,8 @@ var Oc = {
 			costoForm.val(costo).trigger('change');
 			unidadMedidaForm.val(unidadMedida);
 			idUnidadMedidaForm.val(idUnidadMedida);
-
-
 		});
+
 		$(document).on('click', '.btn-removeSubItem', function () {
 			let div = $(this).closest('div.subItemSpace');
 			let divItem = $(this).closest('div.divItem');
@@ -136,6 +136,45 @@ var Oc = {
 			$(this).closest('div.divItem').find('div.subItem').html('');
 			$(this).closest('div.itemData').find('input.cantidadSubItem').val('0');
 			Oc.generarSubItem(t, v);
+		});
+
+		$(document).on('change', '#proveedor', function () {
+			$("#metodoPago").empty();
+			var idProveedor = $('#proveedor').val();
+			
+
+			var obj = {
+				id: idProveedor
+			}
+			var jsonString = {
+				'data': JSON.stringify(obj)
+			};
+			
+			
+			var config = {
+				url: Oc.url + "metodoPago",
+				data: jsonString
+			};
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				// Verifica si hay datos en a.data.metodo
+				if (a.data.metodo && a.data.metodo.length > 0) {
+					// Obtén la referencia al elemento select
+					var selectElement = $('#metodoPago');
+			
+					// Limpiar opciones anteriores si es necesario
+					selectElement.empty();
+			
+					// Itera sobre los datos y agrega opciones al select
+					$.each(a.data.metodo, function (i, m) {
+						// Agrega una opción al select por cada elemento en a.data.metodo
+						selectElement.append($('<option>', {
+							value: m.id, // Cambia 'valor' por el nombre del campo que contiene el valor deseado
+							text: m.value // Cambia 'texto' por el nombre del campo que contiene el texto deseado
+						}));
+					});
+				}
+			});
 		});
 	},
 
@@ -209,6 +248,7 @@ var Oc = {
 			let jsonString = { 'data': id };
 			let config = { 'url': Oc.url + 'formularioOperSinCotizarCarga', 'data': jsonString };
 			console.log(config);
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];

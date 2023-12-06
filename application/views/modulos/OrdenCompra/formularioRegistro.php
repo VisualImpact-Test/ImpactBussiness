@@ -7,7 +7,7 @@
 					<div class="form-group col-md-4">
 					<input type="hidden" name="idOper" value = "">
 						<label class="font-weight-bold">Proveedor:</label>
-						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						<select id="proveedor" name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor']); ?>
 						</select>
 					</div>
@@ -35,8 +35,8 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Metodo Pago:</label>
-						<select name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
-							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $metodoPago, 'class' => 'text-titlecase']); ?>
+						<select id="metodoPago" name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						
 						</select>
 					</div>
 					<div class="form-group col-md-3">
