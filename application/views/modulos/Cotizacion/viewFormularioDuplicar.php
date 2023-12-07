@@ -487,7 +487,7 @@
 										GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
 									</div>
 									<div class="ui right labeled input">
-										<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= $row['semaforoVigencia'] != 'red' ? $row['gap'] : '' ?>">
+										<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= $row['semaforoVigencia'] != 'red' ? $row['gap'] : '' ?>">
 										<div class="ui basic label">
 											%
 										</div>
@@ -735,7 +735,7 @@
 									GAP <div class="ui btn-info-custom text-primary btn-info-gap"><i class="info circle icon"></i></div>
 								</div>
 								<div class="ui right labeled input">
-									<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
+									<input onkeypress="$(this).closest('.nuevo').find('.costoForm').val() == 0 ? $(this).attr('readonly','readonly') : $(this).removeAttr('readonly') " data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($cotizacion['gap']) ? $cotizacion['gap'] : '0' ?>">
 									<div class="ui basic label">
 										%
 									</div>
@@ -776,7 +776,7 @@
 				<!-- <div class="ui sub header">Total</div> -->
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
-					<input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
+					<input data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
