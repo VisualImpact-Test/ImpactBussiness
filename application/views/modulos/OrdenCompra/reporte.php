@@ -24,7 +24,7 @@
 				$badge = $row['estado'] == 1 ? 'badge-success' : 'badge-danger';
 				$toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
 				?>
-				<tr data-id="<?= $key ?>">
+				<tr data-id="<?= $key ?>" data-idproveedor="<?= $row['idProveedor']; ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center style-icons">
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar OC"><i class="fa fa-lg fa-edit"></i></a>

@@ -70,7 +70,7 @@
 					<div class="form-group col-md-4">
 						<input type="hidden" name="idOper" value="">
 						<label class="font-weight-bold mb-0">Proveedor:</label>
-						<select name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						<select id="proveedor" name="proveedor" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'value' => 'razonSocial', 'id' => 'idProveedor', 'selected' => $oc[0]['idProveedor']]); ?>
 						</select>
 						<input type="hidden" name="idOc" value="<?= $oc[0]['idOrdenCompra'] ?>">
@@ -91,7 +91,7 @@
 				<div class="form-row">
 					<div class="form-group col-md-5">
 						<label class="font-weight-bold mb-0">Metodo Pago:</label>
-						<select name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
+						<select id="metodoPago" name="metodoPago" patron="requerido" class="form-control ui fluid search clearable dropdown semantic-dropdown">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $metodoPago, 'class' => 'text-titlecase', 'selected' => $oc[0]['idMetodoPago']]); ?>
 						</select>
 					</div>

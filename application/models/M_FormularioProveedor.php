@@ -35,27 +35,7 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerMetodoPago($params = [])
-	{
-		$sql = "
-			SELECT
-				idMetodoPago AS id
-				, nombre AS value
-			FROM compras.metodoPago
-			WHERE estado = 1
-		";
-
-		$query = $this->db->query($sql);
-
-		if ($query) {
-			$this->resultado['query'] = $query;
-			$this->resultado['estado'] = true;
-		}
-
-		return $this->resultado;
-	}
-
-	public function obtenerMetodoPago1($id)
+	public function obtenerMetodoPago($id)
 	{
 		$this->db->select('mp.idMetodoPago AS id, mp.nombre AS value');
 		$this->db->from('compras.metodoPago mp');
@@ -67,15 +47,18 @@ class M_FormularioProveedor extends MY_Model
 		$sql = $this->db->get();
 
 		return $sql->result();
-/*
+	}
+
+	public function obtenerMetodoPago1($id)
+	{
 		$sql = "
-				SELECT
-					mp.idMetodoPago AS id
-					, mp.nombre AS value
-				FROM compras.metodoPago mp
-				JOIN compras.proveedorMetodoPago provMP ON provMP.idMetodoPago = mp.idMetodoPago
-				JOIN compras.proveedor p ON p.idProveedor = provMP.idProveedor
-				WHERE mp.estado = 1 AND provMP.idProveedor = ".$id;
+		SELECT
+		mp.idMetodoPago AS id
+		, mp.nombre AS value
+	FROM compras.metodoPago mp
+	JOIN compras.proveedorMetodoPago provMP ON provMP.idMetodoPago = mp.idMetodoPago
+	JOIN compras.proveedor p ON p.idProveedor = provMP.idProveedor
+	WHERE mp.estado = 1 AND provMP.idProveedor =".$id;
 
 		$query = $this->db->query($sql);
 
@@ -83,8 +66,8 @@ class M_FormularioProveedor extends MY_Model
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
 		}
-		return $this->resultado;*/
 
+		return $this->resultado;
 	}
 
 	public function validarPropuestaExistencia($params = [])
