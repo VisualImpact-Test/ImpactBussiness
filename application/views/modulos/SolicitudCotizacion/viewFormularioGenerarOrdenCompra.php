@@ -313,7 +313,7 @@
 								<div class="three wide field">
 									<div class="ui sub header">GAP %</div>
 									<div class="ui right labeled input">
-										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($row['gap']) ? $row['gap'] : '' ?>" readonly>
+										<input data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= !empty($row['gap']) ? $row['gap'] : '' ?>" readonly>
 										<div class="ui basic label">
 											%
 										</div>

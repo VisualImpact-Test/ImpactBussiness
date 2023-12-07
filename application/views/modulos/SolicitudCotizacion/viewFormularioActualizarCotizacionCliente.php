@@ -629,7 +629,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">GAP %</div>
 									<div class="ui right labeled input">
-										<input data-max='100' data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= empty($row['gap']) ? '0' : $row['gap']; ?>">
+										<input data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm" name="gapForm" placeholder="Gap" value="<?= empty($row['gap']) ? '0' : $row['gap']; ?>">
 										<div class="ui basic label">
 											%
 										</div>
@@ -681,7 +681,7 @@
 				<!-- <div class="ui sub header">Total</div> -->
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
-					<input data-max='100' data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
+					<input data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
