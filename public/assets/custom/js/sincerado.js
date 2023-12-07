@@ -48,7 +48,7 @@ var Sincerado = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSincerado", fn: "Sincerado.registrarSincerado()", fnFin: "Sincerado.validarCheckbox()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				Fn.loadSemanticFunctions();
 			});
