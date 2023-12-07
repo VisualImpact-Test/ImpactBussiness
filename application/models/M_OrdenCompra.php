@@ -7,7 +7,6 @@ class M_OrdenCompra extends MY_Model
 	{
 		parent::__construct();
 	}
-
 	public function obtenerOrdenCompraLista($params = [])
 	{
 		$this->db
@@ -80,7 +79,6 @@ class M_OrdenCompra extends MY_Model
 		}
 		return $this->db->get();
 	}
-
 	public function obtenerInformacionOperSinCot($params = [])
 	{
 		$this->db
@@ -114,5 +112,14 @@ class M_OrdenCompra extends MY_Model
 		$this->db->order_by('o.idOper', 'DESC');
 		return $this->db->get();
 	}
+	public function getItemTarifario()
+	{
+		$this->db
+			->select('*')
+			->from('compras.itemTarifario')
+			->where('fechaVigencia >= CAST(GETDATE() AS DATE)')
+			->where('estado', 1);
 
+		return $this->db->get();
+	}
 }

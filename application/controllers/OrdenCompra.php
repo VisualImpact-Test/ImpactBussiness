@@ -130,7 +130,7 @@ class OrdenCompra extends MY_Controller
 		$result = $this->result;
 		$idOC = json_decode($this->input->post('id'), true);
 		$idProveedor = json_decode($this->input->post('idproveedor'), true);
-		
+
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
@@ -142,7 +142,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago1($idProveedor)['query']->result_array();
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
-		
+
 		$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
@@ -150,6 +150,11 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
+
+		foreach ($this->model->getItemTarifario()->result_array() as $v) {
+			$itemTarifario[$v['idItem']][$v['idProveedor']] = $v;
+		}
+		$result['data']['itemTarifario'] = $itemTarifario;
 
 		echo json_encode($result);
 	}
@@ -173,6 +178,11 @@ class OrdenCompra extends MY_Controller
 		$result['msg']['title'] = 'Registrar OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioRegistro", $dataParaVista, true);
 
+		foreach ($this->model->getItemTarifario()->result_array() as $v) {
+			$itemTarifario[$v['idItem']][$v['idProveedor']] = $v;
+		}
+		$result['data']['itemTarifario'] = $itemTarifario;
+
 		echo json_encode($result);
 	}
 
@@ -182,7 +192,7 @@ class OrdenCompra extends MY_Controller
 		$grupo['data']['metodo'] = $this->mFormProveedor->obtenerMetodoPago($data->id);
 		echo json_encode($grupo);
 	}
-	
+
 	public function modalOperSinCotizar()
 	{
 		$result = $this->result;
@@ -254,7 +264,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
 		$mostrar_observacion = 0;
-		if(isset($post['mostrar_observacion']) == 'on'){
+		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;
 		}
 
@@ -367,7 +377,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
 		$mostrar_observacion = 0;
-		if(isset($post['mostrar_observacion']) == 'on'){
+		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;
 		}
 		$updateData[0] = [
