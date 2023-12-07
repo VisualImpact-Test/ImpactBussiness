@@ -3321,7 +3321,13 @@ var Cotizacion = {
 				target: $('.btn-send'),
 				content: 'Enviar',
 			});
-
+		//Boton Regresar
+		$('.btn-return')
+		.popup({
+			position: 'left center',
+			target: $('.btn-return'),
+			content: 'Regresar',
+		});
 		//Boton Guardar
 		$('.btn-save')
 			.popup({

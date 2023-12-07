@@ -1097,15 +1097,18 @@
 	<div class="element-container">
 		<a href="javascript:;">
 			<?php if ($btnEnviar) : ?>
-				<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.actualizarCotizacionView(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
+				<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.actualizarCotizacionView(2)", content: "¿Está seguro de registrar y enviar esta cotizacion?" });'>
 					<i class="send icon"></i>
 				</span>
 			<?php endif; ?>
-			<span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "Cotizacion.actualizarCotizacionView()", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+			<span class="float-element tooltip-left btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "Cotizacion.actualizarCotizacionView()", content: "¿Está seguro de guardar esta cotizacion?" });'>
 				<i class="save icon"></i>
 			</span>
 			<span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
 				<i class="plus icon"></i>
+			</span>
+			<span class="float-element tooltip-left btn-return" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "window.history.back();", content: "¿Está seguro de regresar a la pestaña anterior?" });' data-message="Regresar"  style="background-color: red;">
+				<i class="arrow left icon"></i>
 			</span>
 		</a>
 	</div>

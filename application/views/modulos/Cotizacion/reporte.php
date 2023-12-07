@@ -30,7 +30,7 @@
 								// Borrar el "== ESTADO_CONFIRMADO_COMPRAS" cuando se corrija que la opción de enviar se pueda actualizar; 
 								?>
 								<?php if (($row['idCotizacionEstado'] < ESTADO_CONFIRMADO_COMPRAS || $row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS) || ($row['cantDetalle'] == $row['cantidadTransporte'] && $row['idCotizacionEstado'] <= ESTADO_CONFIRMADO_COMPRAS)) :  ?>
-									<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_blank" class="btn btn-outline-secondary border-0">
+									<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_SELF" class="btn btn-outline-secondary border-0">
 										<i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
 									</a>
 								<?php endif; ?>

@@ -53,12 +53,12 @@ class M_FormularioProveedor extends MY_Model
 	{
 		$sql = "
 		SELECT
-		mp.idMetodoPago AS id
-		, mp.nombre AS value
-	FROM compras.metodoPago mp
-	JOIN compras.proveedorMetodoPago provMP ON provMP.idMetodoPago = mp.idMetodoPago
-	JOIN compras.proveedor p ON p.idProveedor = provMP.idProveedor
-	WHERE mp.estado = 1 AND provMP.idProveedor =".$id;
+			mp.idMetodoPago AS id
+			, mp.nombre AS value
+		FROM compras.metodoPago mp
+		JOIN compras.proveedorMetodoPago provMP ON provMP.idMetodoPago = mp.idMetodoPago
+		JOIN compras.proveedor p ON p.idProveedor = provMP.idProveedor
+		WHERE mp.estado = 1 AND provMP.idProveedor =".$id;
 
 		$query = $this->db->query($sql);
 
