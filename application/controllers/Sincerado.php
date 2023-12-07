@@ -102,7 +102,8 @@ class Sincerado extends MY_Controller
 		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Presupuestos Validados';
-		$result['data']['html'] = $this->load->view("modulos/Sincerado/formularioListaParaSincerado", $dataParaVista, true);
+		$html = empty($datos) ? getMensajeGestion('noRegistros') : $this->load->view("modulos/Sincerado/formularioListaParaSincerado", $dataParaVista, true);
+		$result['data']['html'] = $html;
 
 		echo json_encode($result);
 	}
@@ -111,9 +112,12 @@ class Sincerado extends MY_Controller
 	{
 		$result = $this->result;
 		$post = $this->input->post();
-		
+
 		$dataParaVista = [];
 		$dataParaVista['cliente'] = $this->db->get('compras.cliente')->result_array();
+		$dataParaVista['solicitantes'] = $this->db->get_where('compras.solicitante', ['estado' => 1])->result_array();
+		$dataParaVista['cotizacionPrioridad'] = $this->db->get_where('compras.cotizacionPrioridad', ['estado' => 1])->result_array();
+		$dataParaVista['tipoServicioCotizacion'] = $this->db->get_where('compras.tipoServicioCotizacion', ['estado' => 1])->result_array();
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$dataParaVista['moneda'] = $this->db->where('estado', 1)->get('compras.moneda')->result_array();
