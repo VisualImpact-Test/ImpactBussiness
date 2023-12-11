@@ -1,13 +1,12 @@
 <?php $dataRow = 0; ?>
+<?php foreach ($fechaDelPre as $k => $v) : 
+$anio = date('Y', strtotime($v['fecha'])); 
+$mes = date('n', strtotime($v['fecha']));
+if (!isset($contadorMeses[$anio])) { $contadorMeses[$anio] = array_fill(1, 12, 0); }
+$contadorMeses[$anio][$mes]++; 
+endforeach;  ?>
 <form class="form" role="form" id="formEditarPresupuesto" method="post" autoComplete="off">
-	<div class="row">
-		<div class="col-md-10 child-divcenter">
-			<div class="control-group child-divcenter row" style="width:85%">
-				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
-				<textarea class="form-control col-md-4" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
-			</div>
-		</div>
-	</div>
+	
 	<input type="hidden" id="idCuenta" value="<?= $idCuenta; ?>">
 	<div class="row pt-4">
 		<?php $cantidadCargo = 0; ?>
@@ -29,20 +28,32 @@
 			</div>
 			<div class="ui bottom attached tab segment active" data-tab="datos">
 				<div id="divTabla" class="ui table">
-					<table class="ui table" id="tablaFechaPersona">
-						<thead>
+					<table class="ui sortable table" id="tablaFechaPersona">
+					<thead>
+						<tr><th rowspan = "2" class="three wide p-0 "><label class="text-white">________________</label></th>
+						<?php
+							foreach ($contadorMeses as $anio => $meses) {
+								$totalMeses = array_sum($meses); ?>
+								<th  class ="one wide p-0 " colspan="<?php echo $totalMeses ?>" style="text-align: center;" ><?php echo $anio ?></th>
+							<?php } ?>
+							<th class ="one wide p-0 " rowspan = "2"></th>
+							</tr>
 							<tr>
-								<th class="three wide"><label class="text-white">________________</label></th>
 								<?php foreach ($fechaDelPre as $k => $v) : ?>
-									<th class="one wide p-0">
+									<?php $numeroMes = date('n', strtotime($v['fecha'])); ?>
+									
+									<th class="one wide p-0 ">
 										<div class="ui input transparent">
-											<input type="text" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+											<input type="hidden" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes];?>">
+											
 										</div>
 									</th>
 								<?php endforeach; ?>
-								<th class="one wide"></th>
+							
 							</tr>
 						</thead>
+						
 						<tbody>
 							<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 								<tr>
@@ -978,6 +989,14 @@
 	</div>
 	<div class="row py-4">
 		<div id="divSueldo" class="control-group child-divcenter col-md-12" style="width:100%"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-10 child-divcenter">
+			<div class="control-group child-divcenter row" style="width:85%">
+				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
+				<textarea class="form-control col-md-10" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
+			</div>
+		</div>
 	</div>
 </form>
 <script>
