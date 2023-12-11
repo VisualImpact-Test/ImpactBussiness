@@ -1,4 +1,5 @@
-<form class="ui form" autocomplete="off">
+<form class="ui form"  id="formSincerado" method="post" autocomplete="off">
+
 	<div class="fields">
 		<div class="six wide field">
 			<div class="ui sub header">Título</div>
@@ -69,14 +70,69 @@
 			</select>
 		</div>
 		<div class="five wide field">
-			<div class="ui sub header">Anexo</div>
-			<input type="file" id="invisibleupload1" class="ui invisible file input d-none" multiple>
-			<label class="ui red icon button">
-				<i class="file icon"></i>
-				Open any file
-			</label>
+			
 		</div>
 	</div>
+	<div class="fields">
+		<div class="eight wide field">
+			<div class="ui sub header">Comentario</div>
+			<textarea name="comentarioForm" id="comentarioForm" cols="30" rows="6"></textarea>
+		</div>
+		<div class="eight wide field anexos">
+			<div class="ui sub header">Anexos</div>
+			<div class="ui small images content-lsck-capturas">
+				<div class="content-lsck-galeria content-lsck-files">
+					<div class="ui small image text-center btn-add-file">
+						<div class="ui dimmer">
+							<div class="content">
+								<div class="ui small primary button" onclick="$(this).parents('.anexos').find('.file-lsck-capturas-anexos').click();">
+									Agregar
+								</div>
+							</div>
+						</div>
+						<img class="ui image" src="<?= IMG_WIREFRAME ?>">
+					</div>
+					<input type="file" name="capturas" class="file-lsck-capturas-anexos form-control input-sm d-none" placeholder="Cargar Imagen" data-row="0" accept="image/*, .xlsx, .pdf, .xlsm" multiple="">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<h4 class="ui dividing header">DETALLE DE LA COTIZACIÓN <div class="ui blue horizontal label link button btn-leyenda">Leyenda</div>
+	</h4>
+	<div class="default-item">
+		<div class="ui segment body-item nuevo">
+			<div class="ui right floated header">
+				<div class="ui icon menu">
+					
+				</div>
+			</div>
+			<div class="ui left floated header">
+					<span class="ui medium text ">Detalle N. <span class="title-n-detalle">00001</span></span>
+			</div>
+			<div class="ui clearing divider"></div>
+			<?php foreach ($datoSincerado as $key => $row) : ?>
+			<div class="ui grid">
+					<div class="columna_itemss sixteen wide tablet twelve wide computer column itemDet_1">
+					
+						<div class="fields">
+						
+							<div class="eight wide field">
+									<div class="ui sub header">Item</div>
+									<input name="items" placeholder="items" value = "<?= $row['descripcionTipoPresupuestoDetalle'] ?>">
+							</div>	
+							<div class="five wide field">
+									<div class="ui sub header">costo</div>
+									<input class="onlynumbers" name="monto" placeholder="monto" value = "<?= $row['monto'] ?>">
+							</div>	
+						</div>
+						
+					</div>
+			</div>
+			<?php endforeach; ?>
+		</div>
+	</div>
+
 </form>
 
 <script>

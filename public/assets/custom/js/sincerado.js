@@ -40,21 +40,43 @@ var Sincerado = {
 
 			++modalId;
 			let jsonString = { 'idPresupuestoValido': idPresupuestoValido };
-			let config = { 'url': Sincerado.url + 'formularioRegistrarSincerado', 'data': jsonString };
+			let config = { 'url': Sincerado.url + 'formularioFechasSincerado', 'data': jsonString };
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSincerado", fn: "Sincerado.registrarSincerado()", fnFin: "Sincerado.validarCheckbox()", content: "¿Esta seguro de registrar la Orden de Servicio?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
-				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-				Fn.loadSemanticFunctions();
+				fn[1] = 'Fn.showConfirm({ idForm: "formFechaSincerado", fn: "Sincerado.buscarFechaSincerado('+idPresupuestoValido+')" ,content: "¿Esta seguro de ver esa fecha?" });';
+				btn[1] = { title: 'Consultar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '20%' });
+				
 			});
 
 		})
-		HTCustom.load();
+		
 	},
+	buscarFechaSincerado: function (idPresupuestoValido) {
+		
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formFechaSincerado')) };
+		let config = { 'url': Sincerado.url + 'formularioRegistrarSincerado', 'data': jsonString };
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			fn[1] = 'Fn.showConfirm({ idForm: "formSincerado", fn: "Sincerado.registrarSincerado()" ,content: "¿Esta seguro de ver esa fecha?" });';
+			btn[1] = { title: 'Registrar', fn: fn[1] };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+	
+		});
+		},
+	registrarSincerado: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSincerado')) };
+		let config = { 'url': Sincerado.url + 'registrarSincerado', 'data': jsonString };
+		//console.log(config);
+		$.when(Fn.ajax(config)).then((a) => {
+				
+		});
+	}
 }
 Sincerado.load();
