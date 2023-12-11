@@ -143,6 +143,38 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerFechaSinceradoDetalle($params = [])
+	{
+		$sql = "
+			select  * FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
+			where idPresupuestoValido = ".$params['idPresupuestoValido']."  and  fecha = '".$params['fechaSincerado']."'";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerFechaSincerado($params = [])
+	{
+		$sql = "
+			select  fecha as value FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
+			where idPresupuestoValido = ".$params['idPresupuestoValido']."  group by fecha";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerItemTipo($params = [])
 	{
 		$sql = "

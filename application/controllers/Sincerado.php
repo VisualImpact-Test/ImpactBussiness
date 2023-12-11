@@ -107,13 +107,31 @@ class Sincerado extends MY_Controller
 
 		echo json_encode($result);
 	}
+	
+	public function formularioFechasSincerado()
+	{			
+		$result = $this->result;
+		$post = $this->input->post();
+		//var_dump($post);
+		$dataParaVista = [];
+		$dataParaVista['idPresupuestoValido'] = $post['idPresupuestoValido'];
+		$dataParaVista['fechaSincerado'] = $this->mCotizacion->obtenerFechaSincerado(['idPresupuestoValido' => $post['idPresupuestoValido']])['query']->result_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fechas Sincerado';
+		$result['data']['html'] = $this->load->view("modulos/Sincerado/formulariFechasSincerado", $dataParaVista, true);
 
+		echo json_encode($result);
+	}
 	public function formularioRegistrarSincerado()
 	{
 		$result = $this->result;
-		$post = $this->input->post();
 
+		$post = json_decode($this->input->post('data'), true);
+	
 		$dataParaVista = [];
+
+		$dataParaVista['datoSincerado'] = $this->mCotizacion->obtenerFechaSinceradoDetalle(['idPresupuestoValido' => $post['idPresupuestoValido'] , 'fechaSincerado' => $post['fechaSincerado']])['query']->result_array();
+		//echo $this->db->last_query(); exit();
 		$dataParaVista['cliente'] = $this->db->get('compras.cliente')->result_array();
 		$dataParaVista['solicitantes'] = $this->db->get_where('compras.solicitante', ['estado' => 1])->result_array();
 		$dataParaVista['cotizacionPrioridad'] = $this->db->get_where('compras.cotizacionPrioridad', ['estado' => 1])->result_array();
@@ -132,10 +150,54 @@ class Sincerado extends MY_Controller
 				$dataParaVista['datos'][$k]['cuenta_cliente'] = $cuenta . ' / ' . $centroCosto;
 			}
 		}
+		// $dataParaVista['itemTipo'] = $this->mCotizacion->obtenerItemTipo()['query']->result_array();
+		// $dataParaVista['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sincerado';
 		$result['data']['html'] = $this->load->view("modulos/Sincerado/formularioRegistroSincerado", $dataParaVista, true);
 
+		echo json_encode($result);
+	}
+	public function registrarSincerado()
+	{	
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$insertSincerado = [
+			'nombre' => $post['titulo'],
+			'fechaDeadline' => $post['deadline'],
+			'fechaRequerida' => $post['fechaRequerida'],
+			'diasValidez' => $post['validez'],
+			'idSolicitante' => $post['solicitante'],
+			'idCuenta' => $post['cuentaForm'],
+			'idCentroCosto' => $post['cuentaCentroCostoForm'],
+			'idPrioridad' => $post['prioridadForm'],	
+			'motivo' => $post['motivoForm'],	
+			'idTipoServicioCotizacion' => $post['tipoServicio'],	
+			'comentario' => $post['comentarioForm']	
+		];
+		$this->db->insert('compras.cotizacionGeneral', $insertSincerado);
+		$idSincerado = $this->db->insert_id();
+		$insertDetalle = [];
+		foreach ($post['items'] as $key => $value) {
+			$insertDetalleSincerado[] = [
+				'idCotizacionGeneral' => $idSincerado ,
+				'descripcionTipoPresupuestoDetalle' => $value,
+				'monto' => $post['monto'][$key]
+			];
+		}
+		
+		$this->db->insert_batch('compras.cotizacionGeneralDetalle', $insertDetalleSincerado);
+
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
 		echo json_encode($result);
 	}
 }
