@@ -269,6 +269,8 @@ class M_Cotizacion extends MY_Model
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
 				, (SELECT CASE WHEN COUNT(idCotizacionDetalle)>0 THEN 1 ELSE 0 END FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = 5) tipoPersonal
 				, p.numeroGR
+				, p.fechaGR
+				, p.fechaClienteOC
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -290,6 +292,51 @@ class M_Cotizacion extends MY_Model
 		}
 
 		return $this->resultado;
+	}
+
+	public function obtenerInformacionCotizacionGR_ORDENCOMPRA($id)
+	{
+		$sql = "
+		DECLARE @hoy DATE = GETDATE();
+		WITH lst_historico_estado AS (
+			SELECT 
+			idCotizacionEstadoHistorico,
+			idCotizacionEstado,
+			idCotizacionInternaEstado,
+			idCotizacion,
+			fechaReg,
+			idUsuarioReg,
+			estado,
+			ROW_NUMBER() OVER (PARTITION BY idCotizacion,idCotizacionEstado ORDER BY idCotizacionEstado) fila
+			FROM
+			compras.cotizacionEstadoHistorico
+		)
+		SELECT DISTINCT
+			p.idCotizacion
+			, p.codOrdenCompra
+			, p.motivoAprobacion
+			, p.montoOrdenCompra
+			, p.fechaClienteOC
+			, p.numeroGR
+			, p.fechaGR
+		FROM compras.cotizacion p
+		LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
+		LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
+		LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = p.idCentroCosto
+		LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
+			AND od.estado = 1
+		LEFT JOIN sistema.usuario u ON u.idUsuario=p.idUsuarioReg
+		WHERE 1 = 1 AND p.idCotizacion = ".$id."
+		
+		ORDER BY p.idCotizacion DESC
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $query;
 	}
 
 	public function obtenerInformacionCotizacionFiltro($params = [])

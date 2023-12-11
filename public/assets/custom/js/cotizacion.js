@@ -195,15 +195,14 @@ var Cotizacion = {
 			++modalId;
 			let jsonString = { 'idCotizacion': idCotizacion };
 			let config = { 'url': Cotizacion.url + 'formularioIndicarGR', 'data': jsonString };
-			$.when(Fn.ajax(config)).then((a) => {
+			$.when(Fn.ajax(config)).then((a) => {	
 				let btn = [];
 				let fn = [];
-
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 
 				if (a.result == 1) {
-					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroGR", fn: "Cotizacion.registrarGR()", content: "¿Esta seguro de registrar el número de GR?" });';
+					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroGR", fn: "Cotizacion.registrarGR()", content: "¿Esta seguro de registrar los datos ingresados?" });';
 					btn[1] = { title: 'Guardar <i class="fas fa-save"></i>', fn: fn[1] };
 				}
 

@@ -93,10 +93,11 @@ class Cotizacion extends MY_Controller
 		$post = $this->input->post();
 
 		$dataParaVista['idCotizacion'] = $post['idCotizacion'];
+		$data['datosCot'] = $this->model->obtenerInformacionCotizacionGR_ORDENCOMPRA($dataParaVista['idCotizacion'])->result_array();
 
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Indicar GR';
-		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioIndicarGR", $dataParaVista, true);
+		$result['msg']['title'] = 'Indicar Datos';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioIndicarGR", $data, true);
 
 		echo json_encode($result);
 	}
@@ -106,12 +107,85 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$result['result'] = 0;
-		$result['msg']['title'] = 'Información actualizada';
-		$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
+		
+		if(isset($post['numero_gr'])){
+			$numeroGR = $post['numero_gr'];
+		} else {
+			$numeroGR = NULL;
+		}
 
-		if ($this->db->update('compras.cotizacion', ['numeroGR' => $post['numero_gr'], 'fechaGR' => $post['fechaGR']], ['idCotizacion' => $post['idCotizacion']]))
-			$result['result'] = 1;
+		if(isset($post['codigo_oc'])){
+			$codigo_oc = $post['codigo_oc'];
+		} else {
+			$codigo_oc = NULL;
+		}
+
+		if(isset($post['monto_oc'])){
+			$monto_oc = $post['monto_oc'];
+		} else {
+			$monto_oc = NULL;
+		}
+
+		if ($numeroGR == NULL && $post['fechaGR'] == NULL && $codigo_oc == NULL
+		&& $monto_oc == NULL && $post['fechaClienteOC'] == NULL && $post['motivo'] == NULL) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Información no actualizada';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se actualizo ningún dato']);
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Información actualizada';
+			$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
+
+			$update = [];
+
+			if(!empty($codigo_oc)) {
+				$update = [
+					'codOrdenCompra' => $codigo_oc,
+				];
+			}
+
+			if(!empty($monto_oc)) {
+				$update = [
+					'montoOrdenCompra' => $monto_oc,
+				];
+			}
+			if(!empty($post['fechaClienteOC'])) {
+				$update = [
+					'fechaClienteOC' => $post['fechaClienteOC'],
+				];
+			}
+
+			
+			if(!empty($numeroGR)) {
+				$update = [
+					'numeroGR' => $numeroGR,
+				];
+			}
+					
+			
+
+			if(!empty($post['fechaGR'])) {
+				$update = [
+					'fechaGR' => $post['fechaGR'],
+				];
+			}
+
+			if(!empty($post['motivo'])) {
+				$update = [
+					'motivoAprobacion' => $post['motivo'],
+				];
+			}
+			
+
+			if ($this->db->update(
+				'compras.cotizacion',
+				$update,
+				[
+					'idCotizacion' => $post['idCotizacion']
+				]
+			))
+				$result['result'] = 1;
+		}
 
 		echo json_encode($result);
 	}

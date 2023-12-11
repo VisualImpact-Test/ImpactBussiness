@@ -67,7 +67,7 @@
 						<?php if ($row['estado'] == 0) :  ?>
 							<button class="btn btn-link " data-id="<?= $row['idCotizacion'] ?>"><?= $row['icono']; ?></button>
 						<?php else : ?>
-							<?= $row['icono']; ?>
+							<?= $row['icono']; ?> 
 						<?php endif; ?>
 						<?php if (!$row['cotizacionValidaCliente']) :  ?>
 							<br>
@@ -79,15 +79,17 @@
 							$row['idCotizacionEstado'] >= ESTADO_COTIZACION_APROBADA &&
 							(
 								empty($row['numeroGR']) ||
+								empty($row['fechaGR']) ||
 								empty($row['codOrdenCompra']) ||
 								empty($row['motivoAprobacion']) ||
-								empty($row['montoOrdenCompra'])
+								empty($row['montoOrdenCompra']) ||
+								empty($row['fechaClienteOC'])
 							)
 						) : ?>
 							<br>
 							<button class="ui pointing red basic label btnAsignarGR">
 								<!-- Falta indicar datos -->
-								Sin indicar GR
+								Falta completar datos
 							</button>
 						<?php endif; ?>
 					</td>
