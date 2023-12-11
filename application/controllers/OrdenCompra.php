@@ -510,7 +510,9 @@ class OrdenCompra extends MY_Controller
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
-		$cod_oc = generarCorrelativo($dataParaVista['dataOc'][0]['idOrdenCompra'], 6);
-		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6)."-"
+			.$dataParaVista['detalle'][0]['concepto'];
+			
+		$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 };

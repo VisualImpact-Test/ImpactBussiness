@@ -63,7 +63,7 @@
 				<td class="text-center bold">Cantidad</td>
 				<td class="text-center bold" colspan="4">Descripción</td>
 				<td class="text-center bold">Precio Unit.</td>
-				<td class="text-center bold">Precio Total</td>
+				<td class="text-center bold" colspan="3">Precio Total</td>
 			</tr>
 		</thead>
 		<tbody style="border:1px solid black;">
@@ -134,7 +134,7 @@
 						<td class="text-right" rowspan="<?= $rowS ?>">
 							<?= !empty($row['costo_item']) ? monedaNew(['valor' => $row['costo_item'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
-						<td class="text-right" rowspan="<?= $rowS ?>">
+						<td class="text-right" rowspan="<?= $rowS ?>"  colspan="3">
 							<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
 					</tr>
@@ -165,7 +165,7 @@
 				<td class="text-center">
 					<p><?= !empty($data['igv']) ? $data['igv'] : (IGV * 100) ?>%</p>
 				</td>
-				<td class="text-right">
+				<td class="text-right"  colspan="3">
 					<p><?= monedaNew(['valor' => $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 					<p><?= empty($igv_total) ? 'S/ 0.00' : (monedaNew(['valor' => $igv_total, 'simbolo' => $data['simboloMoneda']])) ?></p>
 					<p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
@@ -173,7 +173,7 @@
 			</tr>
 			<tr>
 				<td colspan="2" class="bold">Son :</td>
-				<td colspan="6" class="text-left">
+				<td colspan="8" class="text-left">
 					<?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
 				</td>
 			</tr>
