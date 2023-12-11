@@ -98,7 +98,7 @@
 	<div id="datosAd">
 		<div class="ui form attached fluid segment p-4">
 			<button type="button" class="btn px-0 py-2" data-toggle="collapse" data-target="#colDatosAd" aria-expanded="false" aria-controls="colDatosAd">
-				<h4 class="ui dividing header text-uppercase">Datos Adicionales</h4>
+				<h4 class="ui dividing header text-uppercase">Datos Adicionales <span class="ui btn btn-outline-trade-visual border-0"> <i class="fas fa-plus"></i></span></h4> 
 			</button>
 			<div id="colDatosAd" class="collapse" aria-labelledby="headingOne" data-parent="#datosAd">
 				<div class="fields">
