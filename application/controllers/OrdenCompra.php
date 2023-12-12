@@ -288,7 +288,8 @@ class OrdenCompra extends MY_Controller
 			'idOper' => $post['idOper'],
 			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
 			'mostrar_observacion' => $mostrar_observacion,
-			'idAlmacen' => $post['idAlmacen']
+			'idAlmacen' => $post['idAlmacen'],
+			'descripcionCompras' => $post['descripcionCompras']
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -399,7 +400,8 @@ class OrdenCompra extends MY_Controller
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'mostrar_observacion' => $mostrar_observacion,
-			'idAlmacen' => $post['idAlmacen']
+			'idAlmacen' => $post['idAlmacen'],
+			'descripcionCompras' => $post['descripcionCompras']
 		];
 		$rpta = $this->model->actualizarMasivo('orden.ordenCompra', $updateData, 'idOrdenCompra');
 		$idOC = $updateData[0]['idOrdenCompra'];

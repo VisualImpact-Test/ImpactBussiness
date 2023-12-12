@@ -13,6 +13,10 @@
 						<label class="font-weight-bold mb-0">Concepto:</label>
 						<input class="form-control" name="concepto">
 					</div>
+					<div class="form-group col-md-4">
+						<label class="font-weight-bold mb-0">Descripcion Compras:</label>
+						<input class="form-control" name="descripcionCompras">
+					</div>
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-4">
