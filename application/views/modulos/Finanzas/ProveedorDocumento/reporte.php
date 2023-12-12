@@ -30,14 +30,15 @@
 					<!-- <td class="td-center">btn</td> -->
 					<td class="td-left"><?= date_change_format($row['fechaRegOC']); ?></td>
 					<td class="td-center">
-						<a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank">
+						<?php $rutaOc = empty($row['idOrdenCompra']) ? '#' : 'Cotizacion/descargarOperDirecto/' . $row['idOrdenCompra']; ?>
+						<!-- <a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank"> -->
 							<?= $row['oper']; ?>
-						</a>
+						<!-- </a> -->
 					</td>
 					<td class="td-center">
-						<a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOCDirecto/<?= $row['idOrdenCompra']; ?>" target="_blank">
-							<?= str_pad($row['idOrdenCompra'], 8, "0", STR_PAD_LEFT); ?>
-						</a>
+						<!-- <a class="btn" href="<?= $rutaOc; ?>" target="_blank"> -->
+							<?= $row['ordenCompra']; ?>
+						<!-- </a> -->
 					</td>
 					<td class="td-center"><?= $row['rucProveedor']; ?></td>
 					<td class="td-left"><?= $row['razonSocial'] ?></td>
