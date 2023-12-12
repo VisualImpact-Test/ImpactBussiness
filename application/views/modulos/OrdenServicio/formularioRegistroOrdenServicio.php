@@ -72,7 +72,7 @@
 						<div class="ui calendar date-semantic" id="fechaInicial">
 							<div class="ui input left icon">
 								<i class="calendar icon"></i>
-								<input type="text" placeholder="Fecha Inicial" value="<?= isset($ordenServicio['fechaIni']) ? $ordenServicio['fechaIni'] : '' ?>">
+								<input type="text" placeholder="Fecha Inicial" value="<?= isset($ordenServicio['fechaIni']) ? $ordenServicio['fechaIni'] : '' ?>" patron="requerido">
 							</div>
 						</div>
 						<input type="hidden" class="date-semantic-value" name="fechaIni" value="<?= isset($ordenServicio['fechaIni']) ? $ordenServicio['fechaIni'] : '' ?>">
