@@ -44,6 +44,7 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzasLibre($params = [])
 	{
 		$this->db
+			->distinct()
 			->select("oc.seriado as ordenCompra,
 						null as idOrdenCompra, 
 						cast(oc.fechaReg as DATE) as fechaRegOC, 
@@ -70,8 +71,8 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.Empresa emp', 'emp.idEmpresa = oc.idCuenta')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
-			->where('ocd.estado', 1)
-			->order_by('ocd.idOrdenCompra desc');
+			->where('ocd.estado', 1);
+			// ->order_by('ocd.idOrdenCompra desc');
 
 		if (!empty($params['idProveedor'])) $this->db->where('oc.idProveedor', $params['idProveedor']);
 		if (!empty($params['idCuenta'])) $this->db->where('c.idCuenta', $params['idCuenta']);
