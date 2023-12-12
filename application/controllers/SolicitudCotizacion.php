@@ -1406,6 +1406,7 @@ class SolicitudCotizacion extends MY_Controller
 			'idAlmacen' => $post['idAlmacen'],
 			'idOper' => isset($post['idOper']) ? $post['idOper'] : null,
 			'enlaces' => isset($post['enlaces']) ? $post['enlaces'] : null,
+			'descripcionFinanzas' => $post['descripcionFinanzas'],
 		]);
 
 		$oper = $this->db->get_where("compras.oper", ['idOper' => $post['idOper']])->row_array();
@@ -1431,6 +1432,7 @@ class SolicitudCotizacion extends MY_Controller
 				'idAlmacen' => !empty($row['idAlmacen']) ? $row['idAlmacen'] : NULL,
 				'enlaces' => !empty($row['enlaces']) ? $row['enlaces'] : NULL,
 				'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
+				'descripcionFinanzas' => $row['descripcionFinanzas']
 			];
 
 			$rs_oc = $this->model->insertar(['tabla' => 'compras.ordenCompra', 'insert' => $insert_oc]);
