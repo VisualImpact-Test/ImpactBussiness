@@ -54,11 +54,11 @@ class M_ProveedorDocumento extends MY_Model
 						null as idCotizacion, 
 						oc.requerimiento as oper, 
 						null as idOper, 
-						'PENDIENTE' as cotizacion,
+						'-' as cotizacion,
 						oc.idCuenta, 
 						oc.idCentroCosto, 
-						oc.poCliente as poCliente, 'PENDIENTE' as desTracking, 
-						'PENDIENTE' as numeroGR, oc.totalIGV as igv, 
+						oc.poCliente as poCliente, oc.concepto as desTracking, 
+						'PENDIENTE' as numeroGR, oc.IGVPorcentaje as igv, 
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
