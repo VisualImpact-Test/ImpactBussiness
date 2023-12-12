@@ -49,9 +49,11 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+		
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
-		// logError($datos);
 		$datos = array_merge($datos1, $datos2);
+		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
+
 		foreach ($datos as $k => $v) {
 			if (!isset($dataParaVista['datos'][$v['ordenCompra']])) {
 				$dataParaVista['datos'][$v['ordenCompra']] = $v;
