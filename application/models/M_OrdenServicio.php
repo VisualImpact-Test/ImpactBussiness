@@ -56,6 +56,7 @@ class M_OrdenServicio extends MY_Model
 			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio and pr.estado = 1', 'LEFT')
 			->join('rrhh.dbo.Empresa c', 'l.idCuenta = c.idEmpresa', 'LEFT')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = l.idCentroCosto', 'LEFT')
+			->where('l.estado', 1)
 			->order_by('l.idOrdenServicio desc');
 		return $this->db->get();
 	}
