@@ -199,15 +199,18 @@ class M_OrdenServicio extends MY_Model
 		return $query;
 	}
 
-	public function getPresupuestoCargo($id)
+	public function getPresupuestoCargo($id, $idH = null)
 	{
-		$query = $this->db
+		$this->db
 			->select('pc.*, c.nombre as cargo')
 			->from('compras.presupuestoCargo pc')
 			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = pc.idCargo', 'LEFT')
-			->where('pc.estado', 1)
-			->where('pc.idPresupuesto', $id)
-			->get();
+			->where('pc.idPresupuesto', $id);
+
+		if (!empty($idH)) $this->db->where('pc.idPresupuestoHistorico', $idH);
+		else $this->db->where('pc.estado', 1);
+
+		$query = $this->db->get();
 		return $query;
 	}
 

@@ -48,17 +48,22 @@ class ProveedorDocumento extends MY_Controller
 
 		$dataParaVista = [];
 
-		$datos = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-		foreach ($datos as $k => $v) {
-			if (!isset($dataParaVista['datos'][$v['idOrdenCompra']])) {
-				$dataParaVista['datos'][$v['idOrdenCompra']] = $v;
-				$dataParaVista['datos'][$v['idOrdenCompra']]['monto'] = 0;
+		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+		
+		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
+		$datos = array_merge($datos1, $datos2);
+		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
 
-				$dataParaVista['datos'][$v['idOrdenCompra']]['adjuntosCargados'] = false;
+		foreach ($datos as $k => $v) {
+			if (!isset($dataParaVista['datos'][$v['ordenCompra']])) {
+				$dataParaVista['datos'][$v['ordenCompra']] = $v;
+				$dataParaVista['datos'][$v['ordenCompra']]['monto'] = 0;
+
+				$dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = false;
 				$buscarCargados = $this->db->get_where('compras.sustentoAdjunto', ['idProveedor' => $v['idProveedor'], 'idCotizacion' => $v['idCotizacion'], 'estado' => 1])->result_array();
-				if (!empty($buscarCargados)) $dataParaVista['datos'][$v['idOrdenCompra']]['adjuntosCargados'] = true;
+				if (!empty($buscarCargados)) $dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = true;
 			}
-			$dataParaVista['datos'][$v['idOrdenCompra']]['monto'] += $v['subtotal'];
+			$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
 		}
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -76,7 +81,7 @@ class ProveedorDocumento extends MY_Controller
 					"visible" => false,
 					"targets" => []
 				]
-			]
+			],
 		];
 
 		echo json_encode($result);

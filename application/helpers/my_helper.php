@@ -1540,7 +1540,13 @@ function obtener_carpeta_foto($foto)
 	}
 	return $carpeta . $foto;
 }
+function ordenarArrayPorColumna($array, $columna, $sort = SORT_ASC)
+{
 
+	$keys = array_column($array, $columna);
+	array_multisort($keys, $sort, $array);
+	return $array;
+}
 function ruta_gps($lati_1, $long_1, $lati_2, $long_2)
 {
 	return ' <a href="javascript:;" style="margin-right:3px;font-size: 15px;" class="lk-show-gps" data-lati-1="' . $lati_1 . '" data-long-1="' . $long_1 . '" data-lati-2="' . $lati_2 . '" data-long-2="' . $long_2 . '" ><i class="fa fa-map-marker" ></i></a> ';
@@ -2091,7 +2097,8 @@ function decrypt($string)
 }
 function logError($data = [])
 {
-	log_message('error', json_encode($data));
+	if (is_array($data)) $data = json_encode($data);
+	log_message('error', $data);
 }
 function changeKeyInArray($array, $new_key, $new_key2 = '', $new_key3 = '')
 {

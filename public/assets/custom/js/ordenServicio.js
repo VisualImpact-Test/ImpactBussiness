@@ -169,7 +169,7 @@ var OrdenServicio = {
 			let id = $(this).parents('tr:first').data('id');
 			let estado = $(this).parents('tr:first').data('estado');
 			//console.log(estado);
-			let data = { 'idOrdenServicio': id , 'idOrdenServicioEstado': estado };
+			let data = { 'idOrdenServicio': id, 'idOrdenServicioEstado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': OrdenServicio.url + 'formatoVersionesAnteriores', 'data': jsonString };

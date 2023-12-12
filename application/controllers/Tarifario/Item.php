@@ -494,7 +494,6 @@ class Item extends MY_Controller
 		array_pop($post['HT'][0]);
 
 		foreach ($post['HT'][0] as $tablaHT) {
-
 			if (empty($tablaHT['item']) || empty($tablaHT['proveedor']) || empty($tablaHT['costo']) || empty($tablaHT['fecha'])) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
@@ -505,7 +504,8 @@ class Item extends MY_Controller
 			$idProveedor = !empty($itemProveedores[$tablaHT['proveedor']]) ? $itemProveedores[$tablaHT['proveedor']] : NULL;
 			$idItem = !empty($itemNombre[$tablaHT['item']]) ? $itemNombre[$tablaHT['item']] : NULL;
 
-			if (empty($idProveedor || $idItem)) {
+			if (empty($idItem)) $idItem = $this->db->order_by('idItem desc')->get_where('compras.item', ['nombre' => $tablaHT['item']])->row_array()['idItem'];
+			if (empty($idProveedor) || empty($idItem)) {
 				goto respuesta;
 			}
 
