@@ -180,6 +180,29 @@ var Fn = {
 		});
 	},
 
+	showAlert: function (config) {
+
+		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
+			let fnF = '';
+			if (config.fnFin) fnF = config.fnFin + ';';
+			if (a === true) {
+				++modalId;
+				var btn = new Array();
+				var btn = new Array();
+				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
+				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
+				var content = "<div class='alert alert-warning'>"+ config.content + "</strong></div>";
+				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
+			} else {
+				++modalId;
+				var btn = new Array();
+				btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
+				var content = "<div class='alert alert-danger'>Se encontraron incidencias en la operación. <strong>Verifique el formulario.</strong></div>";
+				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
+			}
+		});
+	},
+
 	modalVisible: function () {
 		if ($('.modal:visible').length == 0) {
 			$('body').removeClass('modal-open');

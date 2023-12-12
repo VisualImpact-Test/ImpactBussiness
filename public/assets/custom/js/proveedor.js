@@ -240,6 +240,30 @@ var Proveedor = {
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);
 			});
 		});
+		
+		$(document).on('click', '.btn-agregar-tipo-servicio', function (e) {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Proveedor.url + 'formularioRegistroTipoServicio', 'data': jsonString };
+			
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showAlert({ idForm: "formRegistroTipoServicio", fn: "Proveedor.registrarTipoServicio()", content: "¿Al registrar el Tipo de Servicio, se perderán los datos ingresados anteriormente. ¿Deseas continuar?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				Fn.loadSemanticFunctions();
+				$('.simpleDropdown').dropdown();
+            	$('.dropdownSingleAditions').dropdown({allowAdditions: true	});
+				Fn.loadDimmerHover();
+			});
+
+		});
 
 		$(document).on('click', '.btn-agregar-zona', function (e) {
 			let tbody = $(".tb-zona-cobertura > tbody");
@@ -296,7 +320,26 @@ var Proveedor = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedor").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-registrarProveedor").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	registrarTipoServicio: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroTipoServicio')) };
+		let url = Proveedor.url + "registrarTipoServicio";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-registrarProveedor").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };

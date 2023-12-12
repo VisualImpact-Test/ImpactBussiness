@@ -140,6 +140,17 @@ class Proveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioRegistroTipoServicio() 
+	{
+		$dataParaVista = [];
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Tipo Servicio';
+		$result['data']['html'] = $this->load->view("modulos/Proveedor/formularioRegistroTipoServicio", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function formularioActualizacionProveedor()
 	{
 		$result = $this->result;
@@ -481,8 +492,30 @@ class Proveedor extends MY_Controller
 
 		$this->db->trans_complete();
 		respuesta:
-
+		
 		echo json_encode($result);
+	}
+
+	public function registrarTipoServicio()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$tablaTipoServicio = 'compras.proveedorTipoServicio';
+			$insertTipoServicio = [
+				'nombre' => $post['tipoServicio'],
+				'estado' => true,
+			];
+			$insertSubCategoria = $this->model->insertarTipoServicio(['tabla' => $tablaTipoServicio, 'insert' => $insertTipoServicio]);
+
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+			$this->db->trans_complete();
+
+			echo json_encode($result);
 	}
 
 	public function actualizarProveedor()
