@@ -13,9 +13,10 @@ class M_Sincerado extends MY_Model
 			->from('compras.presupuestoValido pv')
 			->join('compras.presupuestoHistorico ph', 'ph.idPresupuesto = pv.idPresupuesto AND ph.idPresupuestoHistorico = pv.idPresupuestoHistorico')
 			->join('compras.ordenServicio os', 'os.idOrdenServicio = ph.idOrdenServicio')
-			->join('compras.moneda mon', 'mon.idMoneda = os.idMoneda');
+			->join('compras.moneda mon', 'mon.idMoneda = os.idMoneda')
+			->order_by('pv.idPresupuestoValido desc');
 		if (isset($params['idPresupuestoValido'])) $this->db->where('pv.idPresupuestoValido', $params['idPresupuestoValido']);
-		
+			
 		return $this->db->get();
 	}
 }
