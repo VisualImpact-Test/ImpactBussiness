@@ -58,7 +58,7 @@ class M_ProveedorDocumento extends MY_Model
 						oc.idCuenta, 
 						oc.idCentroCosto, 
 						oc.poCliente as poCliente, 'PENDIENTE' as desTracking, 
-						'PENDIENTE' as numeroGR, oc.totalIGV as igv, 
+						'PENDIENTE' as numeroGR, oc.IGVPorcentaje as igv, 
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
