@@ -17,7 +17,7 @@ class M_ProveedorDocumento extends MY_Model
 						cd.cantidad * ISNULL(cd.costo, 0) as subtotal, 
 						mon.nombreMoneda,
 						c.idCotizacion, op.requerimiento as oper, op.idOper,
-						c.nombre as cotizacion, c.idCuenta, c.idCentroCosto, c.codOrdenCompra as poCliente, c.motivoAprobacion as desTracking,
+						oc.descripcionFinanzas as cotizacion, c.idCuenta, c.idCentroCosto, c.codOrdenCompra as poCliente, c.motivoAprobacion as desTracking,
 						ISNULL(c.numeroGR, 'PENDIENTE') as numeroGR,
 						ISNULL(oc.igv, 0) as igv,
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
@@ -54,7 +54,7 @@ class M_ProveedorDocumento extends MY_Model
 						null as idCotizacion, 
 						oc.requerimiento as oper, 
 						null as idOper, 
-						'-' as cotizacion,
+						oc.descripcionCompras as cotizacion,
 						oc.idCuenta, 
 						oc.idCentroCosto, 
 						oc.poCliente as poCliente, oc.concepto as desTracking, 
