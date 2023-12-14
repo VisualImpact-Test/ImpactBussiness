@@ -355,8 +355,12 @@
 									</div>
 									<div class="form-group col-md-12">
 										<label class="font-weight-bold mb-0">Sub Total:</label>
-										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item'] ?>">
+										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= round($value['csg_item'], 3); ?>">
 									</div>
+									<div class="form-group col-md-12 d-none">
+								<label class="font-weight-bold mb-0">Sub Total real:</label>
+								<input class="form-control item_precio_real" name="precio_real" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item'] ?>">
+							</div>
 								</div>
 							</div>
 						</div>
@@ -379,11 +383,15 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
-						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total'] ?>">
+						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= round($value['total'], 3); ?>">
+						<input type="hidden" class="form-control" name="total_real" patron="requerido" id="total_real" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total'] ?>" >
+
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
-						<input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= $value['totalIGV'] ?>">
+						<input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= round($value['totalIGV'], 3);  ?>">
+						<input type="hidden" class="form-control" name="totalIGV_real" patron="requerido" id="totalFinal_real" readOnly value="<?= $value['totalIGV'] ?>">
+
 					</div>
 				</div>
 			</fieldset>

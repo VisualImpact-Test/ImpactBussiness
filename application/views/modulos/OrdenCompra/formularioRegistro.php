@@ -167,6 +167,10 @@
 								<label class="font-weight-bold mb-0">Sub Total:</label>
 								<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
 							</div>
+							<div class="form-group col-md-12 d-none">
+								<label class="font-weight-bold mb-0">Sub Total real:</label>
+								<input class="form-control item_precio_real" name="precio_real" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
+							</div>
 						</div>
 					</div>
 				</div>
@@ -190,10 +194,13 @@
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
 						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();">
+						<input type="hidden" class="form-control" name="total_real" patron="requerido" id="total_real" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();">
+
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total Final:</label>
 						<input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly>
+						<input type="hidden" class="form-control" name="totalIGV_real" patron="requerido" id="totalFinal_real" readOnly>
 					</div>
 				</div>
 			</fieldset>

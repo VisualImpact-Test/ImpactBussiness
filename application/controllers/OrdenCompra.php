@@ -280,16 +280,17 @@ class OrdenCompra extends MY_Controller
 			'comentario' => $post['comentario'],
 			'concepto' => $post['concepto'],
 			'idMetodoPago' => $post['metodoPago'],
-			'total' => $post['total'],
+			'total' => $post['total_real'],
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-			'totalIGV' => $post['totalIGV'],
+			'totalIGV' => $post['totalIGV_real'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'idOper' => $post['idOper'],
 			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
 			'mostrar_observacion' => $mostrar_observacion,
 			'idAlmacen' => $post['idAlmacen'],
-			'descripcionCompras' => $post['descripcionCompras']
+			'descripcionCompras' => $post['descripcionCompras'],
+			//'totalIGV_real' => $post['totalIGV_real'],
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -316,7 +317,7 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-				'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
@@ -394,9 +395,9 @@ class OrdenCompra extends MY_Controller
 			'comentario' => $post['comentario'],
 			'concepto' => $post['concepto'],
 			'idMetodoPago' => $post['metodoPago'],
-			'total' => $post['total'],
+			'total' => $post['total_real'],
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-			'totalIGV' => $post['totalIGV'],
+			'totalIGV' => $post['totalIGV_real'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'mostrar_observacion' => $mostrar_observacion,
@@ -430,7 +431,7 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-				'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
