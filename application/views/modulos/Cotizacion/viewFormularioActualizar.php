@@ -83,6 +83,22 @@
 
 		</div>
 		<div class="fields">
+			
+			<div class="three wide field">
+				<div class="ui sub header">Tipo Servicio</div>
+				<select class="ui dropdown semantic-dropdown" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">
+			
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicioCotizacion, 'class' => 'text-titlecase', 'selected' => $cotizacion['idTipoServicioCotizacion']]); ?>
+				</select>
+			</div>
+			<div class="three wide field">
+				<div class="ui sub header">Tipo Moneda</div>
+				<select class="ui dropdown semantic-dropdown" id="tipoMoneda" name="tipoMoneda" patron="requerido" onchange="Cotizacion.SimboloMoneda(this)">
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoMoneda, 'class' => 'text-titlecase', 'selected' => $cotizacion['idTipoMoneda']] ); ?>
+				</select>
+			</div>
+		</div>
+		<div class="fields">
 			<div class="eight wide field">
 				<div class="ui sub header">Comentario</div>
 				<textarea name="comentarioForm" id="comentarioForm" cols="30" rows="6"><?= !empty($cotizacion['comentario']) ? $cotizacion['comentario'] : '' ?></textarea>
@@ -502,7 +518,7 @@
 							<div class="sixteen wide field">
 								<div class="ui sub header">Costo</div>
 								<div class="ui right action right labeled input">
-									<label for="amount" class="ui label">S/</label>
+									<label for="amount" class="ui label monedaSimbolo">S/</label>
 									<input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
 								</div>
 							</div>
@@ -522,7 +538,7 @@
 							<div class="eight wide field">
 								<div class="ui sub header">Precio</div>
 								<div class="ui right labeled input">
-									<label for="amount" class="ui label">S/</label>
+									<label for="amount" class="ui label monedaSimbolo">S/</label>
 									<input class="precioFormLabel" type="text" placeholder="0.00" readonly>
 									<input class="precioForm" type="hidden" name="precioForm" placeholder="0.00" readonly>
 								</div>
@@ -532,7 +548,7 @@
 							<div class="sixteen wide field">
 								<div class="ui sub header">Subtotal</div>
 								<div class="ui right labeled input">
-									<label for="amount" class="ui label teal">S/</label>
+									<label for="amount" class="ui label teal monedaSimbolo">S/</label>
 									<input class="subtotalFormLabel" type="text" placeholder="0.00" readonly>
 									<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" readonly>
 									<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
@@ -1006,7 +1022,7 @@
 								<div class="sixteen wide field">
 									<div class="ui sub header">Costo</div>
 									<div class="ui right action right labeled input">
-										<label for="amount" class="ui label">S/</label>
+										<label for="amount" class="ui label monedaSimbolo">S/</label>
 										<input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= verificarEmpty($row['costoCotizacion']); ?>" readonly>
 
 									</div>
@@ -1025,7 +1041,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">Precio</div>
 									<div class="ui right labeled input">
-										<label for="amount" class="ui label">S/</label>
+										<label for="amount" class="ui label monedaSimbolo">S/</label>
 										<input class=" precioFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['precio']) ? $row['precio'] : '' ?>">
 										<input class=" precioForm" type="hidden" name="precioForm" placeholder="0.00" value="<?= !empty($row['precio']) ? ($row['precio']) : '' ?>">
 									</div>
@@ -1035,7 +1051,7 @@
 								<div class="sixteen wide field">
 									<div class="ui sub header">Subtotal</div>
 									<div class="ui right labeled input">
-										<label for="amount" class="ui label teal">S/</label>
+										<label for="amount" class="ui label teal monedaSimbolo">S/</label>
 										<input class="subtotalFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['subtotal']) ? $row['subtotal'] : '' ?>">
 										<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>">
 

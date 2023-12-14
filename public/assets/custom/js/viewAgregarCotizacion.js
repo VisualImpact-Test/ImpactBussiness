@@ -79,6 +79,9 @@ var SolicitudCotizacion = {
 			});
 		});
 
+
+
+
 		$(document).on('click', '.downloadFormatProv____________', function () {
 			idCotizacionDetalle = $(this).data('id');
 			let jsonString = { 'data': idCotizacionDetalle };
@@ -3678,6 +3681,16 @@ var Cotizacion = {
 		// '.total_adicionales'
 		_this.closest('.personal_detalle').find('.total_adicionales').val(total_adicional);
 		_this.closest('.body-item').find('.sueldo_personal').keyup();
+	},
+	SimboloMoneda: function (t) {
+		var ts = $(t).val();
+
+		if (ts == 1 ) {
+			$('.monedaSimbolo').text('S/');
+		} else {
+			$('.monedaSimbolo').text('$');
+		}
+	
 	},
 }
 

@@ -517,6 +517,7 @@ class Cotizacion extends MY_Controller
 			'idUsuarioReg' => $this->idUsuario,
 			'idTipoServicioCotizacion' => $post['tipoServicioCotizacion'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
+			'idTipoMoneda' => $post['tipoMoneda'],
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
@@ -1641,6 +1642,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
 		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
+		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		$config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
 		$config['data']['itemLogistica'] = $this->model_item->obtenerAllItemsLogistica();
@@ -2560,6 +2562,8 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
+		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
+		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}
@@ -3117,6 +3121,7 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		echo json_encode($this->actualizarCotizacion($post));
 	}
+
 	public function actualizarCotizacion($post)
 	{
 		$this->db->trans_start();
@@ -3142,6 +3147,8 @@ class Cotizacion extends MY_Controller
 			'comentario' => $post['comentarioForm'],
 			'diasValidez' => $post['diasValidez'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
+			'idTipoServicioCotizacion' => $post['tipoServicioCotizacion'],
+			'idTipoMoneda' => $post['tipoMoneda'],
 		];
 
 		if (isset($post['actualizarEstado'])) {
@@ -3836,6 +3843,9 @@ class Cotizacion extends MY_Controller
 		$config['data']['title'] = 'Cotizacion';
 		$config['data']['message'] = 'Lista de Cotizacions';
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
+		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
+		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
+
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();

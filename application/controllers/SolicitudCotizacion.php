@@ -1192,6 +1192,8 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
+		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
+		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 		$config['data']['siguienteEstado'] = ESTADO_CONFIRMADO_COMPRAS;
 		$config['data']['controller'] = 'SolicitudCotizacion';
 		$config['data']['disabled'] = false;

@@ -303,6 +303,8 @@ class M_Cotizacion extends MY_Model
 				, p.numeroGR
 				, p.fechaGR
 				, p.fechaClienteOC
+				, p.idTipoServicioCotizacion
+				, p.idTipoMoneda
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -1594,6 +1596,25 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+	public function obtenertipoMoneda($params = [])
+	{
+		$sql = "
+		select idMoneda as id , nombreMoneda AS value from compras.moneda where estado = 1 
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	
 
 	public function insertarCotizacionAnexos($data = [])
 	{
