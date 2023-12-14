@@ -146,8 +146,8 @@ class M_Cotizacion extends MY_Model
 	public function obtenerFechaSinceradoDetalle($params = [])
 	{
 		$sql = "
-			select  * FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
-			where idPresupuestoValido = ".$params['idPresupuestoValido']."  and  fecha = '".$params['fechaSincerado']."'";
+			select * FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
+			where idPresupuestoValido = " . $params['idPresupuestoValido'] . " and fecha = '" . $params['fechaSincerado'] . "'";
 
 		$query = $this->db->query($sql);
 
@@ -162,9 +162,9 @@ class M_Cotizacion extends MY_Model
 	public function obtenerFechaSincerado($params = [])
 	{
 		$sql = "
-			select  fecha as value FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
-			where idPresupuestoValido = ".$params['idPresupuestoValido']."  group by fecha";
-
+			select fecha as id, CONVERT(varchar, cast(fecha as DATE), 103) as value
+			FROM compras.presupuestoValidoDetalle
+			where idPresupuestoValido = " . $params['idPresupuestoValido'] . " group by fecha";
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -358,7 +358,7 @@ class M_Cotizacion extends MY_Model
 		LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 			AND od.estado = 1
 		LEFT JOIN sistema.usuario u ON u.idUsuario=p.idUsuarioReg
-		WHERE 1 = 1 AND p.idCotizacion = ".$id."
+		WHERE 1 = 1 AND p.idCotizacion = " . $id . "
 		
 		ORDER BY p.idCotizacion DESC
 		";
