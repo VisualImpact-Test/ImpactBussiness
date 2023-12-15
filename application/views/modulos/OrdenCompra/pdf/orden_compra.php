@@ -180,7 +180,7 @@
 			<? if (!empty($data['entrega'])) { ?>
 				<tr>
 					<td colspan="2" class="bold">Entrega :</td>
-					<td colspan="6" class="bold">
+					<td colspan="8" class="bold">
 						<?= !empty($data['entrega']) ? "{$data['entrega']}" : '' ?>
 					</td>
 				</tr>
@@ -189,7 +189,7 @@
 			<? if (!empty($data['observacion'])) { ?>
 				<tr>
 					<td colspan="2" class="bold">Observación :</td>
-					<td colspan="6" class="bold">
+					<td colspan="8" class="bold">
 						<?php if ($data['mostrar_observacion'] == 1) : ?>
 							<?= !empty($data['observacion']) ? "{$data['observacion']}" : '' ?>
 						<?php endif; ?>
