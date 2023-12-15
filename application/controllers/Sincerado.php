@@ -284,18 +284,26 @@ class Sincerado extends MY_Controller
 			'idOrdenServicio' => $idOrdenServicio,
 			'fecha_seleccionada' => $post['fechaSincerado'],
 			'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
-			'subtotal' => $post['presupuestoSubTotal'],
+			'subtotalOriginal' => $post['head_sbtotalOriginal'],
+			'subtotalSincerado' => $post['head_sbtotalSincerado'],
 			'fee1' => $post['presupuestoFee1'],
-			'totalFee1' => $post['presupuestoTotalFee1'],
+			'totalFee1Original' => $post['head_fee1Original'],
+			'totalFee1Sincerado' => $post['head_fee1Sincerado'],
 			'fee2' => $post['presupuestoFee2'],
-			'totalFee2' => $post['presupuestoTotalFee2'],
+			'totalFee2Original' => $post['head_fee2Original'],
+			'totalFee2Sincerado' => $post['head_fee2Sincerado'],
 			'fee3' => $post['presupuestoFee3'],
-			'totalFee3' => $post['presupuestoTotalFee3'],
-			'total' => $post['presupuestoTotal'],
+			'totalFee3Original' => $post['head_fee3Original'],
+			'totalFee3Sincerado' => $post['head_fee3Sincerado'],
+			'totalOriginal' => $post['head_totalOriginal'],
+			'totalSincerado' => $post['head_totalSincerado'],
 			'observacion' => $post['observacion'],
 			'idUsuario' => $this->idUsuario,
 			'fechaReg' => getActualDateTime()
 		];
+		if (floatval($post['head_fee3Sincerado']) > floatval($post['head_fee3Original'])) {
+			$insertSincerado['flagPendienteAprobar'] = 1;
+		}
 		$this->db->insert('compras.sincerado', $insertSincerado);
 		$idSincerado = $this->db->insert_id();
 

@@ -272,7 +272,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaSubtotalFinal" name="presupuestoSubTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_sbtotalPresupuesto" readonly>
+										<input class="text-right pasteFijarMonto" value="0" name="head_sbtotalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -285,7 +285,7 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" id="subtotalFinal_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_sbtotalSincerado" <?php endif; ?> value="0" id="subtotalFinal_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
@@ -303,7 +303,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee1Final" name="presupuestoTotalFee1" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee1" readonly>
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee1Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -316,7 +316,7 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" id="fee1_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" <?php if (empty($visible)) : ?> name="head_fee1Sincerado" <?php endif; ?> id="fee1_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
@@ -334,7 +334,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee2Final" name="presupuestoTotalFee2" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee2" readonly>
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee2Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -347,7 +347,7 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" id="fee2_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" <?php if (empty($visible)) : ?> name="head_fee2Sincerado" <?php endif; ?> id="fee2_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
@@ -365,7 +365,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee3Final" name="presupuestoTotalFee3" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee3" readonly>
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee3Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -378,7 +378,7 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" id="fee3_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_fee3Sincerado" <?php endif; ?> value="0" id="fee3_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
@@ -390,7 +390,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaTotalFinal" name="presupuestoTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee3" readonly>
+										<input class="text-right pasteFijarMonto" value="0" name="head_totalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -403,7 +403,7 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" id="totalFinal_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_totalSincerado" <?php endif; ?> value="0" id="totalFinal_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
