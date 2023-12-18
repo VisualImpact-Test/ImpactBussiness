@@ -81,6 +81,8 @@ var FormularioProveedores = {
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
 			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.ordencompra = $(this).data('oc');
+			dataForm.flagoclibre = $(this).data('flag');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
@@ -98,11 +100,24 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		$(document).on('click', '.btn-descargarOc', function (e) {
+			e.preventDefault();
+			Fn.showLoading(true);
+			id = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'id': id }) };
+			var url = '../Cotizacion/' + 'descargarOrdenCompra';
+			//alert(url);
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
 		$(document).on('click', '.formLisArts', function () {
 			++modalId;
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
 			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.ordencompra = $(this).data('oc');
+			dataForm.flagoclibre = $(this).data('flag');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
@@ -124,9 +139,10 @@ var FormularioProveedores = {
 			++modalId;
 			// let id = 
 			var dataForm = {};
-			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.id = $(this).data('idocdetpro');
 			dataForm.idcot = $(this).data('idcot');
 			dataForm.idpro = $(this).data('idpro');
+			dataForm.flagoclibre = $(this).data('flag');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 			// alert($(this).data('idcotdetpro'));
@@ -145,13 +161,17 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		
 		$(document).on('click', '.formLisSustComprobante', function () {
 			++modalId;
 			// let id = 
 			var dataForm = {};
-			dataForm.id = $(this).data('idcotdetpro');
+			dataForm.id = $(this).data('idoc');
 			dataForm.idcot = $(this).data('idcot');
 			dataForm.idpro = $(this).data('idpro');
+			dataForm.flagoclibre = $(this).data('flag');
+			dataForm.idformat = $(this).data('idformat');
+			dataForm.seriado = $(this).data('seriado');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 			// alert($(this).data('idcotdetpro'));
@@ -238,6 +258,8 @@ var FormularioProveedores = {
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
 			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.ordencompra = $(this).data('oc');
+			dataForm.flagoclibre = $(this).data('flag');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
@@ -255,13 +277,57 @@ var FormularioProveedores = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		$(document).on('click', '.formFechaV', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.proveedor = $(this).data('prov');
+			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.ordencompra = $(this).data('oc');
+			dataForm.flagoclibre = $(this).data('flag');
+			dataForm.mostrarOpcionesExt = '1';
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': FormularioProveedores.url + 'formularioListadoFechasCargados', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				//VERIFICAR DATA DE ARTES DENTRO DEL HTML
+				let htmlContent = a.data.html;
+				let $html = $(htmlContent);
+				let nombreArchivo = $html.find('td:eq(1)').text();
+				console.log('Nombre de archivo:', nombreArchivo);
+
+				if (nombreArchivo === null || nombreArchivo.trim() === ""
+					|| nombreArchivo.trim() === "-") {
+					let fnF = '';
+					++modalId;
+					btn[0] = {
+						title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' +
+							fnF
+					};
+					var content = "<div class='alert alert-danger'><strong>No se ha encontrado ningún archivo registrado.</strong></div>";
+					Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
+				} else {
+					fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+					btn[0] = { title: 'Cerrar', fn: fn[0] };
+					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "ProveedorServicio.enviarCorreoValidacionDeArtes()", content: "¿Esta seguro de registrar la validación de Arte?" });';
+
+					Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
+
+				}
+			});
+		})
 		$(document).on('click', '.formSustServ', function () {
 			++modalId;
 			var dataForm = {};
 			dataForm.id = $(this).data('idcotdetpro');
 			dataForm.idcot = $(this).data('idcot');
 			dataForm.idpro = $(this).data('idpro');
-
+			dataForm.ordencompra = $(this).data('oc');
+			dataForm.flagoclibre = $(this).data('flag');
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
 			let config = { 'url': FormularioProveedores.url + 'formularioSustentoServicio', 'data': jsonString };
@@ -282,8 +348,10 @@ var FormularioProveedores = {
 			++modalId;
 			var dataForm = {};
 			dataForm.proveedor = $(this).data('prov');
-			dataForm.cotizacion = $(this).data('idcoti');
+			dataForm.ordencompra = $(this).data('idoc');
+			dataForm.flagoclibre = $(this).data('flag');
 			dataForm.requiereguia = $(this).data('requiereguia');
+			dataForm.cotizacion = $(this).data('idcot');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
