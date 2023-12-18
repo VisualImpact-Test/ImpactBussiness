@@ -19,7 +19,11 @@
 			<?php foreach ($sincerado as $key => $row) : ?>
 				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
-					<td class="td-center"></td>
+					<td class="td-center">
+						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
+							<i class="fa fa-lg fa-history" title="Historial de Tarifario"></i>
+						</button>
+					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>
 					</td>
@@ -28,7 +32,7 @@
 					<td class="td-left"><?= verificarEmpty($row['moneda'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['cargo'], 3); ?></td>
 					<td class="text-center style-icons">
-						
+
 					</td>
 				</tr>
 				<? $ix++; ?>

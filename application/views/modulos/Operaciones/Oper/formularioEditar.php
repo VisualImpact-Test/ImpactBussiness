@@ -9,6 +9,7 @@
 				</div>
 			</div>
 			<input class="codItems d-none" type='text' name='idItemForm'>
+			<input class="codProveedor d-none" type='text' name='idProveedor'>
 		</div>
 		<div class="form-group col-md-6">
 			<label class="font-weight-bold">Tipo:</label>
@@ -122,6 +123,7 @@
 										</div>
 									</div>
 									<input class="codItems d-none" type='text' name='idItemForm' value="<?= $value['idItem'] ?>">
+									<input class="codProveedor d-none" type='text' name='idProveedor' value="<?= $value['idProveedor'] ?>">
 								</div>
 								<div class="form-group col-md-6">
 									<label class="font-weight-bold">Tipo:</label>

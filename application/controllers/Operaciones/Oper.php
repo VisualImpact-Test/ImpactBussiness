@@ -128,7 +128,7 @@ class Oper extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Oper';
 		$result['data']['html'] = $this->load->view("modulos/Operaciones/Oper/formularioRegistro", $dataParaVista, true);
-
+		$result['data']['item'] = $dataParaVista['item'];
 		echo json_encode($result);
 	}
 
@@ -138,6 +138,7 @@ class Oper extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
+		$post['idProveedor'] = checkAndConvertToArray($post['idProveedor']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
@@ -199,10 +200,11 @@ class Oper extends MY_Controller
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
 			}
-			//
+
 			$insertData = [
 				'idOper' => $idOper,
 				'idItem' => $post['idItemForm'][$key],
+				'idProveedor' => verificarEmpty($post['idProveedor'][$key], 4),
 				'idTipo' => $post['tipo'][$key],
 				'costoUnitario' => $post['costo'][$key],
 				'cantidad' => $post['cantidad'][$key],

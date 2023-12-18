@@ -65,6 +65,7 @@
 								</div>
 							</div>
 							<input class="codItems d-none" type='text' name='idItemForm'>
+							<input class="codProveedor d-none" type='text' name='idProveedor'>
 						</div>
 						<div class="form-group col-md-6">
 							<label class="font-weight-bold">Tipo:</label>
@@ -82,10 +83,9 @@
 							</div>
 						</div>
 						<!-- <div class="form-group col-md-4">
-              <label class="font-weight-bold">Caract. para Cliente:</label>
-              <input class="form-control" name="caracteristica" patron="requerido">
-            </div> -->
-
+							<label class="font-weight-bold">Caract. para Cliente:</label>
+							<input class="form-control" name="caracteristica" patron="requerido">
+						</div> -->
 					</div>
 					<div class="col-md-3 order-md-2 pt-3 border-bottom itemValor">
 						<div class="form-group">
@@ -152,7 +152,6 @@
 		</div>
 	</div>
 </form>
-<input id="itemsData" type="hidden" value='<?= json_encode($item) ?>'>
 <div class="d-none" id="divItemLogistica">
 	<select class="form-control itemLogistica" name="subItem_itemLog" patron="requerido" data-live-search="true">
 		<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $itemLogistica, 'class' => 'text-titlecase', 'id' => 'value', 'value' => 'label']); ?>

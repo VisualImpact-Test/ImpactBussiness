@@ -37,6 +37,7 @@ class M_Oper extends MY_Model
 							od.gap AS gap_item,
 							od.costoSubTotal AS cs_item,
 							od.costoSubTotalGap AS csg_item,
+							od.idProveedor,
 							i.nombre AS item,
 							'Coordinadora de compras' AS usuarioReceptor,
 							ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') AS usuarioRegistro,

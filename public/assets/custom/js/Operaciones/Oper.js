@@ -85,7 +85,7 @@ var Oper = {
 				btn[2] = { title: 'Registrar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oper.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
-				Oper.itemsData = $.parseJSON($('#itemsData').val());
+				Oper.itemsData = a.data.item;
 				Oper.modalId = modalId;
 				Oper.itemInputComplete(0);
 			});
@@ -421,6 +421,8 @@ var Oper = {
 					control.find(".codItems").val(ui.item.value);
 					//Tipo Item
 					control.find(".tipo").val(ui.item.tipo).trigger('change');
+					control.find('.item_costo').val(ui.item.costo).change();
+					control.find('.codProveedor').val(ui.item.idProveedor);
 
 					$(this).focusout();
 				},
@@ -432,13 +434,12 @@ var Oper = {
 
 
 	},
-	cleanDetalle: function (parent) {
-		parent.find('.codItems').val('');
-	},
 	editItemValue: function (t) {
 		control = $(t);
 		control.closest('.divItem').find('.items').attr('readonly', false);
 		control.closest('.divItem').find('.codItems').val('');
+		control.closest('.divItem').find('.codProveedor').val('');
+		control.closest('.itemData').find('.item_costo').val('0').change();
 	},
 	calcularTextilPrecio: function (t) {
 		control = t.closest('.divItem');
