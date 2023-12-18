@@ -555,6 +555,332 @@ class SolicitudCotizacion extends MY_Controller
 		$objWriter->save('php://output');
 	}
 
+	public function descargarExcel_provserv()
+	{
+		$post = $this->input->post();
+		$idOrdenCompra = $post['id'];
+		$idProveedor = $post['idProveedor'];
+		$idCotizacion = $post['idCotizacion'];
+		$flag = $post['flag'];
+
+
+		$ids = [];
+		$ids_two = [];
+
+		if ($flag == 0) {
+			$data = $this->db->select('*')
+				->from('compras.cotizacionDetalle cd')
+				->join(
+					'compras.cotizacionDetalleProveedorDetalle cdpd',
+					'cd.idCotizacionDetalle = cdpd.idCotizacionDetalle',
+					'INNER'
+				)
+				->where(['cd.idProveedor' => $idProveedor])
+				->where(['cd.idCotizacion' => $idCotizacion])
+				->where(['cd.estado' => 1])
+				->get()->result_array();
+
+			$cotizacion = $this->db->get_where('compras.cotizacion', ['idCotizacion' => $idCotizacion])->row_array();
+
+			$cuenta = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cotizacion['idCuenta']])->row_array();
+			$cc = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $cotizacion['idCentroCosto']])->row_array();
+
+			if (!empty($data)) {
+				foreach ($data as $k => $v) {
+					$ids[] = $v['idCotizacionDetalleProveedorDetalle'];
+					$ids_two[] = $v['idCotizacionDetalle'];
+				}
+			}
+
+
+			$idsT = implode(',', $ids);
+			$idsT_two = implode(',', $ids_two);
+			$imgCDP = $this->db->select("extension, nombre_archivo, nombre_inicial, 'cotizacionProveedor/' as ruta")
+				->where('idTipoArchivo', 2)->where("idCotizacionDetalleProveedorDetalle in ($idsT)")
+				->get('compras.cotizacionDetalleProveedorDetalleArchivos')->result_array();
+			$imgCoti = $this->db->select("extension, nombre_archivo, nombre_inicial, 'cotizacion/' as ruta")
+				->where('idTipoArchivo', 2)->where("idCotizacionDetalle in ($idsT_two)")
+				->get('compras.cotizacionDetalleArchivos')->result_array();
+			$imgProveedor = array_merge($imgCDP, $imgCoti);
+			error_reporting(E_ALL);
+			ini_set('display_errors', TRUE);
+			ini_set('display_startup_errors', TRUE);
+			ini_set('memory_limit', '1024M');
+			set_time_limit(0);
+		} else {
+			/*$data = $this->db->get_where(
+				'orden.ordenCompraDetalle',
+				['idOrdenCompra' => $idOrdenCompra]
+			)->result_array();*/
+			$data = $this->db
+				->distinct()
+				->select('
+				cd.total, 
+    cc.nombre AS cuentaCentroCosto,
+    pr.razonSocial AS proveedor,
+    cu.nombre AS cuenta,
+    cd.idProveedor,
+    cd.requerimiento AS codOrdenCompra,
+    1 AS flagOcLibre, cp.idItem,
+	cp.cantidad AS cantidad,
+	cp.costoSubTotal AS costo,
+	cp.costoUnitario')
+				->from('orden.ordenCompra cd')
+				->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
+				->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
+				->join('visualImpact.logistica.cuentaCentroCosto cc', 'cd.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
+				->join('visualImpact.logistica.cuenta cu', 'cd.idCuenta = cu.idCuenta', 'INNER')
+				->where('cd.estado', '1')
+				->where('cp.idOrdenCompra', $idOrdenCompra)
+				->group_by('cd.total, 
+				cc.nombre, 
+				cu.nombre, 
+				cd.idProveedor, 
+				pr.razonSocial, 
+				cd.requerimiento, 
+				cp.idOrdenCompra, cp.idItem, cp.cantidad, cp.costoSubTotal, cp.costoUnitario');
+
+			$result = $data->get();
+			foreach ($result->result() as $row) {
+				$cuenta = $row->cuenta;
+				$cc = $row->cuentaCentroCosto;
+			}
+
+			$data = $result->result_array();
+		}
+
+		$proveedor = $this->db
+			->get_where('compras.proveedor', ['idProveedor' => $idProveedor])->row_array();
+
+
+
+		/** Include PHPExcel */
+		require_once '../phpExcel/Classes/PHPExcel.php';
+
+		$objPHPExcel = new PHPExcel();
+
+		/**ESTILOS**/
+		$estilo_cabecera =
+			array(
+				'alignment' => array(
+					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => 'E60000')
+				),
+				'font'  => array(
+					'color' => array('rgb' => 'ffffff'),
+					'size'  => 11,
+					'name'  => 'Calibri'
+				)
+			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 16,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_subtitulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 11,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['left'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['center'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['right'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		/**FIN ESTILOS**/
+
+		$gdImage = imagecreatefromjpeg(APPPATH . '../public/assets/images/visualimpact/logo_full.jpg');
+		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		$objDrawing->setName('Sample image');
+		$objDrawing->setDescription('TEST');
+		$objDrawing->setImageResource($gdImage);
+		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		$objDrawing->setHeight(50);
+		$objDrawing->setCoordinates('A1');
+		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+
+		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+
+		$objPHPExcel->getActiveSheet()->mergeCells('B5:F5');
+
+
+		if ($flag == 0) {
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('B5', 'REQUERIMIENTO DE COTIZACION INTERNA')
+				->setCellValue('A8', 'PROVEEDOR')
+				->setCellValue('B8', $proveedor['razonSocial'])
+				->setCellValue('A9', 'CUENTA')
+				->setCellValue('B9', $cuenta['nombre'])
+				->setCellValue('A10', 'CC')
+				->setCellValue('B10', $cc['subcanal'])
+				->setCellValue('A11', 'FECHA')
+				->setCellValue('B11', getFechaActual());
+
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('A13', 'DESCRIPCION')
+				->setCellValue('B13', 'CANTIDAD')
+				->setCellValue('C13', 'PRECIO UNITARIO')
+				->setCellValue('D13', 'TOTAL')
+				->setCellValue('E13', 'TIEMPO');
+		} else {
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('B5', 'REQUERIMIENTO DE COTIZACION INTERNA')
+				->setCellValue('A8', 'PROVEEDOR')
+				->setCellValue('B8', $proveedor['razonSocial'])
+				->setCellValue('A9', 'CUENTA')
+				->setCellValue('B9', $cuenta)
+				->setCellValue('A10', 'CC')
+				->setCellValue('B10', $cc)
+				->setCellValue('A11', 'FECHA')
+				->setCellValue('B11', getFechaActual());
+
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('A13', 'DESCRIPCION')
+				->setCellValue('B13', 'CANTIDAD')
+				->setCellValue('C13', 'PRECIO UNITARIO')
+				->setCellValue('D13', 'TOTAL');
+		}
+
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("B5")->applyFromArray($estilo_titulo);
+
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getStyle("A8:A11")->applyFromArray($estilo_subtitulo);
+
+
+		$objPHPExcel->getActiveSheet()->getStyle("A13:E13")->applyFromArray($estilo_cabecera);
+		$nIni = 14;
+		foreach ($data as $k => $v) {
+			$itm = $this->db->get_where('compras.item', ['idItem' => $v['idItem']])->row_array();
+			if (empty($v['cantidad']) || intval($v['cantidad']) == 0) $v['cantidad'] = 1;
+
+			$obj1;
+			if ($flag == 0) {
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
+					->setCellValue('B' . $nIni, $v['cantidad'])
+					->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
+					->setCellValue('D' . $nIni, moneda($v['costo']))
+					->setCellValue('E' . $nIni, $v['diasValidez']);
+
+				$obj1 =	$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precio valido por ' . $data[0]['diasValidez']);
+				foreach ($imgProveedor as $k => $v) {
+					if ($v['extension'] == 'jpeg') {
+						$gdImage = imagecreatefromjpeg(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
+					}
+					if ($v['extension'] == 'png') {
+						$gdImage = imagecreatefrompng(RUTA_WASABI . $v['ruta'] . $v['nombre_archivo']);
+					}
+
+					$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+					$objDrawing->setName('Sample image');
+					$objDrawing->setDescription('TEST');
+					$objDrawing->setImageResource($gdImage);
+					if ($v['extension'] == 'jpeg') {
+						$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+					}
+					if ($v['extension'] == 'png') {
+						$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
+					}
+					$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+					$objDrawing->setHeight(100);
+					$objDrawing->setCoordinates('A' . $nIni);
+					$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+					$nIni = $nIni + 6;
+				}
+			} else {
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue('A' . $nIni, $itm['nombre'] . ' - ' . $itm['caracteristicas'])
+					->setCellValue('B' . $nIni, $v['cantidad'])
+					->setCellValue('C' . $nIni, moneda(floatval($v['costo']) / floatval($v['cantidad'])))
+					->setCellValue('D' . $nIni, moneda($v['costo']));
+			}
+
+			$nIni++;
+		}
+		$fin = $nIni - 1;
+		$objPHPExcel->getActiveSheet()->getStyle("A14:A$fin")->applyFromArray($estilo_data['left']);
+		$objPHPExcel->getActiveSheet()->getStyle("B14:B$fin")->applyFromArray($estilo_data['center']);
+		$objPHPExcel->getActiveSheet()->getStyle("C14:C$fin")->applyFromArray($estilo_data['right']);
+		$objPHPExcel->getActiveSheet()->getStyle("D14:D$fin")->applyFromArray($estilo_data['right']);
+		$objPHPExcel->getActiveSheet()->getStyle("E14:E$fin")->applyFromArray($estilo_data['center']);
+
+		$nIni++;
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, '** Precion no incluye IGV');
+		$nIni++;
+		$obj1;
+		$nIni++;
+		$nIni++;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue('A' . $nIni, 'IMAGENES ADJUNTAS');
+
+		$nIni = $nIni + 2;
+
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="Formato.xls"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+	}
+
 	public function formularioVisualizacionCotizacionProveedorItems()
 	{
 		$result = $this->result;

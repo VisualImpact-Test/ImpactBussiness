@@ -125,6 +125,21 @@ class M_FormularioProveedor extends MY_Model
 		}
 		return $this->db->get();
 	}
+
+	function getDistinctOC2($params = [])
+	{
+		$this->db->distinct()
+			->select('ocd.idOrdenCompra')
+			->from('compras.ordenCompraDetalle ocd')
+			->join('compras.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra');
+
+		if (isset($params['idOrdenCompra'])) {
+			$this->db->where('oc.idOrdenCompra', $params['idOrdenCompra']);
+		}
+
+		return $this->db->get();
+	}
+
 	public function obtenerMotivos($params = [])
 	{
 		$this->db

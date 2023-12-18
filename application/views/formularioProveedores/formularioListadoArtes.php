@@ -55,7 +55,7 @@
 										</a>
 										<a class="ui button red btn-estadoArte" data-id="<?= $row['idValidacionArte'] ?>" data-estado="0">
 											<i class="icon times"></i>
-										</a>
+										</a>										
 									</td>
 								<?php endif; ?>
 							</tr>

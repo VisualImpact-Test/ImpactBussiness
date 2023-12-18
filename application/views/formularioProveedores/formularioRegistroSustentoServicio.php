@@ -2,6 +2,8 @@
 	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor ?>">
 	<input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
 	<input type="hidden" name="idProveedor" value="<?= $idProveedor ?>">
+	<input type="hidden" name="ordencompra" value="<?= $ordencompra?>">
+	<input type="hidden" name="flagoclibre" value="<?= $flagoclibre?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

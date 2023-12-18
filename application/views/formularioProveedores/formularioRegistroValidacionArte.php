@@ -1,6 +1,8 @@
 <form class="form" role="form" id="formRegistroValidacionArte" method="post">
 	<input type="hidden" name="proveedor" value="<?= $proveedor?>">
 	<input type="hidden" name="cotizacion" value="<?= $cotizacion?>">
+	<input type="hidden" name="ordencompra" value="<?= $ordencompra?>">
+	<input type="hidden" name="flagoclibre" value="<?= $flagoclibre?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

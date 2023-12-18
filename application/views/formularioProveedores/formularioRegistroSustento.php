@@ -1,6 +1,8 @@
 <form class="form" role="form" id="formRegistroSustento" method="post">
 	<input type="hidden" name="proveedor" value="<?= $proveedor ?>">
 	<input type="hidden" name="cotizacion" value="<?= $cotizacion ?>">
+	<input type="hidden" name="ordencompra" value="<?= $ordencompra ?>">
+	<input type="hidden" name="flag" value="<?= $flag ?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

@@ -1,5 +1,6 @@
 <form class="form" role="form" id="formularioListadoDeArtes" method="post">
-	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor ?>">
+	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idOrdenCompra ?>">
+	<input type="hidden" name="flagoclibre" value="<?= $flagoclibre ?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -42,7 +43,7 @@
 										<i class="icon eye"></i>
 									</a>
 									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') :  ?>
-										<a class="ui button formEditSustentoServ" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>">
+										<a class="ui button formEditSustentoServ" data-idcotdetprov="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-id="<?= $row['idOrdenCompra'] ?>" data-flagoclibre="<?= $row['flagoclibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
 											<i class="icon edit"></i>
 										</a>
 									<?php endif; ?>

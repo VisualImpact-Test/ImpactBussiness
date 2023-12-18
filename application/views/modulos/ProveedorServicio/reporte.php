@@ -26,10 +26,10 @@
 		<tbody>
 			<? $ix = 1; ?>
 			<?php foreach ($data as $k => $row) : ?>
-				<tr data-id="<?= $row['idCotizacion'] ?>">
+				<tr data-id="< ?= $row['idCotizacion'] ?>">
 					<td class="collapsing">
 						<?= ($k + 1) ?>
-						<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $row['idCotizacionDetalleProveedor'] ?>">
+						<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
 					</td>
 					<td><?= verificarEmpty($row['cuenta'], 3) ?></td>
 					<td><?= verificarEmpty($row['cuentaCentroCosto'], 3) ?></td>
@@ -37,8 +37,12 @@
 					<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
 					<td><?= verificarEmpty($row['title'], 3) ?></td>
 					<td>
-						<?php if (!empty($row['idCotizacionDetalleProveedor'])) : ?>
-							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idCotizacion'] ?>" data-proveedor="<?= $row['idProveedor'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+						<?php if (!$row['flagOcLibre'] == 0) : ?>
+							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idOrdenCompra'] ?>" data-proveedor="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-cotizacion="<?= $row['idCotizacion'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+						<?php elseif (!empty($row['flagMostrarExcel'])) : ?>
+							<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarOCdelProveedor" data-id="<?= $row['idOrdenCompra'] ?>" data-proveedor="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-cotizacion="<?= $row['idCotizacion'] ?>"><i class="fa fa-lg fa-file-excel" title="Descargar Cotización"></i></a>
+						<?php else : ?>
+							-
 						<?php endif; ?>
 					</td>
 					<td><?= verificarEmpty($row['status'], 3) ?></td>
@@ -62,18 +66,16 @@
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<?php foreach ($row['ocGen'] as $oc) : ?>
-								<a href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $oc['idOrdenCompra']; ?>" class="ui button" data-id="<?= $oc['idOrdenCompra'] ?>" target="_blank">
-									<?= 'OC' . str_pad($oc['idOrdenCompra'], 6, "0", STR_PAD_LEFT); ?>
-								</a>
-							<?php endforeach; ?>
+							<a href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra']; ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
+								<?= $row['seriado'] ?>
+							</a>
 						<?php endif; ?>
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
 							<?php if ($row['mostrarValidacion'] == '1') :  ?>
 								<div class="ui">
-									<a class="ui basic button formValArt" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+									<a class="ui basic button formValArt" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 										<i class="icon upload"></i>
 										Subir artes
 									</a>
@@ -82,7 +84,7 @@
 								-
 								<!-- No requiere Arte -->
 							<?php else : ?>
-								<a class="ui basic button formLisArts" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+								<a class="ui basic button formLisArts" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 									<i class="icon search"></i>
 									Arte enviado
 								</a>
@@ -95,7 +97,7 @@
 								<?php if ($row['solicitarFecha'] == '1') :  ?>
 									<?php if ($row['flagFechaRegistro'] == '0') :  ?>
 										<div class="ui">
-											<a class="ui basic button formFechaEje" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>">
+											<a class="ui basic button formFechaEje" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 												<i class="icon calendar"></i>
 												Indicar Fecha Ejecución
 											</a>
@@ -105,28 +107,33 @@
 											<a class="ui button" href="<?= RUTA_WASABI . 'fechaEjecucion/' . $row['adjuntoFechaEjecucion'][0]['nombre_archivo']; ?>" target="_blank">
 											<?php endif; ?>
 											<?php if ($row['fechaInicio'] == '1900-01-01') : ?>
-												Se adjunto archivo
+												<a class="ui basic button formFechaV" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
+													Se adjunto archivo
+												</a>
 											<?php else : ?>
-												Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+												<a class="ui basic button formFechaV" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
+													Del <?= date_change_format($row['fechaInicio']) ?> al <?= date_change_format($row['fechaFinal']) ?>
+												</a>
 											<?php endif; ?>
-											<?php if (!empty($row['adjuntoFechaEjecucion'][0]['nombre_archivo'])) : ?>
-											</a>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
-							<?php endif; ?>
 						</div>
 					</td>
 
 					<td>
-						<?php if ($row['status'] == 'Aprobado' && $row['solicitarFecha'] == '1' && $row['flagFechaRegistro'] == '1') :  ?>
-							<?php if (empty($row['sustentoComp'][$row['idCotizacionDetalleProveedor']])) :  ?>
-								<a class="ui basic button formSustServ" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
+						<?php $row['sustentoComp'] ?>
+						<?php if (
+							$row['status'] == 'Aprobado' && $row['solicitarFecha'] == '1' &&
+							$row['flagFechaRegistro'] == '1'
+						) :  ?>
+							<?php if (empty([$row['sustentoComp']]) || $row['sustentoComp'] == NULL) :  ?>
+								<a class="ui basic button formSustServ" data-idcotdetpro="<?= $row['idCotizacion'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>" data-oc="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 									<i class="icon upload"></i>
 									Indicar Sustento
 								</a>
 							<?php else : ?>
-								<a class="ui basic button formLisSustServ dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
+								<a class="ui basic button formLisSustServ dicdp-<?= $row['idOrdenCompra'] ?>" data-idocdetpro="<?= $row['idOrdenCompra'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 									<i class="icon search"></i>
 									Sustento Enviado
 								</a>
@@ -140,13 +147,13 @@
 									<?php if ($row['flagSustentoServicio'] == '1') :  ?>
 										<?php if (empty($row['sustentoC'])) :  ?>
 											<div class="ui">
-												<a class="ui basic button formSustento" data-idcoti="<?= $row['idCotizacion'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>">
+												<a class="ui basic button formSustento" data-idoc="<?= $row['idOrdenCompra'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>">
 													<i class="icon archive"></i>
 													Indicar Sustento
 												</a>
 											</div>
 										<?php else : ?>
-											<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcotdetpro="<?= $row['idCotizacionDetalleProveedor'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
+											<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idOrdenCompra'] ?>" data-idoc="<?= $row['idOrdenCompra'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-seriado="<?= $row['seriado'] ?>">
 												<i class="icon search"></i>
 												Sustento enviado correctamente
 											</a>

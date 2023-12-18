@@ -1,5 +1,8 @@
 <form class="form" role="form" id="formularioListadoDeArtes" method="post">
-	<input type="hidden" name="idCotizacionDetalleProveedor" value="<?= $idCotizacionDetalleProveedor ?>">
+	<input type="hidden" name="ordencompra" value="<?= $idOrdenCompra ?>">
+	<input type="hidden" name="proveedor" value="<?= $idProveedor ?>">
+	<input type="hidden" name="flag" value="<?= $flagoclibre ?>">
+	<input type="hidden" name="cotizacion" value="<?= $idCotizacion ?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -83,10 +86,21 @@
 								</td>
 								<?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
-										<a class="ui button green btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1">
+										<a class="ui button green btn-estadoSustComprobante" 
+										data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" 
+										data-idprov="<?= $row['idProveedor']; ?>" 
+										data-flag ="<?= $row['flagoclibre']; ?>" 
+										data-idcot = "<?= $row['idCotizacion']; ?>"
+										data-idformat = "<?= $row['idFormatoDocumento']; ?>">
 											<i class="icon check"></i>
 										</a>
-										<a class="ui button red btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="0">
+										<a class="ui button red btn-estadoSustComprobante"
+										data-id="<?= $row['idSustentoAdjunto'] ?>"
+										data-idprov="<?= $row['idProveedor']; ?>" 
+										data-flag ="<?= $row['flagoclibre']; ?>" 
+										data-idcot = "<?= $row['idCotizacion']; ?>"
+										data-idformat = "<?= $row['idFormatoDocumento']; ?>"
+										data-estado="0">
 											<i class="icon times"></i>
 										</a>
 									</td>

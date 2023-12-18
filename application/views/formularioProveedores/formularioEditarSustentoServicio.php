@@ -1,5 +1,9 @@
 <form class="form" role="form" id="formEdicionSustentoServicio" method="post">
 	<input type="hidden" name="idCotizacionDetalleProveedorSustentoCompra" value="<?= $idCotizacionDetalleProveedorSustentoCompra ?>">
+	<input type="hidden" name="idCotizacion" value="<?= $idCotizacion ?>">
+	<input type="hidden" name="idProveedor" value="<?= $idProveedor ?>">
+	<input type="hidden" name="ordencompra" value="<?= $idOrdenCompra?>">
+	<input type="hidden" name="flagoclibre" value="<?= $flagoclibre?>">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">

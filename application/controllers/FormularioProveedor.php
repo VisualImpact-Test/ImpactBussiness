@@ -702,7 +702,11 @@ class FormularioProveedor extends MY_Controller
 									}
 								}
 								// Se consulta si tiene "Validación de Arte" cargado aprobados.
-								$va = $this->db->group_start()->where('flagRevisado', 0)->or_where('flagAprobado', 1)->group_end()->where('idProveedor', $v['idProveedor'])->where('idCotizacion', $v['idCotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
+								$va = $this->db->group_start()->where('flagRevisado', 0)
+									->or_where('flagAprobado', 1)->group_end()
+									->where('idProveedor', $v['idProveedor'])
+									->where('idCotizacion', $v['idCotizacion'])
+									->where('estado', 1)->get('sustento.validacionArte')->result_array();
 								if (!empty($va)) {
 									$dataParaVista[$k]['mostrarValidacion'] = '0';
 								}
@@ -794,9 +798,43 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['proveedor'] = $post['proveedor'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Arte';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroValidacionArte", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	public function formularioListadoFechasCargados()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+
+		$dataParaVista['mostrarOpcionesExt'] = false;
+		if (isset($post['mostrarOpcionesExt'])) {
+			$dataParaVista['mostrarOpcionesExt'] = true;
+		}
+
+		$dataParaVista['proveedor'] = $post['proveedor'];
+		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
+
+		$dataParaVista['artes'] = $this->db
+			->where('idProveedor', $post['proveedor'])
+			->where('idOrdenCompra', $post['ordencompra'])
+			->where('flagoclibre', $post['flagoclibre'])
+			->where('estado', 1)
+			->get('sustento.fechaEjecucion')->result_array();
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fechas Cargadas';
+		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoFechas", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
@@ -815,7 +853,12 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista['proveedor'] = $post['proveedor'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
-		$dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
+		$dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])
+			->where('idOrdenCompra', $post['ordencompra'])
+			->where('flagoclibre', $post['flagoclibre'])
+			->where('estado', 1)->get('sustento.validacionArte')->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Artes Cargados';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoArtes", $dataParaVista, true);
@@ -833,8 +876,12 @@ class FormularioProveedor extends MY_Controller
 		// foreach ($post['data'] as $k => $v) {
 		// 	$post[$k] = $v;
 		// }
-
-		$this->db->update('compras.validacionArte', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idValidacionArte' => $post['id']]);
+		//var_dump($post);
+		//exit;
+		$this->db->update('sustento.validacionArte', [
+			'flagAprobado' => $post['estado'],
+			'flagRevisado' => '1'
+		], ['idValidacionArte' => $post['id']]);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -857,18 +904,19 @@ class FormularioProveedor extends MY_Controller
 			$dataParaVista['mostrarOpcionesExt'] = true;
 		}
 
-		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
+		$dataParaVista['idOrdenCompra'] = $post['id'];
 		$dataParaVista['idCotizacion'] = $post['idcot'];
 		$dataParaVista['idProveedor'] = $post['idpro'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
 
 		if (!empty($post['id']))
-			$where = ['idCotizacionDetalleProveedor' => $post['id'], 'estado' => '1'];
+			$where = ['idOrdenCompra' => $post['id'], 'flagoclibre' => $post['flagoclibre'], 'estado' => '1'];
 		else
-			$where = ['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro'], 'estado' => '1'];
+			$where = ['idCotizacion' => $post['idcot'], 'flagoclibre' => $post['flagoclibre'], 'idProveedor' => $post['idpro'], 'estado' => '1'];
 
 		$dataParaVista['sustentosCargados'] = $this->db
 			->get_where(
-				'compras.cotizacionDetalleProveedorSustentoCompra',
+				'sustento.sustentoAdjunto',
 				$where
 			)
 			->result_array();
@@ -892,18 +940,39 @@ class FormularioProveedor extends MY_Controller
 			$dataParaVista['mostrarOpcionesExt'] = true;
 		}
 
-		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
+		$dataParaVista['idOrdenCompra'] = $post['id'];
 		$dataParaVista['idCotizacion'] = $post['idcot'];
 		$dataParaVista['idProveedor'] = $post['idpro'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
+		$dataParaVista['seriado'] = $post['seriado'];
 
 		if (!empty($post['id']))
 			$where = ['idCotizacionDetalleProveedor' => $post['id']];
 		else
 			$where = ['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']];
-		$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', $where)->row_array();
-		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')->get_where('compras.sustentoAdjunto', ['idProveedor' => $post['idpro'], 'idCotizacion' => $post['idcot'], 'estado' => '1'])->result_array();
+		//$dc = $this->db->get_where('compras.cotizacionDetalleProveedor', $where)->row_array();
+		$dataParaVista['sustentosCargados'] = $this->db->order_by('idFormatoDocumento, 1')
+			->get_where(
+				'sustento.comprobante',
+				[
+					'idProveedor' => $post['idpro'], 'idOrdenCompra' => $post['id'],
+					'flagOcLibre' => $post['flagoclibre'], 'estado' => '1'
+				]
+			)
+			->result_array();
 
-		$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']])->result_array();
+
+		if ($post['flagoclibre'] == 0) {
+			$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(
+				['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']]
+			)->result_array();
+		} else {
+			$dataParaVista['ocGenerado'] = $this->model->getDistinctOC2(
+				['idOrdenCompra' => $post['id']]
+			)->result_array();
+		}
+
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Sustentos Cargados';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoSustentoComprobante", $dataParaVista, true);
@@ -953,7 +1022,12 @@ class FormularioProveedor extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$dataParaVista['idCotizacionDetalleProveedorSustentoCompra'] = $post['id'];
+		$dataParaVista['idCotizacionDetalleProveedorSustentoCompra'] = $post['idcotdetprov'];
+		$dataParaVista['idOrdenCompra'] = $post['id'];
+		$dataParaVista['idCotizacion'] = $post['idcot'];
+		$dataParaVista['idProveedor'] = $post['idpro'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioEditarSustentoServicio", $dataParaVista, true);
@@ -1000,6 +1074,8 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['proveedor'] = $post['proveedor'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Fecha de Ejecución';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroFechaEjecucion", $dataParaVista, true);
@@ -1014,8 +1090,10 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['proveedor'] = $post['proveedor'];
-		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flag'] = $post['flagoclibre'];
 		$dataParaVista['requiereguia'] = $post['requiereguia'];
+		$dataParaVista['cotizacion'] = $post['cotizacion'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroSustento", $dataParaVista, true);
@@ -1032,6 +1110,8 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['idCotizacionDetalleProveedor'] = $post['id'];
 		$dataParaVista['idCotizacion'] = $post['idcot'];
 		$dataParaVista['idProveedor'] = $post['idpro'];
+		$dataParaVista['ordencompra'] = $post['ordencompra'];
+		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroSustentoServicio", $dataParaVista, true);
@@ -1047,7 +1127,7 @@ class FormularioProveedor extends MY_Controller
 			$get[$k] = base64_decode($g);
 		}
 
-		$this->db->update('compras.validacionArte', ['flagRevisado' => 1, 'flagAprobado' => $get['ne']], ['idValidacionArte' => $get['det'], 'idProveedor' => $get['pro'], 'idCotizacion' => $get['cot']]);
+		$this->db->update('sustento.validacionArte', ['flagRevisado' => 1, 'flagAprobado' => $get['ne']], ['idValidacionArte' => $get['det'], 'idProveedor' => $get['pro'], 'idCotizacion' => $get['cot']]);
 
 		echo "<script type='text/javascript'>";
 		echo "window.close();";
@@ -1061,6 +1141,24 @@ class FormularioProveedor extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$post['proveedor'] = json_decode($post['data'], true)['proveedor'];
 		$post['cotizacion'] = json_decode($post['data'], true)['cotizacion'];
+		$post['ordencompra'] = json_decode($post['data'], true)['ordencompra'];
+		$post['flagoclibre'] = json_decode($post['data'], true)['flagoclibre'];
+
+		if ($post['flagoclibre'] == 1) {
+			$post['ordencompra'] = json_decode($post['data'], true)['ordencompra'];
+			$post['cotizacion'] = NULL;
+		}
+
+		//Actualización de 
+		$dataUpdate = array(
+			'estado' => '0',
+		);
+
+		$this->db->where('idOrdenCompra', $post['ordencompra']);
+		$this->db->where('flagoclibre', $post['flagoclibre']);
+		$this->db->update('sustento.validacionArte', $dataUpdate);
+
+
 		// $post['enlaces'] = explode('\r\n', json_decode($post['data'], true)['enlaces']);
 		// $post['enlaces'] = var_export(preg_split('~\R~', json_decode($post['data'], true)['enlaces']));
 		$post['enlaces'] = explode(chr(10), json_decode($post['data'], true)['enlaces']);
@@ -1076,9 +1174,11 @@ class FormularioProveedor extends MY_Controller
 						'estado' => true,
 						'idProveedor' => $post['proveedor'],
 						'idCotizacion' => $post['cotizacion'],
+						'idOrdenCompra' => $post['ordencompra'],
+						'flagoclibre' => $post['flagoclibre'],
 						'flagAdjunto' => 0
 					];
-					$this->db->insert('compras.validacionArte', $insertArchivos);
+					$this->db->insert('sustento.validacionArte', $insertArchivos);
 					$ids_insert[] = $this->db->insert_id();
 				}
 			}
@@ -1106,9 +1206,11 @@ class FormularioProveedor extends MY_Controller
 					'estado' => true,
 					'idProveedor' => $post['proveedor'],
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flagoclibre'],
 					'flagAdjunto' => 1
 				];
-				$this->db->insert('compras.validacionArte', $insertArchivos);
+				$this->db->insert('sustento.validacionArte', $insertArchivos);
 				$ids_insert[] = $this->db->insert_id();
 			}
 
@@ -1134,6 +1236,7 @@ class FormularioProveedor extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
 	public function editarValidacionArte()
 	{
 		$this->db->trans_start();
@@ -1240,7 +1343,7 @@ class FormularioProveedor extends MY_Controller
 			$archivoName = $this->saveFileWasabi($archivo);
 			$tipoArchivo = explode('/', $archivo['type']);
 
-			$sa = $this->db->get_where('compras.sustentoAdjunto', ['idSustentoAdjunto' => $post['idSustentoAdjunto'], 'estado' => '1'])->row_array();
+			$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['idSustentoAdjunto'], 'estado' => '1'])->row_array();
 			$insert = [
 				'idFormatoDocumento' => $sa['idFormatoDocumento'],
 				'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
@@ -1249,14 +1352,16 @@ class FormularioProveedor extends MY_Controller
 				'nombre_archivo' => $archivoName,
 				'nombre_unico' => $archivo['nombreUnico'],
 				'estado' => true,
+				'idOrdenCompra' => $sa['idOrdenCompra'],
+				'flagoclibre' => $sa['flagoclibre'],
 				'idProveedor' => $sa['idProveedor'],
 				'idCotizacion' => $sa['idCotizacion'],
 				'flagIncidencia' => $sa['flagIncidencia'],
 				'flagRevisado' => 0,
 				'flagAprobado' => 0,
 			];
-			$this->db->update('compras.sustentoAdjunto', ['estado' => 0], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
-			$this->db->insert('compras.sustentoAdjunto', $insert);
+			$this->db->update('sustento.comprobante', ['estado' => 0], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
+			$this->db->insert('sustento.comprobante', $insert);
 		}
 
 		$result['result'] = 1;
@@ -1279,6 +1384,19 @@ class FormularioProveedor extends MY_Controller
 			$post[$k] = $v;
 		}
 
+		$post['proveedor'] = $post['idProveedor'];
+		$post['cotizacion'] = $post['idCotizacion'];
+		$post['ordencompra'] = $post['ordencompra'];
+		$post['flagoclibre'] = $post['flagoclibre'];
+
+		if ($post['flagoclibre'] == 1) {
+			$post['ordencompra'] = $post['ordencompra'];
+			$post['cotizacion'] = NULL;
+		}
+
+		/*var_dump($post);
+		exit;*/
+
 		if ($post['opcion'] == '1') {
 			if (empty($post['enlace'])) {
 				$result['result'] = 0;
@@ -1286,10 +1404,9 @@ class FormularioProveedor extends MY_Controller
 				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Complete los campos obligatorios']);
 				goto respuesta;
 			}
-			$sa = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
+			$sa = $this->db->get_where('sustento.sustentoAdjunto', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
 			$insert = [
 				// 'idFormatoDocumento' => $sa['idFormatoDocumento'],
-				'idCotizacionDetalleProveedor' => $sa['idCotizacionDetalleProveedor'],
 				'idTipoArchivo' => '7',
 				'extension' => null,
 				'nombre_inicial' => 'Enlace',
@@ -1298,12 +1415,16 @@ class FormularioProveedor extends MY_Controller
 				'flagRevisado' => 0,
 				'flagAprobado' => 0,
 				'estado' => true,
-				'fechaReg' => getActualDateTime()
+				'fechaReg' => getActualDateTime(),
+				'idProveedor' => $post['proveedor'],
+				'idCotizacion' => $post['cotizacion'],
+				'idOrdenCompra' => $post['ordencompra'],
+				'flagoclibre' => $post['flagoclibre'],
 				// 'idCotizacion' => $sa['idCotizacion'],
 				// 'flagIncidencia' => $sa['flagIncidencia'],
 			];
-			$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
-			$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insert);
+			$this->db->update('sustento.sustentoAdjunto', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
+			$this->db->insert('sustento.sustentoAdjunto', $insert);
 		} else {
 			if (empty($post['base64Adjunto'])) {
 				$result['result'] = 0;
@@ -1323,10 +1444,9 @@ class FormularioProveedor extends MY_Controller
 				$archivoName = $this->saveFileWasabi($archivo);
 				$tipoArchivo = explode('/', $archivo['type']);
 
-				$sa = $this->db->get_where('compras.cotizacionDetalleProveedorSustentoCompra', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
+				$sa = $this->db->get_where('sustento.sustentoAdjunto', ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra'], 'estado' => '1'])->row_array();
 				$insert = [
 					// 'idFormatoDocumento' => $sa['idFormatoDocumento'],
-					'idCotizacionDetalleProveedor' => $sa['idCotizacionDetalleProveedor'],
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'extension' => FILES_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
@@ -1335,12 +1455,16 @@ class FormularioProveedor extends MY_Controller
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
 					'estado' => true,
-					'fechaReg' => getActualDateTime()
+					'fechaReg' => getActualDateTime(),
+					'idProveedor' => $post['proveedor'],
+					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flagoclibre'],
 					// 'idCotizacion' => $sa['idCotizacion'],
 					// 'flagIncidencia' => $sa['flagIncidencia'],
 				];
-				$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
-				$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insert);
+				$this->db->update('sustento.sustentoAdjunto', ['estado' => 0], ['idCotizacionDetalleProveedorSustentoCompra' => $post['idCotizacionDetalleProveedorSustentoCompra']]);
+				$this->db->insert('sustento.sustentoAdjunto', $insert);
 			}
 		}
 		$result['result'] = 1;
@@ -1359,7 +1483,11 @@ class FormularioProveedor extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$this->db->update('compras.cotizacionDetalleProveedorSustentoCompra', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]);
+		$this->db->update(
+			'sustento.sustentoAdjunto',
+			['flagAprobado' => $post['estado'], 'flagRevisado' => '1'],
+			['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]
+		);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -1377,7 +1505,11 @@ class FormularioProveedor extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$this->db->update('compras.sustentoAdjunto', ['flagAprobado' => $post['estado'], 'flagRevisado' => '1'], ['idSustentoAdjunto' => $post['id']]);
+		$this->db->update(
+			'sustento.comprobante',
+			['flagAprobado' => $post['estado'], 'flagRevisado' => '1'],
+			['idSustentoAdjunto' => $post['id']]
+		);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -1397,6 +1529,11 @@ class FormularioProveedor extends MY_Controller
 		$post['data'] = json_decode($post['data'], true);
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
+		}
+
+		if ($post['flagoclibre'] == 1) {
+			$post['ordencompra'] = $post['ordencompra'];
+			$post['cotizacion'] = NULL;
 		}
 
 		// Inicio: Validaciones anti-errores :v
@@ -1427,7 +1564,7 @@ class FormularioProveedor extends MY_Controller
 		$post['nameAdjunto'] = checkAndConvertToArray($post['nameAdjunto']);
 		$post['typeAdjunto'] = checkAndConvertToArray($post['typeAdjunto']);
 
-		$cdp = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion'], 'estado' => 1])->row_array()['idCotizacionDetalleProveedor'];
+		//$cdp = $this->db->get_where('compras.cotizacionDetalleProveedor', ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion'], 'estado' => 1])->row_array()['idCotizacionDetalleProveedor'];
 
 		if (!empty($post['base64Adjunto'])) {
 			foreach ($post['base64Adjunto'] as $key => $row) {
@@ -1443,8 +1580,9 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos = [];
 				$insertArchivos = [
-					'idCotizacionDetalleProveedor' => $cdp,
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flagoclibre'],
 					'idProveedor' => $post['proveedor'],
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
@@ -1457,13 +1595,14 @@ class FormularioProveedor extends MY_Controller
 					'idUsuario' => $this->idUsuario,
 					'fechaReg' => getActualDateTime()
 				];
-				$this->db->insert('compras.cotizacionDetalleProveedorFechaEjecucion', $insertArchivos);
+				$this->db->insert('sustento.fechaEjecucion', $insertArchivos);
 				$ids_insert[] = $this->db->insert_id();
 			}
 		} else {
 			$insertArchivos = [
-				'idCotizacionDetalleProveedor' => $cdp,
 				'idCotizacion' => $post['cotizacion'],
+				'idOrdenCompra' => $post['ordencompra'],
+				'flagoclibre' => $post['flagoclibre'],
 				'idProveedor' => $post['proveedor'],
 				'idTipoArchivo' => null,
 				'nombre_inicial' => null,
@@ -1476,7 +1615,7 @@ class FormularioProveedor extends MY_Controller
 				'idUsuario' => $this->idUsuario,
 				'fechaReg' => getActualDateTime()
 			];
-			$this->db->insert('compras.cotizacionDetalleProveedorFechaEjecucion', $insertArchivos);
+			$this->db->insert('sustento.fechaEjecucion', $insertArchivos);
 			$ids_insert[] = $this->db->insert_id();
 		}
 
@@ -1487,7 +1626,7 @@ class FormularioProveedor extends MY_Controller
 		$this->db->trans_complete();
 		////////////////////////////////////
 		if (!empty($ids_insert)) {
-			$daC = $this->db->where_in('idCotizacionDetalleProveedorFechaEjecucion', $ids_insert)->get('compras.cotizacionDetalleProveedorFechaEjecucion')->result_array();
+			$daC = $this->db->where_in('idCotizacionDetalleProveedorFechaEjecucion', $ids_insert)->get('sustento.fechaEjecucion')->result_array();
 		} else {
 			$daC = [];
 		}
@@ -1504,13 +1643,17 @@ class FormularioProveedor extends MY_Controller
 	}
 	public function guardarSustentoServicio()
 	{
-
 		$this->db->trans_start();
 
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		foreach (json_decode($post['data'], true) as $k => $v) {
 			$post[$k] = $v;
+		}
+
+		if ($post['flagoclibre'] == 1) {
+			$post['ordencompra'] = $post['ordencompra'];
+			$post['cotizacion'] = NULL;
 		}
 
 		// $post['proveedor'] = json_decode($post['data'], true)['proveedor'];
@@ -1521,8 +1664,9 @@ class FormularioProveedor extends MY_Controller
 			foreach ($post['enlaces'] as $k => $v) {
 				if (!empty($v)) {
 					$insertArchivos = [
-						'idCotizacionDetalleProveedor' => verificarEmpty($post['idCotizacionDetalleProveedor'], 4),
 						'idCotizacion' => $post['idCotizacion'],
+						'idOrdenCompra' => $post['ordencompra'],
+						'flagoclibre' => $post['flagoclibre'],
 						'idProveedor' => $post['idProveedor'],
 						'idTipoArchivo' => TIPO_ENLACE,
 						'extension' => '',
@@ -1534,7 +1678,7 @@ class FormularioProveedor extends MY_Controller
 						'estado' => true,
 						'fechaReg' => getActualDateTime(),
 					];
-					$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insertArchivos);
+					$this->db->insert('sustento.sustentoAdjunto', $insertArchivos);
 					$ids_insert[] = $this->db->insert_id();
 				}
 			}
@@ -1555,8 +1699,9 @@ class FormularioProveedor extends MY_Controller
 
 				$insertArchivos = [];
 				$insertArchivos = [
-					'idCotizacionDetalleProveedor' => verificarEmpty($post['idCotizacionDetalleProveedor'], 4),
 					'idCotizacion' => $post['idCotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flagoclibre'],
 					'idProveedor' => $post['idProveedor'],
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'extension' => FILES_WASABI[$tipoArchivo[1]],
@@ -1568,7 +1713,7 @@ class FormularioProveedor extends MY_Controller
 					'estado' => true,
 					'fechaReg' => getActualDateTime(),
 				];
-				$this->db->insert('compras.cotizacionDetalleProveedorSustentoCompra', $insertArchivos);
+				$this->db->insert('sustento.sustentoAdjunto', $insertArchivos);
 				$ids_insert[] = $this->db->insert_id();
 			}
 		}
@@ -1615,7 +1760,13 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
 		}
-		$this->db->update('compras.sustentoAdjunto', ['estado' => 0], ['idProveedor' => $post['proveedor'], 'idCotizacion' => $post['cotizacion']]);
+
+		if ($post['flag'] == 1) {
+			$post['ordencompra'] = $post['ordencompra'];
+			$post['cotizacion'] = NULL;
+		}
+
+		$this->db->update('sustento.comprobante', ['estado' => 0], ['idProveedor' => $post['proveedor'], 'idOrdenCompra' => $post['ordencompra'], 'flagoclibre' => $post['flag']]);
 		if (isset($post['base64Adjunto_g'])) {
 			foreach ($post['base64Adjunto_g'] as $key => $row) {
 				$archivo = [
@@ -1637,13 +1788,15 @@ class FormularioProveedor extends MY_Controller
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
 					'estado' => true,
-					'idProveedor' => $post['proveedor'],
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flag'],
+					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0
 				];
-				$this->db->insert('compras.sustentoAdjunto', $insertArchivos);
+				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
 		}
 
@@ -1668,13 +1821,17 @@ class FormularioProveedor extends MY_Controller
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
 					'estado' => true,
-					'idProveedor' => $post['proveedor'],
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flag'],
+					'idProveedor' => $post['proveedor'],
+					'flagoclibre' => $post['flag'],
+					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
 				];
-				$this->db->insert('compras.sustentoAdjunto', $insertArchivos);
+				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
 		}
 
@@ -1699,13 +1856,15 @@ class FormularioProveedor extends MY_Controller
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
 					'estado' => true,
-					'idProveedor' => $post['proveedor'],
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flag'],
+					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
 				];
-				$this->db->insert('compras.sustentoAdjunto', $insertArchivos);
+				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
 		}
 
@@ -1730,13 +1889,15 @@ class FormularioProveedor extends MY_Controller
 					'nombre_archivo' => $archivoName,
 					'nombre_unico' => $archivo['nombreUnico'],
 					'estado' => true,
-					'idProveedor' => $post['proveedor'],
 					'idCotizacion' => $post['cotizacion'],
+					'idOrdenCompra' => $post['ordencompra'],
+					'flagoclibre' => $post['flag'],
+					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
 				];
-				$this->db->insert('compras.sustentoAdjunto', $insertArchivos);
+				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
 		}
 
