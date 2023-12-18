@@ -445,6 +445,7 @@ var Oc = {
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 	},
 	cantidadPorItem: function (t) {
+		//console.log("holas");
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
 		costo = parseFloat($(div).find('input.item_costo').val() || '0');
@@ -454,12 +455,12 @@ var Oc = {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
-		$(div).find('input.item_precio').val(precio.toFixed(2));
-
+		$(div).find('input.item_precio').val(precio.toFixed(3));
+		$(div).find('input.item_precio_real').val(precio);
 		Oc.cantidadTotal();
 	},
 	cantidadTotal: function () {
-		let dd = $('input.item_precio');
+		let dd = $('input.item_precio_real');
 		let xd = $('.item_tipo');
 		let total = 0;
 		let totalNoFee = 0;
@@ -471,12 +472,16 @@ var Oc = {
 			}
 		};
 		totalTotal = total + totalNoFee;
-		$('#total').val(totalTotal.toFixed(2));
+		//console.log(totalTotal);
+		$('#total').val(totalTotal.toFixed(3));
+		$('#total_real').val(totalTotal);
 		fee = 0; //parseFloat($('#fee').val()||'0');
 		// $('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
 		igv = parseFloat($('#valorIGV').val()) / 100;
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
-		$('#totalFinal').val(totalFinal.toFixed(2));
+		//console.log(totalFinal);
+		$('#totalFinal').val(totalFinal.toFixed(3));
+		$('#totalFinal_real').val(totalFinal);
 	},
 	itemInputComplete: function (ord) {
 		let tipo = 1;

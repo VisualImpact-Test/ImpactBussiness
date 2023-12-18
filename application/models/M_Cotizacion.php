@@ -146,8 +146,8 @@ class M_Cotizacion extends MY_Model
 	public function obtenerFechaSinceradoDetalle($params = [])
 	{
 		$sql = "
-			select  * FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
-			where idPresupuestoValido = ".$params['idPresupuestoValido']."  and  fecha = '".$params['fechaSincerado']."'";
+			select * FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
+			where idPresupuestoValido = " . $params['idPresupuestoValido'] . " and fecha = '" . $params['fechaSincerado'] . "'";
 
 		$query = $this->db->query($sql);
 
@@ -162,9 +162,9 @@ class M_Cotizacion extends MY_Model
 	public function obtenerFechaSincerado($params = [])
 	{
 		$sql = "
-			select  fecha as value FROM [ImpactBussiness].[compras].[presupuestoValidoDetalle]
-			where idPresupuestoValido = ".$params['idPresupuestoValido']."  group by fecha";
-
+			select fecha as id, CONVERT(varchar, cast(fecha as DATE), 103) as value
+			FROM compras.presupuestoValidoDetalle
+			where idPresupuestoValido = " . $params['idPresupuestoValido'] . " group by fecha";
 		$query = $this->db->query($sql);
 
 		if ($query) {
@@ -303,6 +303,8 @@ class M_Cotizacion extends MY_Model
 				, p.numeroGR
 				, p.fechaGR
 				, p.fechaClienteOC
+				, p.idTipoServicioCotizacion
+				, p.idTipoMoneda
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -358,7 +360,7 @@ class M_Cotizacion extends MY_Model
 		LEFT JOIN compras.operDetalle od ON od.idCotizacion = p.idCotizacion
 			AND od.estado = 1
 		LEFT JOIN sistema.usuario u ON u.idUsuario=p.idUsuarioReg
-		WHERE 1 = 1 AND p.idCotizacion = ".$id."
+		WHERE 1 = 1 AND p.idCotizacion = " . $id . "
 		
 		ORDER BY p.idCotizacion DESC
 		";
@@ -1594,6 +1596,25 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+	public function obtenertipoMoneda($params = [])
+	{
+		$sql = "
+		select idMoneda as id , nombreMoneda AS value from compras.moneda where estado = 1 
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	
 
 	public function insertarCotizacionAnexos($data = [])
 	{

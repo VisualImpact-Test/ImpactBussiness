@@ -2,6 +2,7 @@ var Sincerado = {
 	frm: 'frm-sincerado',
 	contentDetalle: 'idContentSincerado',
 	url: 'Sincerado/',
+	flagMontoFijado: 0,
 	load: function () {
 		$(document).ready(function () {
 			$('#btn-filtrarSincerado').click();
@@ -47,11 +48,19 @@ var Sincerado = {
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formFechaSincerado", fn: "Sincerado.buscarFechaSincerado(' + idPresupuestoValido + ')" ,content: "¿Esta seguro de ver esa fecha?" });';
+				// fn[1] = 'Sincerado.buscarFechaSincerado(' + idPresupuestoValido + ');';
 				btn[1] = { title: 'Consultar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '20%' });
-
 			});
 
+		});
+
+		$(document).on('click', '.btn-valoresFijosSincerado', function () {
+			$('.copyFijarMonto').each(function () {
+				let v = $(this).val();
+				let tr = $(this).closest('tr');
+				tr.find('.pasteFijarMonto').val(v);
+			});
 		})
 
 	},
@@ -64,7 +73,7 @@ var Sincerado = {
 			let fn = [];
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
-			fn[1] = 'Fn.showConfirm({ idForm: "formSincerado", fn: "Sincerado.registrarSincerado()" ,content: "¿Esta seguro de ver esa fecha?" });';
+			fn[1] = 'Fn.showConfirm({ idForm: "formRegistroSincerado", fn: "Sincerado.registrarSincerado()" ,content: "¿Esta seguro de ver esa fecha?" });';
 			btn[1] = { title: 'Registrar', fn: fn[1] };
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
 			// Lo que traje del JS de Orden de servicio
@@ -84,15 +93,27 @@ var Sincerado = {
 			OrdenServicio.calcularTotalesMovilidad();
 			$('#tablaSueldoAdicional tbody tr:first').find('.movilidadSueldoAdicional').change();
 			$('#tablaAlmacenMonto tbody tr').find('select').change();
-
+			Sincerado.flagMontoFijado = 0;
+			setTimeout(function () {
+				$('.btn-valoresFijosSincerado').click();
+			}, 2000);
 		});
 	},
 	registrarSincerado: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSincerado')) };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroSincerado')) };
 		let config = { 'url': Sincerado.url + 'registrarSincerado', 'data': jsonString };
 		//console.log(config);
-		$.when(Fn.ajax(config)).then((a) => {
+		$.when(Fn.ajax(config)).then((b) => {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarSincerado").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	}
 }

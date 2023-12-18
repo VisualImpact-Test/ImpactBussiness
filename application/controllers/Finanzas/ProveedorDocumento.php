@@ -49,7 +49,7 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-		
+
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
 		$datos = array_merge($datos1, $datos2);
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
@@ -90,18 +90,25 @@ class ProveedorDocumento extends MY_Controller
 	{
 		$post = json_decode($this->input->post('data'), true);
 
-		$datos = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+		// $datos = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+
+		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
+		$datos = array_merge($datos1, $datos2);
+		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
+
+
 		$data = [];
 		foreach ($datos as $k => $v) {
-			if (!isset($data[$v['idOrdenCompra']])) {
-				$data[$v['idOrdenCompra']] = $v;
-				$data[$v['idOrdenCompra']]['monto'] = 0;
+			if (!isset($data[$v['ordenCompra']])) {
+				$data[$v['ordenCompra']] = $v;
+				$data[$v['ordenCompra']]['monto'] = 0;
 
-				$data[$v['idOrdenCompra']]['adjuntosCargados'] = false;
+				$data[$v['ordenCompra']]['adjuntosCargados'] = false;
 				$buscarCargados = $this->db->get_where('compras.sustentoAdjunto', ['idProveedor' => $v['idProveedor'], 'idCotizacion' => $v['idCotizacion'], 'estado' => 1])->result_array();
-				if (!empty($buscarCargados)) $data[$v['idOrdenCompra']]['adjuntosCargados'] = true;
+				if (!empty($buscarCargados)) $data[$v['ordenCompra']]['adjuntosCargados'] = true;
 			}
-			$data[$v['idOrdenCompra']]['monto'] += $v['subtotal'];
+			$data[$v['ordenCompra']]['monto'] += $v['subtotal'];
 		}
 		error_reporting(E_ALL);
 		ini_set('display_errors', TRUE);
@@ -252,7 +259,7 @@ class ProveedorDocumento extends MY_Controller
 				->setCellValue('B' . $nIni, date_change_format($v['fechaRegOC']))
 				->setCellValue('C' . $nIni, NOMBRE_MES[explode('-', $v['fechaRegOC'])[1]])
 				->setCellValue('D' . $nIni, $v['oper'])
-				->setCellValue('E' . $nIni, str_pad($v['idOrdenCompra'], 8, "0", STR_PAD_LEFT))
+				->setCellValue('E' . $nIni, $v['ordenCompra'])
 				->setCellValue('F' . $nIni, $v['rucProveedor'])
 				->setCellValue('G' . $nIni, $v['razonSocial'])
 				->setCellValue('H' . $nIni, $v['cuenta'])

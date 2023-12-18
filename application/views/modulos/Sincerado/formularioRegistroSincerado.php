@@ -1,5 +1,5 @@
 <?php $dataRow = 0; ?>
-<form class="form" role="form" id="formEditarPresupuesto" method="post" autoComplete="off">
+<form class="form" role="form" id="formRegistroSincerado" method="post" autoComplete="off">
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<div class="control-group child-divcenter row" style="width:85%">
@@ -23,6 +23,7 @@
 			<!-- Agregado Para Sincerado -->
 			<input type="hidden" name="idPresupuestoHistorico" value="<?= $idPresupuestoHistorico; ?>">
 			<input type="hidden" name="idPresupuestoValido" value="<?= $idPresupuestoValido; ?>">
+			<input type="hidden" name="fechaSincerado" value="<?= $fechaSincerado; ?>">
 			<!-- Fin -->
 			<div class="ui top attached tabular menu">
 				<a class="item active" data-tab="datos">Datos</a>
@@ -36,7 +37,7 @@
 					<table class="ui table" id="tablaFechaPersona">
 						<thead>
 							<tr>
-								<th class="two wide"><label class="text-white">________________</label></th>
+								<th class="two wide"><label class="text-white">________________</label><button type="button" class="btn-valoresFijosSincerado d-none">FIJAR VALORES</button></th>
 								<?php foreach ($fechaDelPre as $k => $v) : ?>
 									<?php $visible = '' ?>
 									<?php if ($v['fecha'] != $fechaSincerado) : ?>
@@ -78,18 +79,23 @@
 							<thead>
 								<tr>
 									<th class="two wide"><?= $vd['tipoPresupuesto']; ?></th>
+									<th class="one wide text-right">MONTO PRESUPUESTO
+										<input class="pasteFijarMonto d-none" name="sinc_montoOriginal" value="">
+										<input class="d-none" name="sinc_idTipoPresupuesto" value="<?= $vd['idTipoPresupuesto'] ?>">
+									</th>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 										<?php $visible = '' ?>
 										<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 											<?php $visible = 'd-none' ?>
 										<?php endif; ?>
 										<th class="one wide pr-0 <?= $visible ?>">
-											<div class="ui input transparent fluid">
-												<input class="text-right" type="text" value=" - " readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
+											<div class="ui input transparent fluid pr-5">
+												<!-- Ocultado para el sincerado -->
+												<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" type="text" value=" - " <?php if (empty($visible)) : ?> name="sinc_montoSincerado" <?php endif; ?> readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
+												<!-- Fin -->
 											</div>
 										</th>
 									<?php endforeach; ?>
-									<th class="one wide text-right">TOTAL</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -98,81 +104,101 @@
 										<tr>
 											<td><?= $v['cargo']; ?></td>
 											<input type="hidden" name="cargoList" value="<?= $v['idCargo'] ?>">
+											<td>
+												<div class="ui input transparent fluid">
+													<!-- Ocultado para el sincerado -->
+													<input class="text-right d-none" type="text" value="0" readonly id="totalLineaSueldo_<?= $k ?>">
+													<!-- Fin -->
+													<input class="text-right d-none" name="sueldo_idCargo" value="<?= $v['idCargo'] ?>">
+													<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="" readonly>
+													<input class="text-right d-none" name="sueldo_flagIncentivo" value="0">
+												</div>
+											</td>
 											<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 												<?php $visible = '' ?>
 												<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 													<?php $visible = 'd-none' ?>
 												<?php endif; ?>
 												<td class="<?= $visible ?>">
-													<div class="ui input transparent fluid">
-														<input class="text-right" type="text" value="0" readonly id="montoSueldo_<?= $k ?>_<?= $kf ?>">
+													<div class="ui input transparent fluid pr-5">
+														<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="sueldo_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="montoSueldo_<?= $k ?>_<?= $kf ?>">
 													</div>
 												</td>
 											<?php endforeach; ?>
-											<td>
-												<div class="ui input transparent fluid">
-													<input class="text-right" type="text" value="0" readonly id="totalLineaSueldo_<?= $k ?>">
-												</div>
-											</td>
 										</tr>
 									<?php endforeach; ?>
 									<tr>
 										<td> INCENTIVO </td>
+										<td>
+											<div class="ui input transparent fluid">
+												<!-- Ocultado para el sincerado -->
+												<input class="text-right d-none" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumnaSueldo(this);">
+												<!-- Fin -->
+												<input class="text-right d-none" name="sueldo_idCargo" value="0">
+												<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="" readonly>
+												<input class="text-right d-none" name="sueldo_flagIncentivo" value="1">
+											</div>
+										</td>
 										<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 											<?php $visible = '' ?>
 											<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid">
-													<input class="text-right" type="text" value="0" readonly id="montoIncentivo_<?= $kf ?>">
+												<div class="ui input transparent fluid pr-5">
+													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="sueldo_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="montoIncentivo_<?= $kf ?>">
 												</div>
 											</td>
 										<?php endforeach; ?>
-										<td>
-											<div class="ui input transparent fluid">
-												<input class="text-right" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumnaSueldo(this);">
-											</div>
-										</td>
 									</tr>
 								<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
 									<tr>
 										<td> VIAJES SUPERVISIÓN </td>
+										<td>
+											<div class="ui input transparent fluid">
+												<!-- Ocultado para el sincerado -->
+												<input class="text-right d-none" type="text" value="0" readonly id="totalMovilidadViajes">
+												<!-- Fin -->
+												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="" readonly>
+												<input class="text-right d-none" name="movilidad_viaje" value="1">
+												<input class="text-right d-none" name="movilidad_adicional" value="0">
+											</div>
+										</td>
 										<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 											<?php $visible = '' ?>
 											<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid">
-													<input class="text-right" type="text" value="0" readonly id="movilidadViajes_<?= $kf ?>">
+												<div class="ui input transparent fluid pr-5">
+													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="movilidad_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="movilidadViajes_<?= $kf ?>">
 												</div>
 											</td>
 										<?php endforeach; ?>
-										<td>
-											<div class="ui input transparent fluid">
-												<input class="text-right" type="text" value="0" readonly id="totalMovilidadViajes">
-											</div>
-										</td>
 									</tr>
 									<tr>
 										<td> ADICIONALES </td>
+										<td>
+											<div class="ui input transparent fluid">
+												<!-- Ocultado para el sincerado -->
+												<input class="text-right d-none" type="text" value="0" readonly id="totalMovilidadAdicional">
+												<!-- Fin -->
+												<input class="text-right pasteFijarMonto" name="movilidad_montoSincerado" value="" readonly>
+												<input class="text-right d-none" name="movilidad_viaje" value="0">
+												<input class="text-right d-none" name="movilidad_adicional" value="1">
+											</div>
+										</td>
 										<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 											<?php $visible = '' ?>
 											<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid">
-													<input class="text-right" type="text" value="0" readonly id="movilidadAdicionales_<?= $kf ?>">
+												<div class="ui input transparent fluid pr-5">
+													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" type="text" value="0" readonly id="movilidadAdicionales_<?= $kf ?>">
 												</div>
 											</td>
 										<?php endforeach; ?>
-										<td>
-											<div class="ui input transparent fluid">
-												<input class="text-right" type="text" value="0" readonly id="totalMovilidadAdicional">
-											</div>
-										</td>
 									</tr>
 								<?php elseif ($vd['idTipoPresupuesto'] == COD_ALMACEN) : ?>
 									<!-- -->
@@ -181,43 +207,53 @@
 										<?php foreach ($presupuestoDetalleSub[$vd['idPresupuestoDetalle']] as $kLDS => $vLDS) : ?>
 											<tr class="dataItem">
 												<td><?= $vLDS['nombre']; ?></td>
+												<td>
+													<div class="ui input fluid transparent">
+														<!-- Ocultado para el sincerado -->
+														<input class="text-right totalFila d-none" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
+														<!-- Fin -->
+														<input class="text-right d-none" name="otros_idTipoPresupuestoDetalle" value="<?= $vLDS['idTipoPresupuestoDetalle'] ?>">
+														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="" readonly>
+														<input class="text-right d-none" name="otros_flagSctr" value="0">
+													</div>
+												</td>
 												<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 													<?php $visible = '' ?>
 													<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 														<?php $visible = 'd-none' ?>
 													<?php endif; ?>
 													<td class="<?= $visible ?>">
-														<div class="ui input transparent fluid">
-															<input class="text-right" type="text" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
+														<div class="ui input transparent fluid pr-5">
+															<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" type="text" <?php if (empty($visible)) : ?> name="otros_montoSincerado" <?php endif; ?> value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
 														</div>
 													</td>
 												<?php endforeach; ?>
-												<td>
-													<div class="ui input fluid transparent">
-														<input class="text-right totalFila" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
-													</div>
-												</td>
 											</tr>
 										<?php endforeach; ?>
-										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) :  ?>
+										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) : ?>
 											<tr>
 												<td>SCTR</td>
+												<td>
+													<div class="ui input fluid transparent">
+														<!-- Ocultado para el sincerado -->
+														<input class="text-right totalFila d-none" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
+														<!-- Fin -->
+														<input class="text-right d-none" name="otros_idTipoPresupuestoDetalle" value="0">
+														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="" readonly>
+														<input class="text-right d-none" name="otros_flagSctr" value="1">
+													</div>
+												</td>
 												<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 													<?php $visible = '' ?>
 													<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 														<?php $visible = 'd-none' ?>
 													<?php endif; ?>
 													<td class="<?= $visible ?>">
-														<div class="ui input transparent fluid">
-															<input class="text-right inputSctr" type="text" data-sctr="<?= $kLDS + 1 ?>" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>_<?= $kf ?>">
+														<div class="ui input transparent fluid pr-5">
+															<input class="text-right inputSctr <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="otros_montoSincerado" <?php endif; ?> type="text" data-sctr="<?= $kLDS + 1 ?>" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>_<?= $kf ?>">
 														</div>
 													</td>
 												<?php endforeach; ?>
-												<td>
-													<div class="ui input fluid transparent">
-														<input class="text-right totalFila" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
-													</div>
-												</td>
 											</tr>
 										<?php endif; ?>
 									<?php endif; ?>
@@ -231,25 +267,28 @@
 						<tbody>
 							<tr>
 								<td class="font-weight-bolder text-right two wide">SubTotal</td>
+								<td class="one wide p-0">
+									<div class="ui left corner labeled input fluid small">
+										<!-- Ocultado para el sincerado -->
+										<input class="text-right d-none" value="0" id="sumaSubtotalFinal" name="presupuestoSubTotal" readonly>
+										<!-- Fin -->
+										<input class="text-right pasteFijarMonto" value="0" name="head_sbtotalOriginal" readonly>
+										<!-- <div class="ui left corner label">
+											<i class="equals icon"></i>
+										</div> -->
+									</div>
+								</td>
 								<?php foreach ($fechaDelPre as $kc => $vc) : ?>
-									<?php $visible = '' ?>
+									<?php $visible = null ?>
 									<?php if ($vc['fecha'] != $fechaSincerado) : ?>
 										<?php $visible = 'd-none' ?>
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right" value="0" id="subtotalFinal_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_sbtotalSincerado" <?php endif; ?> value="0" id="subtotalFinal_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
-								<td class="one wide p-0">
-									<div class="ui left corner labeled input fluid small">
-										<input class="text-right" value="0" id="sumaSubtotalFinal" name="presupuestoSubTotal" readonly>
-										<div class="ui left corner label">
-											<i class="equals icon"></i>
-										</div>
-									</div>
-								</td>
 							</tr>
 							<tr>
 								<td class="font-weight-bolder text-right">
@@ -259,6 +298,17 @@
 										<div class="ui label">%</div>
 									</div>
 								</td>
+								<td class="one wide p-0">
+									<div class="ui left corner labeled input fluid small">
+										<!-- Ocultado para el sincerado -->
+										<input class="text-right d-none" value="0" id="sumaFee1Final" name="presupuestoTotalFee1" readonly>
+										<!-- Fin -->
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee1Original" readonly>
+										<!-- <div class="ui left corner label">
+											<i class="equals icon"></i>
+										</div> -->
+									</div>
+								</td>
 								<?php foreach ($fechaDelPre as $kc => $vc) : ?>
 									<?php $visible = '' ?>
 									<?php if ($vc['fecha'] != $fechaSincerado) : ?>
@@ -266,18 +316,10 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right" value="0" id="fee1_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" <?php if (empty($visible)) : ?> name="head_fee1Sincerado" <?php endif; ?> id="fee1_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
-								<td class="one wide p-0">
-									<div class="ui left corner labeled input fluid small">
-										<input class="text-right " value="0" id="sumaFee1Final" name="presupuestoTotalFee1" readonly>
-										<div class="ui left corner label">
-											<i class="equals icon"></i>
-										</div>
-									</div>
-								</td>
 							</tr>
 							<tr>
 								<td class="font-weight-bolder text-right">
@@ -287,6 +329,17 @@
 										<div class="ui label">%</div>
 									</div>
 								</td>
+								<td class="one wide p-0">
+									<div class="ui left corner labeled input fluid small">
+										<!-- Ocultado para el sincerado -->
+										<input class="text-right d-none" value="0" id="sumaFee2Final" name="presupuestoTotalFee2" readonly>
+										<!-- Fin -->
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee2Original" readonly>
+										<!-- <div class="ui left corner label">
+											<i class="equals icon"></i>
+										</div> -->
+									</div>
+								</td>
 								<?php foreach ($fechaDelPre as $kc => $vc) : ?>
 									<?php $visible = '' ?>
 									<?php if ($vc['fecha'] != $fechaSincerado) : ?>
@@ -294,18 +347,10 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right" value="0" id="fee2_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" value="0" <?php if (empty($visible)) : ?> name="head_fee2Sincerado" <?php endif; ?> id="fee2_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
-								<td class="one wide p-0">
-									<div class="ui left corner labeled input fluid small">
-										<input class="text-right" value="0" id="sumaFee2Final" name="presupuestoTotalFee2" readonly>
-										<div class="ui left corner label">
-											<i class="equals icon"></i>
-										</div>
-									</div>
-								</td>
 							</tr>
 							<tr>
 								<td class="font-weight-bolder text-right">
@@ -315,6 +360,17 @@
 										<div class="ui label">%</div>
 									</div>
 								</td>
+								<td class="one wide p-0">
+									<div class="ui left corner labeled input fluid small">
+										<!-- Ocultado para el sincerado -->
+										<input class="text-right d-none" value="0" id="sumaFee3Final" name="presupuestoTotalFee3" readonly>
+										<!-- Fin -->
+										<input class="text-right pasteFijarMonto" value="0" name="head_fee3Original" readonly>
+										<!-- <div class="ui left corner label">
+											<i class="equals icon"></i>
+										</div> -->
+									</div>
+								</td>
 								<?php foreach ($fechaDelPre as $kc => $vc) : ?>
 									<?php $visible = '' ?>
 									<?php if ($vc['fecha'] != $fechaSincerado) : ?>
@@ -322,21 +378,24 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right" value="0" id="fee3_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_fee3Sincerado" <?php endif; ?> value="0" id="fee3_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
-								<td class="one wide p-0">
-									<div class="ui left corner labeled input fluid small">
-										<input class="text-right" value="0" id="sumaFee3Final" name="presupuestoTotalFee3" readonly>
-										<div class="ui left corner label">
-											<i class="equals icon"></i>
-										</div>
-									</div>
-								</td>
 							</tr>
 							<tr>
 								<td class="font-weight-bolder text-right">Total</td>
+								<td class="one wide p-0">
+									<div class="ui left corner labeled input fluid small">
+										<!-- Ocultado para el sincerado -->
+										<input class="text-right d-none" value="0" id="sumaTotalFinal" name="presupuestoTotal" readonly>
+										<!-- Fin -->
+										<input class="text-right pasteFijarMonto" value="0" name="head_totalOriginal" readonly>
+										<!-- <div class="ui left corner label">
+											<i class="equals icon"></i>
+										</div> -->
+									</div>
+								</td>
 								<?php foreach ($fechaDelPre as $kc => $vc) : ?>
 									<?php $visible = '' ?>
 									<?php if ($vc['fecha'] != $fechaSincerado) : ?>
@@ -344,18 +403,10 @@
 									<?php endif; ?>
 									<td class="one wide <?= $visible ?>">
 										<div class="ui input fluid">
-											<input class="text-right" value="0" id="totalFinal_<?= $kc ?>" readonly>
+											<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="head_totalSincerado" <?php endif; ?> value="0" id="totalFinal_<?= $kc ?>" readonly>
 										</div>
 									</td>
 								<?php endforeach; ?>
-								<td class="one wide p-0">
-									<div class="ui left corner labeled input fluid small">
-										<input class="text-right" value="0" id="sumaTotalFinal" name="presupuestoTotal" readonly>
-										<div class="ui left corner label">
-											<i class="equals icon"></i>
-										</div>
-									</div>
-								</td>
 							</tr>
 						</tbody>
 					</table>
@@ -411,7 +462,7 @@
 													<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 														<td>
 															<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1[$vp['idCargo']]['monto'] ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
-															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) :  ?>
+															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) : ?>
 																<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - floatval($v1[$vp['idCargo']]['monto']) ?>">
 															<?php endif; ?>
 														</td>
@@ -567,7 +618,7 @@
 						</div>
 						<div class="ui bottom attached tab segment" data-tab="<?= $vd['idTipoPresupuesto']; ?>/b">
 							<div class="control-group child-divcenter col-md-8" style="width:100%">
-								<a class="ui button floated green" onclick="OrdenServicio.addSueldoCargoAdicional();"><i class="icon plus"></i> Agregar</a>
+								<!-- <a class="ui button floated green" onclick="OrdenServicio.addSueldoCargoAdicional();"><i class="icon plus"></i> Agregar</a> -->
 								<table class="ui table" id="tablaSueldoAdicional">
 									<thead>
 										<tr>
@@ -611,8 +662,8 @@
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
 
 						<div style="display: flex;flex-direction: row-reverse;">
-							<a class="ui whatsapp button" onclick="OrdenServicio.listado_movilidad();">Listado</a>
-							<a class="ui blue button" onclick="OrdenServicio.agregar_movilidad();">Agregar</a>
+							<!-- <a class="ui whatsapp button" onclick="OrdenServicio.listado_movilidad();">Listado</a> -->
+							<!-- <a class="ui blue button" onclick="OrdenServicio.agregar_movilidad();">Agregar</a> -->
 						</div>
 						<div class="ui table">
 
@@ -732,8 +783,8 @@
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_ALMACEN) : ?>
 						<div style="display: flex;flex-direction: row-reverse;">
-							<a class="ui whatsapp button" onclick="OrdenServicio.listado_almacen();">Listado</a>
-							<a class="ui blue button" onclick="OrdenServicio.agregar_almacen();">Agregar</a>
+							<!-- <a class="ui whatsapp button" onclick="OrdenServicio.listado_almacen();">Listado</a> -->
+							<!-- <a class="ui blue button" onclick="OrdenServicio.agregar_almacen();">Agregar</a> -->
 						</div>
 						<div class="ui top attached tabular menu">
 							<a class="item active" data-tab="<?= $vd['idTipoPresupuesto']; ?>/a">RECURSOS</a>
@@ -821,7 +872,7 @@
 												<td><?= $va['ciudad']; ?></td>
 												<td style="min-width: 200px;">
 													<?php $existe = isset($dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split']); ?>
-													<?php $valor =  $existe ? $dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split'] : null; ?>
+													<?php $valor = $existe ? $dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split'] : null; ?>
 													<select class="tbAlm_freOpc ui compact fluid selection semantic-dropdown dropdown" name="almFrecuenciaOpc" onchange="OrdenServicio.calcularMontoDeAlmacen(this);">
 														<option value="1" <?= ($valor == '1' || $valor == null) ? 'selected' : '' ?>>1 vez por mes</option>
 														<option value="2" <?= ($valor == '2') ? 'selected' : '' ?>>1 vez cada 2 meses</option>
@@ -872,7 +923,7 @@
 						<div class="control-group child-divcenter col-md-11 divTipoDetalle" style="width:100%">
 							<div class="field">
 								<?php if ($vd['mostrarDetalle'] != '1') : ?>
-									<a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="OrdenServicio.addRow(this)">Agregar</a>
+									<!-- <a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="OrdenServicio.addRow(this)">Agregar</a> -->
 								<?php endif; ?>
 								<!-- <a class="ui green button" onclick="$(this).closest('.divTipoDetalle').find('th.cantidadDeTabla').toggleClass('d-none'); $(this).closest('.divTipoDetalle').find('td.cantidadDeTabla').toggleClass('d-none');$(this).find('i').toggleClass('slash');"><i class="icon eye"></i>Cantidad por cargo</a> -->
 							</div>
@@ -900,7 +951,7 @@
 																<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
 															<?php endforeach; ?>
 														</select>
-														<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a>
+														<!-- <a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a> -->
 													</div>
 												</td>
 												<td class="splitDetalle">
@@ -1034,7 +1085,7 @@
 												</td>
 											</tr>
 										<?php endforeach; ?>
-										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) :  ?>
+										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) : ?>
 											<tr>
 												<td>
 													<div class="ui input fluid">

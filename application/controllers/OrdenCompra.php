@@ -109,7 +109,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
-		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()->result_array();
 
 		//$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOC])->result_array();
@@ -189,7 +189,7 @@ class OrdenCompra extends MY_Controller
 	public function metodoPago()
 	{
 		$data = json_decode($this->input->post('data'));
-		$grupo['data']['metodo'] = $this->mFormProveedor->obtenerMetodoPago($data->id);
+		$grupo['data']['metodo'] = $this->mFormProveedor->obtenerMetodoPago(['idProveedor' => $data->id])->result_array();
 		echo json_encode($grupo);
 	}
 
@@ -280,15 +280,17 @@ class OrdenCompra extends MY_Controller
 			'comentario' => $post['comentario'],
 			'concepto' => $post['concepto'],
 			'idMetodoPago' => $post['metodoPago'],
-			'total' => $post['total'],
+			'total' => $post['total_real'],
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-			'totalIGV' => $post['totalIGV'],
+			'totalIGV' => $post['totalIGV_real'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'idOper' => $post['idOper'],
 			'seriado' => 'OC' . $this->model->obtenerSeriado(OC_SERIADO),
 			'mostrar_observacion' => $mostrar_observacion,
-			'idAlmacen' => $post['idAlmacen']
+			'idAlmacen' => $post['idAlmacen'],
+			'descripcionCompras' => $post['descripcionCompras'],
+			//'totalIGV_real' => $post['totalIGV_real'],
 		];
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -315,7 +317,7 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-				'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
@@ -393,13 +395,14 @@ class OrdenCompra extends MY_Controller
 			'comentario' => $post['comentario'],
 			'concepto' => $post['concepto'],
 			'idMetodoPago' => $post['metodoPago'],
-			'total' => $post['total'],
+			'total' => $post['total_real'],
 			'IGVPorcentaje' => intval($post['igvPorcentaje']) - 100,
-			'totalIGV' => $post['totalIGV'],
+			'totalIGV' => $post['totalIGV_real'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
 			'mostrar_observacion' => $mostrar_observacion,
-			'idAlmacen' => $post['idAlmacen']
+			'idAlmacen' => $post['idAlmacen'],
+			'descripcionCompras' => $post['descripcionCompras']
 		];
 		$rpta = $this->model->actualizarMasivo('orden.ordenCompra', $updateData, 'idOrdenCompra');
 		$idOC = $updateData[0]['idOrdenCompra'];
@@ -428,7 +431,7 @@ class OrdenCompra extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
-				'costoSubTotalGap' => $post['precio'][$key]
+				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
