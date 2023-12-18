@@ -109,7 +109,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
-		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()['query']->result_array();
+		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()->result_array();
 
 		//$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOC])->result_array();
@@ -189,7 +189,7 @@ class OrdenCompra extends MY_Controller
 	public function metodoPago()
 	{
 		$data = json_decode($this->input->post('data'));
-		$grupo['data']['metodo'] = $this->mFormProveedor->obtenerMetodoPago($data->id);
+		$grupo['data']['metodo'] = $this->mFormProveedor->obtenerMetodoPago(['idProveedor' => $data->id])->result_array();
 		echo json_encode($grupo);
 	}
 

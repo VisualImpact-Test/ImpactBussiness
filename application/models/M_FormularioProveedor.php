@@ -35,18 +35,16 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
-	public function obtenerMetodoPago($id)
+	public function obtenerMetodoPago($params = [])
 	{
 		$this->db->select('mp.idMetodoPago AS id, mp.nombre AS value');
 		$this->db->from('compras.metodoPago mp');
 		$this->db->join('compras.proveedorMetodoPago provMP', 'provMP.idMetodoPago = mp.idMetodoPago');
 		$this->db->join('compras.proveedor p', 'p.idProveedor = provMP.idProveedor');
-		$this->db->where('provMP.idProveedor', $id);
 		$this->db->where('mp.estado = 1');
 		
-		$sql = $this->db->get();
-
-		return $sql->result();
+		if (isset($params['idProveedor'])) $this->db->where('provMP.idProveedor', $params['idProveedor']);
+		return $this->db->get();
 	}
 
 	public function obtenerMetodoPago1($id)
@@ -58,7 +56,7 @@ class M_FormularioProveedor extends MY_Model
 		FROM compras.metodoPago mp
 		JOIN compras.proveedorMetodoPago provMP ON provMP.idMetodoPago = mp.idMetodoPago
 		JOIN compras.proveedor p ON p.idProveedor = provMP.idProveedor
-		WHERE mp.estado = 1 AND provMP.idProveedor =".$id;
+		WHERE mp.estado = 1 AND provMP.idProveedor =" . $id;
 
 		$query = $this->db->query($sql);
 

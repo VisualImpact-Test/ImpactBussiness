@@ -26,7 +26,7 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
-		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
 		$config['data']['departamento'] = [];
@@ -87,7 +87,7 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
 		$config['data']['rubro'] = $this->model->obtenerRubro()['query']->result_array();
-		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
+		$config['data']['metodoPago'] = $this->model->obtenerMetodoPago()->result_array();
 		$config['data']['tipoServicio'] = $this->m_proveedor->obtenerProveedorTipoServicio()->result_array();
 		$config['data']['comprobante'] = $this->m_proveedor->obtenerComprobante()['query']->result_array();
 		$config['data']['bancos'] = $this->db->get_where('dbo.banco')->result_array();
