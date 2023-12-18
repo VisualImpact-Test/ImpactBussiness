@@ -187,7 +187,7 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
-
+	
 	public function getPresupuestoDetalle($id)
 	{
 		$query = $this->db
@@ -196,6 +196,17 @@ class M_OrdenServicio extends MY_Model
 			->join('compras.tipoPresupuesto tp', 'tp.idTipoPresupuesto = pd.idTipoPresupuesto')
 			->where('pd.estado', 1)
 			->where('pd.idPresupuesto', $id)
+			->get();
+		return $query;
+	}
+
+	public function obtenerInformacionDatosOc($id)
+	{
+		$query = $this->db
+			->select('*')
+			->from('compras.ordenServicioDatosOc osd')
+			->where('osd.estado', 1)
+			->where('osd.idOrdenServicio', $id)
 			->get();
 		return $query;
 	}

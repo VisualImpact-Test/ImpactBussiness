@@ -924,6 +924,51 @@ class OrdenServicio extends MY_Controller
 
 		echo json_encode($result);
 	}
+	public function formatoDatosOc()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$idOrdenServicio = $post['idOrdenServicio'];
+		$dataParaVista = [];
+		$dataParaVista['datosOC'] = $this->model->obtenerInformacionDatosOc($idOrdenServicio)->result_array();
+		$dataParaVista['idOrdenServicio'] = $post['idOrdenServicio'];
+		
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Procesar Datos OC';
+		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/frmDatosOc", $dataParaVista, true);
+
+		echo json_encode($result);
+
+	}
+
+	public function registrarOrdenServicioDatosOC()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$DatosOc = [
+			'idOrdenServicio' => $post['idOrdenServicio'],
+			'codigoOc' => $post['codigo_oc'],
+			'montoOc' => $post['monto_oc'],
+			'fechaOC' => $post['fechaClienteOC'],
+			'descripcionOc' => $post['motivo']
+		];
+		if ($post['idOrdenServicioDatosOc']) {
+		$this->db->update('compras.ordenServicioDatosOc', $DatosOc, ['idOrdenServicioDatosOc' => $post['idOrdenServicioDatosOc']]);
+		}else {
+		$this->db->insert('compras.ordenServicioDatosOc', $DatosOc);	
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+
+	}
+	
 
 	public function formularioActualizacionOrdenServicio()
 	{

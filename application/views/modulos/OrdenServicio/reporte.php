@@ -39,7 +39,12 @@
 						<?php if ($row['chkPresupuesto']) : ?>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-version-presupuesto" title="Versiones Presupuesto"><i class="fa fa-lg fa-book"></i></a>
 						<?php endif; ?>	
+						
+						<?php if($row['idOrdenServicioEstado'] >= 3){ ?> 	
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-datos-oc" title="Datos de OC"><i class="fa fa-lg fa-check"></i></a>
 						<?php } ?> 
+						<?php } ?> 
+
 						
 					</td>
 					<td class="td-center">

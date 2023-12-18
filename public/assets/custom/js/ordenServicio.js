@@ -183,6 +183,31 @@ var OrdenServicio = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 			});
 		});
+		
+		$(document).on('click', '.btn-datos-oc', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let estado = $(this).parents('tr:first').data('estado');
+			
+			let data = { 'idOrdenServicio': id, 'idOrdenServicioEstado': estado };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': OrdenServicio.url + 'formatoDatosOc', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistrodatosOc", fn: "OrdenServicio.registrarDatosOc()", content: "¿Esta seguro de registrar la Datos OC?" });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
+			});
+
+		});
+
 
 		$(document).on('click', '.btn-copyOrdenServicio', function () {
 			++modalId;
@@ -1562,6 +1587,25 @@ var OrdenServicio = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 			}
 		});
+	},
+	registrarDatosOc: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistrodatosOc')) };
+		let url = OrdenServicio.url + "registrarOrdenServicioDatosOC";
+		let config = { url: url, data: jsonString };
+
+		//console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				let btn = [];
+				let fn = [];
+			
+				fn[0] = 'Fn.closeModals(2); ';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			}
+		});
+
 	},
 	save_udtMovilidadDetalle: function (id) {
 		var origen = $('#up_origen_' + id).val();
