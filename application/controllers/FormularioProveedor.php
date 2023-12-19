@@ -652,8 +652,8 @@ class FormularioProveedor extends MY_Controller
 			$data[$k]['solicitarFecha'] = '1';
 			$data[$k]['flagFechaRegistro'] = '0';
 			$data[$k]['flagSustentoServicio'] = '0';
-			//var_dump(json_encode($v));
-			//exit;
+			$flagOcLibre = base64_encode($v['flagOcLibre']);
+
 			if (!empty($v['idOrdenCompra'])) {
 				$data[$k]['status'] = 'Aprobado';
 				// Se consulta los tipos de Item, considerando que solo se requiere Validación de Arte para SERVICIO (Mantenimiento), Textiles e Impresiones.
@@ -740,10 +740,10 @@ class FormularioProveedor extends MY_Controller
 			$accesoEmail = !empty($proveedor['correoContacto']) ? base64_encode($proveedor['correoContacto']) : '';
 			$fechaActual = base64_encode(date('Y-m-d'));
 			$accesoCodProveedor = !empty($proveedor['idProveedor']) ? base64_encode($proveedor['idProveedor']) : '';
-			$data[$k]['link'] = "?doc={$accesoDocumento}&email={$accesoEmail}&date={$fechaActual}&cod={$accesoCodProveedor}";
+			$data[$k]['link'] = "?doc={$accesoDocumento}&email={$accesoEmail}
+			&date={$fechaActual}&cod={$accesoCodProveedor}&flagOcLibre={$flagOcLibre}";
+			$dataParaVista = $data;
 		}
-
-		$dataParaVista = $data;
 
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
@@ -2267,7 +2267,7 @@ class FormularioProveedor extends MY_Controller
 			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
-
+		
 		$config['css']['style'] = array(
 			'assets/custom/css/floating-action-button'
 		);
@@ -2282,7 +2282,9 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['idOrdenCompra'] = $idOrdenCompra;
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
-		$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
+		if($get['flagOcLibre'] == 0) {
+			$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
+		}
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		$config['data']['detalle'] = $ordenCompraProveedor;
 
