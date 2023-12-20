@@ -1253,7 +1253,8 @@ var OrdenServicio = {
 					$.each(OrdenServicio.arrayFechas, function (k, v) {
 						if (typeof totSctr[k] === 'undefined') totSctr[k] = 0;
 						valorCant = $(tr.find('input.cntColmFC')[k]).val();
-						totSctr[k] += parseFloat(valorCant) * valorSCTR;
+						//totSctr[k] += parseFloat(valorCant) * valorSCTR;
+						totSctr[k] = parseFloat($('#txtVSctr').val());
 					})
 				}
 			});

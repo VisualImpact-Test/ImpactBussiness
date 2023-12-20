@@ -401,15 +401,16 @@ class M_FormularioProveedor extends MY_Model
         pr.idProveedor,
         c.codOrdenCompra, 
         0 AS flagOcLibre,
-		o.estadoval, cdp.idCotizacionDetalleProveedor")
+		o.estadoval,
+		cdp.idCotizacionDetalleProveedor")
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
 			->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
+			->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'INNER')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
-			->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'INNER')
 			->where('ocd.estado', '1')
 			->group_by("
         ocd.idOrdenCompra,
@@ -425,7 +426,8 @@ class M_FormularioProveedor extends MY_Model
         cu.nombre, 
         pr.idProveedor,
         c.codOrdenCompra,
-		o.estadoval, cdp.idCotizacionDetalleProveedor")
+		o.estadoval,
+		cdp.idCotizacionDetalleProveedor")
 			->order_by('ocd.idOrdenCompra DESC');
 
 

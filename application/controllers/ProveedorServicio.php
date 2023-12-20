@@ -48,7 +48,7 @@ class ProveedorServicio extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		exit;
+		
 		$where = [];
 		if (!empty($post['proveedor'])) $where['idProveedor'] = $post['proveedor'];
 		if (!empty($post['fecha'])) $where['fechaEmision'] = $post['fecha'];
@@ -122,7 +122,7 @@ class ProveedorServicio extends MY_Controller
 				}
 
 				// Se compara el Total de Artes Cargados con el Total de Artes Aprobados.
-				$w = ['idProveedor' => $v['idProveedor'], 'idOrdenCompra' => $v['idOrdenCompra'], 'estado' => 1];
+				$w = ['idProveedor' => $v['idProveedor'], 'idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1];
 				$artesCargados = $this->db->get_where('sustento.validacionArte', $w)->result_array();
 				$w['flagRevisado'] = 1;
 				$w['flagAprobado'] = 1;
@@ -136,7 +136,18 @@ class ProveedorServicio extends MY_Controller
 
 				// Si se solicita fecha, validar si la información fue cargada o no.
 				if ($data[$k]['solicitarFecha'] == '1') {
-					$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', ['idOrdenCompra' => $v['idOrdenCompra'], 'estado' => '1'])->result_array();
+					$fechaE = [
+						'idOrdenCompra' => $v['idOrdenCompra'],
+						'idProveedor' => $v['idProveedor'],
+						'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+					];
+
+					if ($v['flagOcLibre'] == 0) {
+						$fechaE['idCotizacion'] = $v['idCotizacion'];
+					}
+
+					$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
+
 					if (!empty($fechaEjecCargado)) {
 						$data[$k]['flagFechaRegistro'] = '1';
 						$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -145,7 +156,17 @@ class ProveedorServicio extends MY_Controller
 				}
 			} else {
 				$data[$k]['status'] = 'Aprobado';
-				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', ['idOrdenCompra' => $v['idOrdenCompra'], 'estado' => '1'])->result_array();
+				$fechaE = [
+					'idOrdenCompra' => $v['idOrdenCompra'],
+					'idProveedor' => $v['idProveedor'],
+					'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+				];
+
+				if ($v['flagOcLibre'] == 0) {
+					$fechaE['idCotizacion'] = $v['idCotizacion'];
+				}
+				
+				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
 				if (!empty($fechaEjecCargado)) {
 					$data[$k]['flagFechaRegistro'] = '1';
 					$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -155,7 +176,12 @@ class ProveedorServicio extends MY_Controller
 
 			$data[$k]['ocGen'] = $v['seriado'];
 
-			$sustComp = $this->db->get_where('sustento.sustentoAdjunto', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagoclibre' => $v['flagOcLibre'], 'estado' => '1'])->result_array();
+			$sustComp = $this->db->get_where('sustento.sustentoAdjunto', [
+				'idOrdenCompra' => $v['idOrdenCompra'],
+				'idProveedor' => $v['idProveedor'],
+				'flagoclibre' => $v['flagOcLibre'],
+				'estado' => '1'
+			])->result_array();
 			$data[$k]['sustentoComp'] = $sustComp;
 
 			if (!empty($sustComp)) {
@@ -169,6 +195,7 @@ class ProveedorServicio extends MY_Controller
 
 			$va4 = $this->db->where('estado', '1')
 				->where('idOrdenCompra', $v['idOrdenCompra'])
+				->where('idProveedor', $v['idProveedor'])
 				->where('flagoclibre', $v['flagOcLibre'])
 				->get('sustento.comprobante')->result_array();
 			foreach ($va4 as $v4) {
@@ -189,11 +216,6 @@ class ProveedorServicio extends MY_Controller
 		if (!empty($data)) {
 			$dataParaVista['data'] = [];
 			foreach ($data as $k => $v) {
-				/*$v['flagMostrarExcel'] = !empty($this->db->
-						 get_where('compras.cotizacionDetalle', 
-						['idCotizacion' => $v['idCotizacion'], 
-						'idProveedor' => $v['idProveedor']])->result_array());*/
-
 				$v['flagMostrarExcel'] = !empty($this->db->select('*')
 					->from('compras.cotizacionDetalle cd')
 					->join(
