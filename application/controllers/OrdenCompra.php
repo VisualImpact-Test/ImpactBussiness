@@ -249,6 +249,7 @@ class OrdenCompra extends MY_Controller
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
+		$post['precio_real'] = checkAndConvertToArray($post['precio_real']);
 
 		if (isset($post['subItem_monto'])) {
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
@@ -365,6 +366,8 @@ class OrdenCompra extends MY_Controller
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
+		$post['precio_real'] = checkAndConvertToArray($post['precio_real']);
+
 		if (isset($post['subItem_monto'])) {
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
 			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
@@ -513,9 +516,9 @@ class OrdenCompra extends MY_Controller
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
-		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6)."-"
-			.$dataParaVista['detalle'][0]['concepto'];
-			
+		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6) . "-"
+			. $dataParaVista['detalle'][0]['concepto'];
+
 		$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 };

@@ -153,7 +153,7 @@
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold mb-0">Mostrar Observación</label>
 						<div class="custom-control custom-switch custom-switch-lg">
-						<?php $chk = $oc[0]['mostrar_observacion'] == 1 ? 'checked' : ''; ?>
+							<?php $chk = $oc[0]['mostrar_observacion'] == 1 ? 'checked' : ''; ?>
 							<input type="checkbox" class="custom-control-input" id="mostrar_observacion" name="mostrar_observacion" <?= $chk ?>>
 							<label class="custom-control-label" for="mostrar_observacion"></label>
 						</div>
@@ -273,11 +273,11 @@
 												</div>
 												<div class="form-group col-md-2">
 													<label class="font-weight-bold mb-0">Cantidad:</label>
-													<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" value="<?= $si_v['cantidad'] ?>">
+													<input class="form-control SbItCantidad keyUpChange" name="subItem_cantidad" value="<?= $si_v['cantidad'] ?>" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 												</div>
 												<div class="form-group col-md-2">
 													<label class="font-weight-bold mb-0">Costo:</label>
-													<input class="form-control SbItCosto" name="subItem_costo" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" value="<?= $si_v['costo'] ?>">
+													<input class="form-control SbItCosto keyUpChange" name="subItem_costo" patron="requerido" value="<?= $si_v['costo'] ?>" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 												</div>
 												<div class="form-group col-md-2">
 													<label class="font-weight-bold mb-0">Sb Tot:</label>
@@ -358,9 +358,9 @@
 										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= round($value['csg_item'], 3); ?>">
 									</div>
 									<div class="form-group col-md-12 d-none">
-								<label class="font-weight-bold mb-0">Sub Total real:</label>
-								<input class="form-control item_precio_real" name="precio_real" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item'] ?>">
-							</div>
+										<label class="font-weight-bold mb-0">Sub Total real:</label>
+										<input class="form-control item_precio_real" name="precio_real" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item'] ?>">
+									</div>
 								</div>
 							</div>
 						</div>
@@ -384,7 +384,7 @@
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
 						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= round($value['total'], 3); ?>">
-						<input type="hidden" class="form-control" name="total_real" patron="requerido" id="total_real" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total'] ?>" >
+						<input type="hidden" class="form-control" name="total_real" patron="requerido" id="total_real" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total'] ?>">
 
 					</div>
 					<div class="form-group col-md-4">

@@ -116,8 +116,8 @@
 						<td class="text-right"><?= monedaNew(['valor' => $costoTotal, 'simbolo' => $data['monedaSimbolo']]); ?></td>
 					</tr>
 				<?php else : ?>
-					<?php $total += $row['cs_item']; ?>
-					<?php $igv_total += ($row['cs_item'] * (!empty($row['IGVPorcentaje']) ? ($row['IGVPorcentaje'] / 100) : 0)); ?>
+					<?php $total += $row['csg_item']; ?>
+					<?php $igv_total += ($row['csg_item'] * (!empty($row['IGVPorcentaje']) ? ($row['IGVPorcentaje'] / 100) : 0)); ?>
 					<tr style="border-bottom: none;">
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad_item'], 2) ?></td>
