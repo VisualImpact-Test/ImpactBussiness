@@ -136,16 +136,18 @@ class ProveedorServicio extends MY_Controller
 
 				// Si se solicita fecha, validar si la información fue cargada o no.
 				if ($data[$k]['solicitarFecha'] == '1') {
-					$fechaE = ['idOrdenCompra' => $v['idOrdenCompra'],
-					'idProveedor' => $v['idProveedor'],
-					'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'];
+					$fechaE = [
+						'idOrdenCompra' => $v['idOrdenCompra'],
+						'idProveedor' => $v['idProveedor'],
+						'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+					];
 
-					if($v['flagOcLibre'] == 0) {
+					if ($v['flagOcLibre'] == 0) {
 						$fechaE['idCotizacion'] = $v['idCotizacion'];
 					}
 
 					$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
-					
+
 					if (!empty($fechaEjecCargado)) {
 						$data[$k]['flagFechaRegistro'] = '1';
 						$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -154,7 +156,17 @@ class ProveedorServicio extends MY_Controller
 				}
 			} else {
 				$data[$k]['status'] = 'Aprobado';
-				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', ['idOrdenCompra' => $v['idOrdenCompra'], 'estado' => '1'])->result_array();
+				$fechaE = [
+					'idOrdenCompra' => $v['idOrdenCompra'],
+					'idProveedor' => $v['idProveedor'],
+					'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+				];
+
+				if ($v['flagOcLibre'] == 0) {
+					$fechaE['idCotizacion'] = $v['idCotizacion'];
+				}
+				
+				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
 				if (!empty($fechaEjecCargado)) {
 					$data[$k]['flagFechaRegistro'] = '1';
 					$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -165,10 +177,11 @@ class ProveedorServicio extends MY_Controller
 			$data[$k]['ocGen'] = $v['seriado'];
 
 			$sustComp = $this->db->get_where('sustento.sustentoAdjunto', [
-				'idOrdenCompra' => $v['idOrdenCompra'], 
-				'idProveedor' => $v['idProveedor'], 
-				'flagoclibre' => $v['flagOcLibre'], 
-				'estado' => '1'])->result_array();
+				'idOrdenCompra' => $v['idOrdenCompra'],
+				'idProveedor' => $v['idProveedor'],
+				'flagoclibre' => $v['flagOcLibre'],
+				'estado' => '1'
+			])->result_array();
 			$data[$k]['sustentoComp'] = $sustComp;
 
 			if (!empty($sustComp)) {
