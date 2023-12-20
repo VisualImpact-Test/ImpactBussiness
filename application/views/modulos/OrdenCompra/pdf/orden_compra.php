@@ -24,7 +24,7 @@
 			<td class="text-left bold" width="<?= $w1 ?>">Centro de Costo</td>
 			<td class="text-center" width="<?= $w2 ?>"><?= strtoupper(verificarEmpty($data['centroCosto'], 3)) ?></td>
 			<td class="text-left bold" width="<?= $w3 ?>">Fecha</td>
-			<td class="text-left" width="<?= $w4 ?>"><?= date_change_format(verificarEmpty($data['fechaEntrega'], 4)) ?></td>
+			<td class="text-left" width="<?= $w4 ?>"><?= date_change_format(verificarEmpty($data['fechaReg'], 4)) ?></td>
 		</tr>
 		<tr>
 			<td class="text-left bold" colspan="4">Datos del proveedor</td>
@@ -51,7 +51,7 @@
 			<td class="text-left" width="<?= $w1 ?>">Email</td>
 			<td class="text-left" width="<?= $w2 ?>"><?= verificarEmpty($data['correoContacto'], 3) ?></td>
 			<td class="text-left" width="<?= $w3 ?>">Fecha entrega</td>
-			<td class="text-left" width="<?= $w4 ?>"><?= verificarEmpty($data['fechaEntrega'], 3) ?></td>
+			<td class="text-left" width="<?= $w4 ?>"><?= date_change_format(verificarEmpty($data['fechaEntrega'], 3)) ?></td>
 		</tr>
 	</table>
 </div>

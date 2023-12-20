@@ -268,20 +268,32 @@ var View = {
 			let puntos = 0;
 			let cadenaAnalizar = $(this).val();
 			let control = $(this);
-			for (var i = 0; i < cadenaAnalizar.length; i++) {
-				var caracter = cadenaAnalizar.charAt(i);
-				if (caracter == '.') {
-					puntos++;
+
+			control.on("input", function () {
+				var text = $(this).val();
+				// Para eliminar los puntos a partir del 2do
+				var dotIndex = text.indexOf(".");
+				if (dotIndex !== -1) {
+					var secondDotIndex = text.indexOf(".", dotIndex + 1);
+					if (secondDotIndex !== -1) {
+						text = text.substring(0, secondDotIndex) + text.substring(secondDotIndex + 1);
+						// $(this).val(text);
+					}
 				}
-			}
+				// Para eliminar las comas
+				text = text.replace(/,/g, "");
+				// Para eliminar los espacion en blanco
+				text = text.replace(/\s/g, "");
+				$(this).val(text);
+			});
+
+
 			let nmax = Number(control.data('max'));
 			if (nmax > 0) {
 				if (control.val() > nmax) {
 					$(this).val(nmax).change();
 				}
 			}
-
-
 
 			if (Fn.validators['numeros']['expr'].test(control.val())) {
 				e.preventDefault();
@@ -294,7 +306,7 @@ var View = {
 					alert('No número');
 					t.val('0').change();
 				} else {
-					t.keyup();
+					t.val(parseFloat($(e.currentTarget).val())).keyup();
 				}
 			}, 0);
 		});
@@ -986,6 +998,25 @@ var View = {
 			});
 
 		});
+
+		$(document).on('click', '.fnBtn_AddFila', function () {
+			let _this = $(this);
+			let s = _this.data('divprincipal');
+			let n = _this.data('contenido');
+			let div = _this.closest(s);
+			let content = div.find(n + ':first').prop('outerHTML');
+			div.append(content);
+			Fn.loadSemanticFunctions();
+		})
+
+		$(document).on('click', '.fnBtn_DeleteFila', function () {
+			let _this = $(this);
+			let s = _this.data('divprincipal');
+			let n = _this.data('contenido');
+			let div = _this.closest(s);
+			if (div.find(n).length > 1)
+				div.find(n + ':last').remove();
+		})
 
 		$(document).on('change', '.flt_grupoCanal', function (e) {
 			var control = $(this);

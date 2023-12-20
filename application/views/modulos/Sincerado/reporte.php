@@ -21,8 +21,12 @@
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
 						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
-							<i class="fa fa-lg fa-history" title="Historial de Tarifario"></i>
+							<i class="fa fa-lg fa-check" title="Pendiente Aprobar"></i>
 						</button>
+						<button class="btn btn-outline-secondary border-0 btn-cargarGR">
+							<i class="fa fa-lg fa-list-ul" title="Cargar GR"></i>
+						</button>
+
 					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>

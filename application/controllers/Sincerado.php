@@ -40,7 +40,7 @@ class Sincerado extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$data = [];
 		$dataParaVista = [];
-		$data = $this->model->getSincerado()->result_array(); // ← ← ← Aqui ingresa el get con la data que va en la tabla
+		$data = $this->model->getSincerado()->result_array();
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($data)) {
 			foreach ($data as $value) {
@@ -97,6 +97,66 @@ class Sincerado extends MY_Controller
 		$html = empty($datos) ? getMensajeGestion('noRegistros') : $this->load->view("modulos/Sincerado/formularioListaParaSincerado", $dataParaVista, true);
 		$result['data']['html'] = $html;
 
+		echo json_encode($result);
+	}
+
+	public function formularioCargarGr()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+		$dataParaVista = [];
+		$dataParaVista['sincerado'] = $this->db->get_where('compras.sincerado', ['idSincerado' => $post['idSincerado']])->row_array();
+		$idMoneda = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $dataParaVista['sincerado']['idOrdenServicio']])->row_array()['idMoneda'];
+		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', ['idMoneda' => $idMoneda])->row_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Cargar GR';
+		$html = $this->load->view("modulos/Sincerado/formularioCargarGr", $dataParaVista, true);
+		$result['data']['html'] = $html;
+
+		echo json_encode($result);
+	}
+
+	public function guardarGrSincerado()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$post['descripcion'] = checkAndConvertToArray($post['descripcion']);
+		$post['fecha'] = checkAndConvertToArray($post['fecha']);
+		$post['porcentaje'] = checkAndConvertToArray($post['porcentaje']);
+		$post['monto'] = checkAndConvertToArray($post['monto']);
+		$post['porcentajeSincerado'] = checkAndConvertToArray($post['porcentajeSincerado']);
+		$post['presupuestoSincerado'] = checkAndConvertToArray($post['presupuestoSincerado']);
+		$post['diferenciaSincerado'] = checkAndConvertToArray($post['diferenciaSincerado']);
+
+		$insertData = [];
+		foreach ($post['descripcion'] as $k => $v) {
+			$insertData[] = [
+				'descripcion' => $v,
+				'fecha' => $post['fecha'][$k],
+				'porcentaje' => $post['porcentaje'][$k],
+				'monto' => $post['monto'][$k],
+				'porcentajeSincerado' => $post['porcentajeSincerado'][$k],
+				'presupuestoSincerado' => $post['presupuestoSincerado'][$k],
+				'diferenciaSincerado' => $post['diferenciaSincerado'][$k]
+			];
+		}
+		if (empty($insertData)) {
+			$result = mensajeList($result, 'NoData');
+			goto respuesta;
+		}
+		
+		$success = $this->db->insert_batch('compras.sinceradoGr', $insertData);
+		if (!$success) {
+			$result = mensajeList($result, 'registroErroneo');
+			goto respuesta;
+		}
+
+		$result = mensajeList($result, 'registroExitoso');
+		$this->db->trans_complete();
+
+		respuesta:
 		echo json_encode($result);
 	}
 

@@ -54,6 +54,23 @@ var Sincerado = {
 			});
 
 		});
+		$(document).on('click', '.btn-cargarGR', function () {
+			let _this = $(this);
+			let idSincerado = _this.closest('tr').data('id');
+			++modalId;
+			let jsonString = { 'idSincerado': idSincerado };
+			let config = { 'url': Sincerado.url + 'formularioCargarGr', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroGrSincerado", fn: "Sincerado.guardarGrSincerado(' + idSincerado + ')" ,content: "¿Esta seguro de guardar GR?" });';
+				btn[1] = { title: 'Guardar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+
+		});
 
 		$(document).on('click', '.btn-valoresFijosSincerado', function () {
 			$('.copyFijarMonto').each(function () {
@@ -102,7 +119,6 @@ var Sincerado = {
 	registrarSincerado: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroSincerado')) };
 		let config = { 'url': Sincerado.url + 'registrarSincerado', 'data': jsonString };
-		//console.log(config);
 		$.when(Fn.ajax(config)).then((b) => {
 			++modalId;
 			var btn = [];
@@ -115,6 +131,58 @@ var Sincerado = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
+	},
+	mostrarOpcionesDeGR: function (t) {
+		let _this = $(t);
+		let control = _this.closest('.divForm');
+		let tipo = control.find('.cbo_tipoFacturacion').dropdown('get value');
+
+		control.find('.1step').removeClass('active');
+		control.find('.2step').addClass('active');
+		control.find('.divTipoFacturacion').addClass('d-none');
+		control.find('.divCargaGr').removeClass('d-none');
+		if (tipo == 0) {
+			control.find('.opc_mult').addClass('d-none');
+			control.find('.opc_mult').find('input').removeAttr('patron')
+
+		} else {
+			control.closest('.modal-dialog').css("width", '85%'); // Para el ancho del modal
+			control.find('.opc_mult').removeClass('d-none');
+			control.find('.opc_mult').find('input').attr('patron', 'requerido')
+		}
+	},
+	guardarGrSincerado: function (idSincerado) {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroGrSincerado')) };
+		let url = Sincerado.url + "guardarGrSincerado";
+		let config = { url: url, data: jsonString };
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + '); $("#btn-filtrarSincerado").click();';
+			}
+
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	calcularMontoDeGR: function (t) {
+		let _this = $(t);
+		let control = _this.closest('.detBase');
+		let montoSincerado = parseFloat($('#montoSincerado').val());
+		let porcentaje = parseFloat(control.find('.cargaGr_por').val());
+		let porcentajeSincerado = parseFloat(control.find('.cargaGr_porSin').val());
+
+		let cargaGr_mon = montoSincerado * porcentaje / 100;
+		control.find('.cargaGr_mon').val(cargaGr_mon.toFixed(3));
+
+		let cargaGr_preSin = cargaGr_mon * porcentajeSincerado / 100;
+		control.find('.cargaGr_preSin').val(cargaGr_preSin.toFixed(3));
+
+		let cargaGr_dif = cargaGr_mon - cargaGr_preSin;
+		control.find('.cargaGr_dif').val(cargaGr_dif.toFixed(3));
 	}
 }
 Sincerado.load();

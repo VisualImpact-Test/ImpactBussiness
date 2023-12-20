@@ -191,7 +191,7 @@ var Fn = {
 				var btn = new Array();
 				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
 				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
-				var content = "<div class='alert alert-warning'>"+ config.content + "</strong></div>";
+				var content = "<div class='alert alert-warning'>" + config.content + "</strong></div>";
 				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
 			} else {
 				++modalId;
@@ -1547,11 +1547,11 @@ var Fn = {
 						day = '0' + day;
 					}
 					$(this).siblings('.date-semantic-value').val(year + '-' + month + '-' + day).trigger('change');
-					if ($(this).data('fechainicio'))$($(this).data('fechainicio')).calendar('set startDate', date);
+					if ($(this).data('fechainicio')) $($(this).data('fechainicio')).calendar('set startDate', date);
 					if ($(this).data('fechafinal')) $($(this).data('fechafinal')).calendar('set maxDate', date);
 				} else {
 					$(this).siblings('.date-semantic-value').val('').trigger('change');
-					if ($(this).data('fechainicio'))$($(this).data('fechainicio')).calendar('set startDate', new Date('2000-01-01'));
+					if ($(this).data('fechainicio')) $($(this).data('fechainicio')).calendar('set startDate', new Date('2000-01-01'));
 					if ($(this).data('fechafinal')) $($(this).data('fechafinal')).calendar('set maxDate', new Date('2100-12-31'));
 				}
 			}
