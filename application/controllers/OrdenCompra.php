@@ -316,7 +316,7 @@ class OrdenCompra extends MY_Controller
 				'idTipo' => $post['tipo'][$key],
 				'costoUnitario' => $post['costo'][$key],
 				'cantidad' => $post['cantidad'][$key],
-				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
+				'costoSubTotal' => $post['costo'][$key] * $post['cantidad'][$key],
 				'gap' => $post['gap'][$key],
 				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
@@ -432,7 +432,7 @@ class OrdenCompra extends MY_Controller
 				'idTipo' => $post['tipo'][$key],
 				'costoUnitario' => $post['costo'][$key],
 				'cantidad' => $post['cantidad'][$key],
-				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
+				'costoSubTotal' => $post['costo'][$key] * $post['cantidad'][$key],
 				'gap' => $post['gap'][$key],
 				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
