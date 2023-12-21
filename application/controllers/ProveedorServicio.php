@@ -62,7 +62,7 @@ class ProveedorServicio extends MY_Controller
 		$data2 = $this->model->obtenerDatosReporte1($where)->result_array();
 
 		$data = array_merge($data1, $data2);
-		$data = ordenarArrayPorColumna($data, 'fechaEmision', SORT_DESC);
+		$data = ordenarArrayPorColumna($data, 'seriado', SORT_DESC);
 
 		foreach ($data as $k => $v) {
 			// Inicio: Para número de Oper
