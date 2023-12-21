@@ -17,11 +17,14 @@
 		<tbody>
 			<? $ix = 1; ?>
 			<?php foreach ($sincerado as $key => $row) : ?>
-				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>">
+				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>" data-idsincerado="<?= $row['idSincerado'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
 						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
 							<i class="fa fa-lg fa-check" title="Pendiente Aprobar"></i>
+						</button>
+						<button class="btn btn-outline-secondary border-0 btn-descargarExcelGr">
+							<i class="fa fa-lg fa-file-excel" title=""></i>
 						</button>
 						<button class="btn btn-outline-secondary border-0 btn-cargarGR">
 							<i class="fa fa-lg fa-list-ul" title="Cargar GR"></i>

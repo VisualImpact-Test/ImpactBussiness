@@ -71,7 +71,13 @@ var Sincerado = {
 			});
 
 		});
-
+		$(document).on('click', '.btn-descargarExcelGr', function () {
+			_this = $(this);
+			let id = _this.closest('tr').data('idsincerado');
+			let data = { 'idSincerado': id };
+			var url = Sincerado.url + 'descargarExcelGr';
+			Fn.download(url, data);
+		});
 		$(document).on('click', '.btn-valoresFijosSincerado', function () {
 			$('.copyFijarMonto').each(function () {
 				let v = $(this).val();
