@@ -209,6 +209,7 @@
 													<input type="hidden" name="subItem_idUm" value="">
 													<input type="hidden" name="subItem_itemLog" value="">
 													<input type="hidden" name="subItem_talla" value="">
+													<input type="hidden" name="subItem_genero" value="">
 													<input type="hidden" name="subItem_tela" value="">
 													<input type="hidden" name="subItem_color" value="">
 													<input type="hidden" name="subItem_costo" value="">
@@ -251,6 +252,7 @@
 												<div class="d-none">
 													<input type="hidden" name="subItem_nombre" value="">
 													<input type="hidden" name="subItem_talla" value="">
+													<input type="hidden" name="subItem_genero" value="">
 													<input type="hidden" name="subItem_tela" value="">
 													<input type="hidden" name="subItem_color" value="">
 													<input type="hidden" name="subItem_monto" value="">
@@ -264,12 +266,23 @@
 													<input class="form-control" name="subItem_talla" patron="requerido" value="<?= $si_v['talla'] ?>">
 												</div>
 												<div class="form-group col-md-2">
+													<label class="font-weight-bold mb-0">Genero:</label>
+													<select class="form-control" name="subItem_genero">
+														<option class="item" value="" <?= empty($si_v['idGenero']) ? 'selected' : ''; ?>>SELECCIONE</option>
+														<option class="item" value="1" <?= $si_v['idGenero'] == '1' ? 'selected' : ''; ?>>VARON</option>
+														<option class="item" value="2" <?= $si_v['idGenero'] == '2' ? 'selected' : ''; ?>>DAMA</option>
+														<option class="item" value="3" <?= $si_v['idGenero'] == '3' ? 'selected' : ''; ?>>UNISEX</option>
+													</select>
+												</div>
+												<div class=" col-md-3" style="display: flex;">
+												<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 													<label class="font-weight-bold mb-0">Tela:</label>
 													<input class="form-control" name="subItem_tela" patron="requerido" value="<?= $si_v['tela'] ?>">
 												</div>
-												<div class="form-group col-md-2">
+												<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 													<label class="font-weight-bold mb-0">Color:</label>
 													<input class="form-control" name="subItem_color" patron="requerido" value="<?= $si_v['color'] ?>">
+												</div>
 												</div>
 												<div class="form-group col-md-2">
 													<label class="font-weight-bold mb-0">Cantidad:</label>
@@ -309,6 +322,7 @@
 													<input type="hidden" name="subItem_itemLog" value="">
 													<input type="hidden" name="subItem_nombre" value="">
 													<input type="hidden" name="subItem_talla" value="">
+													<input type="hidden" name="subItem_genero" value="">
 													<input type="hidden" name="subItem_tela" value="">
 													<input type="hidden" name="subItem_color" value="">
 													<input type="hidden" name="subItem_costo" value="">

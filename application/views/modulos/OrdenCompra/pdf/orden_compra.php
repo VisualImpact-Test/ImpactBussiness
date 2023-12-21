@@ -147,7 +147,7 @@
 									</td>
 								<?php endif; ?>
 								<td class="text-center"><?= $vm['talla']; ?></td>
-								<td class="text-center"><?= RESULT_GENERO[$vm['genero']]; ?></td>
+								<td class="text-center"><?= RESULT_GENERO[$vm['idGenero']]; ?></td>
 								<td class="text-center"><?= $vm['cantidad']; ?></td>
 							</tr>
 						<?php endforeach; ?>
