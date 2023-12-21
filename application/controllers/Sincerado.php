@@ -99,7 +99,6 @@ class Sincerado extends MY_Controller
 
 		echo json_encode($result);
 	}
-
 	public function formularioCargarGr()
 	{
 		$result = $this->result;
@@ -146,7 +145,7 @@ class Sincerado extends MY_Controller
 			$result = mensajeList($result, 'NoData');
 			goto respuesta;
 		}
-		
+
 		$success = $this->db->insert_batch('compras.sinceradoGr', $insertData);
 		if (!$success) {
 			$result = mensajeList($result, 'registroErroneo');
@@ -280,47 +279,6 @@ class Sincerado extends MY_Controller
 		$result['data']['tipoPresupuestoDetalle'] = $dataParaVista['tipoPresupuestoDetalle'];
 		$result['data']['cargo'] = $dataParaVista['cargoDelPre'];
 
-		echo json_encode($result);
-	}
-	// TODO → Borrar al terminar
-	public function registrarSincerado_borrar()
-	{
-		$this->db->trans_start();
-		$result = $this->result;
-		$post = json_decode($this->input->post('data'), true);
-
-		$insertSincerado = [
-			'nombre' => $post['titulo'],
-			'fechaDeadline' => $post['deadline'],
-			'fechaRequerida' => $post['fechaRequerida'],
-			'diasValidez' => $post['validez'],
-			'idSolicitante' => $post['solicitante'],
-			'idCuenta' => $post['cuentaForm'],
-			'idCentroCosto' => $post['cuentaCentroCostoForm'],
-			'idPrioridad' => $post['prioridadForm'],
-			'motivo' => $post['motivoForm'],
-			'idTipoServicioCotizacion' => $post['tipoServicio'],
-			'comentario' => $post['comentarioForm']
-		];
-		$this->db->insert('compras.cotizacionGeneral', $insertSincerado);
-		$idSincerado = $this->db->insert_id();
-		$insertDetalle = [];
-		foreach ($post['items'] as $key => $value) {
-			$insertDetalleSincerado[] = [
-				'idCotizacionGeneral' => $idSincerado,
-				'descripcionTipoPresupuestoDetalle' => $value,
-				'monto' => $post['monto'][$key]
-			];
-		}
-
-		$this->db->insert_batch('compras.cotizacionGeneralDetalle', $insertDetalleSincerado);
-
-		$result['result'] = 1;
-		$result['msg']['title'] = 'Hecho!';
-		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-
-		$this->db->trans_complete();
-		respuesta:
 		echo json_encode($result);
 	}
 
