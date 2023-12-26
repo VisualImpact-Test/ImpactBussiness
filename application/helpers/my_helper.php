@@ -1546,7 +1546,7 @@ function verificarEmpty($string, $tipo = 1, $txtAntes = '', $txtDespues = '')
 	if ($tipo == 4) {
 		$resultado = NULL;
 	}
-	if (!empty($string)) {
+	if (!empty($string) && $string != ' - ') {
 		$resultado = $txtAntes . $string . $txtDespues;
 	}
 	return $resultado;

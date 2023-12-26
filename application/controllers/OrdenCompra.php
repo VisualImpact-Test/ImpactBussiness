@@ -118,7 +118,7 @@ class OrdenCompra extends MY_Controller
 			$dataParaVista['ocSubItem'][$value['idOperDetalle']] = $this->model->obtenerInformacionOperSinCotSubItem(['idOperDetalle' => $value['idOperDetalle']])->result_array();
 		}
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Editar OC';
+		$result['msg']['title'] = 'Generar OC desde Oper libre';
 		//$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/Oper/formularioOperSinCotizar", $dataParaVista, true);
 
@@ -249,6 +249,7 @@ class OrdenCompra extends MY_Controller
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
+		$post['precio_real'] = checkAndConvertToArray($post['precio_real']);
 
 		if (isset($post['subItem_monto'])) {
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
@@ -315,7 +316,7 @@ class OrdenCompra extends MY_Controller
 				'idTipo' => $post['tipo'][$key],
 				'costoUnitario' => $post['costo'][$key],
 				'cantidad' => $post['cantidad'][$key],
-				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
+				'costoSubTotal' => $post['costo'][$key] * $post['cantidad'][$key],
 				'gap' => $post['gap'][$key],
 				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
@@ -365,6 +366,8 @@ class OrdenCompra extends MY_Controller
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
+		$post['precio_real'] = checkAndConvertToArray($post['precio_real']);
+
 		if (isset($post['subItem_monto'])) {
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
 			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
@@ -372,6 +375,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
 			$post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
 			$post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
+			$post['subItem_genero'] = checkAndConvertToArray($post['subItem_genero']);
 			$post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
 			$post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
 			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
@@ -429,7 +433,7 @@ class OrdenCompra extends MY_Controller
 				'idTipo' => $post['tipo'][$key],
 				'costoUnitario' => $post['costo'][$key],
 				'cantidad' => $post['cantidad'][$key],
-				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
+				'costoSubTotal' => $post['costo'][$key] * $post['cantidad'][$key],
 				'gap' => $post['gap'][$key],
 				'costoSubTotalGap' => $post['precio_real'][$key]
 			];
@@ -444,6 +448,7 @@ class OrdenCompra extends MY_Controller
 					'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
 					'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
 					'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
+					'idGenero' => $post['subItem_genero'][$orden] == '' ? NULL : $post['subItem_genero'][$orden],
 					'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
 					'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
 					'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],
@@ -513,9 +518,9 @@ class OrdenCompra extends MY_Controller
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
-		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6)."-"
-			.$dataParaVista['detalle'][0]['concepto'];
-			
+		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6) . "-"
+			. $dataParaVista['detalle'][0]['concepto'];
+
 		$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 };

@@ -20,22 +20,22 @@ class M_ProveedorServicio extends MY_Model
 		$this->db
 			->distinct()
 			->select("
-        CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
-        ocd.idOrdenCompra,
-		o.seriado,
-        CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
-        c.nombre, 
-        c.motivo, 
-        c.total,
-		c.idCotizacion,
-        cc.nombre AS cuentaCentroCosto,
-        c.motivoAprobacion,
-        pr.razonSocial AS proveedor,
-        cu.nombre AS cuenta, 
-        pr.idProveedor,
-        c.codOrdenCompra, 
-        0 AS flagOcLibre,
-		o.estadoval")
+				CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
+				ocd.idOrdenCompra,
+				o.seriado,
+				CONVERT(VARCHAR, c.fechaEmision, 103) AS fechaEmision,
+				c.nombre, 
+				c.motivo, 
+				c.total,
+				c.idCotizacion,
+				cc.nombre AS cuentaCentroCosto,
+				c.motivoAprobacion,
+				pr.razonSocial AS proveedor,
+				cu.nombre AS cuenta, 
+				pr.idProveedor,
+				c.codOrdenCompra, 
+				0 AS flagOcLibre,
+				o.estadoval")
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
@@ -45,22 +45,21 @@ class M_ProveedorServicio extends MY_Model
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
 			->where('ocd.estado', '1')
 			->group_by("
-        ocd.idOrdenCompra,
-		o.seriado,
-        CONVERT(VARCHAR, c.fechaEmision, 103),
-        c.nombre, 
-        c.motivo, 
-        c.total,
-		c.idCotizacion,
-        cc.nombre,
-        c.motivoAprobacion,
-        pr.razonSocial,
-        cu.nombre, 
-        pr.idProveedor,
-        c.codOrdenCompra,
-		o.estadoval")
+				ocd.idOrdenCompra,
+				o.seriado,
+				CONVERT(VARCHAR, c.fechaEmision, 103),
+				c.nombre, 
+				c.motivo, 
+				c.total,
+				c.idCotizacion,
+				cc.nombre,
+				c.motivoAprobacion,
+				pr.razonSocial,
+				cu.nombre, 
+				pr.idProveedor,
+				c.codOrdenCompra,
+				o.estadoval")
 			->order_by('ocd.idOrdenCompra DESC');
-
 
 		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
@@ -70,7 +69,6 @@ class M_ProveedorServicio extends MY_Model
 		if (isset($data['idCuenta'])) $this->db->where('c.idCuenta', $data['idCuenta']);
 		if (isset($data['idCentroCosto'])) $this->db->where('c.idCentroCosto', $data['idCentroCosto']);
 		if (isset($data['codPo_'])) $this->db->like('c.codOrdenCompra', $data['codPo_']);
-
 
 		return $this->db->get();
 	}
@@ -80,22 +78,22 @@ class M_ProveedorServicio extends MY_Model
 		$this->db
 			->distinct()
 			->select("
-        CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
-        cp.idOrdenCompra,
-		cd.seriado,
-        CONVERT(VARCHAR, cd.fechaReg, 103) AS fechaEmision,
-        (NULL) AS nombre,
-        (NULL) AS motivo,
-        cd.total,
-        (NULL) AS idCotizacion,
-        cc.nombre AS cuentaCentroCosto,
-        (NULL) AS motivoAprobacion,
-        pr.razonSocial AS proveedor,
-        cu.nombre AS cuenta,
-        cd.idProveedor,
-        cd.requerimiento AS codOrdenCompra,
-        1 AS flagOcLibre,
-		cd.estadoval")
+				CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
+				cp.idOrdenCompra,
+				cd.seriado,
+				CONVERT(VARCHAR, cd.fechaReg, 103) AS fechaEmision,
+				(NULL) AS nombre,
+				(NULL) AS motivo,
+				cd.total,
+				(NULL) AS idCotizacion,
+				cc.nombre AS cuentaCentroCosto,
+				(NULL) AS motivoAprobacion,
+				pr.razonSocial AS proveedor,
+				cu.nombre AS cuenta,
+				cd.idProveedor,
+				cd.requerimiento AS codOrdenCompra,
+				1 AS flagOcLibre,
+				cd.estadoval")
 			->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
@@ -103,18 +101,17 @@ class M_ProveedorServicio extends MY_Model
 			->join('visualImpact.logistica.cuenta cu', 'cd.idCuenta = cu.idCuenta', 'INNER')
 			->where('cd.estado', '1')
 			->group_by("
-			cd.seriado,
-        CONVERT(VARCHAR, cd.fechaReg, 103),
-        cd.total,
-        cc.nombre,
-        cu.nombre,
-        cd.idProveedor,
-        pr.razonSocial,
-        cd.requerimiento,
-        cp.idOrdenCompra,
-		cd.estadoval")
+				cd.seriado,
+				CONVERT(VARCHAR, cd.fechaReg, 103),
+				cd.total,
+				cc.nombre,
+				cu.nombre,
+				cd.idProveedor,
+				pr.razonSocial,
+				cd.requerimiento,
+				cp.idOrdenCompra,
+				cd.estadoval")
 			->order_by('cp.idOrdenCompra', 'DESC');
-
 
 		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
@@ -124,7 +121,6 @@ class M_ProveedorServicio extends MY_Model
 		if (isset($data['idCuenta'])) $this->db->where('c.idCuenta', $data['idCuenta']);
 		if (isset($data['idCentroCosto'])) $this->db->where('c.idCentroCosto', $data['idCentroCosto']);
 		if (isset($data['codPo_'])) $this->db->like('c.codOrdenCompra', $data['codPo_']);
-
 
 		return $this->db->get();
 	}

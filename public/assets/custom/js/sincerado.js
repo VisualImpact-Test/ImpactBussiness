@@ -71,14 +71,35 @@ var Sincerado = {
 			});
 
 		});
-
+		$(document).on('click', '.btn-descargarExcelGr', function () {
+			_this = $(this);
+			let id = _this.closest('tr').data('idsincerado');
+			let data = { 'idSincerado': id };
+			var url = Sincerado.url + 'descargarExcelGr';
+			Fn.download(url, data);
+		});
 		$(document).on('click', '.btn-valoresFijosSincerado', function () {
 			$('.copyFijarMonto').each(function () {
 				let v = $(this).val();
 				let tr = $(this).closest('tr');
 				tr.find('.pasteFijarMonto').val(v);
 			});
-		})
+		});
+
+		$(document).on('click', '#btn-descargarExcelSincerado', function () {
+			_this = $(this);
+			let idSincerado = _this.closest('tr').data('id');
+			let ruta = _this.data('ruta');
+			let data = { 'data': idSincerado};
+			var url = Sincerado.url + ruta;
+			
+			// console.log(idSincerado);
+			// console.log(data);
+			// console.log(url);
+			$.when(Fn.download(url, data)).then(function (a) {
+				Fn.showLoading(false);
+			});
+		});
 
 	},
 	buscarFechaSincerado: function (idPresupuestoValido) {

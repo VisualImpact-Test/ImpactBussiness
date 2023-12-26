@@ -64,4 +64,217 @@ class M_Sincerado extends MY_Model
 		$query = $this->db->get();
 		return $query;
 	}
+
+
+	public function obtenerDatosSincerado($id)
+	{
+		$this->db
+			->select('
+			s.idSincerado,
+			s.idPresupuesto,
+			s.idPresupuestoHistorico,
+			s.idOrdenServicio,
+			s.fecha_seleccionada,
+			s.estado,
+			os.nombre,
+			os.idCuenta,
+			os.idCentroCosto,
+			os.chkUtilizarCliente,
+			c.razonSocial as cuenta,
+			cc.subcanal AS centroCosto,
+			mon.nombreMoneda as moneda')
+			->from('compras.sincerado s')
+			->join('compras.ordenServicio os', 'os.idOrdenServicio = s.idOrdenServicio')
+			->join('compras.presupuestoHistorico p', 'p.idPresupuesto = s.idPresupuesto AND p.idPresupuestoHistorico = s.idPresupuestoHistorico')
+			->join('rrhh.dbo.Empresa c', 'os.idCuenta = c.idEmpresa', 'LEFT')
+			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = os.idCentroCosto', 'LEFT')
+			->join('compras.cliente cl', 'cl.idCliente = os.idCliente', 'LEFT')
+			->join('compras.moneda mon', 'mon.idMoneda = os.idMoneda', 'LEFT')
+		// ->where('pc.idSincerado', $id);
+			->where('s.idSincerado', $id);
+
+		$this->db->where('s.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+	
+
+
+	
+	public function obtenerOrdenServicioFechas($id)
+	{
+		$this->db
+			->select('*')
+			->from('compras.ordenServicioFecha osf')
+			->join('compras.sincerado scr', 'scr.idOrdenServicio = osf.idOrdenServicio')
+			->where('scr.idSincerado', $id);
+
+		$this->db->where('osf.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+	public function obtenerSinceradoCargos($id)
+	{
+		$this->db
+			->select('*')
+			->from('compras.sinceradoCargo sc')
+			->join('compras.sincerado s', 's.fecha_seleccionada = sc.fecha and sc.idSincerado = s.idSincerado ')
+			->join('rrhh.dbo.cargoTrabajo c', 'c.idCargoTrabajo = sc.idCargo')
+			->where('s.idSincerado', $id);
+
+		$this->db->where('s.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+	public function obtenerPresupuestoHist($id)
+	{
+		$this->db
+			->select('idCargo , fecha ,  pc.cantidad as cantidadfecha')
+			->from('compras.presupuestoHistorico ph')
+			->join('compras.sincerado s', 'ph.idPresupuesto = s.idPresupuesto and ph.idPresupuestoHistorico = s.idPresupuestoHistorico')
+			->join('compras.presupuestoCargo pc', 'ph.idPresupuesto = pc.idPresupuesto and ph.idPresupuestoHistorico = pc.idPresupuestoHistorico')
+			->where('s.idSincerado', $id);
+
+		$this->db->where('s.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
+	public function obtenerFechaCargo($id)
+	{
+		$sql = "
+		WITH list_sincerado
+		AS(
+		select s.idPresupuesto, s.idPresupuestoHistorico, idCargo,fecha,cantidad 
+		from compras.sinceradoCargo sc
+		join compras.sincerado s on s.fecha_seleccionada = sc.fecha and sc.idSincerado = s.idSincerado
+		JOIN rrhh.dbo.cargoTrabajo c on c.idCargoTrabajo = sc.idCargo
+		
+		),
+		list_todo AS
+		(
+		select ph.idPresupuesto, ph.idPresupuestoHistorico, pc.idCargo, fecha, cantidad 
+		from compras.presupuestoHistorico ph
+		join compras.sincerado s on ph.idPresupuesto = s.idPresupuesto and ph.idPresupuestoHistorico = s.idPresupuestoHistorico 
+		join compras.presupuestoCargo pc on ph.idPresupuesto = pc.idPresupuesto and ph.idPresupuestoHistorico = pc.idPresupuestoHistorico
+		where s.idSincerado = $id
+		)
+		
+		select distinct lt.*, ls.idCargo as CargoSinc , ls.fecha as fechaSinc , ls.cantidad as cantidadSinc from list_todo lt
+		left join list_sincerado ls on lt.idPresupuesto =ls.idPresupuesto and lt.idPresupuestoHistorico =ls.idPresupuestoHistorico
+		AND lt.idCargo = ls.idCargo AND lt.fecha = ls.fecha
+		order by lt.fecha, lt.idCargo
+		";
+		return $this->db->query($sql);
+	}
+	
+	public function obtenerTipoPresupuesto($id)
+	{
+		$sql = "
+		select sd.* , ps.nombre  from compras.sincerado s
+		join compras.sinceradoDetalle sd on s.idSincerado =sd.idSincerado
+		join compras.tipoPresupuesto ps on ps.idTipoPresupuesto=sd.idTipoPresupuesto
+		where s.idSincerado = $id
+		and s.estado = 1
+		";
+		return $this->db->query($sql);
+	}
+	// public function obtenerDetalleSueldo($id)
+	// {
+	// 	$sql = "
+	// 		select ss.*, s.fecha_seleccionada 
+	// 		from compras.sinceradoDetalleSueldo_Det ss
+	// 		join compras.sinceradoDetalle sd ON sd.idSinceradoDetalle = ss.idSinceradoDetalle
+	// 		join compras.sincerado s ON s.idSincerado = sd.idSincerado
+	// 		where sd.idSincerado = $id
+	// 	";
+	// 	//echo $sql;
+	// 	return $this->db->query($sql);
+	// }
+
+
+	public function obtenerDetalleSueldo($id)
+	{
+		$sql = "
+		select ss.*, s.fecha_seleccionada 
+		from compras.sinceradoDetalleSueldo_Det ss
+		join compras.sinceradoDetalle sd ON sd.idSinceradoDetalle = ss.idSinceradoDetalle
+		join compras.sincerado s ON s.idSincerado = sd.idSincerado
+		join ( 
+		select distinct idPresupuesto, idPresupuestoHistorico 
+		from compras.sincerado 
+		where idSincerado=$id
+		)
+		 as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
+
+	public function obtenerCabeceraComunicacion($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 2
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
+	
+	public function obtenerCabeceraGastosAdmin($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 7
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
+
+
+	public function obtenerDetalleComunicacion($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 2
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+
+	public function obtenerDetalleGastoAdmin($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 7
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+ 
+ 
 }
