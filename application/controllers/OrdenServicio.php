@@ -289,7 +289,7 @@ class OrdenServicio extends MY_Controller
 					if (!isset($calculoCargoFechaServicio[$k1]['incentivo'][$kf])) $calculoCargoFechaServicio[$k1]['incentivo'][$kf] = 0;
 					$calculoCargoFechaServicio[$k1]['incentivo'][$kf] += ($incentivoTotalPorCargo[$k1][$k2] * (100 + $porcentajeTotalPorCargo[$k1][$k2]) / 100) * floatval($presupuestoCargoFecha[$k2][$kf]['cantidad']);
 					if ($pr['sctr'] > 0) {
-						$calculoCargoFechaServicio[$idPreDe_GastAdmi]['sctr'][$kf] += ($montoParaSCTR[$k2] * $pr['sctr'] / 100) * floatval($presupuestoCargoFecha[$k2][$kf]['cantidad']);
+						$calculoCargoFechaServicio[$idPreDe_GastAdmi]['sctr'][$kf] = $pr['sctr'];
 					}
 				}
 			}

@@ -82,7 +82,7 @@
 				<!-- Para SCTR -->
 				<?php if ($v_pd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] > 0) : ?>
 					<tr>
-						<td>SCTR ( <?= $presupuesto['sctr'] ?> % )</td>
+						<td>SCTR</td>
 						<?php foreach ($fechas as $kF => $vF) : ?>
 							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['sctr'][$kF]) ?></td>
 						<?php endforeach ?>
