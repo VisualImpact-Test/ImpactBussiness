@@ -809,6 +809,10 @@ class Sincerado extends MY_Controller
 		$datosDetalleMateOngo = $this->model->obtenerDetalleMateOngo($datosSincerado[0]['idSincerado'])->result_array();
 		$datosDetalleMovilidad = $this->model->obtenerDetalleMovilidad($datosSincerado[0]['idSincerado'])->result_array();
 		$datosDetalleAlmacen = $this->model->obtenerDetalleAlmacen($datosSincerado[0]['idSincerado'])->result_array();
+		$datosCaeceraUniforme = $this->model->obtenerCabeceraUniforme($datosSincerado[0]['idSincerado'])->result_array();
+		$datosDetalleUniforme = $this->model->obtenerDetalleUniforme($datosSincerado[0]['idSincerado'])->result_array();
+		$datosCaeceraMateOper = $this->model->obtenerCabeceraMateOper($datosSincerado[0]['idSincerado'])->result_array();
+		$datosDetalleMateOper = $this->model->obtenerDetalleMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		
 		//echo json_encode($datosDetalleMateProte); exit;
 
@@ -999,6 +1003,32 @@ class Sincerado extends MY_Controller
 						$celda = $col . $row;
 					}
 				}
+				if ($n['idTipoPresupuesto']== 3) {
+					foreach ($datosCaeceraUniforme as $ab => $cd) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $cd['nombre']);
+						foreach ($datosDetalleUniforme as $ef => $gh) {
+							if ($cd['idTipoPresupuestoDetalle'] == $gh['idTipoPresupuestoDetalle'] AND $gh['fecha_seleccionada'] == $v['fecha']) {
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $gh['montoOriginal']);
+							}
+						}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 4) {
+					foreach ($datosCaeceraMateOper as $xz => $yt) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $yt['nombre']);
+						foreach ($datosDetalleMateOper as $ji => $mn) {
+							if ($yt['idTipoPresupuestoDetalle'] == $mn['idTipoPresupuestoDetalle'] AND $mn['fecha_seleccionada'] == $v['fecha']) {
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $mn['montoOriginal']);
+							}
+						}
+						$row++;
+						$celda = $col . $row;
+					}			
+				}
 				if ($n['idTipoPresupuesto']== 5) {
 					foreach ($datosCaeceraMateProte as $q => $w) {
 						$cabecera = 'B' . $row;
@@ -1111,6 +1141,32 @@ class Sincerado extends MY_Controller
 						$row++;
 						$celda = $col . $row;
 					}
+				}
+				if ($n['idTipoPresupuesto']== 3) {
+					foreach ($datosCaeceraUniforme as $ab => $cd) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $cd['nombre']);
+						foreach ($datosDetalleUniforme as $ef => $gh) {
+							if ($cd['idTipoPresupuestoDetalle'] == $gh['idTipoPresupuestoDetalle'] AND $gh['fecha_seleccionada'] == $v['fecha']) {
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $gh['montoSincerado']);
+							}
+						}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 4) {
+					foreach ($datosCaeceraMateOper as $xz => $yt) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $yt['nombre']);
+						foreach ($datosDetalleMateOper as $ji => $mn) {
+							if ($yt['idTipoPresupuestoDetalle'] == $mn['idTipoPresupuestoDetalle'] AND $mn['fecha_seleccionada'] == $v['fecha']) {
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $mn['montoSincerado']);
+							}
+						}
+						$row++;
+						$celda = $col . $row;
+					}			
 				}
 				if ($n['idTipoPresupuesto']== 5) {
 					foreach ($datosCaeceraMateProte as $q => $w) {

@@ -262,6 +262,28 @@ class M_Sincerado extends MY_Model
 		//echo $sql;
 		return $this->db->query($sql);
 	}
+
+	public function obtenerCabeceraUniforme($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 3
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerCabeceraMateOper($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 4
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
 	
 	public function obtenerDetalleComunicacion($id)
 	{
@@ -358,6 +380,37 @@ class M_Sincerado extends MY_Model
 		return $this->db->query($sql);
 	}
 
+
+	public function obtenerDetalleUniforme($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 3	
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
  
+	public function obtenerDetalleMateOper($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 4
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
  
 }
