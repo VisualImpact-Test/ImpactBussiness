@@ -240,8 +240,29 @@ class M_Sincerado extends MY_Model
 		return $this->db->query($sql);
 	}
 	
+	public function obtenerCabeceraMateProte($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 5
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
 
-
+	public function obtenerCabeceraMateOngo($id)
+	{
+		$sql = "
+		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
+		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado=$id  and tpd.idTipoPresupuesto = 6
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
 	public function obtenerDetalleComunicacion($id)
 	{
 		$sql = "
@@ -270,6 +291,68 @@ class M_Sincerado extends MY_Model
 		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
 		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
 		where tpd.idTipoPresupuesto = 7
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerDetalleMateProte($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 5
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerDetalleMateOngo($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sincerado_Det ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 6
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerDetalleMovilidad($id)
+	{
+		$sql = "
+		select sdmd.*,
+		s.fecha_seleccionada 
+		from compras.sinceradoDetalleMovilidad_Det as sdmd
+		join compras.sinceradoDetalle as sdt on sdt.idSinceradoDetalle = sdmd.idSinceradoDetalle
+		join compras.sincerado s ON s.idSincerado = sdt.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerDetalleAlmacen($id)
+	{
+		$sql = "
+		select ss.*,
+		s.fecha_seleccionada 
+		from compras.sinceradoDetalle ss
+		join compras.sincerado s ON s.idSincerado = ss.idSincerado
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where ss.idTipoPresupuesto = 9		
 		";
 		//echo $sql;
 		return $this->db->query($sql);
