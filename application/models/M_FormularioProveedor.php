@@ -409,7 +409,7 @@ class M_FormularioProveedor extends MY_Model
 	->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
 	->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')
 	->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
-	->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'INNER')
+	->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'LEFT')
 	->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
 	->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
 	->where('ocd.estado', '1')
