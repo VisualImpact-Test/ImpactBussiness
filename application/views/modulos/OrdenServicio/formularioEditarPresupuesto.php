@@ -970,9 +970,9 @@ endforeach;  ?>
 													</div>
 												</td>
 												<td colspan="2">
-													<div class="ui right labeled input fluid">
+													<div class="ui right input fluid">
 														<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="<?= $presupuesto['sctr'] ?>" onchange="OrdenServicio.calcularTablaSueldo()">
-														<div class="ui basic label">%</div>
+														<!-- <div class="ui basic label">%</div> -->
 													</div>
 												</td>
 												<td colspan="4"></td>
