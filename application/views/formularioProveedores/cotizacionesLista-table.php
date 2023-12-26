@@ -31,12 +31,10 @@
 									<i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
 								</a>
 							<?php endif; ?>
-							<?php if (!empty($row['ocGen'])) :  ?>
-								<?php foreach ($row['ocGen'] as $koc => $voc) : ?>
-									<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $voc['idOrdenCompra'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
+							<?php if (!empty($row['ocGen']) && !empty($row['flagOcLibre']) == 0) :  ?>
+									<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $row['idOrdenCompra'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
 										<i class="icon file alternate outline" title="Validar OC"></i>
 									</a>
-								<?php endforeach; ?>
 							<?php endif; ?>
 						</td>
 						<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>

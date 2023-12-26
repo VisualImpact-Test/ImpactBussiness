@@ -652,8 +652,8 @@ class FormularioProveedor extends MY_Controller
 			$data[$k]['solicitarFecha'] = '1';
 			$data[$k]['flagFechaRegistro'] = '0';
 			$data[$k]['flagSustentoServicio'] = '0';
-			//var_dump(json_encode($v));
-			//exit;
+			$flagOcLibre = base64_encode($v['flagOcLibre']);
+
 			if (!empty($v['idOrdenCompra'])) {
 				$data[$k]['status'] = 'Aprobado';
 				// Se consulta los tipos de Item, considerando que solo se requiere Validación de Arte para SERVICIO (Mantenimiento), Textiles e Impresiones.
@@ -684,7 +684,7 @@ class FormularioProveedor extends MY_Controller
 				}
 
 				// Se compara el Total de Artes Cargados con el Total de Artes Aprobados.
-				$w = ['idProveedor' => $v['idProveedor'], 'idOrdenCompra' => $v['idOrdenCompra'], 'estado' => 1];
+				$w = ['idProveedor' => $v['idProveedor'], 'idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1];
 				$artesCargados = $this->db->get_where('sustento.validacionArte', $w)->result_array();
 				$w['flagRevisado'] = 1;
 				$w['flagAprobado'] = 1;
@@ -698,7 +698,18 @@ class FormularioProveedor extends MY_Controller
 
 				// Si se solicita fecha, validar si la información fue cargada o no.
 				if ($data[$k]['solicitarFecha'] == '1') {
-					$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', ['idOrdenCompra' => $v['idOrdenCompra'], 'estado' => '1'])->result_array();
+					$fechaE = [
+						'idOrdenCompra' => $v['idOrdenCompra'],
+						'idProveedor' => $v['idProveedor'],
+						'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+					];
+
+					if ($v['flagOcLibre'] == 0) {
+						$fechaE['idCotizacion'] = $v['idCotizacion'];
+					}
+
+					$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
+
 					if (!empty($fechaEjecCargado)) {
 						$data[$k]['flagFechaRegistro'] = '1';
 						$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -707,7 +718,17 @@ class FormularioProveedor extends MY_Controller
 				}
 			} else {
 				$data[$k]['status'] = 'Aprobado';
-				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', ['idOrdenCompra' => $v['idOrdenCompra'], 'estado' => '1'])->result_array();
+				$fechaE = [
+					'idOrdenCompra' => $v['idOrdenCompra'],
+					'idProveedor' => $v['idProveedor'],
+					'flagOcLibre' => $v['flagOcLibre'], 'estado' => '1'
+				];
+
+				if ($v['flagOcLibre'] == 0) {
+					$fechaE['idCotizacion'] = $v['idCotizacion'];
+				}
+				
+				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
 				if (!empty($fechaEjecCargado)) {
 					$data[$k]['flagFechaRegistro'] = '1';
 					$data[$k]['fechaInicio'] = $fechaEjecCargado[0]['fechaInicial'];
@@ -717,7 +738,12 @@ class FormularioProveedor extends MY_Controller
 
 			$data[$k]['ocGen'] = $v['seriado'];
 
-			$sustComp = $this->db->get_where('sustento.sustentoAdjunto', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagoclibre' => $v['flagOcLibre'], 'estado' => '1'])->result_array();
+			$sustComp = $this->db->get_where('sustento.sustentoAdjunto', [
+				'idOrdenCompra' => $v['idOrdenCompra'],
+				'idProveedor' => $v['idProveedor'],
+				'flagoclibre' => $v['flagOcLibre'],
+				'estado' => '1'
+			])->result_array();
 			$data[$k]['sustentoComp'] = $sustComp;
 
 			if (!empty($sustComp)) {
@@ -730,8 +756,9 @@ class FormularioProveedor extends MY_Controller
 			}
 
 			$va4 = $this->db->where('estado', '1')
-				->where('idOrdenCompra', $v['idOrdenCompra'])
-				->where('flagoclibre', $v['flagOcLibre'])
+			->where('idOrdenCompra', $v['idOrdenCompra'])
+			->where('idProveedor', $v['idProveedor'])
+			->where('flagoclibre', $v['flagOcLibre'])
 				->get('sustento.comprobante')->result_array();
 			foreach ($va4 as $v4) {
 				$data[$k]['sustentoC'][$v4['idOrdenCompra']][$v4['idProveedor']] = $v4;
@@ -740,10 +767,10 @@ class FormularioProveedor extends MY_Controller
 			$accesoEmail = !empty($proveedor['correoContacto']) ? base64_encode($proveedor['correoContacto']) : '';
 			$fechaActual = base64_encode(date('Y-m-d'));
 			$accesoCodProveedor = !empty($proveedor['idProveedor']) ? base64_encode($proveedor['idProveedor']) : '';
-			$data[$k]['link'] = "?doc={$accesoDocumento}&email={$accesoEmail}&date={$fechaActual}&cod={$accesoCodProveedor}";
+			$data[$k]['link'] = "?doc={$accesoDocumento}&email={$accesoEmail}
+			&date={$fechaActual}&cod={$accesoCodProveedor}&flagOcLibre={$flagOcLibre}";
+			$dataParaVista = $data;
 		}
-
-		$dataParaVista = $data;
 
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
@@ -2267,7 +2294,7 @@ class FormularioProveedor extends MY_Controller
 			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
-
+		
 		$config['css']['style'] = array(
 			'assets/custom/css/floating-action-button'
 		);
@@ -2282,7 +2309,9 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['idOrdenCompra'] = $idOrdenCompra;
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
-		$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
+		if($get['flagOcLibre'] == 0) {
+			$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
+		}
 		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		$config['data']['detalle'] = $ordenCompraProveedor;
 

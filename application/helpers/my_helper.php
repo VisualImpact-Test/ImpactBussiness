@@ -58,6 +58,29 @@ function date_change_format($fecha)
 	return $fecha->format('d/m/Y');
 }
 
+function mensajeList($data, $tipo)
+{
+	$result = $data;
+
+	if ($tipo == 'NoData') {
+		$result['result'] = 0;
+		$result['msg']['title'] = 'No Data!';
+		$result['msg']['content'] = getMensajeGestion('noData');
+	}
+	if ($tipo == 'registroErroneo') {
+		$result['result'] = 0;
+		$result['msg']['title'] = 'Error!';
+		$result['msg']['content'] = getMensajeGestion('registroErroneo');
+	}
+	if ($tipo == 'registroExitoso') {
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+	}
+
+	return $result;
+}
+
 function date_change_format_bd($fecha)
 {
 	if (strpos($fecha, "Mes") !== false) return $fecha;
@@ -181,6 +204,11 @@ function monedaNew($params = [])
 	}
 }
 
+function numeroVista($numero)
+{
+	$formateado = number_format($numero, 2, ".", " ");
+	return $formateado;
+}
 function getFechaDias($fecha, $dias = 0)
 {
 	$pos = strpos($fecha, '/');
@@ -834,7 +862,8 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		'actualizacionExitosa' => createMessage(array("type" => 1, "message" => 'La actualización se realizó correctamente')),
 		'actualizacionErronea' => createMessage(array("type" => 2, "message" => 'Hubo un error en la actualización, intentélo nuevamente después de verificar que todos los campos se hayan llenado correctamente')),
 		'registroExitoso' => createMessage(array("type" => 1, "message" => 'El registro se realizó correctamente')),
-		'registroErroneo' => createMessage(array("type" => 2, "message" => 'Hubo un error en el registro, intentélo nuevamente después de verificar que todos los campos se hayan llenado correctamente')),
+		'registroErroneo' => createMessage(array("type" => 2, "message" => 'Hubo un error en el registro, intentélo nuevamente después de verificar que todos los campos se hayan llenado correctamente. Si el error persiste, comunicarse con team.sistema@visualimpact.com.pe')),
+		'noData' => createMessage(array("type" => 2, "message" => 'No se detecto información para guardar.')),
 		'cambioEstadoExitoso' => createMessage(array("type" => 1, "message" => 'El cambio de estado se realizó correctamente')),
 		'cambioEstadoErroneo' => createMessage(array("type" => 2, "message" => 'Hubo un error en el cambio de estado, inténtelo nuevamente')),
 		'guardadoMasivoExitoso' => createMessage(array("type" => 1, "message" => 'Los datos se guardaron correctamente')),
@@ -1517,7 +1546,7 @@ function verificarEmpty($string, $tipo = 1, $txtAntes = '', $txtDespues = '')
 	if ($tipo == 4) {
 		$resultado = NULL;
 	}
-	if (!empty($string)) {
+	if (!empty($string) && $string != ' - ') {
 		$resultado = $txtAntes . $string . $txtDespues;
 	}
 	return $resultado;

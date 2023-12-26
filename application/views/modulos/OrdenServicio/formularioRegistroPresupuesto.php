@@ -768,9 +768,11 @@ endforeach;  ?>
 														</div>
 													</td>
 													<td colspan="2">
-														<div class="ui right labeled input fluid">
-															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="0" onchange="OrdenServicio.calcularTablaSueldo()">
-															<div class="ui basic label">%</div>
+														<div class="ui right input fluid">
+															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" 
+															type="text" id="txtVSctr" value="0" 
+															onchange="OrdenServicio.calcularTablaSueldo()">
+															<!--<div class="ui basic label">S/.</div>-->
 														</div>
 													</td>
 													<td colspan="4"></td>

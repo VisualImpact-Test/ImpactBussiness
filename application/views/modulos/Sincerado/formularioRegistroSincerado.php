@@ -1,13 +1,5 @@
 <?php $dataRow = 0; ?>
 <form class="form" role="form" id="formRegistroSincerado" method="post" autoComplete="off">
-	<div class="row">
-		<div class="col-md-10 child-divcenter">
-			<div class="control-group child-divcenter row" style="width:85%">
-				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
-				<textarea class="form-control col-md-4" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
-			</div>
-		</div>
-	</div>
 	<input type="hidden" id="idCuenta" value="<?= $idCuenta; ?>">
 	<div class="row pt-4">
 		<?php $cantidadCargo = 0; ?>
@@ -78,10 +70,25 @@
 						<table class="ui table no-paddingR" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
 							<thead>
 								<tr>
-									<th class="two wide"><?= $vd['tipoPresupuesto']; ?></th>
+									<th class="two wide" rowspan="2"><?= $vd['tipoPresupuesto']; ?></th>
 									<th class="one wide text-right">MONTO PRESUPUESTO
-										<input class="pasteFijarMonto d-none" name="sinc_montoOriginal" value="">
 										<input class="d-none" name="sinc_idTipoPresupuesto" value="<?= $vd['idTipoPresupuesto'] ?>">
+									</th>
+									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
+										<?php $visible = '' ?>
+										<?php if ($vf['fecha'] != $fechaSincerado) : ?>
+											<?php $visible = 'd-none' ?>
+										<?php endif; ?>
+										<th class="one wide pr-0 <?= $visible ?> text-right">
+											MONTO SINCERADO
+										</th>
+									<?php endforeach; ?>
+								</tr>
+								<tr>
+									<th class="one wide pr-0">
+										<div class="ui input transparent fluid pr-0">
+											<input class="text-right pasteFijarMonto" name="sinc_montoOriginal" value="">
+										</div>
 									</th>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 										<?php $visible = '' ?>
@@ -90,9 +97,7 @@
 										<?php endif; ?>
 										<th class="one wide pr-0 <?= $visible ?>">
 											<div class="ui input transparent fluid pr-5">
-												<!-- Ocultado para el sincerado -->
 												<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" type="text" value=" - " <?php if (empty($visible)) : ?> name="sinc_montoSincerado" <?php endif; ?> readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
-												<!-- Fin -->
 											</div>
 										</th>
 									<?php endforeach; ?>
@@ -466,7 +471,6 @@
 																<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - floatval($v1[$vp['idCargo']]['monto']) ?>">
 															<?php endif; ?>
 														</td>
-
 													<?php endforeach; ?>
 												</tr>
 												<?php $dataRow++; ?>
@@ -1112,6 +1116,14 @@
 	</div>
 	<div class="row py-4">
 		<div id="divSueldo" class="control-group child-divcenter col-md-12" style="width:100%"></div>
+	</div>
+	<div class="row">
+		<div class="col-md-10 child-divcenter">
+			<div class="control-group child-divcenter row" style="width:85%">
+				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
+				<textarea class="form-control col-md-10" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
+			</div>
+		</div>
 	</div>
 </form>
 <script>
