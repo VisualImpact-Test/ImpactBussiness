@@ -616,4 +616,293 @@ class Sincerado extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
+	public function descargarExcel()
+	{
+		$post = json_decode($this->input->post('data'), true);
+		
+		
+		$datosSincerado = $this->model->obtenerDatosSincerado($post)->result_array();
+		$datosFechas = $this->model->obtenerOrdenServicioFechas($datosSincerado[0]['idSincerado'])->result_array();
+		$datosSinceradoCargo = $this->model->obtenerSinceradoCargos($datosSincerado[0]['idSincerado'])->result_array();
+		$datosPreHist = $this->model->obtenerPresupuestoHist($datosSincerado[0]['idSincerado'])->result_array();
+		$datosfechaCargo = $this->model->obtenerFechaCargo($datosSincerado[0]['idSincerado'])->result_array();
+		$datosTipoPresupuesto = $this->model->obtenerTipoPresupuesto($datosSincerado[0]['idSincerado'])->result_array();
+		$datosDetalleSueldo = $this->model->obtenerDetalleSueldo($datosSincerado[0]['idSincerado'])->result_array();
+		$datosCaeceraComunicacion = $this->model->obtenerCabeceraComunicacion($datosSincerado[0]['idSincerado'])->result_array();
+		$datosDetalleComunicacion = $this->model->obtenerDetalleComunicacion($datosSincerado[0]['idSincerado'])->result_array();
+		$datosCaeceraGastosAdmin = $this->model->obtenerCabeceraGastosAdmin($datosSincerado[0]['idSincerado'])->result_array();
+		$datosDetalleGastosAdmin = $this->model->obtenerDetalleGastoAdmin($datosSincerado[0]['idSincerado'])->result_array();
+	
+		//echo json_encode($datosDetalleGastosAdmin); exit;
+
+		$data = [];
+
+		error_reporting(E_ALL);
+		ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		// ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		/** Include PHPExcel */
+		require_once '../phpExcel/Classes/PHPExcel.php';
+
+		$objPHPExcel = new PHPExcel();
+
+		/**ESTILOS**/
+		$estilo_cabecera =
+			array(
+				'alignment' => array(
+					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => 'E60000')
+				),
+				'font'  => array(
+					'color' => array('rgb' => 'ffffff'),
+					'size'  => 11,
+					'name'  => 'Calibri'
+				)
+			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 13,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_subtitulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'size' => 11,
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['left'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['center'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		$estilo_data['right'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font'  => [
+				'name'  => 'Calibri'
+			]
+		];
+		/**FIN ESTILOS**/
+
+		$objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(40);
+		$objPHPExcel->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('B1', 'FORMATO DE PPTO')
+			->setCellValue('B2', 'Costos sin IGV');
+
+
+		$gdImage = imagecreatefromjpeg(APPPATH . '../public/assets/images/visualimpact/logo_full.jpg');
+		$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+		$objDrawing->setName('Sample image');
+		$objDrawing->setDescription('TEST');
+		$objDrawing->setImageResource($gdImage);
+		$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+		$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+		$objDrawing->setHeight(50);
+		$objDrawing->setCoordinates('C1');
+		$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+
+		$col = "C";
+		// columna de fechas
+		foreach ($datosFechas as $k => $v) {
+		  $row = "4";
+		  $celda = $col . $row;
+		  $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $v['fecha']);
+		  $objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+		  
+		  $row++;
+		  $celda = $col . $row;
+		    foreach ($datosSinceradoCargo as $j => $i) {
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
+				foreach ($datosfechaCargo as $d => $f) {
+					if ($v['fecha'] == $f['fecha'] AND $i['idCargo'] ==  $f['idCargo']) {
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $f['cantidad']);
+					}
+				}
+				$row++;
+				$celda = $col . $row;
+			}
+			$row++;
+			
+			foreach ($datosTipoPresupuesto as $m => $n) {
+				if ($n['montoOriginal']!= 0) {
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $n['nombre']);
+				$row++;
+				$cabecera = 'B' . $row;
+				$celda = $col . $row;
+				if ($n['idTipoPresupuesto']== 1) {
+					foreach ($datosSinceradoCargo as $j => $i) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
+						foreach ($datosDetalleSueldo as $e => $r) {
+						 	if ($i['idCargo'] == $r['idCargo'] AND $r['fecha_seleccionada'] == $v['fecha']) {
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $r['montoOriginal']);
+						 	}
+						}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 2) {
+					foreach ($datosCaeceraComunicacion as $t => $y) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $y['nombre']);
+							foreach ($datosDetalleComunicacion as $z => $x) {
+								if ($y['idTipoPresupuestoDetalle'] == $x['idTipoPresupuestoDetalle'] AND $x['fecha_seleccionada'] == $v['fecha']) {
+									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $x['montoOriginal']);
+								}
+							}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 7) {
+					foreach ($datosCaeceraGastosAdmin as $g => $h) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $h['nombre']);
+							foreach ($datosDetalleGastosAdmin as $u => $o) {
+								if ($h['idTipoPresupuestoDetalle'] == $o['idTipoPresupuestoDetalle'] AND $o['fecha_seleccionada'] == $v['fecha']) {
+									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $o['montoOriginal']);
+								}
+							}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				}
+			}
+			//aqui se termina la columna y se sube a la row 4
+			$row = "4";
+			$col++;
+			$celda = $col . $row;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, "SINCERADO");
+			$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+			$row++;
+			$celda = $col . $row;
+			foreach ($datosSinceradoCargo as $j => $i) {
+				foreach ($datosfechaCargo as $d => $f) {
+					if ($v['fecha'] == $f['fecha'] AND $i['idCargo'] ==  $f['idCargo']) {
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $f['cantidadSinc']);
+					}
+				}
+				$row++;
+				$celda = $col . $row;
+			}
+			$row++;
+			// aqui va el foreach
+			foreach ($datosTipoPresupuesto as $m => $n) {
+				if ($n['montoOriginal']!= 0) {
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $n['nombre']);
+				$row++;
+				$cabecera = 'B' . $row;
+				$celda = $col . $row;
+				if ($n['idTipoPresupuesto']== 1) {
+					foreach ($datosSinceradoCargo as $j => $i) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
+						foreach ($datosDetalleSueldo as $e => $r) {
+						 	if ($i['idCargo'] == $r['idCargo'] AND $r['fecha_seleccionada'] == $v['fecha']) {
+							$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $r['montoSincerado']);
+						 	}
+						}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 2) {
+					foreach ($datosCaeceraComunicacion as $t => $y) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $y['nombre']);
+							foreach ($datosDetalleComunicacion as $z => $x) {
+								if ($y['idTipoPresupuestoDetalle'] == $x['idTipoPresupuestoDetalle'] AND $x['fecha_seleccionada'] == $v['fecha']) {
+									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $x['montoSincerado']);
+								}
+							}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				if ($n['idTipoPresupuesto']== 7) {
+					foreach ($datosCaeceraGastosAdmin as $g => $h) {
+						$cabecera = 'B' . $row;
+						$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $h['nombre']);
+							foreach ($datosDetalleGastosAdmin as $u => $o) {
+								if ($h['idTipoPresupuestoDetalle'] == $o['idTipoPresupuestoDetalle'] AND $o['fecha_seleccionada'] == $v['fecha']) {
+									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $o['montoSincerado']);
+								}
+							}
+						$row++;
+						$celda = $col . $row;
+					}
+				}
+				}
+			}
+		  
+ 		$col++;
+		}
+		 $colUlt = $col . '1';
+		 $col = "C";
+		 $celda = $col . $row;
+		 $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'hola');
+
+
+
+		$objPHPExcel->getActiveSheet()->getStyle("B1:".$colUlt)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="Formato.xls"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+		$objWriter->save('php://output');
+	}
 }

@@ -23,6 +23,9 @@
 						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
 							<i class="fa fa-lg fa-history" title="Historial de Tarifario"></i>
 						</button>
+						<button type="button" class="btn btn-outline-trade-visual border-0" data-ruta="descargarExcel" id="btn-descargarExcelSincerado" title="Descargar">
+							<i class="icon file excel"></i>
+						</button>
 					</td>
 					<td class="td-center">
 						<?= str_pad($key, 8, "0", STR_PAD_LEFT);; ?>
