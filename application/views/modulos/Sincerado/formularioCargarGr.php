@@ -6,6 +6,7 @@
 				<div class="content">
 					<div class="title">Tipo de Facturación</div>
 					<input type="hidden" id="montoSincerado" value="<?= $sincerado['totalSincerado'] ?>">
+					<input type="hidden" value="<?= $sincerado['idSincerado'] ?>" name="idSincerado">
 					<!-- <div class="description">Choose your shipping options</div> -->
 				</div>
 			</a>

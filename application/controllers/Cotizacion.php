@@ -107,27 +107,29 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		
-		if(isset($post['numero_gr'])){
+
+		if (isset($post['numero_gr'])) {
 			$numeroGR = $post['numero_gr'];
 		} else {
 			$numeroGR = NULL;
 		}
 
-		if(isset($post['codigo_oc'])){
+		if (isset($post['codigo_oc'])) {
 			$codigo_oc = $post['codigo_oc'];
 		} else {
 			$codigo_oc = NULL;
 		}
 
-		if(isset($post['monto_oc'])){
+		if (isset($post['monto_oc'])) {
 			$monto_oc = $post['monto_oc'];
 		} else {
 			$monto_oc = NULL;
 		}
 
-		if ($numeroGR == NULL && $post['fechaGR'] == NULL && $codigo_oc == NULL
-		&& $monto_oc == NULL && $post['fechaClienteOC'] == NULL && $post['motivo'] == NULL) {
+		if (
+			$numeroGR == NULL && $post['fechaGR'] == NULL && $codigo_oc == NULL
+			&& $monto_oc == NULL && $post['fechaClienteOC'] == NULL && $post['motivo'] == NULL
+		) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Información no actualizada';
 			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se actualizo ningún dato']);
@@ -138,44 +140,44 @@ class Cotizacion extends MY_Controller
 
 			$update = [];
 
-			if(!empty($codigo_oc)) {
+			if (!empty($codigo_oc)) {
 				$update = [
 					'codOrdenCompra' => $codigo_oc,
 				];
 			}
 
-			if(!empty($monto_oc)) {
+			if (!empty($monto_oc)) {
 				$update = [
 					'montoOrdenCompra' => $monto_oc,
 				];
 			}
-			if(!empty($post['fechaClienteOC'])) {
+			if (!empty($post['fechaClienteOC'])) {
 				$update = [
 					'fechaClienteOC' => $post['fechaClienteOC'],
 				];
 			}
 
-			
-			if(!empty($numeroGR)) {
+
+			if (!empty($numeroGR)) {
 				$update = [
 					'numeroGR' => $numeroGR,
 				];
 			}
-					
-			
 
-			if(!empty($post['fechaGR'])) {
+
+
+			if (!empty($post['fechaGR'])) {
 				$update = [
 					'fechaGR' => $post['fechaGR'],
 				];
 			}
 
-			if(!empty($post['motivo'])) {
+			if (!empty($post['motivo'])) {
 				$update = [
 					'motivoAprobacion' => $post['motivo'],
 				];
 			}
-			
+
 
 			if ($this->db->update(
 				'compras.cotizacion',
@@ -688,6 +690,9 @@ class Cotizacion extends MY_Controller
 			if ($post['tipoItemForm'][$k] == COD_TRANSPORTE['id']) {
 				$post['cotizacionInternaForm'][$k] = 0;
 			}
+			if ($post['tipoItemForm'][$k] == COD_DISTRIBUCION['id']) {
+				$post['cotizacionInternaForm'][$k] = 0;
+			}
 
 			$data['insert'][] = [
 				'idCotizacion' => $insert['id'],
@@ -773,7 +778,9 @@ class Cotizacion extends MY_Controller
 						goto respuesta;
 					}
 					$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
-					$cantidad = intval($post['cantidadDatosTabla'][$k]);
+
+					$nro = isset($post['cantidadDatosTabla'][$k]) ? $post['cantidadDatosTabla'][$k] : 0;
+					$cantidad = intval($nro);
 					$data['subDetalle'][$k] = [];
 					$post['idItem'] = checkAndConvertToArray($post['idItem']);
 					for ($it = 0; $it < $cantidad; $it++) {
@@ -1085,12 +1092,15 @@ class Cotizacion extends MY_Controller
 	}
 	public function enviarCorreoPacking($params)
 	{
+		$sendMail = [];
+
+		/*
 		$config = array(
 			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			// 'smtp_host' => 'aspmx.l.google.com',
-			// 'smtp_port' => '25',
+			// 'smtp_host' => 'ssl://smtp.googlemail.com',
+			// 'smtp_port' => 465,
+			'smtp_host' => 'aspmx.l.google.com',
+			'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html'
@@ -1099,33 +1109,37 @@ class Cotizacion extends MY_Controller
 		$this->load->library('email', $config);
 		$this->email->clear(true);
 		$this->email->set_newline("\r\n");
-
+		*/
 		$data = !empty($params['data']) ? $params['data'] : [];
 		$dataParaVista = [];
-		$cc = !empty($params['cc']) ? $params['cc'] : [];
+		// $cc = !empty($params['cc']) ? $params['cc'] : [];
+		$sendMail['cc'] = !empty($params['cc']) ? $params['cc'] : [];
 
-		$this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
-		$this->email->to($params['to']);
-		$this->email->cc($cc);
+		// $this->email->from('team.sistemas@visualimpact.com.pe', 'Visual Impact - IMPACTBUSSINESS');
+		// $this->email->to($params['to']);
+		$sendMail['to'] = $params['to'];
+		// $this->email->cc($cc);
 
 		$dataParaVista['link'] = base_url() . index_page() . 'Cotizacion/RegistrarPesos/' . $params['idCotizacion'];
 
 		$bcc = array(
 			'eder.alata@visualimpact.com.pe',
-			// 'luis.durand@visualimpact.com.pe'
 		);
-		$this->email->bcc($bcc);
+		// $this->email->bcc($bcc);
+		$sendMail['bcc'] = $bcc;
 
-		$this->email->subject('IMPACTBUSSINESS - INDICAR PESOS EN COTIZACION');
+		// $this->email->subject('IMPACTBUSSINESS - INDICAR PESOS EN COTIZACION');
+		$sendMail['asunto'] = 'IMPACTBUSSINESS - INDICAR PESOS EN COTIZACION';
 		$html = $dataParaVista['link'];
 		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => $dataParaVista['link']], true);
-		$this->email->message($correo);
+		// $this->email->message($correo);
+		$sendMail['contenido'] = $correo;
 
-		$estadoEmail = $this->email->send();
-
+		// $estadoEmail = $this->email->send();
+		$estadoEmail = email($sendMail);
 		if (!$estadoEmail) {
 
-			$mensaje = $this->email->print_debugger();
+			$mensaje = $estadoEmail;
 		}
 
 		return $estadoEmail;
