@@ -183,13 +183,13 @@ var OrdenServicio = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 			});
 		});
-		
+
 		$(document).on('click', '.btn-datos-oc', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
 			let estado = $(this).parents('tr:first').data('estado');
-			
+
 			let data = { 'idOrdenServicio': id, 'idOrdenServicioEstado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -1599,7 +1599,7 @@ var OrdenServicio = {
 			if (a.result == 1) {
 				let btn = [];
 				let fn = [];
-			
+
 				fn[0] = 'Fn.closeModals(2); ';
 				btn[0] = { title: 'Continuar', fn: fn[0] };
 
