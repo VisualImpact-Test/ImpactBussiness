@@ -102,14 +102,10 @@ var FormularioProveedores = {
 		})
 		$(document).on('click', '.btn-descargarOc', function (e) {
 			e.preventDefault();
-			Fn.showLoading(true);
 			id = $(this).data('id');
 			data = { 'data': JSON.stringify({ 'id': id }) };
 			var url = '../Cotizacion/' + 'descargarOrdenCompra';
-			//alert(url);
-			$.when(Fn.download(url, data)).then(function (a) {
-				Fn.showLoading(false);
-			});
+			Fn.download(url, data);
 		});
 		$(document).on('click', '.formLisArts', function () {
 			++modalId;
