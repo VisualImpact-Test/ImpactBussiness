@@ -142,17 +142,17 @@ class Sincerado extends MY_Controller
 			];
 		}
 		if (empty($insertData)) {
-			$result = mensajeList($result, 'NoData');
+			$result = mensajeList('NoData', $result);
 			goto respuesta;
 		}
 
 		$success = $this->db->insert_batch('compras.sinceradoGr', $insertData);
 		if (!$success) {
-			$result = mensajeList($result, 'registroErroneo');
+			$result = mensajeList('registroErroneo', $result);
 			goto respuesta;
 		}
 
-		$result = mensajeList($result, 'registroExitoso');
+		$result = mensajeList('registroExitoso', $result);
 		$this->db->trans_complete();
 
 		respuesta:
@@ -161,22 +161,23 @@ class Sincerado extends MY_Controller
 
 	public function descargarExcelGr()
 	{
-		header('Set-Cookie: fileDownload=true; path=/');
-		error_reporting(E_ALL);
-		ini_set('display_errors', TRUE);
-		ini_set('display_startup_errors', TRUE);
-		// ini_set('memory_limit', '1024M');
-		set_time_limit(0);
-		
+		// header('Set-Cookie: fileDownload=true; path=/');
+		// header('Cache-Control: max-age=60, must-revalidate');
+		// error_reporting(E_ALL);
+		// ini_set('display_errors', TRUE);
+		// ini_set('display_startup_errors', TRUE);
+		// set_time_limit(0);
+
 		$post = $this->input->post();
 		$data = $this->db->get_where('compras.sinceradoGr', ['idSincerado' => $post['idSincerado'], 'estado' => 1])->result_array();
 
-		if (count($data) == 1 && '3222' == '100' && '100' == '100') {
-		
-		}
+		echo json_encode(mensajeList('registroErroneo'));
+		exit();
+
+		exit();
+		echo json_encode(mensajeList('registroErroneo'));
 		/** Include PHPExcel */
 		require_once '../phpExcel/Classes/PHPExcel.php';
-
 		$objPHPExcel = new PHPExcel();
 
 		/**ESTILOS**/
@@ -202,11 +203,19 @@ class Sincerado extends MY_Controller
 				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 			],
 			'fill' =>	[
-				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'type' => PHPExcel_Style_Fill::FILL_NONE,
+				// 'startcolor' => array('rgb' => 'FFFF00')
+			],
+			'borders' => [
+				'allborders' => array(
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+					'color' => array('rgb' => '000000')
+				)
 			],
 			'font'  => [
 				'size' => 13,
-				'name'  => 'Calibri'
+				'name'  => 'Calibri',
+				'bold' => true,
 			]
 		];
 		$estilo_subtitulo = [
@@ -260,51 +269,38 @@ class Sincerado extends MY_Controller
 		];
 		/**FIN ESTILOS**/
 
-		$objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		// $objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
+		// $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
+		// $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 
+		if (empty($data)) {
+		}
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('B1', 'FECHA DE GENERACIÓN OC VISUAL')
-			->setCellValue('C1', 'MES OC VISUAL')
-			->setCellValue('D1', 'OPER')
-			->setCellValue('E1', 'OC VISUAL')
-			->setCellValue('F1', 'RUC');
+			->setCellValue('B2', 'GR CARGADO')
+			->setCellValue('B3', 'CODIGO GR');
 
-		$objPHPExcel->getActiveSheet()->getStyle("B1:S1")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+		// $objPHPExcel->getActiveSheet()->getStyle("B2")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+
+		$objPHPExcel->getActiveSheet()->getStyle("B2:B3")->applyFromArray($estilo_titulo)->getFont();
 		$nIni = 2;
 		// foreach ($data as $k => $v) {
-		$objPHPExcel->setActiveSheetIndex(0)
-			// ->setCellValue('B' . $nIni, date_change_format($v['fechaRegOC']))
-			// ->setCellValue('C' . $nIni, NOMBRE_MES[explode('-', $v['fechaRegOC'])[1]])
-			// ->setCellValue('D' . $nIni, $v['oper'])
-			// ->setCellValue('E' . $nIni, $v['ordenCompra'])
-			// ->setCellValue('F' . $nIni, $v['rucProveedor'])
-			// ->setCellValue('G' . $nIni, $v['razonSocial'])
-			// ->setCellValue('H' . $nIni, $v['cuenta'])
-			// ->setCellValue('I' . $nIni, $v['centroCosto'])
-			// ->setCellValue('J' . $nIni, $v['desTracking'])
-			// ->setCellValue('K' . $nIni, $v['cotizacion'])
-			// ->setCellValue('L' . $nIni, $v['monto'])
-			// ->setCellValue('M' . $nIni, $v['monto'] * (1 + ($v['igv'] / 100)))
-			// ->setCellValue('N' . $nIni, $v['nombreMoneda'])
-			// ->setCellValue('O' . $nIni, $v['poCliente'])
-			// ->setCellValue('P' . $nIni, $v['numeroGR'])
-			->setCellValue('Q' . $nIni, 'aaa')
-			->setCellValue('R' . $nIni, 'bbb')
-			->setCellValue('S' . $nIni, 'ccc');
+		// $objPHPExcel->setActiveSheetIndex(0)
+		// 	->setCellValue('Q' . $nIni, 'aaa')
+		// 	->setCellValue('R' . $nIni, 'bbb')
+		// 	->setCellValue('S' . $nIni, 'ccc');
 
-		$objPHPExcel
-			->getActiveSheet()
-			->getStyle('L' . $nIni)
-			->getNumberFormat()
-			->setFormatCode('"S/"#,##0.00_-');
-		$objPHPExcel
-			->getActiveSheet()
-			->getStyle('M' . $nIni)
-			->getNumberFormat()
-			->setFormatCode('"S/"#,##0.00_-');
-		$nIni++;
+		// $objPHPExcel
+		// 	->getActiveSheet()
+		// 	->getStyle('L' . $nIni)
+		// 	->getNumberFormat()
+		// 	->setFormatCode('"S/"#,##0.00_-');
+		// $objPHPExcel
+		// 	->getActiveSheet()
+		// 	->getStyle('M' . $nIni)
+		// 	->getNumberFormat()
+		// 	->setFormatCode('"S/"#,##0.00_-');
+		// $nIni++;
 		// }
 
 		header('Content-Type: application/vnd.ms-excel');
