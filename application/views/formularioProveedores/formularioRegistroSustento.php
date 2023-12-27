@@ -6,7 +6,7 @@
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
-				<legend class="scheduler-border">Archivos</legend>
+				<legend class="scheduler-border">Guia</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Guia</label>
 					<div class="form-control custom-file col-md-8">
@@ -16,6 +16,11 @@
 					<label class="form-control col-md-4" style="border:0px;">N° Guia</label>
 					<input class="form-control col-md-8" id="nguia" name="nguia" patron="requerido" value="">
 				</div>
+			</fieldset>
+		</div>
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Factura</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Factura</label>
 					<div class="form-control custom-file col-md-8">
@@ -23,8 +28,16 @@
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Factura</label>
-					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido" value="">
+					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido">
+					<label class="form-control col-md-4" style="border:0px;">Fecha Emisión</label>
+					<input type="date" class="form-control col-md-8" id="fechaEmision" name="fechaEmision" patron="requerido">
+									
 				</div>
+			</fieldset>
+		</div>
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Otros</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>
 					<div class="form-control custom-file col-md-8">

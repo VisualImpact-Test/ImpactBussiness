@@ -58,10 +58,13 @@
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') : ?>
-							<a href="<?= base_url() . 'Cotizacion/descargarOperDirecto/' . $row['operData']['idOper']; ?>" class="ui button" target="_blank">
-								<?= $row['operData']['requerimiento']; ?>
-							</a>
-							<!-- <a href="javascript:;" download class="ui button btn-descargarOper" data-id="<?= $row['operData']['idOper'] ?>"><?= $row['operData']['requerimiento']; ?></a> -->
+							<?php if ($row['operData']['idOper'] != null) : ?>
+								<a href="<?= base_url() . 'Cotizacion/descargarOperDirecto/' . $row['operData']['idOper']; ?>" class="ui button" target="_blank">
+									<?= $row['operData']['requerimiento']; ?>
+								</a>
+							<?php else : ?>
+								-
+							<?php endif; ?>
 						<?php endif; ?>
 					</td>
 					<td>

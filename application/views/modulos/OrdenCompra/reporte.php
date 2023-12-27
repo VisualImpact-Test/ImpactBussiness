@@ -12,6 +12,7 @@
 				<th>FECHA ENTREGA</th>
 				<th>ITEM</th>
 				<th>IGVPORCENTAJE</th>
+				<th>MONEDA</th>
 				<th>TOTAL</th>
 				<th>ESTADO</th>
 			</tr>
@@ -38,7 +39,8 @@
 					<td class="td-center"><?= verificarEmpty($row['fechaEntrega'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['item'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['IGVPorcentaje'], 3); ?></td>
-					<td class="td-center"><?= monedaNew(['valor' => $row['totalIGV'], 'simbolo' => $row['simboloMoneda'], 'cambio' => $row['monedaCambio']]); ?></td>
+					<td class="td-center"><?= verificarEmpty($row['moneda'], 3); ?></td>
+					<td nowrap class="td-center"><?= monedaTipoNumero(['valor' => $row['totalIGV'], 'simbolo' => $row['simboloMoneda'], 'cambio' => $row['monedaCambio']]); ?></td>
 					<td class="text-center style-icons">
 						<span class="badge <?= $badge ?>" id="spanEstado-<?= $row['estado']; ?>"><?= $mensajeEstado; ?></span>
 					</td>
@@ -46,5 +48,7 @@
 				<? $ix++; ?>
 			<?php endforeach; ?>
 		</tbody>
+
 	</table>
 </div>
+

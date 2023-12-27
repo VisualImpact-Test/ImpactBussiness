@@ -204,6 +204,21 @@ function monedaNew($params = [])
 	}
 }
 
+function monedaTipoNumero($params = [])
+{
+	$valor = !empty($params['valor']) ? $params['valor'] : 'S/ 0.00';
+	$dec = !empty($params['dec']) ? $params['dec'] : 2;
+	// $simbolo = !empty($params['simbolo']) ? $params['simbolo'] : 'S/';
+	$cambio = !empty($params['cambio']) ? $params['cambio'] : 1;
+
+	if (is_string($valor)) return $valor;
+	else {
+		$valor = number_format($valor / $cambio, $dec, '.', ',');
+		return $valor;
+	}
+}
+
+
 function numeroVista($numero)
 {
 	$formateado = number_format($numero, 2, ".", " ");

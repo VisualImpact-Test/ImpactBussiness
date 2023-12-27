@@ -12,6 +12,12 @@
 							patron="requerido" value="<?= $numeroDocumento ?>">
 					</div>
 				<? } ?>
+				<?php if($idFormatoDocumento == 2) { ?>
+					<div class="control-group child-divcenter row" style="width:85%">
+					<label class="form-control col-md-4" style="border:0px;">Fecha Emisión</label>
+					<input type="date" class="form-control col-md-8" id="fechaEmision" name="fechaEmision" patron="requerido" value="<?= $fechaEmision ?>">
+					</div>
+				<? } ?>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;"></label>
 					<div class="form-control custom-file col-md-8">
