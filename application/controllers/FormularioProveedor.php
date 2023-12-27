@@ -1042,8 +1042,10 @@ class FormularioProveedor extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista['idSustentoAdjunto'] = $post['id'];
-		$sa = $this->db->get_where('compras.sustentoAdjunto', ['idSustentoAdjunto' => $post['id']])->row_array();
+		$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['id']])->row_array();
 		// $acept = '';
+		
+
 		switch ($sa['idFormatoDocumento']) {
 			case '1':
 				$acept = 'image/*, .pdf';
@@ -1061,6 +1063,10 @@ class FormularioProveedor extends MY_Controller
 				$acept = '';
 				break;
 		}
+		$sa['idSustentoAdjunto'] = $post['id'];
+
+		$dataParaVista['idFormatoDocumento'] = $sa['idFormatoDocumento'];
+		$dataParaVista['numeroDocumento'] = $sa['numeroDocumento'];
 		$dataParaVista['acept'] = $acept;
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Sustento';
@@ -1335,17 +1341,36 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		foreach ($post['base64Adjunto'] as $key => $row) {
+			$carpeta = null;
+			if($post['idFormatoDocumento'] == 1) {
+				$carpeta = "sustentoGuia";
+			} else if($post['idFormatoDocumento'] == 2) {
+				$carpeta = "sustentoFactura";
+			} else if($post['idFormatoDocumento'] == 3) {
+				$carpeta = "sustentoXml";
+			} else {
+				$carpeta = "sustentoAdicional";
+			}
+
 			$archivo = [
 				'base64' => $row,
 				'name' => $post['nameAdjunto'][$key],
 				'type' => $post['typeAdjunto'][$key],
-				'carpeta' => 'sustentoServicio',
+				'carpeta' => $carpeta,
 				'nombreUnico' => uniqid()
 			];
 			$archivoName = $this->saveFileWasabi($archivo);
 			$tipoArchivo = explode('/', $archivo['type']);
 
 			$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['idSustentoAdjunto'], 'estado' => '1'])->row_array();
+			
+			$nDocumento = null;
+			if(empty($post['nDocumento'])) {
+				$nDocumento = null;
+			} else {
+				$nDocumento = $post['nDocumento'];
+			}
+
 			$insert = [
 				'idFormatoDocumento' => $sa['idFormatoDocumento'],
 				'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
@@ -1361,6 +1386,7 @@ class FormularioProveedor extends MY_Controller
 				'flagIncidencia' => $sa['flagIncidencia'],
 				'flagRevisado' => 0,
 				'flagAprobado' => 0,
+				'numeroDocumento' => $nDocumento
 			];
 			$this->db->update('sustento.comprobante', ['estado' => 0], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
 			$this->db->insert('sustento.comprobante', $insert);
@@ -1652,7 +1678,6 @@ class FormularioProveedor extends MY_Controller
 		foreach (json_decode($post['data'], true) as $k => $v) {
 			$post[$k] = $v;
 		}
-
 		if ($post['flagoclibre'] == 1) {
 			$post['ordencompra'] = $post['ordencompra'];
 			$post['cotizacion'] = NULL;
@@ -1762,7 +1787,7 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
 		}
-
+		
 		if ($post['flag'] == 1) {
 			$post['ordencompra'] = $post['ordencompra'];
 			$post['cotizacion'] = NULL;
@@ -1796,7 +1821,8 @@ class FormularioProveedor extends MY_Controller
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
-					'flagAprobado' => 0
+					'flagAprobado' => 0,
+					'numeroDocumento' => $post['nguia']
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
@@ -1832,6 +1858,7 @@ class FormularioProveedor extends MY_Controller
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
+					'numeroDocumento' => $post['nfactura']
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}

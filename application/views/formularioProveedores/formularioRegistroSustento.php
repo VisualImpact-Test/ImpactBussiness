@@ -13,6 +13,8 @@
 						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf" patron="<?= $requiereguia == 1 ? 'requerido' : ''; ?>">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
+					<label class="form-control col-md-4" style="border:0px;">N° Guia</label>
+					<input class="form-control col-md-8" id="nguia" name="nguia" patron="requerido" value="">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Factura</label>
@@ -20,6 +22,8 @@
 						<input type="file" class="custom-file-input files-upload_factura file-upload_factura" lang="es" accept=".pdf" patron="requerido">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
+					<label class="form-control col-md-4" style="border:0px;">N° Factura</label>
+					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido" value="">
 				</div>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">XML</label>

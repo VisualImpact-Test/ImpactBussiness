@@ -876,21 +876,39 @@ var FormularioProveedores = {
 		dataForm.nameAdjunto = FormularioProveedores.name;
 
 		let jsonString = { 'data': JSON.stringify(dataForm) };
-		let config = { 'url': FormularioProveedores.url + 'editarSustentoComprobante', 'data': jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
+
+		var jsonString1 = dataForm.data;
+		var jsonObject = JSON.parse(jsonString1);
+		var archivo = document.querySelector(".file-uploadedd");
+		console.log(archivo.files.length);
+		if (jsonObject.nDocumento === '' || jsonObject.nDocumento === null || archivo.files.length === 0) {
 			let btn = [];
 			let fn = [];
+			let fnF = '';
+			//++modalId;
+			btn[0] = {
+				title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' +
+					fnF
+			};
+			var content = "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-circle fa-2x text-warning mr-2 float-left'></i>Alerta! Complete los campos obligatorios.</strong></div>";
+			Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
+		} else {
+			let config = { 'url': FormularioProveedores.url + 'editarSustentoComprobante', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				let btn = [];
+				let fn = [];
 
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			if (a.result == 1) {
-				// fn[0] = 'Fn.closeModals(' + modalId + ');';
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
-				Fn.showModal({ id: modal, show: false })
-			}
-			btn[0] = { title: 'Continuar', fn: fn[0] };
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				if (a.result == 1) {
+					// fn[0] = 'Fn.closeModals(' + modalId + ');';
+					fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+					Fn.showModal({ id: modal, show: false })
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
 
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-		});
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			});
+		}
 	},
 	enviarCorreoValidacionDeArtes: function () {
 		++modalId;
