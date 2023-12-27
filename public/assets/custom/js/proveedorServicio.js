@@ -63,7 +63,7 @@ var ProveedorServicio = {
 				let btn = [];
 				let fn = [];
 
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarProveedorServicio").click();';
 				if (a.result == 1) {
 					if (control.data('estado') == '1') {
 						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
@@ -75,7 +75,6 @@ var ProveedorServicio = {
 				btn[0] = { title: 'Continuar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-				$('#btn-filtrarProveedorServicio').click();
 			});
 
 		});
@@ -93,7 +92,7 @@ var ProveedorServicio = {
 				let btn = [];
 				let fn = [];
 
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();$("#btn-filtrarProveedorServicio").click();';
 				if (a.result == 1) {
 					if (control.data('estado') == '1') {
 						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
@@ -105,7 +104,6 @@ var ProveedorServicio = {
 				btn[0] = { title: 'Continuar', fn: fn[0] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-				$('#btn-filtrarProveedorServicio').click();
 			});
 
 		});
