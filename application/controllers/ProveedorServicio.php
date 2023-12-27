@@ -100,10 +100,7 @@ class ProveedorServicio extends MY_Controller
 				foreach ($listDetalleCotProv as $vt) {
 					$it = $this->db->get_where('orden.ordenCompraDetalle', ['idOrdenCompra' => $vt['idOrdenCompra'], 'estado' => 1])->row_array()['idTipo'];
 
-					if (
-						$it == COD_SERVICIO['id'] || $it == COD_TEXTILES['id']
-						|| $it == COD_ARTICULO['id']
-					) {
+					if ($it == COD_SERVICIO['id'] || $it == COD_TEXTILES['id']) {
 						$data[$k]['requiereValidacion'] = '1';
 						$data[$k]['mostrarValidacion'] = '1';
 						$data[$k]['solicitarFecha'] = '0';
