@@ -83,18 +83,18 @@
 
 		</div>
 		<div class="fields">
-			
+
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Servicio</div>
 				<select class="ui dropdown semantic-dropdown" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">
-			
+
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicioCotizacion, 'class' => 'text-titlecase', 'selected' => $cotizacion['idTipoServicioCotizacion']]); ?>
 				</select>
 			</div>
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Moneda</div>
 				<select class="ui dropdown semantic-dropdown" id="tipoMoneda" name="tipoMoneda" patron="requerido" onchange="Cotizacion.SimboloMoneda(this)">
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoMoneda, 'class' => 'text-titlecase', 'selected' => $cotizacion['idTipoMoneda']] ); ?>
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoMoneda, 'class' => 'text-titlecase', 'selected' => $cotizacion['idTipoMoneda']]); ?>
 				</select>
 			</div>
 		</div>
@@ -613,7 +613,8 @@
 								<!-- <div class="four wide field no-personal">
 									<div class="ui sub header">Unidad Medida</div>
 									<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
-										<?= '';//htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione', 'selected' => $row['idUnidadMedida']]); ?>
+										<?= ''; //htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione', 'selected' => $row['idUnidadMedida']]); 
+										?>
 									</select>
 								</div> -->
 							</div>
@@ -656,6 +657,7 @@
 									<div class="ui sub header">Almacén</div>
 									<select class="ui basic floating dropdown button simpleDropdown flagOtrosPuntos" name="flagOtrosPuntos">
 										<?php if ($row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
+											<?php if (!isset($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'])) $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'] = '0'; ?>
 											<option value="0" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '0' ? 'selected' : ''; ?>>Almacén Visual</option>
 											<option value="1" <?= verificarEmpty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]['flagOtrosPuntos'], 2) == '1' ? 'selected' : ''; ?>>Otros Puntos</option>
 										<?php else : ?>
@@ -898,7 +900,9 @@
 										<i class="hand holding usd icon"></i> Detalle Cantidad y Costos
 									</button>
 									<div class="datosTable">
-										<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
+										<?php if (isset($tablaGen[$row['idCotizacionDetalle']])) : ?>
+											<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
+										<?php endif; ?>
 									</div>
 									<div class="arrayDatosItems d-none">
 										<?= json_encode($cotizacionDetalleSubItems[$row['idCotizacionDetalle']]); ?>
@@ -1123,7 +1127,7 @@
 			<span class="float-element tooltip-left btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
 				<i class="plus icon"></i>
 			</span>
-			<span class="float-element tooltip-left btn-return" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "window.history.back();", content: "¿Está seguro de regresar a la pestaña anterior?" });' data-message="Regresar"  style="background-color: red;">
+			<span class="float-element tooltip-left btn-return" onclick='Fn.showConfirm({ idForm: "formActualizarCotizacion", fn: "window.history.back();", content: "¿Está seguro de regresar a la pestaña anterior?" });' data-message="Regresar" style="background-color: red;">
 				<i class="arrow left icon"></i>
 			</span>
 		</a>
