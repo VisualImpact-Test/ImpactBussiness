@@ -58,24 +58,24 @@ function date_change_format($fecha)
 	return $fecha->format('d/m/Y');
 }
 
-function mensajeList($data, $tipo)
+function mensajeList($tipo, $data = [])
 {
-	$result = $data;
+	if (!empty($data)) $result = $data;
 
 	if ($tipo == 'NoData') {
 		$result['result'] = 0;
-		$result['msg']['title'] = 'No Data!';
 		$result['msg']['content'] = getMensajeGestion('noData');
+		$result['msg']['title'] = 'No Data!';
 	}
 	if ($tipo == 'registroErroneo') {
 		$result['result'] = 0;
-		$result['msg']['title'] = 'Error!';
 		$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		$result['msg']['title'] = 'Error!';
 	}
 	if ($tipo == 'registroExitoso') {
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		$result['msg']['title'] = 'Hecho!';
 	}
 
 	return $result;
@@ -1504,6 +1504,9 @@ function email($email = array())
 
 		if (!empty($email['cc'])) {
 			$ci->email->cc($email['cc']);
+		}
+		if (isset($email['bcc'])) {
+			$ci->email->bcc($email['bcc']);
 		}
 		$bcc = [];
 		//$bcc = array('luis.durand@visualimpact.com.pe');
