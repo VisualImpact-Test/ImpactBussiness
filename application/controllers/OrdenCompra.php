@@ -59,6 +59,7 @@ class OrdenCompra extends MY_Controller
 				'simboloMoneda' => $row['simboloMoneda'],
 				'entrega' => $row['entrega'],
 				'fechaEntrega' => date_change_format($row['fechaEntrega']),
+				'poCliente' => $row['poCliente'],
 				'total' => $row['total'],
 				'IGVPorcentaje' => $row['IGVPorcentaje'],
 				'totalIGV' => $row['totalIGV'],
@@ -68,11 +69,6 @@ class OrdenCompra extends MY_Controller
 				'seriado' => $row['seriado'],
 				'moneda' => $row['monedaPlural']
 			];
-			$item[$row['idOrdenCompra']][$row['item']] = $row['item'];
-		}
-
-		foreach ($dataParaVista as $key => $row) {
-			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
 		}
 
 		$html = getMensajeGestion('noRegistros');
