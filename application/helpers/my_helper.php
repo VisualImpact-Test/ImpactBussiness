@@ -878,7 +878,7 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		'actualizacionErronea' => createMessage(array("type" => 2, "message" => 'Hubo un error en la actualización, intentélo nuevamente después de verificar que todos los campos se hayan llenado correctamente')),
 		'registroExitoso' => createMessage(array("type" => 1, "message" => 'El registro se realizó correctamente')),
 		'registroErroneo' => createMessage(array("type" => 2, "message" => 'Hubo un error en el registro, intentélo nuevamente después de verificar que todos los campos se hayan llenado correctamente. Si el error persiste, comunicarse con team.sistema@visualimpact.com.pe')),
-		'noData' => createMessage(array("type" => 2, "message" => 'No se detecto información para guardar.')),
+		'noData' => createMessage(array("type" => 2, "message" => 'No se detecto información para esta operación')),
 		'cambioEstadoExitoso' => createMessage(array("type" => 1, "message" => 'El cambio de estado se realizó correctamente')),
 		'cambioEstadoErroneo' => createMessage(array("type" => 2, "message" => 'Hubo un error en el cambio de estado, inténtelo nuevamente')),
 		'guardadoMasivoExitoso' => createMessage(array("type" => 1, "message" => 'Los datos se guardaron correctamente')),

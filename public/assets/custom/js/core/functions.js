@@ -251,11 +251,16 @@ var Fn = {
 				}, 500);
 			},
 			failCallback: function (responseHtml, url) {
+				let result = JSON.parse(responseHtml);
 				$.when(Fn.showLoading(false)).then(function () {
 					var id = ++modalId;
 					var btn = new Array();
 					btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:' + id + ',show:false });' };
-					Fn.showModal({ id: id, show: true, title: 'ERROR', content: 'Ocurrio un error inesperado en el sistema.', btn: btn });
+					if (result.result == 0) {
+						Fn.showModal({ id: id, show: true, title: result.msg.title, content: result.msg.content, btn: btn });
+					} else {
+						Fn.showModal({ id: id, show: true, title: 'ERROR', content: 'Ocurrio un error inesperado en el sistema.', btn: btn });
+					}
 				})
 			}
 		});

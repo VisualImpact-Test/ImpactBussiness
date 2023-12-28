@@ -572,7 +572,6 @@ class Proveedor extends MY_Controller
 		// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
 		// → Captura Principal: Obligatorio
 		$buscarAdjunto = $this->db->get_where('compras.proveedorArchivo', ['idProveedor' => $post['idProveedor'], 'estado' => 1, 'flagPrincipal' => 1])->result_array();
-		logError($post['idProveedorArchivoEliminadoP']);
 		if (
 			(!empty($post['idProveedorArchivoEliminadoP']) || empty($buscarAdjunto)) &&
 			(

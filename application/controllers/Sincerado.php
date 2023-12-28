@@ -132,6 +132,7 @@ class Sincerado extends MY_Controller
 		$insertData = [];
 		foreach ($post['descripcion'] as $k => $v) {
 			$insertData[] = [
+				'idSincerado' => $post['idSincerado'],
 				'descripcion' => $v,
 				'fecha' => $post['fecha'][$k],
 				'porcentaje' => $post['porcentaje'][$k],
@@ -161,21 +162,14 @@ class Sincerado extends MY_Controller
 
 	public function descargarExcelGr()
 	{
-		// header('Set-Cookie: fileDownload=true; path=/');
-		// header('Cache-Control: max-age=60, must-revalidate');
-		// error_reporting(E_ALL);
-		// ini_set('display_errors', TRUE);
-		// ini_set('display_startup_errors', TRUE);
-		// set_time_limit(0);
-
 		$post = $this->input->post();
 		$data = $this->db->get_where('compras.sinceradoGr', ['idSincerado' => $post['idSincerado'], 'estado' => 1])->result_array();
 
-		echo json_encode(mensajeList('registroErroneo'));
-		exit();
+		if (empty($data)) {
+			echo json_encode(mensajeList('NoData'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
+			exit();
+		}
 
-		exit();
-		echo json_encode(mensajeList('registroErroneo'));
 		/** Include PHPExcel */
 		require_once '../phpExcel/Classes/PHPExcel.php';
 		$objPHPExcel = new PHPExcel();
@@ -269,21 +263,52 @@ class Sincerado extends MY_Controller
 		];
 		/**FIN ESTILOS**/
 
+		if (count($data) == 1 and $data[0]['porcentaje'] == '100' and $data[0]['porcentajeSincerado'] == '100') {
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('B2', 'GR CARGADO')
+				->setCellValue('B3', 'CODIGO GR');
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getStyle("B2:B3")->applyFromArray($estilo_titulo)->getFont();
+		} else {
+			$objPHPExcel->setActiveSheetIndex(0)
+				->setCellValue('E1', 'MONTO TOTAL')
+				->setCellValue('A3', 'DESCRIPCIÓN')
+				->setCellValue('B3', 'FECHA')
+				->setCellValue('C3', 'PORCENTAJE')
+				->setCellValue('D3', 'MONTO')
+				->setCellValue('E3', '% SINCERADO')
+				->setCellValue('F3', 'PRESUPUESTO SINCERADO')
+				->setCellValue('G3', 'DIFERENCIA');
+			$rIni = 3;
+			foreach ($data as $v) {
+				$rIni++;
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue('A' . $rIni, $v['descripcion'])
+					->setCellValue('B' . $rIni, $v['fecha'])
+					->setCellValue('C' . $rIni, $v['porcentaje'])
+					->setCellValue('D' . $rIni, $v['monto'])
+					->setCellValue('E' . $rIni, $v['porcentajeSincerado'])
+					->setCellValue('F' . $rIni, $v['presupuestoSincerado'])
+					->setCellValue('G' . $rIni, $v['diferenciaSincerado']);
+			}
+			$objPHPExcel->getActiveSheet()->getStyle("A3:G3")->applyFromArray($estilo_titulo)->getFont();
+			$objPHPExcel->getActiveSheet()->getStyle("E1")->applyFromArray($estilo_titulo)->getFont();
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+		}
+
+
+
+
 		// $objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
 		// $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
 		// $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 
-		if (empty($data)) {
-		}
-		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('B2', 'GR CARGADO')
-			->setCellValue('B3', 'CODIGO GR');
-
-		// $objPHPExcel->getActiveSheet()->getStyle("B2")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
-		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
-
-		$objPHPExcel->getActiveSheet()->getStyle("B2:B3")->applyFromArray($estilo_titulo)->getFont();
-		$nIni = 2;
 		// foreach ($data as $k => $v) {
 		// $objPHPExcel->setActiveSheetIndex(0)
 		// 	->setCellValue('Q' . $nIni, 'aaa')
@@ -303,6 +328,12 @@ class Sincerado extends MY_Controller
 		// $nIni++;
 		// }
 
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+		error_reporting(E_ALL);
+		ini_set('display_errors', TRUE);
+		ini_set('display_startup_errors', TRUE);
+		set_time_limit(0);
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="Formato.xls"');
 		header('Cache-Control: max-age=0');
