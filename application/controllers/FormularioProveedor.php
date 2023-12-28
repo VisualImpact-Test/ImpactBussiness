@@ -1064,6 +1064,7 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista['idFormatoDocumento'] = $sa['idFormatoDocumento'];
 		$dataParaVista['numeroDocumento'] = $sa['numeroDocumento'];
+		$dataParaVista['fechaEmision'] = $sa['fechaEmision'];
 		$dataParaVista['acept'] = $acept;
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Sustento';
@@ -1084,6 +1085,21 @@ class FormularioProveedor extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Fecha de Ejecución';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroFechaEjecucion", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+	public function formularioFechaVencimiento()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+		$dataParaVista['fechaRegistro'] = $post['fechaRegistro'];
+		$dataParaVista['cantidadDias'] = $post['cantidadDias'];
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fecha Vencimiento';
+		$result['data']['html'] = $this->load->view("formularioProveedores/formularioFechaVencimiento", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
@@ -1339,14 +1355,19 @@ class FormularioProveedor extends MY_Controller
 
 		foreach ($post['base64Adjunto'] as $key => $row) {
 			$carpeta = null;
+			$fechaEmision = null;
 			if($post['idFormatoDocumento'] == 1) {
 				$carpeta = "sustentoGuia";
+				$fechaEmision = null;
 			} else if($post['idFormatoDocumento'] == 2) {
 				$carpeta = "sustentoFactura";
+				$fechaEmision = $post['fechaEmision'];
 			} else if($post['idFormatoDocumento'] == 3) {
 				$carpeta = "sustentoXml";
+				$fechaEmision = null;
 			} else {
 				$carpeta = "sustentoAdicional";
+				$fechaEmision = null;
 			}
 
 			$archivo = [
@@ -1383,7 +1404,8 @@ class FormularioProveedor extends MY_Controller
 				'flagIncidencia' => $sa['flagIncidencia'],
 				'flagRevisado' => 0,
 				'flagAprobado' => 0,
-				'numeroDocumento' => $nDocumento
+				'numeroDocumento' => $nDocumento,
+				'fechaEmision' => $fechaEmision
 			];
 			$this->db->update('sustento.comprobante', ['estado' => 0], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
 			$this->db->insert('sustento.comprobante', $insert);
@@ -1855,7 +1877,8 @@ class FormularioProveedor extends MY_Controller
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 0,
 					'flagAprobado' => 0,
-					'numeroDocumento' => $post['nfactura']
+					'numeroDocumento' => $post['nfactura'],
+					'fechaEmision' => $post['fechaEmision']
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}

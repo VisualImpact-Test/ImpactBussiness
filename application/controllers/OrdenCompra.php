@@ -49,6 +49,7 @@ class OrdenCompra extends MY_Controller
 
 		$dataParaVista = [];
 		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
+
 		foreach ($data as $key => $row) {
 			$dataParaVista[$row['idOrdenCompra']] = [
 				'idProveedor' => $row['idProveedor'],
@@ -64,7 +65,8 @@ class OrdenCompra extends MY_Controller
 				'observacion' => $row['observacion'],
 				'estado' => $row['estado'],
 				'monedaCambio' => $row['monedaCambio'],
-				'seriado' => $row['seriado']
+				'seriado' => $row['seriado'],
+				'moneda' => $row['monedaPlural']
 			];
 			$item[$row['idOrdenCompra']][$row['item']] = $row['item'];
 		}

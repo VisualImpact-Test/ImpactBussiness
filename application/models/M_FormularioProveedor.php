@@ -607,6 +607,83 @@ class M_FormularioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerOrdenCompraDetalleProveedorOC($params)
+	{
+
+		$filtros = "WHERE o.estado = 1";
+		$filtros .= !empty($params['idProveedor']) ? ' AND o.idProveedor = ' . $params['idProveedor'] : '';
+		$filtros .= !empty($params['idOrdenCompra']) ? ' AND o.idOrdenCompra = ' . $params['idOrdenCompra'] : '';
+
+		$sql = "
+		SELECT
+				o.idOrdenCompra,
+				o.idProveedor,
+				--SUM(cp.costo * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
+				o.total AS subTotalOrdenCompra,
+				p.razonSocial,
+				p.nroDocumento rucProveedor,
+				p.nombreContacto,
+				p.direccion,
+				p.correoContacto,
+				p.numeroContacto,
+				CONVERT(VARCHAR, o.fechaEntrega, 103) AS fechaEntrega,
+				CONVERT(VARCHAR, o.fechaReg, 103) AS fechaRegistro,
+				0 AS idCotizacion,
+				o.requerimiento,
+				o.concepto,
+				o.observacion,
+				o.entrega,
+				o.idMetodoPago,
+				o.idMoneda,
+				o.pocliente,
+				o.IGVPorcentaje,
+				o.comentario,
+				o.mostrar_observacion,
+				m.nombre moneda,
+				md.valor valorMoneda,
+				mp.nombre metodoPago,
+				uf.nombre_archivo,
+				od.cantidad,
+				i.nombre,
+				od.costoUnitario as costo,
+				m.nombreMoneda monedaPlural,
+				m.simbolo simboloMoneda,
+				--(cp.costo * cp.cantidad) subtotal,
+				od.costoSubTotal as subtotal,
+				i.idItemTipo,
+				od.costoSubTotal as cotizacionSubTotal,
+				od.idItem,
+				i.caracteristicas as caracteristicaItem,
+				--i.caracteristicasCompras,
+				o.seriado
+			FROM
+			orden.ordenCompra o
+			LEFT JOIN orden.ordenCompraDetalle od ON od.idOrdenCompra = o.idOrdenCompra
+				AND od.estado = 1
+			--LEFT JOIN compras.cotizacionDetalle cp ON o.idProveedor = cp.idProveedor
+			LEFT JOIN compras.proveedor p ON p.idProveedor = o.idProveedor
+			LEFT JOIN compras.moneda m ON m.idMoneda = o.idMoneda
+			LEFT JOIN compras.monedaDet md ON md.idMoneda = m.idMoneda
+				AND General.dbo.fn_fechaVigente(md.fecIni,md.fecFin,o.fechaReg,o.fechaReg)=1
+			LEFT JOIN compras.metodoPago mp ON mp.idMetodoPago = o.idMetodoPago
+			LEFT JOIN compras.item i ON i.idItem = od.idItem
+			LEFT JOIN sistema.usuario us ON us.idUsuario=o.idUsuarioReg
+			LEFT JOIN sistema.usuarioFirma uf ON uf.idUsuarioFirma=us.idUsuarioFirma
+			
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
 	public function insertarMasivoDetalleProveedor($params)
 	{
 

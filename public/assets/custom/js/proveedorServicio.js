@@ -318,6 +318,26 @@ var ProveedorServicio = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 			});
 		})
+		$(document).on('click', '.formFechaVencimiento', function () {
+			++modalId;
+			var dataForm = {};
+			dataForm.fechaRegistro = $(this).data('fechareg');
+			dataForm.cantidadDias = $(this).data('cantdias');
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'formularioFechaVencimiento', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		})
 		$(document).on('click', '.formSustServ', function () {
 			++modalId;
 			var dataForm = {};
