@@ -233,8 +233,8 @@ class M_Sincerado extends MY_Model
 	{
 		$sql = "
 		select ss.* ,tpd.nombre from compras.tipoPresupuestoDetalle as tpd
-		join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
-		where idSincerado=$id  and tpd.idTipoPresupuesto = 7
+		right join compras.sincerado_Det as ss on tpd.idTipoPresupuestoDetalle = ss.idTipoPresupuestoDetalle
+		where idSincerado= $id  and (tpd.idTipoPresupuesto = 7 or ss.idTipoPresupuestoDetalle = 0 )
 		";
 		//echo $sql;
 		return $this->db->query($sql);
@@ -311,12 +311,104 @@ class M_Sincerado extends MY_Model
 		join compras.sincerado s ON s.idSincerado = ss.idSincerado
 		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
 		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
-		join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
-		where tpd.idTipoPresupuesto = 7
+		left join compras.tipoPresupuestoDetalle as tpd on ss.idTipoPresupuestoDetalle = tpd.idTipoPresupuestoDetalle
+		where tpd.idTipoPresupuesto = 7 or ss.idTipoPresupuestoDetalle = 0
 		";
 		//echo $sql;
 		return $this->db->query($sql);
 	}
+
+	public function obtenerTotalGastoAdmin($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 7
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerTotalComunicacion($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 2
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerTotalSueldo($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 1
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
+	public function obtenerTotalMateProte($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 5
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	public function obtenerTotalMateOngo($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 6
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}	
+	
+	public function obtenerTotalMateOper($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 4
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
+	public function obtenerTotalUniforme($id)
+	{
+		$sql = "
+		select sdt.* , s.fecha_seleccionada  from compras.sinceradoDetalle as sdt
+		join compras.sincerado s on s.idSincerado = sdt.idSincerado 
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+		where idTipoPresupuesto = 3
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+	
+	
 
 	public function obtenerDetalleMateProte($id)
 	{
