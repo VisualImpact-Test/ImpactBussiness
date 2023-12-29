@@ -41,6 +41,10 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="oper" id="btn-operSinCotizar" title="oper">
 					<i class="fas fa-money-check-edit-alt"></i> <span class="txt_filtro"></span>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" onclick="exportToExcel('tb-oc', 'ExcelSheet.xlsx')" title="Excell">
+					<i class="far fa-file-excel"></i>
+
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
