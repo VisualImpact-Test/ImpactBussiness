@@ -59,6 +59,7 @@ class OrdenCompra extends MY_Controller
 				'simboloMoneda' => $row['simboloMoneda'],
 				'entrega' => $row['entrega'],
 				'fechaEntrega' => date_change_format($row['fechaEntrega']),
+				'poCliente' => $row['poCliente'],
 				'total' => $row['total'],
 				'IGVPorcentaje' => $row['IGVPorcentaje'],
 				'totalIGV' => $row['totalIGV'],
@@ -68,11 +69,6 @@ class OrdenCompra extends MY_Controller
 				'seriado' => $row['seriado'],
 				'moneda' => $row['monedaPlural']
 			];
-			$item[$row['idOrdenCompra']][$row['item']] = $row['item'];
-		}
-
-		foreach ($dataParaVista as $key => $row) {
-			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
 		}
 
 		$html = getMensajeGestion('noRegistros');
@@ -260,6 +256,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_itemLog'] = checkAndConvertToArray($post['subItem_itemLog']);
 			$post['subItem_nombre'] = checkAndConvertToArray($post['subItem_nombre']);
 			$post['subItem_talla'] = checkAndConvertToArray($post['subItem_talla']);
+			$post['subItem_genero'] = checkAndConvertToArray($post['subItem_genero']);
 			$post['subItem_tela'] = checkAndConvertToArray($post['subItem_tela']);
 			$post['subItem_color'] = checkAndConvertToArray($post['subItem_color']);
 			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
@@ -333,6 +330,7 @@ class OrdenCompra extends MY_Controller
 					'idUnidadMedida' => $post['subItem_idUm'][$orden] == '' ? NULL : $post['subItem_idUm'][$orden],
 					'nombre' => $post['subItem_nombre'][$orden] == '' ? NULL : $post['subItem_nombre'][$orden],
 					'talla' => $post['subItem_talla'][$orden] == '' ? NULL : $post['subItem_talla'][$orden],
+					'idGenero' => $post['subItem_genero'][$orden] == '' ? NULL : $post['subItem_genero'][$orden],
 					'tela' => $post['subItem_tela'][$orden] == '' ? NULL : $post['subItem_tela'][$orden],
 					'color' => $post['subItem_color'][$orden] == '' ? NULL : $post['subItem_color'][$orden],
 					'cantidad' => $post['subItem_cantidad'][$orden] == '' ? NULL : $post['subItem_cantidad'][$orden],

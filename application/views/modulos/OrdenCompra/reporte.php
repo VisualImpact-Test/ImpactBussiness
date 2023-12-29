@@ -9,15 +9,15 @@
 				<th>#</th>
 				<th>OPCIONES</th>
 				<th>NRO OC</th>
+				<th>PO CLIENTE</th>
 				<th>CONCEPTO</th>
 				<th>REQUERIMIENTO</th>
 				<th>PROVEEDOR</th>
 				<th>LUGAR ENTREGA</th>
 				<th>FECHA ENTREGA</th>
-				<th>ITEM</th>
 				<th>IGVPORCENTAJE</th>
 				<th>MONEDA</th>
-				<th>TOTAL</th>
+				<th>TOTAL CON IGV</th>
 				<th>ESTADO</th>
 			</tr>
 		</thead>
@@ -37,12 +37,12 @@
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOC" title="Imprimir OC"><i class="fa fa-lg fa-file-pdf"></i></a>
 					</td>
 					<td class="td-center"><?= verificarEmpty($row['seriado'], 3); ?></td>
+					<td class="td-center"><?= verificarEmpty($row['poCliente'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['concepto'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['requerimiento'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['proveedor'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['entrega'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['fechaEntrega'], 3); ?></td>
-					<td class="td-center"><?= verificarEmpty($row['item'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['IGVPorcentaje'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['moneda'], 3); ?></td>
 					<td nowrap class="td-center"><?= monedaTipoNumero(['valor' => $row['totalIGV'], 'simbolo' => $row['simboloMoneda'], 'cambio' => $row['monedaCambio']]); ?></td>

@@ -10,6 +10,7 @@
 				<th>Centro Costo</th>
 				<th>Proveedor</th>
 				<th>Fecha de Cotización Interna</th>
+				<th>Fecha de Vencimiento Orden</th>
 				<th>Cotización</th>
 				<th>Ver Cotización</th>
 				<th>Estado</th>
@@ -33,8 +34,13 @@
 					</td>
 					<td><?= verificarEmpty($row['cuenta'], 3) ?></td>
 					<td><?= verificarEmpty($row['cuentaCentroCosto'], 3) ?></td>
-					<td><?= verificarEmpty($row['proveedor'], 3) ?></td>
-					<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
+					<td><?= verificarEmpty($row['cantDias'], 3) ?></td>
+					<td><?= verificarEmpty($row['fechaReg'], 3) ?></td>
+					<td>
+						<a class="ui basic button formFechaVencimiento" data-fechareg="<?= $row['fechaReg'] ?>" data-cantdias="<?= $row['cantDias'] ?>">
+							<?= verificarEmpty($row['fechaVencimiento'], 3) ?>
+						</a>
+					</td>
 					<td><?= verificarEmpty($row['title'], 3) ?></td>
 					<td>
 						<?php if (!$row['flagOcLibre'] == 0) : ?>
@@ -69,7 +75,7 @@
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<a href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra']; ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
+							<a href="<?= base_url() . 'Cotizacion/descargarOCDirectoProvServ/' . $row['idOrdenCompra']; ?>?flag=<?= $row['flagOcLibre'] ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
 								<?= $row['seriado'] ?>
 							</a>
 						<?php endif; ?>

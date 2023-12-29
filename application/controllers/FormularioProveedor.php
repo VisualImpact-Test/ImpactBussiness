@@ -1089,6 +1089,21 @@ class FormularioProveedor extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioFechaVencimiento()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+		$dataParaVista['fechaRegistro'] = $post['fechaRegistro'];
+		$dataParaVista['cantidadDias'] = $post['cantidadDias'];
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Fecha Vencimiento';
+		$result['data']['html'] = $this->load->view("formularioProveedores/formularioFechaVencimiento", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	public function formularioSustento()
 	{
 		$result = $this->result;

@@ -2965,6 +2965,11 @@ class Cotizacion extends MY_Controller
 		$this->descargarOrdenCompra($oc, true);
 	}
 
+	public function descargarOCDirectoProvServ($oc = null)
+	{
+		$this->descargarOrdenCompraProveedorServicio($oc, true);
+	}
+
 	public function descargarOrdenCompra($t = null, $visible = false)
 	{
 		require_once('../mpdf/mpdf.php');
@@ -3016,6 +3021,108 @@ class Cotizacion extends MY_Controller
 			$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
 			$ids[] = $v['idCotizacion'];
 		}
+		$dataParaVista['cuentas'] = implode(', ', $cuentas);
+		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
+		$idCotizacion = implode(",", $ids);
+
+		require APPPATH . '/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf([
+			'mode' => 'utf-8',
+			'setAutoTopMargin' => 'stretch',
+			// 'orientation' => '',
+			'autoMarginPadding' => 0,
+			'bleedMargin' => 0,
+			'crossMarkMargin' => 0,
+			'cropMarkMargin' => 0,
+			'nonPrintMargin' => 0,
+			'margBuffer' => 0,
+			'collapseBlockMargins' => false,
+		]);
+
+		$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'ORDEN DE COMPRA DE BIENES Y SERVICIOS', 'codigo' => 'SIG-LOG-FOR-009'], true);
+		$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", array(), true);
+
+		$contenido['style'] = $this->load->view("modulos/Cotizacion/pdf/oper_style", [], true);
+		$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/orden_compra", $dataParaVista, true);
+		$mpdf->curlAllowUnsafeSslRequests = true;
+		$mpdf->showImageErrors = true;
+		$mpdf->debug = true;
+		$mpdf->SetHTMLHeader($contenido['header']);
+		$mpdf->SetHTMLFooter($contenido['footer']);
+		$mpdf->AddPage();
+		$mpdf->WriteHTML($contenido['style']);
+		$mpdf->WriteHTML($contenido['body']);
+
+		header('Set-Cookie: fileDownload=true; path=/');
+		header('Cache-Control: max-age=60, must-revalidate');
+
+		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+		if ($visible) {
+			$mpdf->Output("OC{$cod_oc}.pdf", 'I');
+		} else {
+			$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		}
+	}
+
+	public function descargarOrdenCompraProveedorServicio($t = null, $visible = false)
+	{
+		require_once('../mpdf/mpdf.php');
+		ini_set('memory_limit', '1024M');
+		set_time_limit(0);
+
+		$post = json_decode($this->input->post('data'), true);
+		$flag = $this->input->get('flag');
+		if (!empty($t)) {
+			$post['id'] = $t;
+		}
+
+		if($flag == 0) {
+			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+		}  else {
+			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedorOC(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+		}
+
+		
+		$dataParaVista['data'] = $ordenCompra[0];
+		$dataParaVista['detalle'] = $ordenCompra;
+
+		$cotDet = [];
+		foreach ($ordenCompra as $k => $v) {
+			$cotDet[] = $v['idCotizacionDetalle'];
+		}
+		$cotizacionDet = implode(',', $cotDet);
+
+		$dataParaVista['imagenesDeItem'] = [];
+		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
+			foreach ($dataParaVista['detalle'] as $key => $value) {
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
+			}
+		}
+
+		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
+			foreach ($ordenCompra as $key => $value) {
+				$dd = $this->model->getImagenCotiProv(['idCotizacionDetalle' => $value['idCotizacionDetalle'], 'idProveedor' => $value['idProveedor']])->result_array();
+				foreach ($dd as $kl => $vl) {
+					$dataParaVista['imagenesDeItem'][$value['idItem']][] = $vl;
+				}
+			}
+		}
+
+		foreach ($dataParaVista['detalle'] as $k => $v) {
+			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+		}
+		
+		$ids = [];
+		foreach ($ordenCompra as $v) {
+			$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
+			$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle($v['idCotizacion']);
+
+			$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
+			$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
+			$ids[] = $v['idCotizacion'];
+			
+		}
+		
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);

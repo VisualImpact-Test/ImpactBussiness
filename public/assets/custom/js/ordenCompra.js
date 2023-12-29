@@ -373,7 +373,7 @@ var Oc = {
 					<div class=" col-md-3" style="display: flex;">
 						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 							<label class="font-weight-bold">Tela:</label>
-							<input class="form-control" name="subItem_tela" patron="requerido">
+							<input class="form-control" name="subItem_tela">
 						</div>
 						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 							<label class="font-weight-bold">Color:</label>

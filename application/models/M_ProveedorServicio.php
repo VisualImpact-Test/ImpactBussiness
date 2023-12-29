@@ -35,7 +35,10 @@ class M_ProveedorServicio extends MY_Model
 				pr.idProveedor,
 				c.codOrdenCompra, 
 				0 AS flagOcLibre,
-				o.estadoval")
+				o.estadoval,
+				REPLACE(CONVERT(VARCHAR, CONVERT(DATE, o.fechaReg), 103), '-', '/') AS fechaReg,
+				mp.cantDias,
+				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg)), 103), '-', '/') AS fechaVencimiento")
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
@@ -43,6 +46,7 @@ class M_ProveedorServicio extends MY_Model
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
+			->join('compras.metodoPago mp', 'mp.idMetodoPago = o.idMetodoPago', 'INNER')
 			->where('ocd.estado', '1')
 			->group_by("
 				ocd.idOrdenCompra,
@@ -58,7 +62,10 @@ class M_ProveedorServicio extends MY_Model
 				cu.nombre, 
 				pr.idProveedor,
 				c.codOrdenCompra,
-				o.estadoval")
+				o.estadoval,
+				CONVERT(DATE, o.fechaReg),
+				mp.cantDias,
+				DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg))")
 			->order_by('ocd.idOrdenCompra DESC');
 
 		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
@@ -93,12 +100,16 @@ class M_ProveedorServicio extends MY_Model
 				cd.idProveedor,
 				cd.requerimiento AS codOrdenCompra,
 				1 AS flagOcLibre,
-				cd.estadoval")
+				cd.estadoval,
+				REPLACE(CONVERT(VARCHAR, CONVERT(DATE, cd.fechaReg), 103), '-', '/') AS fechaReg,
+				mp.cantDias,
+				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg)), 103), '-', '/') AS fechaVencimiento")
 			->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'cd.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
 			->join('visualImpact.logistica.cuenta cu', 'cd.idCuenta = cu.idCuenta', 'INNER')
+			->join('compras.metodoPago mp', 'mp.idMetodoPago = cd.idMetodoPago', 'INNER')
 			->where('cd.estado', '1')
 			->group_by("
 				cd.seriado,
@@ -110,7 +121,10 @@ class M_ProveedorServicio extends MY_Model
 				pr.razonSocial,
 				cd.requerimiento,
 				cp.idOrdenCompra,
-				cd.estadoval")
+				cd.estadoval,
+				CONVERT(DATE, cd.fechaReg),
+				mp.cantDias,
+				DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg))")
 			->order_by('cp.idOrdenCompra', 'DESC');
 
 		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
