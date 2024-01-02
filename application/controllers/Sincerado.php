@@ -164,7 +164,7 @@ class Sincerado extends MY_Controller
 	{
 		$post = $this->input->post();
 		$data = $this->db->get_where('compras.sinceradoGr', ['idSincerado' => $post['idSincerado'], 'estado' => 1])->result_array();
-
+		$sincerado = $this->db->get_where('compras.sincerado', ['idSincerado' => $post['idSincerado'], 'estado' => 1])->row_array();
 		if (empty($data)) {
 			echo json_encode(mensajeList('NoData'), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG);
 			exit();
@@ -222,7 +222,7 @@ class Sincerado extends MY_Controller
 			'font'  => [
 				'size' => 13,
 				'name'  => 'Calibri',
-				'bold' => true,
+				// 'bold' => true,
 			]
 		];
 		$estilo_subtitulo = [
@@ -286,9 +286,11 @@ class Sincerado extends MY_Controller
 			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getStyle("B2:B3")->applyFromArray($estilo_titulo)->getFont();
+			$objPHPExcel->getActiveSheet()->getStyle("C2:C3")->applyFromArray($estilo_bordado)->getFont();
 		} else {
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('E1', 'MONTO TOTAL')
+				->setCellValue('F1', $sincerado['totalSincerado'])
 				->setCellValue('A3', 'DESCRIPCIÓN')
 				->setCellValue('B3', 'FECHA')
 				->setCellValue('C3', 'PORCENTAJE')
