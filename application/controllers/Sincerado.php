@@ -212,6 +212,19 @@ class Sincerado extends MY_Controller
 				'bold' => true,
 			]
 		];
+		$estilo_bordado = [
+			'borders' => [
+				'allborders' => array(
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+					'color' => array('rgb' => '000000')
+				)
+			],
+			'font'  => [
+				'size' => 13,
+				'name'  => 'Calibri',
+				'bold' => true,
+			]
+		];
 		$estilo_subtitulo = [
 			'alignment' => [
 				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
@@ -264,10 +277,14 @@ class Sincerado extends MY_Controller
 		/**FIN ESTILOS**/
 
 		if (count($data) == 1 and $data[0]['porcentaje'] == '100' and $data[0]['porcentajeSincerado'] == '100') {
+			$v = $data[0];
 			$objPHPExcel->setActiveSheetIndex(0)
-				->setCellValue('B2', 'GR CARGADO')
-				->setCellValue('B3', 'CODIGO GR');
+				->setCellValue('B2', 'CODIGO GR')
+				->setCellValue('B3', 'FECHA GR')
+				->setCellValue('C2', $v['descripcion'])
+				->setCellValue('C3', date_change_format($v['fecha']));
 			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getStyle("B2:B3")->applyFromArray($estilo_titulo)->getFont();
 		} else {
 			$objPHPExcel->setActiveSheetIndex(0)
@@ -284,7 +301,7 @@ class Sincerado extends MY_Controller
 				$rIni++;
 				$objPHPExcel->setActiveSheetIndex(0)
 					->setCellValue('A' . $rIni, $v['descripcion'])
-					->setCellValue('B' . $rIni, $v['fecha'])
+					->setCellValue('B' . $rIni, date_change_format($v['fecha']))
 					->setCellValue('C' . $rIni, $v['porcentaje'])
 					->setCellValue('D' . $rIni, $v['monto'])
 					->setCellValue('E' . $rIni, $v['porcentajeSincerado'])
@@ -301,32 +318,6 @@ class Sincerado extends MY_Controller
 			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
 			$objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
 		}
-
-
-
-
-		// $objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
-		// $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
-		// $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
-
-		// foreach ($data as $k => $v) {
-		// $objPHPExcel->setActiveSheetIndex(0)
-		// 	->setCellValue('Q' . $nIni, 'aaa')
-		// 	->setCellValue('R' . $nIni, 'bbb')
-		// 	->setCellValue('S' . $nIni, 'ccc');
-
-		// $objPHPExcel
-		// 	->getActiveSheet()
-		// 	->getStyle('L' . $nIni)
-		// 	->getNumberFormat()
-		// 	->setFormatCode('"S/"#,##0.00_-');
-		// $objPHPExcel
-		// 	->getActiveSheet()
-		// 	->getStyle('M' . $nIni)
-		// 	->getNumberFormat()
-		// 	->setFormatCode('"S/"#,##0.00_-');
-		// $nIni++;
-		// }
 
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
