@@ -851,7 +851,10 @@ class Sincerado extends MY_Controller
 		$datosCaeceraMateOper = $this->model->obtenerCabeceraMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		$datosDetalleMateOper = $this->model->obtenerDetalleMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		$datosTotalMateOper = $this->model->obtenerTotalMateOper($datosSincerado[0]['idSincerado'])->result_array();
-
+		
+		
+		$datosFeeTotal = $this->model->obtenerDetalleFeeTotal($datosSincerado[0]['idSincerado'])->result_array();
+		
 		//echo json_encode($datosCargoSueldo); exit;
 
 		$data = [];
@@ -1037,6 +1040,24 @@ class Sincerado extends MY_Controller
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 				'startcolor' => array('rgb' => 'FFD966')
 			],
+			'font'  => [
+				'size' => 8,
+				'name'  => 'Calibri',
+				'bold' => true, // Agregar negrita
+			]
+			// 'numberformat' => [
+			// 	'code' => '[$S/ ]#,##0.00'
+			// ]
+		];
+		$estilo_fee = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			// 'fill' =>	[
+			// 	'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			// 	'startcolor' => array('rgb' => 'FFD966')
+			// ],
 			'font'  => [
 				'size' => 8,
 				'name'  => 'Calibri',
@@ -1280,6 +1301,28 @@ class Sincerado extends MY_Controller
 				}
 			}
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotalNormal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+			$row++;
+			$celda = $col . $row;
+			
+			foreach ($datosFeeTotal as $fe => $fee) {
+				if ($fee['fecha_seleccionada'] == $v['fecha']) {
+			
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalOriginal'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+
+				}
+			}
+			
 			//$col++;
 			//aqui se termina la columna y se sube a la row 4
 			$row = "4";
@@ -1487,21 +1530,57 @@ class Sincerado extends MY_Controller
 					}
 				}
 			}
+			$cabecera = 'B' . $row;
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'SUB TOTAL')->getStyle($cabecera)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+			$row++;
+			$celda = $col . $row;
+			
+			foreach ($datosFeeTotal as $fe => $fee) {
+				if ($fee['fecha_seleccionada'] == $v['fecha']) {
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee1'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee2'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+				$cabecera = 'B' . $row;
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee3'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+				$cabecera = 'B' . $row;
+
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'TOTAL COTIZACION (sin IGV)')->getStyle($cabecera)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
+				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalSincerado'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;	
+				$cabecera = 'B' . $row;
+
+				}
+			}
+
+
+
+
 			$col++;
 		}
-		$colUlt = $col . '1';
-		$col = "B";
-		$celda = $col . $row;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'SUB TOTAL:')->getStyle($celda)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
-		$row++;
-		$row++;
-		$row++;
-		$celda = $col . $row;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'OBSERVACIONES:');
-		$row++;
-		$celda = $col . $row;
-		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, ' - FEE Proyecto 10% ');
+		// $colUlt = $col . '1';
+		// $col = "B";
+		// $celda = $col . $row;
+		// $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'SUB TOTAL:')->getStyle($celda)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
+		// $row++;
+		// $row++;
+		// $row++;
+		// $celda = $col . $row;
+		// $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'OBSERVACIONES:');
+		// $row++;
+		// $celda = $col . $row;
+		// $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, ' - FEE Proyecto 10% ');
 
 		//$objPHPExcel->getActiveSheet()->getStyle("B1:".$colUlt)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
 

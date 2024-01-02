@@ -519,4 +519,16 @@ class M_Sincerado extends MY_Model
 		return $this->db->query($sql);
 	}
  
+	public function obtenerDetalleFeeTotal($id)
+	{
+		$sql = "
+		select s.* from compras.sincerado as s
+		join ( select distinct idPresupuesto, idPresupuestoHistorico from compras.sincerado where idSincerado=$id )
+		as p ON p.idPresupuesto = s.idPresupuesto and p.idPresupuestoHistorico = s.idPresupuestoHistorico
+
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+ 
 }
