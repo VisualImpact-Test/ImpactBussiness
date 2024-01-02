@@ -217,6 +217,20 @@ class M_Sincerado extends MY_Model
 	}
 	
 
+	public function obtenerCargoSueldo($id)
+	{
+		$sql = "
+				select ss.*, s.fecha_seleccionada , c.nombre
+				from compras.sinceradoDetalleSueldo_Det ss
+				join compras.sinceradoDetalle sd ON sd.idSinceradoDetalle = ss.idSinceradoDetalle
+				join compras.sincerado s ON s.idSincerado = sd.idSincerado
+				left JOIN rrhh.dbo.cargoTrabajo c on c.idCargoTrabajo = ss.idCargo
+				where sd.idSincerado = $id
+		";
+		//echo $sql;
+		return $this->db->query($sql);
+	}
+
 	public function obtenerCabeceraComunicacion($id)
 	{
 		$sql = "

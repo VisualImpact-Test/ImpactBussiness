@@ -822,6 +822,8 @@ class Sincerado extends MY_Controller
 		$datosSincerado = $this->model->obtenerDatosSincerado($post)->result_array();
 		$datosFechas = $this->model->obtenerOrdenServicioFechas($datosSincerado[0]['idSincerado'])->result_array();
 		$datosSinceradoCargo = $this->model->obtenerSinceradoCargos($datosSincerado[0]['idSincerado'])->result_array();
+		$datosCargoSueldo = $this->model->obtenerCargoSueldo($datosSincerado[0]['idSincerado'])->result_array();
+
 		$datosPreHist = $this->model->obtenerPresupuestoHist($datosSincerado[0]['idSincerado'])->result_array();
 		$datosfechaCargo = $this->model->obtenerFechaCargo($datosSincerado[0]['idSincerado'])->result_array();
 		$datosTipoPresupuesto = $this->model->obtenerTipoPresupuesto($datosSincerado[0]['idSincerado'])->result_array();
@@ -857,7 +859,7 @@ class Sincerado extends MY_Controller
 		$datosDetalleMateOper = $this->model->obtenerDetalleMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		$datosTotalMateOper = $this->model->obtenerTotalMateOper($datosSincerado[0]['idSincerado'])->result_array();
 
-		//echo json_encode($datosDetalleMateProte); exit;
+		//echo json_encode($datosCargoSueldo); exit;
 
 		$data = [];
 
@@ -1065,6 +1067,7 @@ class Sincerado extends MY_Controller
 			}
 			$row++;
 			$row++;
+			$cantMontosTotalNormal = 0;
 			foreach ($datosTipoPresupuesto as $m => $n) {
 				if ($n['montoOriginal'] != 0) {
 					$cabecera = 'B' . $row;
@@ -1074,6 +1077,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 1) {
 						foreach ($datosTotalSueldo as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1081,6 +1085,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 2) {
 						foreach ($datosTotalComunicacion as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1088,6 +1093,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 3) {
 						foreach ($datosTotalUniforme as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1095,6 +1101,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 4) {
 						foreach ($datosTotalMateOper as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1102,6 +1109,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 5) {
 						foreach ($datosTotalMateProte as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1109,6 +1117,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 6) {
 						foreach ($datosTotalMateOngo as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1116,6 +1125,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 7) {
 						foreach ($datosTotalGastosAdmin as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1123,6 +1133,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 8) {
 						foreach ($datosDetalleMovilidad as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $ñ['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 							// $row++;
@@ -1132,6 +1143,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 9) {
 						foreach ($datosDetalleAlmacen as $t => $z) {
 							if ($z['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotalNormal = $cantMontosTotalNormal + $z['montoOriginal'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $z['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 							// $row++;
@@ -1142,9 +1154,14 @@ class Sincerado extends MY_Controller
 					$cabecera = 'B' . $row;
 					$celda = $col . $row;
 					if ($n['idTipoPresupuesto'] == 1) {
-						foreach ($datosSinceradoCargo as $j => $i) {
+						foreach ($datosCargoSueldo as $j => $i) {
 							$cabecera = 'B' . $row;
-							$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
+							if (!empty($i['nombre'])) {
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
+							}else{
+								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'INCENTIVO');
+							}
+							
 							foreach ($datosDetalleSueldo as $e => $r) {
 								if ($i['idCargo'] == $r['idCargo'] and $r['fecha_seleccionada'] == $v['fecha']) {
 									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $r['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
@@ -1234,6 +1251,8 @@ class Sincerado extends MY_Controller
 					}
 				}
 			}
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotalNormal);
+			//$col++;
 			//aqui se termina la columna y se sube a la row 4
 			$row = "4";
 			$col++;
@@ -1257,6 +1276,7 @@ class Sincerado extends MY_Controller
 			$row++;
 			$row++;
 			// aqui va el foreach
+			$cantMontosTotal = 0;
 			foreach ($datosTipoPresupuesto as $m => $n) {
 				if ($n['montoOriginal'] != 0) {
 					$cabecera = 'B' . $row;
@@ -1266,6 +1286,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 1) {
 						foreach ($datosTotalSueldo as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1273,6 +1294,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 2) {
 						foreach ($datosTotalComunicacion as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1280,6 +1302,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 3) {
 						foreach ($datosTotalUniforme as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1287,6 +1310,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 4) {
 						foreach ($datosTotalMateOper as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1294,6 +1318,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 5) {
 						foreach ($datosTotalMateProte as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1301,6 +1326,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 6) {
 						foreach ($datosTotalMateOngo as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1308,6 +1334,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 7) {
 						foreach ($datosTotalGastosAdmin as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1315,6 +1342,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 8) {
 						foreach ($datosDetalleMovilidad as $b => $ñ) {
 							if ($ñ['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $ñ['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $ñ['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1322,6 +1350,7 @@ class Sincerado extends MY_Controller
 					if ($n['idTipoPresupuesto'] == 9) {
 						foreach ($datosDetalleAlmacen as $t => $z) {
 							if ($z['fecha_seleccionada'] == $v['fecha']) {
+								$cantMontosTotal = $cantMontosTotal + $z['montoSincerado'];
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $z['montoSincerado'])->getStyle($celda)->applyFromArray($estilo_moneda_total)->getFont()->setBold(true);
 							}
 						}
@@ -1331,7 +1360,7 @@ class Sincerado extends MY_Controller
 					$cabecera = 'B' . $row;
 					$celda = $col . $row;
 					if ($n['idTipoPresupuesto'] == 1) {
-						foreach ($datosSinceradoCargo as $j => $i) {
+						foreach ($datosCargoSueldo as $j => $i) {
 							$cabecera = 'B' . $row;
 							$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre'])->getStyle($cabecera)->applyFromArray($estilo_personal)->getFont()->setBold(true);
 							foreach ($datosDetalleSueldo as $e => $r) {
@@ -1430,13 +1459,13 @@ class Sincerado extends MY_Controller
 					}
 				}
 			}
-
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal);
 			$col++;
 		}
 		$colUlt = $col . '1';
 		$col = "C";
 		$celda = $col . $row;
-		// $objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'hola');
+		//$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal);
 
 
 
