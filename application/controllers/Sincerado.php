@@ -1008,7 +1008,42 @@ class Sincerado extends MY_Controller
 				'code' => '[$S/ ]#,##0.00'
 			]
 		];
-
+		$estilo_sub_total = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array('rgb' => 'FFD966')
+			],
+			'font'  => [
+				'size' => 8,
+				'name'  => 'Calibri',
+				'bold' => true, // Agregar negrita
+			],
+			'numberformat' => [
+				'code' => '[$S/ ]#,##0.00'
+			]
+		];
+		$estilo_sub_total_cab = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => array('rgb' => 'FFD966')
+			],
+			'font'  => [
+				'size' => 8,
+				'name'  => 'Calibri',
+				'bold' => true, // Agregar negrita
+			]
+			// 'numberformat' => [
+			// 	'code' => '[$S/ ]#,##0.00'
+			// ]
+		];
 		/**FIN ESTILOS**/
 		$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(3);
 		$objPHPExcel->getActiveSheet()->getStyle('B1:S1')->getAlignment()->setWrapText(true);
@@ -1242,7 +1277,7 @@ class Sincerado extends MY_Controller
 					}
 				}
 			}
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotalNormal);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotalNormal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
 			//$col++;
 			//aqui se termina la columna y se sube a la row 4
 			$row = "4";
@@ -1450,15 +1485,21 @@ class Sincerado extends MY_Controller
 					}
 				}
 			}
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal);
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
 			$col++;
 		}
 		$colUlt = $col . '1';
-		$col = "C";
+		$col = "B";
 		$celda = $col . $row;
-		//$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal);
-
-
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'SUB TOTAL:')->getStyle($celda)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
+		$row++;
+		$row++;
+		$row++;
+		$celda = $col . $row;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, 'OBSERVACIONES:');
+		$row++;
+		$celda = $col . $row;
+		$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, ' - FEE Proyecto 10% ');
 
 		//$objPHPExcel->getActiveSheet()->getStyle("B1:".$colUlt)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
 
