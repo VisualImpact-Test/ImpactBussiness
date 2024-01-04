@@ -38,6 +38,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarProveedor" title="Nuevo">
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" onclick="exportToExcel('tb-proveedor', 'ExcelSheet.xlsx')" title="Excell">
+					<i class="far fa-file-excel"></i>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
