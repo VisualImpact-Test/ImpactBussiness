@@ -54,6 +54,41 @@ var Sincerado = {
 			});
 
 		});
+		$(document).on('click', '.btn-formEditarSincerado', function () {
+			let _this = $(this);
+			let idSincerado = _this.closest('tr').data('idsincerado');
+
+			++modalId;
+			let jsonString = { 'idSincerado': idSincerado };
+			let config = { 'url': Sincerado.url + 'formularioEditarSincerado', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formEditarSincerado", fn: "Sincerado.editarSincerado()", content: "¿Esta seguro de modificar el sincerado?" });';
+				btn[1] = { title: 'Modificar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
+
+				OrdenServicio.arrayFechas = a.data.fechas;
+				OrdenServicio.arrayTipoPresupuestoDetalle = a.data.tipoPresupuestoDetalle;
+				OrdenServicio.arrayCargo = a.data.cargo;
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				$('.tabular.menu .item').tab();
+				Fn.loadSemanticFunctions();
+
+				td = $('td.cantidadDeTabla');
+				for (let i = 0; i < td.length; i++) {
+					$(td[i]).find('.ui.action.input').find('input').trigger('change');
+				}
+				$('.tabTiposPresupuestos').removeClass('disabled');
+				$("#calculateTablaSueldo").click();
+				OrdenServicio.calcularTotalesMovilidad();
+				$('#tablaSueldoAdicional tbody tr:first').find('.movilidadSueldoAdicional').change();
+				$('#tablaAlmacenMonto tbody tr').find('select').change();
+			});
+
+		})
 		$(document).on('click', '.btn-cargarGR', function () {
 			let _this = $(this);
 			let idSincerado = _this.closest('tr').data('id');
@@ -90,12 +125,9 @@ var Sincerado = {
 			_this = $(this);
 			let idSincerado = _this.closest('tr').data('id');
 			let ruta = _this.data('ruta');
-			let data = { 'data': idSincerado};
+			let data = { 'data': idSincerado };
 			var url = Sincerado.url + ruta;
-			
-			// console.log(idSincerado);
-			// console.log(data);
-			// console.log(url);
+
 			$.when(Fn.download(url, data)).then(function (a) {
 				Fn.showLoading(false);
 			});
@@ -171,6 +203,24 @@ var Sincerado = {
 			control.find('.opc_mult').removeClass('d-none');
 			control.find('.opc_mult').find('input').attr('patron', 'requerido')
 		}
+	},
+	editarSincerado: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarSincerado')) };
+		let url = Sincerado.url + "registrarSincerado";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarSincerado").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
 	},
 	guardarGrSincerado: function (idSincerado) {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroGrSincerado')) };

@@ -1,5 +1,13 @@
 <?php $dataRow = 0; ?>
-<form class="form" role="form" id="formRegistroSincerado" method="post" autoComplete="off">
+<?php foreach ($fechaDelPre as $k => $v) :
+	$anio = date('Y', strtotime($v['fecha']));
+	$mes = date('n', strtotime($v['fecha']));
+	if (!isset($contadorMeses[$anio])) {
+		$contadorMeses[$anio] = array_fill(1, 12, 0);
+	}
+	$contadorMeses[$anio][$mes]++;
+endforeach;  ?>
+<form class="form" role="form" id="formEditarSincerado" method="post" autoComplete="off">
 	<input type="hidden" id="idCuenta" value="<?= $idCuenta; ?>">
 	<div class="row pt-4">
 		<?php $cantidadCargo = 0; ?>
@@ -10,44 +18,53 @@
 			<?php break; ?>
 		<?php endforeach; ?>
 		<div class="col-md-11 child-divcenter" style="width: 100%">
-			<input type="hidden" name="idOrdenServicio" value="<?= $presupuesto['idOrdenServicio']; ?>">
-			<input type="hidden" name="idPresupuesto" value="<?= $presupuesto['idPresupuesto']; ?>">
-			<!-- Agregado Para Sincerado -->
-			<input type="hidden" name="idPresupuestoHistorico" value="<?= $idPresupuestoHistorico; ?>">
-			<input type="hidden" name="idPresupuestoValido" value="<?= $idPresupuestoValido; ?>">
+			<input type="hidden" name="idOrdenServicio" value="<?= $sincerado['idOrdenServicio']; ?>">
+			<input type="hidden" name="idSincerado" value="<?= $sincerado['idSincerado']; ?>">
+			<input type="hidden" name="idPresupuesto" value="<?= $sincerado['idPresupuesto']; ?>">
+			<input type="hidden" name="idPresupuestoHistorico" value="<?= $sincerado['idPresupuestoHistorico']; ?>">
 			<input type="hidden" name="fechaSincerado" value="<?= $fechaSincerado; ?>">
-			<!-- Fin -->
 			<div class="ui top attached tabular menu">
 				<a class="item active" data-tab="datos">Datos</a>
-				<?php foreach ($presupuestoDetalle as $kd => $vd) : ?>
+				<?php foreach ($sinceradoDetalle as $kd => $vd) : ?>
 					<input class="idTP" type="hidden" value="<?= $vd['idTipoPresupuesto']; ?>">
 					<a class="tabTiposPresupuestos item" data-tab="<?= $vd['idTipoPresupuesto']; ?>"><?= $vd['tipoPresupuesto']; ?></a>
 				<?php endforeach; ?>
 			</div>
 			<div class="ui bottom attached tab segment active" data-tab="datos">
 				<div id="divTabla" class="ui table">
-					<table class="ui table" id="tablaFechaPersona">
+					<table class="ui sortable table" id="tablaFechaPersona">
 						<thead>
 							<tr>
-								<th class="two wide"><label class="text-white">________________</label><button type="button" class="btn-valoresFijosSincerado d-none">FIJAR VALORES</button></th>
+								<th rowspan="2" class="three wide p-0 "><label class="text-white">________________</label></th>
+								<?php
+								foreach ($contadorMeses as $anio => $meses) {
+									$totalMeses = array_sum($meses); ?>
+									<th class="one wide p-0 " colspan="<?php echo '1' //$totalMeses 
+																					?>" style="text-align: center;"><?php echo $anio ?></th>
+								<?php } ?>
+								<th class="one wide p-0 " rowspan="2"></th>
+							</tr>
+							<tr>
 								<?php foreach ($fechaDelPre as $k => $v) : ?>
 									<?php $visible = '' ?>
 									<?php if ($v['fecha'] != $fechaSincerado) : ?>
 										<?php $visible = 'd-none' ?>
 									<?php endif; ?>
+									<?php $numeroMes = date('n', strtotime($v['fecha'])); ?>
 									<th class="one wide p-0 <?= $visible ?>">
-										<div class="ui input transparent">
-											<input type="text" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+										<div class="ui input transparent fluid">
+											<input type="hidden" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes]; ?>">
+
 										</div>
 									</th>
 								<?php endforeach; ?>
-								<th class="one wide"></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 								<tr>
-									<td class="two wide"><?= $vp['cargo']; ?></td>
+									<td class="three wide"><?= $vp['cargo']; ?></td>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 										<?php $visible = '' ?>
 										<?php #if ($vf['fecha'] != $fechaSincerado) : 
@@ -56,8 +73,9 @@
 											<?php $visible = 'd-none' ?>
 										<?php endif; ?>
 										<td class="one wide <?= $visible ?>">
-											<div class="ui input">
-												<input name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $presupuestoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" patron="requerido">
+											<div class="ui input fluid">
+												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $sinceradoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC 
+												<?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
@@ -66,13 +84,13 @@
 						</tbody>
 					</table>
 				</div>
-				<?php foreach ($presupuestoDetalle as $kd => $vd) : ?>
+				<?php foreach ($sinceradoDetalle as $kd => $vd) : ?>
 					<input type="hidden" name="idTipoPresupuesto" value="<?= $vd['idTipoPresupuesto']; ?>">
 					<div class="ui very compact table">
 						<table class="ui table no-paddingR" id="tb_LD<?= $vd['idTipoPresupuesto'] ?>">
 							<thead>
 								<tr>
-									<th class="two wide" rowspan="2"><?= $vd['tipoPresupuesto']; ?></th>
+									<th class="three wide" rowspan="2"><?= $vd['tipoPresupuesto']; ?></th>
 									<th class="one wide text-right">MONTO PRESUPUESTO
 										<input class="d-none" name="sinc_idTipoPresupuesto" value="<?= $vd['idTipoPresupuesto'] ?>">
 									</th>
@@ -81,15 +99,18 @@
 										<?php if ($vf['fecha'] != $fechaSincerado) : ?>
 											<?php $visible = 'd-none' ?>
 										<?php endif; ?>
-										<th class="one wide pr-0 <?= $visible ?> text-right">
+										<th class="one wide pr-0  <?= $visible ?> text-right">
 											MONTO SINCERADO
+											<!-- <div class="ui input transparent fluid">
+												<input class="text-right" type="text" value=" - " readonly id="totalColumna_<?= $vd['idTipoPresupuesto'] ?>_<?= $kf ?>">
+											</div> -->
 										</th>
 									<?php endforeach; ?>
 								</tr>
 								<tr>
 									<th class="one wide pr-0">
 										<div class="ui input transparent fluid pr-0">
-											<input class="text-right pasteFijarMonto" name="sinc_montoOriginal" value="">
+											<input class="text-right pasteFijarMonto" name="sinc_montoOriginal" value="<?= $vd['montoOriginal'] ?>" readonly>
 										</div>
 									</th>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
@@ -117,7 +138,7 @@
 													<input class="text-right d-none" type="text" value="0" readonly id="totalLineaSueldo_<?= $k ?>">
 													<!-- Fin -->
 													<input class="text-right d-none" name="sueldo_idCargo" value="<?= $v['idCargo'] ?>">
-													<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="" readonly>
+													<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= $sinceradoDetalleSueldo_Det[$v['idCargo']]['montoOriginal'] ?>" readonly>
 													<input class="text-right d-none" name="sueldo_flagIncentivo" value="0">
 												</div>
 											</td>
@@ -127,7 +148,7 @@
 													<?php $visible = 'd-none' ?>
 												<?php endif; ?>
 												<td class="<?= $visible ?>">
-													<div class="ui input transparent fluid pr-5">
+													<div class="ui input transparent fluid">
 														<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="sueldo_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="montoSueldo_<?= $k ?>_<?= $kf ?>">
 													</div>
 												</td>
@@ -142,7 +163,7 @@
 												<input class="text-right d-none" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumnaSueldo(this);">
 												<!-- Fin -->
 												<input class="text-right d-none" name="sueldo_idCargo" value="0">
-												<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="" readonly>
+												<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= $sinceradoDetalleSueldo_Det['0']['montoOriginal'] ?>" readonly>
 												<input class="text-right d-none" name="sueldo_flagIncentivo" value="1">
 											</div>
 										</td>
@@ -152,7 +173,7 @@
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid pr-5">
+												<div class="ui input transparent fluid">
 													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="sueldo_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="montoIncentivo_<?= $kf ?>">
 												</div>
 											</td>
@@ -166,7 +187,7 @@
 												<!-- Ocultado para el sincerado -->
 												<input class="text-right d-none" type="text" value="0" readonly id="totalMovilidadViajes">
 												<!-- Fin -->
-												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="" readonly>
+												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="<?= $sinceradoDetalleMovilidad_Det['1']['0']['montoOriginal'] ?>" readonly>
 												<input class="text-right d-none" name="movilidad_viaje" value="1">
 												<input class="text-right d-none" name="movilidad_adicional" value="0">
 											</div>
@@ -177,7 +198,7 @@
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid pr-5">
+												<div class="ui input transparent fluid">
 													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="movilidad_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="movilidadViajes_<?= $kf ?>">
 												</div>
 											</td>
@@ -190,7 +211,7 @@
 												<!-- Ocultado para el sincerado -->
 												<input class="text-right d-none" type="text" value="0" readonly id="totalMovilidadAdicional">
 												<!-- Fin -->
-												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="" readonly>
+												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="<?= $sinceradoDetalleMovilidad_Det['0']['1']['montoOriginal'] ?>" readonly>
 												<input class="text-right d-none" name="movilidad_viaje" value="0">
 												<input class="text-right d-none" name="movilidad_adicional" value="1">
 											</div>
@@ -201,7 +222,7 @@
 												<?php $visible = 'd-none' ?>
 											<?php endif; ?>
 											<td class="<?= $visible ?>">
-												<div class="ui input transparent fluid pr-5">
+												<div class="ui input transparent fluid">
 													<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="movilidad_montoSincerado" <?php endif; ?> type="text" value="0" readonly id="movilidadAdicionales_<?= $kf ?>">
 												</div>
 											</td>
@@ -210,8 +231,8 @@
 								<?php elseif ($vd['idTipoPresupuesto'] == COD_ALMACEN) : ?>
 									<!-- -->
 								<?php else : ?>
-									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) : ?>
-										<?php foreach ($presupuestoDetalleSub[$vd['idPresupuestoDetalle']] as $kLDS => $vLDS) : ?>
+									<?php if (!empty($sinceradoDetalleSub[$vd['idSinceradoDetalle']])) : ?>
+										<?php foreach ($sinceradoDetalleSub[$vd['idSinceradoDetalle']] as $kLDS => $vLDS) : ?>
 											<tr class="dataItem">
 												<td><?= $vLDS['nombre']; ?></td>
 												<td>
@@ -220,7 +241,7 @@
 														<input class="text-right totalFila d-none" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
 														<!-- Fin -->
 														<input class="text-right d-none" name="otros_idTipoPresupuestoDetalle" value="<?= $vLDS['idTipoPresupuestoDetalle'] ?>">
-														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="" readonly>
+														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="<?= $sincerado_Det[$vLDS['idTipoPresupuestoDetalle']]['montoOriginal'] ?>" readonly>
 														<input class="text-right d-none" name="otros_flagSctr" value="0">
 													</div>
 												</td>
@@ -230,14 +251,14 @@
 														<?php $visible = 'd-none' ?>
 													<?php endif; ?>
 													<td class="<?= $visible ?>">
-														<div class="ui input transparent fluid pr-5">
+														<div class="ui input transparent fluid">
 															<input class="text-right <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" type="text" <?php if (empty($visible)) : ?> name="otros_montoSincerado" <?php endif; ?> value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
 														</div>
 													</td>
 												<?php endforeach; ?>
 											</tr>
 										<?php endforeach; ?>
-										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) : ?>
+										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $sincerado['sctr'] !== NULL) :  ?>
 											<tr>
 												<td>SCTR</td>
 												<td>
@@ -246,7 +267,7 @@
 														<input class="text-right totalFila d-none" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
 														<!-- Fin -->
 														<input class="text-right d-none" name="otros_idTipoPresupuestoDetalle" value="0">
-														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="" readonly>
+														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="<?= $sincerado_Det['0']['montoOriginal'] ?>" readonly>
 														<input class="text-right d-none" name="otros_flagSctr" value="1">
 													</div>
 												</td>
@@ -256,7 +277,7 @@
 														<?php $visible = 'd-none' ?>
 													<?php endif; ?>
 													<td class="<?= $visible ?>">
-														<div class="ui input transparent fluid pr-5">
+														<div class="ui input transparent fluid">
 															<input class="text-right inputSctr <?= !empty($visible) ? '' : 'copyFijarMonto'; ?>" <?php if (empty($visible)) : ?> name="otros_montoSincerado" <?php endif; ?> type="text" data-sctr="<?= $kLDS + 1 ?>" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS + 1 ?>_<?= $kf ?>">
 														</div>
 													</td>
@@ -273,13 +294,13 @@
 					<table class="ui celled striped table">
 						<tbody>
 							<tr>
-								<td class="font-weight-bolder text-right two wide">SubTotal</td>
+								<td class="font-weight-bolder text-right three wide">SubTotal</td>
 								<td class="one wide p-0">
 									<div class="ui left corner labeled input fluid small">
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaSubtotalFinal" name="presupuestoSubTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_sbtotalOriginal" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= $sincerado['subTotalOriginal'] ?>" name="head_sbtotalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -301,7 +322,7 @@
 								<td class="font-weight-bolder text-right">
 									<div class="ui labeled input">
 										<div class="ui label">FEE</div>
-										<input class="fee1V text-right keyUpChange onlyNumbers" name="presupuestoFee1" value="<?= $presupuesto['fee1']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
+										<input class="fee1V text-right keyUpChange onlyNumbers" name="presupuestoFee1" value="<?= $sincerado['fee1']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
 										<div class="ui label">%</div>
 									</div>
 								</td>
@@ -310,7 +331,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee1Final" name="presupuestoTotalFee1" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee1Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee1Original']; ?>" name="head_fee1Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -332,7 +353,7 @@
 								<td class="font-weight-bolder text-right">
 									<div class="ui labeled input">
 										<div class="ui label">FEE</div>
-										<input class="fee2V text-right keyUpChange onlyNumbers" name="presupuestoFee2" value="<?= $presupuesto['fee2']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
+										<input class="fee2V text-right keyUpChange onlyNumbers" name="presupuestoFee2" value="<?= $sincerado['fee2']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
 										<div class="ui label">%</div>
 									</div>
 								</td>
@@ -341,7 +362,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee2Final" name="presupuestoTotalFee2" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee2Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee2Original']; ?>" name="head_fee2Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -363,7 +384,7 @@
 								<td class="font-weight-bolder text-right">
 									<div class="ui labeled input">
 										<div class="ui label">FEE</div>
-										<input class="fee3V text-right keyUpChange onlyNumbers" name="presupuestoFee3" value="<?= $presupuesto['fee3']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
+										<input class="fee3V text-right keyUpChange onlyNumbers" name="presupuestoFee3" value="<?= $sincerado['fee3']; ?>" style="width: 70px;" onchange="OrdenServicio.calcularTotalFinal()">
 										<div class="ui label">%</div>
 									</div>
 								</td>
@@ -372,7 +393,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee3Final" name="presupuestoTotalFee3" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_fee3Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee3Original']; ?>" name="head_fee3Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -397,7 +418,7 @@
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaTotalFinal" name="presupuestoTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="0" name="head_totalOriginal" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalOriginal']; ?>" name="head_totalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -419,7 +440,7 @@
 					</table>
 				</div>
 			</div>
-			<?php foreach ($presupuestoDetalle as $kd => $vd) : ?>
+			<?php foreach ($sinceradoDetalle as $kd => $vd) : ?>
 				<div class="ui bottom attached tab segment" data-tab="<?= $vd['idTipoPresupuesto']; ?>">
 					<?php if ($vd['idTipoPresupuesto'] == COD_SUELDO) : ?>
 						<div class="ui top attached tabular menu">
@@ -439,7 +460,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($presupuestoDetalleSueldo[$vd['idPresupuestoDetalle']] as $k1 => $v1) : ?>
+										<?php foreach ($sinceradoDetalleSueldo[$vd['idSinceradoDetalle']] as $k1 => $v1) : ?>
 											<?php $preDetSu = $v1[$idCargoRef] ?>
 											<?php if ($preDetSu['tipo'] != 4) : ?>
 												<tr data-row="<?= $dataRow ?>">
@@ -469,10 +490,11 @@
 													<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 														<td>
 															<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1[$vp['idCargo']]['monto'] ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
-															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) : ?>
+															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) :  ?>
 																<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - floatval($v1[$vp['idCargo']]['monto']) ?>">
 															<?php endif; ?>
 														</td>
+
 													<?php endforeach; ?>
 												</tr>
 												<?php $dataRow++; ?>
@@ -491,7 +513,7 @@
 											<?php endforeach; ?>
 										</tr>
 										<?php $totalPorcentaje = 0; ?>
-										<?php foreach ($presupuestoDetalleSueldo[$vd['idPresupuestoDetalle']] as $k1 => $v1) : ?>
+										<?php foreach ($sinceradoDetalleSueldo[$vd['idSinceradoDetalle']] as $k1 => $v1) : ?>
 											<?php $preDetSu = $v1[$idCargoRef] ?>
 											<?php if ($preDetSu['tipo'] == 4) : ?>
 												<?php $totalPorcentaje += floatval($preDetSu['porCL']); ?>
@@ -598,7 +620,7 @@
 												</td>
 											<?php endforeach; ?>
 										</tr>
-										<?php if ($presupuesto['sctr'] !== NULL) : ?>
+										<?php if ($sincerado['sctr'] !== NULL) : ?>
 											<tr>
 												<td>SCTR</td>
 												<?php foreach ($cargoDelPre as $k => $v) : ?>
@@ -624,7 +646,7 @@
 						</div>
 						<div class="ui bottom attached tab segment" data-tab="<?= $vd['idTipoPresupuesto']; ?>/b">
 							<div class="control-group child-divcenter col-md-8" style="width:100%">
-								<!-- <a class="ui button floated green" onclick="OrdenServicio.addSueldoCargoAdicional();"><i class="icon plus"></i> Agregar</a> -->
+								<a class="ui button floated green" onclick="OrdenServicio.addSueldoCargoAdicional();"><i class="icon plus"></i> Agregar</a>
 								<table class="ui table" id="tablaSueldoAdicional">
 									<thead>
 										<tr>
@@ -637,7 +659,7 @@
 										</tr>
 									</thead>
 									<tbody>
-										<?php foreach ($presupuestoDetalleSueldoAdicional as $dsa) : ?>
+										<?php foreach ($sinceradoDetalleSueldoAdicional as $dsa) : ?>
 											<tr>
 												<td>
 													<select class="ui dropdown clearable semantic-dropdown parentDependienteSemantic fluid" patron="requerido" name="cargoSueldoAdicional" data-childDependiente=".cboPersonal" data-closest="tr">
@@ -668,8 +690,8 @@
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
 
 						<div style="display: flex;flex-direction: row-reverse;">
-							<!-- <a class="ui whatsapp button" onclick="OrdenServicio.listado_movilidad();">Listado</a> -->
-							<!-- <a class="ui blue button" onclick="OrdenServicio.agregar_movilidad();">Agregar</a> -->
+							<a class="ui whatsapp button" onclick="OrdenServicio.listado_movilidad();">Listado</a>
+							<a class="ui blue button" onclick="OrdenServicio.agregar_movilidad();">Agregar</a>
 						</div>
 						<div class="ui table">
 
@@ -706,54 +728,54 @@
 											</td>
 											<td>
 												<select class="tbMov_freOpc ui compact fluid selection semantic-dropdown dropdown" name="movFrecuenciaOpc" onchange="OrdenServicio.calcularTotalesMovilidad();">
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '1' ? 'selected' : '') : 'selected'; ?> value="1">1 vez por mes</option>
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '2' ? 'selected' : '') : ''; ?> value="2">1 vez cada 2 meses</option>
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '3' ? 'selected' : '') : ''; ?> value="3">1 vez cada 3 meses</option>
+													<option <?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '1' ? 'selected' : '') : 'selected'; ?> value="1">1 vez por mes</option>
+													<option <?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '2' ? 'selected' : '') : ''; ?> value="2">1 vez cada 2 meses</option>
+													<option <?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '3' ? 'selected' : '') : ''; ?> value="3">1 vez cada 3 meses</option>
 												</select>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['dias'] : '0'; ?>" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['dias'] : '0'; ?>" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();">
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_bus text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioBus'] : '0'; ?>" name="movPrecBus" readonly>
+													<input class="tbMov_bus text-right" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioBus'] : '0'; ?>" name="movPrecBus" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_hosp text-right" data-costobase="<?= $vm['precioHospedaje']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioHospedaje'] : '0'; ?>" name="movPrecHosp" readonly>
+													<input class="tbMov_hosp text-right" data-costobase="<?= $vm['precioHospedaje']; ?>" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioHospedaje'] : '0'; ?>" name="movPrecHosp" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_viat text-right" data-costobase="<?= $vm['precioViaticos']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioViaticos'] : '0'; ?>" name="movPrecViaticos" readonly>
+													<input class="tbMov_viat text-right" data-costobase="<?= $vm['precioViaticos']; ?>" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioViaticos'] : '0'; ?>" name="movPrecViaticos" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_movInt text-right" data-costobase="<?= $vm['precioMovilidadInterna']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioMovilidadInterna'] : '0'; ?>" name="movPrecMovInt" readonly>
+													<input class="tbMov_movInt text-right" data-costobase="<?= $vm['precioMovilidadInterna']; ?>" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioMovilidadInterna'] : '0'; ?>" name="movPrecMovInt" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= $vm['precioTaxi']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
+													<input class="tbMov_taxi text-right" data-costobase="<?= $vm['precioTaxi']; ?>" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_sbto text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['subtotal'] : '0'; ?>" name="movSubTotal" readonly>
+													<input class="tbMov_sbto text-right" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['subtotal'] : '0'; ?>" name="movSubTotal" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['frecuencia'] : '1'; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['frecuencia'] : '1'; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_tot text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['total'] : '0'; ?>" name="movTotal" readonly>
+													<input class="tbMov_tot text-right" value="<?= isset($sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $sinceradoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['total'] : '0'; ?>" name="movTotal" readonly>
 												</div>
 											</td>
 										</tr>
@@ -776,11 +798,7 @@
 									<tr>
 										<th></th>
 										<?php foreach ($fechaDelPre as $key => $v) : ?>
-											<?php $visible = '' ?>
-											<?php if ($v['fecha'] != $fechaSincerado) : ?>
-												<?php $visible = 'd-none' ?>
-											<?php endif; ?>
-											<th class="text-center <?= $visible ?>"><?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?></th>
+											<th class="text-center"><?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?></th>
 										<?php endforeach; ?>
 									</tr>
 								</thead>
@@ -789,13 +807,15 @@
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_ALMACEN) : ?>
 						<div style="display: flex;flex-direction: row-reverse;">
-							<!-- <a class="ui whatsapp button" onclick="OrdenServicio.listado_almacen();">Listado</a> -->
-							<!-- <a class="ui blue button" onclick="OrdenServicio.agregar_almacen();">Agregar</a> -->
+							<a class="ui whatsapp button" onclick="OrdenServicio.listado_almacen();">Listado</a>
+							<a class="ui blue button" onclick="OrdenServicio.agregar_almacen();">Agregar</a>
 						</div>
 						<div class="ui top attached tabular menu">
 							<a class="item active" data-tab="<?= $vd['idTipoPresupuesto']; ?>/a">RECURSOS</a>
 							<a class="item" data-tab="<?= $vd['idTipoPresupuesto']; ?>/b">MONTO</a>
 						</div>
+
+
 						<div class="ui bottom attached tab segment active" data-tab="<?= $vd['idTipoPresupuesto']; ?>/a">
 							<div class="ui table">
 								<table class="ui celled table" id="tablaAlmacen">
@@ -805,11 +825,7 @@
 											<th class="one wide">Zona 2</th>
 											<th class="two wide">Ciudad</th>
 											<?php foreach ($fechaDelPre as $vtad) : ?>
-												<?php $visible = '' ?>
-												<?php if ($vtad['fecha'] != $fechaSincerado) : ?>
-													<?php $visible = 'd-none' ?>
-												<?php endif; ?>
-												<th class="one wide <?= $visible ?>"># Recursos <?= strpos($vtad['fecha'], '-') ? date_change_format($vtad['fecha']) : $vtad['fecha']; ?></th>
+												<th class="one wide"># Recursos <?= strpos($vtad['fecha'], '-') ? date_change_format($vtad['fecha']) : $vtad['fecha']; ?></th>
 											<?php endforeach; ?>
 										</tr>
 									</thead>
@@ -827,11 +843,7 @@
 													<?= $va['ciudad']; ?>
 												</td>
 												<?php foreach ($fechaDelPre as $kF => $vF) : ?>
-													<?php $visible = '' ?>
-													<?php if ($vF['fecha'] != $fechaSincerado) : ?>
-														<?php $visible = 'd-none' ?>
-													<?php endif; ?>
-													<td class="<?= $visible ?>">
+													<td>
 														<div class="ui input fluid">
 															<input class="tbAlm_recursos text-right keyUpChange onlyNumbers" value="<?= isset($dataTPDARecursos[$va['idTipoPresupuestoDetalleAlmacen']][$kF]['cantidad']) ? $dataTPDARecursos[$va['idTipoPresupuestoDetalleAlmacen']][$kF]['cantidad'] : 0; ?>" name="almRecursos[<?= $va['idTipoPresupuestoDetalleAlmacen']; ?>][<?= $kF ?>]">
 														</div>
@@ -859,11 +871,7 @@
 											<th>Split</th>
 											<th>Monto</th>
 											<?php foreach ($fechaDelPre as $vFa) : ?>
-												<?php $visible = '' ?>
-												<?php if ($vFa['fecha'] != $fechaSincerado) : ?>
-													<?php $visible = 'd-none' ?>
-												<?php endif; ?>
-												<th class="<?= $visible ?>">Monto <br><?= strpos($vFa['fecha'], '-') ? date_change_format($vFa['fecha']) : $vFa['fecha']; ?></th>
+												<th>Monto <br><?= strpos($vFa['fecha'], '-') ? date_change_format($vFa['fecha']) : $vFa['fecha']; ?></th>
 											<?php endforeach; ?>
 										</tr>
 									</thead>
@@ -878,7 +886,7 @@
 												<td><?= $va['ciudad']; ?></td>
 												<td style="min-width: 200px;">
 													<?php $existe = isset($dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split']); ?>
-													<?php $valor = $existe ? $dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split'] : null; ?>
+													<?php $valor =  $existe ? $dataTPDA[$va['idTipoPresupuestoDetalleAlmacen']]['split'] : null; ?>
 													<select class="tbAlm_freOpc ui compact fluid selection semantic-dropdown dropdown" name="almFrecuenciaOpc" onchange="OrdenServicio.calcularMontoDeAlmacen(this);">
 														<option value="1" <?= ($valor == '1' || $valor == null) ? 'selected' : '' ?>>1 vez por mes</option>
 														<option value="2" <?= ($valor == '2') ? 'selected' : '' ?>>1 vez cada 2 meses</option>
@@ -891,11 +899,7 @@
 													</div>
 												</td>
 												<?php foreach ($fechaDelPre as $vFa) : ?>
-													<?php $visible = '' ?>
-													<?php if ($vFa['fecha'] != $fechaSincerado) : ?>
-														<?php $visible = 'd-none' ?>
-													<?php endif; ?>
-													<td class="<?= $visible ?>">
+													<td>
 														<div class="ui input transparent fluid">
 															<input class="tbAlm_MontoXFecha" type="hidden" value="0">
 															<label>0</label>
@@ -909,11 +913,7 @@
 										<tr>
 											<td colspan="5"></td>
 											<?php foreach ($fechaDelPre as $vFa) : ?>
-												<?php $visible = '' ?>
-												<?php if ($vFa['fecha'] != $fechaSincerado) : ?>
-													<?php $visible = 'd-none' ?>
-												<?php endif; ?>
-												<td class="<?= $visible ?>">
+												<td>
 													<div class="ui input transparent fluid">
 														<input class="tbAlm_TotalMontoXFecha" type="hidden" value="0">
 														<label>0</label>
@@ -929,7 +929,7 @@
 						<div class="control-group child-divcenter col-md-11 divTipoDetalle" style="width:100%">
 							<div class="field">
 								<?php if ($vd['mostrarDetalle'] != '1') : ?>
-									<!-- <a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="OrdenServicio.addRow(this)">Agregar</a> -->
+									<a class="ui blue button" data-detalle="<?= $vd['idTipoPresupuesto']; ?>" onclick="OrdenServicio.addRow(this)">Agregar</a>
 								<?php endif; ?>
 								<!-- <a class="ui green button" onclick="$(this).closest('.divTipoDetalle').find('th.cantidadDeTabla').toggleClass('d-none'); $(this).closest('.divTipoDetalle').find('td.cantidadDeTabla').toggleClass('d-none');$(this).find('i').toggleClass('slash');"><i class="icon eye"></i>Cantidad por cargo</a> -->
 							</div>
@@ -946,8 +946,8 @@
 									</tr>
 								</thead>
 								<tbody>
-									<?php if (!empty($presupuestoDetalleSub[$vd['idPresupuestoDetalle']])) : ?>
-										<?php foreach ($presupuestoDetalleSub[$vd['idPresupuestoDetalle']] as $key => $value) : ?>
+									<?php if (!empty($sinceradoDetalleSub[$vd['idSinceradoDetalle']])) : ?>
+										<?php foreach ($sinceradoDetalleSub[$vd['idSinceradoDetalle']] as $key => $value) : ?>
 											<tr class="detalleTr_<?= $key ?>" data-nrofila="<?= $key ?>">
 												<td>
 													<div class="ui action input fluid">
@@ -957,7 +957,7 @@
 																<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
 															<?php endforeach; ?>
 														</select>
-														<!-- <a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a> -->
+														<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a>
 													</div>
 												</td>
 												<td class="splitDetalle">
@@ -1015,7 +1015,7 @@
 																			<td class="text-center">
 																				<div class="fields">
 																					<div class="ui checkbox">
-																						<input type="checkbox" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" data-cargo="<?= $i; ?>" <?= $presupuestoDetalleSubCargo[$value['idPresupuestoDetalleSub']][$cargo['idCargo']]['checked'] ? 'checked' : ''; ?> onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change();">
+																						<input type="checkbox" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" data-cargo="<?= $i; ?>" <?= $sinceradoDetalleSubCargo[$value['idSinceradoDetalleSub']][$cargo['idCargo']]['checked'] ? 'checked' : ''; ?> onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change();">
 																						<label style="font-size: 1.5em;"></label>
 																					</div>
 																				</div>
@@ -1023,7 +1023,7 @@
 																			<td><?= $cargo['cargo']; ?></td>
 																			<td>
 																				<div class="ui input">
-																					<input class="onlyNumbers keyUpChange subCantDS cantCargoxItm_<?= $cargo['idCargo'] ?>" name="subCantDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" data-max="<?= $cargo['cantidad']; ?>" type="number" value="<?= $presupuestoDetalleSubCargo[$value['idPresupuestoDetalleSub']][$cargo['idCargo']]['cantidad']; ?>" onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change();">
+																					<input class="onlyNumbers keyUpChange subCantDS cantCargoxItm_<?= $cargo['idCargo'] ?>" name="subCantDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" data-max="<?= $cargo['cantidad']; ?>" type="number" value="<?= $sinceradoDetalleSubCargo[$value['idSinceradoDetalleSub']][$cargo['idCargo']]['cantidad']; ?>" onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change();">
 																				</div>
 																			</td>
 																		</tr>
@@ -1055,7 +1055,7 @@
 																	</tr>
 																</thead>
 																<tbody data-nrofila="<?= $key ?>">
-																	<?php foreach ($presupuestoDetalleSubElemento[$value['idPresupuestoDetalleSub']] as $sbElmK => $sbElmV) : ?>
+																	<?php foreach ($sinceradoDetalleSubElemento[$value['idSinceradoDetalleSub']] as $sbElmK => $sbElmV) : ?>
 																		<tr>
 																			<td>
 																				<div class="ui action input" style="min-width: 400px; max-width: 500px;">
@@ -1091,7 +1091,7 @@
 												</td>
 											</tr>
 										<?php endforeach; ?>
-										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] !== NULL) : ?>
+										<?php if ($vd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $sincerado['sctr'] !== NULL) :  ?>
 											<tr>
 												<td>
 													<div class="ui input fluid">
@@ -1099,9 +1099,9 @@
 													</div>
 												</td>
 												<td colspan="2">
-													<div class="ui right labeled input fluid">
-														<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="<?= $presupuesto['sctr'] ?>" onchange="OrdenServicio.calcularTablaSueldo()">
-														<div class="ui basic label">%</div>
+													<div class="ui right input fluid">
+														<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="<?= $sincerado['sctr'] ?>" onchange="OrdenServicio.calcularTablaSueldo()">
+														<!-- <div class="ui basic label">%</div> -->
 													</div>
 												</td>
 												<td colspan="4"></td>
@@ -1123,7 +1123,7 @@
 		<div class="col-md-10 child-divcenter">
 			<div class="control-group child-divcenter row" style="width:85%">
 				<label class="form-control col-md-2" style="border:0px;">Observación :</label>
-				<textarea class="form-control col-md-10" name="observacion" rows="4"><?= $presupuesto['observacion']; ?></textarea>
+				<textarea class="form-control col-md-10" name="observacion" rows="4"><?= $sincerado['observacion']; ?></textarea>
 			</div>
 		</div>
 	</div>

@@ -45,16 +45,6 @@ class Sincerado extends MY_Controller
 		if (!empty($data)) {
 			foreach ($data as $value) {
 				$dataParaVista['sincerado'][$value['idSincerado']] = $value;
-				$cargo = $this->model->getSinceradoCargo($value['idSincerado'])->result_array();
-				if (!empty($cargo)) {
-					$temp = [];
-					foreach ($cargo as $cargoData) {
-						$temp[] = $cargoData['cargo'];
-					}
-					$dataParaVista['sincerado'][$value['idSincerado']]['cargo'] = implode(', ', $temp);
-				} else {
-					$dataParaVista['sincerado'][$value['idSincerado']]['cargo'] = '';
-				}
 			}
 		}
 		if (!empty($dataParaVista)) {
@@ -346,6 +336,120 @@ class Sincerado extends MY_Controller
 
 		echo json_encode($result);
 	}
+	public function formularioEditarSincerado()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+
+		$idSincerado = $post['idSincerado'];
+
+		$dataParaVista = [];
+		$dataParaVista['sincerado'] = $this->db->get_where('compras.sincerado', ['idSincerado' => $idSincerado])->row_array();
+		$dataParaVista['sincerado_Det'] = changeKeyInArray($this->db->get_where('compras.sincerado_Det', ['idSincerado' => $idSincerado, 'estado' => 1])->result_array(), 'idTipoPresupuestoDetalle');
+		$dataParaVista['fechaSincerado'] = $dataParaVista['sincerado']['fecha_seleccionada'];
+		$dataParaVista['valorPorcentual'] =
+			$this->db->select('osds.valorPorcentual')->from('compras.ordenServicioDetalleSub osds')->join('compras.ordenServicioDetalle osd', 'osd.idOrdenServicioDetalle = osds.idOrdenServicioDetalle')->where('osd.estado', 1)->where('osds.idTipoPresupuestoDetalle', COD_ASIGNACIONFAMILIAR)->where('osd.idOrdenServicio', $dataParaVista['sincerado']['idOrdenServicio'])->get()->row_array()['valorPorcentual'];
+		$dataParaVista['idCuenta'] = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $dataParaVista['sincerado']['idOrdenServicio']])->row_array()['idCuenta'];
+		$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos(['soloCargosOcupados' => true, 'idCuenta' => $dataParaVista['idCuenta']])->result_array();
+		$dataParaVista['empleados'] = $this->mOrdenServicio->getAll_RRHHEmpleados(['activo' => true])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
+		$dataParaVista['sueldoMinimo'] = $this->db->where('fechaFin', NULL)->get('compras.sueldoMinimo')->row_array()['monto'];
+
+		$where = [];
+		if (!empty($dataParaVista['idCuenta'])) {
+			$where['idCuenta'] = $dataParaVista['idCuenta'];
+		}
+		// Para traer presupuestoDetalleAlmacen y presupuestoDetalleAlmacenRecursos
+		$idSinDet_Almacen = $this->db->get_where('compras.sinceradoDetalle', ['idSincerado' => $idSincerado, 'idTipoPresupuesto' => COD_ALMACEN, 'estado' => 1])->row_array()['idSinceradoDetalle'];
+
+		$arTPDA = $this->db->get_where('compras.sinceradoDetalleAlmacen', ['idSinceradoDetalle' => $idSinDet_Almacen])->result_array();
+		foreach ($arTPDA as $v) {
+			$dataParaVista['dataTPDA'][$v['idTipoPresupuestoDetalleAlmacen']] = $v;
+		}
+
+		$arTPDAR = $this->db->get_where('compras.sinceradoDetalleAlmacenRecursos', ['idSinceradoDetalle' => $idSinDet_Almacen])->result_array();
+		foreach ($arTPDAR as $v) {
+			$dataParaVista['dataTPDARecursos'][$v['idTipoPresupuestoDetalleAlmacen']][] = $v;
+		}
+		// Fin
+
+		$items = $this->mOrdenServicio->getItemsCnPresupuesto($where)->result_array();
+		foreach ($items as $item) {
+			if (!isset($dataParaVista['item'][$item['idTipoPresupuestoDetalle']])) $dataParaVista['item'][$item['idTipoPresupuestoDetalle']] = [];
+			$dataParaVista['items'][$item['idTipoPresupuestoDetalle']][] = $item;
+		}
+		$dataParaVista['itemPrecio'] = $this->mOrdenServicio->itemPrecios();
+
+		$sinceradoCargo = $this->mOrdenServicio->getSinceradoCargo($idSincerado)->result_array();
+
+		foreach ($sinceradoCargo as $k => $v) {
+			$cargo[$v['idCargo']] = $v;
+			$fecha[$v['fecha']] = $v;
+			$dataParaVista['sinceradoCargo'][$v['fecha']][$v['idCargo']] = $v;
+		}
+		foreach ($fecha as $k => $v) {
+			$dataParaVista['fechaDelPre'][] = $v;
+		}
+		foreach ($cargo as $k => $v) {
+			$dataParaVista['cargoDelPre'][] = $v;
+		}
+		$dataParaVista['sinceradoDetalle'] = $this->mOrdenServicio->getSinceradoDetalle($idSincerado)->result_array();
+
+		$sinceradoDetalleSueldoAdicional = [];
+		$arrayIdSinceradoDetalle = [];
+		foreach ($dataParaVista['sinceradoDetalle'] as $k => $v) {
+			$arrayIdSinceradoDetalle[] = $v['idSinceradoDetalle'];
+			$dataParaVista['sinceradoDetalleSub'][$v['idSinceradoDetalle']] = $this->mOrdenServicio->getSinceradoDetalleSub($v['idSinceradoDetalle'])->result_array();
+
+			foreach ($dataParaVista['sinceradoDetalleSub'][$v['idSinceradoDetalle']] as $presDetSub) {
+				foreach ($this->db->get_where('compras.sinceradoDetalleSubCargo', ['idSinceradoDetalleSub' => $presDetSub['idSinceradoDetalleSub']])->result_array() as $prDetSbCar) {
+					$dataParaVista['sinceradoDetalleSubCargo'][$presDetSub['idSinceradoDetalleSub']][$prDetSbCar['idCargo']] = $prDetSbCar;
+				}
+				$dataParaVista['sinceradoDetalleSubElemento'][$presDetSub['idSinceradoDetalleSub']] = [];
+				foreach ($this->db->get_where('compras.sinceradoDetalleSubElemento', ['idSinceradoDetalleSub' => $presDetSub['idSinceradoDetalleSub']])->result_array() as $prDetSbElm) {
+					$dataParaVista['sinceradoDetalleSubElemento'][$presDetSub['idSinceradoDetalleSub']][] = $prDetSbElm;
+				}
+			}
+
+			$sinceradoDetalleSueldo = $this->mOrdenServicio->getSinceradoDetalleSueldo($v['idSinceradoDetalle'])->result_array();
+			foreach ($sinceradoDetalleSueldo as $pds) {
+				$dataParaVista['sinceradoDetalleSueldo'][$pds['idSinceradoDetalle']][$pds['idTipoPresupuestoDetalle']][$pds['idCargo']] = $pds;
+				$dataParaVista['idCargoRef'] = $pds['idCargo'];
+			}
+
+			if (!isset($sinceradoDetalleSueldoAdicional)) $sinceradoDetalleSueldoAdicional = [];
+			if (!isset($sinceradoDetalleMovilidad)) $sinceradoDetalleMovilidad = [];
+			if (!isset($sinceradoDetalleMovilidad_Det)) $sinceradoDetalleMovilidad_Det = [];
+
+			if ($v['idTipoPresupuesto'] == COD_SUELDO) $sinceradoDetalleSueldoAdicional = $this->db->get_where('compras.sinceradoDetalleSueldoAdicional', ['idSinceradoDetalle' => $v['idSinceradoDetalle']])->result_array();
+			if ($v['idTipoPresupuesto'] == COD_MOVILIDAD) $sinceradoDetalleMovilidad = $this->db->get_where('compras.sinceradoDetalleMovilidad', ['idSinceradoDetalle' => $v['idSinceradoDetalle']])->result_array();
+		}
+
+		$dataParaVista['sinceradoDetalleMovilidad_Det'] = changeKeyInArray($this->db->where_in('idSinceradoDetalle', $arrayIdSinceradoDetalle)->get('compras.sinceradoDetalleMovilidad_Det')->result_array(), 'flagViaje', 'flagAdicional');
+		$dataParaVista['sinceradoDetalleSueldo_Det'] = changeKeyInArray($this->db->select('ISNULL(idCargo, 0) idCargo, flagIncentivo, montoOriginal, montoSincerado')->where_in('idSinceradoDetalle', $arrayIdSinceradoDetalle)->get('compras.sinceradoDetalleSueldo_Det')->result_array(), 'idCargo');
+
+		$dataParaVista['sinceradoDetalleMovilidad'] = [];
+		if (!empty($sinceradoDetalleMovilidad)) {
+			foreach ($sinceradoDetalleMovilidad as $km => $vm) {
+				$dataParaVista['sinceradoDetalleMovilidad'][$vm['idTipoPresupuestoDetalleMovilidad']] = $vm;
+			}
+		}
+		$dataParaVista['sinceradoDetalleSueldoAdicional'] = $sinceradoDetalleSueldoAdicional;
+
+		foreach ($this->db->select('tpd.*, it.costo, it.idProveedor')->join('compras.itemTarifario it', 'it.idItem = tpd.idItem AND it.flag_actual = 1', 'LEFT')->order_by('tpd.nombre')->get('compras.tipoPresupuestoDetalle tpd')->result_array() as $k => $v) {
+			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
+		}
+		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Editar Sincerado';
+		$result['data']['html'] = $this->load->view("modulos/Sincerado/formularioEditarSincerado", $dataParaVista, true);
+		$result['data']['fechas'] = $dataParaVista['fechaDelPre'];
+		$result['data']['tipoPresupuestoDetalle'] = $dataParaVista['tipoPresupuestoDetalle'];
+		$result['data']['cargo'] = $dataParaVista['cargoDelPre'];
+		echo json_encode($result);
+	}
 	public function formularioRegistrarSincerado()
 	{
 		$result = $this->result;
@@ -468,35 +572,63 @@ class Sincerado extends MY_Controller
 		$post['tpdS'] = checkAndConvertToArray($post['tpdS']);
 		$post['clS'] = checkAndConvertToArray($post['clS']);
 
-		// compras.sincerado
-		$insertSincerado = [
-			'idPresupuesto' => $post['idPresupuesto'],
-			'idPresupuestoHistorico' => $post['idPresupuestoHistorico'],
-			'idOrdenServicio' => $idOrdenServicio,
-			'fecha_seleccionada' => $post['fechaSincerado'],
-			'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
-			'subtotalOriginal' => $post['head_sbtotalOriginal'],
-			'subtotalSincerado' => $post['head_sbtotalSincerado'],
-			'fee1' => $post['presupuestoFee1'],
-			'totalFee1Original' => $post['head_fee1Original'],
-			'totalFee1Sincerado' => $post['head_fee1Sincerado'],
-			'fee2' => $post['presupuestoFee2'],
-			'totalFee2Original' => $post['head_fee2Original'],
-			'totalFee2Sincerado' => $post['head_fee2Sincerado'],
-			'fee3' => $post['presupuestoFee3'],
-			'totalFee3Original' => $post['head_fee3Original'],
-			'totalFee3Sincerado' => $post['head_fee3Sincerado'],
-			'totalOriginal' => $post['head_totalOriginal'],
-			'totalSincerado' => $post['head_totalSincerado'],
-			'observacion' => $post['observacion'],
-			'idUsuario' => $this->idUsuario,
-			'fechaReg' => getActualDateTime()
-		];
-		if (floatval($post['head_fee3Sincerado']) > floatval($post['head_fee3Original'])) {
-			$insertSincerado['flagPendienteAprobar'] = 1;
+		if (!isset($post['idSincerado'])) { // NUEVO
+			$insertSincerado = [
+				'idPresupuesto' => $post['idPresupuesto'],
+				'idPresupuestoHistorico' => $post['idPresupuestoHistorico'],
+				'idOrdenServicio' => $idOrdenServicio,
+				'fecha_seleccionada' => $post['fechaSincerado'],
+				'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
+				'subtotalOriginal' => $post['head_sbtotalOriginal'],
+				'subtotalSincerado' => $post['head_sbtotalSincerado'],
+				'fee1' => $post['presupuestoFee1'],
+				'totalFee1Original' => $post['head_fee1Original'],
+				'totalFee1Sincerado' => $post['head_fee1Sincerado'],
+				'fee2' => $post['presupuestoFee2'],
+				'totalFee2Original' => $post['head_fee2Original'],
+				'totalFee2Sincerado' => $post['head_fee2Sincerado'],
+				'fee3' => $post['presupuestoFee3'],
+				'totalFee3Original' => $post['head_fee3Original'],
+				'totalFee3Sincerado' => $post['head_fee3Sincerado'],
+				'totalOriginal' => $post['head_totalOriginal'],
+				'totalSincerado' => $post['head_totalSincerado'],
+				'observacion' => $post['observacion'],
+				'idUsuario' => $this->idUsuario,
+				'fechaReg' => getActualDateTime()
+			];
+			if (floatval($post['head_fee3Sincerado']) > floatval($post['head_fee3Original'])) {
+				$insertSincerado['flagPendienteAprobar'] = 1;
+			}
+			$this->db->insert('compras.sincerado', $insertSincerado);
+			$idSincerado = $this->db->insert_id();
+		} else { // ACTUALIZAR
+			$updateSincerado = [
+				'idPresupuesto' => $post['idPresupuesto'],
+				'idPresupuestoHistorico' => $post['idPresupuestoHistorico'],
+				'idOrdenServicio' => $idOrdenServicio,
+				'fecha_seleccionada' => $post['fechaSincerado'],
+				'sctr' => isset($post['pesupuestoSctr']) ? $post['pesupuestoSctr'] : NULL,
+				'subtotalOriginal' => $post['head_sbtotalOriginal'],
+				'subtotalSincerado' => $post['head_sbtotalSincerado'],
+				'fee1' => $post['presupuestoFee1'],
+				'totalFee1Original' => $post['head_fee1Original'],
+				'totalFee1Sincerado' => $post['head_fee1Sincerado'],
+				'fee2' => $post['presupuestoFee2'],
+				'totalFee2Original' => $post['head_fee2Original'],
+				'totalFee2Sincerado' => $post['head_fee2Sincerado'],
+				'fee3' => $post['presupuestoFee3'],
+				'totalFee3Original' => $post['head_fee3Original'],
+				'totalFee3Sincerado' => $post['head_fee3Sincerado'],
+				'totalOriginal' => $post['head_totalOriginal'],
+				'totalSincerado' => $post['head_totalSincerado'],
+				'observacion' => $post['observacion'],
+				'idUsuario' => $this->idUsuario,
+				'fechaReg' => getActualDateTime()
+			];
+			$idSincerado = $post['idSincerado'];
+			$this->db->update('compras.sincerado', $updateSincerado, ['idSincerado' => $idSincerado]);
+			$this->model->anularSinceradoDetalle($idSincerado);
 		}
-		$this->db->insert('compras.sincerado', $insertSincerado);
-		$idSincerado = $this->db->insert_id();
 
 		// compras.sinceradoCargo
 		$insertSinceradoCargo = [];
@@ -851,10 +983,10 @@ class Sincerado extends MY_Controller
 		$datosCaeceraMateOper = $this->model->obtenerCabeceraMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		$datosDetalleMateOper = $this->model->obtenerDetalleMateOper($datosSincerado[0]['idSincerado'])->result_array();
 		$datosTotalMateOper = $this->model->obtenerTotalMateOper($datosSincerado[0]['idSincerado'])->result_array();
-		
-		
+
+
 		$datosFeeTotal = $this->model->obtenerDetalleFeeTotal($datosSincerado[0]['idSincerado'])->result_array();
-		
+
 		//echo json_encode($datosCargoSueldo); exit;
 
 		$data = [];
@@ -1207,10 +1339,10 @@ class Sincerado extends MY_Controller
 							$cabecera = 'B' . $row;
 							if (!empty($i['nombre'])) {
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, $i['nombre']);
-							}else{
+							} else {
 								$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'INCENTIVO');
 							}
-							
+
 							foreach ($datosDetalleSueldo as $e => $r) {
 								if ($i['idCargo'] == $r['idCargo'] and $r['fecha_seleccionada'] == $v['fecha']) {
 									$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $r['montoOriginal'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
@@ -1303,26 +1435,25 @@ class Sincerado extends MY_Controller
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotalNormal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
 			$row++;
 			$celda = $col . $row;
-			
+
 			foreach ($datosFeeTotal as $fe => $fee) {
 				if ($fee['fecha_seleccionada'] == $v['fecha']) {
-			
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalOriginal'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
 
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Original'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalOriginal'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
 				}
 			}
-			
+
 			//$col++;
 			//aqui se termina la columna y se sube a la row 4
 			$row = "4";
@@ -1535,32 +1666,31 @@ class Sincerado extends MY_Controller
 			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $cantMontosTotal)->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
 			$row++;
 			$celda = $col . $row;
-			
+
 			foreach ($datosFeeTotal as $fe => $fee) {
 				if ($fee['fecha_seleccionada'] == $v['fecha']) {
-				$cabecera = 'B' . $row;
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee1'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;
-				$cabecera = 'B' . $row;
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee2'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
-				$cabecera = 'B' . $row;
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE '.$fee['fee3'].'%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
-				$cabecera = 'B' . $row;
+					$cabecera = 'B' . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE ' . $fee['fee1'] . '%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee1Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$cabecera = 'B' . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE ' . $fee['fee2'] . '%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee2Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$cabecera = 'B' . $row;
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'FEE ' . $fee['fee3'] . '%')->getStyle($cabecera)->applyFromArray($estilo_fee)->getFont()->setBold(true);
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalFee3Sincerado'])->getStyle($celda)->applyFromArray($estilo_moneda)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$cabecera = 'B' . $row;
 
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'TOTAL COTIZACION (sin IGV)')->getStyle($cabecera)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
-				$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalSincerado'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
-				$row++;
-				$celda = $col . $row;	
-				$cabecera = 'B' . $row;
-
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($cabecera, 'TOTAL COTIZACION (sin IGV)')->getStyle($cabecera)->applyFromArray($estilo_sub_total_cab)->getFont()->setBold(true);
+					$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $fee['totalSincerado'])->getStyle($celda)->applyFromArray($estilo_sub_total)->getFont()->setBold(true);
+					$row++;
+					$celda = $col . $row;
+					$cabecera = 'B' . $row;
 				}
 			}
 

@@ -76,12 +76,17 @@ var OrdenServicio = {
 				OrdenServicio.validarCheckbox();
 			});
 		});
+		$(document).on('keyup', '.cloneAll', function () {
+			Fn.showLoading(true);
+		});
 		$(document).on('change', '.cloneAll', function () {
 			id = $(this).data('personal');
-			valor = $(this).val();
-			$('.cloned' + id).val(valor);
+			cargo = $(this).data('cargo');
+			let valor = $(this).val();
+			$('.cloned' + id).val(valor).change();
 			$('#cantidadSueldo_' + id).html(valor);
 			$('#cantidadIncentivo_' + id).html(valor);
+			$('.cantCargoxItm_' + cargo).val(valor).change();
 
 			cantidad = 0;
 			cantidadPrincipal = $('.cloneAll');
@@ -107,6 +112,9 @@ var OrdenServicio = {
 			} else {
 				$('.tabTiposPresupuestos').addClass('disabled');
 			}
+			setTimeout(function () {
+				Fn.showLoading(false);
+			}, 2000);
 		})
 
 		$(document).on('change', '.cntColmFC', function () {
@@ -337,7 +345,7 @@ var OrdenServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formEditarPresupuesto", fn: "OrdenServicio.editarPresupuesto()", content: "¿Esta seguro de modificar el resupuesto?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formEditarPresupuesto", fn: "OrdenServicio.editarPresupuesto()", content: "¿Esta seguro de modificar el presupuesto?" });';
 				btn[1] = { title: 'Modificar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '95%' });
 

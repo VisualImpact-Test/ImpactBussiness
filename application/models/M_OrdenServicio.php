@@ -187,7 +187,7 @@ class M_OrdenServicio extends MY_Model
 			->get();
 		return $query;
 	}
-	
+
 	public function getPresupuestoDetalle($id)
 	{
 		$query = $this->db
@@ -196,6 +196,17 @@ class M_OrdenServicio extends MY_Model
 			->join('compras.tipoPresupuesto tp', 'tp.idTipoPresupuesto = pd.idTipoPresupuesto')
 			->where('pd.estado', 1)
 			->where('pd.idPresupuesto', $id)
+			->get();
+		return $query;
+	}
+	public function getSinceradoDetalle($id)
+	{
+		$query = $this->db
+			->select('pd.*, tp.nombre as tipoPresupuesto, tp.mostrarDetalle')
+			->from('compras.sinceradoDetalle pd')
+			->join('compras.tipoPresupuesto tp', 'tp.idTipoPresupuesto = pd.idTipoPresupuesto')
+			->where('pd.estado', 1)
+			->where('pd.idSincerado', $id)
 			->get();
 		return $query;
 	}
@@ -226,6 +237,22 @@ class M_OrdenServicio extends MY_Model
 		return $query;
 	}
 
+	public function getSinceradoCargo($id, $idH = null)
+	{
+		$this->db
+			->select('pc.*, c.nombre as cargo')
+			->from('compras.sinceradoCargo pc')
+			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = pc.idCargo', 'LEFT')
+			->where('pc.idSincerado', $id);
+
+		// if (!empty($idH)) $this->db->where('pc.idPresupuestoHistorico', $idH);
+		// else 
+		$this->db->where('pc.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
 	public function getPresupuestoDetalleSub($id)
 	{
 		$query = $this->db
@@ -239,6 +266,19 @@ class M_OrdenServicio extends MY_Model
 		return $query;
 	}
 
+	public function getSinceradoDetalleSub($id)
+	{
+		$query = $this->db
+			->select('pds.*, tpd.nombre, tpd.tipo')
+			->from('compras.sinceradoDetalleSub pds')
+			->join('compras.tipoPresupuestoDetalle tpd', 'tpd.idTipoPresupuestoDetalle = pds.idTipoPresupuestoDetalle', 'LEFT')
+			->where('pds.estado', 1)
+			->where('pds.idSinceradoDetalle', $id)
+			->where('tpd.idTipoPresupuesto != ' . COD_SUELDO)
+			->get();
+		return $query;
+	}
+
 	public function getPresupuestoDetalleSueldo($id)
 	{
 		$query = $this->db
@@ -247,6 +287,18 @@ class M_OrdenServicio extends MY_Model
 			->join('compras.tipoPresupuestoDetalle tpd', 'tpd.idTipoPresupuestoDetalle = pds.idTipoPresupuestoDetalle', 'LEFT')
 			->where('pds.estado', 1)
 			->where('pds.idPresupuestoDetalle', $id)
+			->get();
+		return $query;
+	}
+
+	public function getSinceradoDetalleSueldo($id)
+	{
+		$query = $this->db
+			->select('pds.*, tpd.nombre, tpd.tipo')
+			->from('compras.sinceradoDetalleSueldo pds')
+			->join('compras.tipoPresupuestoDetalle tpd', 'tpd.idTipoPresupuestoDetalle = pds.idTipoPresupuestoDetalle', 'LEFT')
+			->where('pds.estado', 1)
+			->where('pds.idSinceradoDetalle', $id)
 			->get();
 		return $query;
 	}

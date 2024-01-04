@@ -9,9 +9,8 @@
 				<th class="td-center">NRO</th>
 				<th>TÍTULO</th>
 				<th>CUENTA & CENTRO COSTO / CLIENTE</th>
-				<th>DEPARTAMENTO</th>
-				<th>PROVINCIA</th>
-				<th>DISTRITO</th>
+				<th>FECHA</th>
+				<th>MONEDA</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -22,6 +21,9 @@
 					<td class="td-center">
 						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
 							<i class="fa fa-lg fa-check" title="Pendiente Aprobar"></i>
+						</button>
+						<button class="btn btn-outline-secondary border-0 btn-formEditarSincerado">
+							<i class="fa fa-lg fa-edit" title="Editar"></i>
 						</button>
 						<button class="btn btn-outline-secondary border-0 btn-descargarExcelGr">
 							<i class="fa fa-lg fa-file-excel" title=""></i>
@@ -39,11 +41,8 @@
 					</td>
 					<td class="td-left"><?= verificarEmpty($row['nombre'], 3); ?></td>
 					<td class="td-left"><?= $row['chkUtilizarCliente'] ? verificarEmpty($row['cliente'], 3) : (verificarEmpty($row['cuenta'], 3) . ' ( ' . verificarEmpty($row['centroCosto'], 3) . ' )'); ?></td>
+					<td class="td-center"><?= date_change_format($row['fecha_seleccionada']); ?></td>
 					<td class="td-left"><?= verificarEmpty($row['moneda'], 3); ?></td>
-					<td class="td-center"><?= verificarEmpty($row['cargo'], 3); ?></td>
-					<td class="text-center style-icons">
-
-					</td>
 				</tr>
 				<? $ix++; ?>
 			<?php endforeach; ?>
