@@ -94,7 +94,10 @@ class Cotizacion extends MY_Controller
 
 		$dataParaVista['idCotizacion'] = $post['idCotizacion'];
 		$data['datosCot'] = $this->model->obtenerInformacionCotizacionGR_ORDENCOMPRA($dataParaVista['idCotizacion'])->result_array();
-
+		
+		$data['datosCotGR'] = $this->model->obtenerCotizacionGR($dataParaVista['idCotizacion'])->result_array();
+		//echo $this->db->last_query();exit();
+		//var_dump($data['datosCotGR']);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Indicar Datos';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioIndicarGR", $data, true);
@@ -106,89 +109,39 @@ class Cotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$idCotizacion = $post['idCotizacion'];
+		$datos = [
+			'codOrdenCompra' => $post['codigo_oc'],
+			'montoOrdenCompra' => $post['monto_oc'],
+			'fechaClienteOC' => $post['fechaClienteOC'],
+			'motivoAprobacion' => $post['motivo']
+		];
+		$this->db->update('compras.cotizacion', $datos, ['idCotizacion' => $idCotizacion]);
 
-
-		if (isset($post['numero_gr'])) {
-			$numeroGR = $post['numero_gr'];
-		} else {
-			$numeroGR = NULL;
-		}
-
-		if (isset($post['codigo_oc'])) {
-			$codigo_oc = $post['codigo_oc'];
-		} else {
-			$codigo_oc = NULL;
-		}
-
-		if (isset($post['monto_oc'])) {
-			$monto_oc = $post['monto_oc'];
-		} else {
-			$monto_oc = NULL;
-		}
-
-		if (
-			$numeroGR == NULL && $post['fechaGR'] == NULL && $codigo_oc == NULL
-			&& $monto_oc == NULL && $post['fechaClienteOC'] == NULL && $post['motivo'] == NULL
-		) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Información no actualizada';
-			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'No se actualizo ningún dato']);
-		} else {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Información actualizada';
-			$result['msg']['content'] = createMessage(['type' => 1, 'message' => 'Se actualizo correctamente']);
-
-			$update = [];
-
-			if (!empty($codigo_oc)) {
-				$update = [
-					'codOrdenCompra' => $codigo_oc,
-				];
-			}
-
-			if (!empty($monto_oc)) {
-				$update = [
-					'montoOrdenCompra' => $monto_oc,
-				];
-			}
-			if (!empty($post['fechaClienteOC'])) {
-				$update = [
-					'fechaClienteOC' => $post['fechaClienteOC'],
-				];
-			}
-
-
-			if (!empty($numeroGR)) {
-				$update = [
+		
+		$insertGR = [
+			'numeroGR' => checkAndConvertToArray($post['numeroGR']),
+			'fechaGR' => checkAndConvertToArray($post['fechaGR']),
+			'idCotizacion' => $post['idCotizacion']
+		];
+		$data = [];
+		foreach ($insertGR['numeroGR'] as $key => $numeroGR) {
+			$fechaGR = $insertGR['fechaGR'][$key];
+			$idCotizacion = $insertGR['idCotizacion'];
+			
+			if (!empty($numeroGR)) { 
+				$data[] = [
 					'numeroGR' => $numeroGR,
+					'fechaGR' => $fechaGR,
+					'idCotizacion' => $idCotizacion
 				];
 			}
-
-
-
-			if (!empty($post['fechaGR'])) {
-				$update = [
-					'fechaGR' => $post['fechaGR'],
-				];
-			}
-
-			if (!empty($post['motivo'])) {
-				$update = [
-					'motivoAprobacion' => $post['motivo'],
-				];
-			}
-
-
-			if ($this->db->update(
-				'compras.cotizacion',
-				$update,
-				[
-					'idCotizacion' => $post['idCotizacion']
-				]
-			))
-				$result['result'] = 1;
 		}
-
+		if (!empty($data)) { 
+			$this->db->insert_batch('compras.cotizacionGr', $data);
+		}
+		//$idSincerado = $this->db->insert_id();
+		$result['result'] = 1;
 		echo json_encode($result);
 	}
 	public function reporte()

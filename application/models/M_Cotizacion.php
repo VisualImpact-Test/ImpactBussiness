@@ -327,6 +327,18 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+	public function obtenerCotizacionGR($id)
+	{
+		$sql = "select * from ImpactBussiness.compras.cotizacionGr
+		where idCotizacion = $id";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $query;
+	}
 
 	public function obtenerInformacionCotizacionGR_ORDENCOMPRA($id)
 	{

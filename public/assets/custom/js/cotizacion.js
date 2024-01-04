@@ -210,6 +210,29 @@ var Cotizacion = {
 			});
 		});
 
+		$(document).on('click', '#btn-agregar-new-gr', function (e) {
+			
+			e.preventDefault();
+			var html="";
+			
+			html+='<tr><td class="text-center">';
+			html+='<input type="text" class="form-control form-control-sm" name="numeroGR" value="" >';
+			html+='</td><td class="text-center" width = "30%">';
+			html+='	<div class="ui calendar date-semantic"><div class="ui input left icon"><i class="calendar icon"></i>';
+			html+='	<input type="text" placeholder="Fecha GR" value="">';
+			html+='	</div></div>	';
+			html+='<input type="hidden" class="date-semantic-value" name="fechaGR" placeholder="Fecha GR" value="">';
+			html+='</td><td  width = "10%">';
+			html+='<button id="btn-agregar-new-gr" class="btn btn-sm btn-success" title="GUARDAR"><i class="fas fa-plus"></i></button>';
+			html+='</td></tr>';
+			
+			
+			$('#tbnumeroGR tbody ').append(html);
+			Fn.loadSemanticFunctions();
+			
+			
+		});
+
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
 			++modalId;
 
