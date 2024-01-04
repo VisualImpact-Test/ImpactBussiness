@@ -223,6 +223,192 @@ var View = {
 			// Fn.dataTableAdjust();
 		});
 
+		$(document).ready(function () {
+			// Función para realizar la solicitud AJAX
+			function fetchData() {
+				$.ajax({
+					url: '/impactBussiness/home/get_data', // Asegúrate de usar la URL correcta
+					type: 'GET',
+					dataType: 'json',
+					success: function (usuario) {
+
+						var activo = usuario.usuario_activo;
+
+						if (activo === 'activo') {
+
+							// var titulo = 'Session activa';
+							// var contenido = '<center><strong>Usuario activo</strong></center>';
+							// ++modalId;
+							// var btn = [];
+							// let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+							// btn[0] = { title: 'Continuar', fn: fn };
+							// Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
+						} else {
+
+							var titulo = 'Session expirada';
+							var contenido = `
+						<style>
+							/* Estilos para el contenedor principal */
+							.form-container {
+								width: 100%; /* El contenedor ocupa el ancho total del contenedor padre */
+								max-width: 350px; /* Un ancho máximo para asegurar que no se vea demasiado grande */
+								margin: 0 auto; /* Centra el contenedor en la página */
+							}
+		
+							/* Estilos para el contenedor de la etiqueta y el campo */
+							.input-container {
+								display: flex;
+								justify-content: flex-start; /* Alinea el contenido a la izquierda */
+								margin-bottom: 10px;
+								align-items: center; /* Alinea los ítems verticalmente */
+							}
+		
+							/* Estilos para las etiquetas */
+							label {
+								white-space: nowrap; /* Asegura que la etiqueta no se divida en dos líneas */
+								width: 30%; /* Ancho fijo para las etiquetas */
+								min-width: 70px; /* Un ancho mínimo para evitar que las etiquetas sean muy pequeñas */
+								text-align: right; /* Alinea el texto de las etiquetas a la derecha */
+								margin-right: 10px; /* Espacio entre la etiqueta y el campo */
+							}
+		
+							/* Estilos para los campos de entrada */
+							input[type="text"],
+							input[type="password"] {
+								flex-grow: 1; /* Los campos de entrada crecerán para ocupar el espacio restante */
+								padding: 8px;
+								border: 1px solid #ccc;
+								border-radius: 4px;
+							}
+		
+							/* Estilos para el botón */
+							button {
+								padding: 10px 15px;
+								background-color: #4CAF50;
+								color: white;
+								border: none;
+								border-radius: 4px;
+								cursor: pointer;
+								display: block; /* Hace que el botón sea un bloque para poder centrarlo */
+								margin: 10px auto; /* Centra el botón horizontalmente */
+							}
+		
+							button:hover {
+								background-color: #45a049;
+							}
+		
+							/* Estilo para el toggle de mostrar contraseña */
+							.password-toggle {
+								cursor: pointer;
+								user-select: none;
+								color: #999;
+								position: absolute;
+								right: 15%; /* Posición ajustada en base al tamaño del contenedor */
+								margin-top: -38px; /* Ajustar en base a la altura del campo de contraseña */
+							}
+						</style>
+		
+						<form class="form" role="form" id="formLogin" method="post" autocomplete="off">
+							<div class="form-container">
+								<div class="input-container">
+									<label for="username">Usuario:</label>
+									<input type="text" id="username" name="user" required>
+								</div>
+								<div class="input-container" style="position: relative;">
+									<label for="password">Contraseña:</label>
+									<input type="password" id="password" name="password" required>
+								</div>
+								<div style="margin-top:15px;">
+									<button id="boton" type="submit">Iniciar Sesión</button>
+								</div>
+							</div>
+						</form>
+					
+						<script>
+							var url="login/acceder_login";
+							var baseUrl = window.location.origin + '/impactBussiness/';
+
+							// Supongamos que esta es la ruta a la que quieres redirigir
+							var url_ = baseUrl + 'login';	
+		
+							$("#boton").click(function (e) {
+								e.preventDefault();
+								++modalId;
+								var intentos = localStorage.getItem('intentosLogin') || 0;
+								let jsonString = { "data": JSON.stringify(Fn.formSerializeObject("formLogin")) };
+								let config = { "url": url, "data": jsonString };
+		
+								$.when(Fn.ajax(config)).then((a) => {
+						
+									if (a.status == 3) {
+
+										localStorage.setItem('intentosLogin', 0);
+
+										let btn = [];
+										let fn = [];
+
+										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 1) + ", show:false });";
+
+										var titulo = "Sesion";
+										var cuerpo = "<strong><center>Usuario valido</center></strong>";
+									
+										btn[0] = { title: "Aceptar", fn: fnCerrarModales };
+										Fn.showModal({ id: modalId, show: true, title: titulo, frm: cuerpo, btn: btn, width: a.data.width });
+
+									} else {
+
+										intentos++;
+        								localStorage.setItem('intentosLogin', intentos);
+
+										let btn = [];
+										let fn = [];
+										var titulo = "Sesion";
+										var cuerpo = "<strong><center>Usuario invalido</center></strong>";
+										fn[0] = "Fn.showModal({ id:" + modalId + ",show:false });";
+										btn[0] = { title: "Aceptar", fn: fn[0] };
+										Fn.showModal({ id: modalId, show: true, title: titulo, frm: cuerpo, btn: btn, width: a.data.width });
+
+										if (intentos >= 3) {
+											// Acciones a realizar después de 3 intentos fallidos
+											alert('Has excedido el número máximo de intentos de inicio de sesión.');
+											localStorage.setItem('intentosLogin', 0);
+											// Por ejemplo, puedes deshabilitar el botón de inicio de sesión
+											window.location.href = url_;
+										}
+
+									}
+
+								});
+							});
+		
+						</script>
+						  `;
+
+							++modalId;
+							var btn = [];
+							let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+							btn[0] = { title: 'Continuar', fn: fn };
+							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
+						}
+
+						// Aquí puedes hacer lo que necesites con los datos recibidos
+					},
+					error: function () {
+						alert('Error al obtener los datos');
+						console.log(usuario);
+					}
+				});
+			}
+
+			// Llamar a fetchData cada 15 segundos
+			setInterval(fetchData, 20000); // 15000 milisegundos = 15 segundos
+			// // También puedes llamar a fetchData inmediatamente si lo deseas
+			// fetchData();
+		});
+
 		$('.hide-parent').parent().hide();
 
 		$("#btn-toggle-menu").click(function (e) {
@@ -1596,6 +1782,15 @@ var View = {
 			childDependiente.closest('.childdependienteSemantic').removeClass('read-only');
 		});
 	},
+
+	limpiar: function () {
+
+		localStorage.clear(); // Elimina todos los datos de localStorage
+		sessionStorage.clear(); // Elimina todos los datos de sessionStorage
+
+
+	},
+
 	toast: (config = {}) => {
 		var defaults = {
 			'type': 0,

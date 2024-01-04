@@ -43,9 +43,12 @@ class Login extends MY_Controller
 		$this->aSessTrack[] = ['idAccion' => 1];
 
 		$config_ = array('type' => 2, 'message' => "Ocurrió un error al validar sus datos, vuelva a intentarlo");
+
 		if (!$rs) {
+
 			$result['msg']['content'] = createMessage($config_);
 		} else {
+
 			$num_rows = count($rs->result_array());
 			$config_ = array('type' => 2, 'message' => "Los datos ingresados no permiten el acceso");
 
@@ -59,6 +62,7 @@ class Login extends MY_Controller
 				$this->model->registrar_intentos($input);
 
 				if (!empty($verifUsuario)) {
+
 					if ($verifUsuario['intentos'] <= 2) {
 						$this->model->actualizar_intentos($verifUsuario);
 						$config_ = array('type' => 2, 'message' => "La clave ingresada no es la correcta. Le quedan " . (2 - $verifUsuario['intentos']) . " intentos");
@@ -77,10 +81,14 @@ class Login extends MY_Controller
 					}
 				}
 			} else {
+
 				$result['status'] = 1;
 
 				$usuario = $rs->row_array();
 				$menu = $this->model->encontrarMenu($usuario)->result_array();
+
+				// var_dump($menu);
+				// exit;
 				$config_ = array('type' => 2, 'message' => 'Usted no tiene permisos asignados, comuniquese con el administrador');
 				if (count($menu) < 1) {
 					$result['msg']['content'] = createMessage($config_);
@@ -128,11 +136,74 @@ class Login extends MY_Controller
 
 					$this->session->set_userdata($navbar_permiso);
 					$this->session->set_userdata('anuncioVisto', 0);
+
+					
+
+					// var_dump($usuario);
+					// exit;
 				}
 			}
 		}
+
 		$this->db->trans_complete();
 		responder:
+		echo json_encode($result);
+	}
+
+
+	public function acceder_login()
+	{
+
+		$data = json_decode($this->input->post('data'));
+
+		$input = array(
+			'usuario' => $data->user,
+			'clave' => $data->password
+		);
+
+		$result = $this->result;
+
+		$rs = $this->model->encontrarUsuario($input);
+
+		$num_rows = count($rs->result_array());
+
+		$this->aSessTrack[] = ['idAccion' => 1];
+
+		$config_ = array('type' => 2, 'message' => "Ocurrió un error al validar sus datos, vuelva a intentarlo");
+
+		if (empty($num_rows)) {
+
+			$result['msg']['content'] = createMessage($config_);
+
+			$result['status'] = 4;
+
+		} else {
+
+			$result['status'] = 3;
+			$usuario = $rs->row_array();
+			$menu = $this->model->encontrarMenu($usuario)->result_array();
+			$usuario['menu'] = $menu;
+			$sessionId = $usuario['idUsuario'] . "-" . session_id();
+			$this->session->set_userdata('sessionId', $sessionId);
+			$this->session->set_userdata($usuario['menu']);
+			$this->session->set_userdata($usuario['menu']);
+
+			$navbar_permiso['pages'] = array();
+
+			$usuario['flag_anuncio_visto'];
+
+			$qp = $this->model->navbar_permiso($usuario['idUsuario'])->result_array();
+
+			foreach ($qp as $index => $value) {
+				$navbar_permiso['pages'][$index] = $value['page'];
+			}
+
+			$this->session->set_userdata($navbar_permiso);
+			// $this->session->userdata('pages');
+			$this->session->set_userdata('anuncioVisto', 0);
+		}
+
+
 		echo json_encode($result);
 	}
 

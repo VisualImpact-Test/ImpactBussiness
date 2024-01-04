@@ -47,7 +47,7 @@ class MY_Controller extends CI_Controller
 	public function __construct()
 	{
 		parent::__construct();
-		$this->version = '1.1.59';
+		$this->version = '1.1.60';
 		date_default_timezone_set("America/Lima");
 
 		$_SESSION['idCuenta'] = $this->session->userdata('idCuenta');
@@ -80,20 +80,27 @@ class MY_Controller extends CI_Controller
 		$is_ajax = $this->input->is_ajax_request();
 
 		if (!empty($this->idUsuario) && $this->namespace == 'login') redirect('home', 'refresh');
+		
+
 		else {
-			if (empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') { // && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
+
+			if (empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') { 
+
+				// && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
 				if ($is_ajax) {
 					$result = array();
 					$result['result'] = 0;
 					$result['data'] = '';
 					$result['msg']['title'] = "Sesión";
-					$result['msg']['content'] = "Su sesi&oacute;n ha caducado. Identifiquese nuevamente <a href='" . base_url() . "'>aqu&iacute;</a>";
+					$result['msg']['content'] = '';
 					$result['url'] = '';
 					$result['session'] = false;
 					echo json_encode($result);
 					exit;
 				} else redirect('login', 'refresh');
+
 			}
+
 		}
 
 		$this->result = array(
@@ -122,11 +129,15 @@ class MY_Controller extends CI_Controller
 		];
 	}
 
+	
+
 	public function expulsar()
 	{
 		$this->session->sess_destroy();
 		header("Location: " . site_url());
 	}
+
+
 
 	public function logout()
 	{

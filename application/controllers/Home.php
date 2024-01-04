@@ -16,8 +16,8 @@ class Home extends MY_Controller
 		if (!empty($query)) $estado = $query[0]['estado'];
 
 		$usuario = array();
-        $key = Encriptar::codificar($this->session->userdata('idTipoUsuario'));
-        $config['data']['key'] = $key;
+		$key = Encriptar::codificar($this->session->userdata('idTipoUsuario'));
+		$config['data']['key'] = $key;
 		$usuario['idUsuario'] = $this->session->userdata('idUsuario');
 		$usuario['usuario'] = $this->session->userdata('apeNom');
 		$usuario['idTipoUsuario'] = $this->session->userdata('idTipoUsuario');
@@ -99,9 +99,41 @@ class Home extends MY_Controller
 		$this->view($config);
 	}
 
+	public function get_data()
+	{
+		// Aquí iría la lógica para obtener tus datos
+		$is_ajax = $this->input->is_ajax_request();
+
+		if (!empty($this->idUsuario) && $this->namespace == 'login') redirect('home', 'refresh');
+
+		else {
+
+			if (empty($this->idUsuario)) {
+				// && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
+
+				$usuario = [
+					'usuario_inactivo' => 'inactivo'
+				];
+				
+			} else {
+
+				$usuario = [
+					'usuario_activo' => 'activo'
+				];
+
+			}
+		}
+
+		// Devolver los datos en formato JSON
+		echo json_encode($usuario);
+	}
+
+
+
 	public function get_cotizacion()
 	{
 		$input = json_decode($this->input->post('data'), true);
+
 		$result = [];
 		$data = [];
 		$result['result'] = 0;
