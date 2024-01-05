@@ -109,6 +109,7 @@
 									<span class="tooltiptextButton">Mostrar todos</span>
 									<input type="radio" name="chMostrar" class="chMostrar" checked="checked" value="0"> Todos </i>
 								</label>
+
 							</div>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group chk_quiebres">
@@ -116,6 +117,10 @@
 								<label class="btn btn-outline-secondary custom_tooltip">
 									<span class="tooltiptextButton">Mostrar solo con los precios vigentes</span>
 									<input type="radio" name="chMostrarVigentes" class="chMostrar" value="1"> Vigentes </i>
+								</label>
+								<label class="btn btn-outline-secondary custom_tooltip">
+									<span class="tooltiptextButton">Mostrar solo los precios vencidos</span>
+									<input type="radio" name="chMostrarVigentes" class="chMostrar" value="2"> Vencidos </i>
 								</label>
 								<label class="btn btn-outline-secondary custom_tooltip">
 									<span class="tooltiptextButton">Mostrar todos</span>
