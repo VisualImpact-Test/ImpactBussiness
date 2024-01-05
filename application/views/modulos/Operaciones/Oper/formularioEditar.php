@@ -79,7 +79,7 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Valor</label>
-						<input type="text" class="form-control" name="valor" value="<?= !empty($oper[0]['valor']) ? $oper[0]['valor'] : '-'; ?>">
+						<input type="text" class="form-control" name="valor" value="<?= !empty($oper[0]['valor']) ? $oper[0]['valor'] : ''; ?>">
 					</div>
 				</div>
 				<div class="form-row">
