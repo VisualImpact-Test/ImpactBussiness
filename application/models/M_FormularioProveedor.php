@@ -431,7 +431,7 @@ class M_FormularioProveedor extends MY_Model
 	")
 	->order_by('ocd.idOrdenCompra DESC');
 
-		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
+		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
 
 		if (isset($data['idProveedor'])) $this->db->where('pr.idProveedor', $data['idProveedor']);

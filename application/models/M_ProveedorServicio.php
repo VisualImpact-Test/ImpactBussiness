@@ -68,7 +68,7 @@ class M_ProveedorServicio extends MY_Model
 				DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg))")
 			->order_by('ocd.idOrdenCompra DESC');
 
-		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
+		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
 
 		if (isset($data['idProveedor'])) $this->db->where('pr.idProveedor', $data['idProveedor']);
@@ -127,7 +127,7 @@ class M_ProveedorServicio extends MY_Model
 				DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg))")
 			->order_by('cp.idOrdenCompra', 'DESC');
 
-		if ($this->idUsuario != 1) $this->db->where('c.demo', 0);
+		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
 
 		if (isset($data['idProveedor'])) $this->db->where('pr.idProveedor', $data['idProveedor']);
