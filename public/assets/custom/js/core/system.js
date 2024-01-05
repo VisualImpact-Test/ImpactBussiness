@@ -245,6 +245,8 @@ var View = {
 							// btn[0] = { title: 'Continuar', fn: fn };
 							// Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 
+							// console.log('activo');
+
 						} else {
 
 							var titulo = 'Session expirada';
@@ -341,6 +343,8 @@ var View = {
 								let config = { "url": url, "data": jsonString };
 		
 								$.when(Fn.ajax(config)).then((a) => {
+
+									console.log(a.status);
 						
 									if (a.status == 3) {
 
@@ -349,7 +353,7 @@ var View = {
 										let btn = [];
 										let fn = [];
 
-										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 1) + ", show:false });";
+										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false });";
 
 										var titulo = "Sesion";
 										var cuerpo = "<strong><center>Usuario valido</center></strong>";
@@ -390,7 +394,8 @@ var View = {
 							var btn = [];
 							let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 							btn[0] = { title: 'Continuar', fn: fn };
-							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });	
+							
 
 						}
 
@@ -404,7 +409,7 @@ var View = {
 			}
 
 			// Llamar a fetchData cada 15 segundos
-			setInterval(fetchData, 20000); // 15000 milisegundos = 15 segundos
+			setInterval(fetchData, 15000); // 15000 milisegundos = 15 segundos
 			// // También puedes llamar a fetchData inmediatamente si lo deseas
 			// fetchData();
 		});
