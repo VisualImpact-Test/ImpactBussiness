@@ -1552,6 +1552,8 @@ var View = {
 							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
 						});
 						break list;
+					} else {
+						control.closest('.contentSemanticDiv').find('.' + prefi_name + 'Cantidad').val(num + total);
 					}
 
 					for (var i = 0; i < num; ++i) {
