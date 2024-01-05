@@ -171,6 +171,9 @@ class Login extends MY_Controller
 
 		$config_ = array('type' => 2, 'message' => "Ocurrió un error al validar sus datos, vuelva a intentarlo");
 
+		// var_dump($num_rows);
+		// exit;
+
 		if (empty($num_rows)) {
 
 			$result['msg']['content'] = createMessage($config_);
@@ -186,7 +189,7 @@ class Login extends MY_Controller
 			$sessionId = $usuario['idUsuario'] . "-" . session_id();
 			$this->session->set_userdata('sessionId', $sessionId);
 			$this->session->set_userdata($usuario['menu']);
-			$this->session->set_userdata($usuario['menu']);
+			$this->session->set_userdata($usuario['idUsuario']);
 
 			$navbar_permiso['pages'] = array();
 
@@ -201,6 +204,8 @@ class Login extends MY_Controller
 			$this->session->set_userdata($navbar_permiso);
 			// $this->session->userdata('pages');
 			$this->session->set_userdata('anuncioVisto', 0);
+
+
 		}
 
 
