@@ -32,9 +32,12 @@
 						<button class="btn btn-outline-secondary border-0 btn-descargarExcelGr">
 							<i class="fa fa-lg fa-file-excel" title=""></i>
 						</button>
+						<?php if ($row['porcentaje'] != 100) { ?>
 						<button class="btn btn-outline-secondary border-0 btn-cargarGR">
 							<i class="fa fa-lg fa-list-ul" title="Cargar GR"></i>
 						</button>
+						<?php } ?>
+					
 						<button type="button" class="btn btn-outline-trade-visual border-0" data-ruta="descargarExcel" id="btn-descargarExcelSincerado" title="Descargar">
 							<i class="icon file excel"></i>
 						</button>
