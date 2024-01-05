@@ -100,11 +100,14 @@ class Oper extends MY_Controller
 		$dataParaVista['tipo'] = $this->model->obtenerTipo()->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
-
 		$dataParaVista['oper'] = $this->model->obtenerInformacionOper(['idOper' => $idOper])->result_array();
+
 		foreach ($dataParaVista['oper'] as $key => $value) {
 			$dataParaVista['operSubItem'][$value['idOperDetalle']] = $this->model->obtenerInformacionOperSubItem(['idOperDetalle' => $value['idOperDetalle']])->result_array();
 		}
+
+		// var_dump($dataParaVista);
+		// exit;
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Oper';
 		$result['data']['html'] = $this->load->view("modulos/Operaciones/Oper/formularioEditar", $dataParaVista, true);
@@ -136,6 +139,7 @@ class Oper extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['idProveedor'] = checkAndConvertToArray($post['idProveedor']);
@@ -176,7 +180,13 @@ class Oper extends MY_Controller
 			'totalFeeIGV' => $post['totalFeeIGV'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
+			'valor' => $post['valor']
 		];
+
+
+		// var_dump($insertData);
+		// exit;
+
 		$this->db->insert('orden.oper', $insertData);
 		$idOper = $this->db->insert_id();
 		$this->db->update(
@@ -197,6 +207,10 @@ class Oper extends MY_Controller
 					'nombre' => $post['item'][$key],
 					'idItemTipo' => $post['tipo'][$key]
 				];
+
+				// var_dump($dataInserItem);
+				// exit;
+
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
 			}
@@ -212,6 +226,9 @@ class Oper extends MY_Controller
 				'gap' => $post['gap'][$key],
 				'costoSubTotalGap' => $post['precio'][$key]
 			];
+
+			var_dump($insertData);
+			exit;
 			$insert = $this->db->insert('orden.operDetalle', $insertData);
 			$idOperDet = $this->db->insert_id();
 			/////////////////////
@@ -289,6 +306,7 @@ class Oper extends MY_Controller
 			'totalFeeIGV' => $post['totalFeeIGV'],
 			'idUsuarioReg' => $this->idUsuario,
 			'observacion' => $post['observacion'],
+			'valor' => $post['valor']
 		];
 		$rpta = $this->model->actualizarMasivo('orden.oper', $updateData, 'idOper');
 		$idOper = $updateData[0]['idOper'];
