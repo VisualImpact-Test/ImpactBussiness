@@ -220,7 +220,9 @@ class M_Proveedor extends MY_Model
 				, cp.nombre as comprobante
 				, p.cuenta
 				, p.idBanco
+				, bc.nombre as banco
 				, p.idTipoCuentaBanco
+				, tcb.nombre as tipoCuenta
 				, p.chkDetraccion
 				, p.cuentaDetraccion
 				, p.cci
@@ -239,11 +241,16 @@ class M_Proveedor extends MY_Model
 			AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
 			AND ISNULL(zc.cod_distrito, 1) = (CASE WHEN zc.cod_distrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
 			JOIN compras.proveedorEstado ep ON p.idProveedorEstado = ep.idProveedorEstado
+			LEFT JOIN dbo.banco bc ON bc.idBanco = p.idBanco 
+			LEFT JOIN dbo.tipoCuentaBanco tcb ON tcb.idTipoCuentaBanco = p.idTipoCuentaBanco
 			-- AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}
 			{$orden}
 		";
+
+		// var_dump($sql);
+		// exit;
 
 		$query = $this->db->query($sql);
 

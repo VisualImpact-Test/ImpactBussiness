@@ -19,6 +19,7 @@
 				<th>MONEDA</th>
 				<th>TOTAL CON IGV</th>
 				<th>ESTADO</th>
+
 			</tr>
 		</thead>
 
@@ -49,6 +50,7 @@
 					<td class="text-center style-icons">
 						<span class="badge <?= $badge ?>" id="spanEstado-<?= $row['estado']; ?>"><?= $mensajeEstado; ?></span>
 					</td>
+
 				</tr>
 				<? $ix++; ?>
 			<?php endforeach; ?>
@@ -69,7 +71,9 @@
 			var row = rows[i];
 			var rowData = [];
 			for (var j = 0; j < row.cells.length; j++) {
-				rowData.push(row.cells[j].textContent.trim());
+				if (j !== 1) {
+					rowData.push(row.cells[j].textContent.trim());
+				}
 			}
 			data.push(rowData);
 		}
@@ -188,4 +192,3 @@
 		}).catch(error => console.error(error));
 	}
 </script>
-
