@@ -49,7 +49,8 @@ class M_Sincerado extends MY_Model
 			os.chkUtilizarCliente,
 			c.razonSocial as cuenta,
 			cc.subcanal AS centroCosto,
-			mon.nombreMoneda as moneda')
+			mon.nombreMoneda as moneda,
+			s.flagPendienteAprobar')
 			->from('compras.sincerado s')
 			->join('compras.ordenServicio os', 'os.idOrdenServicio = s.idOrdenServicio')
 			->join('compras.presupuestoHistorico p', 'p.idPresupuesto = s.idPresupuesto AND p.idPresupuestoHistorico = s.idPresupuestoHistorico')

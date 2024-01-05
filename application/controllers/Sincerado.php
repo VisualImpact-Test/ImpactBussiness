@@ -47,6 +47,7 @@ class Sincerado extends MY_Controller
 				$dataParaVista['sincerado'][$value['idSincerado']] = $value;
 			}
 		}
+		
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/Sincerado/reporte", $dataParaVista, true);
 		}
@@ -104,6 +105,47 @@ class Sincerado extends MY_Controller
 
 		echo json_encode($result);
 	}
+
+
+	public function formularioAprobar()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+
+		$dataParaVista = [];
+		$dataParaVista['sincerado'] = $this->db->get_where('compras.sincerado', ['idSincerado' => $post['idSincerado']])->row_array();
+	
+		$html = $this->load->view("modulos/Sincerado/formularioAprobar", $dataParaVista, true);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Aprobar Sincerado';
+		$result['data']['html'] = $html;
+
+		echo json_encode($result);
+	}
+
+	public function AprobarSincerado()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$idSincerado = $post['idSincerado'];
+
+		$updateSincerado = [
+			'usuarioAprobar' => $this->idUsuario,
+			'flagPendienteAprobar' => '0',
+			'fechaAprobar' => getActualDateTime()
+		];
+		$this->db->update('compras.sincerado', $updateSincerado, ['idSincerado' => $idSincerado]);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
+	
+
 
 	public function guardarGrSincerado()
 	{

@@ -19,9 +19,13 @@
 				<tr data-id="<?= $key ?>" data-presupuesto="<?= $row['idPresupuesto'] ?>" data-idsincerado="<?= $row['idSincerado'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center">
-						<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
+					
+						<?php if ($row['flagPendienteAprobar'] == 1) { ?>
+							<button class="btn btn-outline-secondary border-0 btn-formPendienteAprobar">
 							<i class="fa fa-lg fa-check" title="Pendiente Aprobar"></i>
-						</button>
+							</button>
+						<?php } ?>
+					
 						<button class="btn btn-outline-secondary border-0 btn-formEditarSincerado">
 							<i class="fa fa-lg fa-edit" title="Editar"></i>
 						</button>
