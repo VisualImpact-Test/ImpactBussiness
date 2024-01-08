@@ -349,6 +349,9 @@ var View = {
 								$.when(Fn.ajax(config)).then((a) => {
 									if (a.status == 3) {
 										// Usuario válido
+										
+										console.log(intentos);
+
 										if (intentos == 2) {
 											
 
@@ -358,25 +361,43 @@ var View = {
 											++modalId;
 											var btn = [];
 
-											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 3) + ", show:false });";
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 4) + ", show:false });";
 											console.log(modalId);
 											
 											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
 											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 											
+										} else if(intentos == 1) {
+
+											localStorage.setItem('intentosLogin', 0);
+
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Usuario valido</strong></center>';
+											++modalId;
+											var btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 3) + ", show:false });";
+											console.log(modalId);
+										
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
+
+										} else if (intentos == '') {
+
+											localStorage.setItem('intentosLogin', 0);
+
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Usuario valido</strong></center>';
+											++modalId;
+											var btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 2) + ", show:false });";
+											console.log(modalId);
+										
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 										}
 
-										localStorage.setItem('intentosLogin', 0);
-
-										var titulo = 'Sesion exitosa';
-										var contenido = '<center><strong>Usuario valido</strong></center>';
-										++modalId;
-										var btn = [];
-										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 2) + ", show:false });";
-										console.log(modalId);
 										
-										btn[0] = { title: 'Continuar', fn: fnCerrarModales };
-										Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 
 									} else {
 										// Usuario inválido
