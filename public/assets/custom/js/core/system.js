@@ -231,23 +231,9 @@ var View = {
 					type: 'GET',
 					dataType: 'json',
 					success: function (usuario) {
+						var activo = usuario.usuario_estado;
+						if (activo !== 'activo') {
 
-						var activo = usuario.usuario_activo;
-
-						if (activo === 'activo') {
-
-							// var titulo = 'Session activa';
-							// var contenido = '<center><strong>Usuario activo</strong></center>';
-							// ++modalId;
-							// var btn = [];
-							// let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-							// btn[0] = { title: 'Continuar', fn: fn };
-							// Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
-
-							// console.log('activo');
-
-						} else {
 
 							var titulo = 'Session expirada';
 							var contenido = `
@@ -394,8 +380,8 @@ var View = {
 							var btn = [];
 							let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 							btn[0] = { title: 'Continuar', fn: fn };
-							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });	
-							
+							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
 
 						}
 
