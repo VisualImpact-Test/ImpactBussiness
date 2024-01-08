@@ -872,12 +872,7 @@ class FormularioProveedor extends MY_Controller
 
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		// $post['data'] = json_decode($post['data']);
-		// foreach ($post['data'] as $k => $v) {
-		// 	$post[$k] = $v;
-		// }
-		//var_dump($post);
-		//exit;
+
 		$this->db->update('sustento.validacionArte', [
 			'flagAprobado' => $post['estado'],
 			'flagRevisado' => '1'
@@ -1441,9 +1436,6 @@ class FormularioProveedor extends MY_Controller
 			$post['ordencompra'] = $post['ordencompra'];
 			$post['cotizacion'] = NULL;
 		}
-
-		/*var_dump($post);
-		exit;*/
 
 		if ($post['opcion'] == '1') {
 			if (empty($post['enlace'])) {
@@ -2363,11 +2355,12 @@ class FormularioProveedor extends MY_Controller
 			$dataCabecera = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
 		} else {
 			$ordenCompraProveedor = $this->model->obtenerOrdenCompraLibre(['idOrdenCompra' => $idOrdenCompra])->result_array();
-			// $config['data']['cabecera']['igv'] = $ordenCompraProveedor[0]['igv'];
-			$dataCabecera = $this->model->obtenerInformacionOrdenCompraLibre(['idOrdenCompra' => $idOrdenCompra])->row_array();
+			$dataCabecera = $this->model->obtenerOrdenCompraLibre(['idOrdenCompra' => $idOrdenCompra])->row_array();
 		}
+
 		$config['data']['cabecera'] = $dataCabecera;
 		$config['data']['detalle'] = $ordenCompraProveedor;
+		$config['data']['flagOcLibre'] = $flagOcLibre;
 
 		foreach ($config['data']['detalle'] as $k => $v) {
 			if ($flagOcLibre == 0)
@@ -2416,7 +2409,15 @@ class FormularioProveedor extends MY_Controller
 
 		$post = json_decode($this->input->post('data'), true);
 
-		$ordenCompra = $this->model->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+		if (isset($post['flag'])) {
+			if ($post['flag'] == 1) {
+				$ordenCompra = $this->model->obtenerOrdenCompraDetalleProveedorOC(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+			} else {
+				$ordenCompra = $this->model->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+			}
+		} else {
+			$ordenCompra = $this->model->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
+		}
 
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
@@ -2444,7 +2445,10 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		foreach ($dataParaVista['detalle'] as $k => $v) {
-			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			if ($post['flag'] == 0)
+				$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			elseif ($post['flag'] == 1)
+				$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->select('*, idGenero as genero')->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
 		}
 
 		$ids = [];
@@ -2491,7 +2495,7 @@ class FormularioProveedor extends MY_Controller
 
 		$cod_oc = $dataParaVista['data']['seriado'];
 		// $mpdf->Output('OPER.pdf', 'D');
-		$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
 
 	public function confirmarOrdenCompra()
