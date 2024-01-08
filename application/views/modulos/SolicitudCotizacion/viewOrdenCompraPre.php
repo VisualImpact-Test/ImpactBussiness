@@ -13,7 +13,7 @@
 			</div>
 			<div class="four wide field">
 				<div class="ui sub header">Asunto para Correo</div>
-				<input type="text" name="asunto" value="Cotización <?= $dataOper['tituloAsunto'] ?>" readonly patron="requerido">
+				<input type="text" name="asunto" value="Cotización <?= $dataOper['tituloAsunto'] ?>" patron="requerido">
 			</div>
 			<div class="four wide field">
 				<div class="ui sub header">Descripcion Finanzas</div>
