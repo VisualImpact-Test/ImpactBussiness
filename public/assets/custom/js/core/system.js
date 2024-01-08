@@ -216,6 +216,8 @@ var _aSelectGrupoCanal = {
 
 var intervalPeticionActualizacion = null;
 var intervalEstadoPeticionActualizarVisita = null;
+var modalYaMostrado = false;
+
 var View = {
 	idModal: 0,
 	load: function () {
@@ -223,34 +225,35 @@ var View = {
 			// Fn.dataTableAdjust();
 		});
 
-		$(document).ready(function () {
-			// Función para realizar la solicitud AJAX
-			function fetchData() {
-				$.ajax({
-					url: '/impactBussiness/home/get_data', // Asegúrate de usar la URL correcta
-					type: 'GET',
-					dataType: 'json',
-					success: function (usuario) {
+		var currentPath = window.location.pathname;
+		// Asegúrate de que no estás en la página de login antes de mostrar el modal
+		if (!currentPath.includes('/impactBussiness/login')) {
 
-						var activo = usuario.usuario_activo;
+			function verificarSesion() {
+				if (!modalYaMostrado) {
+					$.ajax({
+						url: '/impactBussiness/MY_Controller/__construct',
+						type: 'POST',
+						dataType: 'json',
+						success: function (respuesta) {
+							console.log(respuesta.session_expired);
+							if (respuesta.session_expired) {
+								mostrarModalReLogin();
+								modalYaMostrado = true; // Establece la bandera en true después de mostrar el modal
+							}
+						}
+					});
+				}
+			}
 
-						if (activo === 'activo') {
 
-							// var titulo = 'Session activa';
-							// var contenido = '<center><strong>Usuario activo</strong></center>';
-							// ++modalId;
-							// var btn = [];
-							// let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		}
 
-							// btn[0] = { title: 'Continuar', fn: fn };
-							// Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
-
-							// console.log('activo');
-
-						} else {
-
-							var titulo = 'Session expirada';
-							var contenido = `
+		function mostrarModalReLogin() {
+			// Muestra un modal que pide al usuario su contraseña o credenciales
+			var titulo = 'Session expirada';
+			var tiempoRestante = 30;
+			var contenido = `
 						<style>
 							/* Estilos para el contenedor principal */
 							.form-container {
@@ -313,6 +316,7 @@ var View = {
 						</style>
 		
 						<form class="form" role="form" id="formLogin" method="post" autocomplete="off">
+							<p id="mensajeTiempoAgotado" style="text-align:center;">Tiene <span id="tiempoRestante">${tiempoRestante}</span> segundos para volver a iniciar sesión.</p>
 							<div class="form-container">
 								<div class="input-container">
 									<label for="username">Usuario:</label>
@@ -337,82 +341,94 @@ var View = {
 		
 							$("#boton").click(function (e) {
 								e.preventDefault();
-								++modalId;
-								var intentos = localStorage.getItem('intentosLogin') || 0;
+								modalId++;
+								var intentos = parseInt(localStorage.getItem('intentosLogin') || 0);
 								let jsonString = { "data": JSON.stringify(Fn.formSerializeObject("formLogin")) };
 								let config = { "url": url, "data": jsonString };
-		
+							
 								$.when(Fn.ajax(config)).then((a) => {
-
-									console.log(a.status);
-						
 									if (a.status == 3) {
+										// Usuario válido
+										if (intentos == 2) {
+											
+
+											localStorage.setItem('intentosLogin', 0);
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Inicio de sesión exitoso, pero has usado todos tus intentos. Ten cuidado la próxima vez.</strong></center>';
+											++modalId;
+											var btn = [];
+
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 3) + ", show:false });";
+											console.log(modalId);
+											
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+											
+										}
 
 										localStorage.setItem('intentosLogin', 0);
 
-										let btn = [];
-										let fn = [];
-
-										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false });";
-
-										var titulo = "Sesion";
-										var cuerpo = "<strong><center>Usuario valido</center></strong>";
-									
-										btn[0] = { title: "Aceptar", fn: fnCerrarModales };
-										Fn.showModal({ id: modalId, show: true, title: titulo, frm: cuerpo, btn: btn, width: a.data.width });
+										var titulo = 'Sesion exitosa';
+										var contenido = '<center><strong>Usuario valido</strong></center>';
+										++modalId;
+										var btn = [];
+										let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 2) + ", show:false });";
+										console.log(modalId);
+										
+										btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+										Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 
 									} else {
-
+										// Usuario inválido
 										intentos++;
-        								localStorage.setItem('intentosLogin', intentos);
-
-										let btn = [];
-										let fn = [];
-										var titulo = "Sesion";
-										var cuerpo = "<strong><center>Usuario invalido</center></strong>";
-										fn[0] = "Fn.showModal({ id:" + modalId + ",show:false });";
-										btn[0] = { title: "Aceptar", fn: fn[0] };
-										Fn.showModal({ id: modalId, show: true, title: titulo, frm: cuerpo, btn: btn, width: a.data.width });
-
+										localStorage.setItem('intentosLogin', intentos);
+							
 										if (intentos >= 3) {
-											// Acciones a realizar después de 3 intentos fallidos
-											alert('Has excedido el número máximo de intentos de inicio de sesión.');
+											// Al tercer intento fallido
 											localStorage.setItem('intentosLogin', 0);
-											// Por ejemplo, puedes deshabilitar el botón de inicio de sesión
+											alert('Ha excedido el número de intentos, será redireccionado al login.');
 											window.location.href = url_;
+										} else {
+											// Manejo de intentos fallidos que no son el tercero
+											let btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false });";
+											btn[0] = { title: "Aceptar", fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: "Sesion", frm: "<strong><center>Usuario invalido</center></strong>", btn: btn });
 										}
-
 									}
-
 								});
 							});
+							
+							
 		
 						</script>
 						  `;
 
-							++modalId;
-							var btn = [];
-							let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-							btn[0] = { title: 'Continuar', fn: fn };
-							Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });	
-							
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-						}
+			console.log(modalId);
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
 
-						// Aquí puedes hacer lo que necesites con los datos recibidos
-					},
-					error: function () {
-						alert('Error al obtener los datos');
-						console.log(usuario);
-					}
-				});
-			}
+			var temporizador = setInterval(function () {
+				tiempoRestante--;
+				$('#tiempoRestante').text(tiempoRestante);
 
-			// Llamar a fetchData cada 15 segundos
-			setInterval(fetchData, 15000); // 15000 milisegundos = 15 segundos
-			// // También puedes llamar a fetchData inmediatamente si lo deseas
-			// fetchData();
-		});
+				if (tiempoRestante <= 0) {
+					clearInterval(temporizador);
+					// Aquí puedes cerrar el modal o redirigir al usuario según sea necesario
+					$('#mensajeTiempoAgotado').text('Recargue la pagina y por favor, inicie sesión nuevamente.');
+				}
+			}, 1000);
+
+
+		}
+
+		// Coloca esto en un intervalo para verificar periódicamente
+		setInterval(verificarSesion, 30000); // Verifica cada 15 segundos
+
 
 		$('.hide-parent').parent().hide();
 
@@ -1557,8 +1573,6 @@ var View = {
 							'btn': [{ 'title': 'Cerrar', 'fn': 'Fn.showModal({ id: ' + modalId + ', show: false });' }]
 						});
 						break list;
-					} else {
-						control.closest('.contentSemanticDiv').find('.' + prefi_name + 'Cantidad').val(num + total);
 					}
 
 					for (var i = 0; i < num; ++i) {
@@ -1790,13 +1804,6 @@ var View = {
 		});
 	},
 
-	limpiar: function () {
-
-		localStorage.clear(); // Elimina todos los datos de localStorage
-		sessionStorage.clear(); // Elimina todos los datos de sessionStorage
-
-
-	},
 
 	toast: (config = {}) => {
 		var defaults = {
