@@ -55,6 +55,28 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function obtenerArchivo($id)
+	{
+		$sql = "
+			SELECT
+			idInformacionBancariaProveedor
+			,idProveedorArchivo
+			,idProveedor
+			,idTipoArchivo
+			,nombre_archivo
+			FROM compras.proveedorArchivo
+			WHERE estado = 1 AND flagPrincipal = 1 AND idProveedor =" . $id;
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function obtenerProveedorTipoServicio($params = [])
 	{
 		$this->db
@@ -83,6 +105,30 @@ class M_Proveedor extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerInformacionBancaria($id)
+	{
+		$sql = "
+		SELECT idInformacionBancariaProveedor
+			,idProveedor
+      		,cuenta
+			,idMoneda
+      		,idBanco
+      		,idTipoCuentaBanco
+      		,cci
+  		FROM compras.informacionBancariaProveedor
+		WHERE estado = 1 AND idProveedor = " . $id;
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 
 	public function obtenerCorreosAdicionales($params = [])
 	{
@@ -184,62 +230,64 @@ class M_Proveedor extends MY_Model
 
 
 		$sql = "
-			SELECT DISTINCT
-				p.idProveedor
-				, p.razonSocial
-				, p.nroDocumento
-				, r.idRubro
-				, r.nombre AS rubro
-				, mp.idMetodoPago
-				, mp.nombre AS metodoPago
-				, ubi.cod_departamento
-				, ubi.departamento
-				, ubi.cod_provincia
-				, ubi.provincia
-				, ubi.cod_ubigeo
-				, ubi.distrito
-				, p.direccion
-				, ubi_zc.departamento AS zc_departamento
-				, zc.cod_departamento AS zc_cod_departamento
-				, (CASE WHEN zc.cod_provincia IS NULL THEN NULL ELSE ubi_zc.provincia END) AS zc_provincia
-				, (CASE WHEN zc.cod_provincia IS NULL THEN NULL ELSE zc.cod_provincia END) AS zc_cod_provincia
-				, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE ubi_zc.distrito END) AS zc_distrito
-				, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE zc.cod_distrito END) AS zc_cod_distrito
-				, p.nombreContacto
-				, p.correoContacto
-				, p.numeroContacto
-				, p.informacionAdicional
-				, ep.idProveedorEstado
-				, ep.nombre AS estado
-				, ep.icono AS estadoIcono
-				, ep.toggle AS estadotoggle
-				, p.costo
-				, pts.idProveedorTipoServicio
-				, ts.nombre as tipoServicio
-				, cp.idComprobante
-				, cp.nombre as comprobante
-				, p.cuenta
-				, p.idBanco
-				, p.idTipoCuentaBanco
-				, p.chkDetraccion
-				, p.cuentaDetraccion
-				, p.cci
-			FROM  compras.proveedor p
-			JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
-			JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
-			LEFT JOIN compras.proveedorComprobante pc ON pc.idProveedor = p.idProveedor
-			JOIN compras.rubro r ON pr.idRubro = r.idRubro
-			LEFT JOIN compras.comprobante cp ON cp.idComprobante = pc.idComprobante
-			JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
-			LEFT JOIN compras.proveedorProveedorTipoServicio pts ON pts.idproveedor = p.idProveedor and pts.estado=1
-			LEFT JOIN compras.proveedorTipoServicio ts ON ts.idProveedorTipoServicio = pts.idProveedorTipoServicio
-			JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
-			JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
-			JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento
-			AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
-			AND ISNULL(zc.cod_distrito, 1) = (CASE WHEN zc.cod_distrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
-			JOIN compras.proveedorEstado ep ON p.idProveedorEstado = ep.idProveedorEstado
-			-- AND ubi_zc.estado = 1
+		SELECT DISTINCT
+		p.idProveedor
+		, p.razonSocial
+		, p.nroDocumento
+		, r.idRubro
+		, r.nombre AS rubro
+		, mp.idMetodoPago
+		, mp.nombre AS metodoPago
+		, ubi.cod_departamento
+		, ubi.departamento
+		, ubi.cod_provincia
+		, ubi.provincia
+		, ubi.cod_ubigeo
+		, ubi.distrito
+		, p.direccion
+		, ubi_zc.departamento AS zc_departamento
+		, zc.cod_departamento AS zc_cod_departamento
+		, (CASE WHEN zc.cod_provincia IS NULL THEN NULL ELSE ubi_zc.provincia END) AS zc_provincia
+		, (CASE WHEN zc.cod_provincia IS NULL THEN NULL ELSE zc.cod_provincia END) AS zc_cod_provincia
+		, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE ubi_zc.distrito END) AS zc_distrito
+		, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE zc.cod_distrito END) AS zc_cod_distrito
+		, p.nombreContacto
+		, p.correoContacto
+		, p.numeroContacto
+		, p.informacionAdicional
+		, ep.idProveedorEstado
+		, ep.nombre AS estado
+		, ep.icono AS estadoIcono
+		, ep.toggle AS estadotoggle
+		, p.costo
+		, pts.idProveedorTipoServicio
+		, ts.nombre as tipoServicio
+		, cp.idComprobante
+		, cp.nombre as comprobante
+		, ibp.idInformacionBancariaProveedor
+		, ibp.cuenta
+		, ibp.idBanco
+		, ibp.idTipoCuentaBanco
+		, p.chkDetraccion
+		, p.cuentaDetraccion
+		, ibp.cci
+		FROM  compras.proveedor p
+		JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
+		JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
+		JOIN compras.informacionBancariaProveedor ibp ON ibp.idProveedor = p.idProveedor
+		LEFT JOIN compras.proveedorComprobante pc ON pc.idProveedor = p.idProveedor
+		JOIN compras.rubro r ON pr.idRubro = r.idRubro
+		LEFT JOIN compras.comprobante cp ON cp.idComprobante = pc.idComprobante
+		JOIN compras.proveedorMetodoPago at ON at.idproveedor = p.idProveedor
+		LEFT JOIN compras.proveedorProveedorTipoServicio pts ON pts.idproveedor = p.idProveedor and pts.estado=1
+		LEFT JOIN compras.proveedorTipoServicio ts ON ts.idProveedorTipoServicio = pts.idProveedorTipoServicio
+		JOIN compras.metodoPago mp ON at.idMetodoPago = mp.idMetodoPago
+		JOIN compras.zonaCobertura zc ON p.idProveedor = zc.idProveedor
+		JOIN General.dbo.ubigeo ubi_zc ON zc.cod_departamento = ubi_zc.cod_departamento
+		AND ISNULL(zc.cod_provincia, 1) = (CASE WHEN zc.cod_provincia IS NULL THEN 1 ELSE ubi_zc.cod_provincia END)
+		AND ISNULL(zc.cod_distrito, 1) = (CASE WHEN zc.cod_distrito IS NULL THEN 1 ELSE ubi_zc.cod_distrito END)
+		JOIN compras.proveedorEstado ep ON p.idProveedorEstado = ep.idProveedorEstado
+		-- AND ubi_zc.estado = 1
 			WHERE 1 = 1
 			{$filtros}
 			{$orden}
@@ -300,6 +348,19 @@ class M_Proveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function insertarInformacionBancaria($params = [])
+	{
+		$query = $this->db->insert($params['tabla'], $params['insert']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+		return $this->resultado;
+	}
+
 	public function insertarProveedorCobertura($params = [])
 	{
 		if (!empty($params['where'])) {
@@ -328,6 +389,19 @@ class M_Proveedor extends MY_Model
 			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
+		return $this->resultado;
+	}
+
+	public function actualizarInformacionBancaria($params = [])
+	{
+		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
 		return $this->resultado;
 	}
 

@@ -240,45 +240,87 @@
 		<div class="col-md-10 child-divcenter">
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Información Bancaria</legend>
-				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control border-0 col-md-4">Banco</label>
-					<select class="form-control col-md-8 simpleDropdown" name="banco" patron="requerido">
-						<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase', 'selected' => $idBanco]); ?>
-					</select>
-				</div>
-				<div class="control-group child-divcenter row" style="width:85%">
-					<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
-					<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta" patron="requerido">
-						<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase', 'selected' => $idTipoCuentaBanco]); ?>
-					</select>
-				</div>
-				<div class="control-group child-divcenter row pt-2" style="width:85%">
-					<label class="form-control border-0 col-md-4">Nº de Cuenta</label>
-					<input class="form-control col-md-8" name="cuentaPrincipal" patron="requerido" value="<?= $cuentaPrincipal ?>">
-				</div>
-				<div class="control-group child-divcenter row pt-2" style="width:85%">
-					<label class="form-control border-0 col-md-4">CCI</label>
-					<input class="form-control col-md-8" name="cuentaInterbancariaPrincipal" patron="requerido" value="<?= $cci ?>">
-				</div>
-				<div class="control-group child-divcenter row pt-2" style="width:85%">
-					<label class="form-control border-0 col-md-4">Captura de Cuenta</label>
-					<div class="divParaCarga col-md-8 pl-0" style="width:85%">
-						<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal']) ?>
-						<?php if (!empty($adjuntoPrincipal)) : ?>
-							<div class="ui tiny fluid image content-lsck-capturas" data-idprincipal="<?= $adjuntoPrincipal['idProveedorArchivo'] ?>">
-								<div class="ui dimmer dimmer-file-detalle">
-									<div class="content">
-										<p class="ui tiny inverted header">.</p>
+				<div class="extraInfoBanc">
+					<?php foreach ($infoBancaria as $key => $valueInfo) : ?>
+						<div class="row InfoBancData" id="divInfoBancData">
+							<div class="form-row order-md-1 divItem pt-3 border-bottom">
+								<div class="control-group child-divcenter row" style="width:85%">
+									<label class="form-control border-0 col-md-4">Banco</label>
+									<select class="form-control col-md-8 simpleDropdown" name="banco" patron="requerido">
+										<?= htmlSelectOptionArray2(['title' => 'Banco', 'id' => 'idBanco', 'value' => 'nombre', 'query' => $bancos, 'class' => 'text-titlecase', 'selected' => $valueInfo['idBanco']]); ?>
+									</select>
+								</div>
+								<div class="control-group child-divcenter row" style="width:85%">
+									<label class="form-control border-0 col-md-4">Tipo Cuenta</label>
+									<select class="form-control col-md-8 simpleDropdown" name="tipoCuenta" patron="requerido">
+										<?= htmlSelectOptionArray2(['title' => 'Tipo Cuenta', 'id' => 'idTipoCuentaBanco', 'value' => 'nombre', 'query' => $tiposCuentaBanco, 'class' => 'text-titlecase', 'selected' => $valueInfo['idTipoCuentaBanco']]); ?>
+									</select>
+								</div>
+								<div class="control-group child-divcenter row" style="width:85%">
+									<label class="form-control border-0 col-md-4">Moneda</label>
+									<select class="form-control col-md-8 simpleDropdown" name="moneda" patron="requerido">
+										<?= htmlSelectOptionArray2(['title' => 'Moneda', 'id' => 'idMoneda', 'value' => 'nombre', 'query' => $moneda, 'class' => 'text-titlecase', 'selected' => $valueInfo['idMoneda']]); ?>
+									</select>
+								</div>
+								<div class="control-group child-divcenter row pt-2" style="width:85%">
+									<label class="form-control border-0 col-md-4">Nº de Cuenta</label>
+									<input class="form-control col-md-8 cuentaPrincipal" name="cuentaPrincipal" patron="requerido" value="<?= $valueInfo['cuenta'] ?>">
+								</div>
+								<div class="control-group child-divcenter row pt-2" style="width:85%">
+									<label class="form-control border-0 col-md-4">CCI</label>
+									<input class="form-control col-md-8" name="cuentaInterbancariaPrincipal" patron="requerido" value="<?= $valueInfo['cci'] ?>">
+								</div>
+								<input class="form-control col-md-8" type='hidden' id="idProveedorInfoBancaria" name="idProveedorInfoBancaria" value="<?= $valueInfo['idInformacionBancariaProveedor'] ?>">
+								<div class="control-group child-divcenter row pt-2" style="width:85%">
+									<label class="form-control border-0 col-md-4">Captura de Cuenta</label>
+									<div class="divParaCarga col-md-8 pl-0" style="width:85%">
+										<?= htmlSemanticCargaDeArchivos([
+											'classDivBase' => 'divParaCarga', 'maxFiles' => 1,
+											'archivosPermitidos' => 'image/*,.pdf',
+											'name' => 'cuentaPrincipal[' . $valueInfo['idInformacionBancariaProveedor'] . ']'
+										]) ?>
+										<?php if (!empty($adjuntoPrincipal)) : ?>
+											<?php foreach ($adjuntoPrincipal as $key => $archivo) : ?>
+												<?php if ($archivo['idInformacionBancariaProveedor'] == $valueInfo['idInformacionBancariaProveedor']) : ?>
+													<div class="ui tiny fluid image content-lsck-capturas" data-idprincipal="<?= $archivo['idProveedorArchivo'] ?>">
+														<!-- Contenido de cada archivo adjunto -->
+														<div class="ui dimmer dimmer-file-detalle">
+															<div class="content">
+																<p class="ui tiny inverted header">.</p>
+															</div>
+														</div>
+														<input class="file-considerarAdjunto" type="hidden">
+														<a target="_blank" href="<?= RUTA_WASABI . 'proveedorAdjuntos/' . $archivo['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
+														<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+														<img height="50" src="<?= imagenDeArchivo($archivo['nombre_archivo'], $archivo['idTipoArchivo'], 'proveedorAdjuntos/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+													</div>
+												<?php endif; ?>
+											<?php endforeach; ?>
+										<?php endif; ?>
 									</div>
 								</div>
-								<input class="file-considerarAdjunto" type="hidden">
-								<a target="_blank" href="<?= RUTA_WASABI . 'proveedorAdjuntos/' . $adjuntoPrincipal['nombre_archivo'] ?>" class="ui blue left corner label"><i class="eye icon"></i></a>
-								<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
-								<img height="50" src="<?= imagenDeArchivo($adjuntoPrincipal['nombre_archivo'], $adjuntoPrincipal['idTipoArchivo'], 'proveedorAdjuntos/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+								<label class="form-control border-0 col-md-4"></label>
+								<div class="control-group child-divcenter row pt-2" style="width:85%">
+									<label class="form-control border-0 col-md-2"></label>
+									<div class="form-group col-md-8" onclick="Proveedor.quitarInfBancaria(this, this.value);">
+										<a class="form-control btn btn-danger"><i class="fa fa-trash"></i> Eliminar</a>
+									</div>
+								</div>
 							</div>
-						<?php endif; ?>
+						</div>
+					<?php endforeach; ?>
+				</div>
+				<div class="control-group child-divcenter row pt-2" style="width:92%">
+					<label class="form-control border-0 col-md-2"></label>
+					<div class="form-group col-md-8" onclick="Proveedor.generarInfBancaria(this, this.value);">
+						<a class="form-control btn btn-info"><i class="fa fa-plus"></i> Agregar</a>
 					</div>
 				</div>
+			</fieldset>
+		</div>
+		<div class="col-md-10 child-divcenter">
+			<fieldset class="scheduler-border">
+				<legend class="scheduler-border">Detracción</legend>
 				<?php $chk = $chkDetraccion ? 'checked' : ''; ?>
 				<?php $hdn = $chkDetraccion ? '' : 'd-none'; ?>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">

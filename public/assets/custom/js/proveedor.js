@@ -3,6 +3,9 @@ var Proveedor = {
 	frm: 'frm-proveedor',
 	contentDetalle: 'idContentProveedor',
 	url: 'Proveedor/',
+	divInfoBancData: '',
+	bancos: [],
+	tiposCuentaBanco: [],
 	archivoEliminadoPrincipal: [],
 	archivoEliminadoDetraccion: [],
 
@@ -45,6 +48,7 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
+				Proveedor.divInfoBancData = '<div class="row InfoBancData">' + $('#divInfoBancData').html() + '</div>';
 			});
 		});
 
@@ -162,6 +166,9 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
+				Proveedor.bancos = a.data.bancos;
+				Proveedor.tiposCuentaBanco = a.data.tiposCuentaBanco;
+				Proveedor.divInfoBancData = '<div class="row InfoBancData">' + $('#divInfoBancData').html() + '</div>';
 			});
 
 		});
@@ -187,6 +194,9 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
+				Proveedor.bancos = a.data.bancos;
+				Proveedor.tiposCuentaBanco = a.data.tiposCuentaBanco;
+				Proveedor.divInfoBancData = '<div class="row InfoBancData">' + $('#divInfoBancData').html() + '</div>';
 			});
 		});
 
@@ -320,7 +330,7 @@ var Proveedor = {
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
 			if (b.result == 1) {
-				fn = 'Fn.closeModals(' + modalId + ');$("#btn-registrarProveedor").click();';
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedor").click();$("#btn-registrarProveedor").click();';
 			}
 
 			btn[0] = { title: 'Continuar', fn: fn };
@@ -349,8 +359,11 @@ var Proveedor = {
 
 	actualizarProveedor: function () {
 		++modalId;
-
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionProveedores')) };
+		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
+		dataFn.idProveedorEstado = '1';
+		dataFn.idProveedorArchivoEliminadoP = Proveedor.archivoEliminadoPrincipal;
+		dataFn.idProveedorArchivoEliminadoD = Proveedor.archivoEliminadoDetraccion;
+		let jsonString = { 'data': JSON.stringify(dataFn) };
 		let config = { 'url': Proveedor.url + 'actualizarProveedor', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then(function (a) {
@@ -389,6 +402,32 @@ var Proveedor = {
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
+	},
+
+	quitarInfBancaria: function (t, v) {
+		div = t.closest('div.InfoBancData');
+		$(div).remove();
+	},
+
+	generarInfBancaria: function (t, v) {
+		var nuevoDiv = $('.InfoBancData:last').clone();
+		
+		// Limpiar los valores de los campos
+		nuevoDiv.find('input').val('');
+		nuevoDiv.find('.dropdown').dropdown('clear');
+		nuevoDiv.find('.file-semantic-upload').empty();
+		nuevoDiv.find('input.form-control#idProveedorInfoBancaria').removeAttr('value');
+
+		// Limpiar la visualización de la imagen
+		nuevoDiv.find('.content-lsck-capturas .img-lsck-capturas').empty();
+		nuevoDiv.find('.content-lsck-capturas img').attr('src', '');
+		nuevoDiv.find('.content-lsck-capturas:first').remove();
+		nuevoDiv.find('input').attr('data-name', 'cuentaPrincipal');
+
+		// Agregar el nuevo div al contenedor
+		$('.extraInfoBanc').append(nuevoDiv);
+		Fn.loadSemanticFunctions();
+		Fn.loadDimmerHover();
 	},
 }
 
