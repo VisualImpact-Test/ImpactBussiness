@@ -206,7 +206,7 @@ class M_Item extends MY_Model
 			SELECT
 				ta.*
 				/* , ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem,ta.flag_actual) ntarifario */
-				, ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem, CASE WHEN ta.flag_actual IS NULL THEN 2 ELSE ta.flag_actual END) ntarifario
+				, ROW_NUMBER() OVER(PARTITION BY ta.idItem ORDER BY ta.idItem, fechaVigencia desc, CASE WHEN ta.flag_actual IS NULL THEN 2 ELSE ta.flag_actual END) ntarifario
 				, art.peso pesoLogistica
 			FROM compras.item a
 			JOIN compras.itemTarifario ta ON a.idItem = ta.idItem
@@ -247,6 +247,7 @@ class M_Item extends MY_Model
 		WHERE i.estado = 1
 		order by 2
 		";
+		logError($sql);
 		$result = $this->db->query($sql)->result_array();
 
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];

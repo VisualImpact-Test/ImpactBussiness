@@ -457,7 +457,7 @@ class FormularioProveedor extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		
+
 		$dataParaVista = [
 			'categoria' => $this->model->obtenerCategorias()->result_array(),
 			'marca' => $this->model->obtenerMarcas()->result_array(),
@@ -598,7 +598,8 @@ class FormularioProveedor extends MY_Controller
 		$config['css']['style'] = array();
 		$config['js']['script'] = array(
 			'assets/custom/js/FormularioProveedoresCotizacionesLista',
-			'assets/libs/fileDownload/jquery.fileDownload');
+			'assets/libs/fileDownload/jquery.fileDownload'
+		);
 
 		$config['view'] = 'formularioProveedores/cotizacionesLista';
 		$config['data']['title'] = 'Formulario Proveedores';
@@ -724,7 +725,7 @@ class FormularioProveedor extends MY_Controller
 				if ($v['flagOcLibre'] == 0) {
 					$fechaE['idCotizacion'] = $v['idCotizacion'];
 				}
-				
+
 				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
 				if (!empty($fechaEjecCargado)) {
 					$data[$k]['flagFechaRegistro'] = '1';
@@ -753,9 +754,9 @@ class FormularioProveedor extends MY_Controller
 			}
 
 			$va4 = $this->db->where('estado', '1')
-			->where('idOrdenCompra', $v['idOrdenCompra'])
-			->where('idProveedor', $v['idProveedor'])
-			->where('flagoclibre', $v['flagOcLibre'])
+				->where('idOrdenCompra', $v['idOrdenCompra'])
+				->where('idProveedor', $v['idProveedor'])
+				->where('flagoclibre', $v['flagOcLibre'])
 				->get('sustento.comprobante')->result_array();
 			foreach ($va4 as $v4) {
 				$data[$k]['sustentoC'][$v4['idOrdenCompra']][$v4['idProveedor']] = $v4;
@@ -1041,7 +1042,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['idSustentoAdjunto'] = $post['id'];
 		$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['id']])->row_array();
 		// $acept = '';
-		
+
 
 		switch ($sa['idFormatoDocumento']) {
 			case '1':
@@ -1356,13 +1357,13 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['base64Adjunto'] as $key => $row) {
 			$carpeta = null;
 			$fechaEmision = null;
-			if($post['idFormatoDocumento'] == 1) {
+			if ($post['idFormatoDocumento'] == 1) {
 				$carpeta = "sustentoGuia";
 				$fechaEmision = null;
-			} else if($post['idFormatoDocumento'] == 2) {
+			} else if ($post['idFormatoDocumento'] == 2) {
 				$carpeta = "sustentoFactura";
 				$fechaEmision = $post['fechaEmision'];
-			} else if($post['idFormatoDocumento'] == 3) {
+			} else if ($post['idFormatoDocumento'] == 3) {
 				$carpeta = "sustentoXml";
 				$fechaEmision = null;
 			} else {
@@ -1381,9 +1382,9 @@ class FormularioProveedor extends MY_Controller
 			$tipoArchivo = explode('/', $archivo['type']);
 
 			$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['idSustentoAdjunto'], 'estado' => '1'])->row_array();
-			
+
 			$nDocumento = null;
-			if(empty($post['nDocumento'])) {
+			if (empty($post['nDocumento'])) {
 				$nDocumento = null;
 			} else {
 				$nDocumento = $post['nDocumento'];
@@ -1806,7 +1807,7 @@ class FormularioProveedor extends MY_Controller
 		foreach ($post['data'] as $k => $v) {
 			$post[$k] = $v;
 		}
-		
+
 		if ($post['flag'] == 1) {
 			$post['ordencompra'] = $post['ordencompra'];
 			$post['cotizacion'] = NULL;
@@ -2311,7 +2312,7 @@ class FormularioProveedor extends MY_Controller
 		redirect('FormularioProveedor', 'refresh');
 	}
 
-	public function viewOrdenCompra($idOrdenCompra = '0')
+	public function viewOrdenCompra($idOrdenCompra = '0', $flagOcLibre = '0')
 	{
 		$get = [];
 		$get = $this->input->get();
@@ -2341,7 +2342,7 @@ class FormularioProveedor extends MY_Controller
 			redirect('FormularioProveedor', 'refresh');
 			exit();
 		}
-		
+
 		$config['css']['style'] = array(
 			'assets/custom/css/floating-action-button'
 		);
@@ -2354,16 +2355,25 @@ class FormularioProveedor extends MY_Controller
 
 		$config['view'] = 'formularioProveedores/ordenCompra';
 		$config['data']['idOrdenCompra'] = $idOrdenCompra;
+		$config['data']['flagOcLibre'] = $flagOcLibre;
 		$config['data']['title'] = 'Formulario Proveedores';
 		$config['data']['icon'] = 'fa fa-home';
-		if($get['flagOcLibre'] == 0) {
+		if ($flagOcLibre == 0) {
 			$ordenCompraProveedor = $this->model->obtenerOrdenCompraDetalleProveedor(['idProveedor' => $proveedor['idProveedor'], 'idOrdenCompra' => $idOrdenCompra, 'estado' => 1])['query']->result_array();
+			$dataCabecera = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
+		} else {
+			$ordenCompraProveedor = $this->model->obtenerOrdenCompraLibre(['idOrdenCompra' => $idOrdenCompra])->result_array();
+			// $config['data']['cabecera']['igv'] = $ordenCompraProveedor[0]['igv'];
+			$dataCabecera = $this->model->obtenerInformacionOrdenCompraLibre(['idOrdenCompra' => $idOrdenCompra])->row_array();
 		}
-		$config['data']['cabecera'] = $this->m_cotizacion->obtenerInformacionOrdenCompra(['id' => $idOrdenCompra])['query']->row_array();
+		$config['data']['cabecera'] = $dataCabecera;
 		$config['data']['detalle'] = $ordenCompraProveedor;
 
 		foreach ($config['data']['detalle'] as $k => $v) {
-			$config['data']['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			if ($flagOcLibre == 0)
+				$config['data']['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			elseif ($flagOcLibre == 1)
+				$config['data']['subDetalleItem'][$v['idItem']] = $this->db->select('*, idGenero as genero')->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
 		}
 
 		$config['data']['imagen'] = [];

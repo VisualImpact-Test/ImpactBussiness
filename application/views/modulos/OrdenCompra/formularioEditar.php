@@ -412,7 +412,6 @@
 		</div>
 	</div>
 </form>
-<input id="itemsData" type="hidden" value='<?= json_encode($item) ?>'>
 <div class="d-none" id="divItemLogistica">
 	<select class="form-control itemLogistica" name="subItem_itemLog" patron="requerido" data-live-search="true">
 		<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $itemLogistica, 'class' => 'text-titlecase', 'id' => 'value', 'value' => 'label']); ?>

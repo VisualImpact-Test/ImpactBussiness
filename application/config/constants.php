@@ -215,7 +215,7 @@ defined("URL_WASABI_ITEM_PROPUESTA") or define("URL_WASABI_ITEM_PROPUESTA", 'htt
 
 // Genero
 defined('LIST_GENERO') or define('LIST_GENERO', [['id' => 1, 'value' => 'VARON'], ['id' => 2, 'value' => 'DAMA'], ['id' => 3, 'value' => 'UNISEX']]);
-defined('RESULT_GENERO') or define('RESULT_GENERO', ['1' => 'VARON', '2' => 'DAMA', '3' => 'UNISEX']);
+defined('RESULT_GENERO') or define('RESULT_GENERO', ['' => '', '1' => 'VARON', '2' => 'DAMA', '3' => 'UNISEX']);
 
 defined('COD_SUELDO') or define('COD_SUELDO', '1'); // ImpactBussiness.compras.tipoPresupuesto
 defined('COD_GASTOSADMINISTRATIVOS') or define('COD_GASTOSADMINISTRATIVOS', '7'); // ImpactBussiness.compras.tipoPresupuesto

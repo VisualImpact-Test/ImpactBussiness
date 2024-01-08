@@ -146,7 +146,7 @@
 						<?php else :  ?>
 							<tr>
 								<td class="text-center" rowspan="<?= $rowS ?>"><?= ++$indexT ?>
-									<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">
+									
 								</td>
 								<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad'], 2) ?></td>
 								<?php if ($incluirImagen) : ?>
@@ -194,18 +194,6 @@
 								<?php endforeach; ?>
 							<?php endif; ?>
 						<?php endif; ?>
-
-						<!-- <?php if (!empty($imagen[$row['idCotizacionDetalle']])) :  ?>
-							<tr>
-								<td></td>
-								<td></td>
-								<td colspan="6" class="text-left">
-									<?php foreach ($imagen[$row['idCotizacionDetalle']] as $key => $value) : ?>
-										<img src="<?= RUTA_WASABI . $value['carpeta'] . $value['nombre_archivo'] ?>" style="padding-top: -120px; width: 200px; height: 120px;">
-									<?php endforeach; ?>
-								</td>
-							</tr>
-						<?php endif; ?> -->
 					<?php endforeach; ?>
 				</tbody>
 				<tfoot class="full-width">

@@ -65,7 +65,7 @@ var Oc = {
 				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
 				$('#divItemData').html('');
 				Oc.itemTarifario = a.data.itemTarifario;
-				Oc.itemsData = $.parseJSON($('#itemsData').val());
+				Oc.itemsData = a.data.item;
 				Oc.modalId = modalId;
 				Oc.itemInputComplete('all');
 			});
@@ -99,6 +99,8 @@ var Oc = {
 				Oc.itemsData = $.parseJSON($('#itemsData').val());
 				Oc.modalId = modalId;
 				Oc.itemInputComplete(0);
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
 			});
 		});
 		$(document).on('click', '.btn-descargarOC', function () {
@@ -107,7 +109,29 @@ var Oc = {
 			let jsonString = { 'data': JSON.stringify(data) };
 			Fn.download(site_url + Oc.url + 'descargarOC' + Oc.tipo, jsonString);
 		});
+		$(document).off('click', '.option-semantic-delete').on('click', '.option-semantic-delete', function (e) {
+			e.preventDefault();
+			var control = $(this);
+			let content = control.closest('.contentSemanticDiv');
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idAdjuntoEliminado = parent.data('idordencompraadjunto');
+			if (idAdjuntoEliminado) {
+				Oc.archivoEliminado.push(idAdjuntoEliminado);
+			}
+			control.parents('.content-lsck-capturas:first').remove();
 
+			// Inicio: Para mantener el conteo correcto despues de eliminar.
+			// Si → tiene que estar al final.
+			var data = content.find('.file-semantic-upload').data();
+			let prefi_name = data.name;
+			let name = prefi_name + 'File-item';
+			var id = '';
+			if (data.id) id = '[' + data.id + ']';
+			var total = content.find('.file-semantic-upload').closest('.content-upload').find('input[name="' + name + id + '"]').length;
+			total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
+			content.find('.' + prefi_name + 'Cantidad').val(total);
+			// Fin
+		});
 		$(document).on('change', '.tipoServicio', function () {
 			let control = $(this);
 			let parent = control.closest('.subItemSpace');
@@ -224,6 +248,8 @@ var Oc = {
 		$('.extraItem').append(Oc.divItemData);
 		tot = $('.items').length - 1;
 		Oc.itemInputComplete(tot);
+		Fn.loadSemanticFunctions();
+		Fn.loadDimmerHover();
 	},
 
 	agregarOperDat: function (t) {
@@ -517,6 +543,9 @@ var Oc = {
 					if (typeof costo === "undefined") costo = 0;
 					control.find(".item_costo").val(costo).change();
 					$(this).focusout();
+					if (ui.item.cantidadImagenes > 0) {
+						Oc.alertaParaAgregarItems(control, ui.item);
+					}
 				},
 				appendTo: "#modal-page-" + Oc.modalId,
 				max: 5,
@@ -525,6 +554,51 @@ var Oc = {
 		}
 
 
+	},
+	alertaParaAgregarItems: function (control, item) {
+		++modalId;
+		var btn = [];
+		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		Oc.objetoParaAgregarImagen = control;
+		let fn1 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.agregarImagenes(${item.value});`;
+
+		btn[0] = { title: 'No en este momento', fn: fn, class: 'btn-outline-danger' };
+		btn[1] = { title: 'Aceptar', fn: fn1 };
+		Fn.showModal({ id: modalId, show: true, title: 'Agregar Imagenes del Item a la Orden de Compra', content: "Desea utilizar las imagenes del Item", btn: btn, width: '33%' });
+
+		$('.simpleDropdown').dropdown();
+		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+	},
+	agregarImagenes: function (id) {
+		$.post(site_url + Oc.url + 'getImagenesItem', {
+			idItem: id
+		}, function (data) {
+			// data = jQuery.parseJSON(data);
+			// divItem = Oc.objetoParaAgregarImagen;
+			// control = divItem.find('.file-lsck-capturas');
+
+			// var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
+			// var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
+			// var num = data.length;
+			// var fileApp = '';
+			// for (var i in data) {
+			// 	fileApp += `
+			// 	<div class="ui fluid image content-lsck-capturas dimmable">
+			// 		<div class="ui dimmer dimmer-file-detalle">
+			// 			<div class="content">
+			// 				<p class="ui tiny inverted header">${data[i].nombre_inicial}</p>
+			// 			</div>
+			// 		</div>
+			// 		<input type="hidden" name="imagenDeItem[${data[i].idItem}]" value="${data[i].idItemImagen}">
+			// 		<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
+			// 		<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data[i].nombre_archivo}" class="img-responsive img-thumbnail">
+			// 	</div>
+			// 	`;
+
+			// }
+			// content.html(fileApp);
+
+		});
 	},
 	cleanDetalle: function (parent) {
 		parent.find('.codItems').val('');

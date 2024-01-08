@@ -42,7 +42,7 @@ class M_FormularioProveedor extends MY_Model
 		$this->db->join('compras.proveedorMetodoPago provMP', 'provMP.idMetodoPago = mp.idMetodoPago');
 		$this->db->join('compras.proveedor p', 'p.idProveedor = provMP.idProveedor');
 		$this->db->where('mp.estado = 1');
-		
+
 		if (isset($params['idProveedor'])) $this->db->where('provMP.idProveedor', $params['idProveedor']);
 		return $this->db->get();
 	}
@@ -384,8 +384,8 @@ class M_FormularioProveedor extends MY_Model
 	public function obtenerListaCotizaciones($data = [])
 	{
 		$this->db
-		->distinct()
-		->select("
+			->distinct()
+			->select("
 		CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
 		ocd.idOrdenCompra,
 		o.seriado,
@@ -404,16 +404,16 @@ class M_FormularioProveedor extends MY_Model
 		o.estadoval,
 		MAX(cdp.idCotizacionDetalleProveedor) AS idCotizacionDetalleProveedor
 	")
-	->from('compras.ordenCompraDetalle ocd')
-	->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
-	->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
-	->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')
-	->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
-	->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'LEFT')
-	->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
-	->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
-	->where('ocd.estado', '1')
-	->group_by("
+			->from('compras.ordenCompraDetalle ocd')
+			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
+			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
+			->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')
+			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
+			->join('compras.cotizacionDetalleProveedor cdp', 'c.idCotizacion = cdp.idCotizacion', 'LEFT')
+			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
+			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
+			->where('ocd.estado', '1')
+			->group_by("
 		ocd.idOrdenCompra,
 		o.seriado,
 		CONVERT(VARCHAR, c.fechaEmision, 103),
@@ -429,7 +429,7 @@ class M_FormularioProveedor extends MY_Model
 		c.codOrdenCompra,
 		o.estadoval
 	")
-	->order_by('ocd.idOrdenCompra DESC');
+			->order_by('ocd.idOrdenCompra DESC');
 
 		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
@@ -449,23 +449,23 @@ class M_FormularioProveedor extends MY_Model
 		$this->db
 			->distinct()
 			->select("
-        CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
-        cp.idOrdenCompra,
-		cd.seriado,
-        CONVERT(VARCHAR, cd.fechaReg, 103) AS fechaEmision,
-        (NULL) AS nombre,
-        (NULL) AS motivo,
-        cd.total,
-        (NULL) AS idCotizacion,
-        cc.nombre AS cuentaCentroCosto,
-        (NULL) AS motivoAprobacion,
-        pr.razonSocial AS proveedor,
-        cu.nombre AS cuenta,
-        cd.idProveedor,
-        cd.requerimiento AS codOrdenCompra,
-        1 AS flagOcLibre,
-		cd.estadoval,
-		(NULL) AS idCotizacionDetalleProveedor")
+				CONVERT(VARCHAR, MIN(cd.fechaEntrega), 103) AS fechaEntrega,
+				cp.idOrdenCompra,
+				cd.seriado,
+				CONVERT(VARCHAR, cd.fechaReg, 103) AS fechaEmision,
+				(NULL) AS nombre,
+				(NULL) AS motivo,
+				cd.total,
+				(NULL) AS idCotizacion,
+				cc.nombre AS cuentaCentroCosto,
+				(NULL) AS motivoAprobacion,
+				pr.razonSocial AS proveedor,
+				cu.nombre AS cuenta,
+				cd.idProveedor,
+				cd.requerimiento AS codOrdenCompra,
+				1 AS flagOcLibre,
+				cd.estadoval,
+				(NULL) AS idCotizacionDetalleProveedor")
 			->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
@@ -605,6 +605,56 @@ class M_FormularioProveedor extends MY_Model
 		}
 
 		return $this->resultado;
+	}
+
+	public function obtenerOrdenCompraLibre($params)
+	{
+		$this->db
+			->select('
+				ocd.*, 
+				oc.*,
+				/* NECESARIO PARA EL REPORTE */
+				ocd.costoSubTotalGap as subTotalOrdenCompra,
+				oc.IGVPorcentaje as igv,
+				ocd.idTipo as idItemTipo,
+				null as caracteristicasCompras,
+				costoUnitario as costo,
+				costoSubTotal as subtotal,
+				/* FIN */
+				i.nombre,
+				pr.razonSocial,
+				pr.nroDocumento rucProveedor,
+				pr.nombreContacto,
+				pr.direccion,
+				pr.correoContacto,
+				pr.numeroContacto', false)
+			->from('orden.ordenCompraDetalle ocd')
+			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra')
+			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
+			->join('compras.item i', 'i.idItem = ocd.idItem')
+			// ->join('compras.moneda mo', 'mo.idMoneda = oc.idMoneda')
+			->where('oc.estado', 1)->where('ocd.estado', 1);
+		if (isset($params['idOrdenCompra'])) $this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
+		return $this->db->get();
+	}
+
+	public function obtenerInformacionOrdenCompraLibre()
+	{
+		$this->db
+			->select('
+				oc.*,pr.razonSocial,
+				pr.nroDocumento ruc,
+				pr.nombreContacto,
+				pr.direccion,
+				pr.correoContacto,
+				pr.numeroContacto,
+				mo.simbolo as simboloMoneda,
+				mo.nombreMoneda as monedaPlural')
+			->from('orden.ordenCompra oc')
+			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
+			->join('compras.moneda mo', 'mo.idMoneda = oc.idMoneda');
+
+		return $this->db->get();
 	}
 
 	public function obtenerOrdenCompraDetalleProveedorOC($params)

@@ -31,10 +31,10 @@
 									<i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
 								</a>
 							<?php endif; ?>
-							<?php if (!empty($row['ocGen']) && !empty($row['flagOcLibre']) == 0) :  ?>
-									<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $row['idOrdenCompra'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
-										<i class="icon file alternate outline" title="Validar OC"></i>
-									</a>
+							<?php if (!empty($row['ocGen']) || !empty($row['flagOcLibre']) == 0) :  ?>
+								<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $row['idOrdenCompra'] . '/' . $row['flagOcLibre'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
+									<i class="icon file alternate outline" title="Validar OC"></i>
+								</a>
 							<?php endif; ?>
 						</td>
 						<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
@@ -110,27 +110,27 @@
 							<?php endif; ?>
 						</td>
 						<td>
-						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<?php if ($row['solicitarFecha'] == '1') :  ?>
-								<?php if ($row['flagFechaRegistro'] == '1') :  ?>
-									<?php if ($row['flagSustentoServicio'] == '1') :  ?>
-										<?php if (empty($row['sustentoC'])) :  ?>
-											<div class="ui">
-												<a class="ui basic button formSustento" data-idoc="<?= $row['idOrdenCompra'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>">
-													<i class="icon archive"></i>
-													Indicar Sustento
+							<?php if ($row['status'] == 'Aprobado') :  ?>
+								<?php if ($row['solicitarFecha'] == '1') :  ?>
+									<?php if ($row['flagFechaRegistro'] == '1') :  ?>
+										<?php if ($row['flagSustentoServicio'] == '1') :  ?>
+											<?php if (empty($row['sustentoC'])) :  ?>
+												<div class="ui">
+													<a class="ui basic button formSustento" data-idoc="<?= $row['idOrdenCompra'] ?>" data-prov="<?= $row['idProveedor'] ?>" data-requiereguia="<?= $row['requiereGuia'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>">
+														<i class="icon archive"></i>
+														Indicar Sustento
+													</a>
+												</div>
+											<?php else : ?>
+												<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idOrdenCompra'] ?>" data-idoc="<?= $row['idOrdenCompra'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-seriado="<?= $row['seriado'] ?>">
+													<i class="icon search"></i>
+													Sustento enviado correctamente
 												</a>
-											</div>
-										<?php else : ?>
-											<a class="ui basic button formLisSustComprobante dicdp-<?= $row['idOrdenCompra'] ?>" data-idoc="<?= $row['idOrdenCompra'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-seriado="<?= $row['seriado'] ?>">
-												<i class="icon search"></i>
-												Sustento enviado correctamente
-											</a>
+											<?php endif; ?>
 										<?php endif; ?>
 									<?php endif; ?>
 								<?php endif; ?>
 							<?php endif; ?>
-						<?php endif; ?>
 						</td>
 						<td>
 							<?php if ($row['status'] == 'Aprobado') :  ?>

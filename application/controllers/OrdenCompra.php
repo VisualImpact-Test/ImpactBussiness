@@ -132,7 +132,6 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
@@ -152,9 +151,13 @@ class OrdenCompra extends MY_Controller
 		foreach ($this->model->getItemTarifario()->result_array() as $v) {
 			$itemTarifario[$v['idItem']][$v['idProveedor']] = $v;
 		}
+		$result['data']['item'] = $this->model_item->obtenerItemServicio();
 		$result['data']['itemTarifario'] = $itemTarifario;
 
 		echo json_encode($result);
+	}
+	public function getImagenesItem()
+	{
 	}
 	public function formularioRegistroOCLibre()
 	{
@@ -244,6 +247,7 @@ class OrdenCompra extends MY_Controller
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
+		$post['adjuntoItemCantidad'] = checkAndConvertToArray($post['adjuntoItemCantidad']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
@@ -297,6 +301,7 @@ class OrdenCompra extends MY_Controller
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;
+		$ordenAdjunto = 0;
 		foreach ($post['item'] as $key => $value) {
 			// En caso: el item es nuevo
 			$dataInserItem = [];
@@ -321,6 +326,25 @@ class OrdenCompra extends MY_Controller
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
+
+			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
+				$insertDataSub[] = [
+					'idOrdenCompraDetalle' => $idOCDet,
+					'idTipoServicio' => $post['subItem_tipoServ'][$ordenAdjunto] == '' ? NULL : $post['subItem_tipoServ'][$ordenAdjunto],
+					'idItemLogistica' => $post['subItem_itemLog'][$ordenAdjunto] == '' ? NULL : $post['subItem_itemLog'][$ordenAdjunto],
+					'idUnidadMedida' => $post['subItem_idUm'][$ordenAdjunto] == '' ? NULL : $post['subItem_idUm'][$ordenAdjunto],
+					'nombre' => $post['subItem_nombre'][$ordenAdjunto] == '' ? NULL : $post['subItem_nombre'][$ordenAdjunto],
+					'talla' => $post['subItem_talla'][$ordenAdjunto] == '' ? NULL : $post['subItem_talla'][$ordenAdjunto],
+					'idGenero' => $post['subItem_genero'][$ordenAdjunto] == '' ? NULL : $post['subItem_genero'][$ordenAdjunto],
+					'tela' => $post['subItem_tela'][$ordenAdjunto] == '' ? NULL : $post['subItem_tela'][$ordenAdjunto],
+					'color' => $post['subItem_color'][$ordenAdjunto] == '' ? NULL : $post['subItem_color'][$ordenAdjunto],
+					'cantidad' => $post['subItem_cantidad'][$ordenAdjunto] == '' ? NULL : $post['subItem_cantidad'][$ordenAdjunto],
+					'cantidadPDV' => $post['subItem_cantidadPdv'][$ordenAdjunto] == '' ? NULL : $post['subItem_cantidadPdv'][$ordenAdjunto],
+					'costo' => $post['subItem_costo'][$ordenAdjunto] == '' ? NULL : $post['subItem_costo'][$ordenAdjunto],
+					'monto' => $post['subItem_monto'][$ordenAdjunto] == '' ? NULL : $post['subItem_monto'][$ordenAdjunto]
+				];
+				$ordenAdjunto++;
+			}
 
 			for ($i = 0; $i < intval($post['cantidadSubItem'][$key]); $i++) {
 				$insertDataSub[] = [
