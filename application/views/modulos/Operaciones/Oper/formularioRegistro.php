@@ -4,23 +4,27 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Datos Generales</legend>
 				<div class="form-row pt-3">
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Dirigido a:</label>
 						<select name="usuarioReceptor" patron="requerido" class="form-control">
 							<option selected value="1">Coordinadora de Compras</option>
 						</select>
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Cuenta:</label>
 						<select class="form-control ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'value' => 'nombre', 'id' => 'idEmpresa']); ?>
 						</select>
 					</div>
-					<div class="form-group col-md-4">
+					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Centro Costo:</label>
 						<select class="form-control ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $centroCosto, 'class' => 'text-titlecase']); ?>
 						</select>
+					</div>
+					<div class="form-group col-md-3">
+						<label class="font-weight-bold">Valor</label>
+						<input type="text" class="form-control" name="valor">
 					</div>
 				</div>
 				<div class="form-row">

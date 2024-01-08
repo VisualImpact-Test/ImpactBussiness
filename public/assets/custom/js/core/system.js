@@ -216,12 +216,240 @@ var _aSelectGrupoCanal = {
 
 var intervalPeticionActualizacion = null;
 var intervalEstadoPeticionActualizarVisita = null;
+var modalYaMostrado = false;
+
 var View = {
 	idModal: 0,
 	load: function () {
 		$(window).resize(function () {
 			// Fn.dataTableAdjust();
 		});
+
+		var currentPath = window.location.pathname;
+		// Asegúrate de que no estás en la página de login antes de mostrar el modal
+		if (!currentPath.includes('/impactBussiness/login')) {
+
+			function verificarSesion() {
+				if (!modalYaMostrado) {
+					$.ajax({
+						url: '/impactBussiness/MY_Controller/__construct',
+						type: 'POST',
+						dataType: 'json',
+						success: function (respuesta) {
+							console.log(respuesta.session_expired);
+							if (respuesta.session_expired) {
+								mostrarModalReLogin();
+								modalYaMostrado = true; // Establece la bandera en true después de mostrar el modal
+							}
+						}
+					});
+				}
+			}
+
+
+		}
+
+		function mostrarModalReLogin() {
+			// Muestra un modal que pide al usuario su contraseña o credenciales
+			var titulo = 'Session expirada';
+			var tiempoRestante = 30;
+			var contenido = `
+						<style>
+							/* Estilos para el contenedor principal */
+							.form-container {
+								width: 100%; /* El contenedor ocupa el ancho total del contenedor padre */
+								max-width: 350px; /* Un ancho máximo para asegurar que no se vea demasiado grande */
+								margin: 0 auto; /* Centra el contenedor en la página */
+							}
+		
+							/* Estilos para el contenedor de la etiqueta y el campo */
+							.input-container {
+								display: flex;
+								justify-content: flex-start; /* Alinea el contenido a la izquierda */
+								margin-bottom: 10px;
+								align-items: center; /* Alinea los ítems verticalmente */
+							}
+		
+							/* Estilos para las etiquetas */
+							label {
+								white-space: nowrap; /* Asegura que la etiqueta no se divida en dos líneas */
+								width: 30%; /* Ancho fijo para las etiquetas */
+								min-width: 70px; /* Un ancho mínimo para evitar que las etiquetas sean muy pequeñas */
+								text-align: right; /* Alinea el texto de las etiquetas a la derecha */
+								margin-right: 10px; /* Espacio entre la etiqueta y el campo */
+							}
+		
+							/* Estilos para los campos de entrada */
+							input[type="text"],
+							input[type="password"] {
+								flex-grow: 1; /* Los campos de entrada crecerán para ocupar el espacio restante */
+								padding: 8px;
+								border: 1px solid #ccc;
+								border-radius: 4px;
+							}
+		
+							/* Estilos para el botón */
+							button {
+								padding: 10px 15px;
+								background-color: #4CAF50;
+								color: white;
+								border: none;
+								border-radius: 4px;
+								cursor: pointer;
+								display: block; /* Hace que el botón sea un bloque para poder centrarlo */
+								margin: 10px auto; /* Centra el botón horizontalmente */
+							}
+		
+							button:hover {
+								background-color: #45a049;
+							}
+		
+							/* Estilo para el toggle de mostrar contraseña */
+							.password-toggle {
+								cursor: pointer;
+								user-select: none;
+								color: #999;
+								position: absolute;
+								right: 15%; /* Posición ajustada en base al tamaño del contenedor */
+								margin-top: -38px; /* Ajustar en base a la altura del campo de contraseña */
+							}
+						</style>
+		
+						<form class="form" role="form" id="formLogin" method="post" autocomplete="off">
+							<p id="mensajeTiempoAgotado" style="text-align:center;">Tiene <span id="tiempoRestante">${tiempoRestante}</span> segundos para volver a iniciar sesión.</p>
+							<div class="form-container">
+								<div class="input-container">
+									<label for="username">Usuario:</label>
+									<input type="text" id="username" name="user" required>
+								</div>
+								<div class="input-container" style="position: relative;">
+									<label for="password">Contraseña:</label>
+									<input type="password" id="password" name="password" required>
+								</div>
+								<div style="margin-top:15px;">
+									<button id="boton" type="submit">Iniciar Sesión</button>
+								</div>
+							</div>
+						</form>
+					
+						<script>
+							var url="login/acceder_login";
+							var baseUrl = window.location.origin + '/impactBussiness/';
+
+							// Supongamos que esta es la ruta a la que quieres redirigir
+							var url_ = baseUrl + 'login';	
+		
+							$("#boton").click(function (e) {
+								e.preventDefault();
+								modalId++;
+								var intentos = parseInt(localStorage.getItem('intentosLogin') || 0);
+								let jsonString = { "data": JSON.stringify(Fn.formSerializeObject("formLogin")) };
+								let config = { "url": url, "data": jsonString };
+							
+								$.when(Fn.ajax(config)).then((a) => {
+									if (a.status == 3) {
+										// Usuario válido
+										
+										console.log(intentos);
+
+										if (intentos == 2) {
+											
+
+											localStorage.setItem('intentosLogin', 0);
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Inicio de sesión exitoso, pero has usado todos tus intentos. Ten cuidado la próxima vez.</strong></center>';
+											++modalId;
+											var btn = [];
+
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 4) + ", show:false });";
+											console.log(modalId);
+											
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+											
+										} else if(intentos == 1) {
+
+											localStorage.setItem('intentosLogin', 0);
+
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Usuario valido</strong></center>';
+											++modalId;
+											var btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 3) + ", show:false });";
+											console.log(modalId);
+										
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
+
+										} else if (intentos == '') {
+
+											localStorage.setItem('intentosLogin', 0);
+
+											var titulo = 'Sesion exitosa';
+											var contenido = '<center><strong>Usuario valido</strong></center>';
+											++modalId;
+											var btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false }); Fn.showModal({ id:" + (modalId - 2) + ", show:false });";
+											console.log(modalId);
+										
+											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+										}
+
+										
+
+									} else {
+										// Usuario inválido
+										intentos++;
+										localStorage.setItem('intentosLogin', intentos);
+							
+										if (intentos >= 3) {
+											// Al tercer intento fallido
+											localStorage.setItem('intentosLogin', 0);
+											alert('Ha excedido el número de intentos, será redireccionado al login.');
+											window.location.href = url_;
+										} else {
+											// Manejo de intentos fallidos que no son el tercero
+											let btn = [];
+											let fnCerrarModales = "Fn.showModal({ id:" + modalId + ", show:false });";
+											btn[0] = { title: "Aceptar", fn: fnCerrarModales };
+											Fn.showModal({ id: modalId, show: true, title: "Sesion", frm: "<strong><center>Usuario invalido</center></strong>", btn: btn });
+										}
+									}
+								});
+							});
+							
+							
+		
+						</script>
+						  `;
+
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			console.log(modalId);
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
+
+			var temporizador = setInterval(function () {
+				tiempoRestante--;
+				$('#tiempoRestante').text(tiempoRestante);
+
+				if (tiempoRestante <= 0) {
+					clearInterval(temporizador);
+					// Aquí puedes cerrar el modal o redirigir al usuario según sea necesario
+					$('#mensajeTiempoAgotado').text('Recargue la pagina y por favor, inicie sesión nuevamente.');
+				}
+			}, 1000);
+
+
+		}
+
+		// Coloca esto en un intervalo para verificar periódicamente
+		setInterval(verificarSesion, 30000); // Verifica cada 15 segundos
+
 
 		$('.hide-parent').parent().hide();
 
@@ -1596,6 +1824,8 @@ var View = {
 			childDependiente.closest('.childdependienteSemantic').removeClass('read-only');
 		});
 	},
+
+
 	toast: (config = {}) => {
 		var defaults = {
 			'type': 0,

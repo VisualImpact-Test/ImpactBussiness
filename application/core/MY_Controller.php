@@ -79,22 +79,20 @@ class MY_Controller extends CI_Controller
 
 		$is_ajax = $this->input->is_ajax_request();
 
+
+
+
 		if (!empty($this->idUsuario) && $this->namespace == 'login') redirect('home', 'refresh');
 		else {
 			if (empty($this->idUsuario) && $this->namespace != 'login' && $this->namespace != 'recover' && $this->namespace != 'FormularioProveedor') { // && $this->namespace != '' si no requiere login para ejecutar colocar aqui el controlador
-				if ($is_ajax) {
-					$result = array();
-					$result['result'] = 0;
-					$result['data'] = '';
-					$result['msg']['title'] = "Sesión";
-					$result['msg']['content'] = "Su sesi&oacute;n ha caducado. Identifiquese nuevamente <a href='" . base_url() . "'>aqu&iacute;</a>";
-					$result['url'] = '';
-					$result['session'] = false;
-					echo json_encode($result);
+				if ($this->session_expired() && $is_ajax) {
+					// Envía una respuesta de sesión expirada
+					echo json_encode(['session_expired' => true]);
 					exit;
 				} else redirect('login', 'refresh');
 			}
 		}
+
 
 		$this->result = array(
 			'status' => 0,
@@ -121,6 +119,29 @@ class MY_Controller extends CI_Controller
 			'fotos' => ['movil' => 'http://movil.visualimpact.com.pe/fotos/impactTrade_Android/']
 		];
 	}
+
+	private function session_expired()
+	{
+		// Verifica si existe un elemento clave en la sesión, por ejemplo, 'idUsuario'
+		if (!$this->session->userdata('idUsuario')) {
+			// Si 'idUsuario' no existe, asume que la sesión ha expirado
+			return true;
+		}
+
+		// Verifica el tiempo de la última actividad
+		$last_activity = $this->session->userdata('last_activity');
+		$current_time = time();
+		$max_inactive_time = 20; // 20 segundos
+
+		if (($current_time - $last_activity) > $max_inactive_time) {
+			// Si han pasado más de 20 segundos desde la última actividad
+			return true;
+		}
+
+		// Si ninguna de las condiciones anteriores se cumple, la sesión aún es válida
+		return false;
+	}
+
 
 	public function expulsar()
 	{

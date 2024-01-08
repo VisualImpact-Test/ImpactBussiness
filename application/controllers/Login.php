@@ -8,6 +8,7 @@ class Login extends MY_Controller
 	{
 		parent::__construct();
 		$this->load->model('M_Login', 'model');
+		$this->load->library('session');
 	}
 
 	public function index()
@@ -135,6 +136,49 @@ class Login extends MY_Controller
 		responder:
 		echo json_encode($result);
 	}
+
+
+	public function acceder_login()
+	{
+		$data = json_decode($this->input->post('data'));
+		$input = array(
+			'usuario' => $data->user,
+			'clave' => $data->password
+		);
+
+		$result = $this->result;
+		$rs = $this->model->encontrarUsuario($input);
+		$num_rows = count($rs->result_array());
+		$this->aSessTrack[] = ['idAccion' => 1];
+
+		$config_ = array('type' => 2, 'message' => "Ocurrió un error al validar sus datos, vuelva a intentarlo");
+
+		if (empty($num_rows)) {
+			$result['msg']['content'] = createMessage($config_);
+			$result['status'] = 4;
+		} else {
+			$result['status'] = 3;
+			$usuario = $rs->row_array();
+			$menu = $this->model->encontrarMenu($usuario)->result_array();
+			$usuario['menu'] = $menu;
+			$sessionId = $usuario['idUsuario'] . "-" . session_id();
+			$this->session->set_userdata($usuario);
+			$this->session->set_userdata('sessionId', $sessionId);
+			$this->session->set_userdata($usuario['menu']);
+			$this->session->set_userdata($usuario['idUsuario']);
+
+			$navbar_permiso['pages'] = array();
+			$qp = $this->model->navbar_permiso($usuario['idUsuario'])->result_array();
+			foreach ($qp as $index => $value) {
+				$navbar_permiso['pages'][$index] = $value['page'];
+			}
+			$this->session->set_userdata($navbar_permiso);
+			$this->session->set_userdata('anuncioVisto', 0);
+		}
+
+		echo json_encode($result);
+	}
+
 
 	public function validar_captcha_v3($post)
 	{

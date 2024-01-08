@@ -162,9 +162,13 @@ class M_Cotizacion extends MY_Model
 	public function obtenerFechaSincerado($params = [])
 	{
 		$sql = "
-			select fecha as id, CONVERT(varchar, cast(fecha as DATE), 103) as value
-			FROM compras.presupuestoValidoDetalle
-			where idPresupuestoValido = " . $params['idPresupuestoValido'] . " group by fecha";
+			select DISTINCT fecha as id , DATENAME(MONTH, fecha) + ' ' + CONVERT(varchar(4), YEAR(fecha)) AS value
+			from compras.presupuestoValidoDetalle as pvd
+			where pvd.idPresupuestoValido = " . $params['idPresupuestoValido'] . "
+			AND fecha NOT IN (select fecha_seleccionada from compras.sincerado as s
+			join compras.presupuestoValido as pv on s.idPresupuesto = pv.idPresupuesto	
+			where idPresupuestoValido = " . $params['idPresupuestoValido'] . ")
+			";
 		$query = $this->db->query($sql);
 
 		if ($query) {

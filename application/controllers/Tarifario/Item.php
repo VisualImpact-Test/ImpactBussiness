@@ -46,6 +46,9 @@ class Item extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		
+		// var_dump($post);
+		// exit;
 
 		$dataParaVista = [];
 		$dataParaVista['dataTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();

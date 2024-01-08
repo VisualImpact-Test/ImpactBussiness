@@ -9,6 +9,7 @@
 				<th>Cuenta</th>
 				<th>Centro Costo</th>
 				<th>Proveedor</th>
+				<th>Cant. Días</th>
 				<th>Fecha de Cotización Interna</th>
 				<th>Fecha de Vencimiento Orden</th>
 				<th>Cotización</th>
@@ -34,6 +35,7 @@
 					</td>
 					<td><?= verificarEmpty($row['cuenta'], 3) ?></td>
 					<td><?= verificarEmpty($row['cuentaCentroCosto'], 3) ?></td>
+					<td><?= verificarEmpty($row['proveedor'], 3) ?></td>
 					<td><?= verificarEmpty($row['cantDias'], 3) ?></td>
 					<td><?= verificarEmpty($row['fechaReg'], 3) ?></td>
 					<td>

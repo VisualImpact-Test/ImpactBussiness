@@ -168,7 +168,25 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['proveedor']) ? ' AND p.idProveedor = ' . $params['proveedor'] : '';
 		$filtros .= !empty($params['chMostrar']) ? ' AND tfa.flag_actual = ' . $params['chMostrar'] : '';
-		$filtros .= !empty($params['chMostrarVigentes']) ? ' AND tfa.fechaVigencia >= GETDATE()' : '';
+		// $filtros .= !empty($params['chMostrarVigentes']) ? ' AND tfa.fechaVigencia >= GETDATE()' : '';
+		if (!empty($params['chMostrarVigentes'])) {
+
+			if ($params['chMostrarVigentes'] == 2) {
+
+				$filtros .= " AND tfa.fechaVigencia <= GETDATE()";
+
+			} else {
+
+				$filtros .= " AND tfa.fechaVigencia >= GETDATE()";
+
+			}
+			
+		} else {
+
+			$filtros .= "";
+
+		}
+		// $filtros .= !empty($params['chMostrarVencidos']) ? ' AND tfa.fechaVigencia <= GETDATE()' : '';
 		$filtros .= !empty($params['precioMinimo']) ? ' AND tfa.costo >= ' . $params['precioMinimo'] : '';
 		$filtros .= !empty($params['precioMaximo']) ? ' AND tfa.costo <= ' . $params['precioMaximo'] : '';
 		$filtros .= !empty($params['idItemTarifario']) ? ' AND tfa.idItemTarifario = ' . $params['idItemTarifario'] : '';
@@ -209,6 +227,10 @@ class M_Item extends MY_Model
 			AND a.idItemTipo in (1, 9) AND a.estado = 1 AND p.idProveedorEstado = 2
 			{$filtros}
 		";
+
+		// var_dump($sql);
+		// exit;
+
 		$query = $this->db->query($sql);
 
 		if ($query) {

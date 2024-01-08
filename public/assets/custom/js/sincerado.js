@@ -88,7 +88,27 @@ var Sincerado = {
 				$('#tablaAlmacenMonto tbody tr').find('select').change();
 			});
 
-		})
+		});
+
+		$(document).on('click', '.btn-formPendienteAprobar', function () {
+			let _this = $(this);
+			let idSincerado = _this.closest('tr').data('idsincerado');
+			
+			++modalId;
+			let jsonString = { 'idSincerado': idSincerado };
+			let config = { 'url': Sincerado.url + 'formularioAprobar', 'data': jsonString };
+			
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formAprobarSincerado", fn: "Sincerado.aprobarSincerado(' + idSincerado + ')" ,content: "¿Esta seguro que quieres aprobar sincerado?" });';
+				btn[1] = { title: 'Aprobar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
+			});
+		});
+
 		$(document).on('click', '.btn-cargarGR', function () {
 			let _this = $(this);
 			let idSincerado = _this.closest('tr').data('id');
@@ -222,6 +242,26 @@ var Sincerado = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	
+	aprobarSincerado: function (idSincerado) {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formAprobarSincerado')) };
+		let url = Sincerado.url + "AprobarSincerado";
+		let config = { url: url, data: jsonString };
+		console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + '); $("#btn-filtrarSincerado").click();';
+			}
+
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
 	guardarGrSincerado: function (idSincerado) {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroGrSincerado')) };
 		let url = Sincerado.url + "guardarGrSincerado";

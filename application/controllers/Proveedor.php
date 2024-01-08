@@ -69,6 +69,12 @@ class Proveedor extends MY_Controller
 				'estado' => $row['estado'],
 				'estadoIcono' => $row['estadoIcono'],
 				'estadoToggle' => $row['estadotoggle'],
+				'tipoServicio' => $row['tipoServicio'],
+				'comprobante' => $row['comprobante'],
+				'banco' => $row['banco'],
+				'tipoCuenta' => $row['tipoCuenta'],
+				'cci' => $row['cci'],
+				'cuenta' => $row['cuenta']
 			];
 			$departamentosCobertura[$row['idProveedor']][$row['zc_departamento']] = $row['zc_departamento'];
 			$provinciasCobertura[$row['idProveedor']][$row['zc_provincia']] = $row['zc_provincia'];
