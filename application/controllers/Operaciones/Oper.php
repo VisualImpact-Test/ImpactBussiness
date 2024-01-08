@@ -106,8 +106,6 @@ class Oper extends MY_Controller
 			$dataParaVista['operSubItem'][$value['idOperDetalle']] = $this->model->obtenerInformacionOperSubItem(['idOperDetalle' => $value['idOperDetalle']])->result_array();
 		}
 
-		// var_dump($dataParaVista);
-		// exit;
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Oper';
 		$result['data']['html'] = $this->load->view("modulos/Operaciones/Oper/formularioEditar", $dataParaVista, true);
@@ -183,10 +181,6 @@ class Oper extends MY_Controller
 			'valor' => $post['valor']
 		];
 
-
-		// var_dump($insertData);
-		// exit;
-
 		$this->db->insert('orden.oper', $insertData);
 		$idOper = $this->db->insert_id();
 		$this->db->update(
@@ -208,9 +202,6 @@ class Oper extends MY_Controller
 					'idItemTipo' => $post['tipo'][$key]
 				];
 
-				// var_dump($dataInserItem);
-				// exit;
-
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
 			}
@@ -227,8 +218,6 @@ class Oper extends MY_Controller
 				'costoSubTotalGap' => $post['precio'][$key]
 			];
 
-			var_dump($insertData);
-			exit;
 			$insert = $this->db->insert('orden.operDetalle', $insertData);
 			$idOperDet = $this->db->insert_id();
 			/////////////////////
