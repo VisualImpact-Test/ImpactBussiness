@@ -2198,6 +2198,7 @@ class Cotizacion extends MY_Controller
 		$n = 0;
 		foreach ($item as $ki => $vi) {
 			foreach ($ht as $k => $v) {
+				$reembarque = floatval($v['reembarque']) / count($item);
 				if (empty($v['zona'])) {
 					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Zona']);
 				}
@@ -2231,12 +2232,12 @@ class Cotizacion extends MY_Controller
 				$arrayDatos[$n]['pesoTotalVisual'] = $v['pesoTotalVisual' . $ki];
 				$arrayDatos[$n]['pesoGapVisual'] = floatval($v['pesoTotalVisual' . $ki]) * (100 + floatval($v['gap'])) / 100;
 				$arrayDatos[$n]['costoTSVisual'] = $ts['costoVisual'];
-				$arrayDatos[$n]['totalVisual'] = floatval($ts['costoVisual']) * floatval($arrayDatos[$n]['pesoGapVisual']);
+				$arrayDatos[$n]['totalVisual'] = floatval($ts['costoVisual']) * floatval($arrayDatos[$n]['pesoGapVisual']) + $reembarque;
 				$arrayDatos[$n]['pesoCuenta'] = $peso[$ki];
 				$arrayDatos[$n]['pesoTotalCuenta'] = $v['pesoTotalCuenta' . $ki];
 				$arrayDatos[$n]['pesoGapCuenta'] = floatval($v['pesoTotalCuenta' . $ki]) * (100 + floatval($v['gap'])) / 100;
 				$arrayDatos[$n]['costoTSCuenta'] = $ts['costo'];
-				$arrayDatos[$n]['totalCuenta'] = floatval($ts['costo']) * floatval($arrayDatos[$n]['pesoGapCuenta']);
+				$arrayDatos[$n]['totalCuenta'] = floatval($ts['costo']) * floatval($arrayDatos[$n]['pesoGapCuenta']) + $reembarque;
 				$n++;
 			}
 		}
