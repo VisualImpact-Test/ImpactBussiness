@@ -70,13 +70,13 @@ class Item extends MY_Controller
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
-			$html = $this->load->view("modulos/Tarifario/Item/reporte",  $dataParaVista, true);
+			$html = $this->load->view("modulos/Tarifario/Item/reporte", $dataParaVista, true);
 		}
 
 		$result['result'] = 1;
 		$result['data']['views']['idContentItem']['datatable'] = 'tb-item';
 		$result['data']['views']['idContentItem']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -101,7 +101,7 @@ class Item extends MY_Controller
 		$dataParaVista['tarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
 		// $dataProveedor = [];
 
-		foreach ($dataParaVista['tarifario']  as $value) {
+		foreach ($dataParaVista['tarifario'] as $value) {
 			$Rproveedor[$value['idProveedor']] = [
 				'idProveedor' => $value['idProveedor'],
 				'nproveedor' => $value['proveedor']
@@ -180,10 +180,10 @@ class Item extends MY_Controller
 					'type' => PHPExcel_Style_Fill::FILL_SOLID,
 					'color' => array('rgb' => 'E60000')
 				),
-				'font'  => array(
+				'font' => array(
 					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
+					'size' => 11,
+					'name' => 'Calibri'
 				)
 			);
 		$estilo_titulo = [
@@ -194,9 +194,9 @@ class Item extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
+			'font' => [
 				'size' => 16,
-				'name'  => 'Calibri'
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_subtitulo = [
@@ -207,9 +207,9 @@ class Item extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
+			'font' => [
 				'size' => 11,
-				'name'  => 'Calibri'
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['left'] = [
@@ -220,8 +220,8 @@ class Item extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['center'] = [
@@ -232,8 +232,8 @@ class Item extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['right'] = [
@@ -244,8 +244,8 @@ class Item extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		/**FIN ESTILOS**/
@@ -767,7 +767,7 @@ class Item extends MY_Controller
 		$result['result'] = 1;
 		$result['data']['views']['idContentItem']['datatable'] = 'tb-item';
 		$result['data']['views']['idContentItem']['html'] = $html;
-		$result['data']['configTable'] =  [
+		$result['data']['configTable'] = [
 			'columnDefs' =>
 			[
 				0 =>
@@ -790,7 +790,7 @@ class Item extends MY_Controller
 
 		$dataParaVista['proveedor'] = $this->model->obtenerProveedor()['query']->result_array();
 
-		$items =  $this->model->obtenerItems();
+		$items = $this->model->obtenerItems();
 		foreach ($items as $key => $row) {
 			$data['items'][1][$row['value']]['value'] = $row['value'];
 			$data['items'][1][$row['value']]['label'] = $row['label'];
@@ -832,7 +832,7 @@ class Item extends MY_Controller
 			->where(['idItem' => $idItem, 'estado' => 1])
 			->get('compras.itemTarifario')->result_array();
 
-		$items =  $this->model->obtenerItems();
+		$items = $this->model->obtenerItems();
 		foreach ($items as $key => $row) {
 			$data['items'][1][$row['value']]['value'] = $row['value'];
 			$data['items'][1][$row['value']]['label'] = $row['label'];
@@ -931,7 +931,7 @@ class Item extends MY_Controller
 		} else {
 			$data['tabla'] = 'compras.itemTarifario';
 			$insert = $this->model->insertarItemTarifario($data);
-			$idItemTarifario =  $insert['id'];
+			$idItemTarifario = $insert['id'];
 		}
 
 		$data = [];
@@ -1014,11 +1014,18 @@ class Item extends MY_Controller
 		$data['where'] = [
 			'idItemTarifario' => $post['idItemTarifario']
 		];
-
+		$update = $this->model->actualizarItemTarifario($data);
+		
+		$data['tabla'] = 'compras.itemTarifarioHistorico';
+		$data['where'] = ['idItemTarifarioHistorico' => $this->db->get_where('compras.itemTarifarioHistorico', ['idItemTarifario' => $post['idItemTarifario']])->row_array()['idItemTarifarioHistorico']];
+		$data['update'] = [
+			'costo' => $post['costo']
+		];
 		$update = $this->model->actualizarItemTarifario($data);
 		$data = [];
 		$actualizacionHistoricos = true;
 
+		/* Al actualizar no deberia generar historico, simplemente debe actualizarse.	
 		if ($post['costoAnterior'] != $post['costo']) {
 
 			$data['update'] = [
@@ -1026,10 +1033,7 @@ class Item extends MY_Controller
 				'fecFin' => getFechaActual(-1),
 
 			];
-
-			// var_dump($data);
-			// exit;
-
+			
 			$data['tabla'] = 'compras.itemTarifarioHistorico';
 			$data['where'] = [
 
@@ -1060,6 +1064,7 @@ class Item extends MY_Controller
 			}
 
 		}
+		*/
 
 		if (!$update['estado'] or !$actualizacionHistoricos) {
 			$result['result'] = 0;
