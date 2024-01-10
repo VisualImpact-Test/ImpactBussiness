@@ -2225,7 +2225,7 @@ class Cotizacion extends MY_Controller
 				$arrayDatos[$n]['item'] = $this->db->where('idArticulo', $vi)->get('VisualImpact.logistica.articulo')->row_array()['nombre'];
 				$arrayDatos[$n]['cantidad'] = $v['item' . $ki];
 				$arrayDatos[$n]['gap'] = $v['gap'];
-				$arrayDatos[$n]['reembarque'] = $v['reembarque'];
+				$arrayDatos[$n]['reembarque'] = $reembarque;
 				$arrayDatos[$n]['idTipoServicio'] = $this->db->where('nombre', $v['tipoServicio'])->get('compras.tipoServicio')->row_array()['idTipoServicio'];
 				$arrayDatos[$n]['tipoServicio'] = $v['tipoServicio'];
 				$arrayDatos[$n]['pesoVisual'] = $pesoReal[$ki];
