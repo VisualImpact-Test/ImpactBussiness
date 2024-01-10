@@ -41,10 +41,13 @@
 					<i class="fas fa-plus"></i> <span class="txt_filtro"></span>
 				</button>
 				<button data-form="Tarifario/Item/getFormCargaMasivaTarifario" data-save="Tarifario/Item/guardarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
+					<i class="fas fa-file"></i> <span class="txt_filtro"></span>
+				</button>
+				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Actualizar Masivo Tarifario" data-id="0">
 					<i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
 				</button>
-				<button data-form="Tarifario/Item/getFormActualizarMasivoTarifario" data-save="Tarifario/Item/actualizarCargaMasivaTarifario" data-tdata="-" type="button" class="btn btn-outline-trade-visual border-0 btn-CustomCargaMasiva" title="Carga Masiva Tarifario" data-id="0">
-					<i class="fas fa-file-upload"></i> <span class="txt_filtro"></span>
+				<button type="button" class="btn btn-outline-trade-visual border-0" onclick="exportToExcel('tb-item', 'ExcelSheet.xlsx')" title="Excell">
+					<i class="far fa-file-excel"></i>
 				</button>
 			</div>
 			<hr>
