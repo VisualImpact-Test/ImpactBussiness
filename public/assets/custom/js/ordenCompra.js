@@ -203,6 +203,44 @@ var Oc = {
 				}
 			});
 		});
+
+		$(document).on('change', '#cuentaForm', function () {
+			let control = $(this);
+			let cod = control.val();
+			$("#cuentaCentroCostoForm").empty();
+
+			var obj = {
+				id: cod
+			}
+			var jsonString = {
+				'data': JSON.stringify(obj)
+			};
+
+			var config = {
+				url: Oc.url + "CentroCosto",
+				data: jsonString
+			};
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				// Verifica si hay datos en a.data.centro
+				if (a.data.centro && a.data.centro.length > 0) {
+					// Obtén la referencia al elemento select
+					var selectElement = $('#cuentaCentroCostoForm');
+
+					// Limpiar opciones anteriores si es necesario
+					selectElement.empty();
+
+					// Itera sobre los datos y agrega opciones al select
+					$.each(a.data.centro, function (i, m) {
+						// Agrega una opción al select por cada elemento en a.data.centro
+						selectElement.append($('<option>', {
+							value: m.id, // Cambia 'valor' por el nombre del campo que contiene el valor deseado
+							text: m.value // Cambia 'texto' por el nombre del campo que contiene el texto deseado
+						}));
+					});
+				}
+			});
+		});
 	},
 
 	registrarOC: function () {

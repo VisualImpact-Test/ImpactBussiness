@@ -3062,7 +3062,10 @@ class Cotizacion extends MY_Controller
 		}
 
 		foreach ($dataParaVista['detalle'] as $k => $v) {
-			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			if ($flag == 0)
+				$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			elseif ($flag == 1)
+				$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->select('*, idGenero as genero')->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
 		}
 		
 		$ids = [];

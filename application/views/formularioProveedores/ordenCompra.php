@@ -204,7 +204,7 @@
 							<p>TOTAL</p>
 						</th>
 						<th class="text-center">
-							<p><?= !empty($cabecera['igv']) ? $cabecera['igv'] : '0' ?>%</p>
+							<p><?= !empty($row['igv']) ? $row['igv'] : '0' ?>%</p>
 						</th>
 						<th class="text-right">
 							<p><?= monedaNew(['valor' => $total, 'simbolo' => $cabecera['simboloMoneda']]) ?></p>
@@ -249,7 +249,7 @@
 	</div>
 	<div class="element-container">
 		<a href="javascript:;">
-			<span class="float-element tooltip-left btn-send" style="background: red;" data-message="Enviar" onclick="FormularioProveedoresOC.descargarOC(<?= $idOrdenCompra ?>);">
+			<span class="float-element tooltip-left btn-send" style="background: red;" data-message="Enviar" onclick="FormularioProveedoresOC.descargarOC(<?= $idOrdenCompra ?>, <?= $flagOcLibre ?>);">
 				<i class="file pdf icon"></i>
 			</span>
 		</a>

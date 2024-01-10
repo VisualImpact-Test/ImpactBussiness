@@ -23,7 +23,7 @@
 						</select>
 					</div>
 					<div class="form-group col-md-3">
-						<label class="font-weight-bold">Valor</label>
+						<label class="font-weight-bold">Adicional CC</label>
 						<input type="text" class="form-control" name="valor">
 					</div>
 				</div>

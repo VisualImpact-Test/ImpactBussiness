@@ -28,8 +28,8 @@ var FormularioProveedoresOC = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
-	descargarOC: function (id) {
-		let data = { id };
+	descargarOC: function (id, flag) {
+		let data = { id, flag };
 		let jsonString = { 'data': JSON.stringify(data) };
 		Fn.download(site_url + FormularioProveedoresOC.url + 'descargarOrdenCompra', jsonString);
 	}

@@ -614,7 +614,7 @@ class M_FormularioProveedor extends MY_Model
 				ocd.*, 
 				oc.*,
 				/* NECESARIO PARA EL REPORTE */
-				ocd.costoSubTotalGap as subTotalOrdenCompra,
+				oc.total as subTotalOrdenCompra,
 				oc.IGVPorcentaje as igv,
 				ocd.idTipo as idItemTipo,
 				null as caracteristicasCompras,
@@ -623,37 +623,22 @@ class M_FormularioProveedor extends MY_Model
 				/* FIN */
 				i.nombre,
 				pr.razonSocial,
-				pr.nroDocumento rucProveedor,
-				pr.nombreContacto,
-				pr.direccion,
-				pr.correoContacto,
-				pr.numeroContacto', false)
-			->from('orden.ordenCompraDetalle ocd')
-			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra')
-			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
-			->join('compras.item i', 'i.idItem = ocd.idItem')
-			// ->join('compras.moneda mo', 'mo.idMoneda = oc.idMoneda')
-			->where('oc.estado', 1)->where('ocd.estado', 1);
-		if (isset($params['idOrdenCompra'])) $this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
-		return $this->db->get();
-	}
-
-	public function obtenerInformacionOrdenCompraLibre()
-	{
-		$this->db
-			->select('
-				oc.*,pr.razonSocial,
+				pr.nroDocumento rucProveedor,	
 				pr.nroDocumento ruc,
 				pr.nombreContacto,
 				pr.direccion,
 				pr.correoContacto,
 				pr.numeroContacto,
 				mo.simbolo as simboloMoneda,
-				mo.nombreMoneda as monedaPlural')
-			->from('orden.ordenCompra oc')
+				mo.nombreMoneda as monedaPlural
+				', false)
+			->from('orden.ordenCompraDetalle ocd')
+			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
-			->join('compras.moneda mo', 'mo.idMoneda = oc.idMoneda');
-
+			->join('compras.item i', 'i.idItem = ocd.idItem')
+			->join('compras.moneda mo', 'mo.idMoneda = oc.idMoneda')
+			->where('oc.estado', 1)->where('ocd.estado', 1);
+		if (isset($params['idOrdenCompra'])) $this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
 		return $this->db->get();
 	}
 
@@ -667,6 +652,7 @@ class M_FormularioProveedor extends MY_Model
 		$sql = "
 		SELECT
 				o.idOrdenCompra,
+				od.idOrdenCompraDetalle,
 				o.idProveedor,
 				--SUM(cp.costo * cp.cantidad) OVER (PARTITION BY o.idOrdenCompra) subTotalOrdenCompra,
 				o.total AS subTotalOrdenCompra,

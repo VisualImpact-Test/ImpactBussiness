@@ -131,7 +131,6 @@ class OrdenCompra extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
-		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
@@ -141,6 +140,8 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
 		$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
+		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCostoEdit($dataParaVista['oc'][0]['idCuenta'])['query']->result_array();
+		
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
 		}
@@ -185,6 +186,13 @@ class OrdenCompra extends MY_Controller
 		$result['data']['itemTarifario'] = $itemTarifario;
 
 		echo json_encode($result);
+	}
+
+	public function CentroCosto()
+	{
+		$data = json_decode($this->input->post('data'));
+		$grupo['data']['centro'] = $this->model_cotizacion->obtenerCuentaCentroCostoEdit($data->id)['query']->result_array();
+		echo json_encode($grupo);
 	}
 
 	public function metodoPago()
