@@ -224,12 +224,9 @@ class M_Item extends MY_Model
 			LEFT JOIN compras.itemSubCategoria sca ON a.idItemSubCategoria = sca.idItemSubCategoria
 			LEFT JOIN compras.itemTipo ta ON a.idItemTipo = ta.idItemTipo
 			WHERE 1 = 1 AND a.idItemTipo != {$tipoDistribucion} AND a.idItemTipo != {$tipoPersonal}
-			AND a.idItemTipo in (1, 9) AND a.estado = 1 AND p.idProveedorEstado = 2
+			AND a.idItemTipo in (1, 9) AND a.estado = 1 AND p.idProveedorEstado = 2 AND tfa.estado = 1
 			{$filtros}
 		";
-
-		// var_dump($sql);
-		// exit;
 
 		$query = $this->db->query($sql);
 
@@ -323,6 +320,7 @@ class M_Item extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idItemTarifario']) ? ' AND ta.idItemTarifario != ' . $params['idItemTarifario'] : '';
+		$filtros .= !empty($params['fechaVigencia']) ? '	AND ta.fechaVigencia = ' . "'" . $params['fechaVigencia'] . "'" : '';
 
 		$sql = "
 			SELECT
@@ -330,8 +328,12 @@ class M_Item extends MY_Model
 			FROM compras.itemTarifario ta
 			WHERE
 			ta.idItem = {$params['idItem']} AND ta.idProveedor = {$params['idProveedor']}
+			AND ta.Estado = 1
 			{$filtros}
 		";
+
+		// var_dump($sql);
+		// exit;
 
 		$query = $this->db->query($sql);
 

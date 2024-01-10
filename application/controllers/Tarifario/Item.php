@@ -47,9 +47,6 @@ class Item extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		
-		// var_dump($post);
-		// exit;
-
 		$dataParaVista = [];
 		$dataParaVista['dataTarifario'] = $this->model->obtenerInformacionItemTarifario($post)['query']->result_array();
 		$Rproveedor = [];
@@ -832,7 +829,7 @@ class Item extends MY_Controller
 		$dataParaVista['proveedor'] = $this->db
 			->select('itemTarifario.*, proveedor.razonSocial')
 			->join('compras.proveedor', 'proveedor.idProveedor = itemTarifario.idProveedor')
-			->where(['idItem' => $idItem])
+			->where(['idItem' => $idItem, 'estado' => 1])
 			->get('compras.itemTarifario')->result_array();
 
 		$items =  $this->model->obtenerItems();
@@ -847,6 +844,9 @@ class Item extends MY_Controller
 		$result['data']['existe'] = 0;
 
 		$dataParaVista['informacionItem'] = $this->model->obtenerInformacionItemTarifario($post)['query']->row_array();
+
+		// var_dump($dataParaVista['proveedor']);
+		// exit;
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Actualizar Tarifario de Item';
@@ -890,17 +890,26 @@ class Item extends MY_Controller
 			'flag_actual' => empty($post['actual']) ? 0 : 1,
 			'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
 		];
+
 		$fechaFin = $data['insert']['fechaVigencia'];
 
 		if (!empty($post['actual'])) {
 			$validacionActual = $this->model->validarItemTarifarioActual($data['insert']);
 			if (!empty($validacionActual['query']->row_array())) {
+
 				$data['insert']['flag_actual'] = 0;
 				$existeItemActual = 1;
+
 			}
 		}
 
+		// var_dump($post);
+		// exit;
+
 		$validacionExistencia = $this->model->validarExistenciaItemTarifario($data['insert'])['query']->row_array();
+
+		// var_dump($validacionExistencia);
+		// exit;
 
 		if (!empty($validacionExistencia)) {
 			$idItemTarifario = $validacionExistencia['idItemTarifario'];
@@ -970,6 +979,7 @@ class Item extends MY_Controller
 		$existeItemActual = 0;
 
 		$data['update'] = [
+			
 			'idItemTarifario' => $post['idItemTarifario'],
 			'idItem' => $post['idItem'],
 			'idProveedor' => $post['proveedor'],
@@ -978,10 +988,12 @@ class Item extends MY_Controller
 			'fechaVigencia' => !empty($post['fechaVigencia']) ? $post['fechaVigencia'] : NULL
 
 		];
+
 		$fechaVigencia = $data['update']['fechaVigencia'];
 
 		if (!empty($post['actual'])) {
 			$validacionActual = $this->model->validarItemTarifarioActual($data['update']);
+
 			if (!empty($validacionActual['query']->row_array())) {
 				$data['update']['flag_actual'] = 0;
 				$existeItemActual = 1;
@@ -1008,24 +1020,34 @@ class Item extends MY_Controller
 		$actualizacionHistoricos = true;
 
 		if ($post['costoAnterior'] != $post['costo']) {
+
 			$data['update'] = [
+
 				'fecFin' => getFechaActual(-1),
+
 			];
+
+			// var_dump($data);
+			// exit;
 
 			$data['tabla'] = 'compras.itemTarifarioHistorico';
 			$data['where'] = [
+
 				'idItemTarifario' => $post['idItemTarifario'],
 				'fecFin' => $fechaVigencia
+
 			];
 
 			$subUpdate = $this->model->actualizarItemTarifario($data);
 			$data = [];
 
 			$data['insert'] = [
+
 				'idItemTarifario' => $post['idItemTarifario'],
 				'fecIni' => getFechaActual(),
 				'fecFin' => $fechaVigencia,
 				'costo' => $post['costo'],
+
 			];
 
 			$data['tabla'] = 'compras.itemTarifarioHistorico';
@@ -1036,6 +1058,7 @@ class Item extends MY_Controller
 			if (!$subUpdate['estado'] && !$subInsert['estado']) {
 				$actualizacionHistoricos = false;
 			}
+
 		}
 
 		if (!$update['estado'] or !$actualizacionHistoricos) {
