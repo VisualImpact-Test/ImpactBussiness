@@ -57,7 +57,7 @@ class M_OrdenCompra extends MY_Model
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'LEFT')
 			->join('sistema.usuario u', 'u.idUsuario = oc.idUsuarioReg')
 			->join('sistema.usuarioFirma uf', 'u.idUsuarioFirma=uf.idUsuarioFirma', 'left')
-			->join('compras.itemImagen itImg', 'itImg.idItem = i.idItem', 'inner')
+			->join('compras.itemImagen itImg', 'itImg.idItem = i.idItem', 'left')
 			->where('oc.estado', '1')
 			->order_by('oc.idOrdenCompra desc');
 
