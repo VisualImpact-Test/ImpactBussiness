@@ -430,7 +430,7 @@ class Item extends MY_Controller
 
 		//ARMANDO HANDSONTABLE
 		$HT[0] = [
-			'nombre' => 'Tarifario',
+			'nombre' => 'Tarifario Actualizar',
 			'data' => $data,
 			'headers' => [
 				'ITEM (*)',
@@ -453,7 +453,8 @@ class Item extends MY_Controller
 		//MOSTRANDO VISTA
 		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
 		$result['result'] = 1;
-		$result['data']['width'] = '95%';
+		$result['data']['width'] = '95%';		
+
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
 
