@@ -235,8 +235,8 @@
 			<td class="w-20 text-center" style="padding-top:120px;">
 			</td>
 			<td class="w-30 text-center" style="padding-top:120px">
-				<?php if (!empty($dataOc[0]['dirFirma'])) : ?>
-					<img id="imagenFirma" src="<?= empty($dataOc[0]['dirFirma']) ? '' : (RUTA_WASABI . 'usuarioFirma/' . $dataOc[0]['dirFirma']) ?>" style="padding-top: -120px; width: 200px; height: 120px;">
+				<?php if (!empty($detalle[0]['dirFirma'])) : ?>
+					<img id="imagenFirma" src="<?= empty($detalle[0]['dirFirma']) ? '' : (RUTA_WASABI . 'usuarioFirma/' . $detalle[0]['dirFirma']) ?>" style="padding-top: -120px; width: 200px; height: 120px;">
 				<?php endif; ?>
 				<div style="text-align:center">
 					<hr style="height: 3px; color:black; ">

@@ -141,7 +141,7 @@ class OrdenCompra extends MY_Controller
 
 		$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCostoEdit($dataParaVista['oc'][0]['idCuenta'])['query']->result_array();
-		
+
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
 		}
@@ -176,6 +176,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioRegistro", $dataParaVista, true);
@@ -186,6 +187,13 @@ class OrdenCompra extends MY_Controller
 		$result['data']['itemTarifario'] = $itemTarifario;
 
 		echo json_encode($result);
+	}
+
+	public function ImagenItem()
+	{
+		$data = json_decode($this->input->post('data'));
+		$grupo['data']['imagen'] = $this->model->obtenerArchivo($data->id)['query']->result_array();
+		echo json_encode($grupo);
 	}
 
 	public function CentroCosto()
@@ -250,6 +258,7 @@ class OrdenCompra extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
@@ -280,6 +289,28 @@ class OrdenCompra extends MY_Controller
 			$mostrar_observacion = 1;
 		}
 
+		$countID = 0;
+		foreach ($post['idItemForm'] as $keyItem => $value) {
+			if ($value == 0) {
+				$countID = $countID + 1;
+			}
+		}
+
+		if ($countID > 0) {
+			if (
+				(
+					!isset($post['adjuntoItemFile-item']) ||
+					!isset($post['adjuntoItemFile-name']) ||
+					!isset($post['adjuntoItemFile-type'])) ||
+				$countID != count($post['adjuntoItemFile-item'])
+			) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
+				goto respuesta;
+			}
+		}
+
 		$insertData = [
 			'requerimiento' => $post['requerimiento'],
 			'fechaEntrega' => $post['fechaEntrega'],
@@ -304,12 +335,14 @@ class OrdenCompra extends MY_Controller
 			'descripcionCompras' => $post['descripcionCompras'],
 			//'totalIGV_real' => $post['totalIGV_real'],
 		];
+
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;
 		$ordenAdjunto = 0;
+		$insertArchivos = [];
 		foreach ($post['item'] as $key => $value) {
 			// En caso: el item es nuevo
 			$dataInserItem = [];
@@ -320,7 +353,11 @@ class OrdenCompra extends MY_Controller
 				];
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
+				$idItem[] = [
+					'id' => $this->db->insert_id()
+				];
 			}
+
 			// Fin: En Caso.
 			$insertData = [
 				'idOrdenCompra' => $idOC,
@@ -374,16 +411,61 @@ class OrdenCompra extends MY_Controller
 			}
 		}
 
-		if (!empty($insertDataSub)) {
-			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
+		if (isset($post['adjuntoItemFile-item'])) {
+			if (count($post['adjuntoItemFile-item']) > 1) {
+				foreach ($idItem as $key1 => $value) {
+					$archivo = [
+						'base64' => $post['adjuntoItemFile-item'][$key1],
+						'name' => $post['adjuntoItemFile-name'][$key1],
+						'type' => $post['adjuntoItemFile-type'][$key1],
+						'carpeta' => 'item',
+						'nombreUnico' => uniqid()
+					];
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/', $archivo['type']);
+
+					$insertArchivos[] = [
+						'idItem' => $value['id'],
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
+						'estado' => true,
+					];
+				}
+			} else {
+				$archivo = [
+					'base64' => $post['adjuntoItemFile-item'],
+					'name' => $post['adjuntoItemFile-name'],
+					'type' => $post['adjuntoItemFile-type'],
+					'carpeta' => 'item',
+					'nombreUnico' => uniqid()
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+
+				$insertArchivos[] = [
+					'idItem' => $idItem[0]['id'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+				];
+			}
 		}
+
+
+		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagen', $insertArchivos);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		respuesta:
 		echo json_encode($result);
 	}
-
 
 
 	public function editarOCLibre()
@@ -413,6 +495,28 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_costo'] = checkAndConvertToArray($post['subItem_costo']);
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
+		}
+
+		$countID = 0;
+		foreach ($post['idItemForm'] as $keyItem => $value) {
+			if ($value == 0) {
+				$countID = $countID + 1;
+			}
+		}
+
+		if ($countID > 0) {
+			if (
+				(
+					!isset($post['adjuntoItemFile-item']) ||
+					!isset($post['adjuntoItemFile-name']) ||
+					!isset($post['adjuntoItemFile-type'])) ||
+				$countID != count($post['adjuntoItemFile-item'])
+			) {
+				$result['result'] = 0;
+				$result['msg']['title'] = 'Alerta!';
+				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
+				goto respuesta;
+			}
 		}
 		$mostrar_observacion = 0;
 		if (isset($post['mostrar_observacion']) == 'on') {
@@ -457,6 +561,9 @@ class OrdenCompra extends MY_Controller
 				];
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
+				$idItem[] = [
+					'id' => $this->db->insert_id()
+				];
 			}
 			// Fin: En Caso.
 			$insertData = [
@@ -492,6 +599,54 @@ class OrdenCompra extends MY_Controller
 			}
 		}
 
+		if (isset($post['adjuntoItemFile-item'])) {
+			if (count($post['adjuntoItemFile-item']) > 1) {
+				foreach ($idItem as $key1 => $value) {
+					$archivo = [
+						'base64' => $post['adjuntoItemFile-item'][$key1],
+						'name' => $post['adjuntoItemFile-name'][$key1],
+						'type' => $post['adjuntoItemFile-type'][$key1],
+						'carpeta' => 'item',
+						'nombreUnico' => uniqid()
+					];
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/', $archivo['type']);
+
+					$insertArchivos[] = [
+						'idItem' => $value['id'],
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
+						'estado' => true,
+					];
+				}
+			} else {
+				$archivo = [
+					'base64' => $post['adjuntoItemFile-item'],
+					'name' => $post['adjuntoItemFile-name'],
+					'type' => $post['adjuntoItemFile-type'],
+					'carpeta' => 'item',
+					'nombreUnico' => uniqid()
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+
+				$insertArchivos[] = [
+					'idItem' => $idItem[0]['id'],
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+				];
+			}
+		}
+
+		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagen', $insertArchivos);
+
 		if (!empty($insertDataSub)) {
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
@@ -499,7 +654,7 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-
+		respuesta:
 		echo json_encode($result);
 	}
 

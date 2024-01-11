@@ -122,8 +122,8 @@
 						<div class="form-group col-md-6">
 							<label class="font-weight-bold mb-0">Item:</label>
 							<div class="input-group mb-3">
-								<input class="form-control items ui-autocomplete-input" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off">
-								<div class="input-group-append">
+								<input class="form-control items ui-autocomplete-input item-id" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off">
+								<div class="input-group-append divItemBlock">
 									<button class="btn btn-outline-secondary" type="button" onclick="Oc.editItemValue(this);"><i class="fa fa-edit"></i></button>
 								</div>
 							</div>
@@ -136,9 +136,9 @@
 							</select>
 						</div>
 						<div class="form-row col-md-12 subItem"></div>
+						<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
 						<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-							<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
-							<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 5, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+							<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
 						</div>
 						<div class="form-row col-md-12">
 							<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">

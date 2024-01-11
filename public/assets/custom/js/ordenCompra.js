@@ -241,6 +241,65 @@ var Oc = {
 				}
 			});
 		});
+
+		$(document).on('change', '.item-id', function () {
+			let control = $(this);
+			id = control.closest('.divItem').find('.codItems').val();
+			var divElement = document.querySelector('.input-group-append.divItemBlock');
+			var divElementC = document.querySelectorAll('.input-group-append.divItemBlock');
+			count = divElementC.length;
+			if (id == '') id = 0;
+			else {
+				if (count == 1) {
+					divElement.remove();
+				} else {
+					var lastDivElement = divElementC[divElementC.length - 1];
+					lastDivElement.remove();
+				}
+			}
+
+			var obj = {
+				id: id
+			}
+			var jsonString = {
+				'data': JSON.stringify(obj)
+			};
+			var config = {
+				url: Oc.url + "ImagenItem",
+				data: jsonString
+			};
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				if (a.data.imagen && a.data.imagen.length > 0) {
+					var selectElement = $('.divParaCarga:last');
+					selectElement.empty();
+					$.each(a.data.imagen, function (i, m) {
+						var ruta = null;
+						if (m.idTipoArchivo == 2)
+							ruta = "https://s3.us-central-1.wasabisys.com/impact.business/item/" + m.nombre_archivo;
+						else {
+							if (m.idTipoArchivo == 3) ruta = '../public/assets/images/wireframe/pdf.png';
+							else if (m.idTipoArchivo == 6) ruta = '../public/assets/images/wireframe/xlsx.png';
+							else ruta = '../public/assets/images/wireframe/file.png';
+						}
+
+						selectElement.append(`
+						<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+							<div class="ui tiny fluid image content-lsck-capturas">
+								<div class="ui dimmer dimmer-file-detalle">
+									<div class="content">
+										<p class="ui tiny inverted header">.</p>
+									</div>
+								</div>
+								<input class="file-considerarAdjunto" type="hidden">
+								<img height="50" src="` + ruta + `" class="img-lsck-capturas img-responsive img-thumbnail">
+							</div>
+						</div>
+						`).clone();
+					});
+				}
+			});
+		});
 	},
 
 	registrarOC: function () {
@@ -283,7 +342,7 @@ var Oc = {
 		});
 	},
 	agregarItem: function (t) {
-		$('.extraItem').append(Oc.divItemData);
+		$('.extraItem').append(Oc.divItemData).clone();
 		tot = $('.items').length - 1;
 		Oc.itemInputComplete(tot);
 		Fn.loadSemanticFunctions();
@@ -594,18 +653,24 @@ var Oc = {
 
 	},
 	alertaParaAgregarItems: function (control, item) {
-		++modalId;
+		/*++modalId;
 		var btn = [];
 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		let fn2 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.quitarImagenItem(${$(this)});`;
 		Oc.objetoParaAgregarImagen = control;
 		let fn1 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.agregarImagenes(${item.value});`;
-
-		btn[0] = { title: 'No en este momento', fn: fn, class: 'btn-outline-danger' };
+		
+		btn[0] = { title: 'No en este momento', fn: fn2, class: 'btn-outline-danger' };
 		btn[1] = { title: 'Aceptar', fn: fn1 };
 		Fn.showModal({ id: modalId, show: true, title: 'Agregar Imagenes del Item a la Orden de Compra', content: "Desea utilizar las imagenes del Item", btn: btn, width: '33%' });
-
+		
 		$('.simpleDropdown').dropdown();
-		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });*/
+	},
+
+	quitarImagenItem: function (t) {
+		div = t.closest('.divParaCarga');
+		$(div).remove();
 	},
 	agregarImagenes: function (id) {
 		$.post(site_url + Oc.url + 'getImagenesItem', {

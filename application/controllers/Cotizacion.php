@@ -2198,6 +2198,7 @@ class Cotizacion extends MY_Controller
 		$n = 0;
 		foreach ($item as $ki => $vi) {
 			foreach ($ht as $k => $v) {
+				$reembarque = floatval($v['reembarque']) / count($item);
 				if (empty($v['zona'])) {
 					$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Zona']);
 				}
@@ -2224,19 +2225,19 @@ class Cotizacion extends MY_Controller
 				$arrayDatos[$n]['item'] = $this->db->where('idArticulo', $vi)->get('VisualImpact.logistica.articulo')->row_array()['nombre'];
 				$arrayDatos[$n]['cantidad'] = $v['item' . $ki];
 				$arrayDatos[$n]['gap'] = $v['gap'];
-				$arrayDatos[$n]['reembarque'] = $v['reembarque'];
+				$arrayDatos[$n]['reembarque'] = $reembarque;
 				$arrayDatos[$n]['idTipoServicio'] = $this->db->where('nombre', $v['tipoServicio'])->get('compras.tipoServicio')->row_array()['idTipoServicio'];
 				$arrayDatos[$n]['tipoServicio'] = $v['tipoServicio'];
 				$arrayDatos[$n]['pesoVisual'] = $pesoReal[$ki];
 				$arrayDatos[$n]['pesoTotalVisual'] = $v['pesoTotalVisual' . $ki];
 				$arrayDatos[$n]['pesoGapVisual'] = floatval($v['pesoTotalVisual' . $ki]) * (100 + floatval($v['gap'])) / 100;
 				$arrayDatos[$n]['costoTSVisual'] = $ts['costoVisual'];
-				$arrayDatos[$n]['totalVisual'] = floatval($ts['costoVisual']) * floatval($arrayDatos[$n]['pesoGapVisual']);
+				$arrayDatos[$n]['totalVisual'] = floatval($ts['costoVisual']) * floatval($arrayDatos[$n]['pesoGapVisual']) + $reembarque;
 				$arrayDatos[$n]['pesoCuenta'] = $peso[$ki];
 				$arrayDatos[$n]['pesoTotalCuenta'] = $v['pesoTotalCuenta' . $ki];
 				$arrayDatos[$n]['pesoGapCuenta'] = floatval($v['pesoTotalCuenta' . $ki]) * (100 + floatval($v['gap'])) / 100;
 				$arrayDatos[$n]['costoTSCuenta'] = $ts['costo'];
-				$arrayDatos[$n]['totalCuenta'] = floatval($ts['costo']) * floatval($arrayDatos[$n]['pesoGapCuenta']);
+				$arrayDatos[$n]['totalCuenta'] = floatval($ts['costo']) * floatval($arrayDatos[$n]['pesoGapCuenta']) + $reembarque;
 				$n++;
 			}
 		}
