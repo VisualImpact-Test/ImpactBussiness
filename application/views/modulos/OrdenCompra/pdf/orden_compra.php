@@ -123,7 +123,9 @@
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad_item'], 2) ?></td>
 						<td class="text-center" colspan="1" rowspan="<?= $rowS ?>">
-							<img height="50" src="<?= imagenDeArchivo($row['nombre_archivo'], $row['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+							<?php if (!empty($row['nombre_archivo'])) : ?>
+								<img height="50" src="<?= imagenDeArchivo($row['nombre_archivo'], $row['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+							<?php endif; ?>
 						</td>
 						<?php if ($mostrarSubDetalle) : ?>
 							<td class="text-center bold" colspan="2">CARACTERISTICA</td>
