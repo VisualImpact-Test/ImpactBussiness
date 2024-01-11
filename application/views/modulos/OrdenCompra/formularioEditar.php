@@ -3,18 +3,21 @@
 		<div class="form-group col-md-6">
 			<label class="font-weight-bold mb-0">Item:</label>
 			<div class="input-group mb-3">
-				<input class="form-control items ui-autocomplete-input" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off">
-				<div class="input-group-append">
+				<input class="form-control items ui-autocomplete-input item-id" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off">
+				<div class="input-group-append divItemBlock">
 					<button class="btn btn-outline-secondary" type="button" onclick="Oc.editItemValue(this);"><i class="fa fa-edit"></i></button>
 				</div>
+				<input class="codItems d-none" type='text' name='idItemForm'>
 			</div>
-			<input class="codItems d-none" type='text' name='idItemForm'>
 		</div>
 		<div class="form-group col-md-6">
 			<label class="font-weight-bold mb-0">Tipo:</label>
 			<select class="form-control tipo clearSubItem item_tipo" name="tipo" patron="requerido" data-live-search="true">
 				<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'tipo']); ?>
 			</select>
+		</div>
+		<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+			<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
 		</div>
 		<div class="form-row col-md-12 subItem"></div>
 		<div class="form-row">
@@ -47,6 +50,10 @@
 			<div class="form-group col-md-6">
 				<label class="font-weight-bold mb-0">Sub Total:</label>
 				<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
+			</div>
+			<div class="form-group col-md-6 d-none">
+				<label class="font-weight-bold mb-0">Sub Total real:</label>
+				<input class="form-control item_precio_real" name="precio_real" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
 			</div>
 		</div>
 	</div>
@@ -179,8 +186,8 @@
 								<div class="form-group col-md-6">
 									<label class="font-weight-bold mb-0">Item:</label>
 									<div class="input-group mb-3">
-										<input class="form-control items ui-autocomplete-input" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off" value="<?= $value['item'] ?>" readonly>
-										<div class="input-group-append">
+										<input class="form-control items ui-autocomplete-input item-id" type="text" name="item" patron="requerido" placeholder="Buscar item" autocomplete="off" value="<?= $value['item'] ?>" readonly>
+										<div class="input-group-append divItemBlock">
 											<button class="btn btn-outline-secondary" type="button" onclick="Oc.editItemValue(this);"><i class="fa fa-edit"></i></button>
 										</div>
 									</div>
@@ -275,14 +282,14 @@
 													</select>
 												</div>
 												<div class=" col-md-3" style="display: flex;">
-												<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
-													<label class="font-weight-bold mb-0">Tela:</label>
-													<input class="form-control" name="subItem_tela" value="<?= $si_v['tela'] ?>">
-												</div>
-												<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
-													<label class="font-weight-bold mb-0">Color:</label>
-													<input class="form-control" name="subItem_color" patron="requerido" value="<?= $si_v['color'] ?>">
-												</div>
+													<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+														<label class="font-weight-bold mb-0">Tela:</label>
+														<input class="form-control" name="subItem_tela" value="<?= $si_v['tela'] ?>">
+													</div>
+													<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+														<label class="font-weight-bold mb-0">Color:</label>
+														<input class="form-control" name="subItem_color" patron="requerido" value="<?= $si_v['color'] ?>">
+													</div>
 												</div>
 												<div class="form-group col-md-2">
 													<label class="font-weight-bold mb-0">Cantidad:</label>
@@ -332,6 +339,15 @@
 											</div>
 										<?php endif; ?>
 									<?php endforeach; ?>
+								</div>
+								<div class="form-row col-md-12 ui">
+									<div class="ui tiny fluid image content-lsck-capturas">
+										<div class="ui dimmer dimmer-file-detalle">
+											<div class="content">
+												<p class="ui tiny inverted header">.</p>
+											</div>
+										</div><img height="50" src="<?= imagenDeArchivo($value['nombre_archivo'], $value['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+									</div>
 								</div>
 								<div class="form-row">
 									<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">

@@ -247,7 +247,6 @@ class M_Item extends MY_Model
 		WHERE i.estado = 1
 		order by 2
 		";
-		logError($sql);
 		$result = $this->db->query($sql)->result_array();
 
 		// $this->CI->aSessTrack[] = ['idAccion' => 5, 'tabla' => 'logistica.item', 'id' => null];

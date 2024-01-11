@@ -3,6 +3,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_OrdenCompra extends MY_Model
 {
+	var $resultado = [
+		'query' => '',
+		'estado' => false,
+		'id' => null,
+		'msg' => ''
+	];
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -35,7 +42,9 @@ class M_OrdenCompra extends MY_Model
 							md.valor AS monedaCambio,
 							oc.idAlmacen,
 							oc.mostrar_observacion,
-							oc.descripcionCompras
+							oc.descripcionCompras,
+							itImg.nombre_archivo,
+							itImg.idTipoArchivo
 							')
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
@@ -48,6 +57,7 @@ class M_OrdenCompra extends MY_Model
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'LEFT')
 			->join('sistema.usuario u', 'u.idUsuario = oc.idUsuarioReg')
 			->join('sistema.usuarioFirma uf', 'u.idUsuarioFirma=uf.idUsuarioFirma', 'left')
+			->join('compras.itemImagen itImg', 'itImg.idItem = i.idItem', 'inner')
 			->where('oc.estado', '1')
 			->order_by('oc.idOrdenCompra desc');
 
@@ -122,5 +132,25 @@ class M_OrdenCompra extends MY_Model
 			->where('estado', 1);
 
 		return $this->db->get();
+	}
+	public function obtenerArchivo($id)
+	{
+		$sql = "
+			SELECT
+			idItemImagen
+			,idItem
+			,idTipoArchivo
+			,nombre_archivo
+			FROM compras.itemImagen
+			WHERE estado = 1 AND idItem =" . $id;
+
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			return $this->resultado;
+		} else {
+			return null;
+		}
 	}
 }
