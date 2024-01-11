@@ -61,7 +61,8 @@
 			<tr>
 				<td class="text-center bold py">Item</td>
 				<td class="text-center bold">Cantidad</td>
-				<td class="text-center bold" colspan="4">Descripción</td>
+				<td class="text-center bold py" colspan="1">Imagen</td>
+				<td class="text-center bold" colspan="5">Descripción</td>
 				<td class="text-center bold">Precio Unit.</td>
 				<td class="text-center bold" colspan="3">Precio Total</td>
 			</tr>
@@ -121,20 +122,23 @@
 					<tr style="border-bottom: none;">
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad_item'], 2) ?></td>
+						<td class="text-center" colspan="1" rowspan="<?= $rowS ?>">
+							<img height="50" src="<?= imagenDeArchivo($row['nombre_archivo'], $row['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+						</td>
 						<?php if ($mostrarSubDetalle) : ?>
-							<td class="text-center bold">CARACTERISTICA</td>
+							<td class="text-center bold" colspan="2">CARACTERISTICA</td>
 							<td class="text-center bold">TALLA</td>
 							<td class="text-center bold">SEXO</td>
 							<td class="text-center bold">CANTIDAD</td>
 						<?php else : ?>
-							<td class="text-left" colspan="4">
+							<td class="text-left" colspan="5">
 								<?= verificarEmpty($row['item'], 3) ?>
 							</td>
 						<?php endif; ?>
 						<td class="text-right" rowspan="<?= $rowS ?>">
 							<?= !empty($row['costo_item']) ? monedaNew(['valor' => $row['costo_item'], 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
-						<td class="text-right" rowspan="<?= $rowS ?>"  colspan="3">
+						<td class="text-right" rowspan="<?= $rowS ?>" colspan="3">
 							<?= !empty($row['subTotalOrdenCompra']) ? monedaNew(['valor' => (($row['idTipo'] == COD_DISTRIBUCION['id']) ? $row['cotizacionSubTotal'] : $row['subTotalOrdenCompra']), 'simbolo' => $data['simboloMoneda']]) : 0 ?>
 						</td>
 					</tr>
@@ -142,7 +146,7 @@
 						<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
 							<tr>
 								<?php if ($km == 0) : ?>
-									<td class="text-left" rowspan="<?= $rowS - 1 ?>">
+									<td class="text-left" colspan="2" rowspan="<?= $rowS - 1 ?>">
 										<?= verificarEmpty($row['item'], 3) ?>
 									</td>
 								<?php endif; ?>
@@ -157,7 +161,7 @@
 		</tbody>
 		<tfoot class="full-width">
 			<tr class="height:100px">
-				<td colspan="6" class="text-right">
+				<td colspan="8" class="text-right">
 					<p>Sub Total</p>
 					<p>IGV</p>
 					<p>TOTAL</p>
@@ -165,37 +169,37 @@
 				<td class="text-center">
 					<p><?= !empty($data['igv']) ? $data['igv'] : (IGV * 100) ?>%</p>
 				</td>
-				<td class="text-right"  colspan="3">
+				<td class="text-right" colspan="3">
 					<p><?= monedaNew(['valor' => $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 					<p><?= empty($igv_total) ? 'S/ 0.00' : (monedaNew(['valor' => $igv_total, 'simbolo' => $data['simboloMoneda']])) ?></p>
 					<p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 				</td>
 			</tr>
 			<tr>
-				<td colspan="2" class="bold">Son :</td>
+				<td colspan="4" class="bold">Son :</td>
 				<td colspan="8" class="text-left">
 					<?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
 				</td>
 			</tr>
 			<? if (!empty($data['entrega'])) { ?>
 				<tr>
-					<td colspan="2" class="bold">Entrega :</td>
+					<td colspan="4" class="bold">Entrega :</td>
 					<td colspan="8" class="bold">
 						<?= !empty($data['entrega']) ? "{$data['entrega']}" : '' ?>
 					</td>
 				</tr>
 			<? } ?>
 			<?php if ($data['mostrar_observacion'] == 1) : ?>
-			<? if (!empty($data['observacion'])) { ?>
-				<tr>
-					<td colspan="2" class="bold">Observación :</td>
-					<td colspan="8" class="bold">
-						<?php if ($data['mostrar_observacion'] == 1) : ?>
-							<?= !empty($data['observacion']) ? "{$data['observacion']}" : '' ?>
-						<?php endif; ?>
-					</td>
-				</tr>
-			<? } ?>
+				<? if (!empty($data['observacion'])) { ?>
+					<tr>
+						<td colspan="4" class="bold">Observación :</td>
+						<td colspan="8" class="bold">
+							<?php if ($data['mostrar_observacion'] == 1) : ?>
+								<?= !empty($data['observacion']) ? "{$data['observacion']}" : '' ?>
+							<?php endif; ?>
+						</td>
+					</tr>
+				<? } ?>
 			<?php endif; ?>
 			<? if (!empty($data['comentario'])) : ?>
 				<tr>
@@ -205,7 +209,7 @@
 				</tr>
 			<? endif; ?>
 			<tr style="border-bottom: none;">
-				<td class="text-center bold" colspan="3" style="border-bottom: none; height: 55px; vertical-align: middle;">
+				<td class="text-center bold" colspan="4" style="border-bottom: none; height: 55px; vertical-align: middle;">
 					Forma de Pago
 				</td>
 				<td class="text-center bold" colspan="2" style="border-bottom: none; height: 55px; vertical-align: middle;">
@@ -214,7 +218,7 @@
 				<td class="text-center bold" style="border-bottom: none; height: 55px; vertical-align: middle;">
 					Observaciones
 				</td>
-				<td class="text-center bold" colspan="4" style="border-bottom: none; height: 55px; vertical-align: middle;">
+				<td class="text-center bold" colspan="5" style="border-bottom: none; height: 55px; vertical-align: middle;">
 					<?= !empty($data['poCliente']) ? $data['poCliente'] : '' ?>
 				</td>
 			</tr>
