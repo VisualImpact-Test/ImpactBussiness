@@ -1089,7 +1089,7 @@
 				<!-- <div class="ui sub header">Total</div> -->
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
-					<input data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
+					<input data-min='0' type="number decimal" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
