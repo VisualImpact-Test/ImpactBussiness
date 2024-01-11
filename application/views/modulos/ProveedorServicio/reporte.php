@@ -77,9 +77,15 @@
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
-							<a href="<?= base_url() . 'Cotizacion/descargarOCDirectoProvServ/' . $row['idOrdenCompra']; ?>?flag=<?= $row['flagOcLibre'] ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
-								<?= $row['seriado'] ?>
-							</a>
+							<?php if ($row['flagOcLibre'] == '1') : ?>
+								<a href="<?= base_url() . 'OrdenCompra/visualizarPdfOCLibre/' . $row['idOrdenCompra']; ?>?flag=<?= $row['flagOcLibre'] ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
+									<?= $row['seriado'] ?>
+								</a>
+							<?php else : ?>
+								<a href="<?= base_url() . 'Cotizacion/descargarOCDirectoProvServ/' . $row['idOrdenCompra']; ?>?flag=<?= $row['flagOcLibre'] ?>" class="ui button" data-id="<?= $row['idOrdenCompra'] ?>" target="_blank">
+									<?= $row['seriado'] ?>
+								</a>
+							<?php endif; ?>
 						<?php endif; ?>
 					</td>
 					<td>

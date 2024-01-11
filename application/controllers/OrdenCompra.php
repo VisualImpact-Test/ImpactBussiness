@@ -658,13 +658,22 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function descargarOCLibre()
+	public function visualizarPdfOCLibre($oc = null)
+	{
+		$post['idOC'] = $oc;
+		$this->descargarOCLibre($post, true);
+	}
+
+	public function descargarOCLibre($data = [], $visible = false)
 	{
 		require_once('../mpdf/mpdf.php');
 		ini_set('memory_limit', '1024M');
 		set_time_limit(0);
-
-		$post = json_decode($this->input->post('data'), true);
+		if (!empty($data)) {
+			$post = $data;
+		} else {
+			$post = json_decode($this->input->post('data'), true);
+		}
 		$dataParaVista['detalle'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $post['idOC']])->result_array();
 		$ids = [];
 		$dataParaVista['data'] = $dataParaVista['detalle'][0];
@@ -707,7 +716,10 @@ class OrdenCompra extends MY_Controller
 		header('Cache-Control: max-age=60, must-revalidate');
 		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6) . "-"
 			. $dataParaVista['detalle'][0]['concepto'];
-
-		$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		if ($visible) {
+			$mpdf->Output("{$cod_oc}.pdf", 'I');
+		} else {
+			$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		}
 	}
 };
