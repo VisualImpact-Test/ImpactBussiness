@@ -579,10 +579,6 @@ var Cotizacion = {
 			}
 		});
 
-
-
-
-
 		$(document).on('change', '#tipoItemForm', function (e) {
 			//ACTUALIZAR FEE
 			var idCuenta = $('#cuentaForm').val();
