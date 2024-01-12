@@ -35,9 +35,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarProveedorServicio" title="Consultar">
 					<i class="fa fa-search"></i>
 				</button>
-				<!-- <button type="button" class="btn btn-outline-trade-visual border-0" data-ruta="descargarExcel" id="btn-descargarExcelProveedorDocumento" title="Descargar">
-					<i class="icon file excel"></i>
-				</button> -->
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-ruta="descargarExcel" id="btn-descargarExcelProveedorDocumento" title="Descargar">
+					<i class="fa fa-user"></i>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
