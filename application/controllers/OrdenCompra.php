@@ -496,7 +496,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
-
+		/*
 		$countID = 0;
 		foreach ($post['idItemForm'] as $keyItem => $value) {
 			if ($value == 0) {
@@ -517,7 +517,7 @@ class OrdenCompra extends MY_Controller
 				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
 				goto respuesta;
 			}
-		}
+		}*/
 		$mostrar_observacion = 0;
 		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;
