@@ -735,6 +735,10 @@ var Fn = {
 		'enteros': {
 			'expr': /^[0-9]$/,
 			'msg': ' Ingresar solo enteros.'
+		},
+		'carnetExtranjeria' : {
+			'expr': /^\d{9,12}$/,
+			'msg': 'Carnet de extranjeria inválido'
 		}
 	},
 

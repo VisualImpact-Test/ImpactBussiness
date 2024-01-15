@@ -146,7 +146,7 @@ class M_Cotizacion extends MY_Model
 	public function obtenerCuentaCentroCostoEdit($params = [])
 	{
 		$filtros = '';
-		!empty($params) ? $filtros .= " AND emp.idEmpresa = ".$params : "";
+		!empty($params) ? $filtros .= " AND emp.idEmpresa = " . $params : "";
 
 		$sql = "
 			DECLARE @hoy DATE = GETDATE();
@@ -1295,7 +1295,7 @@ class M_Cotizacion extends MY_Model
 				JOIN compras.cotizacionDetalle cd ON cd.idCotizacionDetalle = cdp.idCotizacionDetalle
 				JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
 			WHERE
-				1 = 1
+				c.estado = 1
 				{$filtros}
 				{$sqlUnion}
 			)
@@ -1664,8 +1664,6 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-
-	
 
 	public function insertarCotizacionAnexos($data = [])
 	{

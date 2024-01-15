@@ -208,6 +208,26 @@ class ProveedorServicio extends MY_Controller
 			goto respuesta;
 		}
 
+		$elementosAValidar = [
+			'numeroDocumento' => ['requerido', 'numerico'],
+			'razonSocial' => ['requerido'],	
+			'distrito' => ['requerido'],
+			'direccion' => ['requerido'],
+			'idProveedorEstado' => ['requerido'],
+			'correoContacto' => ['requerido', 'email'],
+			'nombreContacto' => ['requerido'],
+			'numeroContacto' => ['requerido', 'numerico']
+		];
+
+		$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
+
+		if (!verificarSeCumplenValidaciones($resultadoDeValidaciones)) {
+            $result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
+            goto respuesta;
+        }
+
 		if ($post['tipoDocumento'] === 'DNI') {
 
 			$insertData = [
