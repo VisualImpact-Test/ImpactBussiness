@@ -1360,6 +1360,7 @@ function htmlSelectOptionArray2($params = [])
 }
 function imagenDeArchivo($name, $tipo, $ruta)
 {
+	if(empty($name)) return $name;
 	if ($tipo == TIPO_IMAGEN) return RUTA_WASABI . $ruta . $name;
 	else {
 		if ($tipo == TIPO_PDF) return RUTA_WIREFRAME . 'pdf.png';
@@ -1405,12 +1406,12 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 	$html .= '<div class="content-upload">';
 	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='file-semantic-upload form-control input-sm d-none'";
 	$html .= "		placeholder='Cargar Imagen' data-row='0' accept='$archivosPermitidos' multiple>";
-	$html .= '	<div class="fields">';
+	$html .= '	<div class="fields col-md-12">';
 	$html .= '		<div class="sixteen wide field">';
 	$html .= '			<div class="ui tiny images content-img"></div>';
 	$html .= '		</div>';
 	$html .= '	</div>';
-	$html .= '	<div class="fields">';
+	$html .= '	<div class="fields col-md-12">';
 	$html .= '		<div class="sixteen wide field">';
 	$html .= '			<div class="ui tiny images content-files"></div>';
 	$html .= '		</div>';
