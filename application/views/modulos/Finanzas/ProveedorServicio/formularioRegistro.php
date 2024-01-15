@@ -55,6 +55,8 @@
                     <option value="CE">Carnet de Extranjería</option>
                 </select>
             </div>
+        </div>
+        <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroDocumento">Número de Documento:</label>
                 <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos.">
