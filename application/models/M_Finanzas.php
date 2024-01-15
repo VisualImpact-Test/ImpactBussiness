@@ -501,9 +501,6 @@ class M_Finanzas extends MY_Model
 	public function validarExistenciaProveedorServicio($params = [])
 	{
 
-
-
-
 		if ($params['tipoDocumento'] === 'DNI') {
 
 			$sql = "
@@ -513,7 +510,7 @@ class M_Finanzas extends MY_Model
 			WHERE
 			(
 				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.dni LIKE '%{$params['ruc']}%'
+				OR p.dni LIKE '%{$params['numeroDocumento']}%'
 			)
 			
 		";
@@ -526,7 +523,7 @@ class M_Finanzas extends MY_Model
 			WHERE
 			(
 				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.ruc LIKE '%{$params['ruc']}%'
+				OR p.ruc LIKE '%{$params['numeroDocumento']}%'
 			)
 			
 		";
@@ -539,7 +536,7 @@ class M_Finanzas extends MY_Model
 			WHERE
 			(
 				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.carnet_extranjeria LIKE '%{$params['ruc']}%'
+				OR p.carnet_extranjeria LIKE '%{$params['numeroDocumento']}%'
 			)
 			
 		";

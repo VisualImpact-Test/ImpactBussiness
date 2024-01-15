@@ -50,8 +50,8 @@
             <div class="form-group">
                 <label for="tipoDocumento">Tipo de Documento:</label>
                 <select class="form-control" id="tipoDocumento" name="tipoDocumento">
-                    <option value="DNI">DNI</option>
                     <option value="RUC">RUC</option>
+                    <option value="DNI">DNI</option>
                     <option value="CE">Carnet de Extranjería</option>
                 </select>
             </div>
@@ -59,13 +59,13 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroDocumento">Número de Documento:</label>
-                <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos.">
+                <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="razonSocial">Razón Social:</label>
-                <input type="text" class="form-control" id="razonSocial" name="razonSocial" placeholder="Ingrese la Razón Social">
+                <input type="text" class="form-control" id="razonSocial" name="razonSocial" placeholder="Ingrese la Razón Social" patron="requerido">
             </div>
         </div>
 
@@ -74,7 +74,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="region">Región :</label>
-                <select class="form-control" id="region" name="region">
+                <select class="form-control" id="region" name="region" patron="requerido">
                     <option value="">Seleccione</option>
                     <?php foreach ($departamento as $k_dp => $v_dp) : ?>
                         <option value="<?= $k_dp ?>"><?= $v_dp['nombre'] ?></option>
@@ -109,7 +109,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="idProveedorEstado">Estado del Proveedor:</label>
-                <select class="form-control" id="idProveedorEstado" name="idProveedorEstado">
+                <select class="form-control" id="idProveedorEstado" name="idProveedorEstado" patron="requerido">
                     <option value="">Seleccione: </option>
                     <? foreach ($estado as $key => $value) { ?>
                         <option value="<?= $value['id'] ?>"><?= $value['value']; ?></option>
@@ -120,7 +120,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="nombreContacto">Nombre de Contacto:</label>
-                <input type="text" class="form-control" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto">
+                <input type="text" class="form-control" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto" patron="requerido">
             </div>
         </div>
     </div>
@@ -129,14 +129,14 @@
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
                 <!-- Se agrega pattern y maxlength para la validación de 9 números -->
-                <input type="tel" class="form-control" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos.">
+                <input type="tel" class="form-control" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="correoContacto">Correo de Contacto:</label>
                 <!-- El tipo email ya incorpora la validación de formato de correo electrónico -->
-                <input type="email" class="form-control" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto" required>
+                <input type="email" class="form-control" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto" patron="requerido">
             </div>
         </div>
 

@@ -87,6 +87,7 @@ var ProveedorServicio = {
 					});
 					break;
 			}
+
 		});
 
 		$(document).on('change', '#region', function (e) {
@@ -127,38 +128,41 @@ var ProveedorServicio = {
 		HTCustom.load();
 	},
 	registrarProveedorServicio: function () {
+
 		++modalId;
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedorServicio')) };
 		let url = ProveedorServicio.url + "registrarProveedorServicio";
 		let config = { url: url, data: jsonString };
 		let jsonData = JSON.parse(jsonString.data);
-
-		let correo = jsonData.correoContacto;
 		let numero = jsonData.numeroContacto;
 		let documento = jsonData.tipoDocumento;
 		let numeroDocumento_ = jsonData.numeroDocumento;
+		let correo = jsonData.correoContacto;
 		let titulo = 'Alerta!!';
 
 		switch (documento) {
 			case 'DNI':
-				if (!numeroDocumento_.match(/^\d{8}$/)) {
+
+				if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
 
 					var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
 					var btn = [];
 					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		
+
 					btn[0] = { title: 'Continuar', fn: fn };
 					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
 					return false;
 				}
+
 				break;
 			case 'RUC':
-				if (!numeroDocumento_.match(/^\d{11}$/)) {
+
+				if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
 
 					var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
 					var btn = [];
 					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		
+
 					btn[0] = { title: 'Continuar', fn: fn };
 					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
 					return false;
@@ -166,20 +170,20 @@ var ProveedorServicio = {
 
 				break;
 			case 'CE':
-				if (!numeroDocumento_.match(/^\d{9,12}$/)) {
+
+				if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
 
 					var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
 					var btn = [];
 					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		
+
 					btn[0] = { title: 'Continuar', fn: fn };
 					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
 					return false;
 				}
+
 				break;
 		}
-
-		
 
 		if (!numero.match(/^\d{9}$/)) {
 
@@ -192,11 +196,9 @@ var ProveedorServicio = {
 			return false;
 		}
 
-		var regexCorreo = /^[a-zA-Z0-9._-]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
+		if (!Fn.validators.email.expr.test(correo)) {
 
-		if (!regexCorreo.test(correo)) {
-
-			var contenidoCorreo = 'Por favor, ingrese una dirección de correo válida.';
+			var contenidoCorreo = 'Correo inválido!!.';
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
@@ -217,7 +219,7 @@ var ProveedorServicio = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
-	},
+	}
 }
 
 ProveedorServicio.load();
