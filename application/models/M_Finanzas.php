@@ -145,6 +145,7 @@ class M_Finanzas extends MY_Model
 			->where('pc.estado', $params['estado']);
 		return $this->db->get();
 	}
+	
 
 	public function obtenerEstado($params = [])
 	{
@@ -496,4 +497,31 @@ class M_Finanzas extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function validarExistenciaProveedorServicio($params = [])
+	{
+		$sql = "
+			SELECT
+				idProveedorServicio
+			FROM finanzas.proveedorServicio p
+			WHERE
+			(
+				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
+				OR p.ruc LIKE '%{$params['ruc']}%'
+			)
+			
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+
+
 }
