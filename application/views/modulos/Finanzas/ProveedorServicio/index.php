@@ -38,6 +38,9 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-ruta="descargarExcel" id="btn-descargarExcelProveedorDocumento" title="Descargar">
 					<i class="fa fa-user"></i>
 				</button>
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarProveedorServicioPago" title="Nuevo Pago">
+					<i class="fas fa-plus"></i><span class="txt_filtro"></span>
+				</button>
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
