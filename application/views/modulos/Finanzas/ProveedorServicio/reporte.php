@@ -21,17 +21,17 @@
 		</thead>
 		<tbody>
 			<? $ix = 0; ?>
-			<?php foreach ($datos as $k => $row) : ?>
+			<?php foreach ($proveedorServicio as $k => $row) : ?>
 				<? $ix++; ?>
-				<tr data-id="<?= $row['idProveedorServicio']; ?>">
+				<tr data-id="<?= $row['idProveedorServicioPago']; ?>">
 					<td class="td-center">
 						<?= $ix; ?>
 					</td>
 					<td class="td-center style-icons">
-						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" 
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizarProveedorServicioPago" 
 						title="Actualizar Proveedor Servicio"><i class="fa fa-lg fa-edit"></i></a>
-						<a id="hrefEstado-<?= $row['idProveedorServicio']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizar-estado" 
-						data-id="<?= $row['idProveedorServicio']; ?>" data-estado="<?= $row['idEstado']; ?>">
+						<a id="hrefEstado-<?= $row['idProveedorServicioPago']; ?>" href="javascript:;" class="btn btn-outline-secondary border-0 btn-actualizar-estado" 
+						data-id="<?= $row['idProveedorServicioPago']; ?>" data-estado="<?= $row['idEstado']; ?>">
 							<i class="<?= $row['estadoToggle']; ?>"></i>
 						</a>
 					</td>
@@ -44,8 +44,8 @@
 					<? } ?>
 					<td><?= verificarEmpty($row['frecuenciaPago'], 3); ?></td>
 					<td><?= verificarEmpty($row['diaPago'], 3); ?></td>
-					<td><?= verificarEmpty($row['fechaInicio'], 3); ?></td>
-					<td><?= verificarEmpty($row['fechaTermino'], 3); ?></td>
+					<td><?= verificarEmpty($row['fechaInicioReporte'], 3); ?></td>
+					<td><?= verificarEmpty($row['fechaTerminoReporte'], 3); ?></td>
 					<td><?= verificarEmpty($row['direccion'], 3); ?></td>
 					<td><?= verificarEmpty($row['nombreContacto'], 3); ?></td>
 					<td><?= verificarEmpty($row['correoContacto'], 3); ?></td>

@@ -30,6 +30,8 @@ class ProveedorServicio extends MY_Controller
 			'assets/custom/js/Finanzas/proveedorServicio'
 		);
 
+		$config['data']['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
+		$config['data']['estado'] = $this->db->get_where('compras.proveedorEstado', "idProveedorEstado = 2 OR idProveedorEstado = 3")->result_array();
 		$config['data']['icon'] = 'fas fa-dollar-sign';
 		$config['data']['title'] = 'Pagos';
 		$config['data']['message'] = 'Lista';
@@ -37,13 +39,14 @@ class ProveedorServicio extends MY_Controller
 
 		$this->view($config);
 	}
+
 	public function reporte()
 	{
 		$result = $this->result;
-        $dataParaVista = [];
-		$dataParaVista['proveedorServicio'] = $this->model->obtenerProveedorServicio()['query']->result_array();
+		$dataParaVista = [];
+		$post = json_decode($this->input->post('data'), true);
 
-		
+		$dataParaVista['proveedorServicio'] = $this->model->obtenerProveedorServicio(['idProveedorServicio' => $post['idProveedorServicio'], 'estado' => $post['estadoProveedorServicioPago']])['query']->result_array();
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -93,7 +96,7 @@ class ProveedorServicio extends MY_Controller
 		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
 		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', array('estado' => '1'))->result_array();
 		$dataParaVista['frecuenciaPago'] = $this->db->get_where('finanzas.frecuenciaPagoProveedorServicioPago', array('estado' => '1'))->result_array();
-		
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Actualizar Pago Proveedor Servicio';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioActualizacionPago", $dataParaVista, true);
@@ -106,7 +109,7 @@ class ProveedorServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
+		
 		$data = [];
 		$data['insert'] = [
 			'idProveedorServicio' => $post['proveedorServicio'],
@@ -114,14 +117,54 @@ class ProveedorServicio extends MY_Controller
 			'monto' => isset($post["chkMontoFijo"]) ? $post['monto'] : null,
 			'diaPago' => $post['diaPago'],
 			'frecuenciaPago' => $post['frecuenciaPago'],
-			'fechaInicio' => $post['deadlineInicio'],
-			'fechaTermino' => verificarEmpty($post['deadlineTermino'], 4),
+			'fechaInicio' => $post['fechaInicio'],
+			'fechaTermino' => verificarEmpty($post['fechaTermino'], 4),
+			'idMoneda' => $post['moneda'],
+			'estado' => 2,
+			'descripcionServicio' => verificarEmpty($post['informacionAdicional'], 4)
+		];
+
+		$data['tabla'] = 'finanzas.proveedorServicioPago';
+		$insert = $this->model->insertarProveedorServicioPago($data);
+
+		if (!$insert) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			goto respuesta;
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
+
+	public function actualizarProveedorServicioPago()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = [];
+		$data['update'] = [
+			'idProveedorServicio' => $post['proveedorServicio'],
+			'flagFijo' => isset($post["chkMontoFijo"]) ? 1 : 0,
+			'monto' => isset($post["chkMontoFijo"]) ? $post['monto'] : null,
+			'diaPago' => $post['diaPago'],
+			'frecuenciaPago' => $post['frecuenciaPago'],
+			'fechaInicio' => $post['fechaInicio'],
+			'fechaTermino' => verificarEmpty($post['fechaTermino'], 4),
 			'idMoneda' => $post['moneda'],
 			'descripcionServicio' => verificarEmpty($post['informacionAdicional'], 4)
 		];
-		
+
 		$data['tabla'] = 'finanzas.proveedorServicioPago';
-		$insert = $this->model->insertarProveedorServicioPago($data);
+		$data['where'] = ['idProveedorServicioPago' => $post['idProveedorServicioPago']];
+		$insert = $this->model->actualizarProveedorServicioPago($data);
 
 		if (!$insert) {
 			$result['result'] = 0;
@@ -145,10 +188,10 @@ class ProveedorServicio extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$data = [];
-		$data['update'] = ['idProveedorEstado' => ($post['estado'] == 2) ? 3 : 2];
+		$data['update'] = ['estado' => ($post['estado'] == 2) ? 3 : 2];
 
-		$data['tabla'] = 'finanzas.proveedorServicio';
-		$data['where'] = ['idProveedorServicio' => $post['idProveedorServicio']];
+		$data['tabla'] = 'finanzas.proveedorServicioPago';
+		$data['where'] = ['idProveedorServicioPago' => $post['idProveedorServicioPago']];
 
 		$update = $this->model->actualizarProveedorServicioPago($data);
 		$data = [];
@@ -187,7 +230,7 @@ class ProveedorServicio extends MY_Controller
 			$dataParaVista['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
 			$dataParaVista['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
 		}
-	
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Proveedor Servicio';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioRegistro", $dataParaVista, true);
@@ -201,7 +244,7 @@ class ProveedorServicio extends MY_Controller
 
 		$validar = $this->model->validarExistenciaProveedorServicio($post)['query']->result_array();
 
-		if(!empty($validar)) {
+		if (!empty($validar)) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroRepetido');
@@ -210,7 +253,7 @@ class ProveedorServicio extends MY_Controller
 
 		$elementosAValidar = [
 			'numeroDocumento' => ['requerido', 'numerico'],
-			'razonSocial' => ['requerido'],	
+			'razonSocial' => ['requerido'],
 			'distrito' => ['requerido'],
 			'direccion' => ['requerido'],
 			'idProveedorEstado' => ['requerido'],
@@ -222,11 +265,11 @@ class ProveedorServicio extends MY_Controller
 		$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
 
 		if (!verificarSeCumplenValidaciones($resultadoDeValidaciones)) {
-            $result['result'] = 0;
+			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
-            goto respuesta;
-        }
+			$result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
+			goto respuesta;
+		}
 
 		if ($post['tipoDocumento'] === 'DNI') {
 
@@ -241,7 +284,6 @@ class ProveedorServicio extends MY_Controller
 				'numeroContacto' => $post['numeroContacto'],
 				'estado' => 1
 			];
-
 		} elseif ($post['tipoDocumento'] === 'RUC') {
 
 			$insertData = [
@@ -255,7 +297,6 @@ class ProveedorServicio extends MY_Controller
 				'numeroContacto' => $post['numeroContacto'],
 				'estado' => 1
 			];
-
 		} elseif ($post['tipoDocumento'] === 'CE') {
 
 			$insertData = [
@@ -269,7 +310,6 @@ class ProveedorServicio extends MY_Controller
 				'numeroContacto' => $post['numeroContacto'],
 				'estado' => 1
 			];
-			
 		}
 
 		$insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
