@@ -145,7 +145,7 @@ class M_Finanzas extends MY_Model
 			->where('pc.estado', $params['estado']);
 		return $this->db->get();
 	}
-	
+
 
 	public function obtenerEstado($params = [])
 	{
@@ -500,7 +500,26 @@ class M_Finanzas extends MY_Model
 
 	public function validarExistenciaProveedorServicio($params = [])
 	{
-		$sql = "
+
+
+
+
+		if ($params['tipoDocumento'] === 'DNI') {
+
+			$sql = "
+			SELECT
+				idProveedorServicio
+			FROM finanzas.proveedorServicio p
+			WHERE
+			(
+				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
+				OR p.dni LIKE '%{$params['ruc']}%'
+			)
+			
+		";
+		} elseif ($params['tipoDocumento'] === 'RUC') {
+
+			$sql = "
 			SELECT
 				idProveedorServicio
 			FROM finanzas.proveedorServicio p
@@ -511,6 +530,20 @@ class M_Finanzas extends MY_Model
 			)
 			
 		";
+		} elseif ($params['tipoDocumento'] === 'CE') {
+
+			$sql = "
+			SELECT
+				idProveedorServicio
+			FROM finanzas.proveedorServicio p
+			WHERE
+			(
+				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
+				OR p.carnet_extranjeria LIKE '%{$params['ruc']}%'
+			)
+			
+		";
+		}
 
 		$query = $this->db->query($sql);
 
@@ -522,6 +555,4 @@ class M_Finanzas extends MY_Model
 
 		return $this->resultado;
 	}
-
-
 }

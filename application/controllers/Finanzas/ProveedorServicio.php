@@ -161,16 +161,49 @@ class ProveedorServicio extends MY_Controller
 			goto respuesta;
 		}
 
-		$insertData = [
-			'ruc' => $post['ruc'],
-			'razonSocial' => $post['razonSocial'],
-			'cod_ubigeo' => $post['distrito'],
-			'direccion' => $post['direccion'],
-			'idProveedorEstado' => $post['idProveedorEstado'],
-			'nombreContacto' => $post['nombreContacto'],
-			'correoContacto' => $post['correoContacto'],
-			'numeroContacto' => $post['numeroContacto']
-		];
+		if ($post['tipoDocumento'] === 'DNI') {
+
+			$insertData = [
+				'dni' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+
+		} elseif ($post['tipoDocumento'] === 'RUC') {
+
+			$insertData = [
+				'ruc' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+
+		} elseif ($post['tipoDocumento'] === 'CE') {
+
+			$insertData = [
+				'carnet_extranjeria' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+			
+		}
 
 		$insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
 

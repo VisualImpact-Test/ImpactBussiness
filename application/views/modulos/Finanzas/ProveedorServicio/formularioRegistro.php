@@ -48,9 +48,16 @@
     <div class="row">
         <div class="col-md-4">
             <div class="form-group">
-                <label for="ruc">RUC:</label>
-                <!-- Se agrega pattern y maxlength para la validación de 9 números -->
-                <input type="text" class="form-control" id="ruc" name="ruc" placeholder="Ingrese el RUC" pattern="\d{11}" maxlength="11" title="El RUC debe contener 11 dígitos numéricos.">
+                <label for="tipoDocumento">Tipo de Documento:</label>
+                <select class="form-control" id="tipoDocumento" name="tipoDocumento">
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="CE">Carnet de Extranjería</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="numeroDocumento">Número de Documento:</label>
+                <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos.">
             </div>
         </div>
         <div class="col-md-4">
@@ -59,7 +66,7 @@
                 <input type="text" class="form-control" id="razonSocial" name="razonSocial" placeholder="Ingrese la Razón Social">
             </div>
         </div>
-       
+
     </div>
     <div class="row">
         <div class="col-md-4">
@@ -136,7 +143,7 @@
 </form>
 
 <script>
-	var provincia = <?= json_encode($provincia); ?>;
-	var distrito = <?= json_encode($distrito); ?>;
-	var distrito_ubigeo = <?= json_encode($distrito_ubigeo); ?>;
+    var provincia = <?= json_encode($provincia); ?>;
+    var distrito = <?= json_encode($distrito); ?>;
+    var distrito_ubigeo = <?= json_encode($distrito_ubigeo); ?>;
 </script>

@@ -16,11 +16,11 @@ var ProveedorServicio = {
 				, 'url': ProveedorServicio.url + ruta
 				, 'contentDetalle': ProveedorServicio.contentDetalle
 			};
-           // console.log(config);
+			// console.log(config);
 			Fn.loadReporte_new(config);
 			Fn.showLoading(false);
 		});
-	
+
 		$(document).on('click', '.btn-actualizar-estado', function () {
 			++modalId;
 
@@ -55,6 +55,38 @@ var ProveedorServicio = {
 				ProveedorServicio.modalId = modalId;
 			});
 
+		});
+
+		$(document).on('change', '#tipoDocumento', function () {
+			var tipo = $(this).val();
+			var numeroDocumento = $('#numeroDocumento');
+
+			switch (tipo) {
+				case 'DNI':
+					numeroDocumento.attr({
+						'placeholder': 'Ingrese su DNI',
+						'pattern': '\\d{8}',
+						'maxlength': '8',
+						'title': 'El DNI debe contener 8 dígitos numéricos.'
+					});
+					break;
+				case 'RUC':
+					numeroDocumento.attr({
+						'placeholder': 'Ingrese su RUC',
+						'pattern': '\\d{11}',
+						'maxlength': '11',
+						'title': 'El RUC debe contener 11 dígitos numéricos.'
+					});
+					break;
+				case 'CE':
+					numeroDocumento.attr({
+						'placeholder': 'Ingrese su Carnet de Extranjería',
+						'pattern': '\\d{9,12}',
+						'maxlength': '12',
+						'title': 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.'
+					});
+					break;
+			}
 		});
 
 		$(document).on('change', '#region', function (e) {
@@ -100,45 +132,78 @@ var ProveedorServicio = {
 		let url = ProveedorServicio.url + "registrarProveedorServicio";
 		let config = { url: url, data: jsonString };
 		let jsonData = JSON.parse(jsonString.data);
-		let ruc = jsonData.ruc;
+
 		let correo = jsonData.correoContacto;
 		let numero = jsonData.numeroContacto;
+		let documento = jsonData.tipoDocumento;
+		let numeroDocumento_ = jsonData.numeroDocumento;
 		let titulo = 'Alerta!!';
 
-		if (!ruc.match(/^\d{11}$/)) {
-    
-			var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
-			var btn = [];
-			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			
-			btn[0] = { title: 'Continuar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-            return false;
-        }
+		switch (documento) {
+			case 'DNI':
+				if (!numeroDocumento_.match(/^\d{8}$/)) {
+
+					var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+				break;
+			case 'RUC':
+				if (!numeroDocumento_.match(/^\d{11}$/)) {
+
+					var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+
+				break;
+			case 'CE':
+				if (!numeroDocumento_.match(/^\d{9,12}$/)) {
+
+					var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+		
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+				break;
+		}
+
+		
 
 		if (!numero.match(/^\d{9}$/)) {
-           
+
 			var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			
+
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
-            return false;
-        }
+			return false;
+		}
 
 		var regexCorreo = /^[a-zA-Z0-9._-]+@(gmail\.com|hotmail\.com|outlook\.com)$/;
 
-        if (!regexCorreo.test(correo)) {
-          
+		if (!regexCorreo.test(correo)) {
+
 			var contenidoCorreo = 'Por favor, ingrese una dirección de correo válida.';
 			var btn = [];
 			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-			
+
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
-            return false;
-        }
+			return false;
+		}
 
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
