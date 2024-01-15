@@ -90,6 +90,9 @@ class ProveedorServicio extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['proveedorServicioPago'] = $this->model->obtenerProveedorServicio(['idProveedorServicioPago' => $post['idProveedorServicioPago']])['query']->result_array();
+		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
+		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', array('estado' => '1'))->result_array();
+		$dataParaVista['frecuenciaPago'] = $this->db->get_where('finanzas.frecuenciaPagoProveedorServicioPago', array('estado' => '1'))->result_array();
 		
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Actualizar Pago Proveedor Servicio';
