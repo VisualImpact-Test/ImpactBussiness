@@ -50,7 +50,7 @@ class ProveedorServicio extends MY_Controller
 			$html = $this->load->view("modulos/Finanzas/ProveedorServicio/reporte", $dataParaVista, true);
 		}
 
-        $result['result'] = 1;
+		$result['result'] = 1;
 		$result['data']['views']['idProveedorServicio']['datatable'] = 'tb-proveedorServicio';
 		$result['data']['views']['idProveedorServicio']['html'] = $html;
 		$result['data']['configTable'] = [
@@ -65,8 +65,7 @@ class ProveedorServicio extends MY_Controller
 		];
 
 		echo json_encode($result);
-
-    }
+	}
 
 	public function formularioRegistroProveedorServicioPago()
 	{
@@ -159,6 +158,108 @@ class ProveedorServicio extends MY_Controller
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+
+		respuesta:
+		echo json_encode($result);
+	}
+
+	public function formularioRegistroProveedorServicio()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+
+		$dataParaVista['estado'] = $this->model->obtenerEstado()['query']->result_array();
+		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
+
+		$dataParaVista['departamento'] = [];
+		$dataParaVista['provincia'] = [];
+		$dataParaVista['distrito'] = [];
+
+		foreach ($ciudad as $ciu) {
+			$dataParaVista['departamento'][trim($ciu->cod_departamento)]['nombre'] = textopropio($ciu->departamento);
+			$dataParaVista['provincia'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)]['nombre'] = textopropio($ciu->provincia);
+			$dataParaVista['distrito'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_distrito)]['nombre'] = textopropio($ciu->distrito);
+			$dataParaVista['distrito_ubigeo'][trim($ciu->cod_departamento)][trim($ciu->cod_provincia)][trim($ciu->cod_ubigeo)]['nombre'] = textopropio($ciu->distrito);
+		}
+	
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Proveedor Servicio';
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioRegistro", $dataParaVista, true);
+		echo json_encode($result);
+	}
+
+	public function registrarProveedorServicio()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$validar = $this->model->validarExistenciaProveedorServicio($post)['query']->result_array();
+
+		if(!empty($validar)) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroRepetido');
+			goto respuesta;
+		}
+
+		if ($post['tipoDocumento'] === 'DNI') {
+
+			$insertData = [
+				'dni' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+
+		} elseif ($post['tipoDocumento'] === 'RUC') {
+
+			$insertData = [
+				'ruc' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+
+		} elseif ($post['tipoDocumento'] === 'CE') {
+
+			$insertData = [
+				'carnet_extranjeria' => $post['numeroDocumento'],
+				'razonSocial' => $post['razonSocial'],
+				'cod_ubigeo' => $post['distrito'],
+				'direccion' => $post['direccion'],
+				'idProveedorEstado' => $post['idProveedorEstado'],
+				'nombreContacto' => $post['nombreContacto'],
+				'correoContacto' => $post['correoContacto'],
+				'numeroContacto' => $post['numeroContacto'],
+				'estado' => 1
+			];
+			
+		}
+
+		$insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
+
+		if ($insertarDatos) {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		} else {
+
+
+			$result['msg']['title'] = 'Ocurrio un error';
+			$result['msg']['content'] = getMensajeGestion('registroInvalido');
 		}
 
 		respuesta:
