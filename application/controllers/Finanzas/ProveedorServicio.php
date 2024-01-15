@@ -79,7 +79,7 @@ class ProveedorServicio extends MY_Controller
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Pago Proveedor Servicio';
-		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioRegistro", $dataParaVista, true);
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioRegistroPago", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
@@ -94,7 +94,7 @@ class ProveedorServicio extends MY_Controller
 		
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Actualizar Pago Proveedor Servicio';
-		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioActualizacion", $dataParaVista, true);
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorServicio/formularioActualizacionPago", $dataParaVista, true);
 
 		echo json_encode($result);
 	}
