@@ -340,7 +340,10 @@
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</div>
-								<div class="form-row col-md-12 ui">
+								<div class="form-row col-md-12 contentSemanticDiv divParaCarga d-none">
+									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+								</div>
+								<div class="form-row col-md-12 ui imagendivCarga">
 									<div class="ui tiny fluid image content-lsck-capturas">
 										<div class="ui dimmer dimmer-file-detalle">
 											<div class="content">
