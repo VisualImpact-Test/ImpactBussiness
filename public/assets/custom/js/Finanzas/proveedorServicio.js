@@ -55,6 +55,8 @@ var ProveedorServicio = {
 
 			let jsonString = { 'data': '' };
 			let config = { 'url': ProveedorServicio.url + 'formularioRegistroProveedorServicioPago', 'data': jsonString };
+		});
+
 		$(document).on('click', '#btn-proveedor', function () {
 			++modalId;
 
@@ -116,6 +118,8 @@ var ProveedorServicio = {
 				return false;
 			}
 			return true;
+		});
+
 		$(document).on('change', '#tipoDocumento', function () {
 			var tipo = $(this).val();
 			var numeroDocumento = $('#numeroDocumento');
@@ -190,6 +194,21 @@ var ProveedorServicio = {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedorServicioPago')) };
 		let url = ProveedorServicio.url + "registrarProveedorServicioPago";
 		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
 	registrarProveedorServicio: function () {
 		++modalId;
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedorServicio')) };
