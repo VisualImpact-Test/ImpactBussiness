@@ -46,7 +46,7 @@
 </style>
 <form class="form" role="form" id="formActualizarProveedorServicio" method="post" autocomplete="off">
     <div class="row">
-    <input type="text" class="form-control d-none" name="idProveedorServicio" value="<?= !empty($datos[0]['idProveedorServicio']) ? $datos[0]['idProveedorServicio'] : ''; ?>" >
+        <input type="text" class="form-control d-none" name="idProveedorServicio" value="<?= !empty($datos[0]['idProveedorServicio']) ? $datos[0]['idProveedorServicio'] : ''; ?>">
         <div class="col-md-4">
             <div class="form-group">
                 <label for="tipoDocumento">Tipo de Documento:</label>
@@ -76,7 +76,13 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroDocumento">Número de Documento:</label>
-                <input type="tel" class="form-control onlyNumbers" id="numeroDocumento" value="<? if (!empty($datos[0]['dni'])) { echo $datos[0]['dni']; } else if (!empty($datos[0]['ruc'])) { echo $datos[0]['ruc']; } else if (!empty($datos[0]['carnet_extranjeria'])) { echo $datos[0]['carnet_extranjeria']; }?>" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" id="numeroDocumento" value="<? if (!empty($datos[0]['dni'])) {
+                                                                                                    echo $datos[0]['dni'];
+                                                                                                } else if (!empty($datos[0]['ruc'])) {
+                                                                                                    echo $datos[0]['ruc'];
+                                                                                                } else if (!empty($datos[0]['carnet_extranjeria'])) {
+                                                                                                    echo $datos[0]['carnet_extranjeria'];
+                                                                                                } ?>" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
@@ -154,8 +160,9 @@
                 <input type="email" class="form-control" value="<?= !empty($datos[0]['correoContacto']) ? $datos[0]['correoContacto'] : ''; ?>" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto" patron="requerido">
             </div>
         </div>
-
+        
     </div>
+  
 
 </form>
 <script>
