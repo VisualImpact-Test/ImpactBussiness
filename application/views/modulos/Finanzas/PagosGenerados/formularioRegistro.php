@@ -38,20 +38,20 @@
                             <div class="ui calendar date-semantic col-md-8">
                                 <div class="ui input left icon fluid">
                                     <i class="calendar icon"></i>
-                                    <input type="text" value="" patron="requerido">
+                                    <input type="text" value="<?= $pagosGenerados[0]['fechaPagoComprobante'] ?>" patron="requerido">
                                 </div>
                             </div>
-                            <input type="hidden" class="date-semantic-value" name="fechaPagoComprobante" value="">
+                            <input type="hidden" class="date-semantic-value" name="fechaPagoComprobante" value="<?= $pagosGenerados[0]['fechaPagoComprobante'] ?>">
                         </div>
                         <div class="control-group child-divcenter row" style="width:30%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-4" for="tipoComprobante" style="border:0px;">Tipo Comprobante :</label>
                             <select class="form-control col-md-8 semantic-dropdown" id="tipoComprobante" name="tipoComprobante"   patron="requerido">
-								<?= htmlSelectOptionArray2(['query' => $tipoComprobante, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $pagosGenerados[0]['idComprobante'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
 							</select>
                         </div>
                         <div class="control-group child-divcenter row" style="width:35%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-5" for="numeroComprobante" style="border:0px;">Comprobante:</label>
-                            <input class="form-control col-md-7" id="numeroComprobante" name="numeroComprobante" patron="requerido" value="">
+                            <input class="form-control col-md-7" id="numeroComprobante" name="numeroComprobante" patron="requerido" value="<?= $pagosGenerados[0]['numeroComprobante'] ?>">
                         </div>
                         
                     </div>
@@ -61,14 +61,14 @@
                             <label class="form-control col-md-3" for="cuentaForm" style="border:0px;">Cuenta :</label>
                             <select class="form-control col-md-9  semantic-dropdown parentDependienteSemantic" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente="#cboCentroCosto">
                                 <?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
-                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
                             </select>
                         </div>
                         <div class="control-group child-divcenter row" style="width:55%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-3" for="centroCostoForm" style="border:0px;">Centro Costo :</label>
                             <select class="form-control col-md-9 semantic-dropdown childdependienteSemantic read-only" id="cboCentroCosto" name="centroCostoForm" patron="requerido">
                                 <?php $selected = isset($ordenServicio['idCentroCosto']) ? verificarEmpty($ordenServicio['idCentroCosto']) : NULL; ?>
-                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
                             </select>
                         </div>
                     </div>
@@ -76,15 +76,15 @@
                     <div class="row">
                         <div class="control-group child-divcenter row" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-5" for="monto" style="border:0px;">Monto :</label>
-                            <input class="form-control col-md-7 onlyNumbers" id="monto" name="monto" patron="requerido" value="">
+                            <input class="form-control col-md-7 onlyNumbers" id="monto" name="monto" patron="requerido" value="<?= $pagosGenerados[0]['monto'] ?>">
                         </div>
                         <div class="control-group child-divcenter row" style="width:35%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-5" for="porcentajeDetraccion" style="border:0px;">% Detraccion :</label>
-                            <input class="form-control col-md-7 onlyNumbers" id="porcentajeDetraccion" name="porcentajeDetraccion" patron="requerido" value="">
+                            <input class="form-control col-md-7 onlyNumbers" id="porcentajeDetraccion" name="porcentajeDetraccion" patron="requerido" value="<?= $pagosGenerados[0]['porcentajeDetraccion'] ?>">
                         </div>
                         <div class="control-group child-divcenter row" style="width:40%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-5" for="montoDetraccion" style="border:0px;">Monto Detraccion :</label>
-                            <input class="form-control col-md-6 " readonly id="montoDetraccion" name="montoDetraccion" patron="requerido" value="">
+                            <input class="form-control col-md-6 " readonly id="montoDetraccion" name="montoDetraccion" patron="requerido" value="<?= $pagosGenerados[0]['montoDetraccion'] ?>">
                         </div>
                     </div>
                  

@@ -25,8 +25,8 @@ class M_PagosGenerados extends MY_Model
 		$sql = "
 				select 
 				idProveedorServicioGenerado
-				,razonSocial
-				,ruc
+				,ps.razonSocial
+				,ps.ruc
 				,descripcionServicio
 				,pspg.monto
 				,fechaProgramada
@@ -39,11 +39,21 @@ class M_PagosGenerados extends MY_Model
 				,ps.nombreContacto
 				,ps.correoContacto
 				,ps.numeroContacto
+				,pspg.porcentajeDetraccion
+				,pspg.montoDetraccion
+				,pspg.fechaPagoComprobante
+				,mn.nombre as moneda
+				,pspg.idCuenta
+				,emp.razonSocial as cuenta
+				,pspg.idComprobante
 				from finanzas.proveedorServicioPagoGenerado as pspg
 				left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
 				left join rrhh.dbo.empresa_Canal as ec on ec.idEmpresaCanal = pspg.idCentroCosto
 				join finanzas.proveedorServicioPago as psp on pspg.idProveedorServicioPago = psp.idProveedorServicioPago
-				join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio 
+				join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
+				left join compras.moneda as mn on mn.idMoneda = psp.idMoneda
+				left join rrhh.dbo.empresa as emp on emp.idEmpresa = pspg.idCuenta
+				where 1=1 
 				{$filtros}
 			";
 		$query = $this->db->query($sql);

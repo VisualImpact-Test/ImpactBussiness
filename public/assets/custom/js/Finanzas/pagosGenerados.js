@@ -81,10 +81,11 @@ var PagosGenerados = {
 			let btn = [];
 			let fn = [];
 
-			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			fn[0] = 'Fn.closeModals(10);';
 			btn[0] = { title: 'Continuar', fn: fn[0] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			$('#btn-filtrarPagosGenerados').click();
 		});
 	},
 
