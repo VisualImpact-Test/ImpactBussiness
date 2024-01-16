@@ -1,7 +1,7 @@
 var ProveedorServicio = {
 	frm: 'frm-proveedorServicio',
 	contentDetalle: 'idProveedorServicio',
-	url: 'Finanzas/ProveedorServicio/',
+	url: 'Finanzas/ProveedorServicioPago/',
 	load: function () {
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarProveedorServicio').click();

@@ -26,7 +26,7 @@
 			<td class="text-left bold">Unidad de Negocio:</td>
 			<td class="text-left"><?= verificarEmpty($dataOper['cuenta'], 3) ?></td>
 			<td class="text-left bold">Centro de Costo</td>
-			<td class="text-center"><?= verificarEmpty($dataOper['centroCosto'], 3) ?></td>
+			<td class="text-center"><?= verificarEmpty($dataOper['centroCosto'], 3) . " " . verificarEmpty($dataOper['valor'], 3) ?></td>
 		</tr>
 		<tr>
 			<td class="text-left bold">Fecha de requerimiento:</td>
