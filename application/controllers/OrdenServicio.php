@@ -461,9 +461,9 @@ class OrdenServicio extends MY_Controller
 			'idPresupuestoHistorico' => $post['idPresupuestoHistorico'],
 			'idUsuario' => $this->idUsuario,
 			'fechaValidacion' => getActualDateTime(),
-			'fee1' =>  $datos['presupuesto']['fee1'],
-			'fee2' =>  $datos['presupuesto']['fee2'],
-			'fee3' =>  $datos['presupuesto']['fee3']
+			'fee1' => $datos['presupuesto']['fee1'],
+			'fee2' => $datos['presupuesto']['fee2'],
+			'fee3' => $datos['presupuesto']['fee3']
 		]);
 		$idPresupuestoValido = $this->db->insert_id();
 
@@ -551,7 +551,6 @@ class OrdenServicio extends MY_Controller
 
 		$ph = $this->db->get_where('compras.presupuestoHistorico', ['idPresupuesto' => $post['idPresupuesto'], 'idPresupuestoHistorico' => $post['idPresupuestoHistorico']])->row_array();
 		$this->db->update('compras.ordenServicio', ['idOrdenServicioEstado' => 3], ['idOrdenServicio' => $ph['idOrdenServicio']]);
-		
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
@@ -932,13 +931,12 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['datosOC'] = $this->model->obtenerInformacionDatosOc($idOrdenServicio)->result_array();
 		$dataParaVista['idOrdenServicio'] = $post['idOrdenServicio'];
-		
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Procesar Datos OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/frmDatosOc", $dataParaVista, true);
 
 		echo json_encode($result);
-
 	}
 
 	public function registrarOrdenServicioDatosOC()
@@ -954,9 +952,9 @@ class OrdenServicio extends MY_Controller
 			'descripcionOc' => $post['motivo']
 		];
 		if ($post['idOrdenServicioDatosOc']) {
-		$this->db->update('compras.ordenServicioDatosOc', $DatosOc, ['idOrdenServicioDatosOc' => $post['idOrdenServicioDatosOc']]);
-		}else {
-		$this->db->insert('compras.ordenServicioDatosOc', $DatosOc);	
+			$this->db->update('compras.ordenServicioDatosOc', $DatosOc, ['idOrdenServicioDatosOc' => $post['idOrdenServicioDatosOc']]);
+		} else {
+			$this->db->insert('compras.ordenServicioDatosOc', $DatosOc);
 		}
 
 		$result['result'] = 1;
@@ -966,9 +964,8 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_complete();
 		respuesta:
 		echo json_encode($result);
-
 	}
-	
+
 
 	public function formularioActualizacionOrdenServicio()
 	{
