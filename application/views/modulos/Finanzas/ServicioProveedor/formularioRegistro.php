@@ -108,23 +108,10 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="idProveedorEstado">Estado del Proveedor:</label>
-                <select class="form-control" id="idProveedorEstado" name="idProveedorEstado" patron="requerido">
-                    <option value="">Seleccione: </option>
-                    <? foreach ($estado as $key => $value) { ?>
-                        <option value="<?= $value['id'] ?>"><?= $value['value']; ?></option>
-                    <? } ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
                 <label for="nombreContacto">Nombre de Contacto:</label>
                 <input type="text" class="form-control" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto" patron="requerido">
             </div>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
@@ -132,6 +119,9 @@
                 <input type="tel" class="form-control onlyNumbers" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
             </div>
         </div>
+    </div>
+    <div class="row">
+
         <div class="col-md-4">
             <div class="form-group">
                 <label for="correoContacto">Correo de Contacto:</label>

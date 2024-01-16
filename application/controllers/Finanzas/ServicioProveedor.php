@@ -168,7 +168,7 @@ class ServicioProveedor extends MY_Controller
             'nombreContacto' => $post['nombreContacto'],
             'correoContacto' => $post['correoContacto'],
             'numeroContacto' => $post['numeroContacto'],
-            'estado' => 2
+            
         ];
 
         } elseif ($post['tipoDocumento'] === 'RUC') {
@@ -297,7 +297,7 @@ class ServicioProveedor extends MY_Controller
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
-    			'estado' => 1
+    			'idProveedorEstado' => 2
     		];
 
     	} elseif ($post['tipoDocumento'] === 'RUC') {
@@ -311,7 +311,7 @@ class ServicioProveedor extends MY_Controller
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
-    			'estado' => 1
+    			'idProveedorEstado' => 2
     		];
 
     	} elseif ($post['tipoDocumento'] === 'CE') {
@@ -325,7 +325,7 @@ class ServicioProveedor extends MY_Controller
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
-    			'estado' => 1
+    			'idProveedorEstado' => 2
     		];
 
     	}
