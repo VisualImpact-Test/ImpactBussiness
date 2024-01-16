@@ -356,6 +356,7 @@ var ServicioProveedor = {
                 }
 
                 break;
+                
             case 'RUC':
 
                 if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {

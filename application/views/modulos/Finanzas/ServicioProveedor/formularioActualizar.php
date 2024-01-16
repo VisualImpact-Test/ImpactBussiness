@@ -131,38 +131,28 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label for="idProveedorEstado">Estado del Proveedor:</label>
-                <select class="form-control" id="idProveedorEstado" name="idProveedorEstado" patron="requerido">
-                    <option value="<?= !empty($datos[0]['idProveedorEstado']) ? $datos[0]['idProveedorEstado'] : ''; ?>"><?= $datos[0]['nombre']; ?></option>
-                    <? foreach ($estado as $key => $value) { ?>
-                        <option value="<?= $value['id'] ?>"><?= $value['value']; ?></option>
-                    <? } ?>
-                </select>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
                 <label for="nombreContacto">Nombre de Contacto:</label>
                 <input type="text" class="form-control" value="<?= !empty($datos[0]['nombreContacto']) ? $datos[0]['nombreContacto'] : ''; ?>" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto" patron="requerido">
             </div>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
                 <input type="tel" class="form-control onlyNumbers" value="<?= !empty($datos[0]['numeroContacto']) ? $datos[0]['numeroContacto'] : ''; ?>" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
             </div>
         </div>
+    </div>
+    <div class="row">
+
         <div class="col-md-4">
             <div class="form-group">
                 <label for="correoContacto">Correo de Contacto:</label>
                 <input type="email" class="form-control" value="<?= !empty($datos[0]['correoContacto']) ? $datos[0]['correoContacto'] : ''; ?>" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto" patron="requerido">
             </div>
         </div>
-        
+
     </div>
-  
+
 
 </form>
 <script>
