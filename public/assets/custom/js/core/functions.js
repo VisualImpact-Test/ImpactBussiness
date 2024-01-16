@@ -294,11 +294,14 @@ var Fn = {
 										if (v == 'requerido' || value.length > 0) {
 											if (typeof (Fn.validators[v]) == 'object') {
 												var validators = !Fn.validators[v]['expr'].test(value);
-
+												
 												if (validators || value == null) {
 													this_.parent().addClass('has-error');
+													this_.css('border-color', 'red');
 													// this_.parent().append('<div class="dv-alert-error mb-1 mr-1 badge badge-danger"><small>' + Fn.validators[v]['msg'] + '</small></div>');
 													return false;
+												} else {
+													this_.css('border-color', '#D6D8D8');
 												}
 											}
 										}
