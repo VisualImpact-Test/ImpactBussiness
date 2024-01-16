@@ -79,58 +79,9 @@ class M_Finanzas extends MY_Model
 		return $this->resultado;
 	}
 
-	public function validarExistenciaProveedorServicio($params = [])
-	{
 
-		if ($params['tipoDocumento'] === 'DNI') {
 
-			$sql = "
-			SELECT
-				idProveedorServicio
-			FROM finanzas.proveedorServicio p
-			WHERE
-			(
-				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.dni LIKE '%{$params['numeroDocumento']}%'
-			)
-			
-		";
-		} elseif ($params['tipoDocumento'] === 'RUC') {
+	
 
-			$sql = "
-			SELECT
-				idProveedorServicio
-			FROM finanzas.proveedorServicio p
-			WHERE
-			(
-				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.ruc LIKE '%{$params['numeroDocumento']}%'
-			)
-			
-		";
-		} elseif ($params['tipoDocumento'] === 'CE') {
-
-			$sql = "
-			SELECT
-				idProveedorServicio
-			FROM finanzas.proveedorServicio p
-			WHERE
-			(
-				LTRIM(RTRIM(p.razonSocial)) = LTRIM(RTRIM('{$params['razonSocial']}'))
-				OR p.carnet_extranjeria LIKE '%{$params['numeroDocumento']}%'
-			)
-			
-		";
-		}
-
-		$query = $this->db->query($sql);
-
-		if ($query) {
-			$this->resultado['query'] = $query;
-			$this->resultado['estado'] = true;
-			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
-		}
-
-		return $this->resultado;
-	}
+	
 }

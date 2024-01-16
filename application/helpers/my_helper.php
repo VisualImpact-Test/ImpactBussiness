@@ -923,6 +923,7 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		'exitosoPersonalizado' => createMessage(array("type" => 1, "message" => (!empty($input['message']) ? $input['message'] : ''))),
 		'anulacionExitosa' => createMessage(array("type" => 1, "message" => 'Se ha anulado la cotización correctamente')),
 		'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
+		'registroInvalido' => createMessage(array("type" => 2, "message" => 'Hubo un error al registrar los datos')),
 	];
 
 	return $mensaje[$tipoMensaje];
