@@ -47,7 +47,7 @@ var ServicioProveedor = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedorServicio", fn: "ServicioProveedor.registrarProveedorServicio()", content: "¿Esta seguro de registrar el pago?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedorServicio", fn: "ServicioProveedor.registrarProveedorServicio()", content: "¿Esta seguro de registrar el Servicio Proveedor?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -73,7 +73,7 @@ var ServicioProveedor = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formActualizarProveedorServicio", fn: "ServicioProveedor.actualizarServicioProveedor()", content: "¿Esta seguro de actualizar el Pago del Proveedor de Servicio?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formActualizarProveedorServicio", fn: "ServicioProveedor.actualizarServicioProveedor()", content: "¿Esta seguro de actualizar el Servicio Proveedor?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
 				
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
@@ -156,6 +156,79 @@ var ServicioProveedor = {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarProveedorServicio')) };
 		let url = ServicioProveedor.url + "actualizarServicioProveedor";
 		let config = { url: url, data: jsonString };
+        let jsonData = JSON.parse(jsonString.data);
+		let numero = jsonData.numeroContacto;
+		let documento = jsonData.tipoDocumento;
+		let numeroDocumento_ = jsonData.numeroDocumento;
+		let correo = jsonData.correoContacto;
+		let titulo = 'Alerta!!';
+
+		switch (documento) {
+			case 'DNI':
+
+				if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
+
+					var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+
+				break;
+			case 'RUC':
+
+				if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
+
+					var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+
+				break;
+			case 'CE':
+
+				if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
+
+					var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
+					var btn = [];
+					let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+					btn[0] = { title: 'Continuar', fn: fn };
+					Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+					return false;
+				}
+
+				break;
+		}
+
+		if (!numero.match(/^\d{9}$/)) {
+
+			var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
+			return false;
+		}
+
+		if (!Fn.validators.email.expr.test(correo)) {
+
+			var contenidoCorreo = 'Correo inválido!!.';
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
+			return false;
+		}
 
 		$.when(Fn.ajax(config)).then(function (b) {
 			++modalId;
