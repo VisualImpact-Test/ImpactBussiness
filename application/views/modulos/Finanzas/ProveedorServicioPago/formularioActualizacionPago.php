@@ -65,7 +65,7 @@
 				<fieldset class="scheduler-border">
 					<legend class="scheduler-border">Descripción Servicio</legend>
 					<div class="control-group child-divcenter row" style="width:85%">
-						<textarea class="form-control col-md-12" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."></textarea>
+						<textarea class="form-control col-md-12" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."><?= $data['descripcionServicio'] ?></textarea>
 					</div>
 				</fieldset>
 			</div>
