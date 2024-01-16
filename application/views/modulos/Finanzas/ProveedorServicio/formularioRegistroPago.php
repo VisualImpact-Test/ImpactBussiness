@@ -8,9 +8,9 @@
 					<select class="form-control proveedorServicio col-md-8 simpleDropdown" name="proveedorServicio" patron="requerido">
 						<?= htmlSelectOptionArray2(['title' => 'Proveedores Servicio', 'id' => 'idProveedorServicio', 'value' => 'razonSocial', 'query' => $proveedorServicio, 'class' => 'text-titlecase']); ?>
 					</select>
-					<div class="input-group-append align-items-center" id="button-addon4">
+					<!--<div class="input-group-append align-items-center" id="button-addon4">
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregar-proveedor-servicio" title="Agregar Proveedor Servicio"><i class="fa fa-lg fa-plus"></i></a>
-					</div>
+					</div>-->
 				</div>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
 					<label class="form-control border-0 col-md-4">Moneda:</label>
