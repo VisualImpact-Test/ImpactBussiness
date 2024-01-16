@@ -31,7 +31,7 @@
 									<i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i>
 								</a>
 							<?php endif; ?>
-							<?php if (!empty($row['ocGen']) || !empty($row['flagOcLibre']) == 0) :  ?>
+							<?php if ((!empty($row['ocGen']) || !empty($row['flagOcLibre']) == 0) && !empty($row['idOrdenCompra'])) :  ?>
 								<a href="<?= index_page() . '../FormularioProveedor/viewOrdenCompra/' . $row['idOrdenCompra'] . '/' . $row['flagOcLibre'] . $row['link'] ?>" class="btn btn-outline-secondary border-0 btn-OC btn-dp-<?= $row['idCotizacion']; ?>">
 									<i class="icon file alternate outline" title="Validar OC"></i>
 								</a>

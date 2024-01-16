@@ -1384,7 +1384,7 @@ class M_Cotizacion extends MY_Model
 			JOIN compras.cotizacionDetalle cdl ON cdl.idCotizacionDetalle = cd.idCotizacionDetalle
 			JOIN compras.proveedor p ON p.idProveedor = c.idProveedor
 			WHERE
-			1 = 1
+			c.estado = 1
 			AND (cd.costo IS NOT NULL AND cd.costo <> 0)
 			{$filtros}
 			{$sqlUnion}

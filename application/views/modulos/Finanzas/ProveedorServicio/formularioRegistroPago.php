@@ -25,29 +25,19 @@
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
 					<label class="form-control border-0 col-md-4">FRECUENCIA:</label>
 					<select class="form-control frecuenciaPago col-md-8 simpleDropdown" name="frecuenciaPago" patron="requerido">
-						<?= htmlSelectOptionArray2(['title' => 'Frecuencia Pago', 'id' => 'idFrecuenciaPago', 'value' => 'nombre', 
-						'query' => $frecuenciaPago, 'class' => 'text-titlecase']); ?>
+						<?= htmlSelectOptionArray2([
+							'title' => 'Frecuencia Pago', 'id' => 'idFrecuenciaPago', 'value' => 'nombre',
+							'query' => $frecuenciaPago, 'class' => 'text-titlecase'
+						]); ?>
 					</select>
 				</div>
 				<div class="control-group child-divcenter row pt-2" style="width: 85%">
-					<label class="col-md-4 border-0 col-form-label">FECHA INICIO:</label>
-					<div class="ui calendar date-semantic">
-						<div class="ui input left icon">
-							<i class="calendar icon"></i>
-							<input type="text" id="fechaInicio" name="fechaInicio" class="form-control" placeholder="Fecha Inicio" value="">
-						</div>
-					</div>
-					<input type="hidden" class="date-semantic-value" name="deadlineInicio" patron="requerido" value="">
+					<label class="form-control border-0 col-md-4">FECHA INICIO:</label>
+					<input class="form-control col-md-8" name="fechaInicio" type="date">
 				</div>
 				<div class="control-group child-divcenter row pt-2" style="width: 85%">
-					<label class="col-md-4 border-0 col-form-label">FECHA TERMINO:</label>
-					<div class="ui calendar date-semantic">
-						<div class="ui input left icon">
-							<i class="calendar icon"></i>
-							<input type="text" id="fechaTermino" name="fechaTermino" class="form-control" placeholder="Fecha Termino" value="">
-						</div>
-					</div>
-					<input type="hidden" class="date-semantic-value" name="deadlineTermino" value="">
+					<label class="form-control border-0 col-md-4">FECHA TERMINO:</label>
+					<input class="form-control col-md-8" name="fechaTermino" type="date">
 				</div>
 			</fieldset>
 		</div>
@@ -63,7 +53,7 @@
 					</div>
 				</div>
 				<div class="control-group child-divcenter row pt-2 fijo d-none" style="width:85%">
-					<label class="form-control border-0 col-md-4">Monto(S/):</label>
+					<label class="form-control border-0 col-md-4">Monto:</label>
 					<input class="form-control col-md-8 onlyNumbers" type="number" id="monto" name="monto">
 				</div>
 			</fieldset>

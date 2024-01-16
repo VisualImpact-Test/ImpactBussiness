@@ -24,9 +24,9 @@ var ProveedorServicio = {
 		$(document).on('click', '.btn-actualizar-estado', function () {
 			++modalId;
 
-			let idProveedorServicio = $(this).data('id');
+			let idProveedorServicioPago = $(this).data('id');
 			let estado = $(this).data('estado');
-			let data = { 'idProveedorServicio': idProveedorServicio, 'estado': estado };
+			let data = { 'idProveedorServicioPago': idProveedorServicioPago, 'estado': estado };
 
 			console.log(JSON.stringify(data));
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -55,6 +55,18 @@ var ProveedorServicio = {
 
 			let jsonString = { 'data': '' };
 			let config = { 'url': ProveedorServicio.url + 'formularioRegistroProveedorServicioPago', 'data': jsonString };
+			
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedorServicioPago", fn: "ProveedorServicio.registrarProveedorServicioPago()", content: "¿Esta seguro de registrar el pago del proveedor?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
 		});
 
 		$(document).on('click', '#btn-proveedor', function () {
@@ -78,7 +90,7 @@ var ProveedorServicio = {
 			});
 		});
 
-		$(document).on('click', '.btn-editar', function () {
+		$(document).on('click', '.btn-actualizarProveedorServicioPago', function () {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('id');
@@ -93,19 +105,10 @@ var ProveedorServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionProveedores", fn: "Proveedor.actualizarProveedor()", content: "¿Esta seguro de actualizar el proveedor?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formActualizacionProveedorServicioPago", fn: "ProveedorServicio.actualizarProveedorServicioPago()", content: "¿Esta seguro de actualizar el Pago del Proveedor de Servicio?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
-
+				
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
-				Fn.loadSemanticFunctions();
-				Fn.loadDimmerHover();
-				Proveedor.bancos = a.data.bancos;
-				Proveedor.tiposCuentaBanco = a.data.tiposCuentaBanco;
-				Proveedor.divInfoBancData = '<div class="row InfoBancData">' + $('#divInfoBancData').html() + '</div>';
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedorServicio", fn: "ProveedorServicio.registrarProveedorServicio()", content: "¿Esta seguro de registrar ProveedorServicio?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
-				ProveedorServicio.modalId = modalId;
 			});
 
 		});
@@ -207,6 +210,26 @@ var ProveedorServicio = {
 
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+
+	actualizarProveedorServicioPago: function () {
+		++modalId;
+		var dataFn = Fn.formSerializeObject('formActualizacionProveedorServicioPago');
+		let jsonString = { 'data': JSON.stringify(dataFn) };
+		let config = { 'url': ProveedorServicio.url + 'actualizarProveedorServicioPago', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			if (a.result == 1) {
+				fn[0] = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarProveedorServicio").click();';
+			}
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 		});
 	},
 

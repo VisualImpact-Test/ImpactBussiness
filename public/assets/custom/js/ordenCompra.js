@@ -247,9 +247,18 @@ var Oc = {
 			id = control.closest('.divItem').find('.codItems').val();
 			var divElement = document.querySelector('.input-group-append.divItemBlock');
 			var divElementC = document.querySelectorAll('.input-group-append.divItemBlock');
+			var divElementCDIVCARGA = control.closest('.divItem').find('.divParaCarga');
+			var divElementCDIVCARGAITEMBLOCK = control.closest('.divItem').find('.imagendivCarga');
 			count = divElementC.length;
-			if (id == '') id = 0;
-			else {
+			if (id == '' || id == 0) {
+				id = 0;
+			
+			divElementCDIVCARGAITEMBLOCK.remove();
+			divElementCDIVCARGA.removeClass('d-none');
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
+			
+			} else {
 				if (count == 1) {
 					divElement.remove();
 				} else {

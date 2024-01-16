@@ -289,27 +289,27 @@ class OrdenCompra extends MY_Controller
 			$mostrar_observacion = 1;
 		}
 
-		$countID = 0;
-		foreach ($post['idItemForm'] as $keyItem => $value) {
-			if ($value == 0) {
-				$countID = $countID + 1;
-			}
-		}
+		// $countID = 0;
+		// foreach ($post['idItemForm'] as $keyItem => $value) {
+		// 	if ($value == 0) {
+		// 		$countID = $countID + 1;
+		// 	}
+		// }
 
-		if ($countID > 0) {
-			if (
-				(
-					!isset($post['adjuntoItemFile-item']) ||
-					!isset($post['adjuntoItemFile-name']) ||
-					!isset($post['adjuntoItemFile-type'])) ||
-				$countID != count($post['adjuntoItemFile-item'])
-			) {
-				$result['result'] = 0;
-				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
-				goto respuesta;
-			}
-		}
+		// if ($countID > 0) {
+		// 	if (
+		// 		(
+		// 			!isset($post['adjuntoItemFile-item']) ||
+		// 			!isset($post['adjuntoItemFile-name']) ||
+		// 			!isset($post['adjuntoItemFile-type'])) ||
+		// 		$countID != count($post['adjuntoItemFile-item'])
+		// 	) {
+		// 		$result['result'] = 0;
+		// 		$result['msg']['title'] = 'Alerta!';
+		// 		$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
+		// 		goto respuesta;
+		// 	}
+		// }
 
 		$insertData = [
 			'requerimiento' => $post['requerimiento'],
@@ -496,7 +496,7 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
-
+		/*
 		$countID = 0;
 		foreach ($post['idItemForm'] as $keyItem => $value) {
 			if ($value == 0) {
@@ -517,7 +517,7 @@ class OrdenCompra extends MY_Controller
 				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
 				goto respuesta;
 			}
-		}
+		}*/
 		$mostrar_observacion = 0;
 		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;
