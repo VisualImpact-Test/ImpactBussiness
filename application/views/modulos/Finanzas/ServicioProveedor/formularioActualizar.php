@@ -76,20 +76,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroDocumento">Número de Documento:</label>
-                <input type="text" class="form-control" id="numeroDocumento" value="<?
-
-                                                                                    if (!empty($datos[0]['dni'])) {
-
-                                                                                        echo $datos[0]['dni'];
-                                                                                    } else if (!empty($datos[0]['ruc'])) {
-
-                                                                                        echo $datos[0]['ruc'];
-                                                                                    } else if (!empty($datos[0]['carnet_extranjeria'])) {
-
-                                                                                        echo $datos[0]['carnet_extranjeria'];
-                                                                                    }
-
-                                                                                    ?>" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" id="numeroDocumento" value="<? if (!empty($datos[0]['dni'])) { echo $datos[0]['dni']; } else if (!empty($datos[0]['ruc'])) { echo $datos[0]['ruc']; } else if (!empty($datos[0]['carnet_extranjeria'])) { echo $datos[0]['carnet_extranjeria']; }?>" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
@@ -158,7 +145,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
-                <input type="tel" class="form-control" value="<?= !empty($datos[0]['numeroContacto']) ? $datos[0]['numeroContacto'] : ''; ?>" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" value="<?= !empty($datos[0]['numeroContacto']) ? $datos[0]['numeroContacto'] : ''; ?>" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">

@@ -59,7 +59,7 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroDocumento">Número de Documento:</label>
-                <input type="text" class="form-control" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" id="numeroDocumento" name="numeroDocumento" placeholder="Ingrese el número del documento" pattern="\d{8,11}" maxlength="11" title="El número del documento debe contener entre 8 y 11 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
@@ -129,7 +129,7 @@
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
                 <!-- Se agrega pattern y maxlength para la validación de 9 números -->
-                <input type="tel" class="form-control" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
             </div>
         </div>
         <div class="col-md-4">
