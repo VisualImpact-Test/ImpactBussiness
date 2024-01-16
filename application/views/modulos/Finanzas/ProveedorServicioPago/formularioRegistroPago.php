@@ -33,7 +33,7 @@
 				</div>
 				<div class="control-group child-divcenter row pt-2" style="width: 85%">
 					<label class="form-control border-0 col-md-4">FECHA INICIO:</label>
-					<input class="form-control col-md-8" name="fechaInicio" type="date">
+					<input class="form-control col-md-8" patron="requerido" name="fechaInicio" type="date">
 				</div>
 				<div class="control-group child-divcenter row pt-2" style="width: 85%">
 					<label class="form-control border-0 col-md-4">FECHA TERMINO:</label>
@@ -64,7 +64,7 @@
 			<fieldset class="scheduler-border">
 				<legend class="scheduler-border">Descripción Servicio</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
-					<textarea class="form-control col-md-12" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."></textarea>
+					<textarea class="form-control col-md-12" patron="requerido" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."></textarea>
 				</div>
 			</fieldset>
 		</div>
