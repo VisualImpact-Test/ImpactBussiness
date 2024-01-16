@@ -27,7 +27,7 @@ class ProveedorServicioPago extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
 			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
-			'assets/custom/js/Finanzas/proveedorServicioPago'
+			'assets/custom/js/Finanzas/proveedorServicio'
 		);
 
 		$config['data']['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();

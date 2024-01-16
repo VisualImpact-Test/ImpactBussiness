@@ -10,7 +10,7 @@
 			<div class="card-body p-0">
 				<ul class="nav nav-tabs nav-justified">
 					<li class="nav-item btnReporte" id="tipoReporte" name="tipoReporte" url="visibilidad">
-						<a data-toggle="tab" href="#idContentProveedorDocumento" class="active nav-link" data-value="1">Detalle</a>
+						<a data-toggle="tab" href="#idContentReporteFinanzas" class="active nav-link" data-value="1">Detalle</a>
 					</li>
 				</ul>
 			</div>
@@ -24,7 +24,7 @@
 		<i class="fal fa-cog fa-lg fa-spin"></i>
 	</a>
 	<div class="customizer-content p-2 ps-container ps-theme-dark" data-ps-id="aca1f25c-4ed9-a04b-d154-95a5d6494748">
-		<form id="frm-proveedorServicio">
+		<form id="frm-reporteFinanzas">
 			<div class="card-header" style="margin-bottom: 14px;justify-content: center;">
 				<h4>CONFIGURACIÓN</h4>
 			</div>
@@ -32,15 +32,10 @@
 				<input type="hidden" id="idTipoFormato" name="tipoFormato" value="1">
 			</div>
 			<div class="customizer-content-button center-items">
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarProveedorServicio" title="Consultar">
+				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarReporteFinanzas" title="Consultar">
 					<i class="fa fa-search"></i>
 				</button>
-				<button type="button" class="btn btn-outline-trade-visual border-0" id="btn-proveedor" title="Proveedor">
-					<i class="fa fa-user"></i>
-				</button>
-				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="registrar" id="btn-registrarProveedorServicioPago" title="Nuevo Pago">
-					<i class="fas fa-plus"></i><span class="txt_filtro"></span>
-				</button>
+				
 			</div>
 			<hr>
 			<div class="customizer-content-filter">
@@ -48,17 +43,37 @@
 				<div class="form-row">
 					<div class="col-md-12">
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Proveedor Servicio</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="idProveedorServicio">
-								<?= htmlSelectOptionArray2(['query' => $proveedorServicio, 'class' => 'text-titlecase', 'title' => 'Seleccione', 'id' => 'idProveedorServicio', 'value' => 'razonSocial']); ?>
+							<span class="tooltiptext">Proveedor</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="idProveedor">
+								<?= htmlSelectOptionArray2(['query' => $proveedor, 'class' => 'text-titlecase', 'title' => 'Todos los proveedores', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Estado</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="estadoProveedorServicioPago" id="estadoProveedorServicioPago">
-								<?= htmlSelectOptionArray2(['query' => $estado, 'class' => 'text-titlecase', 'title' => 'Seleccione', 'id' => 'idProveedorEstado', 'value' => 'nombre']); ?>
+							<span class="tooltiptext">Cuenta</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="idCuenta">
+								<?= htmlSelectOptionArray2(['query' => $cuenta, 'class' => 'text-titlecase', 'title' => 'Todas las cuentas']); ?>
 							</select>
 						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Inicio</span>
+							<div class="ui fluid calendar date-semantic" data-fechainicio="#fechaFinFiltro" id="fechaInicioFiltro">
+								<div class="ui mini input left fluid">
+									<input type="text" placeholder="Fecha Inicio" value="">
+								</div>
+							</div>
+							<input type="hidden" class="date-semantic-value" name="fechaInicio" value="">
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Fin</span>
+							<div class="ui fluid calendar date-semantic" data-fechafinal="#fechaInicioFiltro" id="fechaFinFiltro">
+								<div class="ui mini input left fluid">
+									<input type="text" placeholder="Fecha Fin" value="">
+								</div>
+							</div>
+							<input type="hidden" class="date-semantic-value" name="fechaFinal" value="">
+						</div>
+
+						
 					</div>
 				</div>
 			</div>
@@ -75,7 +90,7 @@
 <div class="main-card mb-3 card">
 	<div class="card-body p-0">
 		<div class="tab-content" id="content-auditoria">
-			<div class="tab-pane fade show active" id="idProveedorServicio" role="tabpanel">
+			<div class="tab-pane fade show active" id="reporteFinanzas" role="tabpanel">
 				<?= getMensajeGestion('noResultados') ?>
 			</div>
 		</div>

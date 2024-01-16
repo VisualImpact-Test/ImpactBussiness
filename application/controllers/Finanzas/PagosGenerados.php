@@ -72,11 +72,12 @@ class PagosGenerados extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista = [];
 		$dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGenerados($post)['query']->result_array();
+		//echo $this->db->last_query();exit();
 		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 
-		//echo $this->db->last_query();exit();
+		
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Proveedor';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/formularioRegistro", $dataParaVista, true);
@@ -98,7 +99,8 @@ class PagosGenerados extends MY_Controller
 			'monto' => $post['monto'],
 			'porcentajeDetraccion' => $post['porcentajeDetraccion'],
 			'montoDetraccion' => $post['montoDetraccion'],
-			'idCentroCosto' => $post['cboCentroCosto'],
+			'idCuenta' => $post['cuentaForm'],
+			'idCentroCosto' => $post['centroCostoForm'],
 			'flagDetraccion' => $flagdetraccion ,
 			'idEstadoPago' => '2',
 		];
