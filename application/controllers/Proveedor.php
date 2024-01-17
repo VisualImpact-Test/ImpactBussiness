@@ -505,6 +505,7 @@ class Proveedor extends MY_Controller
 				$archivoName = $this->saveFileWasabi($archivo);
 				$tipoArchivo = explode('/', $archivo['type']);
 				$insertArchivos[] = [
+					'idInformacionBancariaProveedor' => null,
 					'idProveedor' => $idProveedor,
 					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 					'nombre_inicial' => $archivo['name'],
