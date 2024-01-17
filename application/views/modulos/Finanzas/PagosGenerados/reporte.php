@@ -32,13 +32,13 @@
 				<td><?= $row['razonSocial']; ?></td>
 				<td><?= $row['ruc']; ?></td>
                 <td><?= $row['descripcionServicio']; ?></td>
-				<td><?= $row['monto']; ?></td>
+				<td class="text-right"><?= $row['monto']; ?></td>
 			
-				<td><?= $row['fechaProgramada']; ?></td>
-				<td><?= $row['numeroComprobante']; ?></td>
-				<td><?= $row['canal']; ?></td>
-				<td><?= $row['porcentajeDetraccion']; ?></td>
-				<td><?= $row['nombreEstado']; ?></td>
+				<td class="text-center"><?= getFechaDias($row['fechaProgramada']);  ?></td>
+				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
+				<td class="text-center"><?= $row['canal']; ?></td>
+				<td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td>
+				<td class="text-center"><?= $row['nombreEstado']; ?></td>
 	
 
 			</tr>
