@@ -75,7 +75,7 @@ class ProveedorServicioPago extends MY_Controller
 		$result = $this->result;
 
 		$dataParaVista = [];
-		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
+		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio', array('idProveedorEstado' => '2'))->result_array();
 		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', array('estado' => '1'))->result_array();
 		$dataParaVista['frecuenciaPago'] = $this->db->get_where('finanzas.frecuenciaPagoProveedorServicioPago', array('estado' => '1'))->result_array();
 
@@ -93,7 +93,7 @@ class ProveedorServicioPago extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['proveedorServicioPago'] = $this->model->obtenerProveedorServicio(['idProveedorServicioPago' => $post['idProveedorServicioPago']])['query']->result_array();
-		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
+		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio', array('idProveedorEstado' => '2'))->result_array();
 		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', array('estado' => '1'))->result_array();
 		$dataParaVista['frecuenciaPago'] = $this->db->get_where('finanzas.frecuenciaPagoProveedorServicioPago', array('estado' => '1'))->result_array();
 
