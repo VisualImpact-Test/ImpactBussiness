@@ -109,14 +109,14 @@
         <div class="col-md-4">
             <div class="form-group">
                 <label for="nombreContacto">Nombre de Contacto:</label>
-                <input type="text" class="form-control" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto" patron="requerido">
+                <input type="text" class="form-control" id="nombreContacto" name="nombreContacto" placeholder="Ingrese el Nombre de Contacto">
             </div>
         </div>
         <div class="col-md-4">
             <div class="form-group">
                 <label for="numeroContacto">Número de Contacto:</label>
                 <!-- Se agrega pattern y maxlength para la validación de 9 números -->
-                <input type="tel" class="form-control onlyNumbers" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos." patron="requerido">
+                <input type="tel" class="form-control onlyNumbers" id="numeroContacto" name="numeroContacto" placeholder="Ingrese el Número de Contacto" pattern="\d{9}" maxlength="9" title="El número de contacto debe contener 9 dígitos numéricos.">
             </div>
         </div>
     </div>
@@ -126,7 +126,7 @@
             <div class="form-group">
                 <label for="correoContacto">Correo de Contacto:</label>
                 <!-- El tipo email ya incorpora la validación de formato de correo electrónico -->
-                <input type="email" class="form-control" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto" patron="requerido">
+                <input type="email" class="form-control" id="correoContacto" name="correoContacto" placeholder="Ingrese el Correo de Contacto">
             </div>
         </div>
 

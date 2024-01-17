@@ -53,6 +53,29 @@ class M_Finanzas extends MY_Model
 		return $this->resultado;
 	}
 
+	public function seleccionarProveedorServicio($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['idProveedorServicio']) ? ' OR idProveedorServicio = ' . $params['idProveedorServicio'] : '';
+
+		$sql = "
+			select idProveedorServicio, razonSocial from finanzas.proveedorServicio
+			
+			WHERE
+			idProveedorEstado = 2
+			{$filtros}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	public function insertarProveedorServicioPago($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
@@ -65,7 +88,7 @@ class M_Finanzas extends MY_Model
 
 		return $this->resultado;
 	}
-	
+
 	public function actualizarProveedorServicioPago($params = [])
 	{
 		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
@@ -78,10 +101,4 @@ class M_Finanzas extends MY_Model
 
 		return $this->resultado;
 	}
-
-
-
-	
-
-	
 }

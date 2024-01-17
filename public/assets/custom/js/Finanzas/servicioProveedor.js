@@ -292,16 +292,16 @@ var ServicioProveedor = {
                 break;
         }
 
-        if (!numero.match(/^\d{9}$/)) {
+        // if (!numero.match(/^\d{9}$/)) {
 
-            var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
-            var btn = [];
-            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+        //     var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
+        //     var btn = [];
+        //     let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-            btn[0] = { title: 'Continuar', fn: fn };
-            Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
-            return false;
-        }
+        //     btn[0] = { title: 'Continuar', fn: fn };
+        //     Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
+        //     return false;
+        // }
 
         if (!Fn.validators.email.expr.test(correo)) {
 
@@ -356,7 +356,7 @@ var ServicioProveedor = {
                 }
 
                 break;
-                
+
             case 'RUC':
 
                 if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
