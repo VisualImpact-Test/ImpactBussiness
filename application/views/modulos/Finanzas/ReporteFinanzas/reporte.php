@@ -43,11 +43,11 @@
                 <td><?= $row['descripcionServicio']; ?></td>
                 
                 <td class="text-center"><?= $row['moneda']; ?></td>
-				<td class="text-right"><?= numeroVista($row['monto']); ?></td>
+				<td class="text-right"><?= ($row['idEstadoPago']== 1 ) ? '-' :  numeroVista($row['monto']); ?></td>
                 <td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td>
-                <td class="text-right"><?= numeroVista($row['montoDetraccion']); ?></td>
-                <td class="text-center"><?=  date("d/m/Y", strtotime($row['fechaProgramada'])); ?></td>
-				<td class="text-center"><?=  date("d/m/Y", strtotime($row['fechaPagoComprobante'])); ?></td>
+                <td class="text-right"><?= ($row['idEstadoPago']== 1 ) ? '-' :  numeroVista($row['montoDetraccion']); ?></td>
+                <td class="text-center"><?= getFechaDias($row['fechaProgramada']); ?></td>
+				<td class="text-center"><?= ($row['idEstadoPago']== 1 ) ? '-' :  getFechaDias($row['fechaPagoComprobante']);   ?></td>
 				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
                 <?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
 				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $row['nombreEstado']; ?></span></td>
