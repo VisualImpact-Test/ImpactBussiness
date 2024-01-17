@@ -141,7 +141,7 @@
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['razonSocial']; ?></td>
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['tipoElemento']; ?></td>
 						<td class="text-center" rowspan="<?= count($value); ?>"><?= $value[0]['marca']; ?></td>
-						<td class="text-center" rowspan="1"><?= $value[0]['nombre']; ?></td>
+						<td class="text-left" rowspan="1"><?= $value[0]['nombre']; ?></td>
 						<td class="text-center" rowspan="1"><?= $value[0]['cantidad']; ?></td>
 						<?php if ($cabecera['mostrarPrecio']) : ?>
 							<?php if ($redondear) : ?>
@@ -155,13 +155,13 @@
 					<?php foreach ($value as $k => $v) : ?>
 						<?php if ($k != 0) : ?>
 							<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
-								<td class="text-center" rowspan="1"><?= $v['nombre']; ?></td>
+								<td class="text-left" rowspan="1"><?= $v['nombre']; ?></td>
 								<td class="text-center" rowspan="1"><?= $v['cantidad']; ?></td>
 								<?php if ($cabecera['mostrarPrecio']) : ?>
 									<?php if ($redondear) : ?>
-										<td class="text-center" rowspan="1"><?= ceil($v['costo'] * ($row['gap'] + 100) / 100); ?></td>
+										<td class="text-center" rowspan="1"><?= moneda(ceil($v['costo'] * ($row['gap'] + 100) / 100)); ?></td>
 									<?php else : ?>
-										<td class="text-center" rowspan="1"><?= $v['costo'] * ($row['gap'] + 100) / 100; ?></td>
+										<td class="text-center" rowspan="1"><?= moneda($v['costo'] * ($row['gap'] + 100) / 100); ?></td>
 									<?php endif; ?>
 								<?php endif; ?>
 							</tr>

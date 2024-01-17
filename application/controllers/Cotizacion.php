@@ -94,7 +94,7 @@ class Cotizacion extends MY_Controller
 
 		$dataParaVista['idCotizacion'] = $post['idCotizacion'];
 		$data['datosCot'] = $this->model->obtenerInformacionCotizacionGR_ORDENCOMPRA($dataParaVista['idCotizacion'])->result_array();
-		
+
 		$data['datosCotGR'] = $this->model->obtenerCotizacionGR($dataParaVista['idCotizacion'])->result_array();
 		//echo $this->db->last_query();exit();
 		//var_dump($data['datosCotGR']);
@@ -118,7 +118,7 @@ class Cotizacion extends MY_Controller
 		];
 		$this->db->update('compras.cotizacion', $datos, ['idCotizacion' => $idCotizacion]);
 
-		
+
 		$insertGR = [
 			'numeroGR' => checkAndConvertToArray($post['numeroGR']),
 			'fechaGR' => checkAndConvertToArray($post['fechaGR']),
@@ -128,8 +128,8 @@ class Cotizacion extends MY_Controller
 		foreach ($insertGR['numeroGR'] as $key => $numeroGR) {
 			$fechaGR = $insertGR['fechaGR'][$key];
 			$idCotizacion = $insertGR['idCotizacion'];
-			
-			if (!empty($numeroGR)) { 
+
+			if (!empty($numeroGR)) {
 				$data[] = [
 					'numeroGR' => $numeroGR,
 					'fechaGR' => $fechaGR,
@@ -137,7 +137,7 @@ class Cotizacion extends MY_Controller
 				];
 			}
 		}
-		if (!empty($data)) { 
+		if (!empty($data)) {
 			$this->db->insert_batch('compras.cotizacionGr', $data);
 		}
 		//$idSincerado = $this->db->insert_id();
@@ -3030,13 +3030,13 @@ class Cotizacion extends MY_Controller
 			$post['id'] = $t;
 		}
 
-		if($flag == 0) {
+		if ($flag == 0) {
 			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedor(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
-		}  else {
+		} else {
 			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedorOC(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
 		}
 
-		
+
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
 
@@ -3068,7 +3068,7 @@ class Cotizacion extends MY_Controller
 			elseif ($flag == 1)
 				$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->select('*, idGenero as genero')->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
 		}
-		
+
 		$ids = [];
 		foreach ($ordenCompra as $v) {
 			$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle($v['idCotizacion']);
@@ -3077,9 +3077,8 @@ class Cotizacion extends MY_Controller
 			$cuentas[$cuenta] = $this->db->get_where('rrhh.dbo.Empresa', ['idEmpresa' => $cuenta])->row_array()['nombre'];
 			$centrosDeCosto[$centroCosto] = $this->db->get_where('rrhh.dbo.empresa_Canal', ['idEmpresaCanal' => $centroCosto])->row_array()['subcanal'];
 			$ids[] = $v['idCotizacion'];
-			
 		}
-		
+
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
