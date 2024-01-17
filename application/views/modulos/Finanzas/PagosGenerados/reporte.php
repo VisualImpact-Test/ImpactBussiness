@@ -38,7 +38,9 @@
 				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
 				<td class="text-center"><?= $row['canal']; ?></td>
 				<td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td>
-				<td class="text-center"><?= $row['nombreEstado']; ?></td>
+				<?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
+				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $row['nombreEstado']; ?></span></td>
+	
 	
 
 			</tr>
