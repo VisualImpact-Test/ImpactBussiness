@@ -9,7 +9,7 @@
                     $fechaObjeto = new DateTime($diasValidez[0]['fechaReg']);
                     $fechaReg = $fechaObjeto->format("m/d/Y");
                     ?>
-                    <input type="number" class="form-control" id="diasValidez" name="diasValidez" value="<?= verificarEmpty($diasValidez[0]['diasValidez'], 3); ?>">
+                    <input type="number" class="form-control keyUpChange onlyNumbers" id="diasValidez" name="diasValidez" value="<?= verificarEmpty($diasValidez[0]['diasValidez'], 3); ?>">
                     <input type="number" class="form-control d-none" id="idCotizacion" name="idCotizacion" value="<?= $idCotizacion; ?>">
                     <input type="text" class="form-control d-none" id="fechaReg" name="fechaReg" value="<?= verificarEmpty($fechaReg); ?>">
                 </div>
