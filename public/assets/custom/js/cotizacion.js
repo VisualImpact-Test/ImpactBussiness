@@ -899,10 +899,11 @@ var Cotizacion = {
 				let btn = [];
 				let fn = [];
 	
-				fn[0] = 'Fn.showConfirm({ idForm: "formActualizarValidez", fn: "Cotizacion.actualizarValidez()", content: "¿Esta seguro de actualizar los dias de validez?" });';
-				btn[0] = { title: 'Actualizar', fn: fn[0] };
-				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[1] = { title: 'Cerrar', fn: fn[1] };
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formActualizarValidez", fn: "Cotizacion.actualizarValidez()", content: "¿Esta seguro de actualizar los dias de validez?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+				
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '18%' });
 	
 			});
