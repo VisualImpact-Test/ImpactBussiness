@@ -1,3 +1,8 @@
+<style>
+	#validez {
+    cursor: pointer; /* Esto cambiará el cursor a una mano al pasar sobre el div */
+}
+</style>
 <div class="card-datatable">
 	<table id="tb-cotizacion" class="ui celled table" width="100%">
 		<thead>
@@ -66,7 +71,7 @@
 						<?php endif; ?>
 						<?php if (!$row['cotizacionValidaCliente']) :  ?>
 							<br>
-							<div class="ui pointing red basic label">
+							<div class="ui pointing red basic label" id="validez">
 								Cotizacion no válida
 							</div>
 						<?php elseif (

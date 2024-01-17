@@ -4781,4 +4781,54 @@ class Cotizacion extends MY_Controller
 		$this->model->insertarMasivo('compras.cotizacionLinea', $insertLinea);
 		echo json_encode($result);
 	}
+
+	public function formularioActualizarValidez()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista['idCotizacion'] = $post['idCotizacion'];
+		$dataParaVista['diasValidez'] = $this->model->obtenerCotizacion($post)['query']->result_array();
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Actualizar Validez';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/viewFormularioActualizarValidez", $dataParaVista, true);
+
+		echo json_encode($result);
+		
+	}
+
+
+	public function actualizarValidez()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data['update'] = [
+
+			'diasValidez' => $post['diasValidez']
+
+		];
+
+		$data['tabla'] = 'compras.cotizacion';
+        $data['where'] = ['idCotizacion' => $post['idCotizacion']];
+		$insert = $this->model->actualizarCotizacion($data);
+
+        if (!$insert) {
+            $result['result'] = 0;
+            $result['msg']['title'] = 'Alerta!';
+            $result['msg']['content'] = getMensajeGestion('registroErroneo');
+            goto respuesta;
+        } else {
+            $result['result'] = 1;
+            $result['msg']['title'] = 'Hecho!';
+            $result['msg']['content'] = getMensajeGestion('registroExitoso');
+        }
+
+        respuesta:
+        echo json_encode($result);
+
+
+	}
+	
 }

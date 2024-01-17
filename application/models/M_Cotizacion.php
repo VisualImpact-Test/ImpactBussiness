@@ -355,6 +355,7 @@ class M_Cotizacion extends MY_Model
 			{$filtros}
 			ORDER BY p.idCotizacion DESC
 		";
+
 		$query = $this->db->query($sql);
 		// echo $this->db->last_query();
 		// exit();
@@ -2614,5 +2615,32 @@ class M_Cotizacion extends MY_Model
 				AND idItemTipo=5
 		";
 		return $this->db->query($sql);
+	}
+
+	public function obtenerCotizacion($params = [])
+	{
+
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? ' AND co.idCotizacion = ' . $params['idCotizacion'] : '';
+
+		$sql = "
+			SELECT 
+				ho.fechaReg,
+				co.fechaDeadline,
+				co.fechaRequerida,
+				co.diasValidez
+	   		FROM compras.cotizacion co
+	   		LEFT join compras.cotizacionEstadoHistorico ho ON ho.idCotizacion = co.idCotizacion
+			WHERE 1 = 1
+			{$filtros}";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
 	}
 }

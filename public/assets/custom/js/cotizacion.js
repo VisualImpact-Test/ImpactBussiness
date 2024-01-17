@@ -91,8 +91,13 @@ var SolicitudCotizacion = {
 				SolicitudCotizacion.modalIdForm = modalId;
 			});
 		});
-	},
+
+		
+	}
+
 }
+
+
 
 SolicitudCotizacion.load();
 
@@ -195,7 +200,7 @@ var Cotizacion = {
 			++modalId;
 			let jsonString = { 'idCotizacion': idCotizacion };
 			let config = { 'url': Cotizacion.url + 'formularioIndicarGR', 'data': jsonString };
-			$.when(Fn.ajax(config)).then((a) => {	
+			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
@@ -211,26 +216,26 @@ var Cotizacion = {
 		});
 
 		$(document).on('click', '#btn-agregar-new-gr', function (e) {
-			
+
 			e.preventDefault();
-			var html="";
-			
-			html+='<tr><td class="text-center">';
-			html+='<input type="text" class="form-control form-control-sm" name="numeroGR" value="" >';
-			html+='</td><td class="text-center" width = "30%">';
-			html+='	<div class="ui calendar date-semantic"><div class="ui input left icon"><i class="calendar icon"></i>';
-			html+='	<input type="text" placeholder="Fecha GR" value="">';
-			html+='	</div></div>	';
-			html+='<input type="hidden" class="date-semantic-value" name="fechaGR" placeholder="Fecha GR" value="">';
-			html+='</td><td  width = "10%">';
-			html+='<button id="btn-agregar-new-gr" class="btn btn-sm btn-success" title="GUARDAR"><i class="fas fa-plus"></i></button>';
-			html+='</td></tr>';
-			
-			
+			var html = "";
+
+			html += '<tr><td class="text-center">';
+			html += '<input type="text" class="form-control form-control-sm" name="numeroGR" value="" >';
+			html += '</td><td class="text-center" width = "30%">';
+			html += '	<div class="ui calendar date-semantic"><div class="ui input left icon"><i class="calendar icon"></i>';
+			html += '	<input type="text" placeholder="Fecha GR" value="">';
+			html += '	</div></div>	';
+			html += '<input type="hidden" class="date-semantic-value" name="fechaGR" placeholder="Fecha GR" value="">';
+			html += '</td><td  width = "10%">';
+			html += '<button id="btn-agregar-new-gr" class="btn btn-sm btn-success" title="GUARDAR"><i class="fas fa-plus"></i></button>';
+			html += '</td></tr>';
+
+
 			$('#tbnumeroGR tbody ').append(html);
 			Fn.loadSemanticFunctions();
-			
-			
+
+
 		});
 
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
@@ -779,7 +784,7 @@ var Cotizacion = {
 			var control = $(this);
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-		
+
 		$(document).on('click', '.btn-finalizarCotizacion', function () {
 			let idCotizacion = $(this).closest('tr').data('id');
 			Fn.showConfirm({ idForm: "formRegistroItems", fn: "Cotizacion.finalizarCotizacion(" + idCotizacion + ")", content: "¿Esta seguro que quiere finalizar la cotizacion? " });
@@ -815,19 +820,19 @@ var Cotizacion = {
 			e.preventDefault();
 			let lineaNum = $('input[name="agregarLineaNum"]').val();
 			//console.log(lineaNum);
-			if(lineaNum > 0){
-				var html="";
-				html+='<tr>';
-				html+='<td class="text-center">';
-				html+='<input type="text" class="form-control form-control-sm read-only" name="mail_enviar" value="LINEA" >';
-				html+='</td>';
-				html+='<td width="5%">';
-				html+='<input type="text" class="form-control form-control-sm read-only" name="lineaNum" value="'+lineaNum+'" >';
-				html+='</td>';
-				html+='</tr>';
-			$('#tbLineaNum tr:last').after(html);
+			if (lineaNum > 0) {
+				var html = "";
+				html += '<tr>';
+				html += '<td class="text-center">';
+				html += '<input type="text" class="form-control form-control-sm read-only" name="mail_enviar" value="LINEA" >';
+				html += '</td>';
+				html += '<td width="5%">';
+				html += '<input type="text" class="form-control form-control-sm read-only" name="lineaNum" value="' + lineaNum + '" >';
+				html += '</td>';
+				html += '</tr>';
+				$('#tbLineaNum tr:last').after(html);
 			}
-			$('input[name="agregarLineaNum"]').val("");	
+			$('input[name="agregarLineaNum"]').val("");
 		});
 
 
@@ -879,6 +884,49 @@ var Cotizacion = {
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content, escape: true });
 			});
+		});
+
+		$(document).on('click', '#validez', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+
+			let data = { 'idCotizacion': id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioActualizarValidez', 'data': jsonString };
+	
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showConfirm({ idForm: "formActualizarValidez", fn: "Cotizacion.actualizarValidez()", content: "¿Esta seguro de actualizar los dias de validez?" });';
+				btn[0] = { title: 'Actualizar', fn: fn[0] };
+				fn[1] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[1] = { title: 'Cerrar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '18%' });
+	
+			});
+		});
+
+		$(document).on('change', '#diasValidez', function (e) {
+
+			var dias = parseInt($(this).val());
+            var fechaReg = $('#fechaReg').val();
+            
+            if (!isNaN(dias) && fechaReg) {
+                var fechaInicial = new Date(fechaReg);
+                fechaInicial.setDate(fechaInicial.getDate() + dias);
+                
+                var dd = String(fechaInicial.getDate()).padStart(2, '0');
+                var mm = String(fechaInicial.getMonth() + 1).padStart(2, '0'); // Enero es 0
+                var yyyy = fechaInicial.getFullYear();
+                
+                var fechaFinal = dd + '/' + mm + '/' + yyyy;
+                $('#fechaFinal').val(fechaFinal);
+            } else {
+                $('#fechaFinal').val('');
+            }
+
 		});
 
 	},
@@ -1191,6 +1239,31 @@ var Cotizacion = {
 
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	actualizarValidez: function () {
+
+		++modalId;
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarValidez')) };
+		let config = { 'url': Cotizacion.url + 'actualizarValidez', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
+			let contenido = '<center>Exito!!</center>';
+
+			// Cálculo del ID previo fuera de la cadena.
+			var prevModalId = modalId - 2;
+
+			console.log(prevModalId);
+
+			fn[0] = 'Fn.showModal({ id: ' + modalId + ', show: false });' +
+				'Fn.showModal({ id: ' + prevModalId + ', show: false });';
+
+			btn[0] = { title: 'Aceptar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '25%' });
+			Cotizacion.modalIdForm = modalId;
 		});
 	}
 }
