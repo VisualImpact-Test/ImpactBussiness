@@ -132,7 +132,6 @@ class ServicioProveedor extends MY_Controller
 
         $result = $this->result;
         $post = json_decode($this->input->post('data'), true);
-
         $data = [];
 
         $elementosAValidar = [
@@ -140,13 +139,13 @@ class ServicioProveedor extends MY_Controller
     		'razonSocial' => ['requerido'],	
     		'distrito' => ['requerido'],
     		'direccion' => ['requerido'],
-    		'idProveedorEstado' => ['requerido'],
     		'correoContacto' => ['requerido', 'email'],
     		'nombreContacto' => ['requerido'],
     		'numeroContacto' => ['requerido', 'numerico']
     	];
 
     	$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
+
 
     	if (!verificarSeCumplenValidaciones($resultadoDeValidaciones)) {
             $result['result'] = 0;
@@ -164,10 +163,10 @@ class ServicioProveedor extends MY_Controller
             'razonSocial' => $post['razonSocial'],
             'cod_ubigeo' => $post['distrito'],
             'direccion' => $post['direccion'],
-            'idProveedorEstado' => $post['idProveedorEstado'],
             'nombreContacto' => $post['nombreContacto'],
             'correoContacto' => $post['correoContacto'],
             'numeroContacto' => $post['numeroContacto'],
+            'estado' => 2
             
         ];
 
@@ -180,7 +179,6 @@ class ServicioProveedor extends MY_Controller
                 'razonSocial' => $post['razonSocial'],
                 'cod_ubigeo' => $post['distrito'],
                 'direccion' => $post['direccion'],
-                'idProveedorEstado' => $post['idProveedorEstado'],
                 'nombreContacto' => $post['nombreContacto'],
                 'correoContacto' => $post['correoContacto'],
                 'numeroContacto' => $post['numeroContacto'],
@@ -196,7 +194,6 @@ class ServicioProveedor extends MY_Controller
                 'razonSocial' => $post['razonSocial'],
                 'cod_ubigeo' => $post['distrito'],
                 'direccion' => $post['direccion'],
-                'idProveedorEstado' => $post['idProveedorEstado'],
                 'nombreContacto' => $post['nombreContacto'],
                 'correoContacto' => $post['correoContacto'],
                 'numeroContacto' => $post['numeroContacto'],
@@ -271,7 +268,6 @@ class ServicioProveedor extends MY_Controller
     		'razonSocial' => ['requerido'],	
     		'distrito' => ['requerido'],
     		'direccion' => ['requerido'],
-    		'idProveedorEstado' => ['requerido'],
     		'correoContacto' => ['requerido', 'email'],
     		'nombreContacto' => ['requerido'],
     		'numeroContacto' => ['requerido', 'numerico']
@@ -293,7 +289,6 @@ class ServicioProveedor extends MY_Controller
     			'razonSocial' => $post['razonSocial'],
     			'cod_ubigeo' => $post['distrito'],
     			'direccion' => $post['direccion'],
-    			'idProveedorEstado' => $post['idProveedorEstado'],
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
@@ -307,7 +302,6 @@ class ServicioProveedor extends MY_Controller
     			'razonSocial' => $post['razonSocial'],
     			'cod_ubigeo' => $post['distrito'],
     			'direccion' => $post['direccion'],
-    			'idProveedorEstado' => $post['idProveedorEstado'],
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
@@ -321,7 +315,6 @@ class ServicioProveedor extends MY_Controller
     			'razonSocial' => $post['razonSocial'],
     			'cod_ubigeo' => $post['distrito'],
     			'direccion' => $post['direccion'],
-    			'idProveedorEstado' => $post['idProveedorEstado'],
     			'nombreContacto' => $post['nombreContacto'],
     			'correoContacto' => $post['correoContacto'],
     			'numeroContacto' => $post['numeroContacto'],
