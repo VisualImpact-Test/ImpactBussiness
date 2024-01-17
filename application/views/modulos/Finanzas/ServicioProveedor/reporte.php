@@ -1,3 +1,4 @@
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.2.0/exceljs.min.js"></script> -->
 <div class="card-datatable">
     <table id="tb-servicioProveedor" class="ui celled table" width="100%">
         <thead>
@@ -5,9 +6,8 @@
                 <th class="td-center">#</th>
                 <th>OPCIONES</th>
                 <th>RAZON SOCIAL</th>
-                <th>RUC</th>
-                <th>DNI</th>
-                <th>CARNET EXTRANJERIA</th>
+                <th>TIPO DOCUMENTO</th>
+                <th>NUMERO DOCUMENTO</th>
                 <th>DEPARTAMENTO</th>
                 <th>PROVINCIA</th>
                 <th>DISTRITO</th>
@@ -32,10 +32,37 @@
                             <i class="<?= $row['estadoToggle']; ?>"></i>
                         </a>
                     </td>
+
+                   
                     <td><?= verificarEmpty($row['razonSocial'], 3); ?></td>
-                    <td><?= verificarEmpty($row['ruc'], 3); ?></td>
-                    <td><?= verificarEmpty($row['dni'], 3) ?></td>
-                    <td><?= verificarEmpty($row['carnet_extranjeria'], 3); ?></td>
+
+                    <? if(!empty($row['ruc'])) { ?>
+                        
+                        <td>RUC</td>
+
+                    <? } else if (!empty($row['dni'])) { ?>
+
+                        <td>DNI</td>
+
+                    <? } else if (!empty($row['carnet_extranjeria'])) { ?>
+
+                        <td>CARNET EXTRANJERIA</td>
+
+                    <? } ?>
+
+                    <? if(!empty($row['ruc'])) { ?>
+                        
+                        <td><?= verificarEmpty($row['ruc'], 3); ?></td>
+
+                    <? } else if (!empty($row['dni'])) { ?>
+
+                        <td><?= verificarEmpty($row['dni'], 3) ?></td>
+
+                    <? } else if (!empty($row['carnet_extranjeria'])) { ?>
+
+                        <td><?= verificarEmpty($row['carnet_extranjeria'], 3); ?></td>
+
+                    <? } ?>
                     <td><?= verificarEmpty($row['departamento'], 3); ?></td>
                     <td><?= verificarEmpty($row['provincia'], 3); ?></td>
                     <td><?= verificarEmpty($row['distrito'], 3); ?></td>
@@ -50,8 +77,8 @@
             <?php endforeach; ?>
         </tbody>
     </table>
-</div>
-<!-- <script>
+<!-- </div>
+<script>
     function getAllTextFromTable(tableID) {
         var table = document.getElementById(tableID);
         var rows = table.getElementsByTagName('tr'); // Esto obtiene todas las filas, incluso las no visibles.
@@ -71,7 +98,7 @@
         return data;
     }
 
-    var allData = getAllTextFromTable('tb-proveedorServicio');
+    var allData = getAllTextFromTable('tb-servicioProveedor');
 
     // Esta función crea y descarga el archivo Excel
     function exportToExcel(filename = 'tableData.xlsx') {

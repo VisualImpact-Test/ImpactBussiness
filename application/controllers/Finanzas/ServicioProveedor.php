@@ -139,9 +139,8 @@ class ServicioProveedor extends MY_Controller
     		'razonSocial' => ['requerido'],	
     		'distrito' => ['requerido'],
     		'direccion' => ['requerido'],
-    		'correoContacto' => ['requerido', 'email'],
-    		'nombreContacto' => ['requerido'],
-    		'numeroContacto' => ['requerido', 'numerico']
+    		'correoContacto' => ['email'],
+    		
     	];
 
     	$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
@@ -268,9 +267,7 @@ class ServicioProveedor extends MY_Controller
     		'razonSocial' => ['requerido'],	
     		'distrito' => ['requerido'],
     		'direccion' => ['requerido'],
-    		'correoContacto' => ['requerido', 'email'],
-    		'nombreContacto' => ['requerido'],
-    		'numeroContacto' => ['requerido', 'numerico']
+    		'correoContacto' => ['email']
     	];
 
     	$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
