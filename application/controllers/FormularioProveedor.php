@@ -9,6 +9,7 @@ class FormularioProveedor extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'model');
 		$this->load->model('M_cotizacion', 'm_cotizacion');
 		$this->load->model('M_proveedor', 'm_proveedor');
+		$this->load->model('M_control', 'model_control');
 		$proveedor = $this->session->userdata('proveedor');
 	}
 
@@ -1952,7 +1953,15 @@ class FormularioProveedor extends MY_Controller
 		// 	$ocG[$k]['url'] =
 		// }
 		if (!empty($daC)) {
-			$cfg['to'] = ['eder.alata@visualimpact.com.pe'];
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS);
+
+			$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$toCorreo = [];
+			foreach ($usuariosCorreo as $usuario) {
+				$toCorreo[] = $usuario['email'];
+			}
+
+			$cfg['to'] = $toCorreo;
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
 			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot, 'formatos' => $daD, 'ocG' => $ocG], true);
 			$this->sendEmail($cfg);

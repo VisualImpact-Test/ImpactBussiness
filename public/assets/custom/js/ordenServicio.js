@@ -934,11 +934,14 @@ var OrdenServicio = {
 		})
 
 		let tfoot = $('#tablaAlmacenMonto tfoot tr');
+		totPr = 0;
 		$.each(OrdenServicio.arrayFechas, function (k, v) {
 			$(tfoot.find('.tbAlm_TotalMontoXFecha')[k]).val(tot[k]);
 			$(tfoot.find('.tbAlm_TotalMontoXFecha')[k]).closest('div').find('label').html(tot[k]);
+			totPr += (tot[k] * 1.348);
 			$('#totalColumna_9_' + k).val((tot[k] * 1.348).toFixed(2));
 		});
+		$('#totPresupuesto_9').val(totPr);
 		OrdenServicio.calcularTotalFinal();
 
 	},
@@ -1159,35 +1162,44 @@ var OrdenServicio = {
 	calcularTotalColumna: function (t) {
 		let control = $(t).closest('table').find('tbody').find('tr');
 		let detalle = $(t).data('detalle');
+		tot = 0;
 		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
 				cn += parseFloat($('#montoLDS_' + detalle + '_' + i + '_' + f).val());
 			}
+			tot += cn;
 			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
 		}
+		$('#totPresupuesto_' + detalle).val(tot);
 		OrdenServicio.calcularTotalFinal();
 	},
 	calcularTotalColumnaSueldo: function (t) {
 		let control = $(t).closest('table').find('tbody').find('tr');
 		let detalle = $(t).data('detalle');
+		tot = 0;
 		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
 				let td = $(control[i]).find('td')[f + 1];
 				cn += parseFloat($(td).find('input').val())
 			}
+			tot += cn;
 			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
 		}
+		$('#totPresupuesto_' + detalle).val(tot);
 		OrdenServicio.calcularTotalFinal();
 	},
 	calcularTotalColumnaMovilidad: function () {
+		totPr = 0;
 		$.each(OrdenServicio.arrayFechas, function (k, v) {
 			viaje = parseFloat($('#movilidadViajes_' + k).val());
 			adicional = parseFloat($('#movilidadAdicionales_' + k).val());
 			tot = parseFloat(viaje) + parseFloat(adicional);
+			totPr += tot;
 			$('#totalColumna_8_' + k).val(tot.toFixed(2));
 		});
+		$('#totPresupuesto_8').val(totPr.toFixed(2));
 		OrdenServicio.calcularTotalFinal();
 	},
 	calcularMovilidad: function () {

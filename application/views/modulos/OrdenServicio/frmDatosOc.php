@@ -17,23 +17,20 @@
 			<div class="fields">
 				<div class="sixteen wide field">
 					<label>Monto de OC:</label>
-					<input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($datosOC[0]['montoOc']) ? $datosOC[0]['montoOc'] : '' ?>">
+					<input class="onlyNumbers" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($datosOC[0]['montoOc']) ? $datosOC[0]['montoOc'] : '' ?>">
 				</div>
 			</div>
 			<div class="fields">
-				
-			
 				<div class="four wide field">
-					<div class="ui sub header">FECHA OC</div>
+					<label>Fecha OC: </label>
 					<div class="ui calendar date-semantic">
 						<div class="ui input left icon">
 							<i class="calendar icon"></i>
-							<input type="text" placeholder="FECHA OC" value="<?= !empty($datosOC[0]['fechaOC']) ? $datosOC[0]['fechaOC'] : '' ?>">
+							<input type="text" placeholder="Fecha OC" value="<?= !empty($datosOC[0]['fechaOC']) ? $datosOC[0]['fechaOC'] : '' ?>">
 						</div>
 					</div>
-					<input type="hidden" class="date-semantic-value" name="fechaClienteOC" placeholder="FECHA OC" value="<?= !empty($datosOC[0]['fechaOC']) ? $datosOC[0]['fechaOC'] : '' ?>">
+					<input type="hidden" class="date-semantic-value" name="fechaClienteOC" placeholder="Fecha OC" value="<?= !empty($datosOC[0]['fechaOC']) ? $datosOC[0]['fechaOC'] : '' ?>">
 				</div>
-				
 			</div>
 			<div class="fields">
 				<div class="sixteen wide field">

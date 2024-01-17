@@ -44,24 +44,29 @@
 				<h5 class="text-bold-500"><i class="fal fa-filter"></i> <u>Filtros</u></h5>
 				<div class="form-row">
 					<div class="col-md-12">
+						<!-- 
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Estado</span>
 							<select class="form-control form-control-sm ui my_select2Full" name="estadoOrdenServicio" id="estadoOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $estado, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= '' // htmlSelectOptionArray2(['query' => $estado, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
+								?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Rubro</span>
 							<select class="form-control form-control-sm ui my_select2Full" name="rubroOrdenServicio" id="rubroOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $rubro, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= '' // htmlSelectOptionArray2(['query' => $rubro, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
+								?>
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Metodo Pago</span>
 							<select class="form-control form-control-sm ui my_select2Full" name="metodoPagoOrdenServicio" id="metodoPagoOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $metodoPago, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+								<?= '' // htmlSelectOptionArray2(['query' => $metodoPago, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
+								?>
 							</select>
 						</div>
+						-->
 					</div>
 				</div>
 			</div>

@@ -1383,11 +1383,12 @@ class OrdenServicio extends MY_Controller
 		$this->db->insert_batch('compras.presupuestoCargo', $insertPresupuestoCargo);
 
 		// compras.presupuestoDetalle
-		foreach ($post['idTipoPresupuesto'] as $vd) {
+		foreach ($post['idTipoPresupuesto'] as $kd => $vd) {
 			$insertPresupuestoDetalle = [
 				'idPresupuesto' => $idPresupuesto,
 				'idPresupuestoHistorico' => $idPresupuestoHistorico,
 				'idTipoPresupuesto' => $vd,
+				'monto' => $post['totalPorPresupuesto'][$kd],
 				'idUsuario' => $this->idUsuario,
 				'fechaReg' => getActualDateTime()
 			];
@@ -1766,11 +1767,12 @@ class OrdenServicio extends MY_Controller
 		$this->db->insert_batch('compras.presupuestoCargo', $insertPresupuestoCargo);
 
 		// compras.presupuestoDetalle
-		foreach ($post['idTipoPresupuesto'] as $vd) {
+		foreach ($post['idTipoPresupuesto'] as $kd => $vd) {
 			$insertPresupuestoDetalle = [
 				'idPresupuesto' => $idPresupuesto,
 				'idPresupuestoHistorico' => $idPresupuestoHistorico,
 				'idTipoPresupuesto' => $vd,
+				'monto' => $post['totalPorPresupuesto'][$kd],
 				'idUsuario' => $this->idUsuario,
 				'fechaReg' => getActualDateTime()
 			];
