@@ -41,7 +41,7 @@ class M_ServicioProveedor extends MY_Model
             pe.toggle AS estadoToggle,
             f.estado
           FROM finanzas.proveedorServicio f
-          LEFT JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = f.estado
+          LEFT JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = f.idProveedorEstado
           LEFT JOIN General.dbo.ubigeo u ON u.cod_ubigeo = f.cod_ubigeo
           WHERE 1 = 1 {$filtros}
         ";
