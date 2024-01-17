@@ -33,7 +33,7 @@ class ProveedorServicioPago extends MY_Controller
 		$config['data']['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio')->result_array();
 		$config['data']['estado'] = $this->db->get_where('compras.proveedorEstado', "idProveedorEstado = 2 OR idProveedorEstado = 3")->result_array();
 		$config['data']['icon'] = 'fas fa-dollar-sign';
-		$config['data']['title'] = 'Pagos';
+		$config['data']['title'] = 'Programar Pagos';
 		$config['data']['message'] = 'Lista';
 		$config['view'] = 'modulos/Finanzas/ProveedorServicioPago/index';
 

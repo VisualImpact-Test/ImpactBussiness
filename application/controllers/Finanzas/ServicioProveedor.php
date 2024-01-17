@@ -31,7 +31,7 @@ class ServicioProveedor extends MY_Controller
         );
 
         $config['data']['icon'] = 'fas fa-handshake';
-        $config['data']['title'] = 'Servicio';
+        $config['data']['title'] = 'Proveedor de Servicio';
         $config['data']['message'] = 'Lista';
         $config['view'] = 'modulos/Finanzas/ServicioProveedor/index';
 
