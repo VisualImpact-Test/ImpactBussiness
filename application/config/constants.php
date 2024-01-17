@@ -205,6 +205,7 @@ defined("USER_GERENTE_OPERACIONES") or define("USER_GERENTE_OPERACIONES", 4);
 
 //CORREOS 
 defined("MAIL_DESARROLLO") or define("MAIL_DESARROLLO", ['eder.alata@visualimpact.com.pe']);
+defined("MAIL_FINANZAS") or define("MAIL_FINANZAS", ['lorena.vargas@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_OPERACIONES") or define("MAIL_COORDINADORA_OPERACIONES", ['andrivette.tavara@visualimpact.com.pe', 'margarita.bailon@visualimpact.com.pe', 'tamar.roque@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_COMPRAS") or define("MAIL_COORDINADORA_COMPRAS", ['anghy.vega@visualimpact.com.pe', 'diana.zuniga@visualimpact.com.pe']);
 defined("MAIL_GERENCIA_OPERACIONES") or define("MAIL_GERENCIA_OPERACIONES", ['milenka.gargurevich@visualimpact.com.pe']);

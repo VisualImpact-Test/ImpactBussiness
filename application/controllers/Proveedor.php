@@ -1066,7 +1066,7 @@ class Proveedor extends MY_Controller
 
 	public function enviarCorreo($idProveedor)
 	{
-		$email['to'] = $this->idUsuario == '1' ? MAIL_DESARROLLO : MAIL_COORDINADORA_COMPRAS;
+		$email['to'] = $this->idUsuario == '1' ? MAIL_DESARROLLO : MAIL_FINANZAS;
 
 		$data = [];
 		$dataParaVista = [];
