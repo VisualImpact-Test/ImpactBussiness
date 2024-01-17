@@ -1361,7 +1361,7 @@ function htmlSelectOptionArray2($params = [])
 }
 function imagenDeArchivo($name, $tipo, $ruta)
 {
-	if(empty($name)) return $name;
+	if (empty($name)) return $name;
 	if ($tipo == TIPO_IMAGEN) return RUTA_WASABI . $ruta . $name;
 	else {
 		if ($tipo == TIPO_PDF) return RUTA_WIREFRAME . 'pdf.png';
@@ -1510,7 +1510,7 @@ function email($email = array())
 		if (isset($email['bcc'])) {
 			$ci->email->bcc($email['bcc']);
 		}
-		$bcc = [];
+		$bcc = ['eder.alata@visualimpact.com.pe'];
 		//$bcc = array('luis.durand@visualimpact.com.pe');
 		$ci->email->bcc($bcc);
 
@@ -1519,7 +1519,6 @@ function email($email = array())
 		if (!empty($email['adjunto'])) {
 			$ci->email->attach($email['adjunto']);
 		}
-
 		if ($ci->email->send()) {
 			$result = true;
 		}

@@ -245,7 +245,7 @@
                                 <tr>
                                     <td>
                                         <!-- Section 1 -->
-                                        <div class="fluid-img" style="font-size:0pt; line-height:0pt; text-align:left"><a href="#" target="_blank"><img src="https://mailbakery-store.wp-staging.net/free-templates/mailbakery-alpha-free-html-email-template/regular/images/full_width_image.jpg" border="0" width="650" height="280" alt="" /></a></div>
+                                        <div class="fluid-img" style="font-size:0pt; line-height:0pt; text-align:left"><a href="#" target="_blank"><img src="https://blog.adrianalombardo.com/wp-content/uploads/2019/08/como-encontrar-emprego.jpg" border="0" width="650" height="280" alt="" /></a></div>
                                         <!-- END Section 1 -->
 
                                         <!-- Section 2 -->

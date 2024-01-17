@@ -529,6 +529,7 @@ class Proveedor extends MY_Controller
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Hecho!';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$this->enviarCorreo($idProveedor);
 		}
 
 		$this->db->trans_complete();
@@ -1100,7 +1101,7 @@ class Proveedor extends MY_Controller
 
 		$dataParaVista['link'] = base_url() . index_page() . 'proveedor';
 
-		$email['asunto'] = 'IMPACTBUSSINESS - ACTUALIZACION ENTRADA DE PROVEEDORES';
+		$email['asunto'] = 'IMPACTBUSSINESS - ENTRADA DE PROVEEDORES';
 
 		$html = $this->load->view("email/header", $dataParaVista, true);
 		$email['contenido'] = $this->load->view("formularioProveedores/formato", ['html' => $html, 'link' => base_url() . index_page() . '/proveedores'], true);
