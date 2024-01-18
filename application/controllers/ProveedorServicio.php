@@ -48,7 +48,7 @@ class ProveedorServicio extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		
+
 		$where = [];
 		if (!empty($post['proveedor'])) $where['idProveedor'] = $post['proveedor'];
 		if (!empty($post['fecha'])) $where['fechaEmision'] = $post['fecha'];
@@ -162,7 +162,7 @@ class ProveedorServicio extends MY_Controller
 				if ($v['flagOcLibre'] == 0) {
 					$fechaE['idCotizacion'] = $v['idCotizacion'];
 				}
-				
+
 				$fechaEjecCargado = $this->db->get_where('sustento.fechaEjecucion', $fechaE)->result_array();
 				if (!empty($fechaEjecCargado)) {
 					$data[$k]['flagFechaRegistro'] = '1';
@@ -205,9 +205,6 @@ class ProveedorServicio extends MY_Controller
 			$data[$k]['link'] = "?doc={$accesoDocumento}&email={$accesoEmail}&date={$fechaActual}&cod={$accesoCodProveedor}";
 		}
 
-
-
-
 		$html = getMensajeGestion('noRegistros');
 
 		if (!empty($data)) {
@@ -228,8 +225,6 @@ class ProveedorServicio extends MY_Controller
 			}
 			$html = $this->load->view("modulos/ProveedorServicio/reporte", $dataParaVista, true);
 		}
-
-
 
 		$result['result'] = 1;
 		$result['data']['views']['idContentProveedorServicio']['datatable'] = 'tb-proveedorServicio';

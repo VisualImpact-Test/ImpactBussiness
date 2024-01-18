@@ -3,7 +3,6 @@
 		<thead>
 			<tr>
 				<th class="td-center">#</th>
-				<!-- <th>Opciones</th> -->
 				<th>Fecha</th>
 				<th>Oper</th>
 				<th>OC Visual</th>
@@ -18,27 +17,26 @@
 				<th>Moneda</th>
 				<th>PO Cliente</th>
 				<th>GR</th>
-				<th class="td-center">ESTADO</th>
+				<th>ESTADO</th>
 			</tr>
 		</thead>
 		<tbody>
 			<? $ix = 0; ?>
 			<?php foreach ($datos as $k => $row) : ?>
 				<? $ix++; ?>
-				<tr>
+				<tr data-id="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
-					<!-- <td class="td-center">btn</td> -->
 					<td class="td-left"><?= date_change_format($row['fechaRegOC']); ?></td>
 					<td class="td-center">
-						<?php $rutaOc = empty($row['idOrdenCompra']) ? '#' : 'Cotizacion/descargarOperDirecto/' . $row['idOrdenCompra']; ?>
-						<!-- <a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank"> -->
+						<a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank">
 							<?= $row['oper']; ?>
-						<!-- </a> -->
+						</a>
 					</td>
 					<td class="td-center">
-						<!-- <a class="btn" href="<?= $rutaOc; ?>" target="_blank"> -->
+						<?php $rutaOc = $row['flagOcLibre'] ? '#' : '../Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra']; ?>
+						<a class="btn" href="<?= $rutaOc; ?>" target="_blank">
 							<?= $row['ordenCompra']; ?>
-						<!-- </a> -->
+						</a>
 					</td>
 					<td class="td-center"><?= $row['rucProveedor']; ?></td>
 					<td class="td-left"><?= $row['razonSocial'] ?></td>
@@ -57,7 +55,7 @@
 								Enviado al proveedor
 							</span>
 						<?php else : ?>
-							<a class="ui green large label">
+							<a class="ui green large label btn-sustentosCargados">
 								Documentos enviados
 							</a>
 						<?php endif; ?>

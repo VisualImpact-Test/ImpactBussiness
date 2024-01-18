@@ -28,7 +28,7 @@
 		<tbody>
 			<? $ix = 1; ?>
 			<?php foreach ($data as $k => $row) : ?>
-				<tr data-id="< ?= $row['idCotizacion'] ?>">
+				<tr data-id="<?= $row['idCotizacion'] ?>">
 					<td class="collapsing">
 						<?= ($k + 1) ?>
 						<input type="hidden" name="idCotizacion" value="<?= $row['idCotizacion'] ?>">

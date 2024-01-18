@@ -245,8 +245,6 @@ var View = {
 					});
 				}
 			}
-
-
 		}
 
 		function mostrarModalReLogin() {
@@ -353,8 +351,6 @@ var View = {
 										console.log(intentos);
 
 										if (intentos == 2) {
-											
-
 											localStorage.setItem('intentosLogin', 0);
 											var titulo = 'Sesion exitosa';
 											var contenido = '<center><strong>Inicio de sesión exitoso, pero has usado todos tus intentos. Ten cuidado la próxima vez.</strong></center>';
@@ -380,8 +376,6 @@ var View = {
 										
 											btn[0] = { title: 'Continuar', fn: fnCerrarModales };
 											Fn.showModal({ id: modalId, show: true, title: titulo, content: contenido, btn: btn });
-
-
 										} else if (intentos == '') {
 
 											localStorage.setItem('intentosLogin', 0);
@@ -419,11 +413,8 @@ var View = {
 									}
 								});
 							});
-							
-							
-		
 						</script>
-						  `;
+						`;
 
 			++modalId;
 			var btn = [];
@@ -443,13 +434,10 @@ var View = {
 					$('#mensajeTiempoAgotado').text('Recargue la pagina y por favor, inicie sesión nuevamente.');
 				}
 			}, 1000);
-
-
 		}
 
 		// Coloca esto en un intervalo para verificar periódicamente
 		setInterval(verificarSesion, 30000); // Verifica cada 15 segundos
-
 
 		$('.hide-parent').parent().hide();
 
@@ -514,7 +502,6 @@ var View = {
 				text = text.replace(/\s/g, "");
 				$(this).val(text);
 			});
-
 
 			let nmax = Number(control.data('max'));
 			if (nmax > 0) {
@@ -1639,9 +1626,9 @@ var View = {
 														</div>
 													</div>`;
 								fileApp += '	<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>';
-								fileApp += '	<input class="' + name + '" type="hidden" name="' + name + id + '"  value="' + fileBase.base64 + '">';
-								fileApp += '	<input class="' + nameType + '" type="hidden" name="' + nameType + id + '"  value="' + fileBase.type + '">';
-								fileApp += '	<input class="' + nameFile + '" type="hidden" name="' + nameFile + id + '"  value="' + fileBase.name + '">';
+								fileApp += '	<input class="' + name + '" type="hidden" name="' + name + id + '" value="' + fileBase.base64 + '">';
+								fileApp += '	<input class="' + nameType + '" type="hidden" name="' + nameType + id + '" value="' + fileBase.type + '">';
+								fileApp += '	<input class="' + nameFile + '" type="hidden" name="' + nameFile + id + '" value="' + fileBase.name + '">';
 								fileApp += `	<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
 								fileApp += '</div>';
 
@@ -1824,8 +1811,6 @@ var View = {
 			childDependiente.closest('.childdependienteSemantic').removeClass('read-only');
 		});
 	},
-
-
 	toast: (config = {}) => {
 		var defaults = {
 			'type': 0,

@@ -11,7 +11,9 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzas($params = [])
 	{
 		$this->db
-			->select("oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, oc.idProveedor, 
+			->select("oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
+						oc.idProveedor, 
+						0 as flagOcLibre,
 						pr.razonSocial, pr.nroDocumento as rucProveedor, 
 						/* cd.subtotal, */
 						cd.cantidad * ISNULL(cd.costo, 0) as subtotal, 
@@ -46,7 +48,8 @@ class M_ProveedorDocumento extends MY_Model
 		$this->db
 			->distinct()
 			->select("oc.seriado as ordenCompra,
-						null as idOrdenCompra, 
+						oc.idOrdenCompra as idOrdenCompra, 
+						1 as flagOcLibre,
 						cast(oc.fechaReg as DATE) as fechaRegOC, 
 						oc.idProveedor, pr.razonSocial, 
 						pr.nroDocumento as rucProveedor,
@@ -64,15 +67,10 @@ class M_ProveedorDocumento extends MY_Model
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
-			// ->join('compras.cotizacionDetalle cd', 'cd.idCotizacionDetalle = ocd.idCotizacionDetalle')
-			// ->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion')
-			// ->join('compras.operDetalle od', 'od.idCotizacion = c.idCotizacion and od.estado = 1')
-			// ->join('compras.oper op', 'op.idOper = od.idOper')
 			->join('rrhh.dbo.Empresa emp', 'emp.idEmpresa = oc.idCuenta')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
 			->where('ocd.estado', 1);
-			// ->order_by('ocd.idOrdenCompra desc');
 
 		if (!empty($params['idProveedor'])) $this->db->where('oc.idProveedor', $params['idProveedor']);
 		if (!empty($params['idCuenta'])) $this->db->where('c.idCuenta', $params['idCuenta']);

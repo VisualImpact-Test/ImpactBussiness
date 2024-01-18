@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistroSustento" method="post">
+<form class="form" role="form" id="formRegistroSustento" method="post" autocomplete="off">
 	<input type="hidden" name="proveedor" value="<?= $proveedor ?>">
 	<input type="hidden" name="cotizacion" value="<?= $cotizacion ?>">
 	<input type="hidden" name="ordencompra" value="<?= $ordencompra ?>">
@@ -31,7 +31,6 @@
 					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido">
 					<label class="form-control col-md-4" style="border:0px;">Fecha Emisión</label>
 					<input type="date" class="form-control col-md-8" id="fechaEmision" name="fechaEmision" patron="requerido">
-									
 				</div>
 			</fieldset>
 		</div>
@@ -64,7 +63,6 @@
 						<option value="0">Finalizado al 100%</option>
 					</select>
 				</div>
-
 			</fieldset>
 		</div>
 	</div>
