@@ -258,7 +258,6 @@ class OrdenCompra extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
@@ -288,28 +287,6 @@ class OrdenCompra extends MY_Controller
 		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;
 		}
-
-		// $countID = 0;
-		// foreach ($post['idItemForm'] as $keyItem => $value) {
-		// 	if ($value == 0) {
-		// 		$countID = $countID + 1;
-		// 	}
-		// }
-
-		// if ($countID > 0) {
-		// 	if (
-		// 		(
-		// 			!isset($post['adjuntoItemFile-item']) ||
-		// 			!isset($post['adjuntoItemFile-name']) ||
-		// 			!isset($post['adjuntoItemFile-type'])) ||
-		// 		$countID != count($post['adjuntoItemFile-item'])
-		// 	) {
-		// 		$result['result'] = 0;
-		// 		$result['msg']['title'] = 'Alerta!';
-		// 		$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
-		// 		goto respuesta;
-		// 	}
-		// }
 
 		$insertData = [
 			'requerimiento' => $post['requerimiento'],
@@ -410,7 +387,9 @@ class OrdenCompra extends MY_Controller
 				$orden++;
 			}
 		}
-
+		if (!empty($insertDataSub)) {
+			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
+		}
 		if (isset($post['adjuntoItemFile-item'])) {
 			if (count($post['adjuntoItemFile-item']) > 1) {
 				foreach ($idItem as $key1 => $value) {
