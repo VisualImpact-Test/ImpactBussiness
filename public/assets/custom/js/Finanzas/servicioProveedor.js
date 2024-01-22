@@ -2,6 +2,8 @@ var ServicioProveedor = {
     frm: 'frm-servicioProveedor',
     contentDetalle: 'idServicioProveedor',
     url: 'Finanzas/ServicioProveedor/',
+    provincia: {},
+	distrito: {},
     load: function () {
         $(document).on('dblclick', '.card-body > ul > li > a', function (e) {
             $('#btn-filtrarServicioProveedor').click();
@@ -53,7 +55,25 @@ var ServicioProveedor = {
                 Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
                 Fn.loadSemanticFunctions();
                 Fn.loadDimmerHover();
+                ServicioProveedor.provincia = a.data.provincia;
+				ServicioProveedor.distrito = a.data.distrito;
+              //  console.log(ServicioProveedor.provincia);
             });
+        });
+        
+        $(document).on('click', '#btn-añadir-proveedor', function () {
+            var nomContacto = $('#nomContacto').val();
+            var telContacto = $('#telContacto').val();
+            var correoContacto = $('#correoContacto').val();
+
+            html='';
+            html +='<tr><td><input class="form-control" name="nomContactoinput" value="'+nomContacto+'" readonly></td><td><input class="form-control" name="telContactoinput" value="'+telContacto+'" readonly></td><td><input class="form-control" name="correoContactoimput" value="'+correoContacto+'" readonly></td></tr>';
+            console.log(html);
+            $('#tb-contacProveedores tbody').append(html);
+            $('#nomContacto').val("");
+            $('#telContacto').val("");
+            $('#correoContacto').val("");
+           
         });
 
         $(document).on('click', '.btn-editar', function () {
@@ -77,9 +97,115 @@ var ServicioProveedor = {
                 btn[1] = { title: 'Actualizar', fn: fn[1] };
 
                 Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+               
+                ServicioProveedor.provincia = a.data.provincia;
+				ServicioProveedor.distrito = a.data.distrito;
+				
+
             });
 
         });
+        $(document).on('change', '#numDocumento', function (e) {
+            var tipoDocumento = $('#tipoComprobante').val();
+            var numDocumento = $(this).val();
+            // console.log(numDocumento);
+            // console.log(tipoDocumento);
+            if (tipoDocumento == 1 && numDocumento.length === 8) {
+                $.ajax({
+                    url: `https://dniruc.apisperu.com/api/v1/dni/${numDocumento}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImplYW4uYWxhcmNvbkB2aXN1YWxpbXBhY3QuY29tLnBlIn0.yuUxfSCdDVEOvZkmGM428wevwsAo8z3YZhW1qgbj56Q`,
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        // Asume que la API devuelve un objeto con las propiedades adecuadas
+                        $('#datProveedor').val(data.nombres + ' ' + data.apellidoPaterno + ' ' + data.apellidoMaterno);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+
+
+              } else if (tipoDocumento == 3 && numDocumento.length === 11) {
+                $.ajax({
+                    url: `https://dniruc.apisperu.com/api/v1/ruc/${numDocumento}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImplYW4uYWxhcmNvbkB2aXN1YWxpbXBhY3QuY29tLnBlIn0.yuUxfSCdDVEOvZkmGM428wevwsAo8z3YZhW1qgbj56Q`,
+                    type: 'GET',
+                    success: function (data) {
+                        console.log(data);
+                        // Asume que la API devuelve un objeto con la propiedad 'razonSocial'
+                        $('#datProveedor').val(data.razonSocial);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+              } else {
+                console.log('Documento inválido');
+              }
+
+              let data = { 'numDocumento': numDocumento };
+              let jsonString = { 'data': JSON.stringify(data) };
+              let config = { 'url': ServicioProveedor.url + 'verificarNumDocumento', 'data': jsonString };
+  
+              $.when(Fn.ajax(config)).then((a) => {
+                ++modalId;
+                var btn = [];
+                let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+    
+                btn[0] = { title: 'Continuar', fn: fn };
+                Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '40%' });
+                //console.log(a);
+              });
+              
+        });
+
+        $(document).on('change', '#tipoComprobante', function (e) {
+            var tipoComprobante = $(this).val();
+           
+            if (tipoComprobante == 3) {
+                $('#numDocumento').attr('patron', 'requerido,ruc');
+            } else if (tipoComprobante == 1){
+                $('#numDocumento').attr('patron', 'requerido,dni');
+            }
+        });
+
+        $(document).on('change', '#cboRegion', function (e) {
+			e.preventDefault();
+			var idDepartamento = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			$('#cboDistrito').html(html);
+
+			if (typeof (ServicioProveedor.provincia[idDepartamento]) == 'object') {
+				$.each(ServicioProveedor.provincia[idDepartamento], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#cboProvincia').html(html);
+            Fn.loadSemanticFunctions();
+            $('#cboProvincia').dropdown('clear');
+            $('#cboDistrito').dropdown('clear');
+			Fn.selectOrderOption('cboProvincia');
+		});
+        
+		$(document).on('change', '#cboProvincia', function (e) {
+			e.preventDefault();
+			var idDepartamento = $('#cboRegion').val();
+			var idProvincia = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			if (typeof (ServicioProveedor.distrito[idDepartamento][idProvincia]) == 'object') {
+				$.each(ServicioProveedor.distrito[idDepartamento][idProvincia], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#cboDistrito').html(html);
+            Fn.loadSemanticFunctions();
+            $('#cboDistrito').dropdown('clear');
+			Fn.selectOrderOption('cboDistrito');
+		});
+
 
         $(document).on('change', '#tipoDocumento', function () {
             var tipo = $(this).val();
@@ -115,23 +241,23 @@ var ServicioProveedor = {
             // $('#numeroDocumento').off('change'); // Remueve previos event handlers
 
             // if (tipo == 'DNI') {
-            //     // Agregar handler para DNI
-            //     $('#numeroDocumento').on('change', function () {
-            //         var dni = $(this).val();
-            //         // Reemplaza 'urlApiDni' con la URL de tu API
-            //         $.ajax({
-            //             url: `https://dniruc.apisperu.com/api/v1/dni/${dni}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImplYW4uYWxhcmNvbkB2aXN1YWxpbXBhY3QuY29tLnBlIn0.yuUxfSCdDVEOvZkmGM428wevwsAo8z3YZhW1qgbj56Q`,
-            //             type: 'GET',
-            //             success: function (data) {
-            //                 console.log(data);
-            //                 // Asume que la API devuelve un objeto con las propiedades adecuadas
-            //                 $('#nombreContacto').val(data.nombres + ' ' + data.apellidoPaterno + ' ' + data.apellidoMaterno);
-            //             },
-            //             error: function (error) {
-            //                 console.error('Error:', error);
-            //             }
-            //         });
-            //     });
+                // Agregar handler para DNI
+                // $('#numeroDocumento').on('change', function () {
+                //     var dni = $(this).val();
+                //     // Reemplaza 'urlApiDni' con la URL de tu API
+                //     $.ajax({
+                //         url: `https://dniruc.apisperu.com/api/v1/dni/${dni}?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImplYW4uYWxhcmNvbkB2aXN1YWxpbXBhY3QuY29tLnBlIn0.yuUxfSCdDVEOvZkmGM428wevwsAo8z3YZhW1qgbj56Q`,
+                //         type: 'GET',
+                //         success: function (data) {
+                //             console.log(data);
+                //             // Asume que la API devuelve un objeto con las propiedades adecuadas
+                //             $('#nombreContacto').val(data.nombres + ' ' + data.apellidoPaterno + ' ' + data.apellidoMaterno);
+                //         },
+                //         error: function (error) {
+                //             console.error('Error:', error);
+                //         }
+                //     });
+                // });
 
             // } else if (tipo == 'RUC') {
             //     // Agregar handler para RUC
@@ -195,6 +321,8 @@ var ServicioProveedor = {
                         }
                     });
                 }
+
+               
             }, 500); // Retardo de 500 milisegundos
         });
 
@@ -240,57 +368,160 @@ var ServicioProveedor = {
         let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarProveedorServicio')) };
         let url = ServicioProveedor.url + "actualizarServicioProveedor";
         let config = { url: url, data: jsonString };
-        let jsonData = JSON.parse(jsonString.data);
-        let numero = jsonData.numeroContacto;
-        let documento = jsonData.tipoDocumento;
-        let numeroDocumento_ = jsonData.numeroDocumento;
-        let correo = jsonData.correoContacto;
-        let titulo = 'Alerta!!';
+        
+       
+        console.log(config);
 
-        switch (documento) {
-            case 'DNI':
+        $.when(Fn.ajax(config)).then(function (b) {
+            ++modalId;
+            var btn = [];
+            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-                if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
+            if (b.result == 1) {
+                fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarServicioProveedor").click();';
+            }
 
-                    var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+            btn[0] = { title: 'Continuar', fn: fn };
+            Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+        });
+       
+        // let jsonData = JSON.parse(jsonString.data);
+        // let numero = jsonData.numeroContacto;
+        // let documento = jsonData.tipoDocumento;
+        // let numeroDocumento_ = jsonData.numeroDocumento;
+        // let correo = jsonData.correoContacto;
+        // let titulo = 'Alerta!!';
 
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
+        // switch (documento) {
+        //     case 'DNI':
 
-                break;
-            case 'RUC':
+        //         if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
 
-                if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
+        //             var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-                    var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
 
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
+        //         break;
+        //     case 'RUC':
 
-                break;
-            case 'CE':
+        //         if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
 
-                if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
+        //             var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-                    var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
 
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
+        //         break;
+        //     case 'CE':
 
-                break;
-        }
+        //         if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
+
+        //             var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
+
+        //         break;
+        // }
+
+        // // if (!numero.match(/^\d{9}$/)) {
+
+        // //     var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
+        // //     var btn = [];
+        // //     let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        // //     btn[0] = { title: 'Continuar', fn: fn };
+        // //     Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
+        // //     return false;
+        // // }
+
+        // if (!Fn.validators.email.expr.test(correo)) {
+
+        //     var contenidoCorreo = 'Correo inválido!!.';
+        //     var btn = [];
+        //     let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        //     btn[0] = { title: 'Continuar', fn: fn };
+        //     Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
+        //     return false;
+        // }
+
+ 
+    },
+
+    registrarProveedorServicio: function () {
+
+        ++modalId;
+        let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedorServicio')) };
+      
+        let url = ServicioProveedor.url + "registrarProveedorServicio";
+        let config = { url: url, data: jsonString };
+        console.log(config);
+        // let jsonData = JSON.parse(jsonString.data);
+        // let numero = jsonData.numeroContacto;
+        // let documento = jsonData.tipoDocumento;
+        // let numeroDocumento_ = jsonData.numeroDocumento;
+        // let correo = jsonData.correoContacto;
+        // let titulo = 'Alerta!!';
+
+        // switch (documento) {
+        //     case 'DNI':
+
+        //         if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
+
+        //             var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
+
+        //         break;
+
+        //     case 'RUC':
+
+        //         if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
+
+        //             var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
+
+        //         break;
+        //     case 'CE':
+
+        //         if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
+
+        //             var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
+        //             var btn = [];
+        //             let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+        //             btn[0] = { title: 'Continuar', fn: fn };
+        //             Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
+        //             return false;
+        //         }
+
+        //         break;
+        // }
 
         // if (!numero.match(/^\d{9}$/)) {
 
@@ -303,111 +534,16 @@ var ServicioProveedor = {
         //     return false;
         // }
 
-        if (!Fn.validators.email.expr.test(correo)) {
+        // if (!Fn.validators.email.expr.test(correo)) {
 
-            var contenidoCorreo = 'Correo inválido!!.';
-            var btn = [];
-            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+        //     var contenidoCorreo = 'Correo inválido!!.';
+        //     var btn = [];
+        //     let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-            btn[0] = { title: 'Continuar', fn: fn };
-            Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
-            return false;
-        }
-
-        $.when(Fn.ajax(config)).then(function (b) {
-            ++modalId;
-            var btn = [];
-            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-            if (b.result == 1) {
-                fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarServicioProveedor").click();';
-            }
-
-            btn[0] = { title: 'Continuar', fn: fn };
-            Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
-        });
-    },
-
-    registrarProveedorServicio: function () {
-
-        ++modalId;
-        let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedorServicio')) };
-        let url = ServicioProveedor.url + "registrarProveedorServicio";
-        let config = { url: url, data: jsonString };
-        let jsonData = JSON.parse(jsonString.data);
-        let numero = jsonData.numeroContacto;
-        let documento = jsonData.tipoDocumento;
-        let numeroDocumento_ = jsonData.numeroDocumento;
-        let correo = jsonData.correoContacto;
-        let titulo = 'Alerta!!';
-
-        switch (documento) {
-            case 'DNI':
-
-                if (!Fn.validators.dni.expr.test(numeroDocumento_)) {
-
-                    var contenidoRuc = 'El DNI debe contener 8 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
-
-                break;
-
-            case 'RUC':
-
-                if (!Fn.validators.ruc.expr.test(numeroDocumento_)) {
-
-                    var contenidoRuc = 'El RUC debe contener exactamente 11 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
-
-                break;
-            case 'CE':
-
-                if (!Fn.validators.carnetExtranjeria.expr.test(numeroDocumento_)) {
-
-                    var contenidoRuc = 'El Carnet de Extranjería debe contener entre 9 y 12 dígitos numéricos.';
-                    var btn = [];
-                    let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-                    btn[0] = { title: 'Continuar', fn: fn };
-                    Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoRuc, btn: btn, width: '20%' });
-                    return false;
-                }
-
-                break;
-        }
-
-        if (!numero.match(/^\d{9}$/)) {
-
-            var contenidoNumero = 'El número de contacto debe contener exactamente 9 dígitos numéricos.';
-            var btn = [];
-            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-            btn[0] = { title: 'Continuar', fn: fn };
-            Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoNumero, btn: btn, width: '20%' });
-            return false;
-        }
-
-        if (!Fn.validators.email.expr.test(correo)) {
-
-            var contenidoCorreo = 'Correo inválido!!.';
-            var btn = [];
-            let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-            btn[0] = { title: 'Continuar', fn: fn };
-            Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
-            return false;
-        }
+        //     btn[0] = { title: 'Continuar', fn: fn };
+        //     Fn.showModal({ id: modalId, show: true, title: titulo, content: contenidoCorreo, btn: btn, width: '20%' });
+        //     return false;
+        // }
 
         $.when(Fn.ajax(config)).then(function (b) {
             ++modalId;
@@ -421,6 +557,7 @@ var ServicioProveedor = {
             btn[0] = { title: 'Continuar', fn: fn };
             Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
         });
+        
     },
 
 

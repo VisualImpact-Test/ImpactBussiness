@@ -76,6 +76,7 @@ class ProveedorServicioPago extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['proveedorServicio'] = $this->db->get_where('finanzas.proveedorServicio', array('idProveedorEstado' => '2'))->result_array();
+		
 		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', array('estado' => '1'))->result_array();
 		$dataParaVista['frecuenciaPago'] = $this->db->get_where('finanzas.frecuenciaPagoProveedorServicioPago', array('estado' => '1'))->result_array();
 
@@ -237,95 +238,95 @@ class ProveedorServicioPago extends MY_Controller
 		echo json_encode($result);
 	}
 
-	public function registrarProveedorServicio()
-	{
-		$result = $this->result;
-		$post = json_decode($this->input->post('data'), true);
+	// public function registrarProveedorServicio()
+	// {
+	// 	$result = $this->result;
+	// 	$post = json_decode($this->input->post('data'), true);
 
-		$validar = $this->model->validarExistenciaProveedorServicio($post)['query']->result_array();
+	// 	$validar = $this->model->validarExistenciaProveedorServicio($post)['query']->result_array();
 
-		if (!empty($validar)) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = getMensajeGestion('registroRepetido');
-			goto respuesta;
-		}
+	// 	if (!empty($validar)) {
+	// 		$result['result'] = 0;
+	// 		$result['msg']['title'] = 'Alerta!';
+	// 		$result['msg']['content'] = getMensajeGestion('registroRepetido');
+	// 		goto respuesta;
+	// 	}
 
-		$elementosAValidar = [
-			'numeroDocumento' => ['requerido', 'numerico'],
-			'razonSocial' => ['requerido'],
-			'distrito' => ['requerido'],
-			'direccion' => ['requerido'],
-			'idProveedorEstado' => ['requerido'],
-			'correoContacto' => ['requerido', 'email'],
-			'nombreContacto' => ['requerido'],
-			'numeroContacto' => ['requerido', 'numerico']
-		];
+	// 	$elementosAValidar = [
+	// 		'numeroDocumento' => ['requerido', 'numerico'],
+	// 		'razonSocial' => ['requerido'],
+	// 		'distrito' => ['requerido'],
+	// 		'direccion' => ['requerido'],
+	// 		'idProveedorEstado' => ['requerido'],
+	// 		'correoContacto' => ['requerido', 'email'],
+	// 		'nombreContacto' => ['requerido'],
+	// 		'numeroContacto' => ['requerido', 'numerico']
+	// 	];
 
-		$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
+	// 	$resultadoDeValidaciones = verificarValidacionesBasicas($elementosAValidar, $post);
 
-		if (!verificarSeCumplenValidaciones($resultadoDeValidaciones)) {
-			$result['result'] = 0;
-			$result['msg']['title'] = 'Alerta!';
-			$result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
-			goto respuesta;
-		}
+	// 	if (!verificarSeCumplenValidaciones($resultadoDeValidaciones)) {
+	// 		$result['result'] = 0;
+	// 		$result['msg']['title'] = 'Alerta!';
+	// 		$result['msg']['content'] = getMensajeGestion('registroConDatosInvalidos');
+	// 		goto respuesta;
+	// 	}
 
-		if ($post['tipoDocumento'] === 'DNI') {
+	// 	if ($post['tipoDocumento'] === 'DNI') {
 
-			$insertData = [
-				'dni' => $post['numeroDocumento'],
-				'razonSocial' => $post['razonSocial'],
-				'cod_ubigeo' => $post['distrito'],
-				'direccion' => $post['direccion'],
-				'idProveedorEstado' => $post['idProveedorEstado'],
-				'nombreContacto' => $post['nombreContacto'],
-				'correoContacto' => $post['correoContacto'],
-				'numeroContacto' => $post['numeroContacto'],
-				'estado' => 1
-			];
-		} elseif ($post['tipoDocumento'] === 'RUC') {
+	// 		$insertData = [
+	// 			'dni' => $post['numeroDocumento'],
+	// 			'razonSocial' => $post['razonSocial'],
+	// 			'cod_ubigeo' => $post['distrito'],
+	// 			'direccion' => $post['direccion'],
+	// 			'idProveedorEstado' => $post['idProveedorEstado'],
+	// 			'nombreContacto' => $post['nombreContacto'],
+	// 			'correoContacto' => $post['correoContacto'],
+	// 			'numeroContacto' => $post['numeroContacto'],
+	// 			'estado' => 1
+	// 		];
+	// 	} elseif ($post['tipoDocumento'] === 'RUC') {
 
-			$insertData = [
-				'ruc' => $post['numeroDocumento'],
-				'razonSocial' => $post['razonSocial'],
-				'cod_ubigeo' => $post['distrito'],
-				'direccion' => $post['direccion'],
-				'idProveedorEstado' => $post['idProveedorEstado'],
-				'nombreContacto' => $post['nombreContacto'],
-				'correoContacto' => $post['correoContacto'],
-				'numeroContacto' => $post['numeroContacto'],
-				'estado' => 1
-			];
-		} elseif ($post['tipoDocumento'] === 'CE') {
+	// 		$insertData = [
+	// 			'ruc' => $post['numeroDocumento'],
+	// 			'razonSocial' => $post['razonSocial'],
+	// 			'cod_ubigeo' => $post['distrito'],
+	// 			'direccion' => $post['direccion'],
+	// 			'idProveedorEstado' => $post['idProveedorEstado'],
+	// 			'nombreContacto' => $post['nombreContacto'],
+	// 			'correoContacto' => $post['correoContacto'],
+	// 			'numeroContacto' => $post['numeroContacto'],
+	// 			'estado' => 1
+	// 		];
+	// 	} elseif ($post['tipoDocumento'] === 'CE') {
 
-			$insertData = [
-				'carnet_extranjeria' => $post['numeroDocumento'],
-				'razonSocial' => $post['razonSocial'],
-				'cod_ubigeo' => $post['distrito'],
-				'direccion' => $post['direccion'],
-				'idProveedorEstado' => $post['idProveedorEstado'],
-				'nombreContacto' => $post['nombreContacto'],
-				'correoContacto' => $post['correoContacto'],
-				'numeroContacto' => $post['numeroContacto'],
-				'estado' => 1
-			];
-		}
+	// 		$insertData = [
+	// 			'carnet_extranjeria' => $post['numeroDocumento'],
+	// 			'razonSocial' => $post['razonSocial'],
+	// 			'cod_ubigeo' => $post['distrito'],
+	// 			'direccion' => $post['direccion'],
+	// 			'idProveedorEstado' => $post['idProveedorEstado'],
+	// 			'nombreContacto' => $post['nombreContacto'],
+	// 			'correoContacto' => $post['correoContacto'],
+	// 			'numeroContacto' => $post['numeroContacto'],
+	// 			'estado' => 1
+	// 		];
+	// 	}
 
-		$insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
+	// 	$insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
 
-		if ($insertarDatos) {
-			$result['result'] = 1;
-			$result['msg']['title'] = 'Hecho!';
-			$result['msg']['content'] = getMensajeGestion('registroExitoso');
-		} else {
+	// 	if ($insertarDatos) {
+	// 		$result['result'] = 1;
+	// 		$result['msg']['title'] = 'Hecho!';
+	// 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+	// 	} else {
 
 
-			$result['msg']['title'] = 'Ocurrio un error';
-			$result['msg']['content'] = getMensajeGestion('registroInvalido');
-		}
+	// 		$result['msg']['title'] = 'Ocurrio un error';
+	// 		$result['msg']['content'] = getMensajeGestion('registroInvalido');
+	// 	}
 
-		respuesta:
-		echo json_encode($result);
-	}
+	// 	respuesta:
+	// 	echo json_encode($result);
+	// }
 }

@@ -4,17 +4,15 @@
 			<tr>
 				<th class="td-center">#</th>
 				<th>OPCIONES</th>
-				<th>RAZON SOCIAL</th>
-				<th>RUC</th>
+				<th>TIPO DOCUMENTO</th>
+				<th>NUM DOCUMENTO</th>
 				<th>MONTO</th>
 				<th>FRECUENCIA PAGO</th>
 				<th>DIA PAGO</th>
 				<th>FECHA INICIO</th>
 				<th>FECHA FIN</th>
 				<th>DIRECCIÓN</th>
-				<th>CONTACTO</th>
-				<th>CORREO</th>
-				<th>NÚMERO</th>
+				
 				<th>DESCRIPCIÓN SERVICIO</th>
 				<th class="td-center">ESTADO</th>
 			</tr>
@@ -35,8 +33,8 @@
 							<i class="<?= $row['estadoToggle']; ?>"></i>
 						</a>
 					</td>
-					<td><?= verificarEmpty($row['razonSocial'], 3); ?></td>
-					<td><?= verificarEmpty($row['ruc'], 3); ?></td>
+					<td><?= verificarEmpty($row['breve'], 3); ?></td>
+					<td><?= verificarEmpty($row['numDocumento'], 3); ?></td>
 					<? if ($row['monto'] != null) { ?>
 						<td><?= verificarEmpty($row['simbolo'] . ' ' . $row['monto'], 3); ?></td>
 					<? } else { ?>
@@ -47,9 +45,7 @@
 					<td><?= verificarEmpty($row['fechaInicioReporte'], 3); ?></td>
 					<td><?= verificarEmpty($row['fechaTerminoReporte'], 3); ?></td>
 					<td><?= verificarEmpty($row['direccion'], 3); ?></td>
-					<td><?= verificarEmpty($row['nombreContacto'], 3); ?></td>
-					<td><?= verificarEmpty($row['correoContacto'], 3); ?></td>
-					<td><?= verificarEmpty($row['numeroContacto'], 3); ?></td>
+				
 					<td><?= verificarEmpty($row['descripcionServicio'], 3); ?></td>
 					<td class="text-center style-icons">
 						<span class="<?= $row['estadoIcono'] ?>" id="spanEstado-<?= $k; ?>"><?= $row['estado']; ?></span>

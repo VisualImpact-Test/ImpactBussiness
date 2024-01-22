@@ -21,28 +21,14 @@ class M_ServicioProveedor extends MY_Model
         $filtros .= !empty($params['idProveedorServicio']) ? " AND f.idProveedorServicio = {$params['idProveedorServicio']}" : '';
 
         $sql = "
-          SELECT 
-            f.idProveedorServicio,
-            f.ruc,
-            f.dni,
-            f.carnet_extranjeria,
-            f.razonSocial,
-            f.cod_ubigeo,
-            u.departamento,
-            u.provincia,
-            u.distrito,
-            f.direccion,
-            f.idProveedorEstado,
-            pe.nombre,
-            f.nombreContacto,
-            f.correoContacto,
-            f.numeroContacto,
-            pe.icono AS estadoIcono,
-            pe.toggle AS estadoToggle,
-            f.estado
-          FROM finanzas.proveedorServicio f
-          LEFT JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = f.idProveedorEstado
-          LEFT JOIN General.dbo.ubigeo u ON u.cod_ubigeo = f.cod_ubigeo
+		SELECT 
+		*
+		FROM finanzas.proveedorServicio f
+		left join sistema.usuarioTipoDocumento utd on utd.idTipoDocumento =f.idTipoDocumento
+		LEFT JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = f.idProveedorEstado
+		LEFT JOIN General.dbo.ubigeo u ON f.departamento = u.cod_departamento and f.provincia = u.cod_provincia  and f.distrito = cod_distrito
+		
+		
           WHERE 1 = 1 {$filtros}
         ";
 
@@ -55,6 +41,65 @@ class M_ServicioProveedor extends MY_Model
 
 		return $this->resultado;
     }
+	
+	public function ObtenerDatoServicioProveedor($params = [])
+	{
+		
+		$filtros = "";
+		$filtros .= !empty($params['idProveedorServicio']) ? ' AND f.idProveedorServicio = ' . $params['idProveedorServicio'] : '';
+
+		$sql = "SELECT * FROM finanzas.proveedorServicio f
+		left join sistema.usuarioTipoDocumento utd on utd.idTipoDocumento =f.idTipoDocumento
+		LEFT JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = f.idProveedorEstado
+		LEFT JOIN General.dbo.ubigeo u ON f.departamento = u.cod_departamento and f.provincia = u.cod_provincia  and f.distrito = cod_distrito
+		where 1=1 
+		{$filtros}
+		";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function ObtenerDatoServicioProveedorContacto($params = [])
+	{
+		
+		$filtros = "";
+		$filtros .= !empty($params['idProveedorServicio']) ? ' AND idProveedorServicio = ' . $params['idProveedorServicio'] : '';
+
+		$sql = "SELECT * FROM finanzas.proveedorServicioContacto
+		WHERE 1=1
+		{$filtros}
+		";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+
+	public function ObtenerDatosTipoDocumento($params = [])
+	{
+	
+		$sql = "select idTipoDocumento as id , breve as value  from sistema.usuarioTipoDocumento
+		where 1=1 and idTipoDocumento in (2,1,3,6)";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
 
     public function validarExistenciaProveedorServicio($params = [])
 	{
@@ -177,5 +222,27 @@ class M_ServicioProveedor extends MY_Model
 		return $this->resultado;
 	}
 
+	public function validarExistenciaServicioProveedor($params = [])
+	{
+		$filtros = "";
+        $filtros .= !empty($params['numDocumento']) ? " AND numDocumento = {$params['numDocumento']}" : '';
+
+		$sql = "
+		SELECT * FROM finanzas.proveedorServicio
+		where 1 = 1 
+            {$filtros}          
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
+		}
+
+		return $this->resultado;
+	}
+	
 
 }

@@ -35,6 +35,10 @@
 				<button type="button" class="btn btn-outline-trade-visual border-0" data-url="reporte" id="btn-filtrarReporteFinanzas" title="Consultar">
 					<i class="fa fa-search"></i>
 				</button>
+
+				<!-- <button type="button" class="btn btn-outline-trade-visual border-0" onclick="exportToExcel('tb-reporteFinanzas', 'ExcelSheet.xlsx')" title="Excell">
+					<i class="far fa-file-excel"></i>
+				</button> -->
 				
 			</div>
 			<hr>

@@ -23,23 +23,35 @@ class M_Finanzas extends MY_Model
 		$filtros .= !empty($params['estado']) ? ' AND psp.estado = ' . $params['estado'] : '';
 
 		$sql = "
-            select psp.idProveedorServicioPago, ps.idProveedorServicio, ps.ruc, ps.razonSocial, ps.direccion,
-                ps.nombreContacto, ps.numeroContacto, ps.correoContacto,
-                pe.nombre AS estado, pe.idProveedorEstado idEstado, pe.icono AS estadoIcono, pe.nombre, pe.toggle AS estadoToggle,
-                u.departamento, u.provincia, u.distrito, psp.monto, psp.diaPago, psp.frecuenciaPago, psp.flagFijo,
-                CONVERT(VARCHAR, psp.fechaInicio, 103) AS fechaInicioReporte,
+				select psp.idProveedorServicioPago, 
+				ps.idProveedorServicio, 
+				ps.idTipoDocumento,
+				utd.breve,
+				ps.numDocumento,
+				ps.direccion,
+				pe.nombre AS estado, 
+				pe.idProveedorEstado idEstado,
+				pe.icono AS estadoIcono, 
+				pe.nombre, 
+				pe.toggle AS estadoToggle,
+				u.departamento, u.provincia, u.distrito, 
+				psp.monto, 
+				psp.diaPago, 
+				psp.frecuenciaPago, 
+				psp.flagFijo,
+				CONVERT(VARCHAR, psp.fechaInicio, 103) AS fechaInicioReporte,
 				CONVERT(VARCHAR, psp.fechaTermino, 103) AS fechaTerminoReporte, 
 				psp.fechaInicio,
 				psp.fechaTermino,
 				psp.descripcionServicio, md.simbolo, md.idMoneda
-            from finanzas.proveedorServicio ps
-            INNER JOIN General.dbo.ubigeo u ON u.cod_ubigeo = ps.cod_ubigeo
-            INNER JOIN finanzas.proveedorServicioPago psp ON psp.idProveedorServicio = ps.idProveedorServicio
-            INNER JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = psp.estado
-            INNER JOIN compras.moneda md ON md.idMoneda = psp.idMoneda
-			
-			WHERE
-			1 = 1
+				from finanzas.proveedorServicio ps
+				LEFT JOIN General.dbo.ubigeo u ON ps.departamento = u.cod_departamento and ps.provincia = u.cod_provincia  and ps.distrito = cod_distrito
+				INNER JOIN finanzas.proveedorServicioPago psp ON psp.idProveedorServicio = ps.idProveedorServicio
+				INNER JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = psp.estado
+				INNER JOIN compras.moneda md ON md.idMoneda = psp.idMoneda
+				left join sistema.usuarioTipoDocumento utd on utd.idTipoDocumento = ps.idTipoDocumento
+				WHERE
+				1 = 1
 			{$filtros}
 		";
 
@@ -59,7 +71,7 @@ class M_Finanzas extends MY_Model
 		$filtros .= !empty($params['idProveedorServicio']) ? ' OR idProveedorServicio = ' . $params['idProveedorServicio'] : '';
 
 		$sql = "
-			select idProveedorServicio, razonSocial from finanzas.proveedorServicio
+			select idProveedorServicio, datosProveedor from finanzas.proveedorServicio
 			
 			WHERE
 			idProveedorEstado = 2

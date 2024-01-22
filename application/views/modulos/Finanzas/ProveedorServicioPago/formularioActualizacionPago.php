@@ -1,74 +1,81 @@
 <form class="form" role="form" id="formActualizacionProveedorServicioPago" method="post" autocomplete="off">
-	<?php foreach ($proveedorServicioPago as $data) : ?>
-		<div class="row">
-			<div class="col-md-10 child-divcenter">
-				<fieldset class="scheduler-border">
-					<input class="d-none" id="idProveedorServicioPago" name="idProveedorServicioPago" value="<?= $data['idProveedorServicioPago'] ?>">
-					<legend class="scheduler-border">Datos Generales</legend>
-					<div class="mb-2 input-group control-group child-divcenter row pt-2" style="width:85%">
-						<label class="form-control border-0 col-md-4">Proveedor:</label>
-						<select class="form-control proveedorServicio col-md-8 simpleDropdown" name="proveedorServicio" patron="requerido">
-							<?= htmlSelectOptionArray2(['title' => 'Proveedores Servicio', 'id' => 'idProveedorServicio', 'value' => 'razonSocial', 'query' => $proveedorServicio, 'class' => 'text-titlecase', 'selected' => $data['idProveedorServicio']]); ?>
+	
+<div class="row">
+    <div class="col-md-12 child-divcenter">
+		<fieldset class="scheduler-border">
+		<input class="d-none" id="idProveedorServicioPago" name="idProveedorServicioPago" value="<?= $proveedorServicioPago[0]['idProveedorServicioPago'] ?>">
+
+			<legend class="scheduler-border">Datos Generales</legend>
+			<div class="">
+				<div class="row">
+					<div class="control-group child-divcenter row" style="width:99%;margin-left: 0px;margin-right: 0px;">
+						<label class="form-control col-md-2" for="proveedorServicio" style="border:0px;">Proveedor</label>
+						<select class="form-control proveedorServicio col-md-10 simpleDropdown" name="proveedorServicio" patron="requerido">
+							<?= htmlSelectOptionArray2(['title' => 'Proveedores Servicio', 'id' => 'idProveedorServicio', 'value' => 'datosProveedor', 'query' => $proveedorServicio, 'class' => 'text-titlecase' , 'selected' => $proveedorServicioPago[0]['idProveedorServicio'] ]); ?>
 						</select>
-						<!--<div class="input-group-append align-items-center" id="button-addon4">
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregar-proveedor-servicio" title="Agregar Proveedor Servicio"><i class="fa fa-lg fa-plus"></i></a>
-						</div>-->
 					</div>
-					<div class="control-group child-divcenter row pt-2" style="width:85%">
+					
+				</div>
+				<br>
+				<div class="row">
+					<div class="control-group child-divcenter row" style="width:52%;margin-left: 0px;margin-right: 0px;">
 						<label class="form-control border-0 col-md-4">Moneda:</label>
 						<select class="form-control moneda col-md-8 simpleDropdown" name="moneda" patron="requerido">
-							<?= htmlSelectOptionArray2(['title' => 'Moneda', 'id' => 'idMoneda', 'value' => 'nombre', 'query' => $moneda, 'class' => 'text-titlecase', 'selected' => $data['idMoneda']]); ?>
+							<?= htmlSelectOptionArray2(['title' => 'Moneda', 'id' => 'idMoneda', 'value' => 'nombre', 'query' => $moneda, 'class' => 'text-titlecase', 'selected' => $proveedorServicioPago[0]['idMoneda'] ]); ?>
 						</select>
 					</div>
-					<div class="control-group child-divcenter row pt-2" style="width:85%">
-						<label class="form-control border-0 col-md-4">DIA PAGO:</label>
-						<input class="form-control col-md-8" patron="requerido,numeros" type="text" id="diaPago" name="diaPago" maxlength="2" value="<?= $data['diaPago'] ?>">
-					</div>
-					<div class="control-group child-divcenter row pt-2" style="width:85%">
-						<label class="form-control border-0 col-md-4">FRECUENCIA:</label>
-						<select class="form-control frecuenciaPago col-md-8 simpleDropdown" name="frecuenciaPago" patron="requerido">
-							<?= htmlSelectOptionArray2(['title' => 'Frecuencia Pago', 'id' => 'idFrecuenciaPago', 'value' => 'nombre', 'query' => $frecuenciaPago, 'class' => 'text-titlecase', 'selected' => $data['frecuenciaPago']]); ?>
+					<div class="control-group child-divcenter row " style="width:48%">
+						<label class="form-control border-0 col-md-4">Frecuencia:</label>
+						<select class="form-control frecuenciaPago col-md-8 simpleDropdown" name="frecuenciaPago" patron="requerido" >
+							<?= htmlSelectOptionArray2([
+								'title' => 'Frecuencia Pago', 'id' => 'idFrecuenciaPago', 'value' => 'nombre',
+								'query' => $frecuenciaPago, 'class' => 'text-titlecase'
+								, 'selected' => $proveedorServicioPago[0]['frecuenciaPago']
+							]); ?>
 						</select>
 					</div>
-					<div class="control-group child-divcenter row pt-2" style="width: 85%">
-						<label class="form-control border-0 col-md-4">FECHA INICIO:</label>
-						<input class="form-control col-md-8" patron="requerido" name="fechaInicio" type="date" patron="requerido" value="<?= $data['fechaInicio'] ?>">
+				</div>
+				<br>
+				<div class="row">
+					<div class="control-group child-divcenter row pt-2" style="width:33%">
+						<label class="form-control border-0 col-md-6">Dia Pago:</label>
+						<input class="form-control col-md-6" patron="requerido,numeros" type="text" id="diaPago" name="diaPago" maxlength="2" value="<?= $proveedorServicioPago[0]['diaPago'] ?>">
 					</div>
-					<div class="control-group child-divcenter row pt-2" style="width: 85%">
-						<label class="form-control border-0 col-md-4">FECHA TERMINO:</label>
-						<input class="form-control col-md-8" name="fechaTermino" type="date" value="<?= $data['fechaTermino'] ?>">
+					<div class="control-group child-divcenter row pt-2" style="width: 33%">
+						<label class="form-control border-0 col-md-4">F Inicio:</label>
+						<input class="form-control col-md-8" patron="requerido" name="fechaInicio" type="date" value="<?= $proveedorServicioPago[0]['fechaInicio'] ?>">
 					</div>
-				</fieldset>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-10 child-divcenter">
-				<fieldset class="scheduler-border">
-					<legend class="scheduler-border">Monto</legend>
-					<?php $chk = $data['flagFijo'] ? 'checked' : ''; ?>
-					<?php $hdn = $data['flagFijo'] ? '' : 'd-none'; ?>
-					<div class="control-group child-divcenter row pt-2" style="width:85%">
-						<label class="form-control border-0 col-md-4">Incluir Monto Fijo</label>
+					<div class="control-group child-divcenter row pt-2" style="width: 33%">
+						<label class="form-control border-0 col-md-4">F Fin:</label>
+						<input class="form-control col-md-8" name="fechaTermino" type="date" value="<?= $proveedorServicioPago[0]['fechaTermino'] ?>">
+					</div>
+
+				</div>
+				<br>
+				<div class="row">
+					<div class="control-group child-divcenter row pt-2" style="width:50%">
+						<label class="form-control border-0 col-md-6">Incluir Monto Fijo</label>
 						<div class="ui test toggle checkbox">
-							<input class="chkMontoFijo" name="chkMontoFijo" type="checkbox" <?= $chk ?>>
+							<?php $check = ''; ($proveedorServicioPago[0]['flagFijo'] == 1) ? $check = 'checked'  : $check = '' ?>
+							<input class="chkMontoFijo" name="chkMontoFijo" type="checkbox" <?= $check ?>>
 						</div>
 					</div>
-					<div class="control-group child-divcenter row pt-2 fijo <?= $hdn ?>" style="width:85%">
+					<div class="control-group child-divcenter row pt-2 fijo <?= ($proveedorServicioPago[0]['flagFijo'] == 1) ?  ''  :  'd-none' ?> " style="width:50%">
 						<label class="form-control border-0 col-md-4">Monto:</label>
-						<input class="form-control col-md-8 onlyNumbers" type="number" id="monto" name="monto" value="<?= $data['monto'] ?>">
+						<input class="form-control col-md-8 onlyNumbers" type="number" id="monto" name="monto" value="<?= $proveedorServicioPago[0]['monto'] ?>">
 					</div>
-				</fieldset>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-10 child-divcenter">
-				<fieldset class="scheduler-border">
-					<legend class="scheduler-border">Descripción Servicio</legend>
-					<div class="control-group child-divcenter row" style="width:85%">
-						<textarea class="form-control col-md-12" id="informacionAdicional" patron="requerido" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."><?= $data['descripcionServicio'] ?></textarea>
+				</div>
+				<div class="row">
+					<div class="control-group child-divcenter row pt-2" style="width:80%">
+						<legend class="scheduler-border col-md-6">Descripción Servicio</legend>
+						<div class="control-group child-divcenter col-md-6" style="width:85%">
+							<textarea class="form-control col-md-12" patron="requerido" id="informacionAdicional" name="informacionAdicional"  style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."><?= $proveedorServicioPago[0]['descripcionServicio'] ?></textarea>
+						</div>
 					</div>
-				</fieldset>
+				</div>
 			</div>
-		</div>
-	<?php endforeach; ?>
+	</div>
+</div>
+
+
 </form>
