@@ -25,8 +25,9 @@ class M_PagosGenerados extends MY_Model
 		$sql = "
 				select 
 				idProveedorServicioGenerado
-				,ps.razonSocial
-				,ps.ruc
+				,ps.idTipoDocumento
+				,ps.numDocumento
+				,ps.datosProveedor
 				,descripcionServicio
 				,pspg.monto
 				,fechaProgramada
@@ -36,9 +37,6 @@ class M_PagosGenerados extends MY_Model
 				,porcentajeDetraccion
 				,ep.idEstadoPago 
 				,ep.nombreEstado
-				,ps.nombreContacto
-				,ps.correoContacto
-				,ps.numeroContacto
 				,pspg.porcentajeDetraccion
 				,pspg.montoDetraccion
 				,pspg.fechaPagoComprobante

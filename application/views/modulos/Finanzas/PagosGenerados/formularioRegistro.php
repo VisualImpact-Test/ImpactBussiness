@@ -8,11 +8,11 @@
                     <div class="row">
                         <div class="control-group child-divcenter row" style="width:60%">
                             <label class="form-control col-md-3" for="razonSocial" style="border:0px;">Razón Social :</label>
-                            <input class="form-control col-md-9" id="razonSocial" name="razonSocial" patron="requerido" value="<?= $pagosGenerados[0]['razonSocial'] ?>">
+                            <input class="form-control col-md-9" id="razonSocial" name="razonSocial" patron="requerido" value="<?= $pagosGenerados[0]['datosProveedor'] ?>">
                         </div>
                         <div class="control-group child-divcenter row" style="width:39%">
                             <label class="form-control col-md-4" for="ruc" style="border:0px;">RUC :</label>
-                            <input class="form-control col-md-8" id="ruc" name="ruc" patron="requerido" value="<?= $pagosGenerados[0]['ruc'] ?>">
+                            <input class="form-control col-md-8" id="ruc" name="ruc" patron="requerido" value="<?= $pagosGenerados[0]['numDocumento'] ?>">
                         </div>
                     </div>
                     <br>
@@ -23,7 +23,7 @@
                         </div>
                         <div class="control-group child-divcenter row" style="width:55%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-4" for="nombreContacto" style="border:0px;">Nombre Contacto :</label>
-                            <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto"  value="<?= $pagosGenerados[0]['nombreContacto'] ?>">
+                            <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto"  value="">
                         </div>
                     </div>
 				</div>
