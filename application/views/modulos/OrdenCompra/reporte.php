@@ -36,6 +36,7 @@
 					<td class="td-center style-icons">
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar OC"><i class="fa fa-lg fa-edit"></i></a>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOC" title="Imprimir OC"><i class="fa fa-lg fa-file-pdf"></i></a>
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-indicarGr" title="Indicar Gr"><i class="icon tasks"></i></a>
 					</td>
 					<td class="td-center"><?= verificarEmpty($row['seriado'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['poCliente'], 3); ?></td>
@@ -56,9 +57,6 @@
 			<?php endforeach; ?>
 		</tbody>
 	</table>
-
-	<!-- <button onclick="exportToExcel('tb-oc', 'ExcelSheet.xlsx')">Exportar a Excel</button> -->
-
 </div>
 
 <script>
