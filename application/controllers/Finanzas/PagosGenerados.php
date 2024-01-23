@@ -101,7 +101,77 @@ class PagosGenerados extends MY_Controller
 		echo json_encode($result);
 	}
 	
+	public function addNewFactura()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
+			
+		$result['result'] = 1;
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/addNewFacturaForm", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
 	
+	
+	public function formRegistrarFactura()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$this->db->trans_begin();
+		$post['fechaEmision'] = checkAndConvertToArray($post['fechaEmision']);
+		$post['fechaRecepcion'] = checkAndConvertToArray($post['fechaRecepcion']);
+		$post['fechaVencimiento'] = checkAndConvertToArray($post['fechaVencimiento']);
+		$post['tipoComprobante'] = checkAndConvertToArray($post['tipoComprobante']);
+		$post['numeroComprobante'] = checkAndConvertToArray($post['numeroComprobante']);
+		$post['monto'] = checkAndConvertToArray($post['monto']);
+		$post['cuentaPrincipalFile-item'] = checkAndConvertToArray($post['cuentaPrincipalFile-item']);
+		$post['cuentaPrincipalFile-name'] = checkAndConvertToArray($post['cuentaPrincipalFile-name']);
+		$post['cuentaPrincipalFile-type'] = checkAndConvertToArray($post['cuentaPrincipalFile-type']);
+	
+		foreach ($post['monto'] as $k => $v) {
+			$archivo = [
+				'base64' => $post['cuentaPrincipalFile-item'][$k],
+				'name' => $post['cuentaPrincipalFile-name'][$k],
+				'type' => $post['cuentaPrincipalFile-type'][$k],
+				'carpeta' => 'FinanzasComprobantes',
+				'nombreUnico' => uniqid()
+			];
+			$archivoName = $this->saveFileWasabi($archivo);
+			$tipoArchivo = explode('/', $archivo['type']);
+
+			$insertFactura[] = [
+				'idProveedorServicioGenerado' => $post['idProveedorServicioGenerado'],
+				'fechaEmision' => $post['fechaEmision'][$k],
+				'fechaRecepcion' => $post['fechaRecepcion'][$k],
+				'fechaVencimiento' => $post['fechaVencimiento'][$k],
+				'tipoComprobante' => $post['tipoComprobante'][$k],
+				'numeroComprobante' => $post['numeroComprobante'][$k],
+				'monto' => $post['monto'][$k],
+				'nombre_inicial' => $archivo['name'],
+				'nombre_archivo' => $archivoName,
+				'extension' => FILES_WASABI[$tipoArchivo[1]],
+				'usuarioRegistro' => $this->idUsuario,
+			];
+			//echo var_dump($insertFactura); exit;
+			
+		}
+		$this->db->insert_batch('finanzas.proveedorServicioPagoComprobante', $insertFactura);
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Error al Registrar';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$this->db->trans_commit();
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Pago Registrado';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+		echo json_encode($result);
+	}
 	public function registrarPagoGenerado()
 	{
 		$result = $this->result;
