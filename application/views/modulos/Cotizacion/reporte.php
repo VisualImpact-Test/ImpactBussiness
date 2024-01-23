@@ -1,7 +1,8 @@
 <style>
 	#validez {
-    cursor: pointer; /* Esto cambiará el cursor a una mano al pasar sobre el div */
-}
+		cursor: pointer;
+		/* Esto cambiará el cursor a una mano al pasar sobre el div */
+	}
 </style>
 <div class="card-datatable">
 	<table id="tb-cotizacion" class="ui celled table" width="100%">
@@ -40,7 +41,7 @@
 								<?php if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS && $row['cantidadTransporte'] == '0') :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS /*&& $row['cantidadTransporte'] == '0'*/) :  ?>
 									<a href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) :  ?>
