@@ -42,6 +42,29 @@ var PagosGenerados = {
 		
 			});
 		});
+
+		$(document).on('click', '.btn-registrarFacturas', function () {
+			var idPagoGenerado = $(this).data("id");
+
+			let data = { 'idPagoGenerado': idPagoGenerado};
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': PagosGenerados.url + 'formularioRegistrarFactura', 'data': jsonString };
+			// console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarPagoGenerado", fn: "PagosGenerados.registrarPagoGenerado()", content: "¿Esta seguro de registrar pago?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
+		
+			});
+		});
 		
 		$(document).on('change', '#cboCuenta', function () {
 			$('#divCargo').find('.fields').remove();

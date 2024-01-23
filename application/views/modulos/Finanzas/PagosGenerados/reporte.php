@@ -25,9 +25,8 @@
                 <tr>
 				<td class="td-center"><?= $n; ?></td>
 				<td>
-				
+					<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-registrarFacturas" data-id="<?= $row['idProveedorServicioGenerado']; ?>" title="Pago">  <i class=" fas fa-money-bill"></i></a>
 					<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-pagoGenerado" data-id="<?= $row['idProveedorServicioGenerado']; ?>" title="Pago"><i class=" fas fa-dollar-sign"></i></a>
-					<!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editarPago" title="Editar"><i class="fa fa-lg fa-edit"></i></a> -->
 				</td>
 				<td><?= $row['datosProveedor']; ?></td>
 				<td><?= $row['numDocumento']; ?></td>

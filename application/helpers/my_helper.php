@@ -1393,6 +1393,11 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 		$html .= '</div>';
 	}
 	if ($tipo = 2) {
+		// $html  = '<div class="form-control custom-file '.$centrado.'">';
+		// $html .= '<input type="file" class="custom-file-input files-uploadedd file-uploadedd" lang="es" multiple="">';
+		// $html .= '<label class="custom-file-label labelImagen" lang="es">Agregar Imagen</label>';
+		// $html .= '</div>';
+
 		$html  = "<div class='ui $centrado small image hover text-center'>";
 		$html .= '	<div class="ui dimmer">';
 		$html .= '		<div class="content">';
@@ -1405,7 +1410,7 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 		$html .= '</div>';
 	}
 	$html .= '<div class="content-upload">';
-	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='file-semantic-upload form-control input-sm d-none'";
+	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='form-control custom-file file-semantic-upload  input-sm '";
 	$html .= "		placeholder='Cargar Imagen' data-row='0' accept='$archivosPermitidos' multiple>";
 	$html .= '	<div class="fields col-md-12">';
 	$html .= '		<div class="sixteen wide field">';

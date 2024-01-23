@@ -85,6 +85,22 @@ class PagosGenerados extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioRegistrarFactura()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista = [];
+		$dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGenerados($post)['query']->result_array();
+		//echo $this->db->last_query();exit();
+		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
+			
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Facturas';
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/formularioRegistroFactura", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+	
 	
 	public function registrarPagoGenerado()
 	{

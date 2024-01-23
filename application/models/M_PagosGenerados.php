@@ -26,6 +26,7 @@ class M_PagosGenerados extends MY_Model
 				select 
 				idProveedorServicioGenerado
 				,ps.idTipoDocumento
+				,utd.breve
 				,ps.numDocumento
 				,ps.datosProveedor
 				,descripcionServicio
@@ -51,7 +52,9 @@ class M_PagosGenerados extends MY_Model
 				join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
 				left join compras.moneda as mn on mn.idMoneda = psp.idMoneda
 				left join rrhh.dbo.empresa as emp on emp.idEmpresa = pspg.idCuenta
+				left join sistema.usuarioTipoDocumento as utd on utd.idTipoDocumento = ps.idTipoDocumento
 				where 1=1 
+		
 				{$filtros}
 			";
 		$query = $this->db->query($sql);
