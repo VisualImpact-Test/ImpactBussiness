@@ -28,6 +28,7 @@ class M_Finanzas extends MY_Model
 				ps.idTipoDocumento,
 				utd.breve,
 				ps.numDocumento,
+				ps.datosProveedor,
 				ps.direccion,
 				pe.nombre AS estado, 
 				pe.idProveedorEstado idEstado,

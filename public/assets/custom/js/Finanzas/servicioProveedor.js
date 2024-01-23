@@ -150,10 +150,13 @@ var ServicioProveedor = {
                 ++modalId;
                 var btn = [];
                 let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-    
+              
                 btn[0] = { title: 'Continuar', fn: fn };
-                Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '40%' });
-                //console.log(a);
+                if (a.result != 1) {
+                     Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '40%' });
+                    // console.log(a);
+                }
+               
               });
               
         });

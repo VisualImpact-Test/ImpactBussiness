@@ -320,9 +320,12 @@ class ServicioProveedor extends MY_Controller
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('registroRepetido');
-			//goto respuesta;
-		}
+			goto respuesta;
+		}else{
+            $result['result'] = 1;
+        }
 
+        respuesta:
         echo json_encode($result);
     }
 

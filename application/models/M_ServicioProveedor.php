@@ -225,7 +225,8 @@ class M_ServicioProveedor extends MY_Model
 	public function validarExistenciaServicioProveedor($params = [])
 	{
 		$filtros = "";
-        $filtros .= !empty($params['numDocumento']) ? " AND numDocumento = {$params['numDocumento']}" : '';
+		$numDoc = $params['numDocumento'];
+        $filtros .= !empty($params['numDocumento']) ? " AND numDocumento = '{$numDoc}'" : '';
 
 		$sql = "
 		SELECT * FROM finanzas.proveedorServicio
