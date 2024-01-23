@@ -139,7 +139,6 @@ var Oc = {
 			let unidadMedida = control.find('option:selected').data('unidadmedida');
 			let idUnidadMedida = control.find('option:selected').data('idunidadmedida');
 
-
 			let costoForm = parent.find('.costoSubItem');
 			let unidadMedidaForm = parent.find('.umSubItem');
 			let idUnidadMedidaForm = parent.find('.idUmSubItem');
@@ -156,7 +155,31 @@ var Oc = {
 			div.remove();
 			let cantidadSubItems = $(divItem).find('.subItemSpace').length;
 			$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
+		});
+		$(document).on('click', '.btn-indicarGr', function () {
+			_this = $(this);
+			let tr = _this.closest('tr');
+			let id = tr.data('id');
+			let jsonString = { 'idOrdenCompra': id };
+			let config = { 'url': Oc.url + 'formularioRegistroGrOrdenCompraLibre', 'data': jsonString };
 
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				++modalId;
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				if (a.result == 1) {
+					fn[1] = 'Fn.showConfirm({ idForm: "formRegistroGrOrdenCompraLibre", fn: "Oc.registrarGrOrdenCompraLibre()", content: "¿Esta seguro de registrar la(s) GR(s) en la Orden de Compra?" });';
+					btn[1] = { title: 'Registrar', fn: fn[1] };
+				}
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '40%' });
+				if (a.data.dataCargada) {
+					$('#grBase').find('input').removeAttr('patron');
+					$('#grBase').find('input').removeAttr('name');
+				}
+			});
 
 		});
 		$(document).on('change', '.clearSubItem', function () {
@@ -252,12 +275,12 @@ var Oc = {
 			count = divElementC.length;
 			if (id == '' || id == 0) {
 				id = 0;
-			
-			divElementCDIVCARGAITEMBLOCK.remove();
-			divElementCDIVCARGA.removeClass('d-none');
-			Fn.loadSemanticFunctions();
-			Fn.loadDimmerHover();
-			
+
+				divElementCDIVCARGAITEMBLOCK.remove();
+				divElementCDIVCARGA.removeClass('d-none');
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
+
 			} else {
 				if (count == 1) {
 					divElement.remove();
@@ -329,8 +352,24 @@ var Oc = {
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
 	},
+	registrarGrOrdenCompraLibre: function () {
+		let jsonString = { 'data': Fn.formSerializeObject('formRegistroGrOrdenCompraLibre') };
+		let url = Oc.url + "registrarGrOc" + Oc.tipo;
+		let config = { url: url, data: jsonString };
 
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarOC").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 
 	editarOC: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOC')) };
@@ -658,8 +697,6 @@ var Oc = {
 				minLength: 3,
 			});
 		}
-
-
 	},
 	alertaParaAgregarItems: function (control, item) {
 		/*++modalId;
@@ -732,6 +769,15 @@ var Oc = {
 		}
 		$(control).closest('.itemData').find('.item_cantidad').val(cantidad);
 		$(control).closest('.itemData').find('.item_costo').val(total / cantidad).trigger('change');
+	},
+	addGr: function () {
+		let grBase = $('#grBase').html();
+		$('#grAdicional').append(grBase);
+		Fn.loadSemanticFunctions();
+	},
+	deleteGr: function () {
+		$('#grAdicional').find('.fields').last().remove();
+		Fn.loadSemanticFunctions();
 	},
 	cantidadServicio: function (t) {
 		control = t.closest('.divItem');

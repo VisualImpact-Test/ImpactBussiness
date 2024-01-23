@@ -49,7 +49,6 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
 		$datos = array_merge($datos1, $datos2);
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
@@ -60,7 +59,7 @@ class ProveedorDocumento extends MY_Controller
 				$dataParaVista['datos'][$v['ordenCompra']]['monto'] = 0;
 
 				$dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = false;
-				$buscarCargados = $this->db->get_where('compras.sustentoAdjunto', ['idProveedor' => $v['idProveedor'], 'idCotizacion' => $v['idCotizacion'], 'estado' => 1])->result_array();
+				$buscarCargados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1])->result_array();
 				if (!empty($buscarCargados)) $dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = true;
 			}
 			$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
@@ -90,13 +89,11 @@ class ProveedorDocumento extends MY_Controller
 	{
 		$post = json_decode($this->input->post('data'), true);
 
-		// $datos = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
+
 		$datos = array_merge($datos1, $datos2);
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
-
 
 		$data = [];
 		foreach ($datos as $k => $v) {
@@ -113,7 +110,6 @@ class ProveedorDocumento extends MY_Controller
 		error_reporting(E_ALL);
 		ini_set('display_errors', TRUE);
 		ini_set('display_startup_errors', TRUE);
-		// ini_set('memory_limit', '1024M');
 		set_time_limit(0);
 
 		/** Include PHPExcel */
@@ -132,10 +128,10 @@ class ProveedorDocumento extends MY_Controller
 					'type' => PHPExcel_Style_Fill::FILL_SOLID,
 					'color' => array('rgb' => 'E60000')
 				),
-				'font'  => array(
+				'font' => array(
 					'color' => array('rgb' => 'ffffff'),
-					'size'  => 11,
-					'name'  => 'Calibri'
+					'size' => 11,
+					'name' => 'Calibri'
 				)
 			);
 		$estilo_titulo = [
@@ -146,9 +142,9 @@ class ProveedorDocumento extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
+			'font' => [
 				'size' => 13,
-				'name'  => 'Calibri'
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_subtitulo = [
@@ -159,9 +155,9 @@ class ProveedorDocumento extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
+			'font' => [
 				'size' => 11,
-				'name'  => 'Calibri'
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['left'] = [
@@ -172,8 +168,8 @@ class ProveedorDocumento extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['center'] = [
@@ -184,8 +180,8 @@ class ProveedorDocumento extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		$estilo_data['right'] = [
@@ -196,8 +192,8 @@ class ProveedorDocumento extends MY_Controller
 			'fill' =>	[
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 			],
-			'font'  => [
-				'name'  => 'Calibri'
+			'font' => [
+				'name' => 'Calibri'
 			]
 		];
 		/**FIN ESTILOS**/
@@ -243,16 +239,7 @@ class ProveedorDocumento extends MY_Controller
 			->setCellValue('S1', 'NUMERO DE FACTURA');
 
 		$objPHPExcel->getActiveSheet()->getStyle("B1:S1")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
-		// $objPHPExcel->getActiveSheet()->getStyle("A8:A11")->getFont()->setBold(true);
-		// $objPHPExcel->getActiveSheet()->getStyle("A8:A11")->applyFromArray($estilo_subtitulo);
 
-		// $objPHPExcel->setActiveSheetIndex(0)
-		// 	->setCellValue('A13', 'DESCRIPCION')
-		// 	->setCellValue('B13', 'CANTIDAD')
-		// 	->setCellValue('C13', 'PRECIO UNITARIO')
-		// 	->setCellValue('D13', 'TOTAL')
-		// 	->setCellValue('E13', 'TIEMPO');
-		// $objPHPExcel->getActiveSheet()->getStyle("A13:E13")->applyFromArray($estilo_cabecera);
 		$nIni = 2;
 		foreach ($data as $k => $v) {
 			$objPHPExcel->setActiveSheetIndex(0)
@@ -293,5 +280,49 @@ class ProveedorDocumento extends MY_Controller
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
 		$objWriter->save('php://output');
+	}
+	public function formularioSustentosCargados()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+
+		$dataParaVista = [
+			'idOrdenCompra' => $post['idOrdenCompra'],
+			'flagOcLibre' => $post['flagOcLibre'],
+		];
+		$dataParaVista['sustentosCargados'] = $this->db->get_where(
+			'sustento.comprobante',
+			[
+				'idOrdenCompra' => $post['idOrdenCompra'],
+				'flagOcLibre' => $post['flagOcLibre'],
+				'estado' => 1
+			]
+		)->result_array();
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Sustentos Cargados';
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorDocumento/SustentosCargados", $dataParaVista, true);
+		echo json_encode($result);
+	}
+	public function actualizarEstadoSustentoFinanza()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+		logError($post);
+
+		$dataParaVista = [];
+		if (empty($post['observacionRechazoFinanza']) && empty($post['flagAprobadoFinanza'])) {
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Ingresar Observación';
+			$result['data']['html'] = $this->load->view("modulos/Finanzas/ProveedorDocumento/formularioObservacionDeRechazo", $dataParaVista, true);
+			goto respuesta;
+		}
+
+		$this->db->update('sustento.comprobante', ['observacionRechazoFinanza' => $post['observacionRechazoFinanza'], 'flagAprobadoFinanza' => $post['flagAprobadoFinanza']], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Completo';
+		$result['data']['html'] = getMensajeGestion('registroExitoso');
+
+		respuesta:
+		echo json_encode($result);
 	}
 }

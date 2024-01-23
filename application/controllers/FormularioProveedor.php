@@ -968,7 +968,6 @@ class FormularioProveedor extends MY_Controller
 			)->result_array();
 		}
 
-
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Sustentos Cargados';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioListadoSustentoComprobante", $dataParaVista, true);

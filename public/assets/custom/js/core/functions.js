@@ -185,12 +185,14 @@ var Fn = {
 		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
 			let fnF = '';
 			if (config.fnFin) fnF = config.fnFin + ';';
+			let fnI = '';
+			if (config.fnIni) fnI = config.fnIni + ';';
 			if (a === true) {
 				++modalId;
 				var btn = new Array();
 				var btn = new Array();
 				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
-				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
+				btn[1] = { title: 'Aceptar', fn: fnI + 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
 				var content = "<div class='alert alert-warning'>" + config.content + "</strong></div>";
 				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
 			} else {
@@ -294,7 +296,7 @@ var Fn = {
 										if (v == 'requerido' || value.length > 0) {
 											if (typeof (Fn.validators[v]) == 'object') {
 												var validators = !Fn.validators[v]['expr'].test(value);
-												
+
 												if (validators || value == null) {
 													this_.parent().addClass('has-error');
 													this_.css('border-color', 'red');
@@ -739,7 +741,7 @@ var Fn = {
 			'expr': /^[0-9]$/,
 			'msg': ' Ingresar solo enteros.'
 		},
-		'carnetExtranjeria' : {
+		'carnetExtranjeria': {
 			'expr': /^\d{9,12}$/,
 			'msg': 'Carnet de extranjeria inválido'
 		}

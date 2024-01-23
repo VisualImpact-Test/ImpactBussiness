@@ -701,4 +701,52 @@ class OrdenCompra extends MY_Controller
 			$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 		}
 	}
+	public function formularioRegistroGrOrdenCompraLibre()
+	{
+		$post = $this->input->post();
+		$dataParaVista['idOrdenCompra'] = $post['idOrdenCompra'];
+
+		$dataParaVista['dataCargada'] = $this->db->get_where('orden.ordenCompraGr', ['estado' => 1, 'idOrdenCompra' => $post['idOrdenCompra']])->result_array();
+		$result = $this->result;
+		$result['result'] = 1;
+		$result['data']['dataCargada'] = !empty($dataParaVista['dataCargada']);
+		$result['msg']['title'] = 'Hecho!';
+		$result['data']['html'] = $this->load->view('modulos/OrdenCompra/formularioRegistroGrOCLibre', $dataParaVista, true);
+		echo json_encode($result);
+	}
+	public function registrarGrOcLibre()
+	{
+		$result = $this->result;
+		$post = $this->input->post('data');
+
+		$post['numeroGr'] = checkAndConvertToArray($post['numeroGr']);
+		$post['fechaGr'] = checkAndConvertToArray($post['fechaGr']);
+
+		$insertData = [];
+		foreach ($post['numeroGr'] as $k => $v) {
+			$insertData[] = [
+				'idOrdenCompra' => $post['idOrdenCompra'],
+				'numeroGr' => $v,
+				'fechaGr' => $post['fechaGr'][$k],
+				'fechaReg' => getActualDateTime(),
+				'idUsuarioReg' => $this->idUsuario
+			];
+		}
+
+		if (!empty($insertData)) {
+			$this->db->update('orden.ordenCompraGr', ['estado' => 0], ['idOrdenCompra' => $post['idOrdenCompra']]);
+			$this->db->insert_batch('orden.ordenCompraGr', $insertData);
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'No se encontraron datos para insertar']);
+			goto respuesta;
+		}
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		respuesta:
+		echo json_encode($result);
+	}
 };
