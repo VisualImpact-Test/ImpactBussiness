@@ -3634,7 +3634,6 @@ class Cotizacion extends MY_Controller
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 		$data['where'] = 'idCotizacionDetalle';
-
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
 		if (!empty($post['subItemEliminado'])) {
 			foreach ($post['subItemEliminado'] as $key => $value) {

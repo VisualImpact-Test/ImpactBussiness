@@ -1896,6 +1896,7 @@ class M_Cotizacion extends MY_Model
 							'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
+							'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
 							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
 							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
@@ -1936,7 +1937,6 @@ class M_Cotizacion extends MY_Model
 
 				//Sub Items
 				if (!empty($params['newInsertSubItem'][$k])) {
-
 					foreach ($params['newInsertSubItem'][$k] as $subItem) {
 						$insertSubItem[] = [
 							'idCotizacionDetalle' => $idCotizacionDetalle,
@@ -1975,6 +1975,13 @@ class M_Cotizacion extends MY_Model
 							'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : 0,
 							'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
 							'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
+							'cod_departamento' => !empty($subItem['cod_departamento']) ? $subItem['cod_departamento'] : NULL,
+							'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : NULL,
+							'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : NULL,
+							'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : NULL,
+							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
+							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
+							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						];
 					}
 				}
