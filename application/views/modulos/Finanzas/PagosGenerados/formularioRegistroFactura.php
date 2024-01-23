@@ -90,11 +90,11 @@
                         <div class="control-group child-divcenter row" style="width:55%;margin-left: 0px;margin-right: 0px;">
                             <label class="form-control col-md-5" for="porcentajeDetraccion" style="border:0px;">Subir Archivo :</label>
                             <div class="divParaCarga col-md-7 pl-0" style="width:85%">
-                                <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal', 'visible'=>false , 'tipo' => 2]) ?>
+                                <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal', 'visible' => false , 'tipo' => 2]) ?>
                             </div>
                         </div>
                         <div class="control-group child-divcenter row" style="width:15%;margin-left: 0px;margin-right: 0px;">
-                        <button type="button"></button>   
+                        <!-- <button type="button"></button>    -->
                         </div>
                     </div>
 

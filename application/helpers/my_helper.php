@@ -1377,11 +1377,13 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 	$centrado = !empty($params['centrado']) ? 'centered' : '';
 	$name = !empty($params['name']) ? $params['name'] : '';
 	$archivosPermitidos = !empty($params['archivosPermitidos']) ? $params['archivosPermitidos'] : ARCHIVOS_PERMITIDOS;
+	$visible = empty($params['visible']) ? true : false;
 	// $archivosPermitidos = ARCHIVOS_PERMITIDOS;
 	$rutaImagenCarga = IMG_WIREFRAME;
 
-	if ($tipo = 1) {
-		$html  = "<div class='ui $centrado small image hover text-center'>";
+	if ($tipo == 1) {
+		$dnone = $visible ? 'd-none' : '';
+		$html  = "<div class='ui $centrado small image hover text-center $dnone'>";
 		$html .= '	<div class="ui dimmer">';
 		$html .= '		<div class="content">';
 		$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
@@ -1392,7 +1394,7 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 		$html .= "	<img class='ui image' src='$rutaImagenCarga'>";
 		$html .= '</div>';
 	}
-	if ($tipo = 2) {
+	if ($tipo == 2) {
 		// $html  = '<div class="form-control custom-file '.$centrado.'">';
 		// $html .= '<input type="file" class="custom-file-input files-uploadedd file-uploadedd" lang="es" multiple="">';
 		// $html .= '<label class="custom-file-label labelImagen" lang="es">Agregar Imagen</label>';
@@ -1409,9 +1411,21 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 		$html .= "	<img class='ui image' src='$rutaImagenCarga'>";
 		$html .= '</div>';
 	}
-	$html .= '<div class="content-upload">';
-	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='form-control custom-file file-semantic-upload  input-sm '";
-	$html .= "		placeholder='Cargar Imagen' data-row='0' accept='$archivosPermitidos' multiple>";
+	$html .= '<div class="content-upload custom-file">';
+	$dnone = !$visible ? 'd-none' : '';
+
+	// `<div class="custom-file col-md-8">
+	//              <input type="file" class="custom-file-input files-upload file-upload" lang="es" accept="image/png, image/jpeg">
+	//              <label class="custom-file-label" lang="es">Agregar Imagen</label>
+	//              <input type="hidden" id="f_item" name="file-item" patron="requerido">
+	//              <input type="hidden" id="f_name" name="file-name" patron="requerido">
+	//              <input type="hidden" id="f_type" name="file-type" patron="requerido">
+	//            </div>`;
+
+
+	$html .= "	<input type='file' name='capturas' data-maxfiles='$maxFiles' data-name='$name' class='form-control custom-file-input custom-file file-semantic-upload input-sm $dnone'";
+	$html .= "		placeholder='Cargar Imagen' data-row='0' accept='$archivosPermitidos' multiple lang='es'>";
+	$html .= "	<label class='custom-file-label $dnone' lang='es'>Agregar Imagen</label>";
 	$html .= '	<div class="fields col-md-12">';
 	$html .= '		<div class="sixteen wide field">';
 	$html .= '			<div class="ui tiny images content-img"></div>';
