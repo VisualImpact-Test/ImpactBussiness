@@ -463,11 +463,14 @@ class OrdenCompra extends MY_Controller
 			$toCorreo[] = $usuario['email'];
 		}
 
+		$html = $htmlCorreo;
+		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html], true);
+
 		$config = [
-			'to' => $correoProveedor,
-			'cc' => $this->idUsuario == '1' ? [] : $toCorreo,
-			'asunto' => 'OC ' . $ocSeriado,
-			'contenido' => $htmlCorreo,
+			'to' => $this->idUsuario == '1' ? ['eder.alata@visualimpact.com.pe'] : $correoProveedor,
+			'cc' => $toCorreo,
+			'asunto' => $ocSeriado,
+			'contenido' => $correo,
 		];
 		email($config);
 		// Fin: Envio de Correo
