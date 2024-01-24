@@ -66,7 +66,7 @@ class M_ProveedorDocumento extends MY_Model
 							SELECT ', ' + CONVERT(VARCHAR(500), numeroGr)
 							FROM orden.ordenCompraGr WHERE estado = 1 AND idOrdenCompra = oc.idOrdenCompra
 							FOR XML PATH('')
-						), 1, 2, ''),'PENDIENTE') as numeroGR, 
+						), 1, 2, ''),'PENDIENTE') as numeroGR,
 						oc.IGVPorcentaje as igv, 
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
 			->from('orden.ordenCompraDetalle ocd')

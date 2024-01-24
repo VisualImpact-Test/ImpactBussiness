@@ -28,7 +28,7 @@ class M_ProveedorServicio extends MY_Model
 				c.motivo, 
 				c.total,
 				c.idCotizacion,
-				cc.nombre AS cuentaCentroCosto,
+				cc.subcanal AS cuentaCentroCosto,
 				c.motivoAprobacion,
 				pr.razonSocial AS proveedor,
 				cu.nombre AS cuenta, 
@@ -38,14 +38,19 @@ class M_ProveedorServicio extends MY_Model
 				o.estadoval,
 				REPLACE(CONVERT(VARCHAR, CONVERT(DATE, o.fechaReg), 103), '-', '/') AS fechaReg,
 				mp.cantDias,
+				isnull(STUFF((
+					SELECT ', ' + CONVERT(VARCHAR(500), numeroGR)
+					FROM compras.cotizacionGr WHERE estado = 1 AND idCotizacion = c.idCotizacion
+					FOR XML PATH('')
+				), 1, 2, ''),'PENDIENTE') as numeroGR,
 				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg)), 103), '-', '/') AS fechaVencimiento")
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
 			->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')
 			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion', 'INNER')
-			->join('visualImpact.logistica.cuentaCentroCosto cc', 'c.idCentroCosto = cc.idCuentaCentroCosto', 'INNER')
-			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
+			->join('rrhh.dbo.empresa_Canal cc', 'c.idCentroCosto = cc.idEmpresaCanal', 'INNER')
+			->join('rrhh.dbo.Empresa cu', 'c.idCuenta = cu.idEmpresa', 'INNER')
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = o.idMetodoPago', 'INNER')
 			->where('ocd.estado', '1')
 			->group_by("
@@ -56,7 +61,7 @@ class M_ProveedorServicio extends MY_Model
 				c.motivo, 
 				c.total,
 				c.idCotizacion,
-				cc.nombre,
+				cc.subcanal,
 				c.motivoAprobacion,
 				pr.razonSocial,
 				cu.nombre, 
@@ -93,7 +98,7 @@ class M_ProveedorServicio extends MY_Model
 				(NULL) AS motivo,
 				cd.total,
 				(NULL) AS idCotizacion,
-				cc.nombre AS cuentaCentroCosto,
+				cc.subcanal AS cuentaCentroCosto,
 				(NULL) AS motivoAprobacion,
 				pr.razonSocial AS proveedor,
 				cu.nombre AS cuenta,
@@ -103,19 +108,24 @@ class M_ProveedorServicio extends MY_Model
 				cd.estadoval,
 				REPLACE(CONVERT(VARCHAR, CONVERT(DATE, cd.fechaReg), 103), '-', '/') AS fechaReg,
 				mp.cantDias,
+				isnull(STUFF((
+					SELECT ', ' + CONVERT(VARCHAR(500), numeroGr)
+					FROM orden.ordenCompraGr WHERE estado = 1 AND idOrdenCompra = cp.idOrdenCompra
+					FOR XML PATH('')
+				), 1, 2, ''),'PENDIENTE') as numeroGR,
 				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg)), 103), '-', '/') AS fechaVencimiento")
 			->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
-			->join('visualImpact.logistica.cuentaCentroCosto cc', 'cd.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
-			->join('visualImpact.logistica.cuenta cu', 'cd.idCuenta = cu.idCuenta', 'INNER')
+			->join('rrhh.dbo.empresa_Canal cc', 'cd.idCentroCosto = cc.idEmpresaCanal', 'LEFT')
+			->join('rrhh.dbo.Empresa cu', 'cd.idCuenta = cu.idEmpresa', 'INNER')
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = cd.idMetodoPago', 'INNER')
 			->where('cd.estado', '1')
 			->group_by("
 				cd.seriado,
 				CONVERT(VARCHAR, cd.fechaReg, 103),
 				cd.total,
-				cc.nombre,
+				cc.subcanal,
 				cu.nombre,
 				cd.idProveedor,
 				pr.razonSocial,

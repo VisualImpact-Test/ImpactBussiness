@@ -90,8 +90,7 @@ class ProveedorServicio extends MY_Controller
 			$data[$k]['solicitarFecha'] = '1';
 			$data[$k]['flagFechaRegistro'] = '0';
 			$data[$k]['flagSustentoServicio'] = '0';
-			//var_dump(json_encode($v));
-			//exit;
+
 			if (!empty($v['idOrdenCompra'])) {
 				$data[$k]['status'] = 'Aprobado';
 				// Se consulta los tipos de Item, considerando que solo se requiere Validación de Arte para SERVICIO (Mantenimiento), Textiles e Impresiones.

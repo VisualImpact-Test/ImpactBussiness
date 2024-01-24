@@ -19,6 +19,7 @@
 				<th>PO</th>
 				<th>Oper</th>
 				<th>OC Visual</th>
+				<th>GR</th>
 				<th>Validación de Artes</th>
 				<th>Fecha de Ejecución</th>
 				<th>Sustento de Servicio</th>
@@ -88,6 +89,7 @@
 							<?php endif; ?>
 						<?php endif; ?>
 					</td>
+					<td><?= verificarEmpty($row['numeroGR'], 3) ?></td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') :  ?>
 							<?php if ($row['mostrarValidacion'] == '1') :  ?>
