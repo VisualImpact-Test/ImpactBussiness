@@ -14,6 +14,7 @@ class OrdenCompra extends MY_Controller
 		$this->load->model('M_FormularioProveedor', 'mFormProveedor');
 		$this->load->model('M_Oper', 'mOper');
 		$this->load->model('Configuracion/M_Tipo', 'mTipo');
+		$this->load->model('M_control', 'model_control');
 	}
 
 	public function index()
@@ -182,7 +183,6 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
-
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioRegistro", $dataParaVista, true);
@@ -247,7 +247,6 @@ class OrdenCompra extends MY_Controller
 			// var_dump($dataParaVista[$key]['item']);
 		}
 
-
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/OrdenCompra/Oper/listaOperSinCotizar", ['datos' => $dataParaVista], true);
@@ -256,8 +255,6 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Seleccionar Oper';
 		$result['data']['html'] = $html;
-
-
 		echo json_encode($result);
 	}
 	public function registrarOCLibre()
@@ -318,6 +315,7 @@ class OrdenCompra extends MY_Controller
 			'descripcionCompras' => $post['descripcionCompras'],
 			//'totalIGV_real' => $post['totalIGV_real'],
 		];
+		$ocSeriado = $insertData['seriado'];
 
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
@@ -441,9 +439,38 @@ class OrdenCompra extends MY_Controller
 				];
 			}
 		}
-
-
 		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagen', $insertArchivos);
+
+		// Envio de Correo
+		$detalleParaCorreo = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
+		foreach ($detalleParaCorreo as $k => $v) {
+			$dataParaVista['ocDet'][$k]['nombre'] = $v['item'];
+			$dataParaVista['ocDet'][$k]['cantidad'] = $v['cantidad_item'];
+		}
+
+		$htmlCorreo = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
+		$correoProveedor = [];
+		$correoDeProveedor[] = $this->db->get_where('compras.proveedor', ['idProveedor' => $post['proveedor']])->row_array()['correoContacto'];
+		foreach ($this->db->get_where('compras.proveedorCorreo', ['idProveedor' => $post['proveedor'], 'estado' => 1])->result_array() as $k => $v) {
+			$correoDeProveedor[] = $v['correo'];
+		}
+
+		$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+		$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+
+		$toCorreo = [];
+		foreach ($usuariosCompras as $usuario) {
+			$toCorreo[] = $usuario['email'];
+		}
+
+		$config = [
+			'to' => $correoProveedor,
+			'cc' => $this->idUsuario == '1' ? [] : $toCorreo,
+			'asunto' => 'OC ' . $ocSeriado,
+			'contenido' => $htmlCorreo,
+		];
+		email($config);
+		// Fin: Envio de Correo
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -451,7 +478,6 @@ class OrdenCompra extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-
 
 	public function editarOCLibre()
 	{
@@ -481,28 +507,6 @@ class OrdenCompra extends MY_Controller
 			$post['subItem_cantidad'] = checkAndConvertToArray($post['subItem_cantidad']);
 			$post['subItem_cantidadPdv'] = checkAndConvertToArray($post['subItem_cantidadPdv']);
 		}
-		/*
-		$countID = 0;
-		foreach ($post['idItemForm'] as $keyItem => $value) {
-			if ($value == 0) {
-				$countID = $countID + 1;
-			}
-		}
-
-		if ($countID > 0) {
-			if (
-				(
-					!isset($post['adjuntoItemFile-item']) ||
-					!isset($post['adjuntoItemFile-name']) ||
-					!isset($post['adjuntoItemFile-type'])) ||
-				$countID != count($post['adjuntoItemFile-item'])
-			) {
-				$result['result'] = 0;
-				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del Item']);
-				goto respuesta;
-			}
-		}*/
 		$mostrar_observacion = 0;
 		if (isset($post['mostrar_observacion']) == 'on') {
 			$mostrar_observacion = 1;

@@ -1124,12 +1124,6 @@ class Cotizacion extends MY_Controller
 
 		$dataParaVista['link'] = base_url() . index_page() . 'Cotizacion';
 
-		$bcc = array(
-			'eder.alata@visualimpact.com.pe',
-			'luis.durand@visualimpact.com.pe'
-		);
-		$email['bcc'] = $bcc;
-
 		$email['asunto'] = 'IMPACTBUSSINESS - NUEVA COTIZACION GENERADA';
 
 		$html = $this->load->view("modulos/Cotizacion/correo/informacionProveedor", $dataParaVista, true);
