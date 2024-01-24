@@ -61,8 +61,13 @@ class M_ProveedorDocumento extends MY_Model
 						oc.descripcionCompras as cotizacion,
 						oc.idCuenta, 
 						oc.idCentroCosto, 
-						oc.poCliente as poCliente, oc.concepto as desTracking, 
-						'PENDIENTE' as numeroGR, oc.IGVPorcentaje as igv, 
+						oc.poCliente as poCliente, oc.concepto as desTracking,
+						isnull(STUFF((
+							SELECT ', ' + CONVERT(VARCHAR(500), numeroGr)
+							FROM orden.ordenCompraGr WHERE estado = 1 AND idOrdenCompra = oc.idOrdenCompra
+							FOR XML PATH('')
+						), 1, 2, ''),'PENDIENTE') as numeroGR, 
+						oc.IGVPorcentaje as igv, 
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')

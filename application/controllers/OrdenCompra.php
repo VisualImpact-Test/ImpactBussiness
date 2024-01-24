@@ -51,7 +51,7 @@ class OrdenCompra extends MY_Controller
 		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
 
 		foreach ($data as $key => $row) {
-			$dataParaVista[$row['idOrdenCompra']] = [
+			$datos[$row['idOrdenCompra']] = [
 				'idProveedor' => $row['idProveedor'],
 				'requerimiento' => $row['requerimiento'],
 				'concepto' => $row['concepto'],
@@ -71,9 +71,15 @@ class OrdenCompra extends MY_Controller
 			];
 		}
 
+		$gr = $this->db->get_where('orden.ordenCompraGr', ['estado' => 1])->result_array();
+		foreach ($gr as $k => $v) {
+			$datos[$v['idOrdenCompra']]['gr'][] = $v;
+		}
+
 		$html = getMensajeGestion('noRegistros');
-		if (!empty($dataParaVista)) {
-			$html = $this->load->view("modulos/OrdenCompra/reporte", ['datos' => $dataParaVista], true);
+		if (!empty($datos)) {
+			$dataParaVista['datos'] = $datos;
+			$html = $this->load->view("modulos/OrdenCompra/reporte", $dataParaVista, true);
 		}
 
 		$result['result'] = 1;

@@ -12,6 +12,7 @@
 				<th>PO CLIENTE</th>
 				<th>CONCEPTO</th>
 				<th>REQUERIMIENTO</th>
+				<th>GR</th>
 				<th>PROVEEDOR</th>
 				<th>LUGAR ENTREGA</th>
 				<th>FECHA ENTREGA</th>
@@ -42,6 +43,8 @@
 					<td class="td-center"><?= verificarEmpty($row['poCliente'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['concepto'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['requerimiento'], 3); ?></td>
+					<?php $gr = isset($row['gr']) ? obtenerDatosCabecera($row['gr'], 'numeroGr') : ['-'] ?>
+					<td class="td-left"><?= implode(", ", $gr); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['proveedor'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['entrega'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['fechaEntrega'], 3); ?></td>

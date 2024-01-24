@@ -16,6 +16,7 @@ class M_OrdenCompra extends MY_Model
 	}
 	public function obtenerOrdenCompraLista($params = [])
 	{
+
 		$this->db
 			->select('oc.*,
 							ocd.idOrdenCompraDetalle,
@@ -44,8 +45,7 @@ class M_OrdenCompra extends MY_Model
 							oc.mostrar_observacion,
 							oc.descripcionCompras,
 							itImg.nombre_archivo,
-							itImg.idTipoArchivo
-							')
+							itImg.idTipoArchivo')
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
 			->join('compras.item i', 'i.idItem = ocd.idItem', 'LEFT')

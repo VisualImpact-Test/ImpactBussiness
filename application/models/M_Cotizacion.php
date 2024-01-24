@@ -334,7 +334,7 @@ class M_Cotizacion extends MY_Model
 				, od.idOper
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND cotizacionInterna = 1) nuevos
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND estado = 1) cantDetalle
-				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE idCotizacion = p.idCotizacion AND idItemTipo = $codTransporte) cantidadTransporte
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE estado = 1 AND idCotizacion = p.idCotizacion AND idItemTipo = $codTransporte) cantidadTransporte
 				, ISNULL((SELECT CASE WHEN DATEDIFF(DAY,ISNULL(fechaEnvioCliente,fechaReg),@hoy) <= p.diasValidez THEN 1 ELSE 0 END FROM lst_historico_estado WHERE idCotizacion = p.idCotizacion AND p.idCotizacionEstado IN(4,5) AND idCotizacionEstado = 4 AND fila = 1),1) cotizacionValidaCliente
 				, p.mostrarPrecio AS flagMostrarPrecio
 				, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno as usuario
