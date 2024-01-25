@@ -2183,6 +2183,15 @@ function obtenerDatosCabecera($array, $head)
 	return $ar;
 }
 
+function sumarArrayPorCabecera($array, $head)
+{
+	$total = 0;
+	foreach ($array as $v) {
+		$total += floatval($v[$head]);
+	}
+	return $total;
+}
+
 class Encriptar
 {
 

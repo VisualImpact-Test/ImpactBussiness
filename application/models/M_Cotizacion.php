@@ -2191,6 +2191,7 @@ class M_Cotizacion extends MY_Model
 					cd.caracteristicasCompras AS caracteristicasCompras,
 					cd.caracteristicasProveedor AS caracteristicasProveedor,
 					cd.subtotal AS subtotal,
+					cd.cotizacionInterna,
 					c.total AS total,
 					cd.idItemTipo AS idItemTipo,
 					cd.caracteristicas AS caracteristicas,
@@ -2229,6 +2230,7 @@ class M_Cotizacion extends MY_Model
 				lt.item,
 				lt.itemNombre,
 				lt.diasVigencia,
+				lt.cotizacionInterna,
 				lt.idItem,
 				lt.cantidad,
 				lt.costo,
@@ -2262,16 +2264,15 @@ class M_Cotizacion extends MY_Model
 				lt.costoPersonal,
 				lt.flagMostrarDetalle,
 				lt.requiereOrdenCompra
-
 				FROM listItem lt
 			)
 			SELECT
-			ls.*,
+			ls.*
+			/* ,
 			CASE
-			-- WHEN ls.diasVigencia > 15 or idProveedor is null THEN 1
 			WHEN ls.diasVigencia > 0 or idProveedor is null THEN 1
 			ELSE 0
-			END cotizacionInterna
+			END cotizacionInterna */
 			FROM
 			lst_tarifario_det ls
 		";

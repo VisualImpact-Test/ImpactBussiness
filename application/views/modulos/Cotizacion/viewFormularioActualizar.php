@@ -601,7 +601,7 @@
 										<input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 										<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 										<input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : ""; ?>">
-										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
+										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="<?= $row['cotizacionInterna'] ?>">
 									</div>
 								</div>
 								<div class="five wide field">
@@ -677,7 +677,7 @@
 								</div>
 								<div class="two wide field divCostoPacking <?= $row['flagPackingSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoPacking" name="costoPacking" value="<?= $row['costoPacking']; ?>">
+									<input class="onlyNumbers costoPacking keyUpChange" name="costoPacking" value="<?= $row['costoPacking']; ?>">
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Movilidad</div>
@@ -688,7 +688,7 @@
 								</div>
 								<div class="two wide field divCostoMovilidad <?= $row['flagMovilidadSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoMovilidad" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>">
+									<input class="onlyNumbers costoMovilidad keyUpChange" name="costoMovilidad" value="<?= $row['costoMovilidad']; ?>">
 								</div>
 								<div class="three wide field">
 									<div class="ui sub header">Costo Personal</div>
@@ -699,7 +699,7 @@
 								</div>
 								<div class="two wide field divCostoPersonal <?= $row['flagPersonalSolicitado'] == '1' ? '' : 'd-none'; ?>">
 									<div class="ui sub header">.</div>
-									<input class="onlyNumbers costoPersonal" name="costoPersonal" value="<?= $row['costoPersonal']; ?>">
+									<input class="onlyNumbers costoPersonal keyUpChange" name="costoPersonal" value="<?= $row['costoPersonal']; ?>">
 								</div>
 							</div>
 							<!-- Textiles -->
@@ -902,6 +902,7 @@
 									<div class="datosTable">
 										<?php if (isset($tablaGen[$row['idCotizacionDetalle']])) : ?>
 											<?= $tablaGen[$row['idCotizacionDetalle']]; ?>
+											<input type="hidden" class="totalTablaDeDistribucion" value="<?= $totalTablaGen[$row['idCotizacionDetalle']] ?>">
 										<?php endif; ?>
 									</div>
 									<div class="arrayDatosItems d-none">

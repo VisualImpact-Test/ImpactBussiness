@@ -637,9 +637,9 @@ class Cotizacion extends MY_Controller
 				}
 			}
 
-			if ($post['cantidadForm'][$k] > LIMITE_COMPRAS) {
-				$post['cotizacionInternaForm'][$k] = 1;
-			}
+			// if ($post['cantidadForm'][$k] > LIMITE_COMPRAS) {
+			// 	$post['cotizacionInternaForm'][$k] = 1;
+			// }
 			if ($post['tipoItemForm'][$k] == COD_TRANSPORTE['id']) {
 				$post['cotizacionInternaForm'][$k] = 0;
 			}
@@ -3224,7 +3224,13 @@ class Cotizacion extends MY_Controller
 
 		if (isset($post['actualizarEstado'])) {
 			if ($post['actualizarEstado'] == '2') {
-				$data['update']['idCotizacionEstado'] = 2;
+				// Por defecto en estado confirmado
+				$data['update']['idCotizacionEstado'] = 3;
+				// Se detecta alguno pendiente de cotizar se envia a compras
+				$post['cotizacionInternaForm'] = checkAndConvertToArray($post['cotizacionInternaForm']);
+				foreach ($post['cotizacionInternaForm'] as $k => $v) {
+					if ($v == '1') $data['update']['idCotizacionEstado'] = 2;
+				}
 			}
 		}
 
@@ -3829,18 +3835,20 @@ class Cotizacion extends MY_Controller
 				$dcds = $this->db->where('idCotizacionDetalle', $sub['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 			}
 			foreach ($dcds as $kCds => $vCds) {
+				$reembarque = floatval($vCds['reembarque']);
+				$dcds[$kCds]['reembarque'] = $reembarque;
 				$dcds[$kCds]['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 				$dcds[$kCds]['item'] = $vCds['nombre'];
 				$dcds[$kCds]['tipoServicio'] = $this->db->where('idTipoServicio', $vCds['idTipoServicio'])->get('compras.tipoServicio')->row_array()['nombre'];
 				$dcds[$kCds]['pesoTotalVisual'] = floatval($vCds['pesoVisual']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapVisual'] = floatval($dcds[$kCds]['pesoTotalVisual']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSVisual'] = $vCds['costoVisual'];
-				$dcds[$kCds]['totalVisual'] = floatval($dcds[$kCds]['pesoGapVisual']) * floatval($vCds['costoVisual']);
+				$dcds[$kCds]['totalVisual'] = floatval($dcds[$kCds]['pesoGapVisual']) * floatval($vCds['costoVisual']) + $reembarque;
 				$dcds[$kCds]['pesoCuenta'] = $vCds['peso'];
 				$dcds[$kCds]['pesoTotalCuenta'] = floatval($vCds['peso']) * floatval($vCds['cantidad']);
 				$dcds[$kCds]['pesoGapCuenta'] = floatval($dcds[$kCds]['pesoTotalCuenta']) * (100 + floatval($vCds['gap'])) / 100;
 				$dcds[$kCds]['costoTSCuenta'] = $vCds['costo'];
-				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']);
+				$dcds[$kCds]['totalCuenta'] = floatval($dcds[$kCds]['pesoGapCuenta']) * floatval($vCds['costo']) + $reembarque;
 			}
 			$config['data']['tablaGen'][$sub['idCotizacionDetalle']] = '';
 			if ($sub['idItemTipo'] == COD_DISTRIBUCION['id']) {
@@ -3853,6 +3861,7 @@ class Cotizacion extends MY_Controller
 						'item' => 'ITEM',
 						'cantidad' => 'CANTIDAD',
 						'gap' => 'GAP',
+						'reembarque' => 'REEMBARQUE',
 						'idTipoServicio' => '',
 						'tipoServicio' => 'TIPO SERVICIO',
 						'pesoVisual' => 'PESO VISUAL',
@@ -3870,6 +3879,7 @@ class Cotizacion extends MY_Controller
 					'classP' => 'tb_data_'
 				];
 				$config['data']['tablaGen'][$sub['idCotizacionDetalle']] = htmlTableValueArray($data);
+				$config['data']['totalTablaGen'][$sub['idCotizacionDetalle']] = sumarArrayPorCabecera($dcds, 'totalCuenta');
 			}
 		}
 		foreach ($archivos as $archivo) {
@@ -4788,7 +4798,6 @@ class Cotizacion extends MY_Controller
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/viewFormularioActualizarValidez", $dataParaVista, true);
 
 		echo json_encode($result);
-		
 	}
 
 
@@ -4804,24 +4813,21 @@ class Cotizacion extends MY_Controller
 		];
 
 		$data['tabla'] = 'compras.cotizacion';
-        $data['where'] = ['idCotizacion' => $post['idCotizacion']];
+		$data['where'] = ['idCotizacion' => $post['idCotizacion']];
 		$insert = $this->model->actualizarCotizacion($data);
 
-        if (!$insert) {
-            $result['result'] = 0;
-            $result['msg']['title'] = 'Alerta!';
-            $result['msg']['content'] = getMensajeGestion('registroErroneo');
-            goto respuesta;
-        } else {
-            $result['result'] = 1;
-            $result['msg']['title'] = 'Hecho!';
-            $result['msg']['content'] = getMensajeGestion('registroExitoso');
-        }
+		if (!$insert) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			goto respuesta;
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
 
-        respuesta:
-        echo json_encode($result);
-
-
+		respuesta:
+		echo json_encode($result);
 	}
-	
 }
