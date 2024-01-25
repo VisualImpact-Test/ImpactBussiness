@@ -126,10 +126,10 @@ class M_Cotizacion extends MY_Model
 			JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idEmpresa
 			JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 			WHERE
-				e.flag = 'activo' 
+				/* e.flag = 'activo' 
 				-- Excluir canal Trade -- Se quito la exclusiòn por el correo de margarita 2023-11-02
 				-- AND c.idCanal not in (1)
-				AND c.subcanal IS NOT NULL
+				AND*/ c.subcanal IS NOT NULL
 				{$filtros}
 			ORDER BY id
 		";
