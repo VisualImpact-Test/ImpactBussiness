@@ -616,6 +616,24 @@ class Proveedor extends MY_Controller
 		];
 
 		$informacionBancaria = getDataRefactorizada($informacionBancaria);
+
+		$buscarInformBancaria = $this->db->get_where('compras.informacionBancariaProveedor', 
+		['idProveedor' => $post['idProveedor'], 'estado' => 1])->result_array();
+		
+		$reg = count($informacionBancaria) - count($buscarInformBancaria);
+		if($reg != 0) {
+			if(
+				!isset($post['cuentaPrincipalFile-item']) ||
+				!isset($post['cuentaPrincipalFile-name']) ||
+				!isset($post['cuentaPrincipalFile-type'])
+			) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta']);
+			goto respuesta;
+			}
+		}
+
 		foreach ($post['idProveedorArchivoEliminadoP'] as $key => $value) {
 			// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
 			// → Captura Principal: Obligatorio
