@@ -16,11 +16,11 @@
 				<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'tipo']); ?>
 			</select>
 		</div>
-		<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-			<input class="form-control idItemImagen" type="text" name="idItemImagen" value="">
-			<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 
+		<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+			<input class="form-control idItemImagen" type="hidden" name="idItemImagen" value="">
+			< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 
 			'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
-		</div>
+		</div>-->
 		<div class="form-row col-md-12 ui imagendivCarga"></div>
 		<div class="form-row col-md-12 subItem"></div>
 		<div class="form-row">
@@ -343,11 +343,11 @@
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</div>
-								<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 
+								<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+									< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 
 									'name' => 'adjuntoItem['
 									. $value['idItem'] . ']'], 2) ?>
-								</div>
+								</div>-->
 								<div class="form-row col-md-12 ui imagendivCarga">
 									<div class="ui tiny fluid image content-lsck-capturas">
 										<div class="ui dimmer dimmer-file-detalle">
@@ -356,7 +356,7 @@
 											</div>
 										</div>
 										<? if($value['nombre_archivo'] != null) { ?>
-										<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+										<!--<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>-->
 										<img height="50" src="<?= imagenDeArchivo($value['nombre_archivo'], $value['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 										<? } ?>
 									</div>

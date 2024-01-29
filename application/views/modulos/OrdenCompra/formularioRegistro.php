@@ -137,9 +137,10 @@
 						</div>
 						<div class="form-row col-md-12 subItem"></div>
 						<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
-						<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-							<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
-						</div>
+						<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+							< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+						</div>-->
+						<div class="form-row col-md-12 ui imagendivCarga"></div>
 						<div class="form-row col-md-12">
 							<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">
 								<a class="form-control btn btn-info btnAdicionar" style="display:none;"><i class="fa fa-plus"></i> Adicionar</a>

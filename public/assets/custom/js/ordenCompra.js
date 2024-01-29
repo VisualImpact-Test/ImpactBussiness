@@ -279,13 +279,13 @@ var Oc = {
 			var divContenidoImagen = control.closest('.divItem').find('.content-lsck-capturas');
 			if (id == '' || id == 0) {
 				id = 0;
-				divContenidoImagen.remove();
+				//divContenidoImagen.remove();
 				divParaCarga.addClass('d-none');
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
 			} else {
 				control.closest('.divItem').find('.idItemImagen').val(id);
-				divParaCarga.removeClass('d-none');
+				//divParaCarga.removeClass('d-none');
 				divContenidoImagen.remove();
 			}
 
@@ -324,7 +324,6 @@ var Oc = {
                     					</div>
                 					</div>
                 					<input class="file-considerarAdjunto" type="hidden">
-                					<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
                 					<img height="50" src="${ruta}" class="img-lsck-capturas img-responsive img-thumbnail">
             					</div>
         					</div>`;
