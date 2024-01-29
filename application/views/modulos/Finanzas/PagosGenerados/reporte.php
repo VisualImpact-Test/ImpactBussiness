@@ -7,6 +7,7 @@
 				<th>RAZON SOCIAL</th>
 				<th>RUC</th>
                 <th>DESCRIPCIÓN SERVICIO</th>
+				<th>MONEDA</th>
 				<th>MONTO</th>
 			
 				<th>FECHA DE PAGO</th>
@@ -26,14 +27,18 @@
 				<td class="td-center"><?= $n; ?></td>
 				<td>
 					<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-registrarFacturas" data-id="<?= $row['idProveedorServicioGenerado']; ?>" title="Pago">  <i class=" fas fa-money-bill"></i></a>
+					
+					<?php if ($row['flagFacturas']) { ?>
 					<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-registrarNotaCredito" data-id="<?= $row['idProveedorServicioGenerado']; ?>" title="Pago"><i class="sticky note outline icon"></i></a>
 					<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-registrarPagos" data-id="<?= $row['idProveedorServicioGenerado']; ?>" title="Pago"><i class=" fas fa-dollar-sign"></i></a>
+					<?php  } ?>
+			
 				</td>
 				<td><?= $row['datosProveedor']; ?></td>
 				<td><?= $row['numDocumento']; ?></td>
                 <td><?= $row['descripcionServicio']; ?></td>
+				<td class="text-right"><?= $row['moneda']; ?></td>
 				<td class="text-right"><?= $row['monto']; ?></td>
-			
 				<td class="text-center"><?= getFechaDias($row['fechaProgramada']);  ?></td>
 				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
 				<td class="text-center"><?= $row['canal']; ?></td>

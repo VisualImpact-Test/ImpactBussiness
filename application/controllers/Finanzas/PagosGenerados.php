@@ -46,7 +46,7 @@ class PagosGenerados extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
         $dataParaVista = [];
         $dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGenerados($post)['query']->result_array();
-
+		// echo $this->db->last_query();exit();
         $html = $this->load->view("modulos/Finanzas/PagosGenerados/reporte", $dataParaVista, true);
         $result['result'] = 1;
 		$result['data']['views']['idPagosGenerados']['datatable'] = 'tb-pagosGenerados';
