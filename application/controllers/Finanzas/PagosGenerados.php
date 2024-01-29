@@ -79,7 +79,7 @@ class PagosGenerados extends MY_Controller
 		$dataParaVista['facturas'] = $this->model->ObtenerDatosFacturas($post)['query']->result_array();
 
 		$result['result'] = 1;
-		$result['msg']['title'] = 'Registrar Proveedor';
+		$result['msg']['title'] = 'Registrar Pagos';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/formularioRegistro", $dataParaVista, true);
 
 		echo json_encode($result);
@@ -258,7 +258,7 @@ class PagosGenerados extends MY_Controller
 		$this->db->insert_batch('finanzas.proveedorServicioPagoNotaCredito', $insertFactura);
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
-			$result['result'] = 2;
+			$result['result'] = 0;
 			$result['msg']['title'] = 'Error al Registrar';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
 		} else {

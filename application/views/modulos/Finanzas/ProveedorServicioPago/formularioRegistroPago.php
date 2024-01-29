@@ -63,7 +63,7 @@
 				</div>
 				<div class="row">
 					<div class="control-group child-divcenter row pt-2" style="width:80%">
-						<legend class="scheduler-border col-md-6 " style="font-size: 18px;">Descripción Servicioss</legend>
+						<legend class="scheduler-border col-md-6 " style="font-size: 18px;">Descripción Servicios</legend>
 						<div class="control-group child-divcenter col-md-6" style="width:85%">
 							<textarea class="form-control col-md-12" patron="requerido" id="informacionAdicional" name="informacionAdicional" style="resize: none; height:100px;" placeholder="Máximo 500 caracteres..."></textarea>
 						</div>

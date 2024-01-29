@@ -36,8 +36,8 @@ var PagosGenerados = {
 				let fn = [];
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarPagoGenerado", fn: "PagosGenerados.registrarPagoGenerado()", content: "¿Esta seguro de registrar pago?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
+				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarPagoGenerado", fn: "PagosGenerados.registrarPagoGenerado()", content: "¿Esta seguro de registrar pago?" });';
+				// btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
 				Fn.loadSemanticFunctions();
@@ -82,8 +82,8 @@ var PagosGenerados = {
 				let fn = [];
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarNotaCredito", fn: "PagosGenerados.registrarNotaCredito()", content: "¿Esta seguro de registrar factura?" });';
-				btn[1] = { title: 'Registrar', fn: fn[1] };
+				// fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarNotaCredito", fn: "PagosGenerados.registrarNotaCredito()", content: "¿Esta seguro de registrar factura?" });';
+				// btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
 				Fn.loadSemanticFunctions();
@@ -110,13 +110,13 @@ var PagosGenerados = {
 			
 			
 			 $.when(Fn.ajax(config)).then((a) => {
-				// let btn = [];
-				// let fn = [];
+				let btn = [];
+				let fn = [];
+				modalId++;
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
 
-				// fn[0] = 'Fn.closeModals(1);';
-				// btn[0] = { title: 'Continuar', fn: fn[0] };
-
-				// Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });			
 			});
 			
 
@@ -125,7 +125,7 @@ var PagosGenerados = {
 		$(document).on('change', '#cboCuenta', function () {
 			$('#divCargo').find('.fields').remove();
 			var id = $(this).data("cuentap");
-			console.log(id);
+			//console.log(id);
 			if ($(this).val()) {
 				$('#btn-addCargo').closest('').removeClass('disabled');
 			} else {
@@ -163,7 +163,7 @@ var PagosGenerados = {
 			var type = $('input[name="' + id + '_cuentaPrincipalPagoFile-type"]').val();
 			var name = $('input[name="' + id + '_cuentaPrincipalPagoFile-name"]').val();
 		
-			console.log(tipoComprobante);
+			// console.log(centro);
 			let data = { 'idServicioPagoComprobante': id , 
 			'tipoComprobante':tipoComprobante , 
 			'numeroComprobante':numeroComprobante , 
@@ -180,7 +180,14 @@ var PagosGenerados = {
 			let config = { 'url': PagosGenerados.url + 'RegistrarPagoNew', 'data': jsonString };
 			//console.log(config);
 			$.when(Fn.ajax(config)).then((a) => {
-				
+				let btn = [];
+				let fn = [];
+				modalId++;
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });			
+	
 			});
 		});	
 
@@ -188,19 +195,20 @@ var PagosGenerados = {
 
 
 		//porcentajeDetraccion
-		$(document).on('keyup', '#monto', function () {
-			var monto =$('#monto').val();
-			var porcentajeDetraccion =$('#porcentajeDetraccion').val();
-			montFinal = ( monto * porcentajeDetraccion ) /100
-			//console.log(montFinal);
-			$('#montoDetraccion').val(montFinal);
+		$(document).on('keyup', '.monto', function () {
+			var id = $(this).data("id");
+			var monto = $('#monto_P' + id ).val();
+			var porcentajeDetraccion = $('#porcentajeDetraccion_P' + id ).val();
+			var montFinal = ( monto * porcentajeDetraccion ) /100 ;
+			$('#montoDetraccion_P' + id).val(montFinal);
 		});
-		$(document).on('keyup', '#porcentajeDetraccion', function () {
-			var monto =$('#monto').val();
-			var porcentajeDetraccion =$('#porcentajeDetraccion').val();
-			montFinal = ( monto * porcentajeDetraccion ) /100
-			//console.log(montFinal);
-			$('#montoDetraccion').val(montFinal);
+		$(document).on('keyup', '.porcentaje', function () {
+			var id = $(this).data("id");
+			var monto = $('#monto_P' + id ).val();
+			var porcentajeDetraccion = $('#porcentajeDetraccion_P' + id ).val();
+			var montFinal = ( monto * porcentajeDetraccion ) /100 ;
+			
+			$('#montoDetraccion_P' + id).val(montFinal);
 		});
 		HTCustom.load();
 	},
