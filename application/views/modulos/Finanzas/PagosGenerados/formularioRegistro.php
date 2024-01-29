@@ -92,7 +92,7 @@
                             <div class="field" style="width:30%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                     <label>Cuenta:</label>
-                                        <select class="form-control   semantic-dropdown parentDependienteSemantic " data-cuentap="cuenta_p<?= $id ?>" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente="#cboCentroCosto">
+                                        <select class="form-control   semantic-dropdown parentDependienteSemantic " data-cuentap="cuenta_p<?= $id ?>" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente=".cboCentroCosto" data-closest=".fields">
                                         <?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
                                         </select>
@@ -102,7 +102,7 @@
                             <div class="field" style="width:30%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                     <label>Centro Costo:</label>
-                                        <select class="form-control  semantic-dropdown childdependienteSemantic read-only" data-centrop="centro_p<?= $id ?>" id="cboCentroCosto" name="centroCostoForm" patron="requerido">
+                                        <select class="form-control  semantic-dropdown childdependienteSemantic cboCentroCosto" data-centrop="centro_p<?= $id ?>" name="centroCostoForm" patron="requerido">
                                         <?php $selected = isset($ordenServicio['idCentroCosto']) ? verificarEmpty($ordenServicio['idCentroCosto']) : NULL; ?>
                                         <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
                                         </select>
