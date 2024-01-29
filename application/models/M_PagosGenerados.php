@@ -34,7 +34,7 @@ class M_PagosGenerados extends MY_Model
 				,ps.numDocumento
 				,ps.datosProveedor
 				,descripcionServicio
-				,pspg.monto
+				,psp.monto
 				,fechaProgramada
 				,numeroComprobante
 				,idCentroCosto
@@ -51,6 +51,7 @@ class M_PagosGenerados extends MY_Model
 				,pspg.idComprobante
 				
 				{$filtro2}
+				, (SELECT idProveedorServicioGenerado FROM finanzas.proveedorServicioPagoComprobante as pspc  WHERE pspc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado group by idProveedorServicioGenerado  ) AS flagFacturas
 				from finanzas.proveedorServicioPagoGenerado as pspg
 				left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
 				left join rrhh.dbo.empresa_Canal as ec on ec.idEmpresaCanal = pspg.idCentroCosto

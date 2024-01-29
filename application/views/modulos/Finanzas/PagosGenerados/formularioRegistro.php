@@ -151,7 +151,9 @@
                         <div class="ui divider"></div>
                     <?php } ?>
                 </div>
-			
+                <?php if (empty($facturas)) { ?>
+                  <div style="font-size: 18px;color: red;text-align: center;">  Se requiere la presentación del comprobante de pago  </div>
+                <?php } ?>
                  
 			</fieldset>
 		</div>
