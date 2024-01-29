@@ -81,13 +81,29 @@
 								<?= htmlSelectOptionArray2(['query' => $estado, 'id' => 'idCotizacionEstado', 'value' => 'nombre', 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
-						<div class="mb-2 mr-sm-2 position-relative form-group">
-							<span class="tooltiptext bold">Fecha Desde: </span>
-							<input class="form-control form-control-sm" name="fechaDesde" type="date">
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Inicio</span>
+							<div class="field">
+								<div class="ui calendar date-semantic">
+									<div class="ui input left icon fluid">
+										<i class="calendar icon"></i>
+										<input type="text" placeholder="Fecha Inicio" value="" patron="requerido">
+									</div>
+								</div>
+								<input type="hidden" class="date-semantic-value" name="fechaDesde" value="" patron="requerido">
+							</div>
+
+
 						</div>
-						<div class="mb-2 mr-sm-2 position-relative form-group">
-							<span class="tooltiptext bold">Fecha Hasta</span>
-							<input class="form-control form-control-sm" name="fechaHasta" type="date">
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Fin</span>
+							<div class="ui calendar date-semantic">
+								<div class="ui input left icon fluid">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="Fecha Fin" value="" patron="requerido">
+								</div>
+							</div>
+							<input type="hidden" class="date-semantic-value" name="fechaHasta" value="" patron="requerido">
 						</div>
 					</div>
 				</div>
