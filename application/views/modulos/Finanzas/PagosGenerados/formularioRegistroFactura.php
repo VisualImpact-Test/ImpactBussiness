@@ -95,6 +95,16 @@
                             </div>
                         </div> 
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
+                            <div class="field sixteen">
+                                <label>Moneda</label>
+                                <select class="form-control  semantic-dropdown" id="moneda_reg" name="moneda_reg"   patron="requerido">
+								<?= htmlSelectOptionArray2(['query' => $moneda,'selected' => $v['idMoneda'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+							    </select>
+
+                            </div>
+                        </div> 
+                        
+                        <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen" >
                                 <label>Monto</label>
                                 <input class="onlyNumbers" id="monto_reg" name="monto_reg" patron="requerido" value="<?= $v['montoFactura']; ?>">

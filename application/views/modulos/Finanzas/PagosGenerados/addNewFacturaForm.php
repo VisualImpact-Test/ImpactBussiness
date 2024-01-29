@@ -54,6 +54,15 @@
                             </div>
                         </div> 
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
+                            <div class="field sixteen">
+                                <label>Moneda</label>
+                                <select class="form-control  semantic-dropdown" id="moneda" name="moneda"   patron="requerido">
+								<?= htmlSelectOptionArray2(['query' => $moneda, 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+							    </select>
+
+                            </div>
+                        </div> 
+                        <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen" >
                                 <label>Monto</label>
                                 <input class="onlyNumbers" id="monto" name="monto" patron="requerido" value="">

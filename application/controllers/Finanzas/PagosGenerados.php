@@ -77,7 +77,7 @@ class PagosGenerados extends MY_Controller
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$dataParaVista['facturas'] = $this->model->ObtenerDatosFacturas($post)['query']->result_array();
-
+		
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Pagos';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/formularioRegistro", $dataParaVista, true);
@@ -94,7 +94,8 @@ class PagosGenerados extends MY_Controller
 		//echo $this->db->last_query();exit();
 		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
 		$dataParaVista['facturas'] = $this->model->ObtenerDatosFacturas($post)['query']->result_array();
-		
+		$dataParaVista['moneda'] = $this->model->obtenertipoMoneda($post)['query']->result_array();
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Facturas';
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/formularioRegistroFactura", $dataParaVista, true);
@@ -108,7 +109,8 @@ class PagosGenerados extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista = [];
 		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
-			
+		$dataParaVista['moneda'] = $this->model->obtenertipoMoneda($post)['query']->result_array();
+	
 		$result['result'] = 1;
 		$result['data']['html'] = $this->load->view("modulos/Finanzas/PagosGenerados/addNewFacturaForm", $dataParaVista, true);
 
@@ -128,6 +130,7 @@ class PagosGenerados extends MY_Controller
 		$post['tipoComprobante'] = checkAndConvertToArray($post['tipoComprobante']);
 		$post['numeroComprobante'] = checkAndConvertToArray($post['numeroComprobante']);
 		$post['monto'] = checkAndConvertToArray($post['monto']);
+		$post['moneda'] = checkAndConvertToArray($post['moneda']);
 		$post['cuentaPrincipalFile-item'] = checkAndConvertToArray($post['cuentaPrincipalFile-item']);
 		$post['cuentaPrincipalFile-name'] = checkAndConvertToArray($post['cuentaPrincipalFile-name']);
 		$post['cuentaPrincipalFile-type'] = checkAndConvertToArray($post['cuentaPrincipalFile-type']);
@@ -151,6 +154,7 @@ class PagosGenerados extends MY_Controller
 				'tipoComprobante' => $post['tipoComprobante'][$k],
 				'numeroComprobante' => $post['numeroComprobante'][$k],
 				'monto' => $post['monto'][$k],
+				'idMoneda' => $post['moneda'][$k],
 				'nombre_inicial' => $archivo['name'],
 				'nombre_archivo' => $archivoName,
 				'extension' => FILES_WASABI[$tipoArchivo[1]],
