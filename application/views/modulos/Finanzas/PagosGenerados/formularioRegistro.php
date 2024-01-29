@@ -59,7 +59,7 @@
                             </div>  
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Tipo Comprobante:</label>
+                                <label>Tipo Comprobante Pago:</label>
                                     <select class="form-control  semantic-dropdown" id="tipoComprobante_P<?= $id ?>" name="tipoComprobante_P<?= $id ?>"   patron="requerido">
                                     <?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
                                     </select>
@@ -68,7 +68,7 @@
 
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Numero Comprobante:</label>
+                                <label>Numero Comprobante Pago:</label>
                                 <input class="form-control " id="numeroComprobante_P<?= $id ?>" name="numeroComprobante_P<?= $id ?>" patron="requerido" value="<?= $v['numComprobantePago']; ?>">
                                 </div>
                             </div>  
@@ -76,7 +76,7 @@
                         <div class="fields">
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                    <label>Fecha Comprobante:</label>
+                                    <label>Fecha Comprobante Pago:</label>
                                     <div class="ui calendar date-semantic ">
                                         <div class="ui input left icon fluid">
                                             <i class="calendar icon"></i>
@@ -94,7 +94,7 @@
                                     <label>Cuenta:</label>
                                         <select class="form-control   semantic-dropdown parentDependienteSemantic " data-cuentap="cuenta_p<?= $id ?>" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente=".cboCentroCosto" data-closest=".fields">
                                         <?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
-                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $v['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
                                         </select>
                                 </div>
                             </div>  
@@ -104,7 +104,7 @@
                                     <label>Centro Costo:</label>
                                         <select class="form-control  semantic-dropdown childdependienteSemantic cboCentroCosto" data-centrop="centro_p<?= $id ?>" name="centroCostoForm" patron="requerido">
                                         <?php $selected = isset($ordenServicio['idCentroCosto']) ? verificarEmpty($ordenServicio['idCentroCosto']) : NULL; ?>
-                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $v['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
                                         </select>
                                 </div>
                             </div> 
@@ -115,13 +115,13 @@
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto:</label>
-                                <input class="form-control  onlyNumbers" id="monto_P<?= $id ?>" name="monto_P<?= $id ?>" patron="requerido" value="<?= $v['montoPagado']; ?>">
+                                <input class="form-control  onlyNumbers monto" data-id="<?= $id ?>" id="monto_P<?= $id ?>" name="monto_P<?= $id ?>" patron="requerido" value="<?= $v['montoPagado']; ?>">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Porcentaje:</label>
-                                <input class="form-control onlyNumbers" id="porcentajeDetraccion_P<?= $id ?>" name="porcentajeDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['porcentajeDetraccion']; ?>">
+                                <input class="form-control onlyNumbers porcentaje" data-id="<?= $id ?>"  id="porcentajeDetraccion_P<?= $id ?>" name="porcentajeDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['porcentajeDetraccion']; ?>">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">

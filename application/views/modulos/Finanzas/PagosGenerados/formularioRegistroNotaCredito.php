@@ -48,20 +48,20 @@
                             <div class="field sixteen">
                             <label>Tipo Comprobante:</label>
                             <select class="form-control col-md-12 semantic-dropdown" id="tipoComprobante_<?= $id ?>" name="tipoComprobante_<?= $id ?>"   patron="requerido" disabled>
-								<?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['idTipoNota'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+								<?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['tipoComprobanteFactura'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
 							</select>
                             </div>
                         </div>
                         <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen">
                             <label>Numero Comprobante:</label>
-                            <input id="numComprobante_<?= $id ?>" name="numComprobante_<?= $id ?>" patron="requerido" value="<?= $v['numNota']; ?>" disabled>
+                            <input id="numComprobante_<?= $id ?>" name="numComprobante_<?= $id ?>" patron="requerido" value="<?= $v['numComprobanteFactura']; ?>" disabled>
                             </div>
                         </div>
                         <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen">
                             <label>Monto Comprobante:</label>
-                            <input id="montoComprobante_<?= $id ?>" name="montoComprobante_<?= $id ?>" patron="requerido" value="<?= $v['montoNota']; ?>" disabled>
+                            <input id="montoComprobante_<?= $id ?>" name="montoComprobante_<?= $id ?>" patron="requerido" value="<?= $v['montoFactura']; ?>" disabled>
                             </div>
                         </div>
                     

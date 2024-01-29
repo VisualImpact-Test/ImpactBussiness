@@ -442,16 +442,31 @@ class OrdenCompra extends MY_Controller
 		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagen', $insertArchivos);
 
 		// Envio de Correo
-		$detalleParaCorreo = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
+		$this->enviarCorreo($idOC);
+		// Fin: Envio de Correo
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		respuesta:
+		echo json_encode($result);
+	}
+
+	function enviarCorreo($idOc)
+	{
+		$detalleParaCorreo = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOc])->result_array();
 		foreach ($detalleParaCorreo as $k => $v) {
 			$dataParaVista['ocDet'][$k]['nombre'] = $v['item'];
 			$dataParaVista['ocDet'][$k]['cantidad'] = $v['cantidad_item'];
 		}
 
 		$htmlCorreo = $this->load->view("modulos/Cotizacion/correoGeneracionOC", $dataParaVista, true);
+		$oc = $this->db->get_where('orden.ordenCompra', ['idOrdenCompra' => $idOc])->row_array();
+		$idProveedor = $oc['idProveedor'];
+		$ocSeriado = $oc['seriado'];
 		$correoProveedor = [];
-		$correoDeProveedor[] = $this->db->get_where('compras.proveedor', ['idProveedor' => $post['proveedor']])->row_array()['correoContacto'];
-		foreach ($this->db->get_where('compras.proveedorCorreo', ['idProveedor' => $post['proveedor'], 'estado' => 1])->result_array() as $k => $v) {
+		$correoDeProveedor[] = $this->db->get_where('compras.proveedor', ['idProveedor' => $idProveedor])->row_array()['correoContacto'];
+		foreach ($this->db->get_where('compras.proveedorCorreo', ['idProveedor' => $idProveedor, 'estado' => 1])->result_array() as $k => $v) {
 			$correoDeProveedor[] = $v['correo'];
 		}
 
@@ -473,15 +488,7 @@ class OrdenCompra extends MY_Controller
 			'contenido' => $correo,
 		];
 		email($config);
-		// Fin: Envio de Correo
-
-		$result['result'] = 1;
-		$result['msg']['title'] = 'Hecho!';
-		$result['msg']['content'] = getMensajeGestion('registroExitoso');
-		respuesta:
-		echo json_encode($result);
 	}
-
 	public function editarOCLibre()
 	{
 		$result = $this->result;
@@ -837,6 +844,8 @@ class OrdenCompra extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
 		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->enviarCorreo($idOC);
 		respuesta:
 		echo json_encode($result);
 	}

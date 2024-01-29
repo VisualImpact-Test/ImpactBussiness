@@ -121,9 +121,12 @@ class M_PagosGenerados extends MY_Model
 				,pspg.idCuenta
 				,emp.razonSocial as cuenta
 				,pspg.idComprobante
-				, (SELECT SUM(pspc.monto) FROM finanzas.proveedorServicioPagoComprobante AS pspc WHERE pspc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado) AS montofacturas
-				, (SELECT SUM(pspe.montoPagado) FROM finanzas.proveedorServicioPagoEfectuados AS pspe JOIN finanzas.proveedorServicioPagoComprobante AS psc ON pspe.idServicioPagoComprobante = psc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado) AS montoefectuados
-				, (SELECT SUM(psnc.montoNota) FROM finanzas.proveedorServicioPagoNotaCredito AS psnc JOIN finanzas.proveedorServicioPagoComprobante AS psc ON psc.idServicioPagoComprobante = psnc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado) AS montonotacredito
+				, (SELECT SUM(pspc.monto) FROM finanzas.proveedorServicioPagoComprobante AS pspc WHERE pspc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado and idMoneda = 1) AS montofacturasSoles
+				, (SELECT SUM(pspe.montoPagado) FROM finanzas.proveedorServicioPagoEfectuados AS pspe JOIN finanzas.proveedorServicioPagoComprobante AS psc ON pspe.idServicioPagoComprobante = psc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado  and idMoneda = 1) AS montoefectuadosSoles
+				, (SELECT SUM(psnc.montoNota) FROM finanzas.proveedorServicioPagoNotaCredito AS psnc JOIN finanzas.proveedorServicioPagoComprobante AS psc ON psc.idServicioPagoComprobante = psnc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado  and idMoneda = 1) AS montonotacreditoSoles
+				, (SELECT SUM(pspc.monto) FROM finanzas.proveedorServicioPagoComprobante AS pspc WHERE pspc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado and idMoneda = 2) AS montofacturasDolar
+				, (SELECT SUM(pspe.montoPagado) FROM finanzas.proveedorServicioPagoEfectuados AS pspe JOIN finanzas.proveedorServicioPagoComprobante AS psc ON pspe.idServicioPagoComprobante = psc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado  and idMoneda = 2) AS montoefectuadosDolar
+				, (SELECT SUM(psnc.montoNota) FROM finanzas.proveedorServicioPagoNotaCredito AS psnc JOIN finanzas.proveedorServicioPagoComprobante AS psc ON psc.idServicioPagoComprobante = psnc.idServicioPagoComprobante WHERE psc.idProveedorServicioGenerado = pspg.idProveedorServicioGenerado  and idMoneda = 2) AS montonotacreditoDolar
 				{$filtro2}
 				from finanzas.proveedorServicioPagoGenerado as pspg
 				left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
@@ -161,6 +164,7 @@ class M_PagosGenerados extends MY_Model
 		psc.numeroComprobante as numComprobanteFactura,
 		psc.monto as montoFactura,
 		psc.nombre_archivo as nombre_archivo_factura,
+		psc.idMoneda,
 		psnc.idServicioPagoNota,
 		psnc.idTipoNota,
 		psnc.montoNota,
@@ -216,6 +220,22 @@ class M_PagosGenerados extends MY_Model
 	{
 	
 		$sql = "select idTipoCredito as id , nombre as value from finanzas.tipoCredito";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenertipoMoneda($params = [])
+	{
+		$sql = "
+		select idMoneda as id , nombreMoneda AS value from compras.moneda where estado = 1 
+		";
+
 		$query = $this->db->query($sql);
 
 		if ($query) {
