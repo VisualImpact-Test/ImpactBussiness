@@ -6,9 +6,11 @@ var PagosGenerados = {
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarPagosGenerados').click();
 		});
+
 		$(document).ready(function () {
 			$('#btn-filtrarPagosGenerados').click();
 		});
+		
 		$(document).on('click', '#btn-filtrarPagosGenerados', function () {
 			var ruta = 'reporte';
 			var config = {
@@ -20,7 +22,8 @@ var PagosGenerados = {
 			Fn.loadReporte_new(config);
 			//Fn.showLoading(false);
 		});
-		$(document).on('click', '.btn-pagoGenerado', function () {
+
+		$(document).on('click', '.btn-registrarPagos', function () {
 			var idPagoGenerado = $(this).data("id");
 
 			let data = { 'idPagoGenerado': idPagoGenerado};
@@ -65,11 +68,66 @@ var PagosGenerados = {
 		
 			});
 		});
+
+		$(document).on('click', '.btn-registrarNotaCredito', function () {
+			var idPagoGenerado = $(this).data("id");
+
+			let data = { 'idPagoGenerado': idPagoGenerado};
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': PagosGenerados.url + 'formularioRegistrarNotaCredito', 'data': jsonString };
+			// console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarNotaCredito", fn: "PagosGenerados.registrarNotaCredito()", content: "¿Esta seguro de registrar factura?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
+		
+			});
+		});
+
+		$(document).on('click', '#new-notaCredito', function () {
+			var id = $(this).data("id");
+			var fechaEmision = $('input[name="fechaEmision_' + id + '"]').val();
+			var fechaRecepcion = $('input[name="fechaRecepcion_' + id + '"]').val();
+			var tipoNota = $('select[name="tipoNota_' + id + '"]').val();
+			var numNota = $('input[name="numNota_' + id + '"]').val();
+			var monto = $('input[name="monto_' + id + '"]').val();
+			var item = $('input[name="' + id + '_cuentaPrincipalFile-item"]').val();
+			var type = $('input[name="' + id + '_cuentaPrincipalFile-type"]').val();
+			var name = $('input[name="' + id + '_cuentaPrincipalFile-name"]').val();
+
+			let data = { 'idServicioPagoComprobante': id , 'fechaEmision':fechaEmision , 'fechaRecepcion':fechaRecepcion , 'tipoNota':tipoNota
+						,'numNota': numNota  , 'monto': monto , 'item':item , 'type':type , 'name':name};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': PagosGenerados.url + 'guardarNotaCredito', 'data': jsonString };
+			
+			
+			 $.when(Fn.ajax(config)).then((a) => {
+				// let btn = [];
+				// let fn = [];
+
+				// fn[0] = 'Fn.closeModals(1);';
+				// btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				// Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			});
+			
+
+		});
 		
 		$(document).on('change', '#cboCuenta', function () {
 			$('#divCargo').find('.fields').remove();
+			var id = $(this).data("cuentap");
+			console.log(id);
 			if ($(this).val()) {
-				$('#btn-addCargo').removeClass('disabled');
+				$('#btn-addCargo').closest('').removeClass('disabled');
 			} else {
 				$('#btn-addCargo').addClass('disabled');
 			}
@@ -88,6 +146,45 @@ var PagosGenerados = {
 				 Fn.loadSemanticFunctions();
 			});
 		});	
+
+
+		$(document).on('click', '#new-RegistrarPago', function () {
+			var id = $(this).data("id");
+			
+			var tipoComprobante = $('select[name="tipoComprobante_P' + id + '"]').val();
+			var numeroComprobante = $('input[name="numeroComprobante_P' + id + '"]').val();
+			var fechaPagoComprobante = $('input[name="fechaPagoComprobante_P' + id + '"]').val();
+			var cuenta = $('[data-cuentap="cuenta_p' + id + '"]').val();
+			var centro = $('[data-centrop="centro_p' + id + '"]').val();
+			var montoDetraccion = $('input[name="montoDetraccion_P' + id + '"]').val();
+			var porcentajeDetraccion = $('input[name="porcentajeDetraccion_P' + id + '"]').val();
+			var monto = $('input[name="monto_P' + id + '"]').val();
+			var item = $('input[name="' + id + '_cuentaPrincipalPagoFile-item"]').val();
+			var type = $('input[name="' + id + '_cuentaPrincipalPagoFile-type"]').val();
+			var name = $('input[name="' + id + '_cuentaPrincipalPagoFile-name"]').val();
+		
+			console.log(tipoComprobante);
+			let data = { 'idServicioPagoComprobante': id , 
+			'tipoComprobante':tipoComprobante , 
+			'numeroComprobante':numeroComprobante , 
+			'fechaPagoComprobante':fechaPagoComprobante,
+			'cuenta': cuenta  , 
+			'centro': centro , 
+			'montoDetraccion':montoDetraccion,
+			'porcentajeDetraccion':porcentajeDetraccion,
+			'monto':monto,
+			'item':item , 
+			'type':type , 
+			'name':name};
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': PagosGenerados.url + 'RegistrarPagoNew', 'data': jsonString };
+			//console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				
+			});
+		});	
+
+
 
 
 		//porcentajeDetraccion
@@ -141,6 +238,23 @@ var PagosGenerados = {
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 			$('#btn-filtrarPagosGenerados').click();
+		});
+	},
+	registrarNotaCredito: function () {
+		++modalId;
+		var dataFn = Fn.formSerializeObject('formRegistrarNotaCredito');
+		let jsonString = { 'data': JSON.stringify(dataFn) };
+		let config = { 'url': PagosGenerados.url + 'formRegistrarNotaCredito', 'data': jsonString };
+		// console.log(config);
+		$.when(Fn.ajax(config)).then(function (a) {
+			// let btn = [];
+			// let fn = [];
+
+			// fn[0] = 'Fn.closeModals(10);';
+			// btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			// Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			//$('#btn-filtrarPagosGenerados').click();
 		});
 	},
 

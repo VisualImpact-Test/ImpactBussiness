@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistrarPagoGenerado" method="post" autocomplete="off">
+<form class="ui  form" role="form" id="formRegistrarPagoGenerado" method="post" autocomplete="off">
 	<div class="row">
 		<div class="col-md-12 child-divcenter">
 			<fieldset class="scheduler-border">
@@ -29,64 +29,129 @@
 				</div>
 			</fieldset>
             <fieldset class="scheduler-border">
-				
-				<legend class="scheduler-border">Datos de Pago</legend>
-				<div class="">
-                    <div class="row">
-                        <div class="control-group child-divcenter row" style="width:33%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-4" for="fechaPagoComprobante" style="border:0px;">Fecha Comprobante:</label>
-                            <div class="ui calendar date-semantic col-md-8">
-                                <div class="ui input left icon fluid">
-                                    <i class="calendar icon"></i>
-                                    <input type="text" value="<?= $pagosGenerados[0]['fechaPagoComprobante'] ?>" patron="requerido">
+            <legend class="scheduler-border">Datos Comprobante</legend>
+                <div id="cargar-factura">
+                    <?php foreach ($facturas as $k => $v) { ?>
+                        
+                        <div class="fields">
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <?php $id = $v['idServicioPagoComprobante']; ?>
+                                <input  class="d-none"  type="text"  id="idServicioPagoComprobante" name="idServicioPagoComprobante" patron="requerido" value="<?= $id ?>" >
+
+                                <div class="field sixteen">
+                                <label>Tipo Comprobante:</label>
+                                    <select class="form-control  semantic-dropdown" id="tipoComprobante<?= $id ?>" name="tipoComprobante_<?= $id ?>"   patron="requerido" disabled>
+                                        <?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['tipoComprobanteFactura'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+                                    </select>
                                 </div>
                             </div>
-                            <input type="hidden" class="date-semantic-value" name="fechaPagoComprobante" value="<?= $pagosGenerados[0]['fechaPagoComprobante'] ?>">
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Numero Comprobante:</label>
+                                <input id="numComprobante_<?= $id ?>" name="numComprobante_<?= $id ?>" patron="requerido" value="<?= $v['numComprobanteFactura']; ?>" disabled>
+                                </div>
+                            </div>
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Monto Comprobante:</label>
+                                <input id="montoComprobante_<?= $id ?>" name="montoComprobante_<?= $id ?>" patron="requerido" value="<?= $v['montoFactura']; ?>" disabled>
+                                </div>
+                            </div>  
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Tipo Comprobante:</label>
+                                    <select class="form-control  semantic-dropdown" id="tipoComprobante_P<?= $id ?>" name="tipoComprobante_P<?= $id ?>"   patron="requerido">
+                                    <?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Numero Comprobante:</label>
+                                <input class="form-control " id="numeroComprobante_P<?= $id ?>" name="numeroComprobante_P<?= $id ?>" patron="requerido" value="<?= $v['numComprobantePago']; ?>">
+                                </div>
+                            </div>  
                         </div>
-                        <div class="control-group child-divcenter row" style="width:30%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-4" for="tipoComprobante" style="border:0px;">Tipo Comprobante :</label>
-                            <select class="form-control col-md-8 semantic-dropdown" id="tipoComprobante" name="tipoComprobante"   patron="requerido">
-								<?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $pagosGenerados[0]['idComprobante'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
-							</select>
+                        <div class="fields">
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                    <label>Fecha Comprobante:</label>
+                                    <div class="ui calendar date-semantic ">
+                                        <div class="ui input left icon fluid">
+                                            <i class="calendar icon"></i>
+                                            <input type="text" value="<?= $v['fechaPagoComprobantePago']; ?>" patron="requerido">
+                                        </div>
+                                    </div>
+                                    <input type="hidden" class="date-semantic-value" name="fechaPagoComprobante_P<?= $id ?>" value="<?= $v['fechaPagoComprobantePago']; ?>"> 
+                                </div>
+                            </div>
+
+                            
+
+                            <div class="field" style="width:30%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                    <label>Cuenta:</label>
+                                        <select class="form-control   semantic-dropdown parentDependienteSemantic " data-cuentap="cuenta_p<?= $id ?>" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente=".cboCentroCosto" data-closest=".fields">
+                                        <?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                        </select>
+                                </div>
+                            </div>  
+
+                            <div class="field" style="width:30%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                    <label>Centro Costo:</label>
+                                        <select class="form-control  semantic-dropdown childdependienteSemantic cboCentroCosto" data-centrop="centro_p<?= $id ?>" name="centroCostoForm" patron="requerido">
+                                        <?php $selected = isset($ordenServicio['idCentroCosto']) ? verificarEmpty($ordenServicio['idCentroCosto']) : NULL; ?>
+                                        <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
+                                        </select>
+                                </div>
+                            </div> 
+
                         </div>
-                        <div class="control-group child-divcenter row" style="width:35%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-5" for="numeroComprobante" style="border:0px;">Comprobante:</label>
-                            <input class="form-control col-md-7" id="numeroComprobante" name="numeroComprobante" patron="requerido" value="<?= $pagosGenerados[0]['numeroComprobante'] ?>">
+
+                        <div class="fields">
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Monto:</label>
+                                <input class="form-control  onlyNumbers" id="monto_P<?= $id ?>" name="monto_P<?= $id ?>" patron="requerido" value="<?= $v['montoPagado']; ?>">
+                                </div>
+                            </div>
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Porcentaje:</label>
+                                <input class="form-control onlyNumbers" id="porcentajeDetraccion_P<?= $id ?>" name="porcentajeDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['porcentajeDetraccion']; ?>">
+                                </div>
+                            </div>
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Detraccion:</label>
+                                <input class="form-control  " readonly id="montoDetraccion_P<?= $id ?>" name="montoDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['montoDetraccion']; ?>">
+                                </div>
+                            </div>
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <?php if ($v['nombre_archivo_pago']) { ?>
+                                    <label>Archivo</label>
+                                    <?php $direccion = RUTA_WASABI . 'FinanzasComprobantes/' . verificarEmpty($v['nombre_archivo_pago'], 3); ?>
+                                    <a class="ui button" href="<?= $direccion ?>" target="_blank"><i class="icon eye"></i></a>
+                                <?php } else { ?>
+                                <label>Archivo:</label>  
+                                <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => $id.'_cuentaPrincipalPago', 'visible' => false , 'tipo' => 2]) ?>
+                               <?php }?>
+                               </div>
+                            </div>
+                            <?php if (empty($v['montoPagado'])) { ?>
+                            <div class="field" style="width:10%;margin-left: 0px;margin-right: 0px;">
+                                <button class="ui button" type="button" name="new-RegistrarPago" id="new-RegistrarPago" data-id="<?= $id ?>" style="padding-left: 15px;padding-right: 15px;"><i class="fa fa-save"></i> Pago</button>
+                            </div>
+                            <?php } ?>
                         </div>
-                        
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="control-group child-divcenter row" style="width:45%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-3" for="cuentaForm" style="border:0px;">Cuenta :</label>
-                            <select class="form-control col-md-9  semantic-dropdown parentDependienteSemantic" id="cboCuenta" name="cuentaForm" patron="requerido" data-childDependiente="#cboCentroCosto">
-                                <?php $selected = isset($ordenServicio['idCuenta']) ? verificarEmpty($ordenServicio['idCuenta']) : NULL; ?>
-                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCuenta'], 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
-                            </select>
-                        </div>
-                        <div class="control-group child-divcenter row" style="width:55%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-3" for="centroCostoForm" style="border:0px;">Centro Costo :</label>
-                            <select class="form-control col-md-9 semantic-dropdown childdependienteSemantic read-only" id="cboCentroCosto" name="centroCostoForm" patron="requerido">
-                                <?php $selected = isset($ordenServicio['idCentroCosto']) ? verificarEmpty($ordenServicio['idCentroCosto']) : NULL; ?>
-                                <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $pagosGenerados[0]['idCentroCosto'] , 'query' => $centroCosto, 'simple' => true, 'class' => 'text-titlecase']); ?>
-                            </select>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="control-group child-divcenter row" style="width:25%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-5" for="monto" style="border:0px;">Monto :</label>
-                            <input class="form-control col-md-7 onlyNumbers" id="monto" name="monto" patron="requerido" value="<?= $pagosGenerados[0]['monto'] ?>">
-                        </div>
-                        <div class="control-group child-divcenter row" style="width:35%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-5" for="porcentajeDetraccion" style="border:0px;">% Detraccion :</label>
-                            <input class="form-control col-md-7 onlyNumbers" id="porcentajeDetraccion" name="porcentajeDetraccion" patron="requerido" value="<?= $pagosGenerados[0]['porcentajeDetraccion'] ?>">
-                        </div>
-                        <div class="control-group child-divcenter row" style="width:40%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-5" for="montoDetraccion" style="border:0px;">Monto Detraccion :</label>
-                            <input class="form-control col-md-6 " readonly id="montoDetraccion" name="montoDetraccion" patron="requerido" value="<?= $pagosGenerados[0]['montoDetraccion'] ?>">
-                        </div>
-                    </div>
+                        <div class="ui divider"></div>
+                    <?php } ?>
+                </div>
+			
                  
 			</fieldset>
 		</div>
