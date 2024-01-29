@@ -144,7 +144,7 @@
                             </div>
                             <?php if (empty($v['montoPagado'])) { ?>
                             <div class="field" style="width:10%;margin-left: 0px;margin-right: 0px;">
-                                <button class="ui button" type="button" name="new-RegistrarPago" id="new-RegistrarPago" data-id="<?= $id ?>" style="padding-left: 15px;padding-right: 15px;"><i class="fa fa-save"></i> Pago</button>
+                                <button class="ui button" type="button" name="new-RegistrarPago" id="new-RegistrarPago" data-id="<?= $id ?>" style="padding-left: 15px;padding-right: 15px;"><i class="fa fa-save"></i> Guardar</button>
                             </div>
                             <?php } ?>
                         </div>
