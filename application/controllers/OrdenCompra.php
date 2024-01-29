@@ -591,13 +591,14 @@ class OrdenCompra extends MY_Controller
 			}
 		}
 
-		if (isset($post['adjuntoItemFile-item'])) {
-			if (count($post['adjuntoItemFile-item']) > 1) {
-				foreach ($idItem as $key1 => $value) {
+		foreach ($post['idItemForm'] as $key => $value) {
+			if (isset($post['adjuntoItem[' . $value . ']File-item'])) {
+				$this->db->update('compras.itemImagen', ['estado' => 0], ['idItem' => $value]);
+				if (count($post['adjuntoItem[' . $value . ']File-item']) > 1) {
 					$archivo = [
-						'base64' => $post['adjuntoItemFile-item'][$key1],
-						'name' => $post['adjuntoItemFile-name'][$key1],
-						'type' => $post['adjuntoItemFile-type'][$key1],
+						'base64' => $post['adjuntoItem[' . $value . ']File-item'][$key],
+						'name' => $post['adjuntoItem[' . $value . ']File-name'][$key],
+						'type' => $post['adjuntoItem[' . $value . ']File-type'][$key],
 						'carpeta' => 'item',
 						'nombreUnico' => uniqid()
 					];
@@ -605,7 +606,27 @@ class OrdenCompra extends MY_Controller
 					$tipoArchivo = explode('/', $archivo['type']);
 
 					$insertArchivos[] = [
-						'idItem' => $value['id'],
+						'idItem' => $value,
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]],
+						'estado' => true,
+					];
+				} else {
+					$archivo = [
+						'base64' => $post['adjuntoItem[' . $value . ']File-item'],
+						'name' => $post['adjuntoItem[' . $value . ']File-name'],
+						'type' => $post['adjuntoItem[' . $value . ']File-type'],
+						'carpeta' => 'item',
+						'nombreUnico' => uniqid()
+					];
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/', $archivo['type']);
+
+					$insertArchivos[] = [
+						'idItem' => $value,
 						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
@@ -614,26 +635,6 @@ class OrdenCompra extends MY_Controller
 						'estado' => true,
 					];
 				}
-			} else {
-				$archivo = [
-					'base64' => $post['adjuntoItemFile-item'],
-					'name' => $post['adjuntoItemFile-name'],
-					'type' => $post['adjuntoItemFile-type'],
-					'carpeta' => 'item',
-					'nombreUnico' => uniqid()
-				];
-				$archivoName = $this->saveFileWasabi($archivo);
-				$tipoArchivo = explode('/', $archivo['type']);
-
-				$insertArchivos[] = [
-					'idItem' => $idItem[0]['id'],
-					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-					'nombre_inicial' => $archivo['name'],
-					'nombre_archivo' => $archivoName,
-					'nombre_unico' => $archivo['nombreUnico'],
-					'extension' => FILES_WASABI[$tipoArchivo[1]],
-					'estado' => true,
-				];
 			}
 		}
 

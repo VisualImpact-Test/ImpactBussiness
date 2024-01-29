@@ -68,6 +68,8 @@ var Oc = {
 				Oc.itemsData = a.data.item;
 				Oc.modalId = modalId;
 				Oc.itemInputComplete('all');
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
 			});
 
 		});
@@ -265,29 +267,26 @@ var Oc = {
 			});
 		});
 
+		$(document).on('click', '.divParaCarga', function () {
+			let control = $(this);
+			control.closest('.divItem').find('.imagendivCarga').empty();
+		});
+
 		$(document).on('change', '.item-id', function () {
 			let control = $(this);
 			id = control.closest('.divItem').find('.codItems').val();
-			var divElement = document.querySelector('.input-group-append.divItemBlock');
-			var divElementC = document.querySelectorAll('.input-group-append.divItemBlock');
-			var divElementCDIVCARGA = control.closest('.divItem').find('.divParaCarga');
-			var divElementCDIVCARGAITEMBLOCK = control.closest('.divItem').find('.imagendivCarga');
-			count = divElementC.length;
+			var divParaCarga = control.closest('.divItem').find('.divParaCarga');
+			var divContenidoImagen = control.closest('.divItem').find('.content-lsck-capturas');
 			if (id == '' || id == 0) {
 				id = 0;
-
-				divElementCDIVCARGAITEMBLOCK.remove();
-				divElementCDIVCARGA.removeClass('d-none');
+				divContenidoImagen.remove();
+				divParaCarga.addClass('d-none');
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
-
 			} else {
-				if (count == 1) {
-					divElement.remove();
-				} else {
-					var lastDivElement = divElementC[divElementC.length - 1];
-					lastDivElement.remove();
-				}
+				control.closest('.divItem').find('.idItemImagen').val(id);
+				divParaCarga.removeClass('d-none');
+				divContenidoImagen.remove();
 			}
 
 			var obj = {
@@ -303,8 +302,9 @@ var Oc = {
 
 			$.when(Fn.ajax(config)).then(function (a) {
 				if (a.data.imagen && a.data.imagen.length > 0) {
-					var selectElement = $('.divParaCarga:last');
-					selectElement.empty();
+					var selectElement = control.closest('.divItem').find('.imagendivCarga');
+					control.closest('.divItem').find('.imagendivCarga').empty();
+
 					$.each(a.data.imagen, function (i, m) {
 						var ruta = null;
 						if (m.idTipoArchivo == 2)
@@ -315,20 +315,23 @@ var Oc = {
 							else ruta = '../public/assets/images/wireframe/file.png';
 						}
 
-						selectElement.append(`
-						<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-							<div class="ui tiny fluid image content-lsck-capturas">
-								<div class="ui dimmer dimmer-file-detalle">
-									<div class="content">
-										<p class="ui tiny inverted header">.</p>
-									</div>
-								</div>
-								<input class="file-considerarAdjunto" type="hidden">
-								<img height="50" src="` + ruta + `" class="img-lsck-capturas img-responsive img-thumbnail">
-							</div>
-						</div>
-						`).clone();
+						var newElement = `
+        					<div class="form-row col-md-12 ui imagendivCarga-${i}">
+            					<div class="ui tiny fluid image content-lsck-capturas">
+                					<div class="ui dimmer dimmer-file-detalle">
+                    					<div class="content">
+                        					<p class="ui tiny inverted header">.</p>
+                    					</div>
+                					</div>
+                					<input class="file-considerarAdjunto" type="hidden">
+                					<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+                					<img height="50" src="${ruta}" class="img-lsck-capturas img-responsive img-thumbnail">
+            					</div>
+        					</div>`;
+
+						selectElement.append(newElement).clone();
 					});
+
 				}
 			});
 		});

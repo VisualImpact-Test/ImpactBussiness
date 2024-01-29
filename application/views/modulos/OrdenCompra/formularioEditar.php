@@ -17,8 +17,11 @@
 			</select>
 		</div>
 		<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-			<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+			<input class="form-control idItemImagen" type="text" name="idItemImagen" value="">
+			<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 
+			'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
 		</div>
+		<div class="form-row col-md-12 ui imagendivCarga"></div>
 		<div class="form-row col-md-12 subItem"></div>
 		<div class="form-row">
 			<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">
@@ -340,8 +343,10 @@
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</div>
-								<div class="form-row col-md-12 contentSemanticDiv divParaCarga d-none">
-									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+								<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+									<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 
+									'name' => 'adjuntoItem['
+									. $value['idItem'] . ']'], 2) ?>
 								</div>
 								<div class="form-row col-md-12 ui imagendivCarga">
 									<div class="ui tiny fluid image content-lsck-capturas">
@@ -349,7 +354,11 @@
 											<div class="content">
 												<p class="ui tiny inverted header">.</p>
 											</div>
-										</div><img height="50" src="<?= imagenDeArchivo($value['nombre_archivo'], $value['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+										</div>
+										<? if($value['nombre_archivo'] != null) { ?>
+										<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+										<img height="50" src="<?= imagenDeArchivo($value['nombre_archivo'], $value['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+										<? } ?>
 									</div>
 								</div>
 								<div class="form-row">
