@@ -21,12 +21,11 @@
                 <th>DESCRIPCIÓN SERVICIO</th>
                 
 				<th>MONEDA</th>
-                <th>MONTO</th>
-                <th>DETRACCION</th>
-                <th>MONTO DETRAC.</th>
-                <th>FECHA PROGRAMADA</th>
-				<th>FECHA DE PAGO</th>
-				<th>NUM COMPROBANTE</th>
+                <th>MONTO FACTURADO</th>
+                <th>NOTA CREDITO</th>
+                <th>MONTO PAGADO</th>
+               <th>TOTAL FALTANTE</th>
+
 				<th>ESTADO PAGO</th>
 			</tr>
 		</thead>
@@ -38,17 +37,20 @@
 				<td class="td-center"><?= $n; ?></td>
                 <td><?= $row['cuenta']; ?></td>
                 <td><?= $row['canal']; ?></td>
-				<td class=""><?= $row['razonSocial']; ?></td>
-				<td><?= $row['ruc']; ?></td>
+				<td class=""><?= $row['datosProveedor']; ?></td>
+				<td><?= $row['numDocumento']; ?></td>
                 <td><?= $row['descripcionServicio']; ?></td>
                 
                 <td class="text-center"><?= $row['moneda']; ?></td>
-				<td class="text-right"><?= ($row['idEstadoPago']== 1 ) ? '-' :  numeroVista($row['monto']); ?></td>
-                <td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td>
-                <td class="text-right"><?= ($row['idEstadoPago']== 1 ) ? '-' :  numeroVista($row['montoDetraccion']); ?></td>
-                <td class="text-center"><?= getFechaDias($row['fechaProgramada']); ?></td>
-				<td class="text-center"><?= ($row['idEstadoPago']== 1 ) ? '-' :  getFechaDias($row['fechaPagoComprobante']);   ?></td>
-				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
+
+         
+				<td class="text-right"><?= (empty($row['montofacturas'])) ? '-' :  numeroVista($row['montofacturas']); ?></td>
+                <td class="text-center"><?= (empty($row['montonotacredito'])) ? '-' :  numeroVista($row['montonotacredito']); ?></td>
+
+                <td class="text-right"><?= (empty($row['montoefectuados'])) ? '-' :  numeroVista($row['montoefectuados']); ?></td>
+				<td class="text-center"></td>
+
+
                 <?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
 				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $row['nombreEstado']; ?></span></td>
 	

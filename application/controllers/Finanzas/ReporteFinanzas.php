@@ -45,7 +45,7 @@ class ReporteFinanzas extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
         $dataParaVista = [];
-        $dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGenerados($post)['query']->result_array();
+        $dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGeneradosReporte($post)['query']->result_array();
 
         $html = $this->load->view("modulos/Finanzas/ReporteFinanzas/reporte", $dataParaVista, true);
         $result['result'] = 1;
