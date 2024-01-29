@@ -44,6 +44,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['usuario'] = $this->db->get_where('sistema.usuario')->result_array();
+		$config['data']['estado'] = $this->db->get_where('compras.cotizacionEstado')->result_array();
 		foreach ($config['data']['usuario'] as $k => $v) {
 			$config['data']['usuario'][$k]['user_t'] = $v['nombres'] . ' ' . $v['apePaterno'] . ' ' . $v['apeMaterno'];
 		}
