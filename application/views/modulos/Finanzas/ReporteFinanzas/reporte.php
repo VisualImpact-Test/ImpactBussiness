@@ -14,17 +14,16 @@
 		<thead>
 			<tr>
 				<th class="td-center">#</th>
-                <th>CUENTA</th>
-				<th>CENTRO DE COSTO</th>
+                <!-- <th>CUENTA</th>
+				<th>CENTRO DE COSTO</th> -->
 				<th>RAZON SOCIAL</th>
 				<th>RUC</th>
                 <th>DESCRIPCIÓN SERVICIO</th>
-                
-				<th>MONEDA</th>
-                <th>MONTO FACTURADO</th>
-                <th>NOTA CREDITO</th>
-                <th>MONTO PAGADO</th>
-               <th>TOTAL FALTANTE</th>
+                <th>MONTO FACTURADO SOLES</th>
+                <th>MONTO PAGADO SOLES</th>
+                <th>MONTO FACTURADO DOLARES</th>
+                <th>MONTO PAGADO DOLARES</th>
+               
 
 				<th>ESTADO PAGO</th>
 			</tr>
@@ -35,20 +34,18 @@
               
                 <tr>
 				<td class="td-center"><?= $n; ?></td>
-                <td><?= $row['cuenta']; ?></td>
-                <td><?= $row['canal']; ?></td>
+                <!-- <td><?= $row['cuenta']; ?></td>
+                <td><?= $row['canal']; ?></td> -->
 				<td class=""><?= $row['datosProveedor']; ?></td>
 				<td><?= $row['numDocumento']; ?></td>
                 <td><?= $row['descripcionServicio']; ?></td>
+				<td class="text-right"><?= (empty($row['montofacturasSoles'])) ? '-' :  numeroVista($row['montofacturasSoles']); ?></td>
+                <!-- <td class="text-center"><?= (empty($row['montonotacreditoSoles'])) ? '-' :  numeroVista($row['montonotacreditoSoles']); ?></td> -->
+                <td class="text-right"><?= (empty($row['montoefectuadosSoles'])) ? '-' :  numeroVista($row['montoefectuadosSoles']); ?></td>
+                <td class="text-right"><?= (empty($row['montofacturasDolar'])) ? '-' :  numeroVista($row['montofacturasDolar']); ?></td>
+                <!-- <td class="text-center"><?= (empty($row['montonotacreditoDolar'])) ? '-' :  numeroVista($row['montonotacreditoDolar']); ?></td> -->
+                <td class="text-right"><?= (empty($row['montoefectuadosDolar'])) ? '-' :  numeroVista($row['montoefectuadosDolar']); ?></td>
                 
-                <td class="text-center"><?= $row['moneda']; ?></td>
-
-         
-				<td class="text-right"><?= (empty($row['montofacturas'])) ? '-' :  numeroVista($row['montofacturas']); ?></td>
-                <td class="text-center"><?= (empty($row['montonotacredito'])) ? '-' :  numeroVista($row['montonotacredito']); ?></td>
-
-                <td class="text-right"><?= (empty($row['montoefectuados'])) ? '-' :  numeroVista($row['montoefectuados']); ?></td>
-				<td class="text-center"></td>
 
 
                 <?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
