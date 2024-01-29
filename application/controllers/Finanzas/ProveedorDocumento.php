@@ -295,6 +295,7 @@ class ProveedorDocumento extends MY_Controller
 			[
 				'idOrdenCompra' => $post['idOrdenCompra'],
 				'flagOcLibre' => $post['flagOcLibre'],
+				'flagRevisado' => 1,
 				'estado' => 1
 			]
 		)->result_array();
@@ -307,7 +308,6 @@ class ProveedorDocumento extends MY_Controller
 	{
 		$result = $this->result;
 		$post = $this->input->post();
-		logError($post);
 
 		$dataParaVista = [];
 		if (empty($post['observacionRechazoFinanza']) && empty($post['flagAprobadoFinanza'])) {

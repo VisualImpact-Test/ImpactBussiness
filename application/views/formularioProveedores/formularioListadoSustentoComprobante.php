@@ -64,21 +64,25 @@
 
 								</td>
 								<td class="tdEstado">
-									<?php if ($row['flagRevisado'] == '1') :  ?>
-										<?php if ($row['flagAprobado'] == '1') :  ?>
-											<label class="ui green basic label large">Aprobado</label>
-										<?php else : ?>
-											<label class="ui red basic label large">Rechazado</label>
-										<?php endif; ?>
+									<?php if (!empty($row['observacionRechazoFinanza']) && $row['flagAprobadoFinanza'] == '0') : ?>
+										<label class="ui red basic label large">Rechazado por Finanzas</label>
 									<?php else : ?>
-										<label class="ui black basic label large">Pendiente Revisión</label>
+										<?php if ($row['flagRevisado'] == '1') :  ?>
+											<?php if ($row['flagAprobado'] == '1') :  ?>
+												<label class="ui green basic label large">Aprobado</label>
+											<?php else : ?>
+												<label class="ui red basic label large">Rechazado</label>
+											<?php endif; ?>
+										<?php else : ?>
+											<label class="ui black basic label large">Pendiente Revisión</label>
+										<?php endif; ?>
 									<?php endif; ?>
 								</td>
 								<td>
 									<a class="ui button" href="<?= $direccion ?>" target="_blank">
 										<i class="icon eye"></i>
 									</a>
-									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') :  ?>
+									<?php if (($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') || (!empty($row['observacionRechazoFinanza']) && $row['flagAprobadoFinanza'] == '0')) :  ?>
 										<a class="ui button formEditSustentoComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>">
 											<i class="icon edit"></i>
 										</a>
@@ -86,21 +90,10 @@
 								</td>
 								<?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
-										<a class="ui button green btn-estadoSustComprobante" 
-										data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" 
-										data-idprov="<?= $row['idProveedor']; ?>" 
-										data-flag ="<?= $row['flagoclibre']; ?>" 
-										data-idcot = "<?= $row['idCotizacion']; ?>"
-										data-idformat = "<?= $row['idFormatoDocumento']; ?>">
+										<a class="ui button green btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>">
 											<i class="icon check"></i>
 										</a>
-										<a class="ui button red btn-estadoSustComprobante"
-										data-id="<?= $row['idSustentoAdjunto'] ?>"
-										data-idprov="<?= $row['idProveedor']; ?>" 
-										data-flag ="<?= $row['flagoclibre']; ?>" 
-										data-idcot = "<?= $row['idCotizacion']; ?>"
-										data-idformat = "<?= $row['idFormatoDocumento']; ?>"
-										data-estado="0">
+										<a class="ui button red btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="0">
 											<i class="icon times"></i>
 										</a>
 									</td>

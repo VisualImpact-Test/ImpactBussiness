@@ -58,8 +58,14 @@ var ProveedorDocumento = {
 		});
 		HTCustom.load();
 	},
-	actualizarEstado: function () {
+	actualizarEstado: function (envioDeObservacion = 0) {
+
+		if (envioDeObservacion) ProveedorDocumento.dataTemporal.observacion = $('#observacionDeRechazo').val();
+		
 		data = ProveedorDocumento.dataTemporal; // Lo declaro como variable y no lo envio a traves de la funciòn debido a que lo vuelvo a necesitar y no se puede enviar entre comillas.
+		
+		if (data.estado == '1') ProveedorDocumento.dataTemporal.observacion = null;
+
 		++modalId;
 		let jsonString = { 'idSustentoAdjunto': data.id, 'flagAprobadoFinanza': data.estado, 'observacionRechazoFinanza': data.observacion };
 		let config = { 'url': ProveedorDocumento.url + 'actualizarEstadoSustentoFinanza', 'data': jsonString };
@@ -75,17 +81,14 @@ var ProveedorDocumento = {
 				fn[0] = 'Fn.closeModals(' + modalId + ');';
 				btn[0] = { title: 'Continuar', fn: fn[0] };
 				ProveedorDocumento.dataTemporal = null;
-				
 			}
 
 			if (a.result == 2) {
 				ProveedorDocumento.dataTemporal.observacion = $('#observacionDeRechazo').val();
-
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = `Fn.showConfirm({ idForm: "formObservacionSustentoFinanza", fn: "ProveedorDocumento.actualizarEstado()", content: "¿Esta seguro de enviar esta observación para el rechazo?" });`;
+				fn[1] = `Fn.showConfirm({ idForm: "formObservacionSustentoFinanza", fn: "ProveedorDocumento.actualizarEstado(1)", content: "¿Esta seguro de enviar esta observación para el rechazo?" });`;
 				btn[1] = { title: 'Registrar', fn: fn[1] };
-
 			}
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
 

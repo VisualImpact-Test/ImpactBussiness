@@ -55,26 +55,25 @@
 									<?= $Carpeta; ?>
 								</td>
 								<td class="tdEstado">
-									<?php if ($row['flagAprobadoFinanza'] == '1') : ?>
-										<label class="ui green basic label large">Aprobado</label>
-									<?php else : ?>
-										<?php if ($row['observacionRechazoFinanza']) : ?>
-											<label class="ui red basic label large">Rechazado</label>
-											<label><?= $row['observacionRechazoFinanza'] ?></label>
+									<?php if ($row['flagAprobado']) : ?>
+										<?php if ($row['flagAprobadoFinanza'] == '1') : ?>
+											<label class="ui green basic label large">Aprobado</label>
 										<?php else : ?>
-											<label class="ui black basic label large">Pendiente</label>
+											<?php if ($row['observacionRechazoFinanza']) : ?>
+												<label class="ui red basic label large">Rechazado por Finanzas</label>
+												<!-- <label><?= $row['observacionRechazoFinanza'] ?></label> -->
+											<?php else : ?>
+												<label class="ui black basic label large">Pendiente</label>
+											<?php endif; ?>
 										<?php endif; ?>
+									<?php else : ?>
+										<label class="ui red basic label large">Rechazado por Compras</label>
 									<?php endif; ?>
 								</td>
 								<td>
 									<a class="ui button" href="<?= $direccion ?>" target="_blank">
 										<i class="icon eye"></i>
 									</a>
-									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') : ?>
-										<a class="ui button formEditSustentoComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>">
-											<i class="icon edit"></i>
-										</a>
-									<?php endif; ?>
 								</td>
 								<td class="text-center">
 									<a class="ui button btn-estadoSustComprobante green" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="1">
