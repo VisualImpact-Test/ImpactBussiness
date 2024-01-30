@@ -343,23 +343,14 @@
 										<?php endif; ?>
 									<?php endforeach; ?>
 								</div>
-								<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-									< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 
-									'name' => 'adjuntoItem['
-									. $value['idItem'] . ']'], 2) ?>
-								</div>-->
-								<div class="form-row col-md-12 ui imagendivCarga">
-									<div class="ui tiny fluid image content-lsck-capturas">
-										<div class="ui dimmer dimmer-file-detalle">
-											<div class="content">
-												<p class="ui tiny inverted header">.</p>
-											</div>
-										</div>
-										<? if($value['nombre_archivo'] != null) { ?>
-										<!--<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>-->
-										<img height="50" src="<?= imagenDeArchivo($value['nombre_archivo'], $value['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-										<? } ?>
-									</div>
+								<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+									<?php $count = isset($ocAdjunto[$value['idOrdenCompraDetalle']]) ? count($ocAdjunto[$value['idOrdenCompraDetalle']]) : 0; ?>
+									<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="<?= $count ?>">
+									<?= htmlSemanticCargaDeArchivos([
+										'classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf',
+										'name' => 'adjuntoItem',
+										'data' => $ocAdjunto[$value['idOrdenCompraDetalle']]
+									], 2) ?>
 								</div>
 								<div class="form-row">
 									<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">

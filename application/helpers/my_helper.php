@@ -218,7 +218,6 @@ function monedaTipoNumero($params = [])
 	}
 }
 
-
 function numeroVista($numero)
 {
 	$formateado = number_format($numero, 2, ".", " ");
@@ -1376,14 +1375,16 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 	$maxFiles = !empty($params['maxFiles']) ? $params['maxFiles'] : '1';
 	$centrado = !empty($params['centrado']) ? 'centered' : '';
 	$name = !empty($params['name']) ? $params['name'] : '';
+	$datos = !empty($params['data']) ? $params['data'] : [];
 	$archivosPermitidos = !empty($params['archivosPermitidos']) ? $params['archivosPermitidos'] : ARCHIVOS_PERMITIDOS;
 	$visible = !isset($params['visible']) ? true : false;
 	// $archivosPermitidos = ARCHIVOS_PERMITIDOS;
 	$rutaImagenCarga = IMG_WIREFRAME;
 
-	$dnone = !$visible ? 'd-none' : '';
+	$dnone = !$visible || intval($maxFiles) <= count($datos) ? 'd-none' : '';
+	$html = '';
 	if ($tipo == 1) {
-		$html  = "<div class='ui $centrado small image hover text-center $dnone'>";
+		$html	.= "<div class='ui $centrado small image divCarga hover text-center $dnone'>";
 		$html .= '	<div class="ui dimmer">';
 		$html .= '		<div class="content">';
 		$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
@@ -1395,7 +1396,7 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 		$html .= '</div>';
 	}
 	if ($tipo == 2) {
-		$html  = "<div class='ui $centrado small image hover text-center  $dnone'>";
+		$html .= "<div class='ui $centrado small image divCarga hover text-center $dnone'>";
 		$html .= '	<div class="ui dimmer">';
 		$html .= '		<div class="content">';
 		$html .= "			<div class='ui small primary button' onclick='$(this).parents(\".$divPrincipal\").find(\".file-semantic-upload\").click();'>";
@@ -1418,12 +1419,28 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 	$tamaño = $visible ? "col-sm-2" : '';
 	$html .= "	<div class='fields $tamaño'>";
 	$html .= '		<div class="sixteen wide field">';
-	$html .= '			<div class="ui tiny images content-img"></div>';
+	$html .= '			<div class="ui tiny images content-img">';
+	if (!empty($datos)) {
+		foreach ($datos as $data) {
+			if ($data['idTipoArchivo']) {
+				$html .= '			<div class="ui fluid image content-lsck-capturas">';
+				$html .= '				<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>';
+				$html .= "				<input type='hidden' name='" . $name . "File-item'>";
+				$html .= "				<input type='hidden' name='" . $name . "File-type' value='" . $data['columnaBD'] . "'>";
+				$html .= "				<input type='hidden' name='" . $name . "File-name' value='" . $data['origenBD'] . "'>";
+				$html .= "				<input type='hidden' name='" . $name . "File-idOrigen' value='" . $data['id'] . "'>";
+				$html .= "				<img height='100' src='" . imagenDeArchivo($data['nombre'], $data['idTipoArchivo'], $data['carpeta']) . "' class='img-lsck-capturas img-responsive img-thumbnail'>";
+				$html .= '			</div>';
+			}
+		}
+	}
+	$html .= '			</div>';
 	$html .= '		</div>';
 	$html .= '	</div>';
 	$html .= "	<div class='fields $tamaño'>";
 	$html .= '		<div class="sixteen wide field">';
-	$html .= '			<div class="ui tiny images content-files"></div>';
+	$html .= '			<div class="ui tiny images content-files">';
+	$html .= '			</div>';
 	$html .= '		</div>';
 	$html .= '	</div>';
 	$html .= '</div>';
@@ -1432,7 +1449,6 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 }
 function generarCorrelativo($num, $max_cifras)
 {
-
 	$cifras = $max_cifras - (strlen($num));
 	$cadena = '';
 	for ($i = 0; $i < $cifras; $i++) {

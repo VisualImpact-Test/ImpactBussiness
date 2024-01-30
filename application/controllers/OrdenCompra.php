@@ -151,6 +151,18 @@ class OrdenCompra extends MY_Controller
 
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
+			$adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle'], 'estado' => 1])->result_array();
+			if (!isset($dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']])) $dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']] = [];
+			foreach ($adjuntos as $adj) {
+				$dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']][] = [
+					'id' => $adj['idOrdenCompraAdjunto'],
+					'nombre' => $adj['nombre_archivo'],
+					'idTipoArchivo' => $adj['idTipoArchivo'],
+					'origenBD' => 'orden.ordenCompraAdjunto',
+					'columnaBD' => 'idOrdenCompraAdjunto',
+					'carpeta' => 'ordenCompra/'
+				];
+			}
 		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar OC';
@@ -166,6 +178,9 @@ class OrdenCompra extends MY_Controller
 	}
 	public function getImagenesItem()
 	{
+		$post = $this->input->post();
+		$imagenes = $this->db->where(['idItem' => $post['idItem'], 'estado' => 1, 'idTipoArchivo' => TIPO_IMAGEN])->get('compras.itemImagen')->row_array();
+		echo json_encode($imagenes);
 	}
 	public function formularioRegistroOCLibre()
 	{
@@ -175,7 +190,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array(); //
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
+		$result['data']['item'] = $this->model_item->obtenerItemServicio();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
@@ -320,6 +335,7 @@ class OrdenCompra extends MY_Controller
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
 		$insertData = [];
+		$insertDataArchivos = [];
 		$insertDataSub = [];
 		$orden = 0;
 		$ordenAdjunto = 0;
@@ -334,9 +350,6 @@ class OrdenCompra extends MY_Controller
 				];
 				$this->db->insert('compras.item', $dataInserItem);
 				$post['idItemForm'][$key] = $this->db->insert_id();
-				$idItem[] = [
-					'id' => $this->db->insert_id()
-				];
 			}
 
 			// Fin: En Caso.
@@ -352,22 +365,39 @@ class OrdenCompra extends MY_Controller
 			];
 			$insert = $this->db->insert('orden.ordenCompraDetalle', $insertData);
 			$idOCDet = $this->db->insert_id();
-
 			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
-				$insertDataSub[] = [
+				$ii = [];
+				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
+					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], [$post['adjuntoItemFile-type'][$ordenAdjunto] => $post['adjuntoItemFile-idOrigen'][$ordenAdjunto]])->row_array();
+					$ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
+				} else { // Si la imagen es cargada en la OC
+					$archivo = [
+						'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
+						'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
+						'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
+						'carpeta' => 'ordenCompra',
+						'nombreUnico' => uniqid()
+					];
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/', $archivo['type']);
+
+					$ii = [
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]]
+					];
+				}
+				$insertDataArchivos[] = [
+					'idOrdenCompra' => $idOC,
 					'idOrdenCompraDetalle' => $idOCDet,
-					'idTipoServicio' => $post['subItem_tipoServ'][$ordenAdjunto] == '' ? NULL : $post['subItem_tipoServ'][$ordenAdjunto],
-					'idItemLogistica' => $post['subItem_itemLog'][$ordenAdjunto] == '' ? NULL : $post['subItem_itemLog'][$ordenAdjunto],
-					'idUnidadMedida' => $post['subItem_idUm'][$ordenAdjunto] == '' ? NULL : $post['subItem_idUm'][$ordenAdjunto],
-					'nombre' => $post['subItem_nombre'][$ordenAdjunto] == '' ? NULL : $post['subItem_nombre'][$ordenAdjunto],
-					'talla' => $post['subItem_talla'][$ordenAdjunto] == '' ? NULL : $post['subItem_talla'][$ordenAdjunto],
-					'idGenero' => $post['subItem_genero'][$ordenAdjunto] == '' ? NULL : $post['subItem_genero'][$ordenAdjunto],
-					'tela' => $post['subItem_tela'][$ordenAdjunto] == '' ? NULL : $post['subItem_tela'][$ordenAdjunto],
-					'color' => $post['subItem_color'][$ordenAdjunto] == '' ? NULL : $post['subItem_color'][$ordenAdjunto],
-					'cantidad' => $post['subItem_cantidad'][$ordenAdjunto] == '' ? NULL : $post['subItem_cantidad'][$ordenAdjunto],
-					'cantidadPDV' => $post['subItem_cantidadPdv'][$ordenAdjunto] == '' ? NULL : $post['subItem_cantidadPdv'][$ordenAdjunto],
-					'costo' => $post['subItem_costo'][$ordenAdjunto] == '' ? NULL : $post['subItem_costo'][$ordenAdjunto],
-					'monto' => $post['subItem_monto'][$ordenAdjunto] == '' ? NULL : $post['subItem_monto'][$ordenAdjunto]
+					'idTipoArchivo' => $ii['idTipoArchivo'],
+					'nombre_inicial' => $ii['nombre_inicial'],
+					'nombre_archivo' => $ii['nombre_archivo'],
+					'nombre_unico' => $ii['nombre_unico'],
+					'extension' => $ii['extension'],
+					'idUsuario' => $this->idUsuario
 				];
 				$ordenAdjunto++;
 			}
@@ -391,56 +421,8 @@ class OrdenCompra extends MY_Controller
 				$orden++;
 			}
 		}
-		if (!empty($insertDataSub)) {
-			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
-		}
-		if (isset($post['adjuntoItemFile-item'])) {
-			if (count($post['adjuntoItemFile-item']) > 1) {
-				foreach ($idItem as $key1 => $value) {
-					$archivo = [
-						'base64' => $post['adjuntoItemFile-item'][$key1],
-						'name' => $post['adjuntoItemFile-name'][$key1],
-						'type' => $post['adjuntoItemFile-type'][$key1],
-						'carpeta' => 'item',
-						'nombreUnico' => uniqid()
-					];
-					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/', $archivo['type']);
-
-					$insertArchivos[] = [
-						'idItem' => $value['id'],
-						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-						'nombre_inicial' => $archivo['name'],
-						'nombre_archivo' => $archivoName,
-						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => FILES_WASABI[$tipoArchivo[1]],
-						'estado' => true,
-					];
-				}
-			} else {
-				$archivo = [
-					'base64' => $post['adjuntoItemFile-item'],
-					'name' => $post['adjuntoItemFile-name'],
-					'type' => $post['adjuntoItemFile-type'],
-					'carpeta' => 'item',
-					'nombreUnico' => uniqid()
-				];
-				$archivoName = $this->saveFileWasabi($archivo);
-				$tipoArchivo = explode('/', $archivo['type']);
-
-				$insertArchivos[] = [
-					'idItem' => $idItem[0]['id'],
-					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-					'nombre_inicial' => $archivo['name'],
-					'nombre_archivo' => $archivoName,
-					'nombre_unico' => $archivo['nombreUnico'],
-					'extension' => FILES_WASABI[$tipoArchivo[1]],
-					'estado' => true,
-				];
-			}
-		}
-		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagen', $insertArchivos);
-
+		if (!empty($insertDataSub)) $insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
+		if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
 		// Envio de Correo
 		$this->enviarCorreo($idOC);
 		// Fin: Envio de Correo
@@ -503,6 +485,12 @@ class OrdenCompra extends MY_Controller
 		$post['precio'] = checkAndConvertToArray($post['precio']);
 		$post['precio_real'] = checkAndConvertToArray($post['precio_real']);
 
+		if (isset($post['adjuntoItemCantidad'])) $post['adjuntoItemCantidad'] = checkAndConvertToArray($post['adjuntoItemCantidad']);
+		if (isset($post['adjuntoItemFile-idOrigen'])) $post['adjuntoItemFile-idOrigen'] = checkAndConvertToArray($post['adjuntoItemFile-idOrigen']);
+		if (isset($post['adjuntoItemFile-type'])) $post['adjuntoItemFile-type'] = checkAndConvertToArray($post['adjuntoItemFile-type']);
+		if (isset($post['adjuntoItemFile-name'])) $post['adjuntoItemFile-name'] = checkAndConvertToArray($post['adjuntoItemFile-name']);
+		if (isset($post['adjuntoItemFile-item'])) $post['adjuntoItemFile-item'] = checkAndConvertToArray($post['adjuntoItemFile-item']);
+
 		if (isset($post['subItem_monto'])) {
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
 			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
@@ -550,6 +538,7 @@ class OrdenCompra extends MY_Controller
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;
+		$ordenAdjunto = 0;
 		foreach ($post['item'] as $key => $value) {
 			// En caso: el item es nuevo
 			$dataInserItem = [];
@@ -596,250 +585,50 @@ class OrdenCompra extends MY_Controller
 				];
 				$orden++;
 			}
-		}
-
-		/*$itemImagenOC = $this->db->where(['idOrdenCompra' => $post['idOc'], 'estado' => '1'])->get('compras.itemImagenOrdenCompra')->result_array();
-		//var_dump(json_encode($itemImagenOC));
-		foreach ($post['idItemForm'] as $key => $value) {
-			if (isset($post['adjuntoItem[' . $value . ']File-item'])) {
-				$this->db->update('compras.itemImagenOrdenCompra', ['estado' => 0], ['idItem' => $value]);
-				if (count($post['adjuntoItem[' . $value . ']File-item']) > 1) {
+			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
+				$ii = [];
+				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
+					$where = [];
+					$where[$post['adjuntoItemFile-type'][$ordenAdjunto]] = $post['adjuntoItemFile-idOrigen'][$ordenAdjunto];
+					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], $where)->row_array();
+					if (substr($ii['nombre_archivo'], 0, 2) != '..') $ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
+				} else { // Si la imagen es cargada en la OC
 					$archivo = [
-						'base64' => $post['adjuntoItem[' . $value . ']File-item'][$key],
-						'name' => $post['adjuntoItem[' . $value . ']File-name'][$key],
-						'type' => $post['adjuntoItem[' . $value . ']File-type'][$key],
-						'carpeta' => 'item',
+						'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
+						'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
+						'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
+						'carpeta' => 'ordenCompra',
 						'nombreUnico' => uniqid()
 					];
 					$archivoName = $this->saveFileWasabi($archivo);
 					$tipoArchivo = explode('/', $archivo['type']);
 
-					$insertArchivos[] = [
-						'idItem' => $value,
+					$ii = [
 						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
 						'nombre_inicial' => $archivo['name'],
 						'nombre_archivo' => $archivoName,
 						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => FILES_WASABI[$tipoArchivo[1]],
-						'estado' => true,
-						'idOrdenCompra' => $post['idOc'],
-					];
-				} else {
-					$archivo = [
-						'base64' => $post['adjuntoItem[' . $value . ']File-item'],
-						'name' => $post['adjuntoItem[' . $value . ']File-name'],
-						'type' => $post['adjuntoItem[' . $value . ']File-type'],
-						'carpeta' => 'item',
-						'nombreUnico' => uniqid()
-					];
-					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/', $archivo['type']);
-
-					$insertArchivos[] = [
-						'idItem' => $value,
-						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-						'nombre_inicial' => $archivo['name'],
-						'nombre_archivo' => $archivoName,
-						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => FILES_WASABI[$tipoArchivo[1]],
-						'estado' => true,
-						'idOrdenCompra' => $post['idOc'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]]
 					];
 				}
-			}
-
-			$insertArchivosItemImagen = [];
-			if (!isset($post['adjuntoItem[' . $value . ']File-item'])) {
-				if (isset($post['idItemImagen'])) {
-					foreach ($itemImagenOC as $key1 => $value1) {
-						
-						
-						if (
-							is_array($value1['idItem']) &&
-							is_array($post['idItemImagen']) &&
-							!in_array($value, $post['idItemImagen']) &&
-							!in_array($value, $value1['idItem'])
-						) {
-							$itemImagen = $this->db->where(['idItem' => $value, 'estado' => '1'])->get('compras.itemImagen')->result_array();
-
-							foreach ($itemImagen as $key => $value) {
-								$insertArchivosItemImagen[] = [
-									'idItem' => $value['idItem'][$key],
-									'idTipoArchivo' => $value['idTipoArchivo'],
-									'nombre_inicial' => $value['nombre_inicial'],
-									'nombre_archivo' => '../item/' . $value['nombre_archivo'],
-									'nombre_unico' => $value['nombre_unico'],
-									'extension' => $value['extension'],
-									'estado' => true,
-									'idOrdenCompra' => $post['idOc'],
-								];
-							}
-
-						} else if (
-							is_array($post['idItemImagen']) &&
-							!is_array($value1['idItem']) &&
-							!in_array($value, $post['idItemImagen']) &&
-							$value != $value1['idItem']
-						) {
-							$itemImagen = $this->db->where(['idItem' => $value, 'estado' => '1'])->get('compras.itemImagen')->result_array();
-							foreach ($itemImagen as $key => $value1) {
-								$insertArchivosItemImagen[] = [
-									'idItem' => $value1['idItem'],
-									'idTipoArchivo' => $value1['idTipoArchivo'],
-									'nombre_inicial' => $value1['nombre_inicial'],
-									'nombre_archivo' => '../item/' . $value1['nombre_archivo'],
-									'nombre_unico' => $value1['nombre_unico'],
-									'extension' => $value1['extension'],
-									'estado' => true,
-									'idOrdenCompra' => $post['idOc'],
-								];
-							}
-						} else if (
-							is_array($value1['idItem']) &&
-							!is_array($post['idItemImagen']) &&
-							!in_array($value, $post['idItemImagen']) &&
-							$value != $post['idItemImagen']
-						) {
-							$itemImagen = $this->db->where(['idItem' => $value, 'estado' => '1'])->get('compras.itemImagen')->result_array();
-							foreach ($itemImagen as $key => $value1) {
-								$insertArchivosItemImagen[] = [
-									'idItem' => $value1['idItem'],
-									'idTipoArchivo' => $value1['idTipoArchivo'],
-									'nombre_inicial' => $value1['nombre_inicial'],
-									'nombre_archivo' => '../item/' . $value1['nombre_archivo'],
-									'nombre_unico' => $value1['nombre_unico'],
-									'extension' => $value1['extension'],
-									'estado' => true,
-									'idOrdenCompra' => $post['idOc'],
-								];
-							}
-						}/* else {
-							$itemImagen = $this->db->where(['idItem' => $value, 'estado' => '1'])->get('compras.itemImagen')->result_array();
-							
-							foreach ($itemImagen as $key => $value1) {
-								$insertArchivosItemImagen[] = [
-									'idItem' => $value1['idItem'],
-									'idTipoArchivo' => $value1['idTipoArchivo'],
-									'nombre_inicial' => $value1['nombre_inicial'],
-									'nombre_archivo' => '../item/' . $value1['nombre_archivo'],
-									'nombre_unico' => $value1['nombre_unico'],
-									'extension' => $value1['extension'],
-									'estado' => true,
-									'idOrdenCompra' => $post['idOc'],
-								];
-							}
-						}
-					}
-				} else {
-					$itemImagen = $this->db->where(['idItem' => $value, 'estado' => '1'])->get('compras.itemImagen')->result_array();
-					foreach ($itemImagen as $key => $value) {
-						$insertArchivosItemImagen[] = [
-							'idItem' => $value['idItem'],
-							'idTipoArchivo' => $value['idTipoArchivo'],
-							'nombre_inicial' => $value['nombre_inicial'],
-							'nombre_archivo' => '../item/' . $value['nombre_archivo'],
-							'nombre_unico' => $value['nombre_unico'],
-							'extension' => $value['extension'],
-							'estado' => true,
-							'idOrdenCompra' => $post['idOc'],
-						];
-					}
-				}
-			}
-		}
-		if (!empty($insertArchivosItemImagen)) $this->db->insert_batch('compras.itemImagenOrdenCompra', $insertArchivosItemImagen);
-
-		if (!empty($insertArchivos)) $this->db->insert_batch('compras.itemImagenOrdenCompra', $insertArchivos);
-
-		if (isset($post['idItemImagen'])) {
-			if (isset($post['adjuntoItemFile-item'])) {
-				if (is_array($post['idItemImagen']) && count($post['adjuntoItemFile-item']) > 1) {
-					foreach ($post['idItemImagen'] as $key => $value) {
-						$this->db->update('compras.itemImagenOrdenCompra', ['estado' => 0], ['idItem' => $value]);
-						$archivo = [
-							'base64' => $post['adjuntoItemFile-item'][$key],
-							'name' => $post['adjuntoItemFile-name'][$key],
-							'type' => $post['adjuntoItemFile-type'][$key],
-							'carpeta' => 'item',
-							'nombreUnico' => uniqid()
-						];
-						$archivoName = $this->saveFileWasabi($archivo);
-						$tipoArchivo = explode('/', $archivo['type']);
-
-						$insertArchivosNuevoRow[] = [
-							'idItem' => $value,
-							'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-							'nombre_inicial' => $archivo['name'],
-							'nombre_archivo' => $archivoName,
-							'nombre_unico' => $archivo['nombreUnico'],
-							'extension' => FILES_WASABI[$tipoArchivo[1]],
-							'estado' => true,
-							'idOrdenCompra' => $post['idOc'],
-						];
-					}
-				} else if (!is_array($post['idItemImagen'])) {
-					$this->db->update(
-						'compras.itemImagenOrdenCompra',
-						['estado' => 0],
-						['idItem' => $post['idItemImagen']]
-					);
-					$archivo = [
-						'base64' => $post['adjuntoItemFile-item'],
-						'name' => $post['adjuntoItemFile-name'],
-						'type' => $post['adjuntoItemFile-type'],
-						'carpeta' => 'item',
-						'nombreUnico' => uniqid()
-					];
-					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/', $archivo['type']);
-
-					$insertArchivosNuevoRow[] = [
-						'idItem' => $value,
-						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-						'nombre_inicial' => $archivo['name'],
-						'nombre_archivo' => $archivoName,
-						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => FILES_WASABI[$tipoArchivo[1]],
-						'estado' => true,
-						'idOrdenCompra' => $post['idOc'],
-					];
-				} else {
-					foreach ($post['idItemImagen'] as $key => $value) {
-						$this->db->update(
-							'compras.itemImagenOrdenCompra',
-							['estado' => 0],
-							['idItem' => $value]
-						);
-						$archivo = [
-							'base64' => $post['adjuntoItemFile-item'],
-							'name' => $post['adjuntoItemFile-name'],
-							'type' => $post['adjuntoItemFile-type'],
-							'carpeta' => 'item',
-							'nombreUnico' => uniqid()
-						];
-						$archivoName = $this->saveFileWasabi($archivo);
-						$tipoArchivo = explode('/', $archivo['type']);
-
-						$insertArchivosNuevoRow[] = [
-							'idItem' => $value,
-							'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-							'nombre_inicial' => $archivo['name'],
-							'nombre_archivo' => $archivoName,
-							'nombre_unico' => $archivo['nombreUnico'],
-							'extension' => FILES_WASABI[$tipoArchivo[1]],
-							'estado' => true,
-							'idOrdenCompra' => $post['idOc'],
-						];
-					}
-				}
+				$insertDataArchivos[] = [
+					'idOrdenCompra' => $idOC,
+					'idOrdenCompraDetalle' => $idOCDet,
+					'idTipoArchivo' => $ii['idTipoArchivo'],
+					'nombre_inicial' => $ii['nombre_inicial'],
+					'nombre_archivo' => $ii['nombre_archivo'],
+					'nombre_unico' => $ii['nombre_unico'],
+					'extension' => $ii['extension'],
+					'idUsuario' => $this->idUsuario
+				];
+				$ordenAdjunto++;
 			}
 		}
 
-		if (!empty($insertArchivosNuevoRow)) $this->db->insert_batch('compras.itemImagenOrdenCompra', $insertArchivosNuevoRow);
-		*/
 		if (!empty($insertDataSub)) {
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
+		if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';

@@ -1548,6 +1548,7 @@ var View = {
 
 		$(document).off('change', '.file-semantic-upload').on('change', '.file-semantic-upload', function (e) {
 			var control = $(this);
+			let div = control.closest('.contentSemanticDiv');
 			var data = control.data();
 			let prefi_name = data.name;
 			let cantidadMaximaDeCarga = MAX_ARCHIVOS;
@@ -1562,6 +1563,11 @@ var View = {
 			let name = prefi_name + 'File-item';
 			let nameType = prefi_name + 'File-type';
 			let nameFile = prefi_name + 'File-name';
+			let nameIdOrigen = prefi_name + 'File-idOrigen';
+
+			var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
+			total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
+			div.find('.' + prefi_name + 'Cantidad').val(total);
 
 			if (control.val()) {
 				var content = control.parents('.content-upload:first').find('.content-img');
@@ -1569,8 +1575,6 @@ var View = {
 				var num = control.get(0).files.length;
 
 				list: {
-					var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
-					total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
 					if ((num + total) > cantidadMaximaDeCarga) {
 						var message = Fn.message({ type: 2, message: `Solo se permiten ${cantidadMaximaDeCarga} archivo(s) como máximo` });
 						Fn.showModal({
@@ -1582,11 +1586,9 @@ var View = {
 						});
 						break list;
 					}
-
 					for (var i = 0; i < num; ++i) {
 						var size = control.get(0).files[i].size;
 						size = Math.round((size / 1024));
-
 						if (size > KB_MAXIMO_ARCHIVO) {
 							var message = Fn.message({ type: 2, message: `Solo se permite como máximo ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo` });
 							Fn.showModal({
@@ -1599,7 +1601,6 @@ var View = {
 							break list;
 						}
 					}
-
 					let file = '';
 					let imgFile = '';
 					let contenedor = '';
@@ -1629,19 +1630,32 @@ var View = {
 								fileApp += '	<input class="' + name + '" type="hidden" name="' + name + id + '" value="' + fileBase.base64 + '">';
 								fileApp += '	<input class="' + nameType + '" type="hidden" name="' + nameType + id + '" value="' + fileBase.type + '">';
 								fileApp += '	<input class="' + nameFile + '" type="hidden" name="' + nameFile + id + '" value="' + fileBase.name + '">';
+								fileApp += '	<input class="' + nameIdOrigen + '" type="hidden" name="' + nameIdOrigen + id + '" value="">';
 								fileApp += `	<img height="100" src="${imgFile}" class="img-lsck-capturas img-responsive img-thumbnail">`;
 								fileApp += '</div>';
-
 								contenedor.append(fileApp);
-							}
 
+								// Repito para reevaluar la cantidad despues del cargado, Motivo: el "list" se activa al final.
+								var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
+								total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
+								div.find('.' + prefi_name + 'Cantidad').val(total);
+								// Fin
+								if (cantidadMaximaDeCarga <= total) div.find('div.divCarga').addClass('d-none');
+								else div.find('div.divCarga').removeClass('d-none');
+							}
 						});
 
 					}
 				}
-
 				control.val('');
 			}
+			// Repito para reevaluar la cantidad despues del cargado.
+			var total = control.closest('.content-upload').find('input[name="' + name + id + '"]').length;
+			total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
+			div.find('.' + prefi_name + 'Cantidad').val(total);
+			// Fin
+			if (cantidadMaximaDeCarga <= total) div.find('div.divCarga').addClass('d-none');
+			else div.find('div.divCarga').removeClass('d-none');
 		});
 
 		$(document).on("click", '#btn-anuncios', function (e) {

@@ -144,7 +144,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
 		if ($this->idUsuario != 1) {
-		$filtros .= ' AND a.demo = 0';
+			$filtros .= ' AND a.demo = 0';
 		}
 
 		$sql = "

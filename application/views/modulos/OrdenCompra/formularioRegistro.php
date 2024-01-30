@@ -136,10 +136,10 @@
 							</select>
 						</div>
 						<div class="form-row col-md-12 subItem"></div>
-						<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
-						<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
-							< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
-						</div>-->
+						<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+							<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
+							<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
+						</div>
 						<div class="form-row col-md-12 ui imagendivCarga"></div>
 						<div class="form-row col-md-12">
 							<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">
@@ -212,7 +212,6 @@
 		</div>
 	</div>
 </form>
-<input id="itemsData" type="hidden" value='<?= json_encode($item) ?>'>
 <div class="d-none" id="divItemLogistica">
 	<select class="form-control itemLogistica" name="subItem_itemLog" patron="requerido" data-live-search="true">
 		<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $itemLogistica, 'class' => 'text-titlecase', 'id' => 'value', 'value' => 'label']); ?>

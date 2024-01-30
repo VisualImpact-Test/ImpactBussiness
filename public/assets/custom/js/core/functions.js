@@ -1547,7 +1547,8 @@ var Fn = {
 				pm: 'PM'
 			},
 			popupOptions: {
-				observeChanges: false
+				observeChanges: false,
+				position: 'bottom left'
 			},
 			onChange: function (date) {
 				if (date != null && date != '') {

@@ -8,6 +8,7 @@ var Oc = {
 	itemsData: [],
 	modalId: 0,
 	itemTarifario: [],
+	objetoParaAgregarImagen: null,
 	load: function () {
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
 			$('#btn-filtrarOC').click();
@@ -41,6 +42,8 @@ var Oc = {
 			id = control.closest('.divItem').find('.codItems').val();
 			if (id == '' || id == undefined || id == null) {
 				control.closest('.divItem').find('.codItems').val('0');
+				control.closest('.divItem').find('.content-img').html('');
+				control.closest('.divItem').find('.file-semantic-upload').change();
 			}
 		});
 		$(document).on('click', '.btn-editar', function () {
@@ -93,12 +96,10 @@ var Oc = {
 				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
 				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar OC?" });';
 				btn[2] = { title: 'Registrar', fn: fn[2] };
-				// fn[3] = 'Oc.agregarOperDat();';
-				// btn[3] = { title: 'Oper', fn: fn[3], class: 'btn-danger' };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oc.itemTarifario = a.data.itemTarifario;
 				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
-				Oc.itemsData = $.parseJSON($('#itemsData').val());
+				Oc.itemsData = a.data.item;
 				Oc.modalId = modalId;
 				Oc.itemInputComplete(0);
 				Fn.loadSemanticFunctions();
@@ -133,6 +134,7 @@ var Oc = {
 			total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
 			content.find('.' + prefi_name + 'Cantidad').val(total);
 			// Fin
+			content.find('.file-semantic-upload').change();
 		});
 		$(document).on('change', '.tipoServicio', function () {
 			let control = $(this);
@@ -271,7 +273,7 @@ var Oc = {
 			let control = $(this);
 			control.closest('.divItem').find('.imagendivCarga').empty();
 		});
-
+		/*
 		$(document).on('change', '.item-id', function () {
 			let control = $(this);
 			id = control.closest('.divItem').find('.codItems').val();
@@ -279,19 +281,15 @@ var Oc = {
 			var divContenidoImagen = control.closest('.divItem').find('.content-lsck-capturas');
 			if (id == '' || id == 0) {
 				id = 0;
-				//divContenidoImagen.remove();
 				divParaCarga.addClass('d-none');
 				Fn.loadSemanticFunctions();
 				Fn.loadDimmerHover();
 			} else {
 				control.closest('.divItem').find('.idItemImagen').val(id);
-				//divParaCarga.removeClass('d-none');
 				divContenidoImagen.remove();
 			}
 
-			var obj = {
-				id: id
-			}
+			var obj = { id: id }
 			var jsonString = {
 				'data': JSON.stringify(obj)
 			};
@@ -316,17 +314,17 @@ var Oc = {
 						}
 
 						var newElement = `
-        					<div class="form-row col-md-12 ui imagendivCarga-${i}">
-            					<div class="ui tiny fluid image content-lsck-capturas">
-                					<div class="ui dimmer dimmer-file-detalle">
-                    					<div class="content">
-                        					<p class="ui tiny inverted header">.</p>
-                    					</div>
-                					</div>
-                					<input class="file-considerarAdjunto" type="hidden">
-                					<img height="50" src="${ruta}" class="img-lsck-capturas img-responsive img-thumbnail">
-            					</div>
-        					</div>`;
+										 <div class="form-row col-md-12 ui imagendivCarga-${i}">
+									<div class="ui tiny fluid image content-lsck-capturas">
+												<div class="ui dimmer dimmer-file-detalle">
+														 <div class="content">
+													<p class="ui tiny inverted header">.</p>
+														 </div>
+												</div>
+												<input class="file-considerarAdjunto" type="hidden">
+												<img height="50" src="${ruta}" class="img-lsck-capturas img-responsive img-thumbnail">
+									</div>
+										 </div>`;
 
 						selectElement.append(newElement).clone();
 					});
@@ -334,6 +332,7 @@ var Oc = {
 				}
 			});
 		});
+		*/
 	},
 
 	registrarOC: function () {
@@ -618,7 +617,6 @@ var Oc = {
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 	},
 	cantidadPorItem: function (t) {
-		//console.log("holas");
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
 		costo = parseFloat($(div).find('input.item_costo').val() || '0');
@@ -645,14 +643,12 @@ var Oc = {
 			}
 		};
 		totalTotal = total + totalNoFee;
-		//console.log(totalTotal);
 		$('#total').val(totalTotal.toFixed(3));
 		$('#total_real').val(totalTotal);
 		fee = 0; //parseFloat($('#fee').val()||'0');
 		// $('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
 		igv = parseFloat($('#valorIGV').val()) / 100;
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
-		//console.log(totalFinal);
 		$('#totalFinal').val(totalFinal.toFixed(3));
 		$('#totalFinal_real').val(totalFinal);
 	},
@@ -690,6 +686,8 @@ var Oc = {
 					if (typeof costo === "undefined") costo = 0;
 					control.find(".item_costo").val(costo).change();
 					$(this).focusout();
+					control.find('.content-img').html('');
+					control.find('.file-semantic-upload').change();
 					if (ui.item.cantidadImagenes > 0) {
 						Oc.alertaParaAgregarItems(control, ui.item);
 					}
@@ -701,19 +699,19 @@ var Oc = {
 		}
 	},
 	alertaParaAgregarItems: function (control, item) {
-		/*++modalId;
+		++modalId;
 		var btn = [];
-		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-		let fn2 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.quitarImagenItem(${$(this)});`;
+		let fn = `Fn.showModal({ id: ${modalId} ,show:false });`;
+		// let fn2 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.quitarImagenItem(${$(this)});`;
 		Oc.objetoParaAgregarImagen = control;
 		let fn1 = `Fn.showModal({ id: ${modalId} ,show:false }); Oc.agregarImagenes(${item.value});`;
-		
-		btn[0] = { title: 'No en este momento', fn: fn2, class: 'btn-outline-danger' };
+
+		btn[0] = { title: 'No en este momento', fn: fn, class: 'btn-outline-danger' };
 		btn[1] = { title: 'Aceptar', fn: fn1 };
 		Fn.showModal({ id: modalId, show: true, title: 'Agregar Imagenes del Item a la Orden de Compra', content: "Desea utilizar las imagenes del Item", btn: btn, width: '33%' });
-		
+
 		$('.simpleDropdown').dropdown();
-		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });*/
+		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 	},
 
 	quitarImagenItem: function (t) {
@@ -724,30 +722,36 @@ var Oc = {
 		$.post(site_url + Oc.url + 'getImagenesItem', {
 			idItem: id
 		}, function (data) {
-			// data = jQuery.parseJSON(data);
-			// divItem = Oc.objetoParaAgregarImagen;
-			// control = divItem.find('.file-lsck-capturas');
+			data = jQuery.parseJSON(data);
+			if (data.nombre_inicial) {
+				divItem = Oc.objetoParaAgregarImagen;
+				var content = divItem.find('.content-img');
+				var fileApp = '';
 
-			// var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
-			// var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
-			// var num = data.length;
-			// var fileApp = '';
-			// for (var i in data) {
-			// 	fileApp += `
-			// 	<div class="ui fluid image content-lsck-capturas dimmable">
-			// 		<div class="ui dimmer dimmer-file-detalle">
-			// 			<div class="content">
-			// 				<p class="ui tiny inverted header">${data[i].nombre_inicial}</p>
-			// 			</div>
-			// 		</div>
-			// 		<input type="hidden" name="imagenDeItem[${data[i].idItem}]" value="${data[i].idItemImagen}">
-			// 		<a class="ui red right corner label img-lsck-capturas-delete"><i class="trash icon"></i></a>
-			// 		<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data[i].nombre_archivo}" class="img-responsive img-thumbnail">
-			// 	</div>
-			// 	`;
-
-			// }
-			// content.html(fileApp);
+				var control = divItem.find('.file-semantic-upload');
+				let prefi_name = control.data('name');
+				let name = prefi_name + 'File-item';
+				let nameType = prefi_name + 'File-type';
+				let nameFile = prefi_name + 'File-name';
+				let nameEnlace = prefi_name + 'File-idOrigen';
+				fileApp += `
+				<div class="ui fluid image content-lsck-capturas dimmable">
+					<div class="ui dimmer dimmer-file-detalle">
+						<div class="content">
+								<p class="ui tiny inverted header">${data.nombre_inicial}</p>
+						</div>
+					</div>
+					<input type="hidden" name="${name}" value="../item/">
+					<input type="hidden" name="${nameType}" value="idItemImagen">
+					<input type="hidden" name="${nameFile}" value="compras.itemImagen">
+					<input type="hidden" name="${nameEnlace}" value="${data.idItemImagen}">
+					<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+					<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data.nombre_archivo}" class="img-responsive img-thumbnail">
+				</div>`;
+				content.html(fileApp);
+				// divItem.find('.adjuntoItemCantidad').val(1);
+				divItem.find('.file-semantic-upload').change();
+			}
 
 		});
 	},

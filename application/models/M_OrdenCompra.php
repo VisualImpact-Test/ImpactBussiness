@@ -43,9 +43,7 @@ class M_OrdenCompra extends MY_Model
 							md.valor AS monedaCambio,
 							oc.idAlmacen,
 							oc.mostrar_observacion,
-							oc.descripcionCompras,
-							itImg.nombre_archivo,
-							itImg.idTipoArchivo')
+							oc.descripcionCompras')
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra and ocd.estado=1', 'LEFT')
 			->join('compras.item i', 'i.idItem = ocd.idItem', 'LEFT')
@@ -57,7 +55,7 @@ class M_OrdenCompra extends MY_Model
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'LEFT')
 			->join('sistema.usuario u', 'u.idUsuario = oc.idUsuarioReg')
 			->join('sistema.usuarioFirma uf', 'u.idUsuarioFirma=uf.idUsuarioFirma', 'left')
-			->join('compras.itemImagen itImg', 'itImg.idItem = i.idItem and itImg.estado = 1', 'left')
+			// ->join('compras.itemImagen itImg', 'itImg.idItem = i.idItem and itImg.estado = 1', 'left')
 			->where('oc.estado', '1')
 			->where('ocd.estado', '1')
 			->order_by('oc.idOrdenCompra desc');
