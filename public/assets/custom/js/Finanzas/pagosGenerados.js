@@ -69,6 +69,19 @@ var PagosGenerados = {
 			});
 		});
 
+		$(document).off('click', '.option-semantic-delete').on('click', '.option-semantic-delete', function (e) {
+			e.preventDefault();
+			var control = $(this);
+			let content = control.closest('.contentSemanticDiv');
+			let parent = $(this).closest(".content-lsck-capturas");
+			let idAdjuntoEliminado = parent.data('idordencompraadjunto');
+			if (idAdjuntoEliminado) {
+				Oc.archivoEliminado.push(idAdjuntoEliminado);
+			}
+			control.parents('.content-lsck-capturas:first').remove();
+
+		});
+
 		$(document).on('click', '.btn-registrarNotaCredito', function () {
 			var idPagoGenerado = $(this).data("id");
 

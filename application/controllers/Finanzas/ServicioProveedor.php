@@ -226,6 +226,11 @@ class ServicioProveedor extends MY_Controller
 
         $insertarDatos = $this->db->insert('finanzas.proveedorServicio', $insertData);
         $idProveedorServicio = $this->db->insert_id();
+
+  
+
+        if (isset($post['nomContactoinput'])) {
+      
         $insertContacto = [
 			'nomContacto' => checkAndConvertToArray($post['nomContactoinput']),
 			'telContacto' => checkAndConvertToArray($post['telContactoinput']),
@@ -253,7 +258,7 @@ class ServicioProveedor extends MY_Controller
 		if (!empty($data)) {
 			$this->db->insert_batch('finanzas.proveedorServicioContacto', $data);
 		}
-
+        }
         if ($this->db->trans_status() === FALSE) {
         $this->db->trans_rollback();
         $result['result'] = 2;
@@ -334,6 +339,7 @@ class ServicioProveedor extends MY_Controller
 
         $result = $this->result;
     	$post = json_decode($this->input->post('data'), true);
+        
         $this->db->trans_begin();
         $idProveedorServicio = $post['idProveedorServicio'];
         $update = [
@@ -374,11 +380,18 @@ class ServicioProveedor extends MY_Controller
 			}
 		}
 
+        
 
 		if (!empty($data)) {
 			$this->db->insert_batch('finanzas.proveedorServicioContacto', $data);
 		}
          }
+
+         foreach ($post['archivoEliminado'] as $key => $row) {
+            $this->db->update('finanzas.proveedorServicioContacto', ['estado' => 0],['idContacto' => $row]);
+        }
+       // echo $this->db->last_query();exit();
+
         if ($this->db->trans_status() === FALSE) {
         $this->db->trans_rollback();
         $result['result'] = 2;

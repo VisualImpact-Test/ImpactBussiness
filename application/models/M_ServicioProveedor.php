@@ -72,7 +72,7 @@ class M_ServicioProveedor extends MY_Model
 		$filtros .= !empty($params['idProveedorServicio']) ? ' AND idProveedorServicio = ' . $params['idProveedorServicio'] : '';
 
 		$sql = "SELECT * FROM finanzas.proveedorServicioContacto
-		WHERE 1=1
+		WHERE 1=1 AND estado = 1 
 		{$filtros}
 		";
 		$query = $this->db->query($sql);

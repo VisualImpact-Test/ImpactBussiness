@@ -2,6 +2,7 @@ var ServicioProveedor = {
     frm: 'frm-servicioProveedor',
     contentDetalle: 'idServicioProveedor',
     url: 'Finanzas/ServicioProveedor/',
+    idEliminados :[],
     provincia: {},
 	distrito: {},
     load: function () {
@@ -67,7 +68,8 @@ var ServicioProveedor = {
             var correoContacto = $('#correoContacto').val();
 
             html='';
-            html +='<tr><td><input class="form-control" name="nomContactoinput" value="'+nomContacto+'" readonly></td><td><input class="form-control" name="telContactoinput" value="'+telContacto+'" readonly></td><td><input class="form-control" name="correoContactoimput" value="'+correoContacto+'" readonly></td></tr>';
+            html +='<tr><td><input class="form-control" name="nomContactoinput" value="'+nomContacto+'" readonly></td><td><input class="form-control" name="telContactoinput" value="'+telContacto+'" readonly></td><td><input class="form-control" name="correoContactoimput" value="'+correoContacto+'" readonly></td>';
+            html +='<td><a class="ui red  label elimnaRegistro"><i class="trash icon m-0"></i></a></td></tr>'
             console.log(html);
             $('#tb-contacProveedores tbody').append(html);
             $('#nomContacto').val("");
@@ -75,17 +77,24 @@ var ServicioProveedor = {
             $('#correoContacto').val("");
            
         });
+        $(document).on('click', '.elimnaRegistro', function () {
+            let id = $(this).parents('tr:first').data('id');
+            //console.log(id);
+            if (id) {
+                ServicioProveedor.idEliminados.push(id); 
+            }
+            $(this).closest('tr').remove();
+            console.log(ServicioProveedor.idEliminados);
+        });
 
         $(document).on('click', '.btn-editar', function () {
             ++modalId;
-
+            ServicioProveedor.idEliminados = [];
             let id = $(this).parents('tr:first').data('id');
             let data = { 'idProveedorServicio': id };
 
             let jsonString = { 'data': JSON.stringify(data) };
             let config = { 'url': ServicioProveedor.url + 'formularioActualizacionServicioProveedor', 'data': jsonString };
-
-            console.log(config);
 
             $.when(Fn.ajax(config)).then((a) => {
                 let btn = [];
@@ -368,12 +377,19 @@ var ServicioProveedor = {
     },
 
     actualizarServicioProveedor: function () {
-        let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarProveedorServicio')) };
-        let url = ServicioProveedor.url + "actualizarServicioProveedor";
-        let config = { url: url, data: jsonString };
+
+        let data = Fn.formSerializeObject('formActualizarProveedorServicio');
+		data.archivoEliminado = ServicioProveedor.idEliminados;
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': ServicioProveedor.url + 'actualizarServicioProveedor', 'data': jsonString };
+
+
+        // let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarProveedorServicio')) };
+        // let url = ServicioProveedor.url + "actualizarServicioProveedor";
+        // let config = { url: url, data: jsonString };
         
        
-        console.log(config);
+        //console.log(config);
 
         $.when(Fn.ajax(config)).then(function (b) {
             ++modalId;
@@ -386,6 +402,8 @@ var ServicioProveedor = {
 
             btn[0] = { title: 'Continuar', fn: fn };
             Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+            ServicioProveedor.idEliminados = [];
+           
         });
        
         // let jsonData = JSON.parse(jsonString.data);

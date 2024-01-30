@@ -120,11 +120,12 @@
                             <th>Nombre</th>
                             <th>Telefono</th>
                             <th>Correo</th>
+                            <th>Opcion</th>
                             </tr>
                         </thead>
                         <tbody>
                        <?php foreach ($Contactos as $key => $row) { ?>
-                        <tr>
+                        <tr data-id="<?= $row['idContacto']; ?>">
                             <td>
                                 <input class="form-control" name="nomContacto" value="<?= $row['nomContacto']; ?>" readonly>
                             </td>
@@ -133,6 +134,9 @@
                             </td>
                             <td>
                                 <input class="form-control" name="correoContacto" value="<?= $row['correoContacto']; ?>" readonly>
+                            </td>
+                            <td>
+                             <a class="ui red  label elimnaRegistro"><i class="trash icon m-0"></i></a>                        
                             </td>
                         </tr>
                         <?php  } ?>

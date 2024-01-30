@@ -120,6 +120,7 @@
                             <th>Nombre</th>
                             <th>Telefono</th>
                             <th>Correo</th>
+                            <th>Opcion</th>
                             </tr>
                         </thead>
                         <tbody>

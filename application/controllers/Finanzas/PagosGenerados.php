@@ -116,8 +116,6 @@ class PagosGenerados extends MY_Controller
 
 		echo json_encode($result);
 	}
-
-	
 	
 	public function formRegistrarFactura()
 	{

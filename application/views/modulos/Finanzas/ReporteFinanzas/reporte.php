@@ -50,8 +50,6 @@
                 <td><?= date_change_format($row['fechaPagoComprobante']); ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['montoPagado']) : '-'; ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['montoPagado']) : '-' ; ?></td>
-               
-                
                 <?php if ($row['montoPagado'] >= $row['monto']) {
                     $estado_pago = 'PAGADO';
                     $estado = 'green';
