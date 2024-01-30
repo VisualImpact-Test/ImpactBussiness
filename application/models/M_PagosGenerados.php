@@ -247,5 +247,44 @@ class M_PagosGenerados extends MY_Model
 		return $this->resultado;
 	}
 
+
+	public function obtenerReporteFinanzas($params = [])
+	{
+		$sql = "
+		select 
+		pspc.idProveedorServicioGenerado,
+		ps.datosProveedor , 
+		ps.numDocumento ,
+		pspc.idMoneda ,
+		pspc.numeroComprobante ,
+		pspc.fechaEmision,
+		pspe.numeroComprobante as numComprobantePago,
+		pspe.fechaPagoComprobante,
+		pspc.monto,
+		pspe.montoPagado,
+	
+		pspg.idEstadoPago,
+		ep.nombreEstado
+		from finanzas.proveedorServicioPagoComprobante as pspc
+		left join finanzas.proveedorServicioPagoEfectuados as pspe on pspc.idServicioPagoComprobante = pspe.idServicioPagoComprobante
+		left join finanzas.proveedorServicioPagoGenerado as pspg on pspc.idProveedorServicioGenerado =  pspg.idProveedorServicioGenerado
+		left join finanzas.proveedorServicioPago as psp on psp.idProveedorServicioPago = pspg.idProveedorServicioPago
+		left join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
+		left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
+		order by pspc.idProveedorServicioGenerado asc
+		
+		
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
 	
 }

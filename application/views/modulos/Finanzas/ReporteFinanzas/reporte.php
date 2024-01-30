@@ -14,17 +14,14 @@
 		<thead>
 			<tr>
 				<th class="td-center">#</th>
-                <!-- <th>CUENTA</th>
-				<th>CENTRO DE COSTO</th> -->
 				<th>RAZON SOCIAL</th>
 				<th>RUC</th>
-                <th>DESCRIPCIÓN SERVICIO</th>
+                <th>FECHA EMISION</th>
+                <th>FECHA PAGO</th>
                 <th>MONTO FACTURADO SOLES</th>
                 <th>MONTO PAGADO SOLES</th>
                 <th>MONTO FACTURADO DOLARES</th>
                 <th>MONTO PAGADO DOLARES</th>
-               
-
 				<th>ESTADO PAGO</th>
 			</tr>
 		</thead>
@@ -34,22 +31,26 @@
               
                 <tr>
 				<td class="td-center"><?= $n; ?></td>
-                <!-- <td><?= $row['cuenta']; ?></td>
-                <td><?= $row['canal']; ?></td> -->
+    
 				<td class=""><?= $row['datosProveedor']; ?></td>
 				<td><?= $row['numDocumento']; ?></td>
-                <td><?= $row['descripcionServicio']; ?></td>
-				<td class="text-right"><?= (empty($row['montofacturasSoles'])) ? '-' :  numeroVista($row['montofacturasSoles']); ?></td>
-                <!-- <td class="text-center"><?= (empty($row['montonotacreditoSoles'])) ? '-' :  numeroVista($row['montonotacreditoSoles']); ?></td> -->
-                <td class="text-right"><?= (empty($row['montoefectuadosSoles'])) ? '-' :  numeroVista($row['montoefectuadosSoles']); ?></td>
-                <td class="text-right"><?= (empty($row['montofacturasDolar'])) ? '-' :  numeroVista($row['montofacturasDolar']); ?></td>
-                <!-- <td class="text-center"><?= (empty($row['montonotacreditoDolar'])) ? '-' :  numeroVista($row['montonotacreditoDolar']); ?></td> -->
-                <td class="text-right"><?= (empty($row['montoefectuadosDolar'])) ? '-' :  numeroVista($row['montoefectuadosDolar']); ?></td>
+                <td><?= date_change_format($row['fechaEmision']); ?></td>
+                <td><?= date_change_format($row['fechaPagoComprobante']); ?></td>
+				<td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['monto']) : '-' ; ?></td>
+                <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['montoPagado']) : '-'; ?></td>
                 
-
-
-                <?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
-				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $row['nombreEstado']; ?></span></td>
+                <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['monto']) : '-' ; ?></td>
+                <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['montoPagado']) : '-' ; ?></td>
+               
+                
+                <?php if ($row['montoPagado'] >= $row['monto']) {
+                    $estado_pago = 'PAGADO';
+                    $estado = 'green';
+                }else {
+                    $estado_pago = 'PENDIENTE';
+                    $estado = 'red';
+                } ?>
+				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $estado_pago; ?></span></td>
 	
 
 			</tr>
