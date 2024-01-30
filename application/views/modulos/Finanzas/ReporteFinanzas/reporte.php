@@ -16,11 +16,16 @@
 				<th class="td-center">#</th>
 				<th>RAZON SOCIAL</th>
 				<th>RUC</th>
+                <th>DESCRIPCIÓN</th>
+                <th>TIPO COMPROBANTE</th>
+                <th>NUM. COMPROBANTE</th>
                 <th>FECHA EMISION</th>
-                <th>FECHA PAGO</th>
                 <th>MONTO FACTURADO SOLES</th>
-                <th>MONTO PAGADO SOLES</th>
                 <th>MONTO FACTURADO DOLARES</th>
+                <th>TIPO COMPROBANTE</th>
+                <th>NUM. COMPROBANTE</th>
+                <th>FECHA PAGO</th>
+                <th>MONTO PAGADO SOLES</th>
                 <th>MONTO PAGADO DOLARES</th>
 				<th>ESTADO PAGO</th>
 			</tr>
@@ -34,12 +39,16 @@
     
 				<td class=""><?= $row['datosProveedor']; ?></td>
 				<td><?= $row['numDocumento']; ?></td>
+                <td><?= $row['descripcionServicio']; ?></td>
+                <td><?= $row['estadofactura']; ?></td>
+                <td><?= $row['numeroComprobante']; ?></td>
                 <td><?= date_change_format($row['fechaEmision']); ?></td>
-                <td><?= date_change_format($row['fechaPagoComprobante']); ?></td>
-				<td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['monto']) : '-' ; ?></td>
-                <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['montoPagado']) : '-'; ?></td>
-                
+                <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['monto']) : '-' ; ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['monto']) : '-' ; ?></td>
+                <td><?= $row['estadopago']; ?></td>
+                <td><?= $row['numComprobantePago']; ?></td>
+                <td><?= date_change_format($row['fechaPagoComprobante']); ?></td>
+                <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['montoPagado']) : '-'; ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['montoPagado']) : '-' ; ?></td>
                
                 

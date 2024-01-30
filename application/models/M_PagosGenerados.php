@@ -255,14 +255,18 @@ class M_PagosGenerados extends MY_Model
 		pspc.idProveedorServicioGenerado,
 		ps.datosProveedor , 
 		ps.numDocumento ,
+		psp.descripcionServicio,
 		pspc.idMoneda ,
+		pspc.tipoComprobante as tipoComprobanteFactura,
+		(select nombre from compras.comprobante as cp where pspc.tipoComprobante = cp.idComprobante  ) as estadofactura ,
 		pspc.numeroComprobante ,
 		pspc.fechaEmision,
+		pspe.idTipoComprobante as tipoComprobantePago ,
+		(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
 		pspe.numeroComprobante as numComprobantePago,
 		pspe.fechaPagoComprobante,
 		pspc.monto,
 		pspe.montoPagado,
-	
 		pspg.idEstadoPago,
 		ep.nombreEstado
 		from finanzas.proveedorServicioPagoComprobante as pspc
@@ -272,8 +276,7 @@ class M_PagosGenerados extends MY_Model
 		left join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
 		left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
 		order by pspc.idProveedorServicioGenerado asc
-		
-		
+				
 		";
 
 		$query = $this->db->query($sql);
