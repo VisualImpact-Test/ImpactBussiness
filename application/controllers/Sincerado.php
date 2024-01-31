@@ -169,6 +169,8 @@ class Sincerado extends MY_Controller
 				'usuario' => $post['usuario'][$k],
 				'descripcion' => $v,
 				'fecha' => $post['fecha'][$k],
+				'fechaReg' => getActualDateTime(),
+				'idUsuario' => $this->idUsuario,
 				'porcentaje' => $post['porcentaje'][$k],
 				'monto' => $post['monto'][$k],
 				'porcentajeSincerado' => $post['porcentajeSincerado'][$k],
