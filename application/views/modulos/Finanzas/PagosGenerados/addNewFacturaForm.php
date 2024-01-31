@@ -1,4 +1,4 @@
-<div class="">
+<div class="registroNewFactura">
                     <div class="fields">
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen">
@@ -62,18 +62,28 @@
 
                             </div>
                         </div> 
-                        <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
+                        <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen" >
                                 <label>Monto</label>
                                 <input class="onlyNumbers" id="monto" name="monto" patron="requerido" value="">
                             </div>
                         </div>
-                        <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
+                        <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen" >
                                 <label>Subir Archivo</label>
                                 <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cuentaPrincipal', 'visible' => false , 'tipo' => 2]) ?>
                             </div>
                         </div>
+
+
+                        <div class="field" style="width:10%;margin-left: 0px;margin-right: 0px;">
+                            <div class="field sixteen" >
+                                <a class="ui red  label elimnaRegistro"><i class="trash icon m-0"></i></a>
+                            </div>
+                        </div>
+                                                
+
+
 
                     </div>
                     <div class="ui divider"></div>

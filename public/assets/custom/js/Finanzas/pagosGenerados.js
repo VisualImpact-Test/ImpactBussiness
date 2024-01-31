@@ -147,6 +147,14 @@ var PagosGenerados = {
 		});
 
 
+        $(document).on('click', '.elimnaRegistro', function () {
+          //console.log("ffff");
+            
+            $(this).closest('.registroNewFactura').remove();
+        });
+
+
+
 		$(document).on('click', '#new-factura', function () {
 
 			let data = { 'idPagoGenerado': '1'};

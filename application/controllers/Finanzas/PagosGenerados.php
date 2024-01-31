@@ -121,7 +121,11 @@ class PagosGenerados extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		
 		$this->db->trans_begin();
+		if (isset($post['numeroComprobante'])) {
+			
+		
 		$post['fechaEmision'] = checkAndConvertToArray($post['fechaEmision']);
 		$post['fechaRecepcion'] = checkAndConvertToArray($post['fechaRecepcion']);
 		$post['fechaVencimiento'] = checkAndConvertToArray($post['fechaVencimiento']);
@@ -162,6 +166,7 @@ class PagosGenerados extends MY_Controller
 			
 		}
 		$this->db->insert_batch('finanzas.proveedorServicioPagoComprobante', $insertFactura);
+		}
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$result['result'] = 2;
