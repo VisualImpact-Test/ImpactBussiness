@@ -153,6 +153,7 @@ class Sincerado extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
+		$post['usuario'] = checkAndConvertToArray($post['usuario']);
 		$post['descripcion'] = checkAndConvertToArray($post['descripcion']);
 		$post['fecha'] = checkAndConvertToArray($post['fecha']);
 		$post['porcentaje'] = checkAndConvertToArray($post['porcentaje']);
@@ -165,6 +166,7 @@ class Sincerado extends MY_Controller
 		foreach ($post['descripcion'] as $k => $v) {
 			$insertData[] = [
 				'idSincerado' => $post['idSincerado'],
+				'idUsuario' => $post['usuario'][$k],
 				'descripcion' => $v,
 				'fecha' => $post['fecha'][$k],
 				'porcentaje' => $post['porcentaje'][$k],

@@ -63,6 +63,14 @@
 			<div class="row column detBase">
 				<div class="column">
 					<div class="wide field">
+						<div class="ui sub header">Usuario</div>
+						<div class="ui input fluid">
+							<input name="usuario" patron="requerido">
+						</div>
+					</div>
+				</div>
+				<div class="column">
+					<div class="wide field">
 						<div class="ui sub header">Descripción</div>
 						<div class="ui input fluid">
 							<input name="descripcion" patron="requerido">
@@ -107,7 +115,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="column opc_mult">
+				<div class="column opc_mult" style="width: 100px;">
 					<div class="wide field">
 						<div class="ui sub header">Presupuesto Sinc.</div>
 						<div class="ui input fluid">
