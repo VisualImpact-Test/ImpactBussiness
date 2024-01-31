@@ -85,7 +85,7 @@
 					<?php $v3 = $subDetalleItem[$row['idItem']][0]['tipoElemento'] ?>
 					<?php $v4 = $subDetalleItem[$row['idItem']][0]['marca'] ?>
 					<?php $costoTotal = 0; ?>
-					<?php foreach ($subDetalleItem[$row['idItem']] as $ks => $vs) : ?>
+					<?php foreach ($subDetalleItem[$row['idOrdenCompraDetalle']] as $ks => $vs) : ?>
 						<?php $total += (floatval($vs['cantidad']) * floatval($vs['costo'])); ?>
 						<?php $igv_total += ((floatval($vs['cantidad']) * floatval($vs['costo'])) * (!empty($data['igv']) ? ($data['igv'] / 100) : 0)); ?>
 
@@ -123,8 +123,8 @@
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= ($k + 1) ?></td>
 						<td class="text-center" rowspan="<?= $rowS ?>"><?= verificarEmpty($row['cantidad_item'], 2) ?></td>
 						<td class="text-center" colspan="1" rowspan="<?= $rowS ?>">
-							<?php if (!empty($row['nombre_archivo'])) : ?>
-								<img height="50" src="<?= imagenDeArchivo($row['nombre_archivo'], $row['idTipoArchivo'], 'item/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+							<?php if (!empty($adjunto[$row['idOrdenCompraDetalle']]['nombre_archivo'])) : ?>
+								<img height="50" src="<?= imagenDeArchivo($adjunto[$row['idOrdenCompraDetalle']]['nombre_archivo'], $adjunto[$row['idOrdenCompraDetalle']]['idTipoArchivo'], 'ordenCompra/'); ?>" class="img-lsck-capturas img-responsive img-thumbnail">
 							<?php endif; ?>
 						</td>
 						<?php if ($mostrarSubDetalle) : ?>
