@@ -660,7 +660,8 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['data'] = $dataParaVista['detalle'][0];
 
 		foreach ($dataParaVista['detalle'] as $k => $v) {
-			$dataParaVista['subDetalleItem'][$v['idItem']] = $this->db->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
+			$dataParaVista['subDetalleItem'][$v['idOrdenCompraDetalle']] = $this->db->get_where('orden.ordenCompraDetalleSub', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle']])->result_array();
+			$dataParaVista['adjunto'][$v['idOrdenCompraDetalle']] = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $v['idOrdenCompraDetalle'], 'estado' => 1])->row_array();
 		}
 
 		require APPPATH . '/vendor/autoload.php';
