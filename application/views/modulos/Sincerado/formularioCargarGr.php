@@ -89,6 +89,14 @@
 						<input type="hidden" class="date-semantic-value" name="fecha" value="">
 					</div>
 				</div>
+				<div class="column" style="width: 140px;">
+					<div class="sixteen wide field">
+						<div class="ui sub header">Concepto</div>
+						<select class="form-control col-md-7" id="conceptoTracking" name="conceptoTracking" patron="requerido">
+							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'idConceptoTracking', 'value' => 'nombre', 'query' => $conceptoTracking, 'class' => 'text-titlecase']); ?>
+						</select>
+					</div>
+				</div>
 				<div class="column opc_mult">
 					<div class="wide field">
 						<div class="ui sub header">Porcentaje</div>

@@ -95,6 +95,7 @@ class Sincerado extends MY_Controller
 		$result = $this->result;
 		$post = $this->input->post();
 		$dataParaVista = [];
+		$dataParaVista['conceptoTracking'] = $this->db->get_where('compras.conceptoTracking', ['estado' => 1])->result_array();
 		$dataParaVista['sincerado'] = $this->db->get_where('compras.sincerado', ['idSincerado' => $post['idSincerado']])->row_array();
 		$idMoneda = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $dataParaVista['sincerado']['idOrdenServicio']])->row_array()['idMoneda'];
 		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', ['idMoneda' => $idMoneda])->row_array();
@@ -154,6 +155,7 @@ class Sincerado extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$post['usuario'] = checkAndConvertToArray($post['usuario']);
+		$post['conceptoTracking'] = checkAndConvertToArray($post['conceptoTracking']);
 		$post['descripcion'] = checkAndConvertToArray($post['descripcion']);
 		$post['fecha'] = checkAndConvertToArray($post['fecha']);
 		$post['porcentaje'] = checkAndConvertToArray($post['porcentaje']);
@@ -175,7 +177,8 @@ class Sincerado extends MY_Controller
 				'monto' => $post['monto'][$k],
 				'porcentajeSincerado' => $post['porcentajeSincerado'][$k],
 				'presupuestoSincerado' => $post['presupuestoSincerado'][$k],
-				'diferenciaSincerado' => $post['diferenciaSincerado'][$k]
+				'diferenciaSincerado' => $post['diferenciaSincerado'][$k],
+				'conceptoTracking' => $post['conceptoTracking'][$k],
 			];
 		}
 		if (empty($insertData)) {
