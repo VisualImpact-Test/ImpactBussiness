@@ -166,7 +166,7 @@ class Sincerado extends MY_Controller
 		foreach ($post['descripcion'] as $k => $v) {
 			$insertData[] = [
 				'idSincerado' => $post['idSincerado'],
-				'idUsuario' => $post['usuario'][$k],
+				'usuario' => $post['usuario'][$k],
 				'descripcion' => $v,
 				'fecha' => $post['fecha'][$k],
 				'porcentaje' => $post['porcentaje'][$k],
