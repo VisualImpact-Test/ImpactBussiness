@@ -8,7 +8,6 @@ var SolicitudCotizacion = {
 	itemsLogistica: [],
 	htmlG: '',
 	htmlCotizacion: '',
-
 	load: function () {
 		//reportefiltro
 		$(document).on('click', '#filtrarReporteOper', function () {
@@ -91,13 +90,10 @@ var SolicitudCotizacion = {
 				SolicitudCotizacion.modalIdForm = modalId;
 			});
 		});
-
 		
 	}
 
 }
-
-
 
 SolicitudCotizacion.load();
 
@@ -227,15 +223,12 @@ var Cotizacion = {
 			html += '	<input type="text" placeholder="Fecha GR" value="">';
 			html += '	</div></div>	';
 			html += '<input type="hidden" class="date-semantic-value" name="fechaGR" placeholder="Fecha GR" value="">';
-			html += '</td><td  width = "10%">';
+			html += '</td><td width = "10%">';
 			html += '<button id="btn-agregar-new-gr" class="btn btn-sm btn-success" title="GUARDAR"><i class="fas fa-plus"></i></button>';
 			html += '</td></tr>';
 
-
 			$('#tbnumeroGR tbody ').append(html);
 			Fn.loadSemanticFunctions();
-
-
 		});
 
 		$(document).on('click', '.btn-verOrdenesCompra', function () {
@@ -812,8 +805,6 @@ var Cotizacion = {
 
 				Cotizacion.actualizarAutocomplete();
 			});
-
-
 		});
 
 		$(document).on('click', '#btn-añadir-linea', function (e) {
@@ -834,7 +825,6 @@ var Cotizacion = {
 			}
 			$('input[name="agregarLineaNum"]').val("");
 		});
-
 
 		$(document).on('click', '.btn-descargarOper', function () {
 			let idOper = $(this).closest('tr').data('idoper');
@@ -894,39 +884,39 @@ var Cotizacion = {
 			let data = { 'idCotizacion': id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': Cotizacion.url + 'formularioActualizarValidez', 'data': jsonString };
-	
+
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-	
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formActualizarValidez", fn: "Cotizacion.actualizarValidez()", content: "¿Esta seguro de actualizar los dias de validez?" });';
 				btn[1] = { title: 'Actualizar', fn: fn[1] };
-				
+
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '18%' });
-	
+
 			});
 		});
 
 		$(document).on('change', '#diasValidez', function (e) {
 
 			var dias = parseInt($(this).val());
-            var fechaReg = $('#fechaReg').val();
-            
-            if (!isNaN(dias) && fechaReg) {
-                var fechaInicial = new Date(fechaReg);
-                fechaInicial.setDate(fechaInicial.getDate() + dias);
-                
-                var dd = String(fechaInicial.getDate()).padStart(2, '0');
-                var mm = String(fechaInicial.getMonth() + 1).padStart(2, '0'); // Enero es 0
-                var yyyy = fechaInicial.getFullYear();
-                
-                var fechaFinal = dd + '/' + mm + '/' + yyyy;
-                $('#fechaFinal').val(fechaFinal);
-            } else {
-                $('#fechaFinal').val('');
-            }
+			var fechaReg = $('#fechaReg').val();
+
+			if (!isNaN(dias) && fechaReg) {
+				var fechaInicial = new Date(fechaReg);
+				fechaInicial.setDate(fechaInicial.getDate() + dias);
+
+				var dd = String(fechaInicial.getDate()).padStart(2, '0');
+				var mm = String(fechaInicial.getMonth() + 1).padStart(2, '0'); // Enero es 0
+				var yyyy = fechaInicial.getFullYear();
+
+				var fechaFinal = dd + '/' + mm + '/' + yyyy;
+				$('#fechaFinal').val(fechaFinal);
+			} else {
+				$('#fechaFinal').val('');
+			}
 
 		});
 

@@ -17,7 +17,6 @@
 		</div>
 	</div>
 </div>
-
 <div class="customizer border-left-blue-grey border-left-lighten-4 d-none d-xl-block">
 	<a href="javascript:;" class="customizer-close"><i class="fal fa-times"></i></a>
 	<a href="javascript:;" class="customizer-toggle box-shadow-3 bg-trade-visual-grad-left text-white">
@@ -85,20 +84,18 @@
 							<span class="tooltiptext">Fecha Inicio</span>
 							<div class="field">
 								<div class="ui calendar date-semantic">
-									<div class="ui input left icon fluid">
+									<div class="ui input mini left icon fluid">
 										<i class="calendar icon"></i>
 										<input type="text" placeholder="Fecha Inicio" value="" patron="requerido">
 									</div>
 								</div>
 								<input type="hidden" class="date-semantic-value" name="fechaDesde" value="" patron="requerido">
 							</div>
-
-
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Fecha Fin</span>
 							<div class="ui calendar date-semantic">
-								<div class="ui input left icon fluid">
+								<div class="ui input mini left icon fluid">
 									<i class="calendar icon"></i>
 									<input type="text" placeholder="Fecha Fin" value="" patron="requerido">
 								</div>
@@ -117,7 +114,6 @@
 		</form>
 	</div>
 </div>
-
 <div class="main-card mb-3 card">
 	<div class="card-body p-0">
 		<div class="tab-content" id="content-auditoria">
