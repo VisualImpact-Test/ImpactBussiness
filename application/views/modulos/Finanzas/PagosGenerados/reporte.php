@@ -11,9 +11,9 @@
 				<th>MONTO</th>
 			
 				<th>FECHA DE PAGO</th>
-				<th>NUM COMPROBANTE</th>
+				<!-- <th>NUM COMPROBANTE</th>
 				<th>CENTRO DE COSTO</th>
-				<th>DETRACCION</th>
+				<th>DETRACCION</th> -->
 				<th>ESTADO PAGO</th>
 	
 
@@ -40,9 +40,9 @@
 				<td class="text-right"><?= $row['moneda']; ?></td>
 				<td class="text-right"><?= $row['monto']; ?></td>
 				<td class="text-center"><?= getFechaDias($row['fechaProgramada']);  ?></td>
-				<td class="text-center"><?= $row['numeroComprobante']; ?></td>
+				<!-- <td class="text-center"><?= $row['numeroComprobante']; ?></td>
 				<td class="text-center"><?= $row['canal']; ?></td>
-				<td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td>
+				<td class="text-right"><?= $row['porcentajeDetraccion']; ?> %</td> -->
 				<?php $estado = ($row['idEstadoPago']== 1 ) ? 'red' : 'green' ; ?>
 				<td><span class="ui <?= $estado ?> large label claseEstado"><?= $row['nombreEstado']; ?></span></td>
 	
