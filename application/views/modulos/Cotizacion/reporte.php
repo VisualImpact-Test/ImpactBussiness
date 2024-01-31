@@ -29,28 +29,31 @@
 				<tr data-id="<?= $row['idCotizacion'] ?>" data-idoper="<?= $row['idOper'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center style-icons">
-						<?php if ($row['estado'] == 1) :  ?>
+						<?php if ($row['estado'] == 1) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnDuplicarCotizacion" data-id="<?= $row['idCotizacion']; ?>">
+								<i class="fa fa-lg fa-copy" title="Duplicar Cotizacion"></i>
+							</a>
 							<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_SELF" class="btn btn-outline-secondary border-0">
 								<i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
 							</a>
 							<div class="<?= (!$row['cotizacionValidaCliente']) ? 'disabled' : '' ?>">
-								<?php if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS /*ESTADO_ENVIADO_CLIENTE*/ || ($row['cantDetalle'] == $row['cantidadTransporte'])) :  ?>
+								<?php if ($row['idCotizacionEstado'] >= ESTADO_CONFIRMADO_COMPRAS /*ESTADO_ENVIADO_CLIENTE*/ || ($row['cantDetalle'] == $row['cantidadTransporte'])) : ?>
 									<a href="javascript:;" download class="btn btn-outline-secondary border-0 btn-descargarCotizacion"><i class="file pdf icon large" title="Generar PDF cotizacion"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_ENVIADO_CLIENTE) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-aprobar-cotizacion"><i class="fa fa-lg fa-check" title="Procesar"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS /*&& $row['cantidadTransporte'] == '0'*/) :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_CONFIRMADO_COMPRAS /*&& $row['cantidadTransporte'] == '0'*/) : ?>
 									<a href="../Cotizacion/viewSolicitudCotizacionInterna/<?= $row['idCotizacion'] ?>" class="btn btn-outline-secondary border-0 "><i class="send icon" title="Enviar Cotizacion"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == 1 || $row['idCotizacionEstado'] == 2 || $row['idCotizacionEstado'] == 3) :  ?>
+								<?php if ($row['idCotizacionEstado'] == 1 || $row['idCotizacionEstado'] == 2 || $row['idCotizacionEstado'] == 3) : ?>
 									<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) :  ?>
+								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-completarDatos btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-glasses" title="Ver Detalle de Cotizacion"></i></a>
 								<?php endif; ?>
 							</div>
@@ -65,12 +68,12 @@
 						<?php $row['icono'] = str_replace("<a", "<span", $row['icono']); ?>
 						<?php $row['icono'] = str_replace("/a", "/span", $row['icono']); ?>
 						<?php $row['icono'] = str_replace(" tag ", " ", $row['icono']); ?>
-						<?php if ($row['estado'] == 0) :  ?>
+						<?php if ($row['estado'] == 0) : ?>
 							<button class="btn btn-link " data-id="<?= $row['idCotizacion'] ?>"><?= $row['icono']; ?></button>
 						<?php else : ?>
 							<?= $row['icono']; ?>
 						<?php endif; ?>
-						<?php if (!$row['cotizacionValidaCliente']) :  ?>
+						<?php if (!$row['cotizacionValidaCliente']) : ?>
 							<br>
 							<div class="ui pointing red basic label" id="validez">
 								Cotizacion no válida
@@ -89,7 +92,6 @@
 						) : ?>
 							<br>
 							<button class="ui pointing red basic label btnAsignarGR">
-								<!-- Falta indicar datos -->
 								Falta completar datos
 							</button>
 						<?php endif; ?>
