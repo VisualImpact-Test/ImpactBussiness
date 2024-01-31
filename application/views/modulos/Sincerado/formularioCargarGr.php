@@ -123,8 +123,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="column opc_mult" style="width: 100px;">
-					<div class="wide field">
+				<div class="column opc_mult">
+					<div class="sixteen wide field">
 						<div class="ui sub header">Presupuesto Sinc.</div>
 						<div class="ui input fluid">
 							<input name="presupuestoSincerado" class="onlyNumbers cargaGr_preSin" value="<?= $sincerado['totalSincerado'] ?>" readonly>
