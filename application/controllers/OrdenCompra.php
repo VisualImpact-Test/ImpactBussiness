@@ -50,8 +50,10 @@ class OrdenCompra extends MY_Controller
 
 		$dataParaVista = [];
 		$data = $this->model->obtenerOrdenCompraLista($post)->result_array();
+		$cant = [];
 
 		foreach ($data as $key => $row) {
+			$encontrado = !empty($this->db->distinct()->select('idOrdenCompra')->get_where('sustento.comprobante', ['idOrdenCompra' => $row['idOrdenCompra'], 'estado' => 1])->result_array());
 			$datos[$row['idOrdenCompra']] = [
 				'idProveedor' => $row['idProveedor'],
 				'requerimiento' => $row['requerimiento'],
@@ -68,7 +70,8 @@ class OrdenCompra extends MY_Controller
 				'estado' => $row['estado'],
 				'monedaCambio' => $row['monedaCambio'],
 				'seriado' => $row['seriado'],
-				'moneda' => $row['monedaPlural']
+				'moneda' => $row['monedaPlural'],
+				'dataIdOC' => $encontrado ? 1 : 0,
 			];
 		}
 
@@ -151,7 +154,7 @@ class OrdenCompra extends MY_Controller
 
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
-			$adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle'], 'estado' => 1])->result_array();
+$adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle'], 'estado' => 1])->result_array();
 			if (!isset($dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']])) $dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']] = [];
 			foreach ($adjuntos as $adj) {
 				$dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']][] = [
@@ -178,7 +181,7 @@ class OrdenCompra extends MY_Controller
 	}
 	public function getImagenesItem()
 	{
-		$post = $this->input->post();
+$post = $this->input->post();
 		$imagenes = $this->db->where(['idItem' => $post['idItem'], 'estado' => 1, 'idTipoArchivo' => TIPO_IMAGEN])->get('compras.itemImagen')->row_array();
 		echo json_encode($imagenes);
 	}
@@ -335,7 +338,7 @@ class OrdenCompra extends MY_Controller
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
 		$insertData = [];
-		$insertDataArchivos = [];
+$insertDataArchivos = [];
 		$insertDataSub = [];
 		$orden = 0;
 		$ordenAdjunto = 0;
@@ -538,7 +541,7 @@ class OrdenCompra extends MY_Controller
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;
-		$ordenAdjunto = 0;
+$ordenAdjunto = 0;
 		foreach ($post['item'] as $key => $value) {
 			// En caso: el item es nuevo
 			$dataInserItem = [];
@@ -585,7 +588,7 @@ class OrdenCompra extends MY_Controller
 				];
 				$orden++;
 			}
-			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
+		for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
 				$ii = [];
 				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
 					$where = [];
@@ -593,42 +596,42 @@ class OrdenCompra extends MY_Controller
 					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], $where)->row_array();
 					if (substr($ii['nombre_archivo'], 0, 2) != '..') $ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
 				} else { // Si la imagen es cargada en la OC
-					$archivo = [
-						'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
-						'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
-						'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
-						'carpeta' => 'ordenCompra',
-						'nombreUnico' => uniqid()
-					];
-					$archivoName = $this->saveFileWasabi($archivo);
-					$tipoArchivo = explode('/', $archivo['type']);
+						  $archivo = [
+							  'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
+							  'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
+							  'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
+							  'carpeta' => 'ordenCompra',
+							  'nombreUnico' => uniqid()
+						  ];
+						  $archivoName = $this->saveFileWasabi($archivo);
+						  $tipoArchivo = explode('/', $archivo['type']);
 
-					$ii = [
-						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-						'nombre_inicial' => $archivo['name'],
-						'nombre_archivo' => $archivoName,
-						'nombre_unico' => $archivo['nombreUnico'],
-						'extension' => FILES_WASABI[$tipoArchivo[1]]
-					];
-				}
+						  $ii = [
+							  							  'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+							  'nombre_inicial' => $archivo['name'],
+							  'nombre_archivo' => $archivoName,
+							  'nombre_unico' => $archivo['nombreUnico'],
+							  'extension' => FILES_WASABI[$tipoArchivo[1]]
+						  ];
+					  }
 				$insertDataArchivos[] = [
-					'idOrdenCompra' => $idOC,
+							  'idOrdenCompra' => $idOC,
 					'idOrdenCompraDetalle' => $idOCDet,
 					'idTipoArchivo' => $ii['idTipoArchivo'],
-					'nombre_inicial' => $ii['nombre_inicial'],
+										  'nombre_inicial' => $ii['nombre_inicial'],
 					'nombre_archivo' => $ii['nombre_archivo'],
 					'nombre_unico' => $ii['nombre_unico'],
 					'extension' => $ii['extension'],
 					'idUsuario' => $this->idUsuario
 				];
 				$ordenAdjunto++;
-			}
-		}
+							  }
+			  }
 
-		if (!empty($insertDataSub)) {
+			  		if (!empty($insertDataSub)) {
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
-		if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
+if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
