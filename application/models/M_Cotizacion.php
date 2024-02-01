@@ -2651,4 +2651,86 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function datosCotizacion($params = [])
+	{
+
+
+		$sql = "
+			SELECT 
+			*
+	   		FROM compras.cotizacion co
+	   		
+			WHERE 1 = 1
+			AND co.idCotizacion = $params";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	
+	public function obtenerCotizacionDetalleArchivos($params = [])
+	{
+
+
+		$sql = "
+		select * from compras.cotizacionDetalleArchivos
+		where  1 = 1
+			AND idCotizacion = $params";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerCotizacionDetallada($params = [])
+	{
+
+
+		$sql = "
+		select * from compras.cotizacionDetalle
+		where  1 = 1
+			AND idCotizacion = $params";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function obtenerDuplicadoCotizacionDetalleSub($params = [])
+	{
+
+
+		$sql = "
+		select * from compras.cotizacionDetalleSub
+		where  1 = 1
+		AND idCotizacionDetalle = $params";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	
 }

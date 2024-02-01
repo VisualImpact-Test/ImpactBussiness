@@ -223,6 +223,26 @@ function numeroVista($numero)
 	$formateado = number_format($numero, 2, ".", " ");
 	return $formateado;
 }
+
+function getSoloFecha()
+{
+	$fechaActual = getdate();
+	$fechaCreacion = sprintf(
+		"%04d-%02d-%02d",
+		$fechaActual['year'],
+		$fechaActual['mon'],
+		$fechaActual['mday']
+	);
+	return $fechaCreacion;
+}
+
+function getSoloHora()
+{
+	$horaActual = date("H:i:s");
+	return $horaActual;
+}
+
+
 function getFechaDias($fecha, $dias = 0)
 {
 	$pos = strpos($fecha, '/');
@@ -249,6 +269,22 @@ function getActualDateTime()
 	$actualDateTime = explode(" ", $actualDateTime);
 	$actualDateTime = implode("T", $actualDateTime);
 	return $actualDateTime;
+}
+
+function getDateTime($fecha)
+{
+	// $newfecha = date_format($fecha, 'Y-m-d H:i:s');
+	// $newfecha = explode(" ", $newfecha);
+	// $newfecha = implode("T", $newfecha);
+	$newfecha = date('Y-m-d\TH:i:s', strtotime($fecha));
+	 return $newfecha;
+}
+
+function formularCodCotizacion($codCotizacion)
+{
+	$caracteres = str_repeat("0", 3); 
+
+	return $caracteres.$codCotizacion;
 }
 
 function isArrayAssoc($array)

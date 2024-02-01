@@ -4831,4 +4831,233 @@ class Cotizacion extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
+	public function duplicarCotizacionGeneral()
+	{
+		$result = $this->result;
+		$post = $this->input->post('idCotizacion');
+		$this->db->trans_begin();
+
+		$cotizacion = $this->model->datosCotizacion($post)['query']->result_array();
+		$cotizacionDetalle = $this->model->obtenerCotizacionDetallada($post)['query']->result_array();
+		$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post)['query']->result_array();
+
+		//echo $this->db->last_query();exit();
+		$insertCotizacion = [
+			'nombre' => $cotizacion[0]['nombre'],
+			'fechaDeadline' => $cotizacion[0]['fechaDeadline'],
+			'fechaRequerida' => $cotizacion[0]['fechaRequerida'],
+			'fechaTermino' => $cotizacion[0]['fechaTermino'],
+			'idCuenta' => $cotizacion[0]['idCuenta'],
+			'idCentroCosto' => $cotizacion[0]['idCentroCosto'],
+			'idCotizacionEstado' => 1,
+			'idPrioridad' => $cotizacion[0]['idPrioridad'],
+			'idSolicitante' => $cotizacion[0]['idSolicitante'],
+			'motivo' => $cotizacion[0]['motivo'],
+			'comentario' => $cotizacion[0]['comentario'],
+			'flagIgv' => $cotizacion[0]['flagIgv'],
+			'fee' => $cotizacion[0]['fee'],
+			'total' => $cotizacion[0]['total'],
+			'fechaEmision' => getActualDateTime(),
+			'idUsuarioReg' => $this->idUsuario,
+			'estado' => 1,
+			'codOrdenCompra' => $cotizacion[0]['codOrdenCompra'],
+			'motivoAprobacion' => $cotizacion[0]['motivoAprobacion'],
+			'total_fee' => $cotizacion[0]['total_fee'],
+			'total_fee_igv' => $cotizacion[0]['total_fee_igv'],
+			'diasValidez' => $cotizacion[0]['diasValidez'],
+			'mostrarPrecio' => $cotizacion[0]['mostrarPrecio'],
+			'montoOrdenCompra' => $cotizacion[0]['montoOrdenCompra'],
+			'feePersonal' => $cotizacion[0]['feePersonal'],
+			'numeroGR' => $cotizacion[0]['numeroGR'],
+			'fechaClienteOC' => $cotizacion[0]['fechaClienteOC'],
+			'idOrdenServicio' => $cotizacion[0]['idOrdenServicio'],
+			'fechaGR' => $cotizacion[0]['fechaGR'],
+			'demo' => $cotizacion[0]['demo'],
+			'fechaSustento' => $cotizacion[0]['fechaSustento'],
+			'fechaEnvioFinanzas' => $cotizacion[0]['fechaEnvioFinanzas'],
+			'aprovador' => $cotizacion[0]['aprovador'],
+			'montoSincerado' => $cotizacion[0]['montoSincerado'],
+			'idTipoServicioCotizacion' => $cotizacion[0]['idTipoServicioCotizacion'],
+			'fechaEnvioCliente' => null,
+			'usurioEnvioCliente' => null,
+			'idTipoMoneda' => $cotizacion[0]['idTipoMoneda']			
+		];
+		$this->db->insert('compras.cotizacion', $insertCotizacion);
+		$idNewCotizacion = $this->db->insert_id();
+		$update = ['codCotizacion' => formularCodCotizacion($idNewCotizacion)];
+		$this->db->update('compras.cotizacion', $update, ['idCotizacion' => $idNewCotizacion]);
+
+
+		foreach ($cotizacionDetalle as $k => $v) {
+			$insertarCotizacionDetalle = [
+				'idCotizacion' => $idNewCotizacion,
+				'idItem' => $v['idItem'],
+				'idItemTipo' => $v['idItemTipo'],
+				'nombre' => $v['nombre'],
+				'caracteristicas' => $v['caracteristicas'],
+				'idItemEstado' => $v['idItemEstado'],
+				'idProveedor' => $v['idProveedor'],
+				'cantidad' => $v['cantidad'],
+				'costo' => $v['costo'],
+				'subtotal' => $v['subtotal'],
+				'gap' => $v['gap'],
+				'precio' => $v['precio'],
+				'idCotizacionDetalleEstado' => $v['idCotizacionDetalleEstado'],
+				//'fechaCreacion' => getDateTime($v['fechaCreacion']),
+				'fechaCreacion' => getActualDateTime(),
+				'fechaModificacion' => null,
+				'enlaces' => $v['enlaces'],
+				'cotizacionInterna' => $v['cotizacionInterna'],
+				'caracteristicasCompras' => $v['caracteristicasCompras'],
+				'idUnidadMedida' => $v['idUnidadMedida'],
+				'costoAnterior' => $v['costoAnterior'],
+				'flagCuenta' => $v['flagCuenta'],
+				'flagRedondear' => $v['flagRedondear'],
+				'fechaEntrega' => $v['fechaEntrega'],
+				'diasEntrega' => $v['diasEntrega'],
+				'caracteristicasProveedor' => $v['caracteristicasProveedor'],
+				'estado' =>1,
+				'flagAlternativo' => $v['flagAlternativo'],
+				'nombreAlternativo' => $v['nombreAlternativo'],
+				'tituloParaOC' => $v['tituloParaOC'],
+				'cantPdv' => $v['cantPdv'],
+				'flagDetallePDV' => $v['flagDetallePDV'],
+				'tipoServicio' => $v['tipoServicio'],
+				'requiereOrdenCompra' => $v['requiereOrdenCompra'],
+				'tsCosto' => $v['tsCosto'],
+				'costoPacking' => $v['costoPacking'],
+				'flagPackingSolicitado' => $v['flagPackingSolicitado'],
+				'flagMostrarDetalle' => $v['flagMostrarDetalle'],
+				'sueldo' => $v['sueldo'],
+				'asignacionFamiliar' => $v['asignacionFamiliar'],
+				'movilidad' => $v['movilidad'],
+				'incentivos' => $v['incentivos'],
+				'essalud' => $v['essalud'],
+				'cts' => $v['cts'],
+				'vacaciones' => $v['vacaciones'],
+				'gratificacion' => $v['gratificacion'],
+				'segurovidaley' => $v['segurovidaley'],
+				'adicionales' => $v['adicionales'],
+				'refrigerio' => $v['refrigerio'],
+				'idCargo' => $v['idCargo'],
+				'cantidad_personal' => $v['cantidad_personal'],
+				'mesInicio' => $v['mesInicio'],
+				'mesFin' => $v['mesFin'],
+				'frecuenciaCobro' => $v['frecuenciaCobro'],
+				'costoMovilidad' => $v['costoMovilidad'],
+				'flagMovilidadSolicitado' => $v['flagMovilidadSolicitado'],
+				'costoPersonal' => $v['costoPersonal'],
+				'flagPersonalSolicitado' => $v['flagPersonalSolicitado'],
+				'fee1Por' => $v['fee1Por'],
+				'fee2Por' => $v['fee2Por'],
+				'fee1Monto' => $v['fee1Monto'],
+				'fee2Monto' => $v['fee2Monto'],
+				'idCotizacionDetallePersonal' => $v['idCotizacionDetallePersonal'],	
+			];	
+
+
+			$this->db->insert('compras.cotizacionDetalle', $insertarCotizacionDetalle);
+			$idNewCotizacionDetalle = $this->db->insert_id();
+
+			$cotizacionDetalleSub = $this->model->obtenerDuplicadoCotizacionDetalleSub($v['idCotizacionDetalle'])['query']->result_array();
+
+			//echo $this->db->last_query();exit();
+			foreach ($cotizacionDetalleSub as $j => $i) {
+				$insertarCotizacionDetallesub = [
+					'idCotizacionDetalle' => $idNewCotizacionDetalle,
+					'idTipoServicio' => $i['idTipoServicio'],
+					'idUnidadMedida' => $i['idUnidadMedida'],
+					'nombre' => $i['nombre'],
+					'talla' => $i['talla'],
+					'tela' => $i['tela'],
+					'color' => $i['color'],
+					'cantidad' => $i['cantidad'],
+					'costo' => $i['costo'],
+					'subtotal' => $i['subtotal'],
+					'fechaCreacion' => getActualDateTime(),
+					'fechaModificacion' => null,
+					'monto' => $i['monto'],
+					'costoDistribucion' => $i['costoDistribucion'],
+					'cantidadPdv' => $i['cantidadPdv'],
+					'idItem' => $i['idItem'],
+					'idDistribucionTachado' => $i['idDistribucionTachado'],
+					'genero' => $i['genero'],
+					'idProveedorDistribucion' => $i['idProveedorDistribucion'],
+					'cantidadReal' => $i['cantidadReal'],
+					'requiereOrdenCompra' => $i['requiereOrdenCompra'],
+					'sucursal' => $i['sucursal'],
+					'razonSocial' => $i['razonSocial'],
+					'tipoElemento' => $i['tipoElemento'],
+					'marca' => $i['marca'],
+					'peso' => $i['peso'],
+					'flagItemInterno' => $i['flagItemInterno'],
+					'idZona' => $i['idZona'],
+					'dias' => $i['dias'],
+					'gap' => $i['gap'],
+					'pesoVisual' => $i['pesoVisual'],
+					'costoVisual' => $i['costoVisual'],
+					'flagOtrosPuntos' => $i['flagOtrosPuntos'],
+					'cod_departamento' => $i['cod_departamento'],
+					'cod_provincia' => $i['cod_provincia'],
+					'idTipoServicioUbigeo' => $i['idTipoServicioUbigeo'],
+					'cod_distrito' => $i['cod_distrito'],
+					'reembarque' => $i['reembarque'],
+					'porcentajeParaCosto' => $i['porcentajeParaCosto'],
+					'idConcepto' => $i['idConcepto'],
+					'flagConcepto' => $i['flagConcepto'],
+					'frecuencia' => $i['frecuencia'],
+					];
+				$this->db->insert('compras.cotizacionDetalleSub', $insertarCotizacionDetallesub);
+				$idNewCotizacionDetalleSub = $this->db->insert_id();
+			}
+				
+		}
+		
+			foreach ($cotizacionDetalleArchivos as $r => $p) {
+				$insertarCotizacionDetalleArchivos = [
+					'idCotizacion' => $idNewCotizacion,
+					'idTipoArchivo' => $p['idTipoArchivo'],
+					'nombre_inicial' => $p['nombre_inicial'],
+					'nombre_archivo' => $p['nombre_archivo'],
+					'nombre_unico' => $p['nombre_unico'],
+					'extension' => $p['extension'],
+					'estado' => 1,
+					'fechaReg' => getSoloFecha(),
+					'horaReg' => getSoloHora(),
+					'fechaModificacion' => null,
+					'idUsuarioReg' => $this->idUsuario,
+					'flag_anexo' => $p['flag_anexo'],
+					'idAutorizacion' => $p['idAutorizacion'],
+				];
+				$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
+			}
+			
+			$insertarEstadoHistorico = [
+				'idCotizacionEstado' => 1,
+				'idCotizacionInternaEstado' => null,
+				'idCotizacion' => $idNewCotizacion,
+				'observacion' => null,
+				'fechaReg' => getSoloFecha(),
+				'horaReg' => getSoloHora(),
+				'idUsuarioReg' => $this->idUsuario,
+				'estado' => 1,
+			];
+			$this->db->insert('compras.cotizacionEstadoHistorico', $insertarEstadoHistorico);
+
+	
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Error al Duplicar';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+			} else {
+			$this->db->trans_commit();
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Duplicado Exitoso';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			}
+			echo json_encode($result);
+	}
+	
 }
