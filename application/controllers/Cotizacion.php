@@ -4844,7 +4844,7 @@ class Cotizacion extends MY_Controller
 
 		//echo $this->db->last_query();exit();
 		$insertCotizacion = [
-			'nombre' => $cotizacion[0]['nombre'],
+			'nombre' => $cotizacion[0]['nombre']. " - COPIA",
 			'fechaDeadline' => $cotizacion[0]['fechaDeadline'],
 			'fechaRequerida' => $cotizacion[0]['fechaRequerida'],
 			'fechaTermino' => $cotizacion[0]['fechaTermino'],
