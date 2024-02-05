@@ -151,4 +151,14 @@ class M_OrdenCompra extends MY_Model
 			return null;
 		}
 	}
+	public function getValidarItem($item)
+	{
+		$this->db
+			->select('*')
+			->from('compras.item')
+			->where('nombre', $item);
+
+		return $this->db->get();
+	}
+	
 }

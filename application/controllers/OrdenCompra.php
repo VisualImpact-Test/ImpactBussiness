@@ -351,8 +351,16 @@ $insertDataArchivos = [];
 					'nombre' => $post['item'][$key],
 					'idItemTipo' => $post['tipo'][$key]
 				];
-				$this->db->insert('compras.item', $dataInserItem);
-				$post['idItemForm'][$key] = $this->db->insert_id();
+				//aqui va la validacion
+				$validacionItem = $this->model->getValidarItem($post['item'][$key])->result_array();
+				//echo $this->db->last_query();exit();
+				if (empty($validacionItem)) {
+					$this->db->insert('compras.item', $dataInserItem);
+					$post['idItemForm'][$key] = $this->db->insert_id();
+				}else{ 
+					$post['idItemForm'][$key] = $validacionItem[0]['idItem'];
+				}
+				
 			}
 
 			// Fin: En Caso.
