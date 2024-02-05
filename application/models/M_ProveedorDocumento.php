@@ -11,7 +11,7 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzas($params = [])
 	{
 		$this->db
-			->select("oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
+			->select("comp.numeroDocumento,oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
 						oc.idProveedor, 
 						0 as flagOcLibre,
 						pr.razonSocial, pr.nroDocumento as rucProveedor, 
@@ -33,6 +33,7 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.Empresa emp', 'emp.idEmpresa = c.idCuenta')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = c.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
+			->join('sustento.comprobante comp', 'comp.idOrdenCompra = oc.idOrdenCompra AND comp.idFormatoDocumento = 2 AND comp.estado = 1', 'LEFT')
 			->where('ocd.estado', 1)->where('c.idUsuarioReg != 1')
 			->order_by('ocd.idOrdenCompra desc');
 
@@ -47,7 +48,7 @@ class M_ProveedorDocumento extends MY_Model
 	{
 		$this->db
 			->distinct()
-			->select("oc.seriado as ordenCompra,
+			->select("comp.numeroDocumento,oc.seriado as ordenCompra,
 						oc.idOrdenCompra as idOrdenCompra, 
 						1 as flagOcLibre,
 						cast(oc.fechaReg as DATE) as fechaRegOC, 
@@ -75,6 +76,7 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.Empresa emp', 'emp.idEmpresa = oc.idCuenta')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
+			->join('sustento.comprobante comp', 'comp.idOrdenCompra = oc.idOrdenCompra AND comp.idFormatoDocumento = 2 AND comp.estado = 1', 'LEFT')
 			->where('ocd.estado', 1);
 
 		if (!empty($params['idProveedor'])) $this->db->where('oc.idProveedor', $params['idProveedor']);
