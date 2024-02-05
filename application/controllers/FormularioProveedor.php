@@ -1836,8 +1836,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => 0,
-					'flagAprobado' => 0,
+					'flagRevisado' => $this->idUsuario ? 1 : 0,
+					'flagAprobado' => $this->idUsuario ? 1 : 0,
 					'numeroDocumento' => $post['nguia']
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
@@ -1872,8 +1872,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => 0,
-					'flagAprobado' => 0,
+					'flagRevisado' => $this->idUsuario ? 1 : 0,
+					'flagAprobado' => $this->idUsuario ? 1 : 0,
 					'numeroDocumento' => $post['nfactura'],
 					'fechaEmision' => $post['fechaEmision']
 				];
@@ -1907,8 +1907,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => 0,
-					'flagAprobado' => 0,
+					'flagRevisado' => $this->idUsuario ? 1 : 0,
+					'flagAprobado' => $this->idUsuario ? 1 : 0,
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
@@ -1940,8 +1940,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => 0,
-					'flagAprobado' => 0,
+					'flagRevisado' => $this->idUsuario ? 1 : 0,
+					'flagAprobado' => $this->idUsuario ? 1 : 0,
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
