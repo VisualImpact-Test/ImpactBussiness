@@ -154,7 +154,7 @@ class OrdenCompra extends MY_Controller
 
 		foreach ($dataParaVista['oc'] as $key => $value) {
 			$dataParaVista['ocSubItem'][$value['idOrdenCompraDetalle']] = $this->model->obtenerInformacionOrdenCompraSubItem(['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle']])->result_array();
-$adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle'], 'estado' => 1])->result_array();
+			$adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDetalle' => $value['idOrdenCompraDetalle'], 'estado' => 1])->result_array();
 			if (!isset($dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']])) $dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']] = [];
 			foreach ($adjuntos as $adj) {
 				$dataParaVista['ocAdjunto'][$value['idOrdenCompraDetalle']][] = [
@@ -181,7 +181,7 @@ $adjuntos = $this->db->get_where('orden.ordenCompraAdjunto', ['idOrdenCompraDeta
 	}
 	public function getImagenesItem()
 	{
-$post = $this->input->post();
+		$post = $this->input->post();
 		$imagenes = $this->db->where(['idItem' => $post['idItem'], 'estado' => 1, 'idTipoArchivo' => TIPO_IMAGEN])->get('compras.itemImagen')->row_array();
 		echo json_encode($imagenes);
 	}
@@ -338,7 +338,7 @@ $post = $this->input->post();
 		$this->db->insert('orden.ordenCompra', $insertData);
 		$idOC = $this->db->insert_id();
 		$insertData = [];
-$insertDataArchivos = [];
+		$insertDataArchivos = [];
 		$insertDataSub = [];
 		$orden = 0;
 		$ordenAdjunto = 0;
@@ -357,10 +357,9 @@ $insertDataArchivos = [];
 				if (empty($validacionItem)) {
 					$this->db->insert('compras.item', $dataInserItem);
 					$post['idItemForm'][$key] = $this->db->insert_id();
-				}else{ 
+				} else {
 					$post['idItemForm'][$key] = $validacionItem[0]['idItem'];
 				}
-				
 			}
 
 			// Fin: En Caso.
@@ -378,6 +377,10 @@ $insertDataArchivos = [];
 			$idOCDet = $this->db->insert_id();
 			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
 				$ii = [];
+				$post['adjuntoItemFile-idOrigen'] = checkAndConvertToArray($post['adjuntoItemFile-idOrigen']);
+				$post['adjuntoItemFile-name'] = checkAndConvertToArray($post['adjuntoItemFile-name']);
+				$post['adjuntoItemFile-item'] = checkAndConvertToArray($post['adjuntoItemFile-item']);
+				$post['adjuntoItemFile-type'] = checkAndConvertToArray($post['adjuntoItemFile-type']);
 				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
 					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], [$post['adjuntoItemFile-type'][$ordenAdjunto] => $post['adjuntoItemFile-idOrigen'][$ordenAdjunto]])->row_array();
 					$ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
@@ -549,7 +552,7 @@ $insertDataArchivos = [];
 		$insertData = [];
 		$insertDataSub = [];
 		$orden = 0;
-$ordenAdjunto = 0;
+		$ordenAdjunto = 0;
 		foreach ($post['item'] as $key => $value) {
 			// En caso: el item es nuevo
 			$dataInserItem = [];
@@ -596,7 +599,7 @@ $ordenAdjunto = 0;
 				];
 				$orden++;
 			}
-		for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
+			for ($i = 0; $i < intval($post['adjuntoItemCantidad'][$key]); $i++) {
 				$ii = [];
 				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
 					$where = [];
@@ -604,42 +607,42 @@ $ordenAdjunto = 0;
 					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], $where)->row_array();
 					if (substr($ii['nombre_archivo'], 0, 2) != '..') $ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
 				} else { // Si la imagen es cargada en la OC
-						  $archivo = [
-							  'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
-							  'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
-							  'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
-							  'carpeta' => 'ordenCompra',
-							  'nombreUnico' => uniqid()
-						  ];
-						  $archivoName = $this->saveFileWasabi($archivo);
-						  $tipoArchivo = explode('/', $archivo['type']);
+					$archivo = [
+						'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
+						'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
+						'type' => $post['adjuntoItemFile-type'][$ordenAdjunto],
+						'carpeta' => 'ordenCompra',
+						'nombreUnico' => uniqid()
+					];
+					$archivoName = $this->saveFileWasabi($archivo);
+					$tipoArchivo = explode('/', $archivo['type']);
 
-						  $ii = [
-							  							  'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-							  'nombre_inicial' => $archivo['name'],
-							  'nombre_archivo' => $archivoName,
-							  'nombre_unico' => $archivo['nombreUnico'],
-							  'extension' => FILES_WASABI[$tipoArchivo[1]]
-						  ];
-					  }
+					$ii = [
+						'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+						'nombre_inicial' => $archivo['name'],
+						'nombre_archivo' => $archivoName,
+						'nombre_unico' => $archivo['nombreUnico'],
+						'extension' => FILES_WASABI[$tipoArchivo[1]]
+					];
+				}
 				$insertDataArchivos[] = [
-							  'idOrdenCompra' => $idOC,
+					'idOrdenCompra' => $idOC,
 					'idOrdenCompraDetalle' => $idOCDet,
 					'idTipoArchivo' => $ii['idTipoArchivo'],
-										  'nombre_inicial' => $ii['nombre_inicial'],
+					'nombre_inicial' => $ii['nombre_inicial'],
 					'nombre_archivo' => $ii['nombre_archivo'],
 					'nombre_unico' => $ii['nombre_unico'],
 					'extension' => $ii['extension'],
 					'idUsuario' => $this->idUsuario
 				];
 				$ordenAdjunto++;
-							  }
-			  }
+			}
+		}
 
-			  		if (!empty($insertDataSub)) {
+		if (!empty($insertDataSub)) {
 			$insert = $this->model->insertarMasivo('orden.ordenCompraDetalleSub', $insertDataSub);
 		}
-if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
+		if (!empty($insertDataArchivos)) $this->db->insert_batch('orden.ordenCompraAdjunto', $insertDataArchivos);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
