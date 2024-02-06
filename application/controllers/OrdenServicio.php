@@ -916,13 +916,9 @@ class OrdenServicio extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
+		//VALIDAR VERSIÓN PRESUPUESTO ENVIADO
 		foreach ($dataParaVista['versionesAnteriores'] as $vt) {
-			$result = $this->db->get_where(
-				'compras.presupuestoValido',
-				['idPresupuestoHistorico' => $vt['idPresupuestoHistorico'], 'estado' => 1]
-			)
-				->row_array();
-
+			$result = $this->db->get_where('compras.presupuestoValido',['idPresupuestoHistorico' => $vt['idPresupuestoHistorico'], 'estado' => 1])->row_array();
 			if (!empty($result)) {
 				$dataParaVista['aprobado'] = $result['idPresupuestoHistorico'];
 			}
