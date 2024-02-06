@@ -21,10 +21,10 @@
 				</div>
 			</div>
 			<div class="fields">
-				<div class="four wide field">
+				<div class="sixteen wide field">
 					<label>Fecha OC: </label>
 					<div class="ui calendar date-semantic">
-						<div class="ui input left icon">
+						<div class="ui input left icon fluid">
 							<i class="calendar icon"></i>
 							<input type="text" placeholder="Fecha OC" value="<?= !empty($datosOC[0]['fechaOC']) ? $datosOC[0]['fechaOC'] : '' ?>">
 						</div>

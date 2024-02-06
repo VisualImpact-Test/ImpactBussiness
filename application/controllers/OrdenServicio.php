@@ -935,7 +935,6 @@ class OrdenServicio extends MY_Controller
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Procesar Datos OC';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/frmDatosOc", $dataParaVista, true);
-
 		echo json_encode($result);
 	}
 

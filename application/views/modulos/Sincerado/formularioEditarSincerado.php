@@ -211,7 +211,7 @@ endforeach;  ?>
 												<!-- Ocultado para el sincerado -->
 												<input class="text-right d-none" type="text" value="0" readonly id="totalMovilidadAdicional">
 												<!-- Fin -->
-												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="<?= $sinceradoDetalleMovilidad_Det['0']['1']['montoOriginal'] ?>" readonly>
+												<input class="text-right pasteFijarMonto" name="movilidad_montoOriginal" value="<?= isset($sinceradoDetalleMovilidad_Det['0']['1']['montoOriginal']) ? $sinceradoDetalleMovilidad_Det['0']['1']['montoOriginal'] : '0' ?>" readonly>
 												<input class="text-right d-none" name="movilidad_viaje" value="0">
 												<input class="text-right d-none" name="movilidad_adicional" value="1">
 											</div>

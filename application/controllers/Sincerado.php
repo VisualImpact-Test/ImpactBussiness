@@ -47,7 +47,7 @@ class Sincerado extends MY_Controller
 				$dataParaVista['sincerado'][$value['idSincerado']] = $value;
 			}
 		}
-		
+
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/Sincerado/reporte", $dataParaVista, true);
 		}
@@ -115,7 +115,7 @@ class Sincerado extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['sincerado'] = $this->db->get_where('compras.sincerado', ['idSincerado' => $post['idSincerado']])->row_array();
-	
+
 		$html = $this->load->view("modulos/Sincerado/formularioAprobar", $dataParaVista, true);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Aprobar Sincerado';
@@ -145,8 +145,6 @@ class Sincerado extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-	
-
 
 	public function guardarGrSincerado()
 	{
