@@ -32,7 +32,7 @@ class ProveedorDocumento extends MY_Controller
 		);
 
 		$config['data']['icon'] = 'fas fa-dollar-sign';
-		$config['data']['title'] = 'Reporte de Finanzas';
+		$config['data']['title'] = 'Reporte de Documentos';
 		$config['data']['message'] = 'Lista';
 		$config['data']['proveedor'] = $this->model->getProveedoresQueTienenOC()->result_array();
 		$config['data']['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();

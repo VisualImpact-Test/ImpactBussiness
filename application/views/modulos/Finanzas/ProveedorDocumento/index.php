@@ -1,11 +1,11 @@
 <div class="row mt-4">
-	<div class="col-lg-2 d-flex justify-content-center align-items-center">
+	<div class="col-lg-3 d-flex justify-content-center align-items-center">
 		<h3 class="card-title mb-3">
 			<i class="<?= $icon ?>"></i>
 			<?= $title ?>
 		</h3>
 	</div>
-	<div class="col-lg-10 d-flex">
+	<div class="col-lg-9 d-flex">
 		<div class="card w-100 mb-3 p-0">
 			<div class="card-body p-0">
 				<ul class="nav nav-tabs nav-justified">
