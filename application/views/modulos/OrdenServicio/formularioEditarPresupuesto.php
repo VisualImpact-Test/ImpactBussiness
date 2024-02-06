@@ -86,7 +86,7 @@ endforeach;  ?>
 									<?php endforeach; ?>
 									<th class="one wide text-right">
 										TOTAL
-										<input id="totPresupuesto_<?= $vd['idTipoPresupuesto'] ?>" type="text" name="totalPorPresupuesto" value="0">
+										<input id="totPresupuesto_<?= $vd['idTipoPresupuesto'] ?>" type="hidden" name="totalPorPresupuesto" value="0">
 									</th>
 								</tr>
 							</thead>

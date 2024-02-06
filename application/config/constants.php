@@ -153,7 +153,6 @@ defined('IMG_WIREFRAME') or define('IMG_WIREFRAME', '../public/assets/images/wir
 defined('IMG_WIREFRAME2') or define('IMG_WIREFRAME2', '../public/assets/images/wireframe/clip.png');
 
 //Tipo Archivo
-
 defined('TIPO_ORDEN_COMPRA') or define('TIPO_ORDEN_COMPRA', 1);
 defined('TIPO_IMAGEN') or define('TIPO_IMAGEN', 2);
 defined('TIPO_PDF') or define('TIPO_PDF', 3);
