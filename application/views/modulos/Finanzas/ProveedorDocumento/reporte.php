@@ -17,6 +17,7 @@
 				<th>Moneda</th>
 				<th>PO Cliente</th>
 				<th>GR</th>
+				<th>N° Factura</th>
 				<th>ESTADO</th>
 			</tr>
 		</thead>
@@ -49,6 +50,7 @@
 					<td class="td-center"><?= $row['nombreMoneda']; ?></td>
 					<td class="td-center"><?= $row['poCliente']; ?></td>
 					<td class="td-center"><?= $row['numeroGR']; ?></td>
+					<td class="td-center"><?= verificarEmpty($row['numeroDocumento'], 3); ?></td>
 					<td>
 						<?php if (empty($row['adjuntosCargados'])) : ?>
 							<span class="ui grey large label">
