@@ -30,96 +30,45 @@
 		</tr>
 	</table>
 </div>
-<?php $idItemTipo = ''; ?>
 <?php $col1 = 0; ?>
 <?php $montoSub = 0; ?>
 <?php $totalPacking = 0; ?>
-<?php foreach ($detalle as $key => $row) : ?>
-	<!-- PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_TEXTILES['id']) : ?>
-		<?php $idItemTipo = COD_TEXTILES['id'] ?>
-	<?php endif; ?>
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id']) && $row['idItemTipo'] == COD_ARTICULO['id']) : ?>
-		<?php $idItemTipo = COD_ARTICULO['id'] ?>
-	<?php endif; ?>
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_ARTICULO['id']) && $row['idItemTipo'] == COD_MOVIL['id']) : ?>
-		<?php $idItemTipo = COD_MOVIL['id'] ?>
-	<?php endif; ?>
-	<?php if (($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_TEXTILES['id']) && $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
-		<?php $idItemTipo = COD_DISTRIBUCION['id'] ?>
-	<?php endif; ?>
-	<!-- FIN: PARA UTILIZAR ARTICULO Y TEXTIL BAJO EL MISMO FORMATO -->
-	<!-- PARA UTILIZAR TRANSPORTE Y DISTRIBUCION BAJO EL MISMO FORMATO -->
-	<?php if (($idItemTipo == COD_TRANSPORTE['id']) && $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
-		<?php $idItemTipo = COD_DISTRIBUCION['id'] ?>
-	<?php endif; ?>
-	<?php if (($idItemTipo == COD_DISTRIBUCION['id']) && $row['idItemTipo'] == COD_TRANSPORTE['id']) : ?>
-		<?php $idItemTipo = COD_TRANSPORTE['id'] ?>
-	<?php endif; ?>
-	<!-- FIN: PARA UTILIZAR TRANSPORTE Y DISTRIBUCION BAJO EL MISMO FORMATO -->
-	<?php if ($idItemTipo != $row['idItemTipo']) : ?>
-		<?php if ($key != 0) : ?>
-			</tbody>
-			<tfoot class="full-widtd">
-				<tr style="height:100px; background-color: #FFE598;">
-					<td colspan="<?= $col1; ?>" class="text-right" style="height: 20px; color:black;">
-						<p>SUB TOTAL</p>
-					</td>
-					<td class="text-right" style="color:black">
-						<p><?= moneda($montoSub); ?></p>
-					</td>
-				</tr>
-			</tfoot>
-			</table>
+<table class="tb-detalle" style="width: 100%; margin-bottom: 10px;">
+	<thead>
+		<?php if ($detalle[0]['idItemTipo'] == COD_SERVICIO['id']) : ?>
+			<?php $col1 = 7; ?>
+			<tr style="background-color: #FFE598;">
+				<th>ITEM</th>
+				<th>SUCURSAL</th>
+				<th>RAZON SOCIAL</th>
+				<th>TIPO ELEMENTO</th>
+				<th>MARCA</th>
+				<th>DETALLES DE SERVICIO</th>
+				<th>CANTIDAD</th>
+				<?php if ($cabecera['mostrarPrecio']) : ?>
+					<?php $col1++; ?>
+					<th>COSTO</th>
+				<?php endif; ?>
+				<th>TOTAL</th>
+			</tr>
 		<?php endif; ?>
-		<?php $idItemTipo = $row['idItemTipo']; ?>
-		<br>
-		<table class="tb-detalle" style="width: 100%; margin-bottom: 10px;">
-			<thead>
-				<?php if ($idItemTipo == COD_TRANSPORTE['id']) : ?>
-					<?php $col1 = 6; ?>
-					<tr style="background-color: #FFE598;">
-						<th style="width: 10%;">ITEM</th>
-						<th style="width: 55%;" colspan="4">DESCRIPCIÓN</th>
-						<th style="width: 20%;">CANTIDAD</th>
-						<th style="width: 15%;">TOTAL</th>
-					</tr>
-				<?php endif; ?>
-				<?php if ($idItemTipo == COD_SERVICIO['id']) : ?>
-					<?php $col1 = 7; ?>
-					<tr style="background-color: #FFE598;">
-						<th>ITEM</th>
-						<th>SUCURSAL</th>
-						<th>RAZON SOCIAL</th>
-						<th>TIPO ELEMENTO</th>
-						<th>MARCA</th>
-						<th>DETALLES DE SERVICIO</th>
-						<th>CANTIDAD</th>
-						<?php if ($cabecera['mostrarPrecio']) : ?>
-							<?php $col1++; ?>
-							<th>COSTO</th>
-						<?php endif; ?>
-						<th>TOTAL</th>
-					</tr>
-				<?php endif; ?>
-				<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) : ?>
-					<?php $col1 = 6; ?>
-					<tr style="background-color: #FFE598;">
-						<th width="7%">ITEM</th>
-						<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
-						<th width="15%" class="text-center">
-							<?php if ($idItemTipo != COD_DISTRIBUCION['id'] || ($idItemTipo == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte'])) : ?>
-								CANTIDAD
-							<?php endif; ?>
-						</th>
-						<th width="15%">SUBTOTAL</th>
-					</tr>
-				<?php endif; ?>
-			</thead>
-			<tbody>
-			<?php endif; ?>
-			<!-- <tr style="background-color: #F6FAFD;"> -->
-			<?php if ($idItemTipo == COD_SERVICIO['id']) : ?>
+		<?php if ($detalle[0]['idItemTipo'] == COD_ARTICULO['id'] || $detalle[0]['idItemTipo'] == COD_TEXTILES['id'] || $detalle[0]['idItemTipo'] == COD_MOVIL['id'] || $detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] || $detalle[0]['idItemTipo'] == COD_TRANSPORTE['id']) : ?>
+			<?php $col1 = 6; ?>
+			<tr style="background-color: #FFE598;">
+				<th width="7%">ITEM</th>
+				<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
+				<th width="15%" class="text-center">
+					<?php if ($detalle[0]['idItemTipo'] != COD_DISTRIBUCION['id'] || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte'])) : ?>
+						CANTIDAD
+					<?php endif; ?>
+				</th>
+				<th width="15%">TOTAL</th>
+			</tr>
+		<?php endif; ?>
+	</thead>
+	<tbody>
+		<?php foreach ($detalle as $key => $row) : ?>
+			<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) : ?>
 				<?php
 				$cont = 0;
 				$datos = [];
@@ -169,7 +118,7 @@
 					<?php endforeach; ?>
 				<?php endforeach; ?>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_PERSONAL['id']) : ?>
+			<?php if ($row['idItemTipo'] == COD_PERSONAL['id']) : ?>
 				<?php $rowspan = 1; ?>
 				<tr style="background-color: #F6FAFD; border: 1px solid #cccccc; ">
 					<td class="text-center"><?= $key + 1 ?></td>
@@ -177,7 +126,7 @@
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_TRANSPORTE['id']) : ?>
+			<?php if ($row['idItemTipo'] == COD_TRANSPORTE['id']) : ?>
 				<?php $rowspan = 1; ?>
 				<?php $cantidadMoviles = 0; ?>
 				<?php $cantidadDias = 0; ?>
@@ -192,16 +141,16 @@
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
-			<?php if ($idItemTipo == COD_ARTICULO['id'] || $idItemTipo == COD_TEXTILES['id'] || $idItemTipo == COD_MOVIL['id'] || $idItemTipo == COD_DISTRIBUCION['id']) : ?>
+			<?php if ($row['idItemTipo'] == COD_ARTICULO['id'] || $row['idItemTipo'] == COD_TEXTILES['id'] || $row['idItemTipo'] == COD_MOVIL['id'] || $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
 				<tr class="bg-gray">
 					<td class="text-center"><?= $key + 1 ?></td>
 					<td class="text-left" colspan="4">
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
 					<td class="text-center">
-						<?php if ($idItemTipo != COD_DISTRIBUCION['id']) : ?>
+						<?php if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) : ?>
 							<?= verificarEmpty($row['cantidad'], 3) ?>
-						<?php elseif ($idItemTipo == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte']) : ?>
+						<?php elseif ($row['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte']) : ?>
 							-
 						<?php endif; ?>
 					</td>
@@ -257,155 +206,155 @@
 			<?php endif; ?>
 			<?php $montoSub += floatval($row['subtotal']); ?>
 		<?php endforeach; ?>
-			</tbody>
-			<tfoot class="full-widtd">
-				<tr class="height:100px" style="background-color: #FFE598;">
-					<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
-						<p>SUB TOTAL</p>
-					</td>
-					<td class="text-right bold" style="color:black">
-						<?php $montoSub += floatval($totalPacking) ?>
-						<p><?= moneda($montoSub); ?></p>
-					</td>
-				</tr>
-				<tr class="height:100px" style="background-color: #F6FAFD;">
-					<td colspan="<?= $col1; ?>" class="text-right bold">
-						<p>FEE <?= !empty($cabecera['fee']) ? $cabecera['fee'] . '%' : '0%' ?></p>
-					</td>
-					<td class="text-right">
-						<p><?= moneda(($cabecera['fee_prc'])) ?></p>
-					</td>
-				</tr>
-				<tr class="height:100px" style="background-color: #FFE598;">
-					<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
-						<p>TOTAL</p>
-					</td>
-					<td class="text-right bold" style="color:black">
-						<p><?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc'])); ?></p>
-					</td>
-				</tr>
-			</tfoot>
-		</table>
-		<div>
-			<table>
+	</tbody>
+	<tfoot class="full-widtd">
+		<tr class="height:100px" style="background-color: #FFE598;">
+			<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
+				<p>SUB TOTAL</p>
+			</td>
+			<td class="text-right bold" style="color:black">
+				<?php $montoSub += floatval($totalPacking) ?>
+				<p><?= moneda($montoSub); ?></p>
+			</td>
+		</tr>
+		<tr class="height:100px" style="background-color: #F6FAFD;">
+			<td colspan="<?= $col1; ?>" class="text-right bold">
+				<p>FEE <?= !empty($cabecera['fee']) ? $cabecera['fee'] . '%' : '0%' ?></p>
+			</td>
+			<td class="text-right">
+				<p><?= moneda(($cabecera['fee_prc'])) ?></p>
+			</td>
+		</tr>
+		<tr class="height:100px" style="background-color: #FFE598;">
+			<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
+				<p>TOTAL</p>
+			</td>
+			<td class="text-right bold" style="color:black">
+				<p><?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc'])); ?></p>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+<div>
+	<table>
+		<tr>
+			<td style="height: 20px;"><b>Fecha Vigencia: </b></td>
+			<td><?= date_change_format($cabecera['fechaValido']); ?></td>
+		</tr>
+	</table>
+</div>
+<div>
+	<label>
+		<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
+	</label>
+</div>
+<?php if (!empty($detalleSubT)) : ?>
+	<table id="customers">
+		<thead>
+			<tr>
+				<th>DEPARTAMENTO</th>
+				<th>PROVINCIA</th>
+				<th>DÍAS</th>
+			</tr>
+		</thead>
+		<tbody>
+			<?php foreach ($detalleSubT as $idCD => $dataD) : ?>
+				<?php $dp = '' ?>
+				<?php $pr = '' ?>
+				<?php $totalD = 0 ?>
+				<?php foreach ($dataD as $k => $v) : ?>
+					<?php if ($dp != $v['cod_departamento'] || $pr != $v['cod_provincia']) : ?>
+						<?php if ($k != 0) : ?>
+							<tr>
+								<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
+								<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
+								<td><?= $totalD; ?></td>
+							</tr>
+						<?php endif; ?>
+						<?php $dp = $v['cod_departamento']; ?>
+						<?php $pr = $v['cod_provincia']; ?>
+						<?php $totalD = 0 ?>
+					<?php endif; ?>
+					<?php $totalD += intval($v['dias']) ?>
+				<?php endforeach; ?>
 				<tr>
-					<td style="height: 20px;"><b>Fecha Vigencia: </b></td>
-					<td><?= date_change_format($cabecera['fechaValido']); ?></td>
+					<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
+					<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
+					<td><?= $totalD; ?></td>
 				</tr>
-			</table>
-		</div>
-		<div>
-			<label>
-				<?= isset($cabecera['comentario']) ? $cabecera['comentario'] : ''; ?>
-			</label>
-		</div>
-		<?php if (!empty($detalleSubT)) : ?>
+			<?php endforeach; ?>
+		</tbody>
+	</table>
+<?php endif; ?>
+<?php if (!empty($detalleDistribucionZonas)) : ?>
+	<?php foreach ($detalle as $kd => $vd) : ?>
+		<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') : ?>
 			<table id="customers">
 				<thead>
 					<tr>
-						<th>DEPARTAMENTO</th>
-						<th>PROVINCIA</th>
-						<th>DÍAS</th>
+						<th colspan="2">PRODUCTO</th>
+						<?php $tot = []; ?>
+						<?php foreach ($detalleDistribucionItems[$vd['idCotizacionDetalle']] as $ki => $vi) : ?>
+							<th>
+								<?= $vi[0]['itemNombre']; ?>
+							</th>
+							<?php $tot[$ki] = 0; ?>
+							<?php foreach ($vi as $v_) : ?>
+								<?php $tot[$ki] += floatval($v_['cantidad']); ?>
+							<?php endforeach; ?>
+						<?php endforeach; ?>
+						<th rowspan="2"> PESO TOTAL </th>
+						<th rowspan="2"> TIPO </th>
+					</tr>
+					<tr>
+						<th colspan="2">CANTIDAD</th>
+						<?php foreach ($tot as $valueT) : ?>
+							<th class="text-right"><?= $valueT; ?></th>
+						<?php endforeach; ?>
 					</tr>
 				</thead>
+				<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
+					<?php $totZC[$kf] = 0; ?>
+					<?php $totZP[$kf] = 0; ?>
+					<?php foreach ($vf as $v_) : ?>
+						<?php $totZC[$kf] += floatval($v_['cantidad']); ?>
+						<?php $totZP[$kf] += (floatval($v_['peso']) * floatval($v_['cantidad']) * (100 + floatval($v_['gap'])) / 100); ?>
+					<?php endforeach; ?>
+				<?php endforeach; ?>
 				<tbody>
-					<?php foreach ($detalleSubT as $idCD => $dataD) : ?>
-						<?php $dp = '' ?>
-						<?php $pr = '' ?>
-						<?php $totalD = 0 ?>
-						<?php foreach ($dataD as $k => $v) : ?>
-							<?php if ($dp != $v['cod_departamento'] || $pr != $v['cod_provincia']) : ?>
-								<?php if ($k != 0) : ?>
-									<tr>
-										<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
-										<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
-										<td><?= $totalD; ?></td>
-									</tr>
-								<?php endif; ?>
-								<?php $dp = $v['cod_departamento']; ?>
-								<?php $pr = $v['cod_provincia']; ?>
-								<?php $totalD = 0 ?>
-							<?php endif; ?>
-							<?php $totalD += intval($v['dias']) ?>
-						<?php endforeach; ?>
+					<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
 						<tr>
-							<td><?= $zonas[$dp][$pr]['departamento']; ?></td>
-							<td><?= $zonas[$dp][$pr]['provincia']; ?></td>
-							<td><?= $totalD; ?></td>
+							<td>
+								<?= $vf[0]['zonaNombre']; ?>
+							</td>
+							<td>
+								<?= $totZC[$kf]; ?>
+							</td>
+							<?php foreach ($vf as $valueF) : ?>
+								<td class="text-right">
+									<?= $valueF['cantidad']; ?>
+								</td>
+							<?php endforeach; ?>
+							<td class="text-right">
+								<?= $totZP[$kf]; ?>
+							</td>
+							<td>
+								<?= $vf[0]['tipoServicioNombre']; ?>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
 			</table>
 		<?php endif; ?>
-		<?php if (!empty($detalleDistribucionZonas)) : ?>
-			<?php foreach ($detalle as $kd => $vd) : ?>
-				<?php if ($vd['idItemTipo'] == COD_DISTRIBUCION['id'] && $vd['flagMostrarDetalle'] == '1') : ?>
-					<table id="customers">
-						<thead>
-							<tr>
-								<th colspan="2">PRODUCTO</th>
-								<?php $tot = []; ?>
-								<?php foreach ($detalleDistribucionItems[$vd['idCotizacionDetalle']] as $ki => $vi) : ?>
-									<th>
-										<?= $vi[0]['itemNombre']; ?>
-									</th>
-									<?php $tot[$ki] = 0; ?>
-									<?php foreach ($vi as $v_) : ?>
-										<?php $tot[$ki] += floatval($v_['cantidad']); ?>
-									<?php endforeach; ?>
-								<?php endforeach; ?>
-								<th rowspan="2"> PESO TOTAL </th>
-								<th rowspan="2"> TIPO </th>
-							</tr>
-							<tr>
-								<th colspan="2">CANTIDAD</th>
-								<?php foreach ($tot as $valueT) : ?>
-									<th class="text-right"><?= $valueT; ?></th>
-								<?php endforeach; ?>
-							</tr>
-						</thead>
-						<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
-							<?php $totZC[$kf] = 0; ?>
-							<?php $totZP[$kf] = 0; ?>
-							<?php foreach ($vf as $v_) : ?>
-								<?php $totZC[$kf] += floatval($v_['cantidad']); ?>
-								<?php $totZP[$kf] += (floatval($v_['peso']) * floatval($v_['cantidad']) * (100 + floatval($v_['gap'])) / 100); ?>
-							<?php endforeach; ?>
-						<?php endforeach; ?>
-						<tbody>
-							<?php foreach ($detalleDistribucionZonas[$vd['idCotizacionDetalle']] as $kf => $vf) : ?>
-								<tr>
-									<td>
-										<?= $vf[0]['zonaNombre']; ?>
-									</td>
-									<td>
-										<?= $totZC[$kf]; ?>
-									</td>
-									<?php foreach ($vf as $valueF) : ?>
-										<td class="text-right">
-											<?= $valueF['cantidad']; ?>
-										</td>
-									<?php endforeach; ?>
-									<td class="text-right">
-										<?= $totZP[$kf]; ?>
-									</td>
-									<td>
-										<?= $vf[0]['tipoServicioNombre']; ?>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
-				<?php endif; ?>
-			<?php endforeach; ?>
-		<?php endif; ?>
-		<?php if (!empty($anexos)) : ?>
-			<h3>Anexos</h3>
-			<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
-				<?php foreach ($anexos as $anexo) : ?>
-					<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>">
-						<img src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
-					</a>
-				<?php endforeach; ?>
-			</div>
-		<?php endif; ?>
+	<?php endforeach; ?>
+<?php endif; ?>
+<?php if (!empty($anexos)) : ?>
+	<h3>Anexos</h3>
+	<div class="ui fluid image content-lsck-capturas" data-id="<?= $anexo['idCotizacionDetalleArchivo'] ?> " style="display: inline-block;">
+		<?php foreach ($anexos as $anexo) : ?>
+			<a target="_blank" href="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>">
+				<img src="<?= RUTA_WASABI . "cotizacion/{$anexo['nombre_archivo']}" ?>" class="img-lsck-capturas img-responsive img-thumbnail">
+			</a>
+		<?php endforeach; ?>
+	</div>
+<?php endif; ?>
