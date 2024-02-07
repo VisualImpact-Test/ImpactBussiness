@@ -3392,7 +3392,7 @@ class Cotizacion extends MY_Controller
 								case COD_DISTRIBUCION['id']:
 									$this->db->delete('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $post['idCotizacionDetalle'][$k]]);
 									$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
-									$cantidad = intval($post['cantidadDatosTabla'][$k]);
+									$cantidad = intval($post['cantidadDatosTabla'][$n]);
 									$data['subDetalle'][$k] = [];
 
 									for ($it = 0; $it < $cantidad; $it++) {

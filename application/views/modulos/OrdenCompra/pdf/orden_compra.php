@@ -77,13 +77,13 @@
 				<?php $rowS = 1; ?>
 				<?php if ($row['idTipo'] == COD_TEXTILES['id']) : ?>
 					<?php $mostrarSubDetalle = true; ?>
-					<?php $rowS = count($subDetalleItem[$row['idItem']]) + 1; ?>
+					<?php $rowS = count($subDetalleItem[$row['idOrdenCompraDetalle']]) + 1; ?>
 				<?php endif; ?>
 				<?php if ($row['idTipo'] == COD_SERVICIO['id']) : ?>
-					<?php $v1 = $subDetalleItem[$row['idItem']][0]['sucursal'] ?>
-					<?php $v2 = $subDetalleItem[$row['idItem']][0]['razonSocial'] ?>
-					<?php $v3 = $subDetalleItem[$row['idItem']][0]['tipoElemento'] ?>
-					<?php $v4 = $subDetalleItem[$row['idItem']][0]['marca'] ?>
+					<?php $v1 = $subDetalleItem[$row['idOrdenCompraDetalle']][0]['sucursal'] ?>
+					<?php $v2 = $subDetalleItem[$row['idOrdenCompraDetalle']][0]['razonSocial'] ?>
+					<?php $v3 = $subDetalleItem[$row['idOrdenCompraDetalle']][0]['tipoElemento'] ?>
+					<?php $v4 = $subDetalleItem[$row['idOrdenCompraDetalle']][0]['marca'] ?>
 					<?php $costoTotal = 0; ?>
 					<?php foreach ($subDetalleItem[$row['idOrdenCompraDetalle']] as $ks => $vs) : ?>
 						<?php $total += (floatval($vs['cantidad']) * floatval($vs['costo'])); ?>
@@ -145,7 +145,7 @@
 						</td>
 					</tr>
 					<?php if ($mostrarSubDetalle) : ?>
-						<?php foreach ($subDetalleItem[$row['idItem']] as $km => $vm) : ?>
+						<?php foreach ($subDetalleItem[$row['idOrdenCompraDetalle']] as $km => $vm) : ?>
 							<tr>
 								<?php if ($km == 0) : ?>
 									<td class="text-left" colspan="2" rowspan="<?= $rowS - 1 ?>">
