@@ -4844,7 +4844,7 @@ class Cotizacion extends MY_Controller
 
 		//echo $this->db->last_query();exit();
 		$insertCotizacion = [
-			'nombre' => $cotizacion[0]['nombre']. " - COPIA",
+			'nombre' => $cotizacion[0]['nombre'] . " - COPIA",
 			'fechaDeadline' => $cotizacion[0]['fechaDeadline'],
 			'fechaRequerida' => $cotizacion[0]['fechaRequerida'],
 			'fechaTermino' => $cotizacion[0]['fechaTermino'],
@@ -4881,7 +4881,7 @@ class Cotizacion extends MY_Controller
 			'idTipoServicioCotizacion' => $cotizacion[0]['idTipoServicioCotizacion'],
 			'fechaEnvioCliente' => null,
 			'usurioEnvioCliente' => null,
-			'idTipoMoneda' => $cotizacion[0]['idTipoMoneda']			
+			'idTipoMoneda' => $cotizacion[0]['idTipoMoneda']
 		];
 		$this->db->insert('compras.cotizacion', $insertCotizacion);
 		$idNewCotizacion = $this->db->insert_id();
@@ -4917,7 +4917,7 @@ class Cotizacion extends MY_Controller
 				'fechaEntrega' => $v['fechaEntrega'],
 				'diasEntrega' => $v['diasEntrega'],
 				'caracteristicasProveedor' => $v['caracteristicasProveedor'],
-				'estado' =>1,
+				'estado' => 1,
 				'flagAlternativo' => $v['flagAlternativo'],
 				'nombreAlternativo' => $v['nombreAlternativo'],
 				'tituloParaOC' => $v['tituloParaOC'],
@@ -4953,8 +4953,8 @@ class Cotizacion extends MY_Controller
 				'fee2Por' => $v['fee2Por'],
 				'fee1Monto' => $v['fee1Monto'],
 				'fee2Monto' => $v['fee2Monto'],
-				'idCotizacionDetallePersonal' => $v['idCotizacionDetallePersonal'],	
-			];	
+				'idCotizacionDetallePersonal' => $v['idCotizacionDetallePersonal'],
+			];
 
 
 			$this->db->insert('compras.cotizacionDetalle', $insertarCotizacionDetalle);
@@ -5007,57 +5007,55 @@ class Cotizacion extends MY_Controller
 					'idConcepto' => $i['idConcepto'],
 					'flagConcepto' => $i['flagConcepto'],
 					'frecuencia' => $i['frecuencia'],
-					];
+				];
 				$this->db->insert('compras.cotizacionDetalleSub', $insertarCotizacionDetallesub);
 				$idNewCotizacionDetalleSub = $this->db->insert_id();
 			}
-				
 		}
-		
-			foreach ($cotizacionDetalleArchivos as $r => $p) {
-				$insertarCotizacionDetalleArchivos = [
-					'idCotizacion' => $idNewCotizacion,
-					'idTipoArchivo' => $p['idTipoArchivo'],
-					'nombre_inicial' => $p['nombre_inicial'],
-					'nombre_archivo' => $p['nombre_archivo'],
-					'nombre_unico' => $p['nombre_unico'],
-					'extension' => $p['extension'],
-					'estado' => 1,
-					'fechaReg' => getSoloFecha(),
-					'horaReg' => getSoloHora(),
-					'fechaModificacion' => null,
-					'idUsuarioReg' => $this->idUsuario,
-					'flag_anexo' => $p['flag_anexo'],
-					'idAutorizacion' => $p['idAutorizacion'],
-				];
-				$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
-			}
-			
-			$insertarEstadoHistorico = [
-				'idCotizacionEstado' => 1,
-				'idCotizacionInternaEstado' => null,
+
+		foreach ($cotizacionDetalleArchivos as $r => $p) {
+			$insertarCotizacionDetalleArchivos = [
 				'idCotizacion' => $idNewCotizacion,
-				'observacion' => null,
+				'idTipoArchivo' => $p['idTipoArchivo'],
+				'nombre_inicial' => $p['nombre_inicial'],
+				'nombre_archivo' => $p['nombre_archivo'],
+				'nombre_unico' => $p['nombre_unico'],
+				'extension' => $p['extension'],
+				'estado' => 1,
 				'fechaReg' => getSoloFecha(),
 				'horaReg' => getSoloHora(),
+				'fechaModificacion' => null,
 				'idUsuarioReg' => $this->idUsuario,
-				'estado' => 1,
+				'flag_anexo' => $p['flag_anexo'],
+				'idAutorizacion' => $p['idAutorizacion'],
 			];
-			$this->db->insert('compras.cotizacionEstadoHistorico', $insertarEstadoHistorico);
+			$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
+		}
 
-	
+		$insertarEstadoHistorico = [
+			'idCotizacionEstado' => 1,
+			'idCotizacionInternaEstado' => null,
+			'idCotizacion' => $idNewCotizacion,
+			'observacion' => null,
+			'fechaReg' => getSoloFecha(),
+			'horaReg' => getSoloHora(),
+			'idUsuarioReg' => $this->idUsuario,
+			'estado' => 1,
+		];
+		$this->db->insert('compras.cotizacionEstadoHistorico', $insertarEstadoHistorico);
+
+
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$result['result'] = 2;
 			$result['msg']['title'] = 'Error al Duplicar';
 			$result['msg']['content'] = getMensajeGestion('registroErroneo');
-			} else {
+		} else {
 			$this->db->trans_commit();
 			$result['result'] = 1;
 			$result['msg']['title'] = 'Duplicado Exitoso';
 			$result['msg']['content'] = getMensajeGestion('registroExitoso');
-			}
-			echo json_encode($result);
+		}
+		echo json_encode($result);
 	}
-	
 }
