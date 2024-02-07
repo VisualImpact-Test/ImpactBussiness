@@ -53,8 +53,14 @@ class Tracking extends MY_Controller
 		$result['data']['views']['idContentTracking']['datatable'] = 'tb-tracking';
 		$result['data']['views']['idContentTracking']['html'] = $html;
 		$result['data']['configTable'] = [
-			// 'dom' => 'Bfrtip',
-			'buttons' => ['excel']
+			'columnDefs' =>
+			[
+				0 =>
+				[
+					"visible" => false,
+					"targets" => []
+				]
+			]
 		];
 
 		echo json_encode($result);

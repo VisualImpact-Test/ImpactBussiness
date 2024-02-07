@@ -48,10 +48,10 @@ class M_Tracking extends MY_Model
 				group by s.idPresupuesto, s.idPresupuestoHistorico
 			)
 			select
-				os.idOrdenServicio,
-				gr.idSinceradoGr,
+				os.idOrdenServicio as id,
+				gr.idSinceradoGr as idGr,
 				e.abreviatura correlativa,
-				os.fechaIni mes,
+				CAST(os.fechaIni as date) mes,
 				e.razonSocial cliente,
 				ec.canal,
 				ec.subcanal,
@@ -59,7 +59,7 @@ class M_Tracking extends MY_Model
 				gr.usuario usuario, -- PENDIENTE, se debe indicar al llenar GR
 				oc.fechaOC fechaOC,
 				oc.codigoOc oc,
-				'-----' fechaSustento, -- NO SE INDICA SUSTENTO
+				null fechaSustento, -- NO SE INDICA SUSTENTO
 				gr.fecha fechaGR,
 				gr.fechaReg fechaEnvioFinanzas,
 				gr.descripcion gr,
@@ -73,7 +73,8 @@ class M_Tracking extends MY_Model
 				s.totalFee1Sincerado + s.totalFee2Sincerado + s.totalFee3Sincerado as fee,
 				s.totalSincerado as total,
 				tda.fechaEstimadaEjecucion,
-				tda.comentario
+				tda.comentario,
+				tda.flagCotizacion
 			from compras.ordenServicio os
 			left join compras.presupuesto p ON p.idOrdenServicio = os.idOrdenServicio
 			join rrhh.dbo.Empresa e ON e.idEmpresa = os.idCuenta
@@ -83,6 +84,43 @@ class M_Tracking extends MY_Model
 			left join monto on monto.idPresupuesto = p.idPresupuesto
 			left join compras.sincerado s ON s.idPresupuesto = p.idPresupuesto
 			left join compras.trackingDatosAdicionales tda ON tda.idOrdenServicio = os.idOrdenServicio AND tda.idSinceradoGr = gr.idSinceradoGr
+			
+			union all
+
+			select 
+				c.idCotizacion as id,
+				cgr.idCotizacionGr AS idGr,
+				emp.abreviatura AS correlativa,
+				CAST(c.fechaEmision as date) AS mes,
+				emp.nombre as cliente,
+				ec.canal as canal,
+				ec.subcanal as subcanal,
+				c.nombre as descripcion,
+				'---' as usuario,
+				c.fechaClienteOC as fechaOC,
+				c.codOrdenCompra as oc,
+				null as fechaSustento,
+				cgr.fechaGR as fechaGR,
+				null as fechaEnvioFinanzas,
+				cgr.numeroGR as gr,
+				null as monto,
+				'---' as status,
+				'---' as concepto,
+				0 as planillas,
+				0 as incentivo,
+				0 as soporte,
+				c.total as compras,
+				c.total_fee - c.total as fee,
+				c.total_fee as total,
+				tda.fechaEstimadaEjecucion,
+				tda.comentario,
+				tda.flagCotizacion
+			from compras.cotizacion c
+			join rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idCuenta
+			join rrhh.dbo.empresa_Canal ec ON ec.idEmpresaCanal = c.idCentroCosto
+			left join compras.cotizacionGr cgr on cgr.idCotizacion = c.idCotizacion and cgr.estado = 1
+			left join compras.trackingDatosAdicionales tda ON tda.idOrdenServicio = c.idCotizacion AND tda.idSinceradoGr = cgr.idCotizacionGr AND tda.flagCotizacion = 1
+			order by mes desc
 		";
 		return $this->db->query($sql);
 	}

@@ -51,10 +51,10 @@ var Tracking = {
 		$(document).on('click', '.btn-trackingDatosAdicionales', function () {
 			let _this = $(this);
 			let data = _this.data();
-			let idSinceradoGr = data.idsinceradogr;
-			let idOrdenServicio = data.idordenservicio;
+			let idGr = data.idgr;
+			let id = data.id;
 
-			let jsonString = { 'idSinceradoGr': idSinceradoGr, 'idOrdenServicio': idOrdenServicio };
+			let jsonString = { 'idSinceradoGr': idGr, 'idOrdenServicio': id };
 			let config = { 'url': Tracking.url + 'formularioTrackingDatosAdicionales', 'data': jsonString };
 			$.when(Fn.ajax(config)).then((a) => {
 				++modalId;
