@@ -20,7 +20,6 @@
 				<th>MONEDA</th>
 				<th>TOTAL CON IGV</th>
 				<th>ESTADO</th>
-
 			</tr>
 		</thead>
 

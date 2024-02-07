@@ -55,9 +55,9 @@ class M_OrdenCompra extends MY_Model
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'LEFT')
 			->join('sistema.usuario u', 'u.idUsuario = oc.idUsuarioReg')
 			->join('sistema.usuarioFirma uf', 'u.idUsuarioFirma=uf.idUsuarioFirma', 'left')
-			->where('oc.estado', '1')
+			// ->where('oc.estado', '1')
 			->where('ocd.estado', '1')
-			->order_by('oc.idOrdenCompra desc');
+			->order_by('oc.estado desc, oc.idOrdenCompra desc');
 
 		if (isset($params['idOrdenCompra'])) {
 			$this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
