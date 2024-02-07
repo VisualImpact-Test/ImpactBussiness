@@ -136,17 +136,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ($ocG as $key => $row) : ?>
+						<!--< ?php foreach ($ocG as $key => $row) : ?>
 							<tr class="default">
-								<td> <?= $key + 1; ?> </td>
+								<td> < ?= $key + 1; ?> </td>
 								<td>Orden de Compra</td>
-								<td> OC <?= $row['idOrdenCompra']; ?></td>
-								<td><a class="ui button" href="<?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra']; ?>?flag=<?= $flag ?>" target="_blank">Descargar</a></td>
+								<td> OC < ?= $row['idOrdenCompra']; ?></td>
+								<td><a class="ui button" href="< ?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra']; ?>?flag=< ?= $flag ?>" target="_blank">Descargar</a></td>
 							</tr>
-						<?php endforeach; ?>
+						< ?php endforeach; ?>-->
 						<?php foreach ($data as $key => $row) : ?>
 							<tr class="default">
-								<td><?= $key + 1 + count($ocG) ?></td>
+								<td><?= $key + 1 /*+ count($ocG)*/ ?></td>
 								<td>
 									<?php switch ($row['idFormatoDocumento']) {
 										case '1':
