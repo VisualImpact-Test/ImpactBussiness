@@ -1423,6 +1423,7 @@ class M_Cotizacion extends MY_Model
 				, nombre AS value
 			FROM compras.solicitante
 			WHERE estado = 1
+			order by nombre
 		";
 
 		$query = $this->db->query($sql);
