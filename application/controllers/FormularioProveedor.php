@@ -1947,14 +1947,22 @@ class FormularioProveedor extends MY_Controller
 			}
 		}
 
-		$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
-		$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('compras.sustentoAdjunto')->result_array();
+		if ($post['flag'] == 0) {
+			$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idOrdenCompra', $post['ordencompra'])
+				->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
+			$ocG = $this->model->getDistinctOC(['idOrdenCompra' => $post['ordencompra'], 
+				'idProveedor' => $post['proveedor']])->result_array();
+		} else {
+			$daC = $this->db->where('estado', 1)->where('idOrdenCompra', $post['ordencompra'])
+				->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
+			$ocG = $this->model->getDistinctOCORDEN(['idOrdenCompra' => $post['ordencompra'], 
+				'idProveedor' => $post['proveedor']])->result_array();
+		}
+		
+		$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
 		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
-		$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
-		$ocG = $this->model->getDistinctOC(['idCotizacion' => $post['cotizacion'], 'idProveedor' => $post['proveedor']])->result_array();
-		// foreach ($ocG as $k => $v) {
-		// 	$ocG[$k]['url'] =
-		// }
+		//$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
+		
 		if (!empty($daC)) {
 			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS);
 
@@ -1966,7 +1974,7 @@ class FormularioProveedor extends MY_Controller
 
 			$cfg['to'] = $toCorreo;
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
-			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'cotizacion' => $cot, 'formatos' => $daD, 'ocG' => $ocG], true);
+			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro/*, 'cotizacion' => $cot*/, 'formatos' => $daD, 'ocG' => $ocG], true);
 			$this->sendEmail($cfg);
 		}
 

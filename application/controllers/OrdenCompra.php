@@ -653,6 +653,12 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function visualizarPdfOCDescargar($oc = null)
+	{
+		$post['idOC'] = $oc;
+		$this->descargarOCLibre($post, false);
+	}
+
 	public function visualizarPdfOCLibre($oc = null)
 	{
 		$post['idOC'] = $oc;

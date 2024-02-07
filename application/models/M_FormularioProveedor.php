@@ -115,8 +115,24 @@ class M_FormularioProveedor extends MY_Model
 			->join('compras.cotizacionDetalle cd', 'ocd.idCotizacionDetalle = cd.idCotizacionDetalle')
 			->join('compras.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra');
 
-		if (isset($params['idCotizacion'])) {
-			$this->db->where('cd.idCotizacion', $params['idCotizacion']);
+		if (isset($params['idOrdenCompra'])) {
+			$this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
+		}
+		if (isset($params['idProveedor'])) {
+			$this->db->where('oc.idProveedor', $params['idProveedor']);
+		}
+		return $this->db->get();
+	}
+
+	function getDistinctOCORDEN($params = [])
+	{
+		$this->db->distinct()
+			->select('ocd.idOrdenCompra')
+			->from('orden.ordenCompraDetalle ocd')
+			->join('orden.ordenCompra oc', 'oc.idOrdenCompra = ocd.idOrdenCompra');
+
+		if (isset($params['idOrdenCompra'])) {
+			$this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
 		}
 		if (isset($params['idProveedor'])) {
 			$this->db->where('oc.idProveedor', $params['idProveedor']);
