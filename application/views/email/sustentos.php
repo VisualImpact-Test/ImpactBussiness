@@ -141,7 +141,7 @@
 								<td> <?= $key + 1; ?> </td>
 								<td>Orden de Compra</td>
 								<td> OC <?= $row['idOrdenCompra']; ?></td>
-								<td><a class="ui button" href="<?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra'] ?>" target="_blank">Descargar</a></td>
+								<td><a class="ui button" href="<?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra']; ?>?flag=<?= $flag ?>" target="_blank">Descargar</a></td>
 							</tr>
 						<?php endforeach; ?>
 						<?php foreach ($data as $key => $row) : ?>

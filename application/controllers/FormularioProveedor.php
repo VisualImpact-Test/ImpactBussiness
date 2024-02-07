@@ -1947,6 +1947,7 @@ class FormularioProveedor extends MY_Controller
 			}
 		}
 
+		$flag = $post['flag'];
 		if ($post['flag'] == 0) {
 			$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idOrdenCompra', $post['ordencompra'])
 				->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
@@ -1974,7 +1975,7 @@ class FormularioProveedor extends MY_Controller
 
 			$cfg['to'] = $toCorreo;
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
-			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro/*, 'cotizacion' => $cot*/, 'formatos' => $daD, 'ocG' => $ocG], true);
+			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro/*, 'cotizacion' => $cot*/, 'formatos' => $daD, 'ocG' => $ocG, 'flag' => $flag], true);
 			$this->sendEmail($cfg);
 		}
 
