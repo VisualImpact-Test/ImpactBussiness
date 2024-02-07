@@ -65,9 +65,13 @@ class M_Item extends MY_Model
 			->where('it.estado', 1)
 			->where('i.estado', 1)
 			->where('p.idProveedorEstado', 2) // Activo
-			->where('it.fechaVigencia < GETDATE()')
-			// ->limit('5')
-			->order_by('2, 1');
+			->where('it.fechaVigencia < GETDATE()');
+
+			if ($this->idUsuario != '1') {
+				$this->db->where('p.demo != 1');
+			}
+			
+			$this->db->order_by('2, 1');
 
 		return $this->db->get();
 	}
