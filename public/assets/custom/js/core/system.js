@@ -479,6 +479,16 @@ var View = {
 				}
 			}
 		});
+		$(document).on('keyup', 'input, textarea', function () {
+			const valor = $(this).val();
+			if (valor.includes("`")) {
+				$(this).val(valor.replace(/`/g, ""));
+			} else if(valor.includes("´")) {
+				$(this).val(valor.replace(/´/g, ""));
+			} else if(valor.includes("'")) {
+				$(this).val(valor.replace(/'/g, ""));
+			}
+		});
 
 		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
