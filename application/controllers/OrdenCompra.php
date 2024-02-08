@@ -36,6 +36,9 @@ class OrdenCompra extends MY_Controller
 			'assets/custom/js/OrdenCompra',
 			'assets/custom/js/dataTables.select.min'
 		);
+		$config['data']['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
+		$config['data']['cuentaCentroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
+		$config['data']['estado'] = $this->db->get_where('compras.ordenServicioEstado')->result_array();
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'OC';
 		$config['data']['message'] = 'Lista de OCs';
@@ -75,13 +78,12 @@ class OrdenCompra extends MY_Controller
 			];
 		}
 
-		$gr = $this->db->get_where('orden.ordenCompraGr', ['estado' => 1])->result_array();
-		foreach ($gr as $k => $v) {
-			$datos[$v['idOrdenCompra']]['gr'][] = $v;
-		}
-
 		$html = getMensajeGestion('noRegistros');
-		if (!empty($datos)) {
+		if (!empty($data)) {
+			$gr = $this->db->get_where('orden.ordenCompraGr', ['idOrdenCompra' => $row['idOrdenCompra'], 'estado' => 1])->result_array();
+			foreach ($gr as $k => $v) {
+				$datos[$v['idOrdenCompra']]['gr'][] = $v;
+			}
 			$dataParaVista['datos'] = $datos;
 			$html = $this->load->view("modulos/OrdenCompra/reporte", $dataParaVista, true);
 		}
@@ -688,7 +690,7 @@ class OrdenCompra extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-	
+
 	public function visualizarPdfOCDescargar($oc = null)
 	{
 		$post['idOC'] = $oc;
