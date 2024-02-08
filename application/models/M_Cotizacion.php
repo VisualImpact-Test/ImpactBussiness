@@ -131,7 +131,7 @@ class M_Cotizacion extends MY_Model
 				-- AND c.idCanal not in (1)
 				AND c.subcanal IS NOT NULL */
 				{$filtros}
-			ORDER BY id
+			ORDER BY value
 		";
 		$query = $this->db->query($sql);
 
