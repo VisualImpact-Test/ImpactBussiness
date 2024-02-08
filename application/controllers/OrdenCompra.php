@@ -489,6 +489,14 @@ class OrdenCompra extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+
+		if(!isset($post['item'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe agregar al menos un Item']);
+			goto respuesta;
+		}
+
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
