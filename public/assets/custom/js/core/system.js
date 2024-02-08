@@ -489,6 +489,18 @@ var View = {
 				$(this).val(valor.replace(/'/g, ""));
 			}
 		});
+		$(document).on('input paste', 'input, textarea', function (event) {
+			const valor = $(this).val();
+			
+			// Manejar tanto la entrada de teclado como el pegado con el ratón
+			if (event.type === 'input' || event.type === 'paste') {
+				if (valor.includes("`") || valor.includes("´") || valor.includes("'")) {
+					$(this).val(valor.replace(/[`´']/g, ""));
+				}
+			}
+		});
+		
+		
 
 		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
