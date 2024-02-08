@@ -77,6 +77,18 @@ var Oc = {
 
 		});
 
+		$(document).on('click', '.btn-anularOC', function () {
+			++modalId;
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'id': id };
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Oc.url + 'anularOC', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				$("#btn-filtrarOC").click();
+			});
+		});
+
 		$(document).on('click', '#btn-operSinCotizar', function () {
 			Oc.agregarOperDat();
 		});

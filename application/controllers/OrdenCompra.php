@@ -661,6 +661,34 @@ class OrdenCompra extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function anularOC()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$data = [];
+		$data['update'] = ['estado' => '0'];
+
+		$data['tabla'] = 'orden.ordenCompra';
+		$data['where'] = ['idOrdenCompra' => $post['id']];
+
+		$update = $this->model->actualizarAnulacionOC($data);
+		$data = [];
+
+		if (!$update['estado']) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+
+		respuesta:
+		echo json_encode($result);
+	}
+	
 	public function visualizarPdfOCDescargar($oc = null)
 	{
 		$post['idOC'] = $oc;

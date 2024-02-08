@@ -27,7 +27,7 @@
 			<? $ix = 1; ?>
 			<?php foreach ($datos as $key => $row) : ?>
 				<?php
-				$mensajeEstado = $row['estado'] == 1 ? 'Activo' : 'Inactivo';
+				$mensajeEstado = $row['estado'] == 1 ? 'Activo' : 'Anulado';
 				$badge = $row['estado'] == 1 ? 'badge-success' : 'badge-danger';
 				$toggle = $row['estado'] == 1 ? 'fa-toggle-on' : 'fa-toggle-off';
 				?>
@@ -39,6 +39,9 @@
 						<? } ?>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOC" title="Imprimir OC"><i class="fa fa-lg fa-file-pdf"></i></a>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-indicarGr" title="Indicar Gr"><i class="icon tasks"></i></a>
+						<? if ($row['estado'] == 1) { ?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-anularOC" title="Anular OC"><i class="fa fa-lg fa-times"></i></a>
+						<? } ?>
 					</td>
 					<td class="td-center"><?= verificarEmpty($row['seriado'], 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['poCliente'], 3); ?></td>

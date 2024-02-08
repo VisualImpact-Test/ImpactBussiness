@@ -161,4 +161,16 @@ class M_OrdenCompra extends MY_Model
 		return $this->db->get();
 	}
 	
+	public function actualizarAnulacionOC($params = [])
+	{
+		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+		}
+
+		return $this->resultado;
+	}
 }
