@@ -16,11 +16,14 @@
 				<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'tipo']); ?>
 			</select>
 		</div>
-		<!--<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
+		<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
 			<input class="form-control idItemImagen" type="hidden" name="idItemImagen" value="">
-			< ?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 
-			'archivosPermitidos' => 'image/*,.pdf', 'name' => 'adjuntoItem'], 2) ?>
-		</div>-->
+			<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
+			<?= htmlSemanticCargaDeArchivos([
+				'classDivBase' => 'divParaCarga', 'maxFiles' => 1,
+				'archivosPermitidos' => 'image/*', 'name' => 'adjuntoItem'
+			], 2) ?>
+		</div>
 		<div class="form-row col-md-12 ui imagendivCarga"></div>
 		<div class="form-row col-md-12 subItem"></div>
 		<div class="form-row">
@@ -347,7 +350,7 @@
 									<?php $count = isset($ocAdjunto[$value['idOrdenCompraDetalle']]) ? count($ocAdjunto[$value['idOrdenCompraDetalle']]) : 0; ?>
 									<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="<?= $count ?>">
 									<?= htmlSemanticCargaDeArchivos([
-										'classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf',
+										'classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*',
 										'name' => 'adjuntoItem',
 										'data' => $ocAdjunto[$value['idOrdenCompraDetalle']]
 									], 2) ?>
