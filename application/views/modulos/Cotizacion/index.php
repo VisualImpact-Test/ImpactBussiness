@@ -76,7 +76,7 @@
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Estado</span>
-							<select class="form-control form-control-sm ui childDependiente" name="estadoCotizacion">
+							<select class="form-control form-control-sm ui my_select2Full parentDependiente" name="estadoCotizacion">
 								<?= htmlSelectOptionArray2(['query' => $estado, 'id' => 'idCotizacionEstado', 'value' => 'nombre', 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>

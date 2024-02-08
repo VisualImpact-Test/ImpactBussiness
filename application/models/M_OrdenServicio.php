@@ -41,8 +41,14 @@ class M_OrdenServicio extends MY_Model
 			->order_by('idOrdenServicioDocumento');
 		return $this->db->get();
 	}
-	public function obtenerInformacionOrdenServicio()
+	public function obtenerInformacionOrdenServicio($params = [])
 	{
+		$filtros = "";
+		$filtros = "1=1";
+		$filtros .= !empty($params['cuenta']) ? ' AND l.idCuenta = ' . $params['cuenta'] : '';
+		$filtros .= !empty($params['cuentaCentroCosto']) ? ' AND l.idCentroCosto = ' . $params['cuentaCentroCosto'] : '';
+		$filtros .= !empty($params['estadoOrdenServicio']) ? " AND l.idOrdenServicioEstado IN (" . $params['estadoOrdenServicio'] . ")" : "";
+
 		$this->db
 			->select('l.idOrdenServicio, l.idCliente, l.estado, l.observacion, l.chkAprobado, mon.nombreMoneda as moneda, ubi_zc.departamento, ubi_zc.provincia, l.idDistrito, c.nombre as cuenta, cc.subcanal as centroCosto, 
 			ubi_zc.distrito, cli.nombre as cliente, l.chkPresupuesto, pr.idPresupuesto, l.chkUtilizarCliente, l.nombre , ose.idOrdenServicioEstado , ose.nombre as estadoServicio , ose.color as colorEstado')
@@ -56,8 +62,13 @@ class M_OrdenServicio extends MY_Model
 			->join('compras.presupuesto pr', 'pr.idOrdenServicio = l.idOrdenServicio and pr.estado = 1', 'LEFT')
 			->join('rrhh.dbo.Empresa c', 'l.idCuenta = c.idEmpresa', 'LEFT')
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = l.idCentroCosto', 'LEFT')
-			->where('l.estado', 1)
-			->order_by('l.idOrdenServicio desc');
+			->where('l.estado', 1);
+
+		if (!empty($filtros)) {
+			$this->db->where($filtros);
+		}
+		
+		$this->db->order_by('l.idOrdenServicio desc');
 		return $this->db->get();
 	}
 
