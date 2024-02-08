@@ -34,12 +34,12 @@
 				<tr data-id="<?= $key ?>" data-idproveedor="<?= $row['idProveedor']; ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-center style-icons">
-						<? if ($row['dataIdOC'] == 0) { ?>
+						<? if ($row['dataIdOC'] == 0 && $row['estado'] == 1) { ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar OC"><i class="fa fa-lg fa-edit"></i></a>
 						<? } ?>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOC" title="Imprimir OC"><i class="fa fa-lg fa-file-pdf"></i></a>
-						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-indicarGr" title="Indicar Gr"><i class="icon tasks"></i></a>
 						<? if ($row['estado'] == 1) { ?>
+						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-indicarGr" title="Indicar Gr"><i class="icon tasks"></i></a>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-anularOC" title="Anular OC"><i class="fa fa-lg fa-times"></i></a>
 						<? } ?>
 					</td>
