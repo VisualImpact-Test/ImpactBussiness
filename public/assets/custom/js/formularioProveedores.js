@@ -189,7 +189,35 @@ var FormularioProveedores = {
 				}
 			});
 		});
-	}
+	},
 
+	quitarInfBancaria: function (t, v) {
+		var elementos = document.querySelectorAll('div.InfoBancData');
+		if(elementos.length > 1) {
+			div = t.closest('div.InfoBancData');
+			$(div).remove();
+		}
+	},
+
+	generarInfBancaria: function (t, v) {
+		var nuevoDiv = $('.InfoBancData:last').clone();
+		
+		// Limpiar los valores de los campos
+		nuevoDiv.find('input').val('');
+		nuevoDiv.find('.dropdown').dropdown('clear');
+		nuevoDiv.find('.file-semantic-upload').empty();
+		nuevoDiv.find('input.form-control#idProveedorInfoBancaria').removeAttr('value');
+
+		// Limpiar la visualización de la imagen
+		nuevoDiv.find('.content-lsck-capturas .img-lsck-capturas').empty();
+		nuevoDiv.find('.content-lsck-capturas img').attr('src', '');
+		nuevoDiv.find('.content-lsck-capturas:first').remove();
+		nuevoDiv.find('input').attr('data-name', 'cuentaPrincipal');
+
+		// Agregar el nuevo div al contenedor
+		$('.extraInfoBanc').append(nuevoDiv);
+		Fn.loadSemanticFunctions();
+		Fn.loadDimmerHover();
+	},
 }
 FormularioProveedores.load();

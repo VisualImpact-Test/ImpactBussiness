@@ -11,6 +11,7 @@
                 <th>RAZON SOCIAL</th>
                 <th>RUC</th>
                 <th>RUBRO</th>
+                <th>CUENTA</th>
                 <th>METODO DE PAGO</th>
                 <th style="display: none;">TIPO SERVICIO</th>
                 <th style="display: none;">TIPO COMPROBANTE</th>
@@ -52,6 +53,7 @@
                     <td class="td-left"><?= verificarEmpty($row['razonSocial'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nroDocumento'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['rubros'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['cuentas_bancos'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['metodosPago'], 3); ?></td>
 
                     <td class="td-left" style="display: none;"><?= verificarEmpty($row['tipoServicio'], 3); ?></td>

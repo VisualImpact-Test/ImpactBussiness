@@ -18,7 +18,8 @@
 				<th>PO Cliente</th>
 				<th>GR</th>
 				<th>N° Factura</th>
-				<th>ESTADO</th>
+				<th>Estado</th>
+				<th>Cuenta</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -62,6 +63,7 @@
 							</a>
 						<?php endif; ?>
 					</td>
+					<td class="td-left"><?= verificarEmpty($row['cuentas_bancos'], 3); ?></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>

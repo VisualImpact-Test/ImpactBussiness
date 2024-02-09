@@ -92,6 +92,7 @@ class FormularioProveedor extends MY_Controller
 		$config['data']['tipoServicio'] = $this->m_proveedor->obtenerProveedorTipoServicio()->result_array();
 		$config['data']['comprobante'] = $this->m_proveedor->obtenerComprobante()['query']->result_array();
 		$config['data']['bancos'] = $this->db->get_where('dbo.banco')->result_array();
+		$config['data']['moneda'] = $this->db->get_where('compras.moneda')->result_array();
 		$config['data']['tiposCuentaBanco'] = $this->db->get_where('dbo.tipoCuentaBanco')->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
@@ -130,10 +131,6 @@ class FormularioProveedor extends MY_Controller
 			'nombreContacto' => $post['nombreContacto'],
 			'correoContacto' => $post['correoContacto'],
 			'numeroContacto' => $post['numeroContacto'],
-			'cuenta' => verificarEmpty($post['cuentaPrincipal'], 4),
-			'cci' => verificarEmpty($post['cuentaInterbancariaPrincipal'], 4),
-			'idBanco' => verificarEmpty($post['banco'], 4),
-			'idTipoCuentaBanco' => verificarEmpty($post['tipoCuenta'], 4),
 			'chkDetraccion' => isset($post["chkDetraccion"]) ? 1 : 0,
 			'cuentaDetraccion' => verificarEmpty($post['cuentaDetraccion'], 4),
 		];
@@ -149,8 +146,26 @@ class FormularioProveedor extends MY_Controller
 
 		$data['tabla'] = 'compras.proveedor';
 
+		$informacionBancaria = [
+			'cuenta' => $post['cuentaPrincipal'],
+			'cci' => $post['cuentaInterbancariaPrincipal'],
+			'idMoneda' => $post['moneda'],
+			'idBanco' => $post['banco'],
+			'idTipoCuentaBanco' => $post['tipoCuenta']
+		];
+		$informacionBancaria = getDataRefactorizada($informacionBancaria);
+
 		// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
 		// → Captura Principal: Obligatorio
+		if (!isset($post['cuentaPrincipalFile-item']) ||
+			(count($post['cuentaPrincipalFile-item']) != count($informacionBancaria))
+			
+		) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe adjuntar archivo con la captura del N° de Cuenta']);
+			goto respuesta;
+		}
 		if (
 			!isset($post['cuentaPrincipalFile-item']) ||
 			!isset($post['cuentaPrincipalFile-name']) ||
@@ -195,6 +210,49 @@ class FormularioProveedor extends MY_Controller
 		$idProveedor = $insert['id'];
 		$data = [];
 
+		$insertArchivos = [];
+		foreach ($informacionBancaria as $key => $value) {
+			$dataInfoBanc['insert'] = [
+				'idProveedor' => $idProveedor,
+				'cuenta' => !empty($value['cuenta']) ? $value['cuenta'] : NULL,
+				'cci' => !empty($value['cci']) ? $value['cci'] : NULL,
+				'idMoneda' => !empty($value['idMoneda']) ? $value['idMoneda'] : NULL,
+				'idBanco' => !empty($value['idBanco']) ? $value['idBanco'] : NULL,
+				'idTipoCuentaBanco' => !empty($value['idTipoCuentaBanco']) ? $value['idTipoCuentaBanco'] : NULL,
+				'estado' => 1,
+			];
+
+			$dataInfoBanc['tabla'] = 'compras.informacionBancariaProveedor';
+			$th_insert = $this->m_proveedor->insertarInformacionBancaria($dataInfoBanc);
+			$idInfoBanc = $th_insert['id'];
+
+			// → Archivo cuenta principal
+			if (!empty($post['cuentaPrincipalFile-item'])) {
+				$archivo = [
+					'base64' => $post['cuentaPrincipalFile-item'][$key],
+					'name' => $post['cuentaPrincipalFile-name'][$key],
+					'type' => $post['cuentaPrincipalFile-type'][$key],
+					'carpeta' => 'proveedorAdjuntos',
+					'nombreUnico' => 'Cuenta_' . $idProveedor . '_' . str_replace(':', '', $this->hora) . '_' . $key,
+				];
+				$archivoName = $this->saveFileWasabi($archivo);
+				$tipoArchivo = explode('/', $archivo['type']);
+				$insertArchivos[] = [
+					'idInformacionBancariaProveedor' => $idInfoBanc,
+					'idProveedor' => $idProveedor,
+					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
+					'nombre_inicial' => $archivo['name'],
+					'nombre_archivo' => $archivoName,
+					'nombre_unico' => $archivo['nombreUnico'],
+					'extension' => FILES_WASABI[$tipoArchivo[1]],
+					'estado' => true,
+					'idUsuarioReg' => $this->idUsuario,
+					'flagPrincipal' => true,
+				];
+			}
+		}
+
+		$data = [];
 		$zonasCobertura = [
 			'regionCobertura' => $post['regionCobertura'],
 			'provinciaCobertura' => $post['provinciaCobertura'],
@@ -286,32 +344,6 @@ class FormularioProveedor extends MY_Controller
 		$data = [];
 
 		// INICIO: Para subir archivos del proveedor → Funciona con multiples archivos.
-		$insertArchivos = [];
-		// → Archivo cuenta principal
-		if (!empty($post['cuentaPrincipalFile-item'])) {
-			foreach ($post['cuentaPrincipalFile-item'] as $k => $v) {
-				$archivo = [
-					'base64' => $post['cuentaPrincipalFile-item'][$k],
-					'name' => $post['cuentaPrincipalFile-name'][$k],
-					'type' => $post['cuentaPrincipalFile-type'][$k],
-					'carpeta' => 'proveedorAdjuntos',
-					'nombreUnico' => 'Cuenta_' . $idProveedor . '_' . str_replace(':', '', $this->hora) . '_' . $k,
-				];
-				$archivoName = $this->saveFileWasabi($archivo);
-				$tipoArchivo = explode('/', $archivo['type']);
-				$insertArchivos[] = [
-					'idProveedor' => $idProveedor,
-					'idTipoArchivo' => FILES_TIPO_WASABI[$tipoArchivo[1]],
-					'nombre_inicial' => $archivo['name'],
-					'nombre_archivo' => $archivoName,
-					'nombre_unico' => $archivo['nombreUnico'],
-					'extension' => FILES_WASABI[$tipoArchivo[1]],
-					'estado' => true,
-					'idUsuarioReg' => $this->idUsuario,
-					'flagPrincipal' => true,
-				];
-			}
-		}
 		// → Archivo cuenta detracción
 		if (!empty($post['cuentaDetraccionFile-item'])) {
 			foreach ($post['cuentaDetraccionFile-item'] as $k => $v) {
