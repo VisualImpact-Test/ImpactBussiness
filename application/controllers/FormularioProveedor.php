@@ -1807,16 +1807,14 @@ class FormularioProveedor extends MY_Controller
 		$fechaHoy = date_change_format_bd(getFechaActual());
 		$hora = strtotime(time_change_format(getActualDateTime()));
 
-		// $horaLimiteMin = strtotime('09:00:00');
-		// $horaLimiteMax = strtotime('13:00:00');
-		$horaLimiteMin = strtotime('00:00:00');
-		$horaLimiteMax = strtotime('12:00:00');
+		$horaLimiteMin = strtotime('09:00:00');
+		$horaLimiteMax = strtotime('13:00:00');
 
 		$r = $this->db->where('fecha', $fechaHoy)->get('General.dbo.tiempo')->row_array();
 
 		$params['idUsuario'] = $this->session->userdata('idUsuario');
 		if (empty($params['idUsuario'])) {
-			if ( /*$r['idDia'] != 1 &&*/ $r['idDia'] != 2 && $r['idDia'] != 4) {
+			if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
 				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
