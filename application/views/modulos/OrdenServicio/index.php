@@ -44,29 +44,24 @@
 				<h5 class="text-bold-500"><i class="fal fa-filter"></i> <u>Filtros</u></h5>
 				<div class="form-row">
 					<div class="col-md-12">
-						<!-- 
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Cuenta</span>
+							<select class="form-control form-control-sm ui my_select2Full parentDependiente" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuenta, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Centro Costo</span>
+							<select class="form-control form-control-sm ui childDependiente" name="cuentaCentroCosto" id="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Estado</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="estadoOrdenServicio" id="estadoOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $estado, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
-								?>
+							<select class="form-control form-control-sm ui my_select2Full parentDependiente" name="estadoOrdenServicio">
+								<?= htmlSelectOptionArray2(['query' => $estado, 'id' => 'idOrdenServicioEstado', 'value' => 'nombre', 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
 							</select>
 						</div>
-						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Rubro</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="rubroOrdenServicio" id="rubroOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $rubro, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
-								?>
-							</select>
-						</div>
-						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Metodo Pago</span>
-							<select class="form-control form-control-sm ui my_select2Full" name="metodoPagoOrdenServicio" id="metodoPagoOrdenServicio">
-								<?= '' // htmlSelectOptionArray2(['query' => $metodoPago, 'class' => 'text-titlecase', 'title' => 'Seleccione']); 
-								?>
-							</select>
-						</div>
-						-->
 					</div>
 				</div>
 			</div>

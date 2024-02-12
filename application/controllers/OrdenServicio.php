@@ -32,6 +32,9 @@ class OrdenServicio extends MY_Controller
 			'assets/custom/js/ordenServicio'
 		);
 
+		$config['data']['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
+		$config['data']['cuentaCentroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto()['query']->result_array();
+		$config['data']['estado'] = $this->db->get_where('compras.ordenServicioEstado')->result_array();
 		$config['data']['icon'] = 'fas fa-dollar-sign';
 		$config['data']['title'] = 'Orden de Servicio';
 		$config['data']['message'] = 'Lista';
@@ -60,7 +63,7 @@ class OrdenServicio extends MY_Controller
 		$departamentosCobertura = [];
 		$provinciasCobertura = [];
 		$distritosCobertura = [];
-		$data = $this->model->obtenerInformacionOrdenServicio()->result_array();
+		$data = $this->model->obtenerInformacionOrdenServicio($post)->result_array();
 
 		foreach ($data as $value) {
 			$dataParaVista['ordenServicio'][$value['idOrdenServicio']] = $value;
@@ -916,6 +919,13 @@ class OrdenServicio extends MY_Controller
 
 		$dataParaVista = [];
 		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
+		//VALIDAR VERSIÓN PRESUPUESTO ENVIADO
+		foreach ($dataParaVista['versionesAnteriores'] as $vt) {
+			$result = $this->db->get_where('compras.presupuestoValido',['idPresupuestoHistorico' => $vt['idPresupuestoHistorico'], 'estado' => 1])->row_array();
+			if (!empty($result)) {
+				$dataParaVista['aprobado'] = $result['idPresupuestoHistorico'];
+			}
+		}
 		$dataParaVista['idOrdenServicioEstado'] = $post['idOrdenServicioEstado'];
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Versiones Presupuesto';

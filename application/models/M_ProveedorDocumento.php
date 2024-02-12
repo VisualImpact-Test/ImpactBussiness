@@ -22,7 +22,14 @@ class M_ProveedorDocumento extends MY_Model
 						oc.descripcionFinanzas as cotizacion, c.idCuenta, c.idCentroCosto, c.codOrdenCompra as poCliente, c.motivoAprobacion as desTracking,
 						ISNULL(c.numeroGR, 'PENDIENTE') as numeroGR,
 						ISNULL(oc.igv, 0) as igv,
-						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
+						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto,
+						REPLACE(
+								   STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + ' - ' + ifb_inner.cuenta
+										  FROM compras.informacionBancariaProveedor as ifb_inner
+										  INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+										  WHERE ifb_inner.idProveedor = ibp.idProveedor
+										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+								   '&#x0D;&#x0A;', '') as cuentas_bancos", false)
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
@@ -34,6 +41,7 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = c.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
 			->join('sustento.comprobante comp', 'comp.idOrdenCompra = oc.idOrdenCompra AND comp.idFormatoDocumento = 2 AND comp.estado = 1', 'LEFT')
+			->join('compras.informacionBancariaProveedor ibp', 'ibp.idProveedor = PR.idProveedor', 'LEFT')
 			->where('ocd.estado', 1)->where('c.idUsuarioReg != 1')
 			->order_by('ocd.idOrdenCompra desc');
 
@@ -69,7 +77,14 @@ class M_ProveedorDocumento extends MY_Model
 							FOR XML PATH('')
 						), 1, 2, ''),'PENDIENTE') as numeroGR,
 						oc.IGVPorcentaje as igv, 
-						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto", false)
+						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto,
+						REPLACE(
+								   STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + ' - ' + ifb_inner.cuenta
+										  FROM compras.informacionBancariaProveedor as ifb_inner
+										  INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+										  WHERE ifb_inner.idProveedor = ibp.idProveedor
+										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+								   '&#x0D;&#x0A;', '') as cuentas_bancos", false)
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
@@ -77,6 +92,7 @@ class M_ProveedorDocumento extends MY_Model
 			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto')
 			->join('compras.moneda mon', 'mon.idMoneda = oc.idMoneda')
 			->join('sustento.comprobante comp', 'comp.idOrdenCompra = oc.idOrdenCompra AND comp.idFormatoDocumento = 2 AND comp.estado = 1', 'LEFT')
+			->join('compras.informacionBancariaProveedor ibp', 'ibp.idProveedor = PR.idProveedor', 'LEFT')
 			->where('ocd.estado', 1);
 
 		if (!empty($params['idProveedor'])) $this->db->where('oc.idProveedor', $params['idProveedor']);

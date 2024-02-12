@@ -4,6 +4,7 @@
 			<tr>
 				<th class="d-none">NRO</th>
 				<th class="td-center">CORRELATIVO</th>
+				<th class="td-center">AÑO</th>
 				<th class="td-center">MES</th>
 				<th class="td-left">CLIENTE</th>
 				<th>CANAL</th>
@@ -35,6 +36,7 @@
 				<tr data-id="<?= $k ?>">
 					<td class="d-none"> <?= $k + 1 ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['correlativa'], 3) ?> </td>
+					<td class="td-center"> <?= explode('-', $row['mes'])[0] ?> </td>
 					<td class="td-center"> <?= NOMBRE_MES[explode('-', $row['mes'])[1]] ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['cliente'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['canal'], 3) ?> </td>
@@ -58,14 +60,14 @@
 					<td class="td-center"> <?= verificarEmpty($row['total'], 3) ?> </td>
 					<td class="td-center">
 						<?= verificarEmpty($row['fechaEstimadaEjecucion']) ?>
-						<?php if (!empty($row['idSinceradoGr'])) : ?>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingDatosAdicionales" data-idsinceradogr="<?= $row['idSinceradoGr'] ?>" data-idordenservicio="<?= $row['idOrdenServicio'] ?>" title="Indicar Fecha Ejecución"><i class="fa fa-lg fa-edit"></i></a>
+						<?php if (!empty($row['idGr'])) : ?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingDatosAdicionales" data-idgr="<?= $row['idGr'] ?>" data-id="<?= $row['id'] ?>" title="Indicar Fecha Ejecución"><i class="fa fa-lg fa-edit"></i></a>
 						<?php endif; ?>
 					</td>
 					<td class="td-center">
 						<?= verificarEmpty($row['comentario']) ?>
-						<?php if (!empty($row['idSinceradoGr'])) : ?>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingDatosAdicionales" data-idsinceradogr="<?= $row['idSinceradoGr'] ?>" data-idordenservicio="<?= $row['idOrdenServicio'] ?>" title="Indicar Comentario"><i class="fa fa-lg fa-edit"></i></a>
+						<?php if (!empty($row['idGr'])) : ?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingDatosAdicionales" data-idgr="<?= $row['idGr'] ?>" data-id="<?= $row['id'] ?>" title="Indicar Comentario"><i class="fa fa-lg fa-edit"></i></a>
 						<?php endif; ?>
 					</td>
 				</tr>

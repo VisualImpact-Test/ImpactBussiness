@@ -72,7 +72,8 @@ class TiposServicio extends MY_Controller
         $post = json_decode($this->input->post('data'), true);
         $dataParaVista = [
           'tipoServicioUbigeo' => $this->model->obtenerTipoServicioUbigeo(['estado' => [1]])->result_array(),
-          'unidadMedida' => $this->model->obtenerUnidadMedida(['estado' => [1]])->result_array()
+          'unidadMedida' => $this->model->obtenerUnidadMedida(['estado' => [1]])->result_array(),
+          'tipoTransporte' => $this->db->get_where('VisualImpact.logistica.tipo_transporte')->result_array()
         ];
 
         $result['result'] = 1;
@@ -105,6 +106,7 @@ class TiposServicio extends MY_Controller
         }
 
         $data['insert']['costo'] = $post['costo'];
+        $data['insert']['idTipoTransporte'] = $post['tipoTransporte'];
 
         $insert = $this->model->guardarDatos('compras.tipoServicio', $data['insert']);
 
@@ -158,7 +160,8 @@ class TiposServicio extends MY_Controller
         $dataParaVista = [
           'tipoServicioUbigeo' => $this->model->obtenerTipoServicioUbigeo(['estado' => [1]])->result_array(),
           'unidadMedida' => $this->model->obtenerUnidadMedida(['estado' => [1]])->result_array(),
-          'informacion' => $this->model->obtenerInformacionTiposServicio($post)->row_array()
+          'informacion' => $this->model->obtenerInformacionTiposServicio($post)->row_array(),
+          'tipoTransporte' => $this->db->get_where('VisualImpact.logistica.tipo_transporte')->result_array()
         ];
 
         // $dataParaVista['informacion'] = $this->model->obtenerInformacionTiposServicio($post)->row_array();
@@ -181,6 +184,7 @@ class TiposServicio extends MY_Controller
           'idItemTipo' => 7,
           'idUnidadMedida' => $post['unidadMedida'],
           'nombre' => $post['nombre'],
+          'idTipoTransporte' => $post['tipoTransporte'],
         ];
 
         $validacionExistencia = $this->model->obtenerInformacionTiposServicio($datos);

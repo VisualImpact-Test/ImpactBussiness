@@ -72,6 +72,7 @@ class Proveedor extends MY_Controller
 				'estadoIcono' => $row['estadoIcono'],
 				'estadoToggle' => $row['estadotoggle'],
 				'chkDetraccion' => $row['chkDetraccion'],
+				'cuentas_bancos' => nl2br($row['cuentas_bancos'])
 			];
 			$departamentosCobertura[$row['idProveedor']][$row['zc_departamento']] = $row['zc_departamento'];
 			$provinciasCobertura[$row['idProveedor']][$row['zc_provincia']] = $row['zc_provincia'];

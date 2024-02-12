@@ -1,17 +1,30 @@
 <form class="form px-5" role="form" id="formRegistroTiposServicio" method="post">
   <div class="form-row">
-    <div class="col-md-12 mb-3">
+    <div class="col-md-6 mb-3">
       <label>Ubigeo</label>
-      <select class="form-control" name="tipoServicioUbigeo" patron="requerido"
-              onchange="$('#extra').val( (this.value==1 ? 'Urbano' : 'No Urbano'));">
+      <select class="form-control" name="tipoServicioUbigeo" patron="requerido" onchange="$('#extra').val( (this.value==1 ? 'Urbano' : 'No Urbano'));">
         <?=
-          htmlSelectOptionArray2([
-            'title' => 'Seleccione',
-            'query' => $tipoServicioUbigeo,
-            'class' => 'text-titlecase',
-            'value' => 'nombre',
-            'id' => 'idTipoServicioUbigeo'
-          ]);
+        htmlSelectOptionArray2([
+          'title' => 'Seleccione',
+          'query' => $tipoServicioUbigeo,
+          'class' => 'text-titlecase',
+          'value' => 'nombre',
+          'id' => 'idTipoServicioUbigeo'
+        ]);
+        ?>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label>Tipo Transporte</label>
+      <select class="form-control" name="tipoTransporte" patron="requerido">
+        <?=
+        htmlSelectOptionArray2([
+          'title' => 'Seleccione',
+          'query' => $tipoTransporte,
+          'class' => 'text-titlecase',
+          'value' => 'nombre',
+          'id' => 'idTipoTransporte'
+        ]);
         ?>
       </select>
     </div>
@@ -35,13 +48,13 @@
       <label>Unidad de Medida</label>
       <select class="form-control" name="unidadMedida" patron="requerido">
         <?=
-          htmlSelectOptionArray2([
-            'title' => 'Seleccione',
-            'query' => $unidadMedida,
-            'class' => 'text-titlecase',
-            'value' => 'nombre',
-            'id' => 'idUnidadMedida'
-          ]);
+        htmlSelectOptionArray2([
+          'title' => 'Seleccione',
+          'query' => $unidadMedida,
+          'class' => 'text-titlecase',
+          'value' => 'nombre',
+          'id' => 'idUnidadMedida'
+        ]);
         ?>
       </select>
     </div>
@@ -61,7 +74,7 @@
 </form>
 -->
 <script>
-    setTimeout(function() {
-        $('.my_select2').select2();
-    }, 500);
+  setTimeout(function() {
+    $('.my_select2').select2();
+  }, 500);
 </script>

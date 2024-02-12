@@ -7,6 +7,7 @@
                 <th>RAZON SOCIAL</th>
                 <th>RUC</th>
                 <th>RUBRO</th>
+                <th>CUENTA</th>
                 <th>METODO DE PAGO</th>
                 <th>DIRECCION</th>
                 <th>CONTACTO</th>
@@ -41,6 +42,7 @@
                     <td class="td-left"><?= verificarEmpty($row['razonSocial'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nroDocumento'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['rubros'], 3); ?></td>
+                    <td class="td-left"><?= verificarEmpty($row['cuentas_bancos'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['metodosPago'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['direccion'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nombreContacto'], 3); ?></td>

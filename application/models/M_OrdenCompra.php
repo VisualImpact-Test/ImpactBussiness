@@ -16,6 +16,12 @@ class M_OrdenCompra extends MY_Model
 	}
 	public function obtenerOrdenCompraLista($params = [])
 	{
+		$filtros = "";
+		$filtros = "1=1";
+		$filtros .= !empty($params['cuenta']) ? ' AND oc.idCuenta = ' . $params['cuenta'] : '';
+		$filtros .= !empty($params['cuentaCentroCosto']) ? ' AND oc.idCentroCosto = ' . $params['cuentaCentroCosto'] : '';
+		$filtros .= !empty($params['fechaDesde']) ? ' AND oc.fechaEntrega >= Convert(date,\'' . $params['fechaDesde'] . '\') ' : '';
+		$filtros .= !empty($params['fechaHasta']) ? ' AND oc.fechaEntrega <= Convert(date,\'' . $params['fechaHasta'] . '\') ' : '';
 
 		$this->db
 			->select('oc.*,
@@ -55,13 +61,17 @@ class M_OrdenCompra extends MY_Model
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'LEFT')
 			->join('sistema.usuario u', 'u.idUsuario = oc.idUsuarioReg')
 			->join('sistema.usuarioFirma uf', 'u.idUsuarioFirma=uf.idUsuarioFirma', 'left')
-			->where('oc.estado', '1')
-			->where('ocd.estado', '1')
-			->order_by('oc.idOrdenCompra desc');
+			// ->where('oc.estado', '1')
+			->where('ocd.estado', '1');
 
 		if (isset($params['idOrdenCompra'])) {
 			$this->db->where('ocd.idOrdenCompra', $params['idOrdenCompra']);
 		}
+		if (!empty($filtros)) {
+			$this->db->where($filtros);
+		}
+		$this->db->order_by('oc.estado desc, oc.idOrdenCompra desc');
+
 		return $this->db->get();
 	}
 	public function obtenerInformacionOrdenCompraSubItem($params = [])
@@ -161,4 +171,16 @@ class M_OrdenCompra extends MY_Model
 		return $this->db->get();
 	}
 	
+	public function actualizarAnulacionOC($params = [])
+	{
+		$query = $this->db->update($params['tabla'], $params['update'], $params['where']);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			$this->resultado['id'] = $this->db->insert_id();
+		}
+
+		return $this->resultado;
+	}
 }

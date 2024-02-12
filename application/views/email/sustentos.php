@@ -76,14 +76,14 @@
 <br>
 <h3 style="margin: 0px;">Se adjunta documentos para la programación de abonos.</h3>
 <br>
-<table>
+<!--<table>
 	<tbody>
 		<tr>
 			<td>
 				<h3 style="margin: 0px;">Descripción de PO: </h3>
 			</td>
 			<td>
-				<h4><?= $cotizacion['motivoAprobacion']; ?></h4>
+				<h4>< ?= $cotizacion['motivoAprobacion']; ?></h4>
 			</td>
 		</tr>
 		<tr>
@@ -91,11 +91,11 @@
 				<h3 style="margin: 0px;">Número de PO: </h3>
 			</td>
 			<td>
-				<h4><?= $cotizacion['codOrdenCompra']; ?></h4>
+				<h4>< ?= $cotizacion['codOrdenCompra']; ?></h4>
 			</td>
 		</tr>
 	</tbody>
-</table>
+</table>-->
 
 <br>
 <h3 style="margin: 0px;">Formatos cargados:</h3>
@@ -113,13 +113,13 @@
 <br>
 <h4 style="margin: 0px;"> Orden Compra ✔</h4>
 <br>
-<h4 style="margin: 0px;"> Guia <?= $aGuia ? '✔' : '✘'; ?></h4>
+<h4 style="margin: 0px;"> Guia <?= str_repeat('&nbsp;', 17) . ($aGuia ? '✔' : '✘'); ?></h4>
 <br>
-<h4 style="margin: 0px;"> Factura <?= $aFactura ? '✔' : '✘'; ?></h4>
+<h4 style="margin: 0px;"> Factura <?= str_repeat('&nbsp;', 12) . ($aFactura ? '✔' : '✘'); ?></h4>
 <br>
-<h4 style="margin: 0px;"> XML <?= $aXml ? '✔' : '✘'; ?></h4>
+<h4 style="margin: 0px;"> XML <?= str_repeat('&nbsp;', 17) . ($aXml ? '✔' : '✘'); ?></h4>
 <br>
-<h4 style="margin: 0px;"> Adicional <?= $aAdicional ? '✔' : '✘'; ?></h4>
+<h4 style="margin: 0px;"> Adicional <?= str_repeat('&nbsp;', 8) . ($aAdicional ? '✔' : '✘'); ?></h4>
 
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">
@@ -136,17 +136,17 @@
 						</tr>
 					</thead>
 					<tbody>
-						<?php foreach ($ocG as $key => $row) : ?>
+						<!--< ?php foreach ($ocG as $key => $row) : ?>
 							<tr class="default">
-								<td> <?= $key + 1; ?> </td>
+								<td> < ?= $key + 1; ?> </td>
 								<td>Orden de Compra</td>
-								<td> OC <?= $row['idOrdenCompra']; ?></td>
-								<td><a class="ui button" href="<?= base_url() . 'Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra'] ?>" target="_blank">Descargar</a></td>
+								<td> OC < ?= $row['idOrdenCompra']; ?></td>
+								<td><a class="ui button" href="< ?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra']; ?>?flag=< ?= $flag ?>" target="_blank">Descargar</a></td>
 							</tr>
-						<?php endforeach; ?>
+						< ?php endforeach; ?>-->
 						<?php foreach ($data as $key => $row) : ?>
 							<tr class="default">
-								<td><?= $key + 1 + count($ocG) ?></td>
+								<td><?= $key + 1 /*+ count($ocG)*/ ?></td>
 								<td>
 									<?php switch ($row['idFormatoDocumento']) {
 										case '1':

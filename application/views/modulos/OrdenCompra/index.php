@@ -51,10 +51,40 @@
 				<h5 class="text-bold-500"><i class="fal fa-filter"></i> <u>Filtros</u></h5>
 				<div class="form-row">
 					<div class="col-md-12">
-						<!-- <div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
-							<span class="tooltiptext">Cobertura</span>
-							<input class="form-control form-control-sm" name="coberturaProveedor" id="coberturaProveedor">
-						</div> -->
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Inicio</span>
+							<div class="field">
+								<div class="ui calendar date-semantic">
+									<div class="ui input mini left icon fluid">
+										<i class="calendar icon"></i>
+										<input type="text" placeholder="Fecha Inicio" value="" patron="requerido">
+									</div>
+								</div>
+								<input type="hidden" class="date-semantic-value" name="fechaDesde" value="" patron="requerido">
+							</div>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Fecha Fin</span>
+							<div class="ui calendar date-semantic">
+								<div class="ui input mini left icon fluid">
+									<i class="calendar icon"></i>
+									<input type="text" placeholder="Fecha Fin" value="" patron="requerido">
+								</div>
+							</div>
+							<input type="hidden" class="date-semantic-value" name="fechaHasta" value="" patron="requerido">
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Cuenta</span>
+							<select class="form-control form-control-sm ui my_select2Full parentDependiente" name="cuenta" id="cuenta" data-childDependiente="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuenta, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Centro Costo</span>
+							<select class="form-control form-control-sm ui childDependiente" name="cuentaCentroCosto" id="cuentaCentroCosto">
+								<?= htmlSelectOptionArray2(['query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>

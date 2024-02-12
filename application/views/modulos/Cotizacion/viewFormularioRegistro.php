@@ -67,7 +67,7 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm" >
+				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
@@ -94,14 +94,14 @@
 		<div class="fields">
 			<div class="five d-none wide field">
 				<div class="ui sub header">Presupuestos</div>
-				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui ead-only dropdown clearable semantic-dropdown centro-ocultado"  >
+				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui ead-only dropdown clearable semantic-dropdown centro-ocultado">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Servicio</div>
 				<select class="ui dropdown semantic-dropdown" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">
-			
+
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoServicioCotizacion, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
@@ -202,10 +202,18 @@
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<div class="four wide field no-personal">
+							<div class="four wide field no-personal divUnidadMedidida">
 								<div class="ui sub header">Unidad Medida</div>
 								<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
+								</select>
+							</div>
+							<div class="four wide field divTipoTarjVales d-none">
+								<div class="ui sub header">Tipo</div>
+								<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
+									<option class="text-titlecase" value>Seleccione</option>
+									<option class="text-titlecase" value="1">COMPRA</option>
+									<option class="text-titlecase" value="2">RECARGA</option>
 								</select>
 							</div>
 						</div>
@@ -220,7 +228,13 @@
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características">
 							</div>
-							<div class="five wide field no-personal">
+							<div class="five wide field divTipoTarjVales d-none">
+								<div class="ui sub header">Proveedor</div>
+								<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
+									<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
+								</select>
+							</div>
+							<div class="five wide field no-personal divCarProv">
 								<div class="ui sub header">Características para proveedor</div>
 								<input name="caracteristicasProveedor" placeholder="Características">
 							</div>
@@ -357,18 +371,30 @@
 							</button>
 						</div>
 						<!-- Tarjetas y Vales -->
-						<div class="fields d-none div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
-							<div class="six wide field">
-								<div class="ui sub header">Razón Social</div>
-								<input class="razonSocialSubItemTarjVal" name="razonSocialSubItemTarjVal[0]" placeholder="Razón Social">
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-tarjVales teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-tarjVales red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
 							</div>
-							<div class="five wide field">
-								<div class="ui sub header">Sucursal</div>
-								<input class="sucursalSubItemTarjVal" name="sucursalSubItemTarjVal[0]" placeholder="Sucursal">
-							</div>
-							<div class="five wide field">
-								<div class="ui sub header">Monto S/</div>
-								<input class="montoSubItemTarjVal" name="montoSubItemTarjVal[0]" placeholder="Monto">
+							<div class="three column row divDetalleTarjVales">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemTarjVal" name="descripcionSubItemTarjVal[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemTarjVal keyUpChange onlyNumbers" name="cantidadSubItemTarjVal[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoTarjetasVales(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemTarjVal keyUpChange onlyNumbers" name="montoSubItemTarjVal[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoTarjetasVales(this);">
+								</div>
 							</div>
 						</div>
 						<!-- Personal -->
@@ -844,7 +870,7 @@
 				</div>
 			</div>
 			<div class="column">
-				<div class="ui right labeled input">
+				<div class="ui labeled input">
 					<label for="totalForm" class="ui label green">Total: </label>
 					<input class=" totalFormLabel" type="text" placeholder="0.00" readonly="">
 					<input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" readonly="">
@@ -865,7 +891,7 @@
 			<span class="float-element tooltip-left btn-send" data-message="Enviar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(2)", content: "¿Esta seguro de registrar y enviar esta cotizacion?" });'>
 				<i class="send icon"></i>
 			</span>
-			<span class="float-element btn-save" data-message="Guardar" onclick='Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
+			<span class="float-element btn-save" data-message="Guardar" onclick='Fn.showConfirm({ fn: "Cotizacion.registrarCotizacion(1)", content: "¿Esta seguro de guardar esta cotizacion?" });'>
 				<i class="save icon"></i>
 			</span>
 			<span class="float-element btn-add-detalle btn-add-row" onclick="" data-message="Agregar detalle">
