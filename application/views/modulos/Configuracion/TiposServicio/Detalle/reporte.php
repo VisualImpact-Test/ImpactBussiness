@@ -9,6 +9,7 @@
                 <th>UBIGEO</th>
                 <th>UNIDAD DE MEDIDA</th>
                 <th>ITEM TIPO</th>
+                <th>COSTO CUENTA</th>
                 <th>COSTO</th>
                 <th>ESTADO</th>
             </tr>
@@ -34,6 +35,7 @@
                 <td class="td-center"><?= $row['unidadMedida']; ?></td>
                 <td class="td-center"><?= $row['itemTipo']; ?></td>
                 <td class="td-center"><?= moneda($row['costo']); ?></td>
+                <td class="td-center"><?= moneda($row['costoVisual']); ?></td>
                 <td class="text-center style-icons">
                   <span class="badge <?= $badge ?>" id="spanEstado-<?= $row['estado']; ?>"><?= $mensajeEstado; ?></span>
                 </td>
