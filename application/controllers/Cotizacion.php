@@ -5081,7 +5081,6 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['CuentaUsuario'] = $this->model->datosCuentaUsuario($idCuenta)['query']->result_array();
 		$dataParaVista['Almacen'] = $this->model->datosAlmacenOrigen($idCuenta)['query']->result_array();
 
-		
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Generar OperLog';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioOperLog", $dataParaVista, true);
@@ -5095,6 +5094,7 @@ class Cotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = $this->input->post('data');
+		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
 		// var_dump($post); exit();
 		// echo $this->db->last_query();exit();
@@ -5162,7 +5162,20 @@ class Cotizacion extends MY_Controller
 
 		}
 
-		echo json_encode($idOperlog);
+		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
+
+		if ($this->db->trans_status() === FALSE) {
+			$this->db->trans_rollback();
+			$result['result'] = 2;
+			$result['msg']['title'] = 'Error al Crear OPERLOG';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		} else {
+			$this->db->trans_commit();
+			$result['result'] = 1;
+			$result['msg']['title'] = 'OPERLOG creado';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+		}
+		echo json_encode($result);
 	}
 
 	
