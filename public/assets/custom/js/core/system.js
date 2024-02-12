@@ -226,9 +226,14 @@ var View = {
 		});
 
 		var currentPath = window.location.pathname;
-		// Asegúrate de que no estás en la página de login antes de mostrar el modal
-		if (!currentPath.includes('/impactBussiness/login')) {
+		let path = currentPath.replace("/impactBussiness/", "");
 
+		// Asegúrate de que no estás en la página de login antes de mostrar el modal
+		if (path === 'login'
+			|| path === 'FormularioProveedor'
+			|| path === 'FormularioProveedor/'
+			|| path.includes('FormularioProveedor/')) {
+		} else {
 			function verificarSesion() {
 				if (!modalYaMostrado) {
 					$.ajax({
@@ -481,7 +486,7 @@ var View = {
 		});
 		$(document).on('input paste', 'input, textarea', function (event) {
 			const valor = $(this).val();
-			
+
 			// Manejar tanto la entrada de teclado como el pegado con el ratón
 			if (event.type === 'input' || event.type === 'paste') {
 				if (valor.includes("`") || valor.includes("´") || valor.includes("'")) {
@@ -489,8 +494,8 @@ var View = {
 				}
 			}
 		});
-		
-		
+
+
 
 		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
