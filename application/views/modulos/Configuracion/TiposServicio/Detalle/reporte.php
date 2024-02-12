@@ -5,6 +5,7 @@
                 <th class="td-center">#</th>
                 <th>OPCIONES</th>
                 <th>TIPO SERVICIO</th>
+                <th>TIPO TRANSPORTE</th>
                 <th>UBIGEO</th>
                 <th>UNIDAD DE MEDIDA</th>
                 <th>ITEM TIPO</th>
@@ -28,6 +29,7 @@
                   </a>
                 </td>
                 <td class="td-left"><?= $row['nombre']; ?></td>
+                <td class="td-center"><?= $row['tipoTransporte']; ?></td>
                 <td class="td-center"><?= $row['ubigeo']; ?></td>
                 <td class="td-center"><?= $row['unidadMedida']; ?></td>
                 <td class="td-center"><?= $row['itemTipo']; ?></td>

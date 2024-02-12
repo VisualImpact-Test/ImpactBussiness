@@ -18,11 +18,12 @@ class M_TiposServicio extends MY_Model
 	public function obtenerInformacionTiposServicio($params = [])
 	{
 		$db = $this->db
-			->select('ts.*, tsu.nombre as ubigeo, um.nombre as unidadMedida, it.nombre as itemTipo')
+			->select('tT.nombre as tipoTransporte, ts.*, tsu.nombre as ubigeo, um.nombre as unidadMedida, it.nombre as itemTipo')
 			->from('compras.tipoServicio ts')
 			->join('compras.tipoServicioUbigeo tsu', 'ts.idTipoServicioUbigeo=tsu.idTipoServicioUbigeo', 'left')
 			->join('compras.unidadMedida um', 'um.idUnidadMedida=ts.idUnidadMedida', 'left')
-			->join('compras.itemTipo it', 'it.idItemTipo=ts.idItemTipo', 'left');
+			->join('compras.itemTipo it', 'it.idItemTipo=ts.idItemTipo', 'left')
+			->join('VisualImpact.logistica.tipo_transporte tT', 'tT.idTipoTransporte=ts.idTipoTransporte', 'left');
 
 		if (isset($params['idTipoServicio'])) {
 			$db->where('idTipoServicio', $params['idTipoServicio']);

@@ -1,6 +1,6 @@
 <form class="form px-5" role="form" id="formActualizacionTiposServicio" method="post">
   <div class="form-row">
-    <div class="col-md-12 mb-3">
+    <div class="col-md-6 mb-3">
       <label>Ubigeo</label>
       <select class="form-control" name="tipoServicioUbigeo" patron="requerido">
         <?=
@@ -12,6 +12,21 @@
             'id' => 'idTipoServicioUbigeo',
             'selected' => $informacion['idTipoServicioUbigeo']
           ]);
+        ?>
+      </select>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label>Tipo Transporte</label>
+      <select class="form-control" name="tipoTransporte" patron="requerido">
+        <?=
+        htmlSelectOptionArray2([
+          'title' => 'Seleccione',
+          'query' => $tipoTransporte,
+          'class' => 'text-titlecase',
+          'value' => 'nombre',
+          'id' => 'idTipoTransporte',
+          'selected' => $informacion['idTipoTransporte']
+        ]);
         ?>
       </select>
     </div>
