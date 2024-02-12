@@ -119,7 +119,6 @@ class Cotizacion extends MY_Controller
 		];
 		$this->db->update('compras.cotizacion', $datos, ['idCotizacion' => $idCotizacion]);
 
-
 		$insertGR = [
 			'numeroGR' => checkAndConvertToArray($post['numeroGR']),
 			'fechaGR' => checkAndConvertToArray($post['fechaGR']),
@@ -317,7 +316,6 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
 		$data = [];
 		$data['tabla'] = 'compras.cotizacion';
 
@@ -817,7 +815,10 @@ class Cotizacion extends MY_Controller
 
 					case COD_TARJETAS_VALES['id']:
 						$data['subDetalle'][$k] = getDataRefactorizada([
-							'monto' => $post["montoSubItem[$k]"],
+							'nombre' => $post["descripcionSubItemTarjVal[$k]"],
+							'cantidad' => $post["cantidadSubItemTarjVal[$k]"],
+							'costo' => $post["montoSubItemTarjVal[$k]"],
+							'subtotal' => floatval($post["cantidadSubItemTarjVal[$k]"]) * floatval($post["montoSubItemTarjVal[$k]"])
 						]);
 						break;
 
@@ -973,7 +974,6 @@ class Cotizacion extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-
 	public function actualizarCotizacion_personal()
 	{
 		$result = $this->result;
@@ -1614,6 +1614,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
+		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
 		$area = $this->db->get_where('rrhh.dbo.area', ['idEmpresa' => 2])->result_array();
 		$areas = [];
 		foreach ($area as $k => $v) {
@@ -3032,8 +3033,7 @@ class Cotizacion extends MY_Controller
 		} else {
 			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedorOC(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
 		}
-
-
+		
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
 
@@ -3146,7 +3146,7 @@ class Cotizacion extends MY_Controller
 		$data['tabla'] = 'compras.cotizacion';
 		$data['update'] = [
 			'idCotizacionEstado' => ESTADO_ENVIADO_CLIENTE,
-			'fechaEnvioCliente' =>  getActualDateTime(),
+			'fechaEnvioCliente' => getActualDateTime(),
 			'usurioEnvioCliente' => $this->idUsuario,
 		];
 		$data['where'] = [
@@ -3202,7 +3202,7 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 
 		$data['tabla'] = 'compras.cotizacion';
-
+		$itemsTipoDistribucion = 0;
 		$data = [];
 
 		$data['update'] = [
@@ -3353,7 +3353,7 @@ class Cotizacion extends MY_Controller
 							'precio' => !empty($post['precioForm'][$k]) ? $post['precioForm'][$k] : NULL,
 							'subtotal' => !empty($post['subtotalForm'][$k]) ? $post['subtotalForm'][$k] : NULL,
 							'idItemEstado' => $post['idEstadoItemForm'][$k],
-							// 'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
+							'idProveedor' => empty($post['idProveedorForm'][$k]) ? NULL : $post['idProveedorForm'][$k],
 							'idCotizacionDetalleEstado' => 2,
 							'caracteristicas' => !empty($post['caracteristicasItem'][$k]) ? $post['caracteristicasItem'][$k] : NULL,
 							'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
@@ -3432,7 +3432,10 @@ class Cotizacion extends MY_Controller
 								case COD_TARJETAS_VALES['id']:
 									$data['subDetalle'][$k] = getDataRefactorizada([
 										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
-										'monto' => $post["montoSubItem[{$post['idCotizacionDetalle'][$k]}]"],
+										'nombre' => $post["descripcionSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"],
+										'cantidad' => $post["cantidadSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"],
+										'costo' => $post["montoSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"],
+										'subtotal' => floatval($post["cantidadSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"]),
 									]);
 									break;
 
@@ -3517,7 +3520,7 @@ class Cotizacion extends MY_Controller
 							case COD_DISTRIBUCION['id']:
 								///////////// Ini
 								$post['cantidadDatosTabla'] = checkAndConvertToArray($post['cantidadDatosTabla']);
-								$cantidad = intval($post['cantidadDatosTabla'][$k]);
+								$cantidad = intval($post['cantidadDatosTabla'][$itemsTipoDistribucion++]);
 								$subDetalleInsert[$k] = [];
 
 								for ($it = 0; $it < $cantidad; $it++) {
@@ -3554,7 +3557,10 @@ class Cotizacion extends MY_Controller
 
 							case COD_TARJETAS_VALES['id']:
 								$subDetalleInsert[$k] = getDataRefactorizada([
-									'monto' => $post["montoSubItem[$k]"],
+									'nombre' => $post["descripcionSubItemTarjVal[$k]"],
+									'cantidad' => $post["cantidadSubItemTarjVal[$k]"],
+									'costo' => $post["montoSubItemTarjVal[$k]"],
+									'subtotal' => floatval($post["cantidadSubItemTarjVal[$k]"]) * floatval($post["montoSubItemTarjVal[$k]"])
 								]);
 								break;
 
@@ -3635,7 +3641,7 @@ class Cotizacion extends MY_Controller
 					}
 				}
 			}
-			if(!empty($data)){
+			if (!empty($data)) {
 				$data['archivoEliminado'] = isset($post['archivosEliminados']) ? $post['archivosEliminados'] : null;
 				$data['tabla'] = 'compras.cotizacionDetalle';
 				$data['where'] = 'idCotizacionDetalle';
@@ -3773,6 +3779,7 @@ class Cotizacion extends MY_Controller
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
+		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
 
 		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
@@ -3784,7 +3791,6 @@ class Cotizacion extends MY_Controller
 		foreach ($config['data']['cotizacionTarifario'] as $k => $v) {
 			$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idItem, isnull(peso, 0) as pesoCuenta, isnull(pesoVisual, 0) as pesoVisual, flagItemInterno')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 			$config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idZona, flagOtrosPuntos, isnull(dias, 0) as dias, gap, costo, idTipoServicio, costoVisual, reembarque')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
-
 			$i = 0;
 			foreach ($config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] as $kz => $vz) {
 				$psTV = 0;
@@ -4773,7 +4779,6 @@ class Cotizacion extends MY_Controller
 		if ($this->db->update('compras.cotizacion', ['fechaSustento' => $post['fechaSustento'], 'fechaEnvioFinanzas' => $post['fechaEnvioFinanzas'], 'aprovador' => $post['aprovador'], 'montoSincerado' => $post['montoSincerado']], ['idCotizacion' => $post['idCotizacion']]))
 			$result['result'] = 1;
 
-
 		$insertLinea = [];
 		if (is_array($post['lineaNum'])) {
 			foreach ($post['lineaNum'] as $item) {
@@ -4807,7 +4812,6 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
-
 
 	public function actualizarValidez()
 	{
@@ -4895,7 +4899,6 @@ class Cotizacion extends MY_Controller
 		$update = ['codCotizacion' => formularCodCotizacion($idNewCotizacion)];
 		$this->db->update('compras.cotizacion', $update, ['idCotizacion' => $idNewCotizacion]);
 
-
 		foreach ($cotizacionDetalle as $k => $v) {
 			$insertarCotizacionDetalle = [
 				'idCotizacion' => $idNewCotizacion,
@@ -4962,7 +4965,6 @@ class Cotizacion extends MY_Controller
 				'fee2Monto' => $v['fee2Monto'],
 				'idCotizacionDetallePersonal' => $v['idCotizacionDetallePersonal'],
 			];
-
 
 			$this->db->insert('compras.cotizacionDetalle', $insertarCotizacionDetalle);
 			$idNewCotizacionDetalle = $this->db->insert_id();
@@ -5050,7 +5052,6 @@ class Cotizacion extends MY_Controller
 			'estado' => 1,
 		];
 		$this->db->insert('compras.cotizacionEstadoHistorico', $insertarEstadoHistorico);
-
 
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
