@@ -40,10 +40,16 @@
   </div>
   <div class="form-row">
     <div class="col-md-6 mb-3">
-      <label>Costo</label>
+      <label>Costo Cuenta</label>
       <input class="form-control" name="costo" patron="requerido" value="<?= $informacion['costo'] ?>">
     </div>
     <div class="col-md-6 mb-3">
+      <label>Costo</label>
+      <input class="form-control" name="costoVisual" patron="requerido" value="<?= $informacion['costoVisual'] ?>">
+    </div>
+  </div>
+  <div class="form-row">
+  <div class="col-md-12 mb-3">
       <label>Unidad de Medida</label>
       <select class="form-control" name="unidadMedida" patron="requerido">
         <?=

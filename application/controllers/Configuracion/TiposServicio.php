@@ -106,6 +106,7 @@ class TiposServicio extends MY_Controller
         }
 
         $data['insert']['costo'] = $post['costo'];
+        $data['insert']['costoVisual'] = $post['costoVisual'];
         $data['insert']['idTipoTransporte'] = $post['tipoTransporte'];
 
         $insert = $this->model->guardarDatos('compras.tipoServicio', $data['insert']);
@@ -185,6 +186,8 @@ class TiposServicio extends MY_Controller
           'idUnidadMedida' => $post['unidadMedida'],
           'nombre' => $post['nombre'],
           'idTipoTransporte' => $post['tipoTransporte'],
+          'costo' => $post['costo'],
+          'costoVisual' => $post['costoVisual'],
         ];
 
         $validacionExistencia = $this->model->obtenerInformacionTiposServicio($datos);
