@@ -344,6 +344,7 @@ class M_Cotizacion extends MY_Model
 				, p.fechaClienteOC
 				, p.idTipoServicioCotizacion
 				, p.idTipoMoneda
+				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE estado = 1 AND idCotizacion = p.idCotizacion AND idItemTipo = 7 ) cantidadTransporte
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa
@@ -2652,15 +2653,140 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function datosCotizacion($params = [])
+	public function datosOperLog($params = [])
 	{
 
+		$filtros = "";
+		$filtros .= !empty($params['idCotizacion']) ? ' AND co.idCotizacion = ' . $params['idCotizacion'] : '';
 
+		$sql = "
+		select co.idCotizacion,
+		co.idCuenta ,
+		co.idCentroCosto ,
+		c.razonSocial AS cuenta,
+		cc.subcanal AS cuentaCentroCosto,
+		'0' as idCuentaUsuario,
+		co.codCotizacion ,
+		co.nombre as nombreCotizacion , 
+		so.idSolicitante ,
+		so.nombre, 
+		'0' as fotografia,
+		'0' as guia,
+		'' as otros,
+		cda.nombre_archivo,
+		cda.nombre_inicial,
+		'3' as idEstado ,
+		'1' as estado ,
+		codd.idCotizacionDetalle
+		from compras.cotizacion AS co
+		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion
+		JOIN compras.solicitante AS so ON co.idSolicitante = so.idSolicitante
+		LEFT JOIN compras.cotizacionDetalleArchivos AS cda ON cda.idCotizacion = co.idCotizacion AND cda.idCotizacionDetalle IS NULL AND flag_anexo = 0
+		JOIN (SELECT idCotizacion, COUNT(idCotizacionDetalle) AS tipoDistribucion FROM compras.cotizacionDetalle WHERE estado = 1 AND idItemTipo = 7 GROUP BY idCotizacion ) AS cod ON cod.idCotizacion = co.idCotizacion
+		LEFT JOIN rrhh.dbo.Empresa c ON co.idCuenta = c.idEmpresa
+		LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = co.idCentroCosto
+		WHERE 1 = 1
+			{$filtros}
+		order by co.idCotizacion desc";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function datosOperLogDetalle($params = [])
+	{
+		$sql = "
+		select * from compras.cotizacionDetalle
+		where 1 = 1 AND
+		estado = 1 AND 
+		idItemTipo = 7
+		and idCotizacionDetalle = ".$params;
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+
+	public function datosOperLogDetalleSub($params = [])
+	{
+		$sql = "
+		select idZona , flagOtrosPuntos , idTipoTransporte from compras.cotizacionDetalleSub as cds
+		left join compras.tipoServicio as ts on cds.idTipoServicio = ts.idTipoServicio 
+		where 1= 1
+		and idCotizacionDetalle = ".$params."
+		group by idZona , flagOtrosPuntos ,idTipoTransporte ";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+	public function datosOperLogDetalleArticulo($idZona , $idCotizacionDetalle)
+	{
+		$sql = "
+		select * from compras.cotizacionDetalleSub
+		where 1 = 1
+		and idCotizacionDetalle = ".$idCotizacionDetalle."
+		and idZona = ".$idZona."
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+	
+
+	
+	public function datosCuentaUsuario($params = [])
+	{
+		$sql = "
+		select cu.idCuentaUsuario as id, UPPER(cu.nombre) AS value from VisualImpact.logistica.cuentaUsuario cu where cu.estado='1' and idCuenta = ".$params." order by cu.nombre asc"
+		;
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function datosAlmacenOrigen($params = [])
+	{
+		$sql = "select idAlmacen as id , nombre as value from VisualImpact.logistica.almacen";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+	public function datosCotizacion($params = [])
+	{
 		$sql = "
 			SELECT 
 			*
 	   		FROM compras.cotizacion co
-	   		
 			WHERE 1 = 1
 			AND co.idCotizacion = $params";
 
@@ -2673,6 +2799,7 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
 
 	
 	public function obtenerCotizacionDetalleArchivos($params = [])

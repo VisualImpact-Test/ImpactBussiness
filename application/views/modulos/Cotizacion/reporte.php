@@ -31,9 +31,9 @@
 					<td class="td-center style-icons">
 						<?php if ($row['estado'] == 1) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleCotizacion btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-bars" title="Ver Detalle de Cotizacion"></i></a>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnDuplicarCotizacion" data-id="<?= $row['idCotizacion']; ?>">
+							<!-- <a href="javascript:;" class="btn btn-outline-secondary border-0 btnDuplicarCotizacion" data-id="<?= $row['idCotizacion']; ?>">
 								<i class="fa fa-lg fa-copy" title="Duplicar Cotizacion"></i>
-							</a>
+							</a> -->
 							<a href="../Cotizacion/viewFormularioActualizar/<?= $row['idCotizacion'] ?>" target="_SELF" class="btn btn-outline-secondary border-0">
 								<i class="fa fa-lg fa-edit"></i> <span class="txt_filtro"></span>
 							</a>
@@ -55,6 +55,9 @@
 								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-completarDatos btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-glasses" title="Ver Detalle de Cotizacion"></i></a>
+								<?php endif; ?>
+								<?php if ($row['cantidadTransporte'] >= 1) : ?>
+								<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-operlog" data-id="<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-truck" title="Ver Oper LOG"></i></a>
 								<?php endif; ?>
 							</div>
 						<?php endif; ?>

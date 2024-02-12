@@ -354,6 +354,32 @@ var Cotizacion = {
 			});
 		});
 
+
+		
+		$(document).on('click', '.btn-operlog', function () {
+			++modalId;
+
+			let id = $(this).data('id');
+			let data = { 'idCotizacion': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioOperLogCotizacion', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formOperLog", fn: "Cotizacion.registrarOperLog(' + id + ')", content: "¿Esta seguro de registrar OperLog? " });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+				Fn.loadSemanticFunctions();
+				//Cotizacion.actualizarAutocomplete();
+			});
+		});
+
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
 
@@ -1277,6 +1303,15 @@ var Cotizacion = {
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '25%' });
 			Cotizacion.modalIdForm = modalId;
+		});
+	},
+	registrarOperLog: function (id) {
+
+		let jsonString = { 'data': Fn.formSerializeObject('formOperLog') };
+		let config = { 'url': Cotizacion.url + 'generarOperLogCotizacion', 'data': jsonString };
+		console.log(config);
+		$.when(Fn.ajax(config)).then((a) => {
+	
 		});
 	}
 }

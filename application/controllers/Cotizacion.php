@@ -162,6 +162,7 @@ class Cotizacion extends MY_Controller
 		} else {
 			$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 		}
+		//echo $this->db->last_query();exit();
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -4754,6 +4755,7 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+
 	function guardarCompletarDatos()
 	{
 		$result = $this->result;
@@ -4842,7 +4844,7 @@ class Cotizacion extends MY_Controller
 		$cotizacionDetalle = $this->model->obtenerCotizacionDetallada($post)['query']->result_array();
 		$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post)['query']->result_array();
 
-		//echo $this->db->last_query();exit();
+		
 		$insertCotizacion = [
 			'nombre' => $cotizacion[0]['nombre']. " - COPIA",
 			'fechaDeadline' => $cotizacion[0]['fechaDeadline'],
@@ -5059,5 +5061,102 @@ class Cotizacion extends MY_Controller
 			}
 			echo json_encode($result);
 	}
+
+
+	
+	public function formularioOperLogCotizacion()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$dataParaVista['cabOperLog'] = $this->model->datosOperLog($post)['query']->result_array();
+		$idCuenta = $dataParaVista['cabOperLog'][0]['idCuenta'];
+		//var_dump($idCuenta);
+		$dataParaVista['CuentaUsuario'] = $this->model->datosCuentaUsuario($idCuenta)['query']->result_array();
+		$dataParaVista['Almacen'] = $this->model->datosAlmacenOrigen($idCuenta)['query']->result_array();
+
+		
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Generar OperLog';
+		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioOperLog", $dataParaVista, true);
+
+		echo json_encode($result);
+
+	}
+	
+
+	public function generarOperLogCotizacion()
+	{
+		$result = $this->result;
+		$post = $this->input->post('data');
+		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
+		// var_dump($post); exit();
+		// echo $this->db->last_query();exit();
+
+		foreach ($cabOperLog as $f => $d) {
+			$insertarCabOperLog = [
+			'idCuenta' => $d['idCuenta']
+			,'idCuentaCentroCosto' => $d['idCentroCosto']
+			,'idCuentaUsuario' => $post['CuentaUsuario']
+			,'codCotizacion' => $d['codCotizacion']
+			,'nombreCotizacion' => $d['nombreCotizacion']
+			,'ordenCompra' => null
+			,'dirigido' => $d['nombre']
+			,'fotografico' => $d['fotografia']
+			,'guia' => $d['guia']
+			,'otros' => $d['otros']
+			,'archivoCotizacion' => $d['nombre_archivo']
+			,'archivoOrden' => $d['nombre_archivo']
+			,'idEstado' => $d['idEstado']
+			,'estado' => $d['estado']
+			,'fecReg' => getSoloFecha()
+			,'horReg' => getSoloHora()
+			,'idUsuario' => $this->idUsuario
+			,'updateCC' => null
+			,'fechaUltimaModificacion' => null
+		];
+		$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
+		$idOperlog = $this->db->insert_id();
+		
+		$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
+		// echo $this->db->last_query();exit();
+		foreach ($cabOperLogDetalle as $p => $q) {
+			$cabOperLogDetalleSub = $this->model->datosOperLogDetalleSub($q['idCotizacionDetalle'])['query']->result_array();
+
+			foreach ($cabOperLogDetalleSub as $l => $m) {
+				$InsertOperLogDetalle = [
+					'idOperlog' => $idOperlog,
+					'idAlmacenOrigen' => $post['AlmacenOrigen'],
+					'idAlmacenDestino' => $m['idZona'],
+					'idTipoDestino' => ($m['flagOtrosPuntos'] == 0)? 1 : 2,
+					'idTipoTransporte' => $m['idTipoTransporte'],
+					'recojo' => '',
+					'idGuia' => null,
+					'fechaEstimada' => null,
+					'fechaEntrega' => null,
+					'estado' => 1,
+					'idTipoOrigen' => 1,
+					//'idTipoDestino' => 2,					
+				];
+				$this->db->insert('VisualImpact.logistica.operLogDetalle', $InsertOperLogDetalle);
+				$idOperlogDetalle = $this->db->insert_id();
+				$ArtOper = $this->model->datosOperLogDetalleArticulo($m['idZona'] , $q['idCotizacionDetalle'])['query']->result_array();
+				foreach ($ArtOper as $w => $r) {
+					$InsertOperLogArt = [
+						'idOperlogDetalle' => $idOperlogDetalle,
+						'idArticulo' => $r['idItem'],
+						'cantidad' => $r['cantidad'],
+						'estado' => 1,
+					];
+					$this->db->insert('VisualImpact.logistica.operLogDetalleArticulo', $InsertOperLogArt);
+					$idOperArt = $this->db->insert_id();
+				}
+			}
+		}
+
+		}
+
+		echo json_encode($idOperlog);
+	}
+
 	
 }
