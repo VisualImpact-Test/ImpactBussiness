@@ -95,6 +95,7 @@ const COD_MOVIL = { 'id': 4, 'nombre': 'MOVIL' };
 const COD_PERSONAL = { 'id': 5, 'nombre': 'PERSONAL' };
 const COD_EVENTO = { 'id': 6, 'nombre': 'EVENTO' };
 const COD_DISTRIBUCION = { 'id': 7, 'nombre': 'DISTRIBUCION' };
+const COD_CONCURSO = { 'id': 8, 'nombre': 'CONCURSO' };
 const COD_TEXTILES = { 'id': 9, 'nombre': 'TEXTILES' };
 const COD_TARJETAS_VALES = { 'id': 10, 'nombre': 'TARJETAS_VALES' };
 const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
@@ -481,7 +482,7 @@ var View = {
 		});
 		$(document).on('input paste', 'input, textarea', function (event) {
 			const valor = $(this).val();
-			
+
 			// Manejar tanto la entrada de teclado como el pegado con el ratón
 			if (event.type === 'input' || event.type === 'paste') {
 				if (valor.includes("`") || valor.includes("´") || valor.includes("'")) {
@@ -489,8 +490,8 @@ var View = {
 				}
 			}
 		});
-		
-		
+
+
 
 		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
