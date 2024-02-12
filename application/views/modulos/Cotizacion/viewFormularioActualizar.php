@@ -206,6 +206,14 @@
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
+							<div class="four wide field divTipoTarjVales d-none">
+								<div class="ui sub header">Tipo</div>
+								<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
+									<option class="text-titlecase" value>Seleccione</option>
+									<option class="text-titlecase" value="1">COMPRA</option>
+									<option class="text-titlecase" value="2">RECARGA</option>
+								</select>
+							</div>
 						</div>
 						<div class="fields">
 							<div class="five wide field">
@@ -218,7 +226,13 @@
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características" value="">
 							</div>
-							<div class="five wide field">
+							<div class="five wide field divTipoTarjVales d-none">
+								<div class="ui sub header">Proveedor</div>
+								<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
+									<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
+								</select>
+							</div>
+							<div class="five wide field divCarProv">
 								<div class="ui sub header">Características para proveedor</div>
 								<input name="caracteristicasProveedor" placeholder="Características" value="">
 							</div>
@@ -400,11 +414,31 @@
 								Agregar
 							</button>
 						</div>
-						<!-- Monto S/ -->
-						<div class="fields d-none div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
-							<div class="sixteen wide field">
-								<div class="ui sub header">Monto S/</div>
-								<input class="montoSubItem" name="montoSubItem[0]" placeholder="Monto" value="<?= !empty($data['montoSubItem']) ? $data['montoSubItem'] : '' ?>">
+						<!-- Tarjetas y vales -->
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-tarjVales teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-tarjVales red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<div class="three column row divDetalleTarjVales">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemTarjVal" name="descripcionSubItemTarjVal[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemTarjVal keyUpChange onlyNumbers" name="cantidadSubItemTarjVal[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoTarjetasVales(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemTarjVal keyUpChange onlyNumbers" name="montoSubItemTarjVal[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoTarjetasVales(this);">
+								</div>
 							</div>
 						</div>
 						<!-- Distribucion -->
@@ -610,13 +644,16 @@
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
-								<!-- <div class="four wide field no-personal">
-									<div class="ui sub header">Unidad Medida</div>
-									<select class="ui fluid search clearable dropdown unidadMed" name="unidadMedida">
-										<?= ''; //htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione', 'selected' => $row['idUnidadMedida']]); 
-										?>
+								<div class="four wide field divTipoTarjVales <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Tipo</div>
+									<?php $tipo_vt = verificarEmpty($row['idTipo_TarjetasVales']) ?>
+
+									<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
+										<option class="text-titlecase" value <?= empty($tipo_vt) ? 'selected' : ''; ?>>Seleccione</option>
+										<option class="text-titlecase" value="1" <?= $tipo_vt == '1' ? 'selected' : ''; ?>>COMPRA</option>
+										<option class="text-titlecase" value="2" <?= $tipo_vt == '2' ? 'selected' : ''; ?>>RECARGA</option>
 									</select>
-								</div> -->
+								</div>
 							</div>
 							<div class="fields">
 								<div class="five wide field">
@@ -629,7 +666,13 @@
 									<div class="ui sub header">Características para compras</div>
 									<input name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
 								</div>
-								<div class="five wide field">
+								<div class="five wide field divTipoTarjVales <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Proveedor</div>
+									<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
+										<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione', 'selected' => verificarEmpty($row['idProveedor'])]); ?>
+									</select>
+								</div>
+								<div class="five wide field <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? 'd-none' : '' ?>">
 									<div class="ui sub header">Características para proveedor</div>
 									<input name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
 								</div>
@@ -751,18 +794,36 @@
 								</button>
 							</div>
 							<!-- Monto -->
-							<div class="fields <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
-								<?
-								if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
-									foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
-										<div class="sixteen wide field">
-											<div class="ui sub header">Monto S/</div>
-											<input class="montoSubItem" name="montoSubItem[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= !empty($dataSubItem['monto']) ? $dataSubItem['monto'] : '' ?>">
+							<div class="ui grid ml-0 div-features <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+								<div class="row ml-0 pt-4 d-none"> <!-- No se muestra los botones de agregar y eliminar, pendiente corregir error -->
+									<button type="button" class="ui button btn-add-sub-item-tarjVales teal ">
+										<i class="plus icon"></i>
+										Agregar
+									</button>
+									<button type="button" class="ui button btn-delete-sub-item-tarjVales red">
+										<i class="trash icon"></i>
+										Eliminar
+									</button>
+								</div>
+								<? if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) : ?>
+									<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
+										<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+										<div class="three column row divDetalleTarjVales">
+											<div class="column">
+												<div class="ui sub header">Descripción</div>
+												<input class="descripcionSubItemTarjVal" name="descripcionSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Cantidad</div>
+												<input class="cantidadSubItemTarjVal keyUpChange onlyNumbers" name="cantidadSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoTarjetasVales(this);" value="<?= $dataSubItem['cantidad'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Monto</div>
+												<input class="montoSubItemTarjVal keyUpChange onlyNumbers" name="montoSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" onchange="Cotizacion.calcularMontoTarjetasVales(this);" value="<?= $dataSubItem['costoSubItem'] ?>">
+											</div>
 										</div>
-								<?
-									endforeach;
-								endif;
-								?>
+									<? endforeach; ?>
+								<? endif; ?>
 							</div>
 							<!-- TRANSPORTE -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) : ?>
@@ -849,19 +910,6 @@
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) : ?>
 								<div class="div-features div-feature-<?= COD_DISTRIBUCION['id'] ?> <?= $row['idItemTipo'] == COD_DISTRIBUCION['id'] ? '' : 'd-none' ?>">
 									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $row['idCotizacionDetalle'] ?>">
-									<!-- <?php $distribucion = $cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']][0]; ?>
-									<div class="<?= ($distribucion['requiereOrdenCompra'] == '0') ? 'd-none ' : ''; ?> fields divAddParaOC">
-										<div class="eight wide field">
-											<div class="ui sub header">Proveedor</div>
-											<select class="ui clearable dropdown simpleDropdown proveedorDistribucionSubItem" name="proveedorDistribucionSubItem[<?= $row['idCotizacionDetalle'] ?>]">
-												<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $distribucion['idProveedorDistribucion'], 'query' => $proveedorDistribucion, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase' /*, 'data-option' => ['columnaAdicionalSegunLoRequerido']*/]); ?>
-											</select>
-										</div>
-										<div class="four wide field">
-											<div class="ui sub header">Peso Real </div>
-											<input class="cantidadRealSubItem" name="cantidadRealSubItem[<?= $row['idCotizacionDetalle'] ?>]" value="<?= verificarEmpty($distribucion['cantidadReal']) ?>" placeholder="Cantidad REAL">
-										</div>
-									</div> -->
 									<div class="content-body-sub-item" id="divIL">
 										<input type="hidden" name="cantidadItemsDistribucion" value="<?= count($cotizacionDetalleSubItems[$row['idCotizacionDetalle']]); ?>">
 										<?php foreach ($cotizacionDetalleSubItems[$row['idCotizacionDetalle']] as $kcdsi => $vcdsi) : ?>

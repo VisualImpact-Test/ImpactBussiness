@@ -79,9 +79,6 @@ var SolicitudCotizacion = {
 			});
 		});
 
-
-
-
 		$(document).on('click', '.downloadFormatProv____________', function () {
 			idCotizacionDetalle = $(this).data('id');
 			let jsonString = { 'data': idCotizacionDetalle };
@@ -188,7 +185,7 @@ var Cotizacion = {
 	contentDetalle: 'idContentCotizacion',
 	url: 'Cotizacion/',
 	itemServicio: [],
-	tachadoDistribucion: [], //items
+	tachadoDistribucion: [],
 	modalIdForm: 0,
 	itemsLogistica: [],
 	htmlG: '',
@@ -584,49 +581,47 @@ var Cotizacion = {
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
 			var jsonData = JSON.stringify(idCuenta);
-			//alert(idCuenta + idCosto);
 			var jsonString = { jsonData: jsonData };
-			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
-				'data': jsonString };
+			let config1 = {
+				'url': Cotizacion.url + 'formularioRegistroCotizacion',
+				'data': jsonString
+			};
 
-				$.when(Fn.ajax(config1)).then((exa) => {
+			$.when(Fn.ajax(config1)).then((exa) => {
 				if (exa.data.existe == 0) {
-				Cotizacion.feeCuenta = exa.data.feeCuenta;
+					Cotizacion.feeCuenta = exa.data.feeCuenta;
 				}
-					//alert(JSON.stringify(Cotizacion.feeCuenta));
-					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
-					var parsedResponse = JSON.parse(jsonResponse);
-					console.log(parsedResponse);
-					var idCuentaF;
-					var fee;
-					var fee2;
-					for (var i = 0; i < parsedResponse.length; i++) {
-						idCuentaF = parsedResponse[i].idCuenta;
-						fee = parsedResponse[i].fee;
-					}
-					fee2 = parsedResponse[0].fee;
-					
-					if (idCuenta == 2) {
-						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
-							$('.feeForm').val(fee);
-							$('.fee2Form').val(fee2);
-						} else {
-							$('.feeForm').val(0);
-							$('.fee2Form').val(0);
-						}
-					} else if (idCuenta == 11) {
+				var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+				var parsedResponse = JSON.parse(jsonResponse);
+				var idCuentaF;
+				var fee;
+				var fee2;
+				for (var i = 0; i < parsedResponse.length; i++) {
+					idCuentaF = parsedResponse[i].idCuenta;
+					fee = parsedResponse[i].fee;
+				}
+				fee2 = parsedResponse[0].fee;
+
+				if (idCuenta == 2) {
+					if (idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
 						$('.feeForm').val(fee);
 						$('.fee2Form').val(fee2);
-					} else if (idCuenta == idCuentaF) {
-						$('.feeForm').val(fee);
-						$('.fee2Form').val(fee);
 					} else {
 						$('.feeForm').val(0);
 						$('.fee2Form').val(0);
 					}
-				});
-				//////
-				
+				} else if (idCuenta == 11) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee2);
+				} else if (idCuenta == idCuentaF) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee);
+				} else {
+					$('.feeForm').val(0);
+					$('.fee2Form').val(0);
+				}
+			});
+
 			let control = $(this);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
@@ -647,14 +642,30 @@ var Cotizacion = {
 			allFeatures.find('input.formTransporte').removeAttr("patron");
 			allFeatures.find('div.formTransporte').find('select').removeAttr("patron");
 
-
 			// ocultar fee de personal
 			control.closest('.body-item').find('.fieldPersonal').addClass('d-none');
+
+			// De Tarjetas y valess
+			parent.find('.divCarProv').removeClass('d-none');
+			parent.find('.divUnidadMedidida').removeClass('d-none');
+			parent.find('.divTipoTarjVales').addClass('d-none');
+			parent.find('div.provList').find('select').removeAttr("patron");
+			parent.find('.descripcionSubItemTarjVal').removeAttr("patron");
+			parent.find('.montoSubItemTarjVal').removeAttr("patron");
+			parent.find('.cantidadSubItemTarjVal').removeAttr("patron");
+			// FIN
+
+			parent.find('.provList').dropdown('clear');
+			parent.find('.no-personal').removeClass('d-none');
+			parent.find('.personal').addClass('d-none');
+			cotizacionInternaForm.val(1);
+			(parent.find('.cantPDV')).addClass('d-none');
+
 			if (idTipo == COD_DISTRIBUCION.id) {
-				$('.no-personal').removeClass('d-none');
+				parent.find('.no-personal').removeClass('d-none');
 
 				control.closest('.body-item').find('.cantidadForm').val('0');
-				$('.personal').addClass('d-none');
+				parent.find('.personal').addClass('d-none');
 				if (typeof ($('#centroCosto_visible .selected').attr('data-value')) === 'undefined') {
 					++modalId;
 					let btn = [];
@@ -686,31 +697,6 @@ var Cotizacion = {
 
 					Cotizacion.comboItemLogistica = parent.find('#divIL').html();
 					$('.specialSearch').dropdown({ allowAdditions: true });
-
-					// var parametros = {
-					// 	"cuenta": $('#centroCosto_visible .selected').attr('data-value'),
-					// 	"centroCosto": $('#centroCosto_oculto .selected').attr('data-value')
-					// };
-					// $.ajax({
-					// 	data: parametros,
-					// 	url: '../Cotizacion/obtenerItemsLogistica',
-					// 	type: 'post',
-					// 	beforeSend: function () {
-					// 		//$("#resultado").html("Procesando, espere por favor...");
-					// 	},
-					// 	success: function (response) {
-					// 		var html = '';
-					// 		html += '<select class="itemsLogisticaBuscador itemLogisticaForm" name="itemLogisticaForm[0]">';
-					// 		html += '<option></option>';
-					// 		html += response;
-					// 		html += '</select>';
-					// 		$('.SelectitemLogisticaForm').html(html);
-					// 		Cotizacion.comboItemLogistica = html;
-					// 		$(".itemsLogisticaBuscador").select2();
-					// 		$('.select2-container').css('height', '35px');
-					// 		$('.select2-selection').css('height', '35px');
-					// 	}
-					// });
 				}
 
 				Cotizacion.cleanDetalle(parent);
@@ -718,8 +704,8 @@ var Cotizacion = {
 			} else if (idTipo == COD_PERSONAL.id) {
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
 				control.closest('.body-item').find('.fieldPersonal').removeClass('d-none');
-				$('.no-personal').addClass('d-none');
-				$('.personal').removeClass('d-none');
+				parent.find('.no-personal').addClass('d-none');
+				parent.find('.personal').removeClass('d-none');
 				control.closest('.body-item').find('.cantidadForm').val('1');
 				var idCuenta = $('#cuentaForm').val();
 				var idCentro = $('#cuentaCentroCostoForm').val();
@@ -766,13 +752,20 @@ var Cotizacion = {
 				allFeatures.find('input.formTransporte').attr("patron", "requerido");
 				allFeatures.find('div.formTransporte').find('select').attr("patron", "requerido");
 				parent.find(".unidadMed").dropdown('set selected', '1');
+			} else if (idTipo == COD_TARJETAS_VALES.id) {
+				// visibilidad
+				parent.find('.divCarProv').addClass('d-none');
+				parent.find('.divUnidadMedidida').addClass('d-none');
+				parent.find('.divTipoTarjVales').removeClass('d-none');
+				// patron
+				parent.find('div.provList').find('select').attr("patron", "requerido");
+				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
+				parent.find('.montoSubItemTarjVal').attr('patron', 'requerido');
+				parent.find('.cantidadSubItemTarjVal').attr('patron', 'requerido');
+				cotizacionInternaForm.val(0);
 			} else {
-				$('.no-personal').removeClass('d-none');
-				$('.personal').addClass('d-none');
 				control.closest('.body-item').find('.cantidadForm').val('0');
-
 				(parent.find('.cCompras')).removeClass('d-none');
-				(parent.find('.cantPDV')).addClass('d-none');
 
 				let codItem = parent.find('.codItems');
 
@@ -792,7 +785,6 @@ var Cotizacion = {
 			$("input").remove("#identificador");
 		});
 
-		
 		$(document).on("keyup", ".cantidad_dias_personal", function () {
 			let _this = $(this);
 			var dias = $(this).val();
@@ -832,46 +824,48 @@ var Cotizacion = {
 			var jsonData = JSON.stringify(idCuenta);
 			//alert(idCuenta + idCosto);
 			var jsonString = { jsonData: jsonData };
-			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
-				'data': jsonString };
+			let config1 = {
+				'url': Cotizacion.url + 'formularioRegistroCotizacion',
+				'data': jsonString
+			};
 
-				$.when(Fn.ajax(config1)).then((exa) => {
+			$.when(Fn.ajax(config1)).then((exa) => {
 				if (exa.data.existe == 0) {
-				Cotizacion.feeCuenta = exa.data.feeCuenta;
+					Cotizacion.feeCuenta = exa.data.feeCuenta;
 				}
-					//alert(JSON.stringify(Cotizacion.feeCuenta));
-					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
-					var parsedResponse = JSON.parse(jsonResponse);
+				//alert(JSON.stringify(Cotizacion.feeCuenta));
+				var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+				var parsedResponse = JSON.parse(jsonResponse);
 
-					var idCuentaF;
-					var fee;
-					var fee2;
-					for (var i = 0; i < parsedResponse.length; i++) {
-						idCuentaF = parsedResponse[i].idCuenta;
-						fee = parsedResponse[i].fee;
-					}
-					fee2 = parsedResponse[0].fee;
-					
-					if (idCuenta == 2) {
-						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
-							$('.feeForm').val(fee);
-							$('.fee2Form').val(fee2);
-						} else {
-							$('.feeForm').val(0);
-							$('.fee2Form').val(0);
-						}
-					} else if (idCuenta == 11) {
+				var idCuentaF;
+				var fee;
+				var fee2;
+				for (var i = 0; i < parsedResponse.length; i++) {
+					idCuentaF = parsedResponse[i].idCuenta;
+					fee = parsedResponse[i].fee;
+				}
+				fee2 = parsedResponse[0].fee;
+
+				if (idCuenta == 2) {
+					if (idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
 						$('.feeForm').val(fee);
 						$('.fee2Form').val(fee2);
-					} else if (idCuenta == idCuentaF) {
-						$('.feeForm').val(fee);
-						$('.fee2Form').val(fee);
 					} else {
 						$('.feeForm').val(0);
 						$('.fee2Form').val(0);
 					}
-				});
-				//////
+				} else if (idCuenta == 11) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee2);
+				} else if (idCuenta == idCuentaF) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee);
+				} else {
+					$('.feeForm').val(0);
+					$('.fee2Form').val(0);
+				}
+			});
+			//////
 		})
 
 		$(document).on("keyup", ".cantidad_personal", function () {
@@ -886,7 +880,7 @@ var Cotizacion = {
 		})
 
 		$('#cargo_personal').on("change", function () {
-			
+
 		})
 
 		$(document).on("keyup", ".sueldo_personal", function () {
@@ -912,8 +906,6 @@ var Cotizacion = {
 			} else {
 				essalud = (parseFloat(pago_final) + asignacion_familiar_personal + parseFloat(incentivo_personal)) * 0.09;
 			}
-			
-			
 
 			essalud = parseFloat(essalud.toFixed(2));
 
@@ -2045,6 +2037,22 @@ var Cotizacion = {
 				data.find('.simpleDropdown').dropdown('clear');
 			}
 		});
+		$(document).on('click', '.btn-add-sub-item-tarjVales', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id);
+			let html = control.find('.divDetalleTarjVales').first().prop('outerHTML');
+			control.append(html);
+			control.find('.divDetalleTarjVales').find('.montoSubItemTarjVal').first().change();
+
+		});
+		$(document).on('click', '.btn-delete-sub-item-tarjVales', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id);
+			if (control.find('.divDetalleTarjVales').length > 1) {
+				control.find('.divDetalleTarjVales').last().remove();
+			}
+			control.find('.divDetalleTarjVales').find('.montoSubItemTarjVal').first().change();
+		});
 		$(document).on('click', '.btn-add-sub-item2', function () {
 			let control = $(this);
 			let parent = control.closest('.div-features');
@@ -2284,49 +2292,50 @@ var Cotizacion = {
 			var jsonData = JSON.stringify(idCuenta);
 			//alert(idCuenta + idCosto);
 			var jsonString = { jsonData: jsonData };
-			let config1 = { 'url': Cotizacion.url + 'formularioRegistroCotizacion', 
-				'data': jsonString };
+			let config1 = {
+				'url': Cotizacion.url + 'formularioRegistroCotizacion',
+				'data': jsonString
+			};
 
-				$.when(Fn.ajax(config1)).then((exa) => {
+			$.when(Fn.ajax(config1)).then((exa) => {
 				if (exa.data.existe == 0) {
-				Cotizacion.feeCuenta = exa.data.feeCuenta;
+					Cotizacion.feeCuenta = exa.data.feeCuenta;
 				}
-					//alert(JSON.stringify(Cotizacion.feeCuenta));
-					var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
-					var parsedResponse = JSON.parse(jsonResponse);
+				//alert(JSON.stringify(Cotizacion.feeCuenta));
+				var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
+				var parsedResponse = JSON.parse(jsonResponse);
 
-					var idCuentaF;
-					var fee;
-					var fee2;
-					for (var i = 0; i < parsedResponse.length; i++) {
-						idCuentaF = parsedResponse[i].idCuenta;
-						fee = parsedResponse[i].fee;
-					}
-					fee2 = parsedResponse[0].fee;
-					
-					if (idCuenta == 2) {
-						if(idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
-							$('.feeForm').val(fee);
-							$('.fee2Form').val(fee2);
-						} else {
-							$('.feeForm').val(0);
-							$('.fee2Form').val(0);
-						}
-					} else if (idCuenta == 11) {
+				var idCuentaF;
+				var fee;
+				var fee2;
+				for (var i = 0; i < parsedResponse.length; i++) {
+					idCuentaF = parsedResponse[i].idCuenta;
+					fee = parsedResponse[i].fee;
+				}
+				fee2 = parsedResponse[0].fee;
+
+				if (idCuenta == 2) {
+					if (idCuenta == idCuentaF && (idCosto == 26 || idCosto == 87)) {
 						$('.feeForm').val(fee);
 						$('.fee2Form').val(fee2);
-					} else if (idCuenta == idCuentaF) {
-						$('.feeForm').val(fee);
-						$('.fee2Form').val(fee);
 					} else {
 						$('.feeForm').val(0);
 						$('.fee2Form').val(0);
 					}
-				});
+				} else if (idCuenta == 11) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee2);
+				} else if (idCuenta == idCuentaF) {
+					$('.feeForm').val(fee);
+					$('.fee2Form').val(fee);
+				} else {
+					$('.feeForm').val(0);
+					$('.fee2Form').val(0);
+				}
+			});
 
 			$('#tipoItemForm').change();
 		});
-
 
 		$(document).on('change', '#cuentaForm', function () {
 			$('.feeForm').val(0);
@@ -2367,7 +2376,7 @@ var Cotizacion = {
 			} else {
 				$('.gapForm').val('');
 			}
-			
+
 			$('#tipoItemForm').change();
 		});
 
@@ -2496,8 +2505,6 @@ var Cotizacion = {
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .cantidad_dias').hide();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_diario').hide();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .sueldo_personal').prop('readonly', false);
-
-				
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .periodo').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_inicio').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_fin').show();
@@ -2546,8 +2553,6 @@ var Cotizacion = {
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .periodo').hide();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_inicio').hide();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .mes_fin').hide();
-
-
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .cantidad_dias').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_diario').show();
 				_this.closest('.body-item').find('.personal_' + idDiv + ' .pago_mensual_personal').val(0);
@@ -3322,11 +3327,11 @@ var Cotizacion = {
 			});
 		//Boton Regresar
 		$('.btn-return')
-		.popup({
-			position: 'left center',
-			target: $('.btn-return'),
-			content: 'Regresar',
-		});
+			.popup({
+				position: 'left center',
+				target: $('.btn-return'),
+				content: 'Regresar',
+			});
 		//Boton Guardar
 		$('.btn-save')
 			.popup({
@@ -3515,6 +3520,13 @@ var Cotizacion = {
 		let cantidadF = parent.find('.cantidad_transporte');
 		// FIN: TRANSPORTE
 
+		// TARJETAS Y VALES
+		
+		let descripcionTV = parent.find('.descripcionSubItemTarjVal');
+		let cantidadTV = parent.find('.cantidadSubItemTarjVal');
+		let montoTV = parent.find('.montoSubItemTarjVal');
+		// FIN: TARJETAS Y VALES
+
 		// PERSONAL
 		let sueldo_personal = parent.find('.sueldo_personal');
 		let asignacion_familiar_personal = parent.find('.asignacion_familiar_personal');
@@ -3565,6 +3577,12 @@ var Cotizacion = {
 		diasF.attr('name', `diasTransporte[${number}]`);
 		cantidadF.attr('name', `cantidadTransporte[${number}]`);
 		// FIN: TRANSPORTE
+
+		// TARJETAS Y VALES
+		descripcionTV.attr('name', `descripcionSubItemTarjVal[${number}]`);
+		cantidadTV.attr('name', `cantidadSubItemTarjVal[${number}]`);
+		montoTV.attr('name', `montoSubItemTarjVal[${number}]`);
+		// FIN: TARJETAS Y VALES
 
 		// PERSONAL
 		// sueldo_personal.attr('name', `sueldo_personal[${number}]`);
@@ -3681,12 +3699,34 @@ var Cotizacion = {
 	SimboloMoneda: function (t) {
 		var ts = $(t).val();
 
-		if (ts == 1 ) {
+		if (ts == 1) {
 			$('.monedaSimbolo').text('S/');
 		} else {
 			$('.monedaSimbolo').text('$');
 		}
-	
+
+	},
+	calcularMontoTarjetasVales: function (t) {
+		let _this = $(t);
+		let cantidad = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id).find('.cantidadSubItemTarjVal');
+		let monto = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id).find('.montoSubItemTarjVal');
+
+		let cantTot = 0;
+		let montoTot = 0;
+
+		console.log(cantidad);
+		console.log(monto);
+
+		$.each(cantidad, function (index, value) {
+			rowCantidad = parseFloat($(value).val());
+			rowMonto = parseFloat($(monto[index]).val()) * rowCantidad;
+
+			cantTot += rowCantidad;
+			montoTot += rowMonto;
+		});
+		let montoProm = montoTot / cantTot;
+		_this.closest('.body-item').find('.costoForm').val(montoProm);
+		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	},
 }
 

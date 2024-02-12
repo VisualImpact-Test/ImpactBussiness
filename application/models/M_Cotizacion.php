@@ -1760,7 +1760,6 @@ class M_Cotizacion extends MY_Model
 	}
 	public function actualizarCotizacionDetalleArchivos($params = [])
 	{
-
 		$insertArchivos = [];
 		foreach ($params['update'] as $k => $update) {
 			$idCotizacionDetalle = $update['idCotizacionDetalle'];
@@ -2199,7 +2198,7 @@ class M_Cotizacion extends MY_Model
 					cd.gap AS gap,
 					cd.precio AS precio,
 					cd.enlaces AS enlaces,
-					ci.idProveedor AS idProveedor,
+					ISNULL(cd.idProveedor, ci.idProveedor) as idProveedor,
 					p.razonSocial AS razonSocial,
 					ci.flag_actual AS flag_actual,
 					cd.costo as costoCotizacion,
@@ -2212,7 +2211,8 @@ class M_Cotizacion extends MY_Model
 					cd.flagPersonalSolicitado,
 					cd.costoPersonal,
 					cd.flagMostrarDetalle,
-					cd.requiereOrdenCompra
+					cd.requiereOrdenCompra,
+					cd.idTipo_TarjetasVales
 				FROM
 					compras.cotizacion c
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2264,7 +2264,8 @@ class M_Cotizacion extends MY_Model
 				lt.flagPersonalSolicitado,
 				lt.costoPersonal,
 				lt.flagMostrarDetalle,
-				lt.requiereOrdenCompra
+				lt.requiereOrdenCompra,
+				lt.idTipo_TarjetasVales
 				FROM listItem lt
 			)
 			SELECT
@@ -2638,8 +2639,8 @@ class M_Cotizacion extends MY_Model
 				co.fechaDeadline,
 				co.fechaRequerida,
 				co.diasValidez
-	   		FROM compras.cotizacion co
-	   		LEFT join compras.cotizacionEstadoHistorico ho ON ho.idCotizacion = co.idCotizacion
+			FROM compras.cotizacion co
+			LEFT join compras.cotizacionEstadoHistorico ho ON ho.idCotizacion = co.idCotizacion
 			WHERE 1 = 1
 			{$filtros}";
 
@@ -2660,8 +2661,7 @@ class M_Cotizacion extends MY_Model
 		$sql = "
 			SELECT 
 			*
-	   		FROM compras.cotizacion co
-	   		
+			FROM compras.cotizacion co		
 			WHERE 1 = 1
 			AND co.idCotizacion = $params";
 
@@ -2682,7 +2682,7 @@ class M_Cotizacion extends MY_Model
 
 		$sql = "
 		select * from compras.cotizacionDetalleArchivos
-		where  1 = 1
+		where 1 = 1
 			AND idCotizacion = $params";
 
 		$query = $this->db->query($sql);
@@ -2701,7 +2701,7 @@ class M_Cotizacion extends MY_Model
 
 		$sql = "
 		select * from compras.cotizacionDetalle
-		where  1 = 1
+		where 1 = 1
 			AND idCotizacion = $params";
 
 		$query = $this->db->query($sql);
@@ -2720,7 +2720,7 @@ class M_Cotizacion extends MY_Model
 
 		$sql = "
 		select * from compras.cotizacionDetalleSub
-		where  1 = 1
+		where 1 = 1
 		AND idCotizacionDetalle = $params";
 
 		$query = $this->db->query($sql);
