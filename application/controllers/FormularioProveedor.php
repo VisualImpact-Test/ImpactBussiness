@@ -157,9 +157,10 @@ class FormularioProveedor extends MY_Controller
 
 		// Inicio: Validando que no falte la captura de cuenta antes de guardar la información
 		// → Captura Principal: Obligatorio
-		if (!isset($post['cuentaPrincipalFile-item']) ||
+		if (
+			!isset($post['cuentaPrincipalFile-item']) ||
 			(count($post['cuentaPrincipalFile-item']) != count($informacionBancaria))
-			
+
 		) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
@@ -805,7 +806,6 @@ class FormularioProveedor extends MY_Controller
 
 		$html = $this->load->view("formularioProveedores/cotizacionesLista-table", ['datos' => $dataParaVista, 'idProveedor' => $proveedor['idProveedor']], true);
 
-
 		$result['result'] = 1;
 		$result['data']['views']['content-tb-cotizaciones-proveedor']['datatable'] = 'tb-cotizaciones';
 		$result['data']['views']['content-tb-cotizaciones-proveedor']['html'] = $html;
@@ -989,10 +989,9 @@ class FormularioProveedor extends MY_Controller
 			)
 			->result_array();
 
-
 		if ($post['flagoclibre'] == 0) {
 			$dataParaVista['ocGenerado'] = $this->model->getDistinctOC(
-				['idCotizacion' => $post['idcot'], 'idProveedor' => $post['idpro']]
+				['idOrdenCompra' => $post['id'], 'idProveedor' => $post['idpro']]
 			)->result_array();
 		} else {
 			$dataParaVista['ocGenerado'] = $this->model->getDistinctOC2(
@@ -1068,8 +1067,6 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista['idSustentoAdjunto'] = $post['id'];
 		$sa = $this->db->get_where('sustento.comprobante', ['idSustentoAdjunto' => $post['id']])->row_array();
-		// $acept = '';
-
 
 		switch ($sa['idFormatoDocumento']) {
 			case '1':
@@ -1206,7 +1203,6 @@ class FormularioProveedor extends MY_Controller
 		$this->db->where('idOrdenCompra', $post['ordencompra']);
 		$this->db->where('flagoclibre', $post['flagoclibre']);
 		$this->db->update('sustento.validacionArte', $dataUpdate);
-
 
 		// $post['enlaces'] = explode('\r\n', json_decode($post['data'], true)['enlaces']);
 		// $post['enlaces'] = var_export(preg_split('~\R~', json_decode($post['data'], true)['enlaces']));
@@ -1820,7 +1816,7 @@ class FormularioProveedor extends MY_Controller
 				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
 				goto respuesta;
 			}
-	
+
 			if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
@@ -1828,7 +1824,6 @@ class FormularioProveedor extends MY_Controller
 				goto respuesta;
 			}
 		}
-		
 
 		$post = json_decode($this->input->post('data'), true);
 		$post['data'] = json_decode($post['data'], true);
@@ -1983,19 +1978,23 @@ class FormularioProveedor extends MY_Controller
 		if ($post['flag'] == 0) {
 			$daC = $this->db->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idOrdenCompra', $post['ordencompra'])
 				->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
-			$ocG = $this->model->getDistinctOC(['idOrdenCompra' => $post['ordencompra'], 
-				'idProveedor' => $post['proveedor']])->result_array();
+			$ocG = $this->model->getDistinctOC([
+				'idOrdenCompra' => $post['ordencompra'],
+				'idProveedor' => $post['proveedor']
+			])->result_array();
 		} else {
 			$daC = $this->db->where('estado', 1)->where('idOrdenCompra', $post['ordencompra'])
 				->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
-			$ocG = $this->model->getDistinctOCORDEN(['idOrdenCompra' => $post['ordencompra'], 
-				'idProveedor' => $post['proveedor']])->result_array();
+			$ocG = $this->model->getDistinctOCORDEN([
+				'idOrdenCompra' => $post['ordencompra'],
+				'idProveedor' => $post['proveedor']
+			])->result_array();
 		}
-		
+
 		$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
 		$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
 		//$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
-		
+
 		if (!empty($daC)) {
 			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS);
 

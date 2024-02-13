@@ -173,12 +173,10 @@ var ProveedorServicio = {
 		});
 		$(document).on('click', '.btn-descargarOc', function (e) {
 			e.preventDefault();
-			Fn.showLoading(true);
 			id = $(this).data('id');
 			data = { 'data': JSON.stringify({ 'id': id }) };
 			var url = 'Cotizacion/' + 'descargarOrdenCompra';
 			$.when(Fn.download(url, data)).then(function (a) {
-				Fn.showLoading(false);
 			});
 		});
 		$(document).on('click', '.formValArt', function () {

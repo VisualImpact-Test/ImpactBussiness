@@ -56,14 +56,22 @@ var ProveedorDocumento = {
 			ProveedorDocumento.dataTemporal = data;
 			ProveedorDocumento.actualizarEstado();
 		});
+		$(document).on('click', '.btn-descargarOc', function (e) {
+			e.preventDefault();
+			id = $(this).data('id');
+			data = { 'data': JSON.stringify({ 'id': id }) };
+			var url = site_url + 'Cotizacion/' + 'descargarOrdenCompra';
+			$.when(Fn.download(url, data)).then(function (a) {
+			});
+		});
 		HTCustom.load();
 	},
 	actualizarEstado: function (envioDeObservacion = 0) {
 
 		if (envioDeObservacion) ProveedorDocumento.dataTemporal.observacion = $('#observacionDeRechazo').val();
-		
+
 		data = ProveedorDocumento.dataTemporal; // Lo declaro como variable y no lo envio a traves de la funciòn debido a que lo vuelvo a necesitar y no se puede enviar entre comillas.
-		
+
 		if (data.estado == '1') ProveedorDocumento.dataTemporal.observacion = null;
 
 		++modalId;
