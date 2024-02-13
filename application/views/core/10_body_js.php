@@ -15,11 +15,11 @@
 		<!-- <script type="text/javascript" src="assets/libs/semanticui/semantic.min.js?v=<?= $this->version; ?>"></script> -->
 		<!-- <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script> -->
 
-		<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+		<script src="assets/libs/semantic_2.8.8/jquery.dataTables.min.js"></script>
 		<script src="assets/libs/tableTools/TableTools.js"></script>
 
-		<script src="https://cdn.datatables.net/1.11.5/js/dataTables.semanticui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.8.8/semantic.min.js"></script>
+		<script src="assets/libs/semantic_2.8.8/dataTables.semanticui.min.js"></script>
+	<link href="assets/libs/semantic_2.8.8/Fomantic-UI-CSS-master/semantic.min.css" rel="stylesheet">
 		<script src="assets/libs/sheetJs/xlsx.full.min.js"></script>
 		<script src="assets/libs/fileSaver/FileSaver.min.js"></script>
 
