@@ -19,7 +19,7 @@
 		<script src="assets/libs/tableTools/TableTools.js"></script>
 
 		<script src="assets/libs/semantic_2.8.8/dataTables.semanticui.min.js"></script>
-	<link href="assets/libs/semantic_2.8.8/Fomantic-UI-CSS-master/semantic.min.css" rel="stylesheet">
+		<script src="assets/libs/semantic_2.8.8/Fomantic-UI-CSS-master/semantic.min.js"></script>
 		<script src="assets/libs/sheetJs/xlsx.full.min.js"></script>
 		<script src="assets/libs/fileSaver/FileSaver.min.js"></script>
 
