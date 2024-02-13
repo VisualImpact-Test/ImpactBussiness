@@ -763,6 +763,17 @@ var Cotizacion = {
 				parent.find('.montoSubItemTarjVal').attr('patron', 'requerido');
 				parent.find('.cantidadSubItemTarjVal').attr('patron', 'requerido');
 				cotizacionInternaForm.val(0);
+			} else if (idTipo == COD_CONCURSO.id) {
+				// visibilidad
+				parent.find('.divCarProv').addClass('d-none');
+				parent.find('.divUnidadMedidida').addClass('d-none');
+				parent.find('.divTipoTarjValesConcurso').removeClass('d-none');
+				// patron
+				parent.find('div.provList').find('select').attr("patron", "requerido");
+				parent.find('.descripcionSubItemConcurso').attr('patron', 'requerido');
+				parent.find('.montoSubItemConcurso').attr('patron', 'requerido');
+				parent.find('.cantidadSubItemConcurso').attr('patron', 'requerido');
+				cotizacionInternaForm.val(0);
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -2052,6 +2063,22 @@ var Cotizacion = {
 				control.find('.divDetalleTarjVales').last().remove();
 			}
 			control.find('.divDetalleTarjVales').find('.montoSubItemTarjVal').first().change();
+		});
+		$(document).on('click', '.btn-add-sub-item-concurso', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_CONCURSO.id);
+			console.log(control);
+			let html = control.find('.divDetalleConcurso').first().prop('outerHTML');
+			control.append(html);
+			control.find('.divDetalleConcurso').find('.montoSubItemConcurso').first().change();
+		});
+		$(document).on('click', '.btn-delete-sub-item-concurso', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_CONCURSO.id);
+			if (control.find('.divDetalleConcurso').length > 1) {
+				control.find('.divDetalleConcurso').last().remove();
+			}
+			control.find('.divDetalleConcurso').find('.montoSubItemConcurso').first().change();
 		});
 		$(document).on('click', '.btn-add-sub-item2', function () {
 			let control = $(this);
@@ -3521,11 +3548,17 @@ var Cotizacion = {
 		// FIN: TRANSPORTE
 
 		// TARJETAS Y VALES
-		
 		let descripcionTV = parent.find('.descripcionSubItemTarjVal');
 		let cantidadTV = parent.find('.cantidadSubItemTarjVal');
 		let montoTV = parent.find('.montoSubItemTarjVal');
 		// FIN: TARJETAS Y VALES
+
+		// CONCURSO
+		let descripcionC = parent.find('.descripcionSubItemConcurso');
+		let cantidadC = parent.find('.cantidadSubItemConcurso');
+		let montoC = parent.find('.montoSubItemConcurso');
+		let porcentajeC = parent.find('.porcentajeSubItemConcurso');
+		// FIN: CONCURSO
 
 		// PERSONAL
 		let sueldo_personal = parent.find('.sueldo_personal');
@@ -3583,6 +3616,13 @@ var Cotizacion = {
 		cantidadTV.attr('name', `cantidadSubItemTarjVal[${number}]`);
 		montoTV.attr('name', `montoSubItemTarjVal[${number}]`);
 		// FIN: TARJETAS Y VALES
+
+		// CONCURSO
+		descripcionC.attr('name', `descripcionSubItemConcurso[${number}]`);
+		cantidadC.attr('name', `cantidadSubItemConcurso[${number}]`);
+		montoC.attr('name', `montoSubItemConcurso[${number}]`);
+		porcentajeC.attr('name', `porcentajeSubItemConcurso[${number}]`);
+		// FIN: CONCURSO
 
 		// PERSONAL
 		// sueldo_personal.attr('name', `sueldo_personal[${number}]`);
@@ -3714,9 +3754,6 @@ var Cotizacion = {
 		let cantTot = 0;
 		let montoTot = 0;
 
-		console.log(cantidad);
-		console.log(monto);
-
 		$.each(cantidad, function (index, value) {
 			rowCantidad = parseFloat($(value).val());
 			rowMonto = parseFloat($(monto[index]).val()) * rowCantidad;
@@ -3728,6 +3765,29 @@ var Cotizacion = {
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	},
+	calcularMontoConcurso: function (t) {
+		let _this = $(t);
+		let cantidad = _this.closest('.div-feature-' + COD_CONCURSO.id).find('.cantidadSubItemConcurso');
+		let monto = _this.closest('.div-feature-' + COD_CONCURSO.id).find('.montoSubItemConcurso');
+		let porcentaje = _this.closest('.div-feature-' + COD_CONCURSO.id).find('.porcentajeSubItemConcurso');
+
+		let cantTot = 0;
+		let montoTot = 0;
+
+		$.each(cantidad, function (index, value) {
+			rowCantidad = parseFloat($(value).val());
+			rowPorcentaje = parseFloat($(porcentaje[index]).val());
+			rowPorcentaje = isNaN(rowPorcentaje) ? 0 : rowPorcentaje;
+			porcentajeCalc = (rowPorcentaje + 100) / 100;
+			rowMonto = parseFloat($(monto[index]).val()) * rowCantidad * porcentajeCalc;
+
+			cantTot += isNaN(rowCantidad) ? 0 : rowCantidad;
+			montoTot += isNaN(rowMonto) ? 0 : rowMonto;
+		});
+		let montoProm = montoTot / cantTot;
+		_this.closest('.body-item').find('.costoForm').val(montoProm);
+		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
+	}
 }
 
 Cotizacion.load();
