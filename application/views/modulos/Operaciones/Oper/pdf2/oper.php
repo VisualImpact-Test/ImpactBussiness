@@ -53,10 +53,7 @@
 		<tr>
 			<th class="text-center">ÍTEM</th>
 			<?php if ($operDetalle[0]['idTipo'] == COD_SERVICIO['id']) : ?>
-				<th class="text-center">RAZÓN SOCIAL</th>
-				<th class="text-center">TIPO ELEMENTO</th>
-				<th class="text-center">MARCA</th>
-				<th class="text-center">ZONA</th>
+				<th class="text-center" colspan="4">DESCRIPCIÓN</th>
 			<?php else : ?>
 				<th class="text-center" colspan="4">DESCRIPCIÓN - UNIDAD MEDIDA</th>
 			<?php endif; ?>
@@ -105,7 +102,7 @@
 				<?php endforeach; ?>
 			<?php else : ?>
 				<?php if ($row['idTipo'] == COD_SERVICIO['id']) : ?>
-					<?php $v1 = $operDetalleSub[$row['idOperDetalle']][0]['sucursal'] ?>
+					<!-- <?php $v1 = $operDetalleSub[$row['idOperDetalle']][0]['sucursal'] ?>
 					<?php $v2 = $operDetalleSub[$row['idOperDetalle']][0]['razonSocial'] ?>
 					<?php $v3 = $operDetalleSub[$row['idOperDetalle']][0]['tipoElemento'] ?>
 					<?php $v4 = $operDetalleSub[$row['idOperDetalle']][0]['marca'] ?>
@@ -114,10 +111,7 @@
 						<?php if (!($v1 == $vs['sucursal'] && $v2 == $vs['razonSocial'] && $v3 == $vs['tipoElemento'] && $v4 == $vs['marca'])) : ?>
 							<tr>
 								<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= ++$indexT ?></td>
-								<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v2; ?></td>
-								<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v3; ?></td>
-								<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v4; ?></td>
-								<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v1; ?></td>
+								<td style="text-align: left;" rowspan="<?= $rowT; ?>" colspan="4"><?= $v2; ?></td>
 								<?php if ($tieneTextil) : ?>
 									<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
 								<?php endif; ?>
@@ -136,10 +130,7 @@
 					<?php endforeach; ?>
 					<tr>
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= ++$indexT ?></td>
-						<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v2; ?></td>
-						<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v3; ?></td>
-						<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v4; ?></td>
-						<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= $v1; ?></td>
+						<td style="text-align: left;" rowspan="<?= $rowT; ?>" colspan="4"><?= $v2; ?></td>
 						<?php if ($tieneTextil) : ?>
 							<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
 						<?php endif; ?>
@@ -147,6 +138,17 @@
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
 						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($costoTotal); ?></td>
 						<?php $sbTotal += floatval($costoTotal) ?>
+					</tr> -->
+					<tr>
+						<td><?= ++$indexT ?></td>
+						<td style="text-align: left;" colspan="4"><?= $row['item']; ?></td>
+						<?php if ($tieneTextil) : ?>
+							<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
+						<?php endif; ?>
+						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= $row['cantidad_item']; ?></td>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['costo_item']); ?></td>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['cs_item']); ?></td>
+						<?php $sbTotal += floatval($row['cs_item']); ?>
 					</tr>
 				<?php else : ?>
 					<tr>
