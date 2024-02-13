@@ -5096,8 +5096,28 @@ class Cotizacion extends MY_Controller
 		$post = $this->input->post('data');
 		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
-		// var_dump($post); exit();
-		// echo $this->db->last_query();exit();
+		
+		//var_dump($post); exit();
+		//  echo $this->db->last_query();exit();
+		$archivoCotizacion = [
+			'base64' => $post['cotizacionFile-item'],
+			'name' => $post['cotizacionFile-name'],
+			'type' => $post['cotizacionFile-type'],
+			'carpeta' => 'operlog/cotizaciones',
+			'nombreUnico' => uniqid()
+		];
+		$archivoNameCotizacion = $this->saveFileWasabi($archivoCotizacion);
+		//$tipoArchivoCotizacion = explode('/', $archivo['type']);
+
+		$archivoOrdenCompra = [
+			'base64' => $post['ordenCompraFile-item'],
+			'name' => $post['ordenCompraFile-name'],
+			'type' => $post['ordenCompraFile-type'],
+			'carpeta' => 'operlog/ordenes',
+			'nombreUnico' => uniqid()
+		];
+		$archivoNameOrdenCompra = $this->saveFileWasabi($archivoOrdenCompra);
+
 
 		foreach ($cabOperLog as $f => $d) {
 			$insertarCabOperLog = [
@@ -5111,8 +5131,8 @@ class Cotizacion extends MY_Controller
 			,'fotografico' => $d['fotografia']
 			,'guia' => $d['guia']
 			,'otros' => $d['otros']
-			,'archivoCotizacion' => $d['nombre_archivo']
-			,'archivoOrden' => $d['nombre_archivo']
+			,'archivoCotizacion' => $archivoNameCotizacion
+			,'archivoOrden' => $archivoNameOrdenCompra
 			,'idEstado' => $d['idEstado']
 			,'estado' => $d['estado']
 			,'fecReg' => getSoloFecha()
@@ -5120,6 +5140,8 @@ class Cotizacion extends MY_Controller
 			,'idUsuario' => $this->idUsuario
 			,'updateCC' => null
 			,'fechaUltimaModificacion' => null
+			,'flagImpactBussiness' => 1
+			// flagImpactBussiness
 		];
 		$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
 		$idOperlog = $this->db->insert_id();
