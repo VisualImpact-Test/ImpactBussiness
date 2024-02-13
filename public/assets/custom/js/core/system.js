@@ -230,7 +230,7 @@ var View = {
 		let path = currentPath.replace("/impactBussiness/", "");
 
 		// Asegúrate de que no estás en la página de login antes de mostrar el modal
-		if (path === 'login'
+		if (path.includes('login')
 			|| path === 'FormularioProveedor'
 			|| path === 'FormularioProveedor/'
 			|| path.includes('FormularioProveedor/')) {
