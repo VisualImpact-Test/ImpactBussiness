@@ -407,7 +407,8 @@ class M_FormularioProveedor extends MY_Model
 				c.motivo, c.total, c.idCotizacion, cc.nombre AS cuentaCentroCosto, 
 				c.motivoAprobacion, pr.razonSocial AS proveedor, cu.nombre AS cuenta, 
 				pr.idProveedor, c.codOrdenCompra, 0 AS flagOcLibre, oc.estadoval, 
-				MAX(cdp.idCotizacionDetalleProveedor) AS idCotizacionDetalleProveedor
+				MAX(cdp.idCotizacionDetalleProveedor) AS idCotizacionDetalleProveedor,
+				c.fechaEmision as row_num
 			")
 			->from('compras.cotizacionDetalle cd')
 
@@ -434,9 +435,9 @@ class M_FormularioProveedor extends MY_Model
 			->group_by("
 				ocd.idOrdenCompra, oc.seriado, CONVERT(VARCHAR, c.fechaEmision, 103), 
 				c.nombre, c.motivo, c.total, c.idCotizacion, cc.nombre, c.motivoAprobacion, 
-				pr.razonSocial, cu.nombre, pr.idProveedor, c.codOrdenCompra, oc.estadoval
+				pr.razonSocial, cu.nombre, pr.idProveedor, c.codOrdenCompra, oc.estadoval, c.fechaEmision
 			")
-			->order_by('ocd.idOrdenCompra DESC');
+			->order_by('row_num ASC');
 
 		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
 		// isset($params['idProveedor']) ? $this->db->where('cd.idProveedor', $params['idProveedor']) : '';
@@ -472,8 +473,9 @@ class M_FormularioProveedor extends MY_Model
 				cd.requerimiento AS codOrdenCompra,
 				1 AS flagOcLibre,
 				cd.estadoval,
-				(NULL) AS idCotizacionDetalleProveedor")
-			->from('orden.ordenCompra cd')
+				(NULL) AS idCotizacionDetalleProveedor,
+				cd.fechaReg as row_num")
+    		->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
 			->join('visualImpact.logistica.cuentaCentroCosto cc', 'cd.idCentroCosto = cc.idCuentaCentroCosto', 'LEFT')
@@ -489,8 +491,9 @@ class M_FormularioProveedor extends MY_Model
         pr.razonSocial,
         cd.requerimiento,
         cp.idOrdenCompra,
-		cd.estadoval")
-			->order_by('cp.idOrdenCompra', 'DESC');
+		cd.estadoval,
+        cd.fechaReg")
+		->order_by('row_num', 'ASC');
 
 
 		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);
