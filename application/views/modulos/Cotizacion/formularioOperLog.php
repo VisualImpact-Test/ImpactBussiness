@@ -26,6 +26,14 @@
                     <?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $Almacen, 'class' => 'text-titlecase', 'selected' => 1]); ?>
                 </select>			
 			</div>
+			<div class="five wide field">
+				<label>Cotizacion:</label>  
+				<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cotizacion', 'visible' => false , 'tipo' => 2]) ?>
+			</div>
+			<div class="five wide field">
+				<label>Orden de compra:</label>  
+				<?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'ordenCompra', 'visible' => false , 'tipo' => 2]) ?>
+			</div>
 		</div>
 	
 	</div>

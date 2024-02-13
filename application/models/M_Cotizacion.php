@@ -2682,7 +2682,7 @@ class M_Cotizacion extends MY_Model
 		'1' as estado ,
 		codd.idCotizacionDetalle
 		from compras.cotizacion AS co
-		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion
+		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion and codd.estado = 1 and codd.idItemTipo = 7
 		JOIN compras.solicitante AS so ON co.idSolicitante = so.idSolicitante
 		LEFT JOIN compras.cotizacionDetalleArchivos AS cda ON cda.idCotizacion = co.idCotizacion AND cda.idCotizacionDetalle IS NULL AND flag_anexo = 0
 		JOIN (SELECT idCotizacion, COUNT(idCotizacionDetalle) AS tipoDistribucion FROM compras.cotizacionDetalle WHERE estado = 1 AND idItemTipo = 7 GROUP BY idCotizacion ) AS cod ON cod.idCotizacion = co.idCotizacion
