@@ -659,7 +659,7 @@ class FormularioProveedor extends MY_Controller
 		$data2 = $this->model->obtenerListaCotizaciones2($post)->result_array();
 
 		$data = array_merge($data1, $data2);
-		$data = ordenarArrayPorColumna($data, 'fechaEmision', SORT_DESC);
+		$data = ordenarArrayPorColumna($data, 'row_num', SORT_DESC);
 
 		foreach ($data as $k => $v) {
 			// Inicio: Para número de Oper
