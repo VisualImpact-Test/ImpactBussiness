@@ -345,6 +345,7 @@ class M_Cotizacion extends MY_Model
 				, p.idTipoServicioCotizacion
 				, p.idTipoMoneda
 				, (SELECT COUNT(idCotizacionDetalle) FROM compras.cotizacionDetalle WHERE estado = 1 AND idCotizacion = p.idCotizacion AND idItemTipo = 7 ) cantidadTransporte
+				, p.flagOperlog
 			FROM compras.cotizacion p
 			LEFT JOIN compras.cotizacionEstado ce ON p.idCotizacionEstado = ce.idCotizacionEstado
 			LEFT JOIN rrhh.dbo.Empresa c ON p.idCuenta = c.idEmpresa

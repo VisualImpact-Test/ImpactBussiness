@@ -1310,7 +1310,18 @@ var Cotizacion = {
 		let jsonString = { 'data': Fn.formSerializeObject('formOperLog') };
 		let config = { 'url': Cotizacion.url + 'generarOperLogCotizacion', 'data': jsonString };
 		console.log(config);
-		$.when(Fn.ajax(config)).then((a) => {
+		$.when(Fn.ajax(config)).then((b) => {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		
 	
 		});
 	}
