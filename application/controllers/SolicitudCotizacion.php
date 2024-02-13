@@ -128,6 +128,13 @@ class SolicitudCotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
+
+	public function CentroCosto()
+	{
+		$data = json_decode($this->input->post('data'));
+		$grupo['data']['centro'] = $this->model->obtenerCuentaCentroCostoEdit($data->id)['query']->result_array();
+		echo json_encode($grupo);
+	}
 	public function formCotizacionTransporteSincerado()
 	{
 		$result = $this->result;
