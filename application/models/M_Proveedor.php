@@ -252,12 +252,16 @@ class M_Proveedor extends MY_Model
 		, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE ubi_zc.distrito END) AS zc_distrito
 		, (CASE WHEN zc.cod_distrito IS NULL THEN NULL ELSE zc.cod_distrito END) AS zc_cod_distrito
 		, REPLACE(
-			STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + ' - ' + ifb_inner.cuenta
-				   FROM compras.informacionBancariaProveedor as ifb_inner
-				   INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
-				   WHERE ifb_inner.idProveedor = ibp.idProveedor
-				   FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
-			'&#x0D;&#x0A;', '') as cuentas_bancos
+			STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + 
+				CASE 
+                	WHEN ifb_inner.cuenta = '-' THEN ''
+                	ELSE ' - ' + ifb_inner.cuenta
+            	END
+			FROM compras.informacionBancariaProveedor as ifb_inner
+			INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+			WHERE ifb_inner.idProveedor = ibp.idProveedor
+				FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+				'&#x0D;&#x0A;', '') as cuentas_bancos
 				
 		, p.nombreContacto
 		, p.correoContacto
