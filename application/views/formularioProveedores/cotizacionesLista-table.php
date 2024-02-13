@@ -6,6 +6,7 @@
 				<tr>
 					<th></th>
 					<th>Opciones</th>
+					<th>Orden Compra</th>
 					<th>Fecha Emisión</th>
 					<th>Cotización</th>
 					<th>Cuenta</th>
@@ -37,6 +38,7 @@
 								</a>
 							<?php endif; ?>
 						</td>
+						<td><?= verificarEmpty($row['seriado'], 3) ?></td>
 						<td><?= verificarEmpty($row['fechaEmision'], 3) ?></td>
 						<td><?= verificarEmpty($row['title'], 3) ?></td>
 						<td><?= verificarEmpty($row['cuenta'], 3) ?></td>
