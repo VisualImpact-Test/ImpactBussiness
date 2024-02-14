@@ -67,13 +67,13 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+				<select class="ui dropdown parentDependiente centro-visible parentDependienteSemantic" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="#cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado childdependienteSemantic" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
