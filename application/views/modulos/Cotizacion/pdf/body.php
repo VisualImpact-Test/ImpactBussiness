@@ -52,7 +52,7 @@
 				<th>TOTAL</th>
 			</tr>
 		<?php endif; ?>
-		<?php if ($detalle[0]['idItemTipo'] == COD_ARTICULO['id'] || $detalle[0]['idItemTipo'] == COD_TEXTILES['id'] || $detalle[0]['idItemTipo'] == COD_MOVIL['id'] || $detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] || $detalle[0]['idItemTipo'] == COD_TRANSPORTE['id']) : ?>
+		<?php if ($detalle[0]['idItemTipo'] == COD_ARTICULO['id'] || $detalle[0]['idItemTipo'] == COD_TEXTILES['id'] || $detalle[0]['idItemTipo'] == COD_MOVIL['id'] || $detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] || $detalle[0]['idItemTipo'] == COD_TRANSPORTE['id'] || $detalle[0]['idItemTipo'] == COD_TARJETAS_VALES['id'] || $detalle[0]['idItemTipo'] == COD_CONCURSO['id']) : ?>
 			<?php $col1 = 6; ?>
 			<tr style="background-color: #FFE598;">
 				<th width="7%">ITEM</th>
@@ -141,7 +141,7 @@
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
-			<?php if ($row['idItemTipo'] == COD_ARTICULO['id'] || $row['idItemTipo'] == COD_TEXTILES['id'] || $row['idItemTipo'] == COD_MOVIL['id'] || $row['idItemTipo'] == COD_DISTRIBUCION['id']) : ?>
+			<?php if ($row['idItemTipo'] == COD_ARTICULO['id'] || $row['idItemTipo'] == COD_TEXTILES['id'] || $row['idItemTipo'] == COD_MOVIL['id'] || $row['idItemTipo'] == COD_DISTRIBUCION['id'] || $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id']) : ?>
 				<tr class="bg-gray">
 					<td class="text-center"><?= $key + 1 ?></td>
 					<td class="text-left" colspan="4">

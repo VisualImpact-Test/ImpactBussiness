@@ -703,7 +703,8 @@ class Cotizacion extends MY_Controller
 					'idCargo' => !empty($post['cargo_personal'][$k]) ? $post['cargo_personal'][$k] : 0,
 					'cantidad_personal' => !empty($post['cantidad_personal'][$k]) ? $post['cantidad_personal'][$k] : 0,
 					'mesInicio' => !empty($post['mes_inicio_personal'][$k]) ? $post['mes_inicio_personal'][$k] : 0,
-					'mesFin' => !empty($post['mesFin'][$k]) ? $post['mesFin'][$k] : 0
+					'mesFin' => !empty($post['mesFin'][$k]) ? $post['mesFin'][$k] : 0,
+					'idTipo_TarjetasVales' => !empty($post['tipoTarjVales'][$k]) ? $post['tipoTarjVales'][$k] : NULL,
 				];
 
 				if ($post['flagPackingSolicitado'][$k] == '1') {
@@ -822,7 +823,23 @@ class Cotizacion extends MY_Controller
 							'subtotal' => floatval($post["cantidadSubItemTarjVal[$k]"]) * floatval($post["montoSubItemTarjVal[$k]"])
 						]);
 						break;
-
+					case COD_CONCURSO['id']:
+						$data['subDetalle'][$k] = [];
+						$post["descripcionSubItemConcurso[$k]"] = checkAndConvertToArray($post["descripcionSubItemConcurso[$k]"]);
+						$post["cantidadSubItemConcurso[$k]"] = checkAndConvertToArray($post["cantidadSubItemConcurso[$k]"]);
+						$post["montoSubItemConcurso[$k]"] = checkAndConvertToArray($post["montoSubItemConcurso[$k]"]);
+						$post["porcentajeSubItemConcurso[$k]"] = checkAndConvertToArray($post["porcentajeSubItemConcurso[$k]"]);
+						foreach ($post["descripcionSubItemConcurso[$k]"] as $kti => $vti) {
+							$data['subDetalle'][$k][] = [
+								'nombre' => $post["descripcionSubItemConcurso[$k]"][$kti],
+								'cantidad' => $post["cantidadSubItemConcurso[$k]"][$kti],
+								'costo' => $post["montoSubItemConcurso[$k]"][$kti],
+								'porcentajeParaCosto' => $post["porcentajeSubItemConcurso[$k]"][$kti],
+								'subtotal' => floatval($post["cantidadSubItemConcurso[$k]"][$kti]) * floatval($post["montoSubItemConcurso[$k]"][$kti] * (1 + (floatval(verificarEmpty($post["porcentajeSubItemConcurso[$k]"][$kti], 2)) / 100)))
+							];
+						}
+						// $data['subDetalle'][$k] = getDataRefactorizada([]);
+						break;
 					default:
 						$data['subDetalle'][$k] = [];
 						break;
@@ -3034,7 +3051,7 @@ class Cotizacion extends MY_Controller
 		} else {
 			$ordenCompra = $this->model_formulario_proveedor->obtenerOrdenCompraDetalleProveedorOC(['idOrdenCompra' => $post['id'], 'estado' => 1])['query']->result_array();
 		}
-		
+
 		$dataParaVista['data'] = $ordenCompra[0];
 		$dataParaVista['detalle'] = $ordenCompra;
 
@@ -3371,7 +3388,7 @@ class Cotizacion extends MY_Controller
 							'flagMostrarDetalle' => !empty($post['flagMostrarDetalle'][$k]) ? $post['flagMostrarDetalle'][$k] : 0,
 							'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
 							'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
-
+							'idTipo_TarjetasVales' => !empty($post['tipoTarjVales'][$k]) ? $post['tipoTarjVales'][$k] : null,
 						];
 
 						if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
@@ -3437,6 +3454,16 @@ class Cotizacion extends MY_Controller
 										'cantidad' => $post["cantidadSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"],
 										'costo' => $post["montoSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"],
 										'subtotal' => floatval($post["cantidadSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemTarjVal[{$post['idCotizacionDetalle'][$k]}]"]),
+									]);
+									break;
+								case COD_CONCURSO['id']:
+									$data['subDetalle'][$k] = getDataRefactorizada([
+										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+										'nombre' => $post["descripcionSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
+										'cantidad' => $post["cantidadSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
+										'costo' => $post["montoSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
+										'porcentajeParaCosto' => $post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
+										'subtotal' => floatval($post["cantidadSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) * (1 + (floatval($post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) / 100)),
 									]);
 									break;
 
@@ -4855,7 +4882,7 @@ class Cotizacion extends MY_Controller
 		$cotizacionDetalle = $this->model->obtenerCotizacionDetallada($post)['query']->result_array();
 		$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post)['query']->result_array();
 
-		
+
 		$insertCotizacion = [
 			'nombre' => $cotizacion[0]['nombre'] . " - COPIA",
 			'fechaDeadline' => $cotizacion[0]['fechaDeadline'],
@@ -5070,7 +5097,7 @@ class Cotizacion extends MY_Controller
 	}
 
 
-	
+
 	public function formularioOperLogCotizacion()
 	{
 		$result = $this->result;
@@ -5086,9 +5113,8 @@ class Cotizacion extends MY_Controller
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioOperLog", $dataParaVista, true);
 
 		echo json_encode($result);
-
 	}
-	
+
 
 	public function generarOperLogCotizacion()
 	{
@@ -5096,7 +5122,7 @@ class Cotizacion extends MY_Controller
 		$post = $this->input->post('data');
 		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
-		
+
 		//var_dump($post); exit();
 		//  echo $this->db->last_query();exit();
 		$archivoCotizacion = [
@@ -5121,67 +5147,47 @@ class Cotizacion extends MY_Controller
 
 		foreach ($cabOperLog as $f => $d) {
 			$insertarCabOperLog = [
-			'idCuenta' => $d['idCuenta']
-			,'idCuentaCentroCosto' => $d['idCentroCosto']
-			,'idCuentaUsuario' => $post['CuentaUsuario']
-			,'codCotizacion' => $d['codCotizacion']
-			,'nombreCotizacion' => $d['nombreCotizacion']
-			,'ordenCompra' => null
-			,'dirigido' => $d['nombre']
-			,'fotografico' => $d['fotografia']
-			,'guia' => $d['guia']
-			,'otros' => $d['otros']
-			,'archivoCotizacion' => $archivoNameCotizacion
-			,'archivoOrden' => $archivoNameOrdenCompra
-			,'idEstado' => $d['idEstado']
-			,'estado' => $d['estado']
-			,'fecReg' => getSoloFecha()
-			,'horReg' => getSoloHora()
-			,'idUsuario' => $this->idUsuario
-			,'updateCC' => null
-			,'fechaUltimaModificacion' => null
-			,'flagImpactBussiness' => 1
-			// flagImpactBussiness
-		];
-		$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
-		$idOperlog = $this->db->insert_id();
-		
-		$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
-		// echo $this->db->last_query();exit();
-		foreach ($cabOperLogDetalle as $p => $q) {
-			$cabOperLogDetalleSub = $this->model->datosOperLogDetalleSub($q['idCotizacionDetalle'])['query']->result_array();
+				'idCuenta' => $d['idCuenta'], 'idCuentaCentroCosto' => $d['idCentroCosto'], 'idCuentaUsuario' => $post['CuentaUsuario'], 'codCotizacion' => $d['codCotizacion'], 'nombreCotizacion' => $d['nombreCotizacion'], 'ordenCompra' => null, 'dirigido' => $d['nombre'], 'fotografico' => $d['fotografia'], 'guia' => $d['guia'], 'otros' => $d['otros'], 'archivoCotizacion' => $archivoNameCotizacion, 'archivoOrden' => $archivoNameOrdenCompra, 'idEstado' => $d['idEstado'], 'estado' => $d['estado'], 'fecReg' => getSoloFecha(), 'horReg' => getSoloHora(), 'idUsuario' => $this->idUsuario, 'updateCC' => null, 'fechaUltimaModificacion' => null, 'flagImpactBussiness' => 1
+				// flagImpactBussiness
+			];
+			$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
+			$idOperlog = $this->db->insert_id();
 
-			foreach ($cabOperLogDetalleSub as $l => $m) {
-				$InsertOperLogDetalle = [
-					'idOperlog' => $idOperlog,
-					'idAlmacenOrigen' => $post['AlmacenOrigen'],
-					'idAlmacenDestino' => $m['idZona'],
-					'idTipoDestino' => ($m['flagOtrosPuntos'] == 0)? 1 : 2,
-					'idTipoTransporte' => $m['idTipoTransporte'],
-					'recojo' => '',
-					'idGuia' => null,
-					'fechaEstimada' => null,
-					'fechaEntrega' => null,
-					'estado' => 1,
-					'idTipoOrigen' => 1,
-					//'idTipoDestino' => 2,					
-				];
-				$this->db->insert('VisualImpact.logistica.operLogDetalle', $InsertOperLogDetalle);
-				$idOperlogDetalle = $this->db->insert_id();
-				$ArtOper = $this->model->datosOperLogDetalleArticulo($m['idZona'] , $q['idCotizacionDetalle'])['query']->result_array();
-				foreach ($ArtOper as $w => $r) {
-					$InsertOperLogArt = [
-						'idOperlogDetalle' => $idOperlogDetalle,
-						'idArticulo' => $r['idItem'],
-						'cantidad' => $r['cantidad'],
+			$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
+			// echo $this->db->last_query();exit();
+			foreach ($cabOperLogDetalle as $p => $q) {
+				$cabOperLogDetalleSub = $this->model->datosOperLogDetalleSub($q['idCotizacionDetalle'])['query']->result_array();
+
+				foreach ($cabOperLogDetalleSub as $l => $m) {
+					$InsertOperLogDetalle = [
+						'idOperlog' => $idOperlog,
+						'idAlmacenOrigen' => $post['AlmacenOrigen'],
+						'idAlmacenDestino' => $m['idZona'],
+						'idTipoDestino' => ($m['flagOtrosPuntos'] == 0) ? 1 : 2,
+						'idTipoTransporte' => $m['idTipoTransporte'],
+						'recojo' => '',
+						'idGuia' => null,
+						'fechaEstimada' => null,
+						'fechaEntrega' => null,
 						'estado' => 1,
+						'idTipoOrigen' => 1,
+						//'idTipoDestino' => 2,					
 					];
-					$this->db->insert('VisualImpact.logistica.operLogDetalleArticulo', $InsertOperLogArt);
-					$idOperArt = $this->db->insert_id();
+					$this->db->insert('VisualImpact.logistica.operLogDetalle', $InsertOperLogDetalle);
+					$idOperlogDetalle = $this->db->insert_id();
+					$ArtOper = $this->model->datosOperLogDetalleArticulo($m['idZona'], $q['idCotizacionDetalle'])['query']->result_array();
+					foreach ($ArtOper as $w => $r) {
+						$InsertOperLogArt = [
+							'idOperlogDetalle' => $idOperlogDetalle,
+							'idArticulo' => $r['idItem'],
+							'cantidad' => $r['cantidad'],
+							'estado' => 1,
+						];
+						$this->db->insert('VisualImpact.logistica.operLogDetalleArticulo', $InsertOperLogArt);
+						$idOperArt = $this->db->insert_id();
+					}
 				}
 			}
-		}
-
 		}
 
 		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
@@ -5199,6 +5205,4 @@ class Cotizacion extends MY_Controller
 		}
 		echo json_encode($result);
 	}
-
-	
 }

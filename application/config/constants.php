@@ -142,6 +142,7 @@ defined('COD_MOVIL')				or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL'])
 defined('COD_PERSONAL')			or define('COD_PERSONAL', ['id' => 5, 'nombre' => 'PERSONAL']);
 defined('COD_EVENTO')			or define('COD_EVENTO', ['id' => 6, 'nombre' => 'EVENTO']);
 defined('COD_DISTRIBUCION')	or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
+defined('COD_CONCURSO')			or define('COD_CONCURSO', ['id' => 8, 'nombre' => 'CONCURSO']);
 defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
 defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
 defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
@@ -204,7 +205,7 @@ defined("USER_GERENTE_OPERACIONES") or define("USER_GERENTE_OPERACIONES", 4);
 
 //CORREOS 
 defined("MAIL_DESARROLLO") or define("MAIL_DESARROLLO", ['eder.alata@visualimpact.com.pe']);
-defined("MAIL_FINANZAS") or define("MAIL_FINANZAS", ['lorena.vargas@visualimpact.com.pe','mariela.alva@visualimpact.com.pe','mery.espinoza@visualimpact.com.pe']);
+defined("MAIL_FINANZAS") or define("MAIL_FINANZAS", ['lorena.vargas@visualimpact.com.pe', 'mariela.alva@visualimpact.com.pe', 'mery.espinoza@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_OPERACIONES") or define("MAIL_COORDINADORA_OPERACIONES", ['andrivette.tavara@visualimpact.com.pe', 'margarita.bailon@visualimpact.com.pe', 'tamar.roque@visualimpact.com.pe']);
 defined("MAIL_COORDINADORA_COMPRAS") or define("MAIL_COORDINADORA_COMPRAS", ['anghy.vega@visualimpact.com.pe', 'jonathan.inostroza@visualimpact.com.pe']);
 defined("MAIL_GERENCIA_OPERACIONES") or define("MAIL_GERENCIA_OPERACIONES", ['milenka.gargurevich@visualimpact.com.pe']);

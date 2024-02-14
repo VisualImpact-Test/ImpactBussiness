@@ -208,7 +208,7 @@
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<div class="four wide field divTipoTarjVales d-none">
+							<div class="four wide field divTipoTarjValesConcurso d-none">
 								<div class="ui sub header">Tipo</div>
 								<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
 									<option class="text-titlecase" value>Seleccione</option>
@@ -228,7 +228,7 @@
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características">
 							</div>
-							<div class="five wide field divTipoTarjVales d-none">
+							<div class="five wide field divTipoTarjValesConcurso d-none">
 								<div class="ui sub header">Proveedor</div>
 								<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
 									<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
@@ -394,6 +394,37 @@
 								<div class="column">
 									<div class="ui sub header">Monto</div>
 									<input class="montoSubItemTarjVal keyUpChange onlyNumbers" name="montoSubItemTarjVal[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoTarjetasVales(this);">
+								</div>
+							</div>
+						</div>
+						<!-- Concurso -->
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_CONCURSO['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-concurso teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-concurso red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<div class="four column row divDetalleConcurso">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemConcurso" name="descripcionSubItemConcurso[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemConcurso keyUpChange onlyNumbers" name="cantidadSubItemConcurso[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemConcurso keyUpChange onlyNumbers" name="montoSubItemConcurso[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Porcentaje</div>
+									<input class="porcentajeSubItemConcurso keyUpChange onlyNumbers" name="porcentajeSubItemConcurso[0]" placeholder="Porcentaje" onchange="Cotizacion.calcularMontoConcurso(this);">
 								</div>
 							</div>
 						</div>

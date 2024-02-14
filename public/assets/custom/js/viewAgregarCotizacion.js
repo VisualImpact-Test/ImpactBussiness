@@ -687,7 +687,7 @@ var Cotizacion = {
 			// De Tarjetas y valess
 			parent.find('.divCarProv').removeClass('d-none');
 			parent.find('.divUnidadMedidida').removeClass('d-none');
-			parent.find('.divTipoTarjVales').addClass('d-none');
+			parent.find('.divTipoTarjValesConcurso').addClass('d-none');
 			parent.find('div.provList').find('select').removeAttr("patron");
 			parent.find('.descripcionSubItemTarjVal').removeAttr("patron");
 			parent.find('.montoSubItemTarjVal').removeAttr("patron");
@@ -795,7 +795,7 @@ var Cotizacion = {
 				// visibilidad
 				parent.find('.divCarProv').addClass('d-none');
 				parent.find('.divUnidadMedidida').addClass('d-none');
-				parent.find('.divTipoTarjVales').removeClass('d-none');
+				parent.find('.divTipoTarjValesConcurso').removeClass('d-none');
 				// patron
 				parent.find('div.provList').find('select').attr("patron", "requerido");
 				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
