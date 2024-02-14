@@ -3968,6 +3968,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 
+		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
 		$config['data']['cuenta'] = $this->model->obtenerCuenta()['query']->result_array();
 		$config['data']['cuentaCentroCosto'] = $this->model->obtenerCuentaCentroCosto()['query']->result_array();
 		$config['data']['solicitantes'] = $this->model->obtenerSolicitante()['query']->result_array();

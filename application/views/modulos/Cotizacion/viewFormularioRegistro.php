@@ -67,7 +67,7 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui dropdown parentDependiente centro-visible parentDependienteSemantic" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="#cuentaCentroCostoForm">
+				<select class="ui dropdown semantic-dropdown centro-visible parentDependienteSemantic" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="#cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>

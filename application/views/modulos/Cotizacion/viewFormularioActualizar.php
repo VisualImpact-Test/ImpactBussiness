@@ -56,13 +56,13 @@
 			</div>
 			<div class="five wide field">
 				<div class="ui sub header">Cuenta</div>
-				<select class="ui dropdown parentDependiente centro-visible" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+				<select class="ui dropdown semantic-dropdown centro-visible parentDependienteSemantic" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="#cuentaCentroCostoForm">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'selected' => $cotizacion['idCuenta']]); ?>
 				</select>
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui dropdown clearable semantic-dropdown centro-ocultado" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+				<select class="ui dropdown clearable semantic-dropdown centro-ocultado childdependienteSemantic" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase', 'selected' => $cotizacion['idCuentaCentroCosto']]); ?>
 				</select>
 			</div>
@@ -1305,3 +1305,4 @@
 <!-- Items -->
 <input id="itemsServicio" type="hidden" value='<?= json_encode($itemServicio) ?>'>
 <input id="tachadoDistribucion" type="hidden" value='<?= json_encode($tachadoDistribucion) ?>'>
+<input id="ordenServicioDatos" type="hidden" value='<?= json_encode($ordenServicio) ?>'>
