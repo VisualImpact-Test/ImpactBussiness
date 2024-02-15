@@ -443,4 +443,17 @@ class Oper extends MY_Controller
 		$title = $oper[0]['requerimiento'];
 		$mpdf->Output("$title.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 	}
+
+	public function generarRowParaOper()
+	{
+		$post = $this->input->post();
+
+		$where = ['soloCargosOcupados' => true];
+		if (!empty($post['idCuenta'])) $where['idCuenta'] = $post['idCuenta'];
+
+		//$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos($where)->result_array();
+		$dataParaVista['usuario'] = $this->db->get_where('sistema.usuario')->result_array();
+
+		echo $this->load->view('modulos/Operaciones/Oper/elements/rowAdicional', $dataParaVista, true);
+	}
 };

@@ -183,7 +183,80 @@ var Oper = {
 		div = t.closest('div.itemData');
 		$(div).remove();
 	},
-	generarSubItem: function (t, v) {
+	generarSubItem: function (t) {
+		div = t.closest('div.divItem');
+		espacio = t.closest('div.itemData');
+		tipo = $(espacio).find('select.tipo').val();
+		btnAd = $(t).closest('.divItem').find('.btnAdicionar');
+		btnAd.hide();
+
+		let detalle = $(t).data('detalle');
+		var contador = $("#tb_LD" + detalle + " tbody tr.dataItem").length;
+		if (tipo == '2') {
+			Fn.showLoading(true);
+			let post1 = $.post(
+				site_url + Oper.url + 'generarRowParaOper', {
+				'detalle': detalle,
+				'contador': contador,
+			});
+
+			post1.done(function (data) {
+				btnAd.show();
+				$(div).find('div.subItem').append(data);
+				$(div).find('div.subItemSpaceTextil').addClass('d-none');
+				$(div).find('div.subItemSpaceServicio').removeClass('d-none');
+				$(div).find('div.subItemSpaceTextil').find('input').removeAttr('patron');
+				$(div).find('div.subItemSpaceTextil').find('div.cantidadTextil').remove();
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			}).always(function () {
+				Fn.showLoading(false);
+			});
+		} else if (tipo == '9') {
+			Fn.showLoading(true);
+			let post1 = $.post(
+				site_url + Oper.url + 'generarRowParaOper', {
+				'detalle': detalle,
+				'contador': contador,
+			});
+
+			post1.done(function (data) {
+				btnAd.show();
+				$(div).find('div.subItem').append(data);
+				$(div).find('div.subItemSpaceServicio').find('input').removeAttr('patron');
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			}).always(function () {
+				Fn.showLoading(false);
+			});
+		} else {
+			Fn.showLoading(true);
+			let post1 = $.post(
+				site_url + Oper.url + 'generarRowParaOper', {
+				'detalle': detalle,
+				'contador': contador,
+			});
+
+			post1.done(function (data) {
+				btnAd.show();
+				$(div).find('div.subItem').append(data);
+				$(div).find('div.subItemSpaceTextil').addClass('d-none');
+				$(div).find('div.subItemSpaceServicio').addClass('d-none');
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			}).always(function () {
+				Fn.showLoading(false);
+			});
+			
+			$(div).find('div.subItemSpaceTextil').find('div.cantidadTextil').remove();
+		}
+		
+		let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
+		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
+
+
+	},
+	/*generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
 		espacio = t.closest('div.itemData');
 
@@ -355,7 +428,8 @@ var Oper = {
 		$(div).find('div.subItem').append(htmlAdd);
 		let cantidadSubItems = $(div).find('.subItemSpace').length;
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
-	},
+	},*/
+
 	cantidadPorItem: function (t) {
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
