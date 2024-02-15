@@ -1,3 +1,57 @@
+<?php if ($tipo == COD_TEXTILES['id']) {
+	$cantidadDatos = 'seven';
+}
+if ($tipo == COD_SERVICIO['id']) {
+	$cantidadDatos = 'seven';
+} ?>
+<div class="ui form">
+	<div class="<?= $cantidadDatos ?> fields">
+		<div class="field <?= $tipo == 0  ? '' : 'd-none'; ?>">
+			<label>Unidad Medida</label>
+			<input name="subItem_idUm" patron="requerido"><!-- Select -->
+		</div>
+		<div class="field <?= $tipo == COD_SERVICIO['id'] ? '' : 'd-none'; ?>">
+			<label>Descripción</label>
+			<input name="subItem_nombre" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Talla</label>
+			<input name="subItem_talla" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Genero</label>
+			<input name="subItem_genero" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Tela</label>
+			<input name="subItem_tela" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Color</label>
+			<input name="subItem_color" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] || $tipo == COD_SERVICIO['id'] ? '' : 'd-none'; ?>">
+			<label>Cantidad</label>
+			<input name="subItem_cantidad" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == 0 ? '' : 'd-none'; ?>">
+			<label>CantidadPDV</label>
+			<input name="subItem_cantidadPdv" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Costo</label>
+			<input name="subItem_costo" patron="requerido">
+		</div>
+		<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<label>Monto</label>
+			<input name="subItem_monto" patron="requerido">
+		</div>
+	</div>
+</div>
+
+
+
+<!-- 
 <div class="form-row subItemSpace col-md-12">
 	<div class="form-row subItemSpaceTextil col-md-12 border-bottom pt-2">
 		<div class="form-group col-md-1">
@@ -62,3 +116,4 @@
 		<input type="hidden" name="subItem_monto" value="">
 	</div>
 </div>
+-->
