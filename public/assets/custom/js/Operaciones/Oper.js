@@ -238,17 +238,16 @@ var Oper = {
 			});
 
 			post1.done(function (data) {
-				btnAd.show();
 				$(div).find('div.subItem').append(data);
 				$(div).find('div.subItemSpaceTextil').addClass('d-none');
 				$(div).find('div.subItemSpaceServicio').addClass('d-none');
+				$(div).find('div.subItemSpaceTextil').find('input').removeAttr('patron');
+				$(div).find('div.subItemSpaceServicio').find('input').removeAttr('patron');
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				Fn.loadSemanticFunctions();
 			}).always(function () {
 				Fn.showLoading(false);
 			});
-			
-			$(div).find('div.subItemSpaceTextil').find('div.cantidadTextil').remove();
 		}
 		
 		let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
