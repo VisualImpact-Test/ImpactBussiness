@@ -250,7 +250,7 @@ class Oper extends MY_Controller
 		$dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleOper(['idoper' => $idOper, 'estado' => 1])['query']->result_array();
 
 		$html = $this->load->view("modulos/Cotizacion/correoGeneracionOper", $dataParaVista, true);
-		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "SolicitudCotizacion/viewUpdateOper/{$idOper}"], true);
+		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html], true);
 
 		$usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_OPERACIONES])['query']->result_array();
 		$toOperaciones = [];

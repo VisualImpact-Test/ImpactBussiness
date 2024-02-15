@@ -72,4 +72,6 @@
     </fieldset>
 </div>
 <br>
+<? if (!empty($link)) { ?>
 <h4 style="margin: 0px;">Se pide a los implicados rellenar los costos de cada item para completar la cotización.</h4>
+<? } ?>
