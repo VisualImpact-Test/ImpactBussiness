@@ -8,6 +8,7 @@ class Oper extends MY_Controller
 	{
 		parent::__construct();
 		$this->load->model('M_Oper', 'model');
+		$this->load->model('M_control', 'model_control');
 		$this->load->model('M_Cotizacion', 'model_cotizacion');
 		$this->load->model('M_Item', 'model_item');
 	}
@@ -244,6 +245,32 @@ class Oper extends MY_Controller
 		if (!empty($insertDataSub)) {
 			$insert = $this->model->insertarMasivo('orden.operDetalleSub', $insertDataSub);
 		}
+
+		$dataParaVista = [];
+		$dataParaVista['detalle'] = $this->model->obtenerInformacionDetalleOper(['idoper' => $idOper, 'estado' => 1])['query']->result_array();
+
+		$html = $this->load->view("modulos/Cotizacion/correoGeneracionOper", $dataParaVista, true);
+		$correo = $this->load->view("modulos/Cotizacion/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . "SolicitudCotizacion/viewUpdateOper/{$idOper}"], true);
+
+		$usuariosOperaciones = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_OPERACIONES])['query']->result_array();
+		$toOperaciones = [];
+		foreach ($usuariosOperaciones as $usuario) {
+			$toOperaciones[] = $usuario['email'];
+		}
+
+		$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => USER_COORDINADOR_COMPRAS])['query']->result_array();
+		$toCompras = [];
+		foreach ($usuariosCompras as $usuario) {
+			$toCompras[] = $usuario['email'];
+		}
+
+		$config = [
+			'to' => $toOperaciones,
+			'cc' => $toCompras,
+			'asunto' => 'Generación de Oper',
+			'contenido' => $correo,
+		];
+		email($config);
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';

@@ -173,6 +173,9 @@ class M_Oper extends MY_Model
 
 	public function obtenerInformacionDetalleOper($params = [])
 	{
+		$filtros = "";
+		$filtros .= !empty($params['estado']) ? ' AND od.estado = ' . $params['estado'] : '';
+		
 		$sql = "
 			SELECT 
 				o.*, od.idOperDetalle, od.idItem,
@@ -182,7 +185,7 @@ class M_Oper extends MY_Model
 				i.nombre AS item, 'Coordinadora de compras' AS usuarioReceptor,
 				ue.nombres + ' ' + ISNULL(ue.apePaterno, '') + ' ' + ISNULL(ue.apeMaterno, '') AS usuarioRegistro,
 				cu.nombre AS cuenta, cc.subcanal AS centroCosto 
-				, um.nombre as unidadMedida
+				, um.nombre as unidadMedida, od.cantidad, od.costoUnitario AS costo, od.costoSubTotalGap AS subTotal
 			FROM orden.oper o 
 			JOIN orden.operDetalle od ON od.idOper = o.idOper and od.estado = 1 
 			LEFT JOIN compras.item i ON i.idItem = od.idItem 
@@ -190,7 +193,8 @@ class M_Oper extends MY_Model
 			LEFT JOIN rrhh.dbo.empresa cu ON cu.idEmpresa = o.idCuenta 
 			LEFT JOIN rrhh.dbo.empresa_canal cc ON cc.idEmpresaCanal = o.idCentroCosto 
 			LEFT JOIN compras.unidadMedida um ON um.idUnidadMedida = od.idTipo
-			WHERE o.idOper = " . $params['idoper'] . " ORDER BY o.idOper DESC
+			WHERE o.idOper = " . $params['idoper'] . " {$filtros}
+			ORDER BY o.idOper DESC
 			";
 		$query = $this->db->query($sql);
 		if ($query) {
