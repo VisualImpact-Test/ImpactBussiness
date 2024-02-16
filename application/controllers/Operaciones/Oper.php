@@ -450,8 +450,11 @@ class Oper extends MY_Controller
 
 		$where = ['soloCargosOcupados' => true];
 		if (!empty($post['idCuenta'])) $where['idCuenta'] = $post['idCuenta'];
-		$dataParaVista['tipo'] = $post['tipo'];
-		//$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos($where)->result_array();
+		if($post['tipo'] != 0) {
+			$dataParaVista['tipo'] = $post['tipo'];
+		} else {
+			$dataParaVista['tipo'] = 0;
+		}
 		$dataParaVista['usuario'] = $this->db->get_where('sistema.usuario')->result_array();
 
 		echo $this->load->view('modulos/Operaciones/Oper/elements/rowAdicional', $dataParaVista, true);

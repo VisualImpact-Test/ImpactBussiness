@@ -190,93 +190,30 @@ var Oper = {
 		btnAd = $(t).closest('.divItem').find('.btnAdicionar');
 		btnAd.hide();
 
-		// let detalle = $(t).data('detalle');
-		// var contador = $("#tb_LD" + detalle + " tbody tr.dataItem").length;
-		Fn.showLoading(true);
-		let post1 = $.post(
-			site_url + Oper.url + 'generarRowParaOper', {
-			'tipo': tipo
-			// 'detalle': detalle,
-			// 'contador': contador,
-		});
-
-		post1.done(function (data) {
-			btnAd.show();
-			$(div).find('div.subItem').append(data);
-			// $(div).find('div.subItemSpaceTextil').addClass('d-none');
-			// $(div).find('div.subItemSpaceServicio').removeClass('d-none');
-			// $(div).find('div.subItemSpaceTextil').find('input').removeAttr('patron');
-			// $(div).find('div.subItemSpaceTextil').find('div.cantidadTextil').remove();
-			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-			Fn.loadSemanticFunctions();
-		}).always(function () {
-			Fn.showLoading(false);
-		});
-
-		/////////////////////////////////////////
-		// if (tipo == '2') {
-		// 	Fn.showLoading(true);
-		// 	let post1 = $.post(
-		// 		site_url + Oper.url + 'generarRowParaOper', {
-		// 		// 'detalle': detalle,
-		// 		// 'contador': contador,
-		// 	});
-
-		// 	post1.done(function (data) {
-		// 		btnAd.show();
-		// 		$(div).find('div.subItem').append(data);
-		// 		$(div).find('div.subItemSpaceTextil').addClass('d-none');
-		// 		$(div).find('div.subItemSpaceServicio').removeClass('d-none');
-		// 		$(div).find('div.subItemSpaceTextil').find('input').removeAttr('patron');
-		// 		$(div).find('div.subItemSpaceTextil').find('div.cantidadTextil').remove();
-		// 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-		// 		Fn.loadSemanticFunctions();
-		// 	}).always(function () {
-		// 		Fn.showLoading(false);
-		// 	});
-		// } else if (tipo == '9') {
-		// 	Fn.showLoading(true);
-		// 	let post1 = $.post(
-		// 		site_url + Oper.url + 'generarRowParaOper', {
-		// 		'detalle': detalle,
-		// 		'contador': contador,
-		// 	});
-
-		// 	post1.done(function (data) {
-		// 		btnAd.show();
-		// 		$(div).find('div.subItem').append(data);
-		// 		$(div).find('div.subItemSpaceServicio').find('input').removeAttr('patron');
-		// 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-		// 		Fn.loadSemanticFunctions();
-		// 	}).always(function () {
-		// 		Fn.showLoading(false);
-		// 	});
-		// } else {
-		// 	Fn.showLoading(true);
-		// 	let post1 = $.post(
-		// 		site_url + Oper.url + 'generarRowParaOper', {
-		// 		'detalle': detalle,
-		// 		'contador': contador,
-		// 	});
-
-		// 	post1.done(function (data) {
-		// 		$(div).find('div.subItem').append(data);
-		// 		$(div).find('div.subItemSpaceTextil').addClass('d-none');
-		// 		$(div).find('div.subItemSpaceServicio').addClass('d-none');
-		// 		$(div).find('div.subItemSpaceTextil').find('input').removeAttr('patron');
-		// 		$(div).find('div.subItemSpaceServicio').find('input').removeAttr('patron');
-		// 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
-		// 		Fn.loadSemanticFunctions();
-		// 	}).always(function () {
-		// 		Fn.showLoading(false);
-		// 	});
-		// }
-
-		let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
-		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
-
-
+		if(tipo == 2 || tipo == 9) {
+			Fn.showLoading(true);
+			let post1 = $.post(
+				site_url + Oper.url + 'generarRowParaOper', {
+				'tipo': tipo
+			});
+	
+			post1.done(function (data) {
+				btnAd.show();
+				$(div).find('div.subItem').append(data);
+				$(espacio).find('div.field.d-none').find('input').removeAttr('patron');
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			}).always(function () {
+				Fn.showLoading(false);
+			});
+	
+			let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
+			$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
+		} else {
+			btnAd.hide();
+		}
 	},
+
 	/*generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
 		espacio = t.closest('div.itemData');
