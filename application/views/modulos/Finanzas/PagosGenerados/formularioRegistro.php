@@ -59,16 +59,16 @@
                             </div>  
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Tipo Comprobante Pago:</label>
+                                <label>Metodo de Pago:</label>
                                     <select class="form-control  semantic-dropdown" id="tipoComprobante_P<?= $id ?>" name="tipoComprobante_P<?= $id ?>"   patron="requerido">
-                                    <?= htmlSelectOptionArray2(['query' => $tipoComprobante,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+                                    <?= htmlSelectOptionArray2(['query' => $motodoPago,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
                                     </select>
                                 </div>
                             </div>
 
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Numero Comprobante Pago:</label>
+                                <label>Codigo Pago:</label>
                                 <input class="form-control " id="numeroComprobante_P<?= $id ?>" name="numeroComprobante_P<?= $id ?>" patron="requerido" value="<?= $v['numComprobantePago']; ?>">
                                 </div>
                             </div>  
@@ -120,13 +120,13 @@
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Porcentaje:</label>
+                                <label>Porcentaje Detracción:</label>
                                 <input class="form-control onlyNumbers porcentaje" data-id="<?= $id ?>"  id="porcentajeDetraccion_P<?= $id ?>" name="porcentajeDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['porcentajeDetraccion']; ?>">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
-                                <label>Detraccion:</label>
+                                <label>Monto Detracción:</label>
                                 <input class="form-control  " readonly id="montoDetraccion_P<?= $id ?>" name="montoDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['montoDetraccion']; ?>">
                                 </div>
                             </div>
