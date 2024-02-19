@@ -3,7 +3,7 @@
 		<div class="col-md-12 child-divcenter">
 			<fieldset class="scheduler-border">
 				<input class="d-none" id="idProveedorServicioGenerado" name="idProveedorServicioGenerado" value="<?= $pagosGenerados[0]['idProveedorServicioGenerado'] ?>">
-				<legend class="scheduler-border">Datos </legend>
+				<legend class="scheduler-border">Registrar Descuento </legend>
 				<div class="">
                     <div class="row">
                         <div class="control-group child-divcenter row" style="width:53%;margin-left: 0px;margin-right: 0px;">
@@ -95,7 +95,7 @@
                     <div class="fields">
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen">
-                            <label>Tipo Comprobante:</label>
+                            <label>Método de descuento:</label>
                                 <select class="form-control col-md-12 semantic-dropdown" id="tipoNota_<?= $id ?>" name="tipoNota_<?= $id ?>"  >
                                     <?= htmlSelectOptionArray2(['query' => $tipoNota, 'class' => 'text-titlecase', 'title' => 'Seleccione' , 'selected' => $v['idTipoNota'] ]); ?>
                                 </select>

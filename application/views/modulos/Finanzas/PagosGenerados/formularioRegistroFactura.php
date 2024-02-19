@@ -43,7 +43,7 @@
                         <div class="fields">
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen">
-                                <label>Monto</label>
+                                <label>Fecha Emision</label>
                                 <div class="ui calendar date-semantic col-md-12">
                                     <div class="ui input left icon fluid">
                                         <i class="calendar icon"></i>

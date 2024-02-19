@@ -73,6 +73,23 @@ class M_PagosGenerados extends MY_Model
 
 		return $this->resultado;
 	}
+	
+
+	public function ObtenerDatosMetodoPago($params = [])
+	{
+	
+		$sql = "select idMetodoPago as id , nombre as value from finanzas.proveedorServicioMetodoPago";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+
+
 
 	public function ObtenerDatosTipoComprobante($params = [])
 	{
