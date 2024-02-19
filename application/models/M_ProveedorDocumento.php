@@ -23,6 +23,7 @@ class M_ProveedorDocumento extends MY_Model
 						ISNULL(c.numeroGR, 'PENDIENTE') as numeroGR,
 						ISNULL(oc.igv, 0) as igv,
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto,
+						0 AS flagOcLibre,
 						REPLACE(
 								   STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + ' - ' + ifb_inner.cuenta
 										  FROM compras.informacionBancariaProveedor as ifb_inner
@@ -78,6 +79,7 @@ class M_ProveedorDocumento extends MY_Model
 						), 1, 2, ''),'PENDIENTE') as numeroGR,
 						oc.IGVPorcentaje as igv, 
 						emp.nombre as cuenta, cc.canal + ' / ' + cc.subcanal as centroCosto,
+						1 AS flagOcLibre,
 						REPLACE(
 								   STUFF((SELECT CHAR(13) + CHAR(10) + b.nombre + ' - ' + ifb_inner.cuenta
 										  FROM compras.informacionBancariaProveedor as ifb_inner

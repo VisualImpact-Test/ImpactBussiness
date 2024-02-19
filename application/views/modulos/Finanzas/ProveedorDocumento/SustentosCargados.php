@@ -21,9 +21,15 @@
 								<label class="ui green basic label large">Aprobado</label>
 							</td>
 							<td>
-								<a class="ui button btn-descargarOc" target="_blank" data-id="<?= $idOrdenCompra; ?>" data-flag="<?= $flagOcLibre ?>">
-									<i class="icon eye"></i>
-								</a>
+								<?php if ($flagOcLibre == '1') : ?>
+									<a href="<?= base_url() . 'OrdenCompra/visualizarPdfOCLibre/' . $idOrdenCompra; ?>?flag=<?= $flagOcLibre ?>&d=true" class="ui button" data-id="<?= $idOrdenCompra ?>" target="_blank">
+										<i class="icon eye"></i>
+									</a>
+								<?php else : ?>
+									<a href="<?= base_url() . 'Cotizacion/descargarOCDirectoProvServ/' . $idOrdenCompra; ?>?flag=<?= $flagOcLibre ?>" class="ui button" data-id="<?= $idOrdenCompra ?>" target="_blank">
+										<i class="icon eye"></i>
+									</a>
+								<?php endif; ?>
 							</td>
 							<td class="text-center"></td>
 						</tr>

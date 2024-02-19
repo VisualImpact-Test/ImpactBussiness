@@ -2937,7 +2937,7 @@ class Cotizacion extends MY_Controller
 
 	public function descargarOCDirectoProvServ($oc = null)
 	{
-		$this->descargarOrdenCompraProveedorServicio($oc, true);
+		$this->descargarOrdenCompraProveedorServicio($oc, false);
 	}
 
 	public function descargarOrdenCompra($t = null, $visible = false)
@@ -3097,7 +3097,6 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cuentas'] = implode(', ', $cuentas);
 		$dataParaVista['centrosCosto'] = implode(', ', $centrosDeCosto);
 		$idCotizacion = implode(",", $ids);
-
 		require APPPATH . '/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf([
 			'mode' => 'utf-8',
@@ -3129,11 +3128,11 @@ class Cotizacion extends MY_Controller
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 
-		$cod_oc = generarCorrelativo($dataParaVista['data']['idOrdenCompra'], 6);
+		$cod_oc = generarCorrelativo($dataParaVista['data']['seriado'], 6);
 		if ($visible) {
-			$mpdf->Output("OC{$cod_oc}.pdf", 'I');
+			$mpdf->Output("{$cod_oc}.pdf", 'I');
 		} else {
-			$mpdf->Output("OC{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+			$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
 		}
 	}
 
