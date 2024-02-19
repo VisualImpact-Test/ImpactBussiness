@@ -23,6 +23,26 @@ var PagosGenerados = {
 			//Fn.showLoading(false);
 		});
 
+		$(document).on('click', '#btn-nuevoPago', function () {
+		// console.log("hola");
+		let data = { 'idPagoGenerado': 1};
+		let jsonString = { 'data': JSON.stringify(data) };
+		let config = { 'url': PagosGenerados.url + 'formularioRegistrarNuevoPago', 'data': jsonString };
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			fn[1] = 'Fn.showConfirm({ idForm: "formRegistrarNuevoPago", fn: "PagosGenerados.registrarPagoLibre()", content: "¿Esta seguro de registrar pago?" });';
+			btn[1] = { title: 'Registrar', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '70%' });
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
+	
+		});
+		});
+
 		$(document).on('click', '.btn-registrarPagos', function () {
 			var idPagoGenerado = $(this).data("id");
 
@@ -213,7 +233,20 @@ var PagosGenerados = {
 		});	
 
 
-
+		$(document).on('keyup', '.monto', function () {
+			var monto = $('#monto_M').val();
+			var porcentajeDetraccion = $('#porcentajeDetraccion_M').val();
+			var montFinal = ( monto * porcentajeDetraccion ) /100 ;
+			
+			$('#montoDetraccion_M').val(montFinal);
+		});
+		$(document).on('keyup', '.porcentaje', function () {
+			var monto = $('#monto_M').val();
+			var porcentajeDetraccion = $('#porcentajeDetraccion_M').val();
+			var montFinal = ( monto * porcentajeDetraccion ) /100 ;
+			
+			$('#montoDetraccion_M').val(montFinal);
+		});
 
 		//porcentajeDetraccion
 		$(document).on('keyup', '.monto', function () {
@@ -221,6 +254,7 @@ var PagosGenerados = {
 			var monto = $('#monto_P' + id ).val();
 			var porcentajeDetraccion = $('#porcentajeDetraccion_P' + id ).val();
 			var montFinal = ( monto * porcentajeDetraccion ) /100 ;
+			
 			$('#montoDetraccion_P' + id).val(montFinal);
 		});
 		$(document).on('keyup', '.porcentaje', function () {
@@ -276,16 +310,35 @@ var PagosGenerados = {
 		let config = { 'url': PagosGenerados.url + 'formRegistrarNotaCredito', 'data': jsonString };
 		// console.log(config);
 		$.when(Fn.ajax(config)).then(function (a) {
-			// let btn = [];
-			// let fn = [];
+			let btn = [];
+			let fn = [];
 
-			// fn[0] = 'Fn.closeModals(10);';
-			// btn[0] = { title: 'Continuar', fn: fn[0] };
+			fn[0] = 'Fn.closeModals(10);';
+			btn[0] = { title: 'Continuar', fn: fn[0] };
 
-			// Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
-			//$('#btn-filtrarPagosGenerados').click();
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			$('#btn-filtrarPagosGenerados').click();
 		});
 	},
+
+	registrarPagoLibre: function () {
+		++modalId;
+		var dataFn = Fn.formSerializeObject('formRegistrarNuevoPago');
+		let jsonString = { 'data': JSON.stringify(dataFn) };
+		let config = { 'url': PagosGenerados.url + 'registrarPagoLibre', 'data': jsonString };
+		
+		$.when(Fn.ajax(config)).then(function (a) {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.closeModals(10);';
+			btn[0] = { title: 'Continuar', fn: fn[0] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			$('#btn-filtrarPagosGenerados').click();
+		});
+	},
+	
 
 }
 
