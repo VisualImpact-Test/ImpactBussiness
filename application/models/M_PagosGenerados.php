@@ -74,6 +74,20 @@ class M_PagosGenerados extends MY_Model
 		return $this->resultado;
 	}
 	
+	public function ObtenerDatosTipoDocumento($params = [])
+	{
+	
+		$sql = "select idTipoDocumento as id , breve as value  from sistema.usuarioTipoDocumento
+		where 1=1 and idTipoDocumento in (2,1,3,6)";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
 
 	public function ObtenerDatosMetodoPago($params = [])
 	{

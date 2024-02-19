@@ -338,6 +338,7 @@ class PagosGenerados extends MY_Controller
 	//	echo $this->db->last_query();exit();
 		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
 		$dataParaVista['motodoPago'] = $this->model->ObtenerDatosMetodoPago($post)['query']->result_array();
+        $dataParaVista['tipoDocumento'] = $this->model->ObtenerDatosTipoDocumento($post)['query']->result_array();
 
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
@@ -356,6 +357,18 @@ class PagosGenerados extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 		$this->db->trans_begin();
+		$datosContacto = [
+			'idTipoDocumento' => $post['tipoDocumento'],
+			'numDocumento' => $post['numDocumento'],
+			'datosProveedor' => $post['datosProveedor'],
+			'descripcionServicio' => $post['descripcionServicio'],
+			'nomContacto' => $post['nomContacto'],
+			'telContacto' => $post['telContacto'],
+
+		];
+		$this->db->insert('finanzas.proveedorServicioDatosPagosLibre', $datosContacto);
+		$idDatosPagoLibre = $this->db->insert_id();
+
 		$archivo = [
 			'base64' => $post['cuentaPrincipalPagoFile-item'],
 			'name' => $post['cuentaPrincipalPagoFile-name'],
@@ -366,7 +379,7 @@ class PagosGenerados extends MY_Controller
 		$archivoName = $this->saveFileWasabi($archivo);
 		$tipoArchivo = explode('/', $archivo['type']);
 		$insertFactura[] = [
-			//'idServicioPagoComprobante' => $post['idServicioPagoComprobante'],
+			'idDatosPagosLibre' => $idDatosPagoLibre,
 			'fechaPagoComprobante' => $post['fechaPagoComprobante'],
 			'idTipoComprobante' => $post['tipoComprobante'],
 			'numeroComprobante' => $post['numeroComprobante'],

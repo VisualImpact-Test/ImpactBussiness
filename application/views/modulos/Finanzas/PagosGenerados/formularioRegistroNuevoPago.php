@@ -4,32 +4,57 @@
 			<fieldset class="scheduler-border">
 				
 				<legend class="scheduler-border">Datos Generales</legend>
-				<div >
-                    <div class="row">
-                        <div class="control-group child-divcenter row" style="width:60%">
-                            <label class="form-control col-md-3" for="razonSocial" style="border:0px;">Razón Social :</label>
-                            <input class="form-control col-md-9" id="razonSocial" name="razonSocial" patron="requerido" value="">
+				    <div >
+                        <div class="fields">
+                            <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                    <label>Tipo Documento:</label>
+                                    <select class="form-control  semantic-dropdown" id="tipoDocumento" name="tipoDocumento"   patron="requerido">
+                                    <?= htmlSelectOptionArray2(['query' => $tipoDocumento,'selected' =>  3  , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="field" style="width:30%">
+                                <div class="field sixteen">
+                                    <label>Numero Documento:</label>
+                                    <input class="form-control " id="numDocumento" name="numDocumento" patron="requerido" value="">
+                                </div>
+                            </div>
+                            <div class="field" style="width:50%">
+                                <div class="field sixteen">
+                                    <label>Datos Proveedor:</label>
+                                    <input class="form-control " id="datosProveedor" name="datosProveedor" patron="requerido" value="">
+                                </div>
+                            </div>
+                            
                         </div>
-                        <div class="control-group child-divcenter row" style="width:39%">
-                            <label class="form-control col-md-4" for="ruc" style="border:0px;">RUC :</label>
-                            <input class="form-control col-md-8" id="ruc" name="ruc" patron="requerido" value="">
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="control-group child-divcenter row" style="width:45%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-4" for="descripcionServicio" style="border:0px;">Descripcion Servicio :</label>
-                            <input class="form-control col-md-8" id="descripcionServicio" name="descripcionServicio"  value="">
-                        </div>
-                        <div class="control-group child-divcenter row" style="width:55%;margin-left: 0px;margin-right: 0px;">
-                            <label class="form-control col-md-4" for="nombreContacto" style="border:0px;">Nombre Contacto :</label>
-                            <input class="form-control col-md-8" id="nombreContacto" name="nombreContacto"  value="">
-                        </div>
+                   
+                    <div class="fields">
+                            <div class="field" style="width:20%">
+                                <div class="field sixteen">
+                                    <label>Descripcion Servicio:</label>
+                                    <input class="form-control " id="descripcionServicio" name="descripcionServicio" patron="requerido" value="">
+                                </div>
+                            </div>
+
+                            <div class="field" style="width:45%">
+                                <div class="field sixteen">
+                                    <label>Nombre Contacto:</label>
+                                    <input class="form-control " id="nomContacto" name="nomContacto" patron="requerido" value="">
+                                </div>
+                            </div>
+                            <div class="field" style="width:35%">
+                                <div class="field sixteen">
+                                    <label>Telefono Contacto:</label>
+                                    <input class="form-control " id="telContacto" name="telContacto" patron="requerido" value="">
+                                </div>
+                            </div>
+                   
                     </div>
 				</div>
 			</fieldset>
             <fieldset class="scheduler-border">
-            <legend class="scheduler-border">Datos Comprobante</legend>
+            <legend class="scheduler-border">Datos Pagos</legend>
                 <div id="cargar-factura">
                     
                         
