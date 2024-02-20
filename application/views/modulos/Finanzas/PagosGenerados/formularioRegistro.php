@@ -60,7 +60,7 @@
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Metodo de Pago:</label>
-                                    <select class="form-control  semantic-dropdown" id="tipoComprobante_P<?= $id ?>" name="tipoComprobante_P<?= $id ?>"   patron="requerido">
+                                    <select class="form-control  semantic-dropdown" id="metodoPago_P<?= $id ?>" name="metodoPago_P<?= $id ?>"   patron="requerido">
                                     <?= htmlSelectOptionArray2(['query' => $motodoPago,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
                                     </select>
                                 </div>

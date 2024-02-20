@@ -297,7 +297,8 @@ class PagosGenerados extends MY_Controller
 		$insertFactura[] = [
 			'idServicioPagoComprobante' => $post['idServicioPagoComprobante'],
 			'fechaPagoComprobante' => $post['fechaPagoComprobante'],
-			'idTipoComprobante' => $post['tipoComprobante'],
+			//'idTipoComprobante' => $post['tipoComprobante'],
+			'idMetodoPago' => $post['idMetodoPago'],
 			'numeroComprobante' => $post['numeroComprobante'],
 			'montoPagado' => $post['monto'],
 			'idCentroCosto' => $post['centro'],

@@ -284,6 +284,7 @@ class M_PagosGenerados extends MY_Model
 		$sql = "
 		select 
 		pspc.idProveedorServicioGenerado,
+		pspe.idServicioPagoEfectuado,
 		ps.datosProveedor , 
 		ps.numDocumento ,
 		psp.descripcionServicio,
@@ -293,7 +294,8 @@ class M_PagosGenerados extends MY_Model
 		pspc.numeroComprobante ,
 		pspc.fechaEmision,
 		pspe.idTipoComprobante as tipoComprobantePago ,
-		(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
+		--(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
+		smp.nombre as metodoPago ,
 		pspe.numeroComprobante as numComprobantePago,
 		pspe.fechaPagoComprobante,
 		pspc.monto,
@@ -306,11 +308,14 @@ class M_PagosGenerados extends MY_Model
 		left join finanzas.proveedorServicioPago as psp on psp.idProveedorServicioPago = pspg.idProveedorServicioPago
 		left join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
 		left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
-				
+		left join finanzas.proveedorServicioMetodoPago as smp on smp.idMetodoPago = pspe.idMetodoPago
+
+
 		UNION
 
 		SELECT 
 		null as idProveedorServicioGenerado,
+		pspe.idServicioPagoEfectuado,
 		pdpl.datosProveedor,
 		pdpl.numDocumento ,
 		pdpl.descripcionServicio,
@@ -320,7 +325,8 @@ class M_PagosGenerados extends MY_Model
 		null as numeroComprobante,
 		pspe.fechaPagoComprobante as fechaEmision,
 		pspe.idTipoComprobante as tipoComprobantePago,
-		(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
+		--(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
+		smp.nombre as metodoPago ,
 		pspe.numeroComprobante as numComprobantePago,
 		pspe.fechaPagoComprobante,
 		null as monto,
@@ -329,8 +335,10 @@ class M_PagosGenerados extends MY_Model
 		null as nombreEstado
 		from finanzas.proveedorServicioPagoEfectuados as pspe
 		left join finanzas.proveedorServicioDatosPagosLibre as pdpl on pdpl.idDatosPagosLibres = pspe.idDatosPagosLibre 
-		where  pspe.flagPagoLibre = 1
+		left join finanzas.proveedorServicioMetodoPago as smp on smp.idMetodoPago = pspe.idMetodoPago
 
+		where  pspe.flagPagoLibre = 1
+		ORDER BY  pspe.idServicioPagoEfectuado DESC;
 				
 		";
 

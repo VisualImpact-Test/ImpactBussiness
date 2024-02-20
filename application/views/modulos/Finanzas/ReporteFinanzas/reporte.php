@@ -22,7 +22,7 @@
                 <th>FECHA EMISION</th>
                 <th>MONTO FACTURADO SOLES</th>
                 <th>MONTO FACTURADO DOLARES</th>
-                <th>TIPO COMPROBANTE</th>
+                <th>METODO PAGO</th>
                 <th>NUM. COMPROBANTE</th>
                 <th>FECHA PAGO</th>
                 <th>MONTO PAGADO SOLES</th>
@@ -45,7 +45,7 @@
                 <td><?= date_change_format($row['fechaEmision']); ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['monto']) : '-' ; ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==2) ? numeroVista($row['monto']) : '-' ; ?></td>
-                <td><?= $row['estadopago']; ?></td>
+                <td><?= $row['metodoPago']; ?></td>
                 <td><?= $row['numComprobantePago']; ?></td>
                 <td><?= date_change_format($row['fechaPagoComprobante']); ?></td>
                 <td class="text-right"><?= ($row['idMoneda']==1) ? numeroVista($row['montoPagado']) : '-'; ?></td>

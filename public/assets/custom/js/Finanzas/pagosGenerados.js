@@ -192,7 +192,7 @@ var PagosGenerados = {
 		$(document).on('click', '#new-RegistrarPago', function () {
 			var id = $(this).data("id");
 			
-			var tipoComprobante = $('select[name="tipoComprobante_P' + id + '"]').val();
+			var metodoPago = $('select[name="metodoPago_P' + id + '"]').val();
 			var numeroComprobante = $('input[name="numeroComprobante_P' + id + '"]').val();
 			var fechaPagoComprobante = $('input[name="fechaPagoComprobante_P' + id + '"]').val();
 			var cuenta = $('[data-cuentap="cuenta_p' + id + '"]').val();
@@ -206,7 +206,7 @@ var PagosGenerados = {
 		
 			// console.log(centro);
 			let data = { 'idServicioPagoComprobante': id , 
-			'tipoComprobante':tipoComprobante , 
+			'idMetodoPago':metodoPago , 
 			'numeroComprobante':numeroComprobante , 
 			'fechaPagoComprobante':fechaPagoComprobante,
 			'cuenta': cuenta  , 
