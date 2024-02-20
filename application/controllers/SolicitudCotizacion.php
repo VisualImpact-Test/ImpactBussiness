@@ -1925,7 +1925,7 @@ class SolicitudCotizacion extends MY_Controller
 		$dataParaVista['imagenesDeItem'] = [];
 		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
 			foreach ($detalleCotizacion as $key => $value) {
-				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->where('estado', 1)->get('compras.itemImagen')->result_array();
 			}
 		}
 		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
