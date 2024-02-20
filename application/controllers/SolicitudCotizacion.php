@@ -1925,7 +1925,7 @@ class SolicitudCotizacion extends MY_Controller
 		$dataParaVista['imagenesDeItem'] = [];
 		if ($dataParaVista['data']['mostrar_imagenes'] == '1') {
 			foreach ($detalleCotizacion as $key => $value) {
-				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->where('estado', 1)->get('compras.itemImagen')->result_array();
+				$dataParaVista['imagenesDeItem'][$value['idItem']] = $this->db->where('idItem', $value['idItem'])->get('compras.itemImagen')->result_array();
 			}
 		}
 		if ($dataParaVista['data']['mostrar_imagenesCoti'] == '1') {
@@ -1943,6 +1943,8 @@ class SolicitudCotizacion extends MY_Controller
 
 		$dataParaVista['detalle'] = $detalleCotizacion;
 
+		var_dump($dataParaVista['detalle']);
+		exit;
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle(checkAndConvertToArray($post['idCotizacion'])[0]);
 		$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle(checkAndConvertToArray($post['idCotizacion'])[0]);
