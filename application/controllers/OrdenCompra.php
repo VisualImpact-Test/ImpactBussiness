@@ -757,10 +757,14 @@ class OrdenCompra extends MY_Controller
 		$cod_oc = generarCorrelativo($dataParaVista['detalle'][0]['seriado'], 6) . "-"
 			. $dataParaVista['detalle'][0]['concepto'];
 		$descarga = $this->input->get('d');
-		if ($visible && !isset($descarga)) {
-			$mpdf->Output("{$cod_oc}.pdf", 'I');
-		} else {
+		if(isset($descarga)) {
 			$mpdf->Output("{$dataParaVista['detalle'][0]['seriado']}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+		} else {
+			if ($visible) {
+				$mpdf->Output("{$cod_oc}.pdf", 'I');
+			} else {
+				$mpdf->Output("{$cod_oc}.pdf", \Mpdf\Output\Destination::DOWNLOAD);
+			}
 		}
 	}
 	public function formularioRegistroGrOrdenCompraLibre()
