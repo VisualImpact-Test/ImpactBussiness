@@ -306,7 +306,31 @@ class M_PagosGenerados extends MY_Model
 		left join finanzas.proveedorServicioPago as psp on psp.idProveedorServicioPago = pspg.idProveedorServicioPago
 		left join finanzas.proveedorServicio as ps on ps.idProveedorServicio = psp.idProveedorServicio
 		left join finanzas.estadoPago as ep on ep.idEstadoPago = pspg.idEstadoPago
-		order by pspc.idProveedorServicioGenerado asc
+				
+		UNION
+
+		SELECT 
+		null as idProveedorServicioGenerado,
+		pdpl.datosProveedor,
+		pdpl.numDocumento ,
+		pdpl.descripcionServicio,
+		pspe.idMoneda,
+		null as tipoComprobanteFactura,
+		'Libre' as estadofactura, 
+		null as numeroComprobante,
+		pspe.fechaPagoComprobante as fechaEmision,
+		pspe.idTipoComprobante as tipoComprobantePago,
+		(select nombre from compras.comprobante as cp where pspe.idTipoComprobante = cp.idComprobante  ) as estadopago ,
+		pspe.numeroComprobante as numComprobantePago,
+		pspe.fechaPagoComprobante,
+		null as monto,
+		pspe.montoPagado,
+		null AS idEstadoPago,
+		null as nombreEstado
+		from finanzas.proveedorServicioPagoEfectuados as pspe
+		left join finanzas.proveedorServicioDatosPagosLibre as pdpl on pdpl.idDatosPagosLibres = pspe.idDatosPagosLibre 
+		where  pspe.flagPagoLibre = 1
+
 				
 		";
 

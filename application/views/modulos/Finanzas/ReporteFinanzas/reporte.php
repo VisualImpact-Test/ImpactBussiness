@@ -85,7 +85,7 @@
             data.push(rowData);
         }
 
-        return data;x|
+        return data;
     }
 
     var allData = getAllTextFromTable('tb-reporteFinanzas');

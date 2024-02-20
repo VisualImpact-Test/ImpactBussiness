@@ -111,6 +111,17 @@
                                 </div>
                             </div>
                        
+
+                            <div class="field" style="width:15%;margin-left: 0px;margin-right: 0px;">
+                                <div class="field sixteen">
+                                <label>Moneda:</label>
+                                    <select class="form-control  simpleDropdown" name="moneda" patron="requerido">
+                                        <?= htmlSelectOptionArray2(['title' => 'Moneda',  'query' => $moneda, 'class' => 'text-titlecase']); ?>
+                                    </select>
+                                </div>
+                            </div>
+				
+
                             <div class="field" style="width:15%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto:</label>
