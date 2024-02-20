@@ -5104,7 +5104,18 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista['cabOperLog'] = $this->model->datosOperLog($post)['query']->result_array();
 		$idCuenta = $dataParaVista['cabOperLog'][0]['idCuenta'];
-		//var_dump($idCuenta);
+		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->get()->result_array();
+		$agrupadoPorId = [];
+		foreach ($dcds as $kCds => $vCds) {
+			$idCotizacionDetalle = $vCds['idCotizacionDetalle'];
+			if (!isset($agrupadoPorId[$idCotizacionDetalle])) {
+				$agrupadoPorId[$idCotizacionDetalle] = array();
+			}
+			
+			$vCds['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
+			$agrupadoPorId[$idCotizacionDetalle][] = $vCds;
+		}
+		$dataParaVista['distribucion'] = $agrupadoPorId;
 		$dataParaVista['CuentaUsuario'] = $this->model->datosCuentaUsuario($idCuenta)['query']->result_array();
 		$dataParaVista['Almacen'] = $this->model->datosAlmacenOrigen($idCuenta)['query']->result_array();
 
