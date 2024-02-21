@@ -41,6 +41,25 @@ class M_ServicioProveedor extends MY_Model
 
 		return $this->resultado;
     }
+
+	public function obtenerContactoProveedor($params = [])
+    {
+
+        $sql = "
+		select * from finanzas.proveedorServicioContacto
+		where estado = 1
+        ";
+
+        $query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+    }
+
 	
 	public function ObtenerDatoServicioProveedor($params = [])
 	{
