@@ -5,10 +5,10 @@
             <tr>
                 <th class="td-center">#</th>
                 <th>OPCIONES</th>
-                
                 <th>TIPO DOCUMENTO</th>
                 <th>NUMERO DOCUMENTO</th>
                 <th>DATOS PROVEEDOR</th>
+                <th>CONTACTO</th>
                 <th>DEPARTAMENTO</th>
                 <th>PROVINCIA</th>
                 <th>DISTRITO</th>
@@ -35,6 +35,12 @@
                     <td><?= verificarEmpty($row['breve'], 3); ?></td>
                     <td><?= verificarEmpty($row['numDocumento'], 3); ?></td>
                     <td><?= verificarEmpty($row['datosProveedor'], 3); ?></td>
+                    <td><?php foreach ($contacto as $i => $j) { 
+                        if ($row['idProveedorServicio'] == $j['idProveedorServicio']) {
+                          echo  $j['nomContacto'].':'.$j['telContacto'] ; echo '<br>';
+                        }
+                       
+                     } ?> </td>
                     <td><?= verificarEmpty($row['departamento'], 3); ?></td>
                     <td><?= verificarEmpty($row['provincia'], 3); ?></td>
                     <td><?= verificarEmpty($row['distrito'], 3); ?></td>

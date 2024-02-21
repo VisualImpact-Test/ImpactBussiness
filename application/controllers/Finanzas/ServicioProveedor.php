@@ -46,6 +46,7 @@ class ServicioProveedor extends MY_Controller
         $result = $this->result;
         $dataParaVista = [];
         $dataParaVista['datos'] = $this->model->obtenerServicioProveedor()['query']->result_array();
+        $dataParaVista['contacto'] = $this->model->obtenerContactoProveedor()['query']->result_array();
 
         $html = getMensajeGestion('noRegistros');
         if (!empty($dataParaVista)) {
