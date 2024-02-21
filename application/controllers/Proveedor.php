@@ -126,7 +126,7 @@ class Proveedor extends MY_Controller
 		$dataParaVista['metodoPago'] = $this->model->obtenerMetodoPago()['query']->result_array();
 		$dataParaVista['tipoServicio'] = $this->model->obtenerProveedorTipoServicio()->result_array();
 		$dataParaVista['bancos'] = $this->db->get_where('dbo.banco')->result_array();
-		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda')->result_array();
+		$dataParaVista['moneda'] = $this->db->get_where('compras.moneda', ['estado' => 1])->result_array();
 		$dataParaVista['tiposCuentaBanco'] = $this->db->get_where('dbo.tipoCuentaBanco')->result_array();
 		$ciudad = $this->model->obtenerCiudadUbigeo()['query']->result();
 
