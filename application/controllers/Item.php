@@ -1138,8 +1138,8 @@ class Item extends MY_Controller
 					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
 				}
 				$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-				$objDrawing->setHeight(30);
-				$objDrawing->setwidth(30);
+				$objDrawing->setHeight(45);
+				$objDrawing->setwidth(45);
 				$objDrawing->setOffsetX(8);
 				$objDrawing->setOffsetY(8);
 				$objDrawing->setCoordinates('B' . $nIni);
