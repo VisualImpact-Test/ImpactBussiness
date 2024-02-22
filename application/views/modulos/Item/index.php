@@ -81,6 +81,12 @@
 							<span class="tooltiptext">Item</span>
 							<input class="form-control form-control-sm" name="item" id="item">
 						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Cuenta</span>
+							<select class="form-control form-control-sm ui my_select2Full" name="cuenta" id="cuenta">
+								<?= htmlSelectOptionArray2(['query' => $cuenta, 'class' => 'text-titlecase', 'title' => 'Seleccione']); ?>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>

@@ -143,6 +143,7 @@ class M_Item extends MY_Model
 		$filtros .= !empty($params['subcategoriaItem']) ? ' AND a.idItemSubCategoria = ' . $params['subcategoriaItem'] : '';
 		$filtros .= !empty($params['item']) ? " AND a.nombre LIKE '%" . $params['item'] . "%'" : "";
 		$filtros .= !empty($params['idItem']) ? ' AND a.idItem = ' . $params['idItem'] : '';
+		$filtros .= !empty($params['cuenta']) ? ' AND a.idCuenta = ' . $params['cuenta'] : '';
 		if ($this->idUsuario != 1) {
 			$filtros .= ' AND a.demo = 0';
 		}
@@ -487,5 +488,26 @@ class M_Item extends MY_Model
 		WHERE a.codigo is not null AND mc.idCuenta='" . $idCuenta . "' $filtro
 		ORDER BY 2";
 		return $query = $this->db->query($sql);
+	}
+
+	public function obtenerItemExcel()
+	{
+		$sql = "
+			SELECT DISTINCT i.nombre AS item, it.nombre AS tipoItem, COALESCE(emp.nombre, '-') AS cuenta,
+			iI.nombre_archivo, iI.extension
+			FROM compras.item i
+			INNER JOIN compras.itemTipo it ON it.idItemTipo = i.idItemTipo
+			LEFT JOIN rrhh.dbo.Empresa emp ON emp.idEmpresa = i.idCuenta
+			LEFT JOIN compras.itemImagen iI ON iI.idItem = i.idItem AND iI.estado = 1
+			WHERE i.estado = 1;
+		";
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
 	}
 }

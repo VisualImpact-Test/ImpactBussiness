@@ -30,12 +30,17 @@
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-left"><?= date_change_format($row['fechaRegOC']); ?></td>
 					<td class="td-center">
-						<a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank">
+						<?php if ($row['oper'] != '-') : ?>
+							<a class="btn" href="<?= base_url(); ?>Cotizacion/descargarOperDirecto/<?= $row['idOper']; ?>" target="_blank">
+								<?= $row['oper']; ?>
+							</a>
+						<? else : ?>
 							<?= $row['oper']; ?>
-						</a>
+						<? endif; ?>
 					</td>
 					<td class="td-center">
-						<?php $rutaOc = $row['flagOcLibre'] ? '#' : '../Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra']; ?>
+						<?php $rutaOc = $row['flagOcLibre'] ? '../OrdenCompra/visualizarPdfOCLibre/' . $row['idOrdenCompra'] . '?flag=' . $row['flagOcLibre'] :
+							'../Cotizacion/descargarOCDirecto/' . $row['idOrdenCompra']; ?>
 						<a class="btn" href="<?= $rutaOc; ?>" target="_blank">
 							<?= $row['ordenCompra']; ?>
 						</a>
