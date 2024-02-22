@@ -1116,15 +1116,14 @@ class Item extends MY_Controller
 		$objPHPExcel->getActiveSheet()->getStyle("B1:E1")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
 
 		foreach ($datos as $k => $v) {
-			$objPHPExcel->getActiveSheet()->getRowDimension($nIni)->setRowHeight(100);
+			$objPHPExcel->getActiveSheet()->getRowDimension($nIni)->setRowHeight(120);
 
 
 
 			$url = RUTA_WASABI . 'item/' . $v['nombre_archivo'];
 			if ($v['extension'] == 'jpeg') {
 				$imageUrl = imagecreatefromjpeg($url);
-			}
-			if ($v['extension'] == 'png') {
+			} else {
 				$imageUrl = imagecreatefrompng($url);
 			}
 
@@ -1135,13 +1134,12 @@ class Item extends MY_Controller
 				$objDrawing->setImageResource($imageUrl);
 				if ($v['extension'] == 'jpeg') {
 					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
-				}
-				if ($v['extension'] == 'png') {
+				} else {
 					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
 				}
 				$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-				$objDrawing->setHeight(10);
-				$objDrawing->setwidth(100);
+				$objDrawing->setHeight(30);
+				$objDrawing->setwidth(30);
 				$objDrawing->setOffsetX(8);
 				$objDrawing->setOffsetY(8);
 				$objDrawing->setCoordinates('B' . $nIni);
