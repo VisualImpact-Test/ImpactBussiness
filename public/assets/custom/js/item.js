@@ -71,13 +71,13 @@ var Item = {
 			Fn.download(site_url + Item.url + 'descargarTarifarioPDF', jsonString);
 		});
 		$(document).on('click', '.btn-descargarListaDeItem', function () {
-			let jsonString = { 'data': JSON.stringify({}) };
-			Fn.download(site_url + Item.url + 'descargarListaDeItem', jsonString);
-			/*let data = { 'data': JSON.stringify({}) };
+			/*let jsonString = { 'data': JSON.stringify({}) };
+			Fn.download(site_url + Item.url + 'descargarListaDeItem', jsonString);*/
+			let data = { 'data': JSON.stringify({}) };
 			var url = site_url + Item.url + 'descargar_formato_excel';
 			$.when(Fn.download(url, data)).then(function (a) {
 				Fn.showLoading(false);
-			});*/
+			});
 		});
 		$(document).on('click', '.btn-actualizarItem', function () {
 			++modalId;
