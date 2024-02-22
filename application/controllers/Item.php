@@ -1117,10 +1117,8 @@ class Item extends MY_Controller
 
 		foreach ($datos as $k => $v) {
 			$objPHPExcel->getActiveSheet()->getRowDimension($nIni)->setRowHeight(120);
-
-
-
 			$url = RUTA_WASABI . 'item/' . $v['nombre_archivo'];
+
 			if ($v['extension'] == 'jpeg') {
 				$imageUrl = imagecreatefromjpeg($url);
 			} else {
@@ -1138,8 +1136,8 @@ class Item extends MY_Controller
 					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
 				}
 				$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
-				$objDrawing->setHeight(45);
-				$objDrawing->setwidth(45);
+				$objDrawing->setHeight(80);
+				$objDrawing->setwidth(80);
 				$objDrawing->setOffsetX(8);
 				$objDrawing->setOffsetY(8);
 				$objDrawing->setCoordinates('B' . $nIni);
