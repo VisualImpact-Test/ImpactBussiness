@@ -39,6 +39,7 @@ class Item extends MY_Controller
 		$config['data']['marcaItem'] = $this->model->obtenerMarcaItem()['query']->result_array();
 		$config['data']['categoriaItem'] = $this->model->obtenerCategoriaItem()['query']->result_array();
 		$config['data']['subcategoriaItem'] = $this->model->obtenerSubCategoriaItem()['query']->result_array();
+		$config['data']['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 
 		$config['view'] = 'modulos/item/index';
 
@@ -1006,6 +1007,94 @@ class Item extends MY_Controller
 	{
 		require_once '../PHPExcel/Classes/PHPExcel.php';
 		$objPHPExcel = new PHPExcel();
+		$datos = $this->model->obtenerItemExcel()['query']->result_array();
+
+		/**ESTILOS**/
+		$estilo_cabecera =
+			array(
+				'alignment' => array(
+					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => 'E60000')
+				),
+				'font' => array(
+					'color' => array('rgb' => 'ffffff'),
+					'size' => 11,
+					'name' => 'Calibri'
+				)
+			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font' => [
+				'size' => 13,
+				'name' => 'Calibri'
+			]
+		];
+		$estilo_subtitulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font' => [
+				'size' => 11,
+				'name' => 'Calibri'
+			]
+		];
+		$estilo_data['left'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font' => [
+				'name' => 'Calibri'
+			]
+		];
+		$estilo_data['center'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font' => [
+				'name' => 'Calibri'
+			]
+		];
+		$estilo_data['right'] = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_RIGHT,
+				'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+			],
+			'font' => [
+				'name' => 'Calibri'
+			]
+		];
+		/**FIN ESTILOS**/
+
+		$objPHPExcel->getActiveSheet()->getStyle('B1:E1')->getAlignment()->setWrapText(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(18);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(70);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
 
 		$objPHPExcel->getProperties()
 			->setCreator("Visual Impact")
@@ -1017,27 +1106,61 @@ class Item extends MY_Controller
 			->setCategory("FORMATO");
 
 		$objPHPExcel->setActiveSheetIndex(0)
-			->setCellValue('A1', 'TIPO (*)')
-			->setCellValue('B1', 'MARCA (*)')
-			->setCellValue('C1', 'CATEGORIA (*)')
-			->setCellValue('D1', 'SUBCATEGORIA (*)')
-			->setCellValue('E1', 'ITEM (*)')
-			->setCellValue('F1', 'CARACTERISTICAS (*)')
-			->setCellValue('G1', 'EQUIVALENTE EN LOGISTICA')
-			->setCellValue('H1', 'TALLA')
-			->setCellValue('I1', 'TELA')
-			->setCellValue('J1', 'COLOR')
-			->setCellValue('K1', 'MONTO');
-
+			->setCellValue('B1', '')
+			->setCellValue('C1', 'ITEM')
+			->setCellValue('D1', 'TIPO ITEM')
+			->setCellValue('E1', 'CUENTA');
+		$nIni = 2;
 		$objPHPExcel->getActiveSheet()->setTitle('FORMATO');
-		$objPHPExcel->setActiveSheetIndex(0);
+
+		$objPHPExcel->getActiveSheet()->getStyle("B1:E1")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+
+		foreach ($datos as $k => $v) {
+			$objPHPExcel->getActiveSheet()->getRowDimension($nIni)->setRowHeight(30);
+
+
+
+			$url = RUTA_WASABI . 'item/' . $v['nombre_archivo'];
+			if ($v['extension'] == 'jpeg') {
+				$imageUrl = imagecreatefromjpeg($url);
+			}
+			if ($v['extension'] == 'png') {
+				$imageUrl = imagecreatefrompng($imageUrl);
+			}
+
+			if($v['nombre_archivo'] != null) {
+				$objDrawing = new PHPExcel_Worksheet_MemoryDrawing();
+				$objDrawing->setName('Sample image');
+				$objDrawing->setDescription('TEST');
+				$objDrawing->setImageResource($imageUrl);
+				if ($v['extension'] == 'jpeg') {
+					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_JPEG);
+				}
+				if ($v['extension'] == 'png') {
+					$objDrawing->setRenderingFunction(PHPExcel_Worksheet_MemoryDrawing::RENDERING_PNG);
+				}
+				$objDrawing->setMimeType(PHPExcel_Worksheet_MemoryDrawing::MIMETYPE_DEFAULT);
+				$objDrawing->setHeight(20);
+				$objDrawing->setwidth(100);
+				$objDrawing->setOffsetX(8);
+				$objDrawing->setOffsetY(8);
+				$objDrawing->setCoordinates('B' . $nIni);
+				$objDrawing->setWorksheet($objPHPExcel->getActiveSheet());
+			}
+
+			$objPHPExcel->getActiveSheet()
+				->setCellValue('C' . $nIni, $v['item'])
+				->setCellValue('D' . $nIni, $v['tipoItem'])
+				->setCellValue('E' . $nIni, $v['cuenta']);
+
+			$nIni++;
+		}
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="Formato.xls"');
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 		$objWriter->save('php://output');
-		exit;
 	}
 
 	public function formularioFotosItem()
