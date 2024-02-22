@@ -242,6 +242,21 @@ class ProveedorDocumento extends MY_Controller
 
 		$nIni = 2;
 		foreach ($data as $k => $v) {
+			if($v['numeroDocumento'] == null) {
+				$numFactura = '-';
+			} else {
+				$numFactura = $v['numeroDocumento'];
+			}
+			if (empty($row['adjuntosCargados'])) {
+				$estado = 'Enviado al proveedor';
+			} else {
+				$estado = 'Documentos enviados';
+			}
+			if ($v['fechaEmision'] == null) {
+				$fecha_factura = '-';
+			} else {
+				$fecha_factura = $v['fechaEmision'];
+			}
 			$objPHPExcel->setActiveSheetIndex(0)
 				->setCellValue('B' . $nIni, date_change_format($v['fechaRegOC']))
 				->setCellValue('C' . $nIni, NOMBRE_MES[explode('-', $v['fechaRegOC'])[1]])
@@ -258,9 +273,9 @@ class ProveedorDocumento extends MY_Controller
 				->setCellValue('N' . $nIni, $v['nombreMoneda'])
 				->setCellValue('O' . $nIni, $v['poCliente'])
 				->setCellValue('P' . $nIni, $v['numeroGR'])
-				->setCellValue('Q' . $nIni, '')
-				->setCellValue('R' . $nIni, '')
-				->setCellValue('S' . $nIni, '');
+				->setCellValue('Q' . $nIni, $estado)
+				->setCellValue('R' . $nIni, $fecha_factura)
+				->setCellValue('S' . $nIni, $numFactura);
 
 			$objPHPExcel
 				->getActiveSheet()

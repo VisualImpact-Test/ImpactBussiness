@@ -11,7 +11,7 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzas($params = [])
 	{
 		$this->db
-			->select("comp.numeroDocumento,oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
+			->select("comp.numeroDocumento,comp.fechaEmision,oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
 						oc.idProveedor, 
 						0 as flagOcLibre,
 						pr.razonSocial, pr.nroDocumento as rucProveedor, 
@@ -57,7 +57,7 @@ class M_ProveedorDocumento extends MY_Model
 	{
 		$this->db
 			->distinct()
-			->select("comp.numeroDocumento,oc.seriado as ordenCompra,
+			->select("comp.numeroDocumento,comp.fechaEmision,oc.seriado as ordenCompra,
 						oc.idOrdenCompra as idOrdenCompra, 
 						1 as flagOcLibre,
 						cast(oc.fechaReg as DATE) as fechaRegOC, 
