@@ -49,7 +49,9 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
+	
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
+
 		$datos = array_merge($datos1, $datos2);
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
 
@@ -64,6 +66,7 @@ class ProveedorDocumento extends MY_Controller
 			}
 			$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
 		}
+
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
 			$html = $this->load->view("modulos/Finanzas/ProveedorDocumento/reporte", $dataParaVista, true);

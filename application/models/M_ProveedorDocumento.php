@@ -30,7 +30,9 @@ class M_ProveedorDocumento extends MY_Model
 										  INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
 										  WHERE ifb_inner.idProveedor = ibp.idProveedor
 										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
-								   '&#x0D;&#x0A;', '') as cuentas_bancos", false)
+								   '&#x0D;&#x0A;', '') as cuentas_bancos,
+								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '0' AND flagRevisado = 1 AND estado = 1 AND flagAprobadoFinanza = 1) + 1 as aprobados,
+								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '0' AND flagRevisado = 1 AND estado = 1 ) + 1 as totalDocumentos", false)
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
@@ -86,7 +88,9 @@ class M_ProveedorDocumento extends MY_Model
 										  INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
 										  WHERE ifb_inner.idProveedor = ibp.idProveedor
 										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
-								   '&#x0D;&#x0A;', '') as cuentas_bancos", false)
+								   '&#x0D;&#x0A;', '') as cuentas_bancos ,
+								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '1' AND flagRevisado = 1 AND estado = 1 AND flagAprobadoFinanza = 1) + 1 as aprobados,
+								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '1' AND flagRevisado = 1 AND estado = 1 ) + 1 as totalDocumentos", false)
 			->from('orden.ordenCompraDetalle ocd')
 			->join('orden.ordenCompra oc', 'ocd.idOrdenCompra = oc.idOrdenCompra')
 			->join('compras.proveedor pr', 'pr.idProveedor = oc.idProveedor')
