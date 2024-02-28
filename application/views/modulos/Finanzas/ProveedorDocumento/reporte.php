@@ -63,8 +63,9 @@
 								Enviado al proveedor
 							</span>
 						<?php else : ?>
-							<a class="ui green large label btn-sustentosCargados">
-								Documentos enviados
+							<a class="ui green large label btn-sustentosCargados" style="text-align: center;">
+								Documentos enviados <br>
+								(<?= $row['aprobados']; ?>/<?= $row['totalDocumentos']; ?>)
 							</a>
 						<?php endif; ?>
 					</td>
