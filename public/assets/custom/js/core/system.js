@@ -491,8 +491,8 @@ var View = {
 
 			// Manejar tanto la entrada de teclado como el pegado con el ratón
 			if (event.type === 'input' || event.type === 'paste') {
-				if (valor.includes("´") || valor.includes("'")) {
-					$(this).val(valor.replace(/[´']/g, ""));
+				if (valor.includes("'")) {
+					$(this).val(valor.replace(/[']/g, ""));
 				}
 			}
 		});
