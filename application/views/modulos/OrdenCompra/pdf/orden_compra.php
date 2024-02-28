@@ -160,8 +160,8 @@
 					<?php endif; ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
-		</tbody>
-		<tfoot class="full-width">
+		<!--</tbody>
+		<tfoot class="full-width">-->
 			<tr class="height:100px">
 				<td colspan="8" class="text-right">
 					<p>Sub Total</p>
@@ -224,7 +224,7 @@
 					<?= !empty($data['poCliente']) ? $data['poCliente'] : '' ?>
 				</td>
 			</tr>
-		</tfoot>
+			</tbody>
 	</table>
 </div>
 <div style="border: 2px solid black; text-align:justify;height:100px">
