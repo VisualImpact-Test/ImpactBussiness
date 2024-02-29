@@ -1943,8 +1943,8 @@ class SolicitudCotizacion extends MY_Controller
 
 		$dataParaVista['detalle'] = $detalleCotizacion;
 
-		var_dump($dataParaVista['detalle']);
-		exit;
+		//var_dump($dataParaVista['detalle']);
+		//exit;
 		// METER ESTAS 2 LINEAS EN UN FOR, en caso se pase varias cotizaciones.
 		$cuenta = $this->model->obtenerCuentaDeLaCotizacionDetalle(checkAndConvertToArray($post['idCotizacion'])[0]);
 		$centroCosto = $this->model->obtenerCentroCostoDeLaCotizacionDetalle(checkAndConvertToArray($post['idCotizacion'])[0]);
