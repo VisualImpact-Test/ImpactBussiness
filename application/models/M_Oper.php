@@ -111,7 +111,7 @@ class M_Oper extends MY_Model
 	public function obtenerCuenta(array $params = [])
 	{
 		$this->db
-			->select('*')
+			->select('*, nombre as value, idEmpresa as id')
 			->from('rrhh.dbo.empresa')
 			->where('estado', '1')
 			->order_by('nombre');
