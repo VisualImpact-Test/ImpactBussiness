@@ -6,6 +6,7 @@
 				<th>Fecha</th>
 				<th>Oper</th>
 				<th>OC Visual</th>
+				<th>Fecha Emision</th>
 				<th>RUC</th>
 				<th>Proveedor</th>
 				<th>Cuenta</th>
@@ -45,6 +46,7 @@
 							<?= $row['ordenCompra']; ?>
 						</a>
 					</td>
+					<td class="td-center"><?= !empty($row['fechaEmision']) ? date_change_format($row['fechaEmision']) : '-' ?></td>
 					<td class="td-center"><?= $row['rucProveedor']; ?></td>
 					<td class="td-left"><?= $row['razonSocial'] ?></td>
 					<td class="td-left"><?= $row['cuenta']; ?></td>
