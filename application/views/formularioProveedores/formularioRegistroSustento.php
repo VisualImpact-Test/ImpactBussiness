@@ -14,7 +14,7 @@
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Guia</label>
-					<input class="form-control col-md-8" id="nguia" name="nguia" patron="requerido" value="">
+					<input class="form-control col-md-8" id="nguia" name="nguia" value="">
 				</div>
 			</fieldset>
 		</div>
