@@ -67,13 +67,13 @@
 					</div>
 					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Cuenta:</label>
-						<select class="form-control ui search dropdown parentDependiente" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="cuentaCentroCostoForm">
+						<select class="form-control ui dropdown clearable semantic-dropdown parentDependienteSemantic" id="cuentaForm" name="cuentaForm" patron="requerido" data-childDependiente="#cuentaCentroCostoForm">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuenta, 'class' => 'text-titlecase', 'value' => 'nombre', 'id' => 'idEmpresa', 'selected' => $oper[0]['idCuenta']]); ?>
 						</select>
 					</div>
 					<div class="form-group col-md-3">
 						<label class="font-weight-bold">Centro Costo:</label>
-						<select class="form-control ui search dropdown simpleDropdown childDependiente clearable" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+						<select class="form-control ui dropdown clearable read-only semantic-dropdown childdependienteSemantic" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 							<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $centroCosto, 'class' => 'text-titlecase', 'selected' => $oper[0]['idCentroCosto']]); ?>
 						</select>
 					</div>

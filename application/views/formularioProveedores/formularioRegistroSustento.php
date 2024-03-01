@@ -14,7 +14,7 @@
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Guia</label>
-					<input class="form-control col-md-8" id="nguia" name="nguia" patron="requerido" value="">
+					<input class="form-control col-md-8" id="nguia" name="nguia" value="">
 				</div>
 			</fieldset>
 		</div>
@@ -72,7 +72,7 @@
 				<i class="icon warning"></i>CONSIDERAR QUE LA FACTURA CARGADA DEBE TENER FECHA DE EMISION DEL MES EN CURSO
 			</div>
 			<div class="ui bottom attached warning message">
-				<i class="icon warning"></i>SUBIR SUSTENTOS LOS DÍAS MARTES Y JUEVES DE 9:00 AM HASTA LAS 12:00
+				<i class="icon warning"></i>SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00
 			</div>
 		</div>
 	</div>

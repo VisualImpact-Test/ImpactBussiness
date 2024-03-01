@@ -1752,7 +1752,6 @@ class FormularioProveedor extends MY_Controller
 		}
 
 		if (!empty($post['base64Adjunto'])) {
-
 			foreach ($post['base64Adjunto'] as $key => $row) {
 				$archivo = [
 					'base64' => $row,
@@ -1803,24 +1802,24 @@ class FormularioProveedor extends MY_Controller
 		$fechaHoy = date_change_format_bd(getFechaActual());
 		$hora = strtotime(time_change_format(getActualDateTime()));
 
-		$horaLimiteMin = strtotime('09:00:00');
-		$horaLimiteMax = strtotime('13:00:00');
+		$horaLimiteMin = strtotime('00:00:00');
+		$horaLimiteMax = strtotime('14:00:00');
 
 		$r = $this->db->where('fecha', $fechaHoy)->get('General.dbo.tiempo')->row_array();
 
 		$params['idUsuario'] = $this->session->userdata('idUsuario');
 		if (empty($params['idUsuario'])) {
-			if ($r['idDia'] != 1 && $r['idDia'] != 2 && $r['idDia'] != 4) {
+			if ($r['idDia'] == 6 && $r['idDia'] == 7) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00']);
 				goto respuesta;
 			}
 
 			if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Subir sustentos los días Martes y Jueves de 9:00 AM hasta las 12:00']);
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00']);
 				goto respuesta;
 			}
 		}
@@ -1865,7 +1864,7 @@ class FormularioProveedor extends MY_Controller
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => $this->idUsuario ? 1 : 0,
 					'flagAprobado' => $this->idUsuario ? 1 : 0,
-					'numeroDocumento' => $post['nguia']
+					'numeroDocumento' => $post['nguia'] ? $post['nguia'] : NULL
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
