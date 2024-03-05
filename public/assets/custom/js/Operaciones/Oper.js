@@ -190,13 +190,13 @@ var Oper = {
 		btnAd = $(t).closest('.divItem').find('.btnAdicionar');
 		btnAd.hide();
 
-		if(tipo == 2 || tipo == 9) {
+		if (tipo == 2 || tipo == 9) {
 			Fn.showLoading(true);
 			let post1 = $.post(
 				site_url + Oper.url + 'generarRowParaOper', {
 				'tipo': tipo
 			});
-	
+
 			post1.done(function (data) {
 				btnAd.show();
 				$(div).find('div.subItem').append(data);
@@ -206,7 +206,7 @@ var Oper = {
 			}).always(function () {
 				Fn.showLoading(false);
 			});
-	
+
 			let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
 			$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 		} else {
@@ -401,6 +401,28 @@ var Oper = {
 		$(div).find('input.item_precio').val(precio.toFixed(2));
 
 		Oper.cantidadTotal();
+	},
+	calcularCantidadSubItem: function (t) {
+		let _t = $(t);
+		let cantTotal = 0;
+		_t.closest('.subItem').find('.SbItCantidad').each(function (i, v) {
+			cantTotal += parseFloat($(v).val());
+		});
+		_t.closest('.itemData').find('.item_cantidad').val(cantTotal);
+	},
+	calcularCostoPromedioTextil: function (t) {
+		let _t = $(t);
+		let costoTotal = 0;
+		let cantidadTotal = 0;
+
+		_t.closest('.subItem').find('.SbItCantidad').each(function (i, v) {
+			costo = parseFloat($(_t.closest('.subItem').find('.SbItCosto')[i]).val());
+			cantidad = parseFloat($(v).val());
+
+			costoTotal += costo * cantidad;
+			cantidadTotal += cantidad;
+		});
+		_t.closest('.itemData').find('.item_costo').val(costoTotal / cantidadTotal).change();
 	},
 	cantidadTotal: function () {
 		let dd = $('input.item_precio');

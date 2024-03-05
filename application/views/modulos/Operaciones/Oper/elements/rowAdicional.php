@@ -31,15 +31,17 @@
 			</div>
 			<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
 				<label>Tela</label>
-				<input name="subItem_tela" patron="requerido">
+				<input name="subItem_tela">
 			</div>
 			<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
 				<label>Color</label>
-				<input name="subItem_color" patron="requerido">
+				<input name="subItem_color">
 			</div>
 			<div class="field <?= $tipo == COD_TEXTILES['id'] || $tipo == COD_SERVICIO['id'] ? '' : 'd-none'; ?>">
 				<label>Cantidad</label>
-				<input name="subItem_cantidad" patron="requerido">
+				<input class="SbItCantidad keyUpChange" name="subItem_cantidad" patron="requerido"
+					onchange="Oper.calcularCantidadSubItem(this);"
+				>
 			</div>
 			<div class="field <?= $tipo == 0 ? '' : 'd-none'; ?>">
 				<label>CantidadPDV</label>
@@ -47,11 +49,13 @@
 			</div>
 			<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
 				<label>Costo</label>
-				<input name="subItem_costo" patron="requerido">
+				<input class="SbItCosto keyUpChange" name="subItem_costo" patron="requerido" 
+					onchange="Oper.calcularCostoPromedioTextil(this);"
+				>
 			</div>
-			<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<div class="field d-none <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
 				<label>Monto</label>
-				<input name="subItem_monto" patron="requerido">
+				<input name="subItem_monto">
 			</div>
 			<div class="field <?= $tipo == 0 ? '' : 'd-none'; ?>">
 				<label></label>
