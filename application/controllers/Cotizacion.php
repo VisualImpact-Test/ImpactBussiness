@@ -473,6 +473,8 @@ class Cotizacion extends MY_Controller
 			'idTipoServicioCotizacion' => $post['tipoServicioCotizacion'],
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 			'idTipoMoneda' => $post['tipoMoneda'],
+			'feeTarjetaVales' => $post['feeForm3'],
+			
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);

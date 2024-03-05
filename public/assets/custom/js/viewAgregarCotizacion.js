@@ -3311,6 +3311,7 @@ var Cotizacion = {
 		let totalDistribucion = 0;
 		let feePersonal = 0;
 		let totalPersonal = 0;
+		let totalValesTarjetas = 0;
 		$.each($('.subtotalForm'), function (index, value) {
 			// Distribucion no se le agrega al FEE
 			if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_DISTRIBUCION.id) {
@@ -3322,11 +3323,14 @@ var Cotizacion = {
 
 				totalPersonal = Number(totalDistribucion) + Number($(value).val());
 				// total = Number(total) + Number($(value).val());
+			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_TARJETAS_VALES.id) {
+				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
 			} else { // != COD_DISTRIBUCION.id
 				total = Number(total) + Number($(value).val());
 			}
 		})
 		let fee = Number($("#feeForm").val());
+		let fee3 = Number($("#feeForm3").val());
 		let igvForm = $('.igvForm');
 		let igv = 0;
 
@@ -3334,7 +3338,7 @@ var Cotizacion = {
 			igv = IGV_SYSTEM;
 		}
 		// let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion; -- Antes: distribucion no tenia FEE
-		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100))) + totalPersonal;
+		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100))) + totalPersonal + (totalValesTarjetas + (totalValesTarjetas * (fee3 / 100)));
 		totalFee += feePersonal;
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
