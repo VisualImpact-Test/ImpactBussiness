@@ -587,7 +587,7 @@ class Proveedor extends MY_Controller
 		];
 
 		if (isset($post['idProveedorEstado'])) {
-			$data['update']['idProveedorEstado'] = $post['idProveedorEstado'];
+			//$data['update']['idProveedorEstado'] = $post['idProveedorEstado'];
 			$enviarCorreo = true;
 			$rptaCorreo = false;
 		}
