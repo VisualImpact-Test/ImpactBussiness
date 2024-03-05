@@ -220,11 +220,11 @@
 												<div class="col-md-3" style="display: flex;">
 													<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 														<label class="font-weight-bold">Tela:</label>
-														<input class="form-control" name="subItem_tela" patron="requerido" value="<?= $si_v['tela'] ?>">
+														<input class="form-control" name="subItem_tela" value="<?= $si_v['tela'] ?>">
 													</div>
 													<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 														<label class="font-weight-bold">Color:</label>
-														<input class="form-control" name="subItem_color" patron="requerido" value="<?= $si_v['color'] ?>">
+														<input class="form-control" name="subItem_color" value="<?= $si_v['color'] ?>">
 													</div>
 												</div>
 												<div class="col-md-3" style="display: flex;">
