@@ -288,7 +288,7 @@ class M_Proveedor extends MY_Model
 		FROM  compras.proveedor p
 		JOIN General.dbo.ubigeo ubi ON p.cod_ubigeo = ubi.cod_ubigeo
 		JOIN compras.proveedorRubro pr ON pr.idProveedor = p.idProveedor
-		JOIN compras.informacionBancariaProveedor ibp ON ibp.idProveedor = p.idProveedor
+		LEFT JOIN compras.informacionBancariaProveedor ibp ON ibp.idProveedor = p.idProveedor
 		LEFT JOIN compras.proveedorComprobante pc ON pc.idProveedor = p.idProveedor
 		JOIN compras.rubro r ON pr.idRubro = r.idRubro
 		LEFT JOIN compras.comprobante cp ON cp.idComprobante = pc.idComprobante
@@ -308,9 +308,6 @@ class M_Proveedor extends MY_Model
 			{$filtros}
 			{$orden}
 		";
-
-		// var_dump($sql);
-		// exit;
 
 		$query = $this->db->query($sql);
 
