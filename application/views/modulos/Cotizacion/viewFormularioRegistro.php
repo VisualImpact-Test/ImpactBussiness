@@ -208,7 +208,7 @@
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<div class="four wide field divTipoTarjValesConcurso d-none">
+							<div class="four wide field divTipoConcurso divTipoTarjVales d-none">
 								<div class="ui sub header">Tipo</div>
 								<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
 									<option class="text-titlecase" value>Seleccione</option>
@@ -228,7 +228,7 @@
 								<div class="ui sub header">Características para compras</div>
 								<input name="caracteristicasCompras" placeholder="Características">
 							</div>
-							<div class="five wide field divTipoTarjValesConcurso d-none">
+							<div class="five wide field divTipoTarjVales d-none">
 								<div class="ui sub header">Proveedor</div>
 								<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
 									<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>

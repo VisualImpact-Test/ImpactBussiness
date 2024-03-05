@@ -648,7 +648,7 @@ var Cotizacion = {
 			// De Tarjetas y valess
 			parent.find('.divCarProv').removeClass('d-none');
 			parent.find('.divUnidadMedidida').removeClass('d-none');
-			parent.find('.divTipoTarjValesConcurso').addClass('d-none');
+			parent.find('.divTipoTarjVales').addClass('d-none');
 			parent.find('div.provList').find('select').removeAttr("patron");
 			parent.find('.descripcionSubItemTarjVal').removeAttr("patron");
 			parent.find('.montoSubItemTarjVal').removeAttr("patron");
@@ -658,9 +658,11 @@ var Cotizacion = {
 			parent.find('.provList').dropdown('clear');
 			parent.find('.no-personal').removeClass('d-none');
 			parent.find('.personal').addClass('d-none');
+			parent.find('.divTipoTarjVales').addClass('d-none');
+			parent.find('.divTipoConcurso').addClass('d-none');
 			cotizacionInternaForm.val(1);
 			(parent.find('.cantPDV')).addClass('d-none');
-
+			control.closest('.body-item').find('.gapForm').removeAttr('readonly');
 			if (idTipo == COD_DISTRIBUCION.id) {
 				parent.find('.no-personal').removeClass('d-none');
 
@@ -756,24 +758,27 @@ var Cotizacion = {
 				// visibilidad
 				parent.find('.divCarProv').addClass('d-none');
 				parent.find('.divUnidadMedidida').addClass('d-none');
-				parent.find('.divTipoTarjValesConcurso').removeClass('d-none');
+				parent.find('.divTipoTarjVales').removeClass('d-none');
 				// patron
 				parent.find('div.provList').find('select').attr("patron", "requerido");
 				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
 				parent.find('.montoSubItemTarjVal').attr('patron', 'requerido');
 				parent.find('.cantidadSubItemTarjVal').attr('patron', 'requerido');
 				cotizacionInternaForm.val(0);
+				control.closest('.body-item').find('.gapForm').val('0');
+				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
 			} else if (idTipo == COD_CONCURSO.id) {
 				// visibilidad
 				parent.find('.divCarProv').addClass('d-none');
 				parent.find('.divUnidadMedidida').addClass('d-none');
-				parent.find('.divTipoTarjValesConcurso').removeClass('d-none');
+				parent.find('.divTipoConcurso').removeClass('d-none');
 				// patron
-				parent.find('div.provList').find('select').attr("patron", "requerido");
 				parent.find('.descripcionSubItemConcurso').attr('patron', 'requerido');
 				parent.find('.montoSubItemConcurso').attr('patron', 'requerido');
 				parent.find('.cantidadSubItemConcurso').attr('patron', 'requerido');
 				cotizacionInternaForm.val(0);
+				control.closest('.body-item').find('.gapForm').val('0');
+				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -1169,7 +1174,15 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && subTotalSinGap >= GAP_MONTO_MINIMO && gapForm.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id && tipoItem.val() != COD_PERSONAL.id && tipoItem.val() != COD_TRANSPORTE.id) {
+			if (	(gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && 
+					subTotalSinGap >= GAP_MONTO_MINIMO && 
+					gapForm.val() < GAP_MINIMO && 
+					flagCuentaForm.val() == 0 && 
+					tipoItem.val() != COD_DISTRIBUCION.id && 
+					tipoItem.val() != COD_PERSONAL.id && 
+					tipoItem.val() != COD_TRANSPORTE.id && 
+					tipoItem.val() != COD_CONCURSO.id && 
+					tipoItem.val() != COD_TARJETAS_VALES.id) {
 				gapForm.val(GAP_MINIMO);
 			}
 
@@ -1424,7 +1437,15 @@ var Cotizacion = {
 
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 			//SI EL SUBTOTAL ES MAYOR A 1500 EL GAP NO PUEDE SER MENOR A 15%
-			if (subTotalSinGap >= GAP_MONTO_MINIMO && thisControl.val() < GAP_MINIMO && flagCuentaForm.val() == 0 && tipoItem.val() != COD_DISTRIBUCION.id && tipoItem.val() != COD_PERSONAL.id && tipoItem.val() != COD_TRANSPORTE.id) {
+			if (subTotalSinGap >= GAP_MONTO_MINIMO &&
+				thisControl.val() < GAP_MINIMO &&
+				flagCuentaForm.val() == 0 &&
+				tipoItem.val() != COD_DISTRIBUCION.id &&
+				tipoItem.val() != COD_PERSONAL.id &&
+				tipoItem.val() != COD_TRANSPORTE.id &&
+				tipoItem.val() != COD_CONCURSO.id &&
+				tipoItem.val() != COD_TARJETAS_VALES.id
+			) {
 				thisControl.val(GAP_MINIMO).trigger('keyup');
 				$("#nagGapValidacion").nag({
 					persist: true
@@ -3784,7 +3805,7 @@ var Cotizacion = {
 			cantTot += isNaN(rowCantidad) ? 0 : rowCantidad;
 			montoTot += isNaN(rowMonto) ? 0 : rowMonto;
 		});
-		let montoProm = montoTot / cantTot;
+		let montoProm = montoTot / cantTot / cantTot;
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	}

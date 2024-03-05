@@ -310,7 +310,7 @@ class M_Item extends MY_Model
 				a.idItem AS value
 				, a.nombre AS label
 			FROM compras.item a
-			WHERE a.estado = 1
+			WHERE a.estado = 1 and idItemTipo in (1, 9)
 			ORDER BY 2
 		";
 
