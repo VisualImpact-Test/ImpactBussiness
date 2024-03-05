@@ -79,6 +79,23 @@ class Tracking extends MY_Controller
 
 		echo json_encode($result);
 	}
+
+	public function formulariotrackingFechaSustento()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+
+		//$dataParaVista['datosAdicionales'] = $this->db->get_where('compras.trackingDatosAdicionales', ['idOrdenServicio' => $post['idOrdenServicio'], 'idSinceradoGr' => $post['idSinceradoGr'], 'estado' => 1])->result_array();
+		$dataParaVista['idOrdenServicio'] = $post['idOrdenServicio'];
+		$dataParaVista['idSinceradoGr'] = $post['idSinceradoGr'];
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Registrar Sustento';
+		$result['data']['html'] = $this->load->view("modulos/Finanzas/Tracking/formularioRegistroFechaSustento", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
+
+
 	public function registrarTrackingDatosAdicionales()
 	{
 		$this->db->trans_start();
@@ -107,4 +124,26 @@ class Tracking extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
+
+	public function registrarTrackingFechaSustento()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = $this->input->post();
+		if ($post['estadoSustento'] == 0) {
+			$data = ['estadoSustento' => $post['estadoSustento'],'usuarioEliminar' => $this->idUsuario];
+		}elseif ($post['estadoSustento'] == 1) {
+			$data = ['fechaSustento' => $post['fechaSustento']];
+		}
+		$this->db->update('compras.cotizacion', $data, ['idCotizacion' => $post['idCotizacion']]);
+
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('registroExitoso');
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
+	}
+	
 }

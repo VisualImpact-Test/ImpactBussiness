@@ -4,6 +4,7 @@
 			<tr>
 				<th class="d-none">NRO</th>
 				<th class="td-center">CORRELATIVO</th>
+			
 				<th class="td-center">AÑO</th>
 				<th class="td-center">MES</th>
 				<th class="td-left">CLIENTE</th>
@@ -27,6 +28,7 @@
 				<th>FEE</th>
 				<th>TOTAL</th>
 				<th>FECHA ESTIMADA EJECUCIÓN</th>
+				<th>ACTUALIZAR ESTADO TRACKING</th>
 				<th>COMENTARIOS</th>
 			</tr>
 		</thead>
@@ -35,7 +37,8 @@
 			<?php foreach ($tracking as $k => $row) : ?>
 				<tr data-id="<?= $k ?>">
 					<td class="d-none"> <?= $k + 1 ?> </td>
-					<td class="td-center"> <?= verificarEmpty($row['correlativa'], 3) ?> </td>
+					<td class="td-center"> <?= verificarEmpty($row['correlativa'], 3).'-'.formularSerie($row['id']) ?> </td>
+					
 					<td class="td-center"> <?= explode('-', $row['mes'])[0] ?> </td>
 					<td class="td-center"> <?= NOMBRE_MES[explode('-', $row['mes'])[1]] ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['cliente'], 3) ?> </td>
@@ -45,12 +48,29 @@
 					<td class="td-center"> <?= verificarEmpty($row['usuario'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['fechaOC'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['oc'], 3) ?> </td>
-					<td class="td-center"> <?= verificarEmpty($row['fechaSustento'], 3) ?> </td>
+					<td class="td-center"> <?= date_change_format(verificarEmpty($row['fechaSustento'], 4)) ?> </td>
 					<td class="td-center"> <?= date_change_format(verificarEmpty($row['fechaGR'], 4)) ?> </td>
 					<td class="td-center"> <?= date_change_format(verificarEmpty($row['fechaEnvioFinanzas'], 4)) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['gr'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['monto'], 3) ?> </td>
-					<td class="td-center"> <?= verificarEmpty($row['status'], 3) ?> </td>
+					<?php 
+					$status = 'PENDIENTE';
+					$span = 'yellow';
+					if (!empty($row['fechaSustento'])) {
+						$status = 'ENVIADO';
+						$span = 'green';
+					}
+					if (!empty($row['fechaGR']) && !empty($row['idGr'])) {
+						$status = 'POR FACTURAR';
+						$span = 'purple';
+					}
+					if ($row['estadoSustento'] == 0) {
+						$status = 'ELIMINADO';
+						$span = 'red';
+					}
+					?>
+					
+					<td class="td-center"> <span class="ui <?= $span; ?> large label claseEstado"><?= $status; ?></span> </td>
 					<td class="td-center"> <?= verificarEmpty($row['concepto'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['planillas'], 3) ?> </td>
 					<td class="td-center"> <?= verificarEmpty($row['incentivo'], 3) ?> </td>
@@ -63,6 +83,13 @@
 						<?php if (!empty($row['idGr'])) : ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingDatosAdicionales" data-idgr="<?= $row['idGr'] ?>" data-id="<?= $row['id'] ?>" title="Indicar Fecha Ejecución"><i class="fa fa-lg fa-edit"></i></a>
 						<?php endif; ?>
+					</td>
+					<td class="td-center">
+						<?php if ($row['tipoTracking'] == 'C') { 
+							if (empty($row['fechaSustento'])) { 
+								if($row['estadoSustento'] == 1){?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-trackingFechaSustento" data-idgr="<?= $row['idGr'] ?>" data-id="<?= $row['id'] ?>" title="Indicar Fecha Ejecución"><i class="fa fa-lg fa-edit"></i></a>
+						<?php } } } ?>
 					</td>
 					<td class="td-center">
 						<?= verificarEmpty($row['comentario']) ?>

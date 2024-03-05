@@ -52,6 +52,7 @@ class M_Tracking extends MY_Model
 				gr.idSinceradoGr as idGr,
 				e.abreviatura correlativa,
 				CAST(os.fechaIni as date) mes,
+				'S' AS tipoTracking,
 				e.razonSocial cliente,
 				ec.canal,
 				ec.subcanal,
@@ -74,7 +75,10 @@ class M_Tracking extends MY_Model
 				s.totalSincerado as total,
 				tda.fechaEstimadaEjecucion,
 				tda.comentario,
-				tda.flagCotizacion
+				tda.flagCotizacion,
+				os.estado as estadoTracking,
+				'1' as estadoSustento,
+				'' as usuarioEliminar
 			from compras.ordenServicio os
 			left join compras.presupuesto p ON p.idOrdenServicio = os.idOrdenServicio
 			join rrhh.dbo.Empresa e ON e.idEmpresa = os.idCuenta
@@ -92,6 +96,7 @@ class M_Tracking extends MY_Model
 				cgr.idCotizacionGr AS idGr,
 				emp.abreviatura AS correlativa,
 				CAST(c.fechaEmision as date) AS mes,
+				'C' AS tipoTracking,
 				emp.nombre as cliente,
 				ec.canal as canal,
 				ec.subcanal as subcanal,
@@ -99,7 +104,7 @@ class M_Tracking extends MY_Model
 				'---' as usuario,
 				c.fechaClienteOC as fechaOC,
 				c.codOrdenCompra as oc,
-				null as fechaSustento,
+				c.fechaSustento as fechaSustento,
 				cgr.fechaGR as fechaGR,
 				null as fechaEnvioFinanzas,
 				cgr.numeroGR as gr,
@@ -114,7 +119,10 @@ class M_Tracking extends MY_Model
 				c.total_fee as total,
 				tda.fechaEstimadaEjecucion,
 				tda.comentario,
-				tda.flagCotizacion
+				tda.flagCotizacion,
+				c.estado as estadoTracking,
+				c.estadoSustento as estadoSustento,
+				c.usuarioEliminar
 			from compras.cotizacion c
 			join rrhh.dbo.Empresa emp ON emp.idEmpresa = c.idCuenta
 			join rrhh.dbo.empresa_Canal ec ON ec.idEmpresaCanal = c.idCentroCosto

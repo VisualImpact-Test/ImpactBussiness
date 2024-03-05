@@ -2235,6 +2235,14 @@ function obtenerDatosCabecera($array, $head)
 	return $ar;
 }
 
+
+function formularSerie($numero)
+{
+    $numeroFormateado = str_pad($numero, 6, '0', STR_PAD_LEFT);
+    return  $numeroFormateado;
+}
+
+
 function sumarArrayPorCabecera($array, $head)
 {
 	$total = 0;

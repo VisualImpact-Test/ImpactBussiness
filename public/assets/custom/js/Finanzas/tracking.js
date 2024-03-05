@@ -12,6 +12,24 @@ var Tracking = {
 			$('#btn-filtrarTracking').click();
 		});
 
+		$(document).on('change', '#estadoSustento', function () {
+			var _this = $('#estadoSustento').val();
+			console.log(_this);
+			if (_this == 0) {
+				$('#fechSusten').hide();
+				$('#fechaSustento').removeAttr("patron");
+				$('#elimSusten').show();
+				$('#comentarioForm').attr("patron", "requerido");
+				
+			  } else {
+				$('#fechSusten').show();
+				$('#comentarioForm').removeAttr("patron");
+				$('#elimSusten').hide();
+				$('#fechaSustento').attr("patron", "requerido");
+			  }
+
+		});
+
 		$(document).on('click', '#btn-filtrarTracking', function () {
 			var ruta = 'reporte';
 			var config = {
@@ -69,6 +87,31 @@ var Tracking = {
 		})
 		HTCustom.load();
 
+		$(document).on('click', '.btn-trackingFechaSustento', function () {
+			let _this = $(this);
+			let data = _this.data();
+			let idGr = data.idgr;
+			let id = data.id;
+
+			let jsonString = { 'idSinceradoGr': idGr, 'idOrdenServicio': id };
+			let config = { 'url': Tracking.url + 'formulariotrackingFechaSustento', 'data': jsonString };
+			//console.log(config);
+			$.when(Fn.ajax(config)).then((a) => {
+				++modalId;
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroTrackingFechaSustento", fn: "Tracking.registrarFechaSustento()", content: "¿Esta seguro de registrar Fecha de Sustento?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
+				$('#fechSusten').show();
+				$('#comentarioForm').removeAttr("patron");
+				$('#elimSusten').hide();
+				$('#fechaSustento').attr("patron", "requerido");
+			});
+		});
+
 	},
 	registrarDatosAdicionales: function () {
 		let jsonString = Fn.formSerializeObject('formRegistroTrackingDatosAdicionales');
@@ -87,8 +130,25 @@ var Tracking = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
-	}
+	},
+	registrarFechaSustento: function () {
+		let jsonString = Fn.formSerializeObject('formRegistroTrackingFechaSustento');
+		let url = Tracking.url + "registrarTrackingFechaSustento";
+		let config = { url: url, data: jsonString };
+		//console.log(config);
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarTracking").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '30%' });
+		});
+	}
 }
 
 Tracking.load();
