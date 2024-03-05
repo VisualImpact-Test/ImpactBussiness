@@ -1221,6 +1221,15 @@
 					</div>
 				</div>
 			</div>
+			<div class="column d-none">
+				<div class="ui right labeled input">
+					<label for="feeForm3" class="ui label">Fee3: </label>
+					<input data-min='0' type="number decimal" id="feeForm3" class="onlyNumbers" name="feeForm3" placeholder="Fee" value="<?= !empty($cotizacion['feeTarjetaVales']) ? $cotizacion['feeTarjetaVales'] : '0' ?>" onkeyup="Cotizacion.actualizarTotal();">
+					<div class="ui basic label">
+						%
+					</div>
+				</div>
+			</div>
 			<div class="column">
 				<div class="ui right labeled input">
 					<label for="totalForm" class="ui label green">Total: </label>
