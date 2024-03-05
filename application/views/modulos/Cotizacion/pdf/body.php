@@ -1,3 +1,5 @@
+<?php $montoFee = 0; ?>
+<?php $montoFeeTarjVales = 0; ?>
 <div>
 	<table>
 		<tr>
@@ -68,6 +70,10 @@
 	</thead>
 	<tbody>
 		<?php foreach ($detalle as $key => $row) : ?>
+			<!-- Calcular Fee -->
+			<?php $montoFee += floatval($row['montoFee']); ?>
+			<!-- Calcular FeeTarjValConc -->
+			<?php $montoFeeTarjVales += floatval($row['montoFeeTarjValCon']); ?>
 			<?php if ($row['idItemTipo'] == COD_SERVICIO['id']) : ?>
 				<?php
 				$cont = 0;
@@ -204,6 +210,36 @@
 					<?php endforeach; ?>
 				<?php endif; ?>
 			<?php endif; ?>
+			<?php if ($row['idItemTipo'] == COD_CONCURSO['id']) : ?>
+				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
+					<tr class="bg-gray">
+						<td class="text-center"></td>
+						<td class="text-left" colspan="4">
+							&nbsp; &nbsp; &nbsp;<?= $dsV['nombre'] ?>
+						</td>
+						<td class="text-center">
+							<?= floatval($dsV['cantidad'])  ?>
+						</td>
+						<td class="text-right">
+							<?= moneda(floatval($dsV['costo'])) ?>
+						</td>
+					</tr>
+					<?php if (!empty($dsV['porcentajeParaCosto'])) : ?>
+						<tr class="bg-gray">
+							<td class="text-center"></td>
+							<td class="text-left" colspan="4">
+								&nbsp; &nbsp; &nbsp;Gasto administrativo concurso
+							</td>
+							<td class="text-center">
+								-
+							</td>
+							<td class="text-right">
+								<?= moneda(floatval($dsV['costo']) * floatval($dsV['porcentajeParaCosto']) / 100) ?>
+							</td>
+						</tr>
+					<?php endif; ?>
+				<?php endforeach; ?>
+			<?php endif; ?>
 			<?php $montoSub += floatval($row['subtotal']); ?>
 		<?php endforeach; ?>
 	</tbody>
@@ -217,20 +253,37 @@
 				<p><?= moneda($montoSub); ?></p>
 			</td>
 		</tr>
-		<tr class="height:100px" style="background-color: #F6FAFD;">
-			<td colspan="<?= $col1; ?>" class="text-right bold">
-				<p>FEE <?= !empty($cabecera['fee']) ? $cabecera['fee'] . '%' : '0%' ?></p>
-			</td>
-			<td class="text-right">
-				<p><?= moneda(($cabecera['fee_prc'])) ?></p>
-			</td>
-		</tr>
+		<?php if (!empty($montoFee)) : ?>
+			<tr class="height:100px" style="background-color: #F6FAFD;">
+				<td colspan="<?= $col1; ?>" class="text-right bold">
+					<p>FEE <?= !empty($cabecera['fee']) ? $cabecera['fee'] . '%' : '0%' ?></p>
+				</td>
+				<td class="text-right">
+					<p><?= moneda($montoFee) ?></p>
+				</td>
+			</tr>
+		<?php endif; ?>
+		<?php if (!empty($montoFeeTarjVales)) : ?>
+			<tr class="height:100px" style="background-color: #F6FAFD;">
+				<td colspan="<?= $col1; ?>" class="text-right bold">
+					<p>FEE <?= !empty($cabecera['feeTarjetaVales']) ? $cabecera['feeTarjetaVales'] . '%' : '0%' ?></p>
+				</td>
+				<td class="text-right">
+					<p><?= moneda($montoFeeTarjVales) ?></p>
+				</td>
+			</tr>
+		<?php endif; ?>
 		<tr class="height:100px" style="background-color: #FFE598;">
 			<td colspan="<?= $col1; ?>" class="text-right bold" style="color:black">
 				<p>TOTAL</p>
 			</td>
 			<td class="text-right bold" style="color:black">
-				<p><?= moneda(floatval($montoSub) + floatval($cabecera['fee_prc'])); ?></p>
+				<p>
+					<?=
+						// moneda(floatval($montoSub) + floatval($cabecera['fee_prc']));
+						moneda($cabecera['total_fee'])
+					?>
+				</p>
 			</td>
 		</tr>
 	</tfoot>

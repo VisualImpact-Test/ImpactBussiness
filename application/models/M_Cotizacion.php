@@ -761,8 +761,9 @@ class M_Cotizacion extends MY_Model
 				, p.aprovador 
 				, p.montoSincerado
 				, pd.idCotizacionDetallePersonal
-				, pd.subtotal * case when pd.idItemTipo in (8,10) then p.feeTarjetaVales end as montoFeeTarjValCon
-				, pd.subtotal * case when pd.idItemTipo not in (8,10) then p.feeTarjetaVales end as montoFee
+				, p.feeTarjetaVales
+				, pd.subtotal * case when pd.idItemTipo in (8,10) then isnull(p.feeTarjetaVales, 0) end / 100 as montoFeeTarjValCon
+				, pd.subtotal * case when pd.idItemTipo not in (8,10) then isnull(p.fee, 0) end / 100 as montoFee
 				 
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
@@ -782,7 +783,6 @@ class M_Cotizacion extends MY_Model
 			ORDER BY itemTipo, pd.idCotizacionDetalle
 		";
 		$query = $this->db->query($sql);
-
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
@@ -847,7 +847,6 @@ class M_Cotizacion extends MY_Model
 	public function insertarCotizacion($params = [])
 	{
 		$query = $this->db->insert($params['tabla'], $params['insert']);
-
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
@@ -2770,7 +2769,7 @@ class M_Cotizacion extends MY_Model
 		where 1 = 1 AND
 		estado = 1 AND 
 		idItemTipo = 7
-		and idCotizacionDetalle = ".$params;
+		and idCotizacionDetalle = " . $params;
 		$query = $this->db->query($sql);
 		if ($query) {
 			$this->resultado['query'] = $query;
@@ -2786,7 +2785,7 @@ class M_Cotizacion extends MY_Model
 		select idZona , flagOtrosPuntos , idTipoTransporte from compras.cotizacionDetalleSub as cds
 		left join compras.tipoServicio as ts on cds.idTipoServicio = ts.idTipoServicio 
 		where 1= 1
-		and idCotizacionDetalle = ".$params."
+		and idCotizacionDetalle = " . $params . "
 		group by idZona , flagOtrosPuntos ,idTipoTransporte ";
 		$query = $this->db->query($sql);
 		if ($query) {
@@ -2796,13 +2795,13 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	public function datosOperLogDetalleArticulo($idZona , $idCotizacionDetalle)
+	public function datosOperLogDetalleArticulo($idZona, $idCotizacionDetalle)
 	{
 		$sql = "
 		select * from compras.cotizacionDetalleSub
 		where 1 = 1
-		and idCotizacionDetalle = ".$idCotizacionDetalle."
-		and idZona = ".$idZona."
+		and idCotizacionDetalle = " . $idCotizacionDetalle . "
+		and idZona = " . $idZona . "
 		";
 		$query = $this->db->query($sql);
 		if ($query) {
@@ -2812,14 +2811,13 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
-	
 
-	
+
+
 	public function datosCuentaUsuario($params = [])
 	{
 		$sql = "
-		select cu.idCuentaUsuario as id, UPPER(cu.nombre) AS value from VisualImpact.logistica.cuentaUsuario cu where cu.estado='1' and idCuenta = ".$params." order by cu.nombre asc"
-		;
+		select cu.idCuentaUsuario as id, UPPER(cu.nombre) AS value from VisualImpact.logistica.cuentaUsuario cu where cu.estado='1' and idCuenta = " . $params . " order by cu.nombre asc";
 
 		$query = $this->db->query($sql);
 
@@ -2865,7 +2863,7 @@ class M_Cotizacion extends MY_Model
 	}
 
 
-	
+
 	public function obtenerCotizacionDetalleArchivos($params = [])
 	{
 
@@ -2922,6 +2920,4 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
-
-	
 }

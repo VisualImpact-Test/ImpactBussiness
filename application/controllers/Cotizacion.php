@@ -474,7 +474,7 @@ class Cotizacion extends MY_Controller
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 			'idTipoMoneda' => $post['tipoMoneda'],
 			'feeTarjetaVales' => $post['feeForm3'],
-			
+
 		];
 
 		$validacionExistencia = $this->model->validarExistenciaCotizacion($data['insert']);
@@ -508,6 +508,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		$insert = $this->model->insertarCotizacion($data);
+		
 		$data['idCotizacion'] = $insert['id'];
 		$idCotizacion = $data['idCotizacion'];
 		$insertAnexos = $this->model->insertarCotizacionAnexos($data);
@@ -1196,6 +1197,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['cabecera']['fee'] = $row['fee'];
 				$dataParaVista['cabecera']['feePersonal'] = $row['feePersonal'];
 				$dataParaVista['cabecera']['igv'] = $row['flagIgv'];
+				$dataParaVista['cabecera']['feeTarjetaVales'] = $row['feeTarjetaVales'];
 				$dataParaVista['cabecera']['total'] = $total = $row['total'];
 				$dataParaVista['cabecera']['total_fee'] = $row['total_fee'];
 				$dataParaVista['cabecera']['total_fee_igv'] = $row['total_fee_igv'];
@@ -1252,6 +1254,8 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['fee2Por'] = $row['fee2Por'];
 				$dataParaVista['detalle'][$key]['fee1Monto'] = $row['fee1Monto'];
 				$dataParaVista['detalle'][$key]['fee2Monto'] = $row['fee2Monto'];
+				$dataParaVista['detalle'][$key]['montoFeeTarjValCon'] = $row['montoFeeTarjValCon'];
+				$dataParaVista['detalle'][$key]['montoFee'] = $row['montoFee'];
 
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
@@ -1277,10 +1281,10 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['archivos'][$archivo['idCotizacionDetalle']][] = $archivo;
 			}
 
-			if (!empty($dataParaVista['cabecera']['fee'])) {
-				$dataParaVista['cabecera']['fee_prc'] = $fee = ($total * ($dataParaVista['cabecera']['fee'] / 100));
-				$totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
-			}
+			// if (!empty($dataParaVista['cabecera']['fee'])) {
+			// 	$dataParaVista['cabecera']['fee_prc'] = $fee = ($total * ($dataParaVista['cabecera']['fee'] / 100));
+			// 	$totalFee = $dataParaVista['cabecera']['total_fee'] = ($total + $fee);
+			// }
 
 			if (!empty($dataParaVista['cabecera']['total_fee_igv'])) {
 				$total = $dataParaVista['cabecera']['total'];
@@ -3028,7 +3032,7 @@ class Cotizacion extends MY_Controller
 		header('Set-Cookie: fileDownload=true; path=/');
 		header('Cache-Control: max-age=60, must-revalidate');
 
-		$cod_oc = generarCorrelativo($dataParaVista['data']['seriado'], 6) . "-". $dataParaVista['data']['concepto'];
+		$cod_oc = generarCorrelativo($dataParaVista['data']['seriado'], 6) . "-" . $dataParaVista['data']['concepto'];
 		if ($visible) {
 			$mpdf->Output("OC{$cod_oc}.pdf", 'I');
 		} else {
@@ -5113,7 +5117,7 @@ class Cotizacion extends MY_Controller
 			if (!isset($agrupadoPorId[$idCotizacionDetalle])) {
 				$agrupadoPorId[$idCotizacionDetalle] = array();
 			}
-			
+
 			$vCds['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 			$agrupadoPorId[$idCotizacionDetalle][] = $vCds;
 		}
