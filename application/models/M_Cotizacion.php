@@ -38,8 +38,8 @@ class M_Cotizacion extends MY_Model
 			AND General.dbo.fn_fechaVigente(ec.fecInicio,ec.fecFin,@hoy,@hoy)=1
 		JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 		WHERE
-			/*e.flag = 'activo'
-			AND*/ emp.estado = 1
+			e.flag = 'activo'
+			AND emp.estado = 1
 		ORDER BY emp.razonSocial
 		";
 		$query = $this->db->query($sql);
@@ -126,10 +126,10 @@ class M_Cotizacion extends MY_Model
 			JOIN rrhh.dbo.Empleado e ON e.idEmpleado = ec.idEmpleado
 			WHERE
 			1 = 1
-				/* e.flag = 'activo' 
+				AND e.flag = 'activo' 
 				-- Excluir canal Trade -- Se quito la exclusiòn por el correo de margarita 2023-11-02
-				-- AND c.idCanal not in (1)
-				AND c.subcanal IS NOT NULL */
+			    --AND c.idCanal in (1)
+				AND c.subcanal IS NOT NULL
 				{$filtros}
 			ORDER BY value
 		";
@@ -143,6 +143,63 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function actualizarCostosDeCotizacionesVigentes($idItem, $idProveedor, $newCosto)
+	{
+		$this->db->distinct()
+			->select('	c.idCotizacion, c.idCotizacionEstado, c.fee, c.flagIgv,
+							cd.idCotizacionDetalle, cd.idItem, cd.nombre, cd.idProveedor, cd.cantidad, cd.costo, cd.subtotal, cd.gap, cd.precio')
+			->from('compras.cotizacionDetalle cd')
+			->join('compras.cotizacion c', 'c.idCotizacion = cd.idCotizacion')
+			->where('cd.idItem', $idItem)
+			->where('cd.idProveedor', $idProveedor)
+			->where('cd.idCotizacionDetalle', 334) // Eliminar esta fila despues de probar.
+			->where('cd.costo >', $newCosto);
+
+		$query = $this->db->get();
+		$result = $query->result_array();
+		if (!empty($result)) {
+			foreach ($result as $row) {
+				$newPrecio = (floatval($row['gap']) + 100) / 100 * floatval($newCosto);
+				$newSubTotal = floatval($row['cantidad']) * floatval($newPrecio);
+
+				$this->db->update(
+					'compras.cotizacionDetalle',
+					[
+						'costo' => $newCosto,
+						'subtotal' => $newSubTotal,
+						'precio' => $newPrecio
+					],
+					[
+						'idCotizacionDetalle' => $row['idCotizacionDetalle']
+					]
+				);
+
+				$this->db
+					->select('idCotizacion, sum(isnull(subtotal,0)) as total')
+					->from('compras.cotizacionDetalle')
+					->where('idCotizacion', $row['idCotizacion'])
+					->where('estado', 1)
+					->group_by('idCotizacion');
+
+				$queryTotal = $this->db->get();
+				$rCot = $queryTotal->row_array();
+
+				$this->db->update(
+					'compras.cotizacion',
+					[
+						'total' => $rCot['total'],
+						'total_fee' => (floatval($row['fee']) + 100) / 100 * floatval($rCot['total']),
+						'total_fee_igv' => (floatval($row['fee']) + 100) / 100 * floatval($rCot['total']) * (!empty($row['flagIgv']) ? 1.18 : 1)
+					],
+					[
+						'idCotizacion' => $row['idCotizacion']
+					]
+				);
+			}
+		}
+
+		return true;
+	}
 	public function obtenerCuentaCentroCostoEdit($params = [])
 	{
 		$filtros = '';
@@ -2220,7 +2277,7 @@ class M_Cotizacion extends MY_Model
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
 				LEFT JOIN compras.proveedor p ON p.idProveedor = cd.idProveedor
 				LEFT JOIN compras.item i ON i.idItem = cd.idItem
-				LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem AND flag_actual = 1
+				LEFT JOIN compras.itemTarifario ci ON ci.idItem = cd.idItem AND flag_actual = 1 and ci.estado=1
 				WHERE
 				1 = 1 and cd.estado=1
 				and cd.idCotizacion in {$filtros}
