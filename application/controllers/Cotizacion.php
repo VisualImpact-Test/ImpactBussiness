@@ -3242,6 +3242,7 @@ class Cotizacion extends MY_Controller
 			'mostrarPrecio' => !empty($post['flagMostrarPrecio']) ? $post['flagMostrarPrecio'] : 0,
 			'idTipoServicioCotizacion' => $post['tipoServicioCotizacion'],
 			'idTipoMoneda' => $post['tipoMoneda'],
+			'feeTarjetaVales' => $post['feeForm3'],
 		];
 
 		if (isset($post['actualizarEstado'])) {
