@@ -3346,6 +3346,8 @@ var Cotizacion = {
 				// total = Number(total) + Number($(value).val());
 			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_TARJETAS_VALES.id) {
 				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
+			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_CONCURSO.id) {
+				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
 			} else { // != COD_DISTRIBUCION.id
 				total = Number(total) + Number($(value).val());
 			}
