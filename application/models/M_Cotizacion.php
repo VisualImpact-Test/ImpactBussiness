@@ -759,7 +759,10 @@ class M_Cotizacion extends MY_Model
 				, p.fechaEnvioFinanzas 
 				, p.aprovador 
 				, p.montoSincerado
-				,pd.idCotizacionDetallePersonal
+				, pd.idCotizacionDetallePersonal
+				, pd.subtotal * case when pd.idItemTipo in (8,10) then p.feeTarjetaVales end as montoFeeTarjValCon
+				, pd.subtotal * case when pd.idItemTipo not in (8,10) then p.feeTarjetaVales end as montoFee
+				 
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo
