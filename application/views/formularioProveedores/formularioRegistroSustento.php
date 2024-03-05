@@ -10,7 +10,7 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Guia</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf" patron="<?= $requiereguia == 1 ? 'requerido' : ''; ?>">
+						<input type="file" class="custom-file-input files-upload_guia file-upload_guia" lang="es" accept="image/*, .pdf">
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Guia</label>
