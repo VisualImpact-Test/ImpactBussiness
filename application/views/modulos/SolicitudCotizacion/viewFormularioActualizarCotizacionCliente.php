@@ -215,6 +215,7 @@
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
+								
 							</div>
 							<div class="fields">
 								<div class="five wide field">
@@ -697,6 +698,16 @@
 				<div class="ui right labeled input">
 					<label for="feeForm" class="ui label">Fee: </label>
 					<input data-min='0' type="number" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
+					<div class="ui basic label">
+						%
+					</div>
+				</div>
+			</div>
+			<div class="column d-none">
+				<!-- <div class="ui sub header">Total</div> -->
+				<div class="ui right labeled input">
+					<label for="feeForm3" class="ui label">Fee: </label>
+					<input data-min='0' type="number" id="feeForm3" class="onlyNumbers" name="feeForm3" placeholder="Fee" value="<?= !empty($cotizacion['feeTarjetaVales']) ? $cotizacion['feeTarjetaVales'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
 					</div>
