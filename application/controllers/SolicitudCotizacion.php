@@ -1649,7 +1649,7 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['itemServicio'] = $data['itemServicio'];
 
 		$config['single'] = true;
-
+		
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'Cotizacion';
 		$config['data']['message'] = 'Lista de Cotizacions';
@@ -2119,6 +2119,7 @@ class SolicitudCotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		// var_dump($post);exit();
 		$dataParaVista = [];
 		$dataParaVista['monedas'] = $this->model->obtenerMonedas()['query']->result_array();
 
@@ -2155,10 +2156,13 @@ class SolicitudCotizacion extends MY_Controller
 			'precioForm' => $post['precioForm'],
 			'subtotalForm' => empty($post['subtotalForm']) ? number_format($post['cantidadForm'] * $post['costoForm'], 2) : $post['subtotalForm'],
 			'ocDelCliente' => $post['ocDelCliente'],
+			'idTipo_TarjetasVales' => $post['tipoTarjVales'],
 			// 'caracteristicasCompras' => $post['caracteristicasCompras'],
 		]);
+		
 
 		$provCompare = [];
+		$tarjCompare = [];
 		$post['idCotizacionDetalle'] = checkAndConvertToArray($post['idCotizacionDetalle']);
 		$titulos = [];
 		foreach ($post['idCotizacionDetalle'] as $kc => $vc) {
@@ -2184,11 +2188,14 @@ class SolicitudCotizacion extends MY_Controller
 		}
 		$dataParaVista['dataOper']['tituloAsunto'] = $titulo;
 		$dataParaVista['dataOper']['enlaces'] = $enlace;
+		
 		foreach ($dataParaVista['detalle'] as $dd => $row) {
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;
 			$provCompare[$row['idProveedorForm']] = $row['idProveedorForm'];
-
+			$tarjCompare[$row['idTipo_TarjetasVales']] = $row['idTipo_TarjetasVales'];
+			//var_dump($tarjCompare);
+			//$tarjCompare
 			if (!empty($post["idCotizacionDetalleSub[{$row['idCotizacionDetalle']}]"])) {
 				$k = $row['idCotizacionDetalle'];
 				switch ($row['tipoItemForm']) {
@@ -2254,6 +2261,13 @@ class SolicitudCotizacion extends MY_Controller
 		if (count($provCompare) > 1) {
 			$result['result'] = 2;
 			$result['data']['html'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Se indicaron distintos proveedores en la selección']);
+			$result['msg']['title'] = 'OC Vista previa';
+			$result['data']['width'] = '30%';
+			goto resultado;
+		}
+		if (count($tarjCompare) > 1) {
+			$result['result'] = 2;
+			$result['data']['html'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Se indicaron distintos tipo']);
 			$result['msg']['title'] = 'OC Vista previa';
 			$result['data']['width'] = '30%';
 			goto resultado;

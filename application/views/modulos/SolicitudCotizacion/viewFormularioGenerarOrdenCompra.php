@@ -92,18 +92,35 @@
 									<div class="ui sub header">Proveedor</div>
 									<input class="proveedoresForm" type='text' value="<?= $row['razonSocial'] ?>" readonly>
 								</div>
+								
 								<div class="four wide field">
 									<div class="ui sub header">Tipo Item</div>
 									<select class="ui dropdown simpleDropdown read-only idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido">
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
-								<div class="four wide field">
+								<div class="four wide field <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? 'd-none' : '' ?>">
 									<div class="ui sub header">Características</div>
 									<div class="ui right labeled input w-100">
 										<input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>" placeholder="Caracteristicas del item">
 									</div>
 								</div>
+
+								<div class="four wide field divTipoTarjValesConcurso <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Tipo</div>
+									<?php $tipo_vt = verificarEmpty($row['idTipo_TarjetasVales']); #Tambien es para concursos pero la columna ya tiene ese nombre :) ?>
+
+									<select class="ui fluid clearable dropdown simpleDropdown read-only" name="tipoTarjVales" >
+										<option class="text-titlecase" value <?= empty($tipo_vt) ? 'selected' : ''; ?>>Seleccione</option>
+										<option class="text-titlecase" value="1" <?= $tipo_vt == '1' ? 'selected' : ''; ?>>COMPRA</option>
+										<option class="text-titlecase" value="2" <?= $tipo_vt == '2' ? 'selected' : ''; ?>>RECARGA</option>
+									</select>
+								</div>
+
+
+
+
+							
 								<div class="three wide field">
 									<div class="ui sub header">Nro OC</div>
 									<div class="ui right labeled input w-100">
