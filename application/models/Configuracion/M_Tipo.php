@@ -22,6 +22,7 @@ class M_Tipo extends MY_Model
 		$filtros = "";
 		$filtros .= !empty($params['tipo']) ? " AND a.nombre LIKE '%" . $params['tipo'] . "%'" : "";
 		$filtros .= !empty($params['idTipo']) ? ' AND a.idItemTipo = ' . $params['idTipo'] : '';
+		$filtros .= !empty($params['allTipoArticulo']) ? '' : ' AND a.estado = 1';
 
 		$sql = "
 			SELECT
@@ -29,7 +30,7 @@ class M_Tipo extends MY_Model
 				, a.nombre AS tipo
 				, a.estado
 			FROM compras.itemTipo a
-			WHERE 1 = 1 AND a.estado = 1
+			WHERE 1 = 1 
 			{$filtros}
 		";
 

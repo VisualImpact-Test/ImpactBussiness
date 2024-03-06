@@ -41,14 +41,14 @@ class SolicitudRequerimientoInterno extends MY_Controller
 
 		$this->view($config);
 	}
-	
+
 	public function reporte()
 	{
 		$result = $this->result;
 		$dataParaVista = [];
 		$solicitanteInterno = $this->session->userdata('idUsuario');
 		$dataParaVista['requerimientoInterno'] = $this->model->obtenerInformacionRequerimientoInterno($solicitanteInterno)['query']->result_array();
-		
+
 		$html = getMensajeGestion('noResultados');
 		if (!empty($dataParaVista['requerimientoInterno'])) {
 			$html = $this->load->view("formularioRequerimientosInternos/SolicitudRequerimientoInterno/reporte", ['datos' => $dataParaVista], true);
@@ -104,8 +104,8 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		}
 
 		$data['itemServicio'][0] = array();
-		$dataParaVista['requerimientoInterno'] = $this->model->obtenerInformacionRequerimientoInternoDetalle($post)['query']->row_array();
 		$dataParaVista['requerimientoTarifario'] = $this->model->obtenerInformacionRequerimientoInternoDetalle($post)['query']->result_array();
+		$dataParaVista['requerimientoInterno'] = $dataParaVista['requerimientoTarifario'][0];
 
 		$dataParaVista['pdf'] = $this->model->obtenerInformacionRequerimientoInternoArchivos(['idRequerimientoInterno' => $post['idRequerimientoInterno'], 'aprobacion' => true])['query']->row_array();
 		$archivos = $this->model->obtenerInformacionRequerimientoInternoArchivos(['idRequerimientoInterno' => $post['idRequerimientoInterno'], 'aprobacion' => false])['query']->result_array();
@@ -115,7 +115,8 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		}
 
 		$dataParaVista['itemServicio'] = $data['itemServicio'];
-		$dataParaVista['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
+		// $dataParaVista['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
+		$dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor', ['idProveedorEstado' => 2])->result_array();
 		$dataParaVista['usuarioAprobar'] = $this->model->obtenerUsuarioAprobar()['query']->result_array();
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
 		$dataParaVista['unidadMedida'] = $this->db->get_where('compras.unidadMedida', ['estado' => '1'])->result_array();
@@ -124,6 +125,15 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		$dataParaVista['cuentaCentroCosto'] = $this->m_cotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$dataParaVista['prioridad'] = $this->m_cotizacion->obtenerPrioridadCotizacion()['query']->result_array();
 		$dataParaVista['tipoServicio'] = $this->m_cotizacion->obtenerTipoServicioCotizacion()['query']->result_array();
+
+		foreach ($dataParaVista['requerimientoTarifario'] as $k => $v) {
+			$listProveedores = $this->db->get_where('compras.solicitudCostoProveedor', ['idItem' => $v['idItem'], 'estado' => 1])->result_array();
+			$list = [];
+			foreach ($listProveedores as $vp) {
+				$list[] = $this->db->get_where('compras.proveedor', ['idProveedor' => $vp['idProveedor']])->row_array()['razonSocial'];
+			}
+			$dataParaVista['listProveedores'][$v['idItem']] = implode(', ', $list);
+		}
 		$config['data']['title'] = 'Registrar Nuevo Requerimiento';
 		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioActualizacion", $dataParaVista, true);
 
@@ -233,5 +243,48 @@ class SolicitudRequerimientoInterno extends MY_Controller
 	{
 		$grupo['data']['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
 		echo json_encode($grupo);
+	}
+	public function enviarSolicitudCostoProveedor()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = $this->input->post();
+
+		$listItems = checkAndConvertToArray($post['idItemForm']);
+		$listProveedores = checkAndConvertToArray($post['proveedorSolicitudForm']);
+
+		$post['cantidadForm'] = checkAndConvertToArray($post['cantidadForm']);
+		$post['costoReferencialForm'] = checkAndConvertToArray($post['costoReferencialForm']);
+
+		// $post['cantidadForm'] = checkAndConvertToArray($post['checkItem']);
+
+		foreach ($listItems as $ki => $item) {
+			if (isset($post['checkItem'][$item])) {
+				foreach ($listProveedores as $proveedor) {
+					$this->db->update('compras.solicitudCostoProveedor', ['estado' => 0], [
+						'idProveedor' => $proveedor,
+						'idItem' => $item,
+					]);
+					$this->db->insert(
+						'compras.solicitudCostoProveedor',
+						[
+							'idProveedor' => $proveedor,
+							'idItem' => $item,
+							'cantidad' => $post['cantidadForm'][$ki],
+							'costoReferencial' => $post['costoReferencialForm'][$ki],
+							'fechaCreacion' => getActualDateTime(),
+						]
+					);
+				}
+			}
+		}
+
+		$result['result'] = 1;
+		$result['data']['html'] = createMessage(['type' => 1, 'message' => 'Solicitud enviada al proveedor']);
+		$result['msg']['title'] = 'Solicitud Enviada';
+
+		$this->db->trans_complete();
+		respuesta:
+		echo json_encode($result);
 	}
 }

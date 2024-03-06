@@ -47,6 +47,7 @@ class Tipo extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 
 		$dataParaVista = [];
+		$post['allTipoArticulo'] = true;
 		$dataParaVista = $this->model->obtenerInformacionTiposArticulo($post)['query']->result_array();
 
 		$html = getMensajeGestion('noRegistros');

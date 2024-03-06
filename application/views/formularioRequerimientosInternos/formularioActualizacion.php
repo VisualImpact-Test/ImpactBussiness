@@ -68,16 +68,15 @@
 				<div class="thirteen wide field">
 					<div class="ui sub header">Proveedor</div>
 					<select class="ui fluid search <?= $col_dropdown ?> dropdown simpleDropdown proveedorSolicitudForm" multiple="" name="proveedorSolicitudForm">
-						<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedorARequerir, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
+						<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
 					</select>
 				</div>
 				<div class="three wide field">
 					<div class="ui sub header">&nbsp;</div>
-					<button type='button' class="ui labeled icon green button w-100 btnSolicitarCotizacion">
+					<button type='button' class="ui labeled icon green button w-100 btnSolicitarCostoProveedor">
 						<i class="hand holding usd icon"></i>
 						Solicitar cotización
 					</button>
-
 				</div>
 			</div>
 		</div>
@@ -89,7 +88,7 @@
 						<div class="ui icon menu">
 							<a class="item chk-item" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); ">
 								<i class="square outline icon"></i>
-								<input type="checkbox" name="checkItem[324]" class="checkItem d-none">
+								<input type="checkbox" name="checkItem[<?= $row['idItem'] ?>]" class="checkItem d-none">
 							</a>
 							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 								<i class="lock icon"></i>
@@ -102,7 +101,11 @@
 					<div class="ui left floated header">
 						<span class="ui medium text "><?= $row['item'] ?></span>
 						<br>
-						<small class="text-primary"> Proveedores: <?= !empty($cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) ? implode(', ', $cotizacionProveedorRegistrados[$row['idCotizacionDetalle']]) : 'No se han enviado solicitudes' ?></small>
+						<small class="text-primary"> Proveedores:
+							<?php if (!empty($listProveedores[$row['idItem']])) : ?>
+								<?= $listProveedores[$row['idItem']] ?>
+							<?php endif; ?>
+						</small>
 					</div>
 					<div class="ui clearing divider"></div>
 					<div class="ui grid">

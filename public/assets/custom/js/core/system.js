@@ -98,6 +98,7 @@ const COD_DISTRIBUCION = { 'id': 7, 'nombre': 'DISTRIBUCION' };
 const COD_CONCURSO = { 'id': 8, 'nombre': 'CONCURSO' };
 const COD_TEXTILES = { 'id': 9, 'nombre': 'TEXTILES' };
 const COD_TARJETAS_VALES = { 'id': 10, 'nombre': 'TARJETAS_VALES' };
+const COD_PAGOS_FARMACIAS = { 'id': 11, 'nombre': 'PAGOS FARMACIA' };
 const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {

@@ -339,6 +339,32 @@ var RequerimientoInterno = {
 			let id = $(this).data('id');
 			Fn.showConfirm({ fn: "RequerimientoInterno.anularRequerimientoInterno(" + id + ")", content: " ¿Está seguro de anular el requerimiento?" });
 		});
+		$(document).on('click', '.btnSolicitarCostoProveedor', function () {
+			++modalId;
+
+			if ($('.proveedorSolicitudForm').find('select').val().length <= 0) {
+				$('.proveedorSolicitudForm').transition('shake')
+				return false;
+			}
+
+			if (!$('.checkItem').is(' :checked')) {
+				$('.chk-item').transition('glow');
+				return false;
+			}
+
+			let jsonString = Fn.formSerializeObject('formActualizarRequerimientoInterno');
+			let config = { 'url': RequerimientoInterno.url + 'enviarSolicitudCostoProveedor', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Aceptar', fn: fn[0] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+
+			});
+		});
 	},
 	registrarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroRequerimientoInterno')) };

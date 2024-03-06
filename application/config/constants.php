@@ -145,6 +145,7 @@ defined('COD_DISTRIBUCION')	or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' =
 defined('COD_CONCURSO')			or define('COD_CONCURSO', ['id' => 8, 'nombre' => 'CONCURSO']);
 defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
 defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
+defined('COD_PAGOS_FARMACIAS')	or define('COD_PAGOS_FARMACIAS', ['id' => 11, 'nombre' => 'PAGOS FARMACIA']);
 defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
 
 //Wireframe
