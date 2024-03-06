@@ -2387,6 +2387,7 @@ class Cotizacion extends MY_Controller
 		);
 
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+		//echo $this->db->last_query();exit();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
@@ -2554,6 +2555,8 @@ class Cotizacion extends MY_Controller
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
+		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
+
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}

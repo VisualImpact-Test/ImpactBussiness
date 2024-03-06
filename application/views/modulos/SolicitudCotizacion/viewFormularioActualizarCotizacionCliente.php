@@ -215,6 +215,16 @@
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
+								<div class="four wide field divTipoTarjValesConcurso <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Tipo</div>
+									<?php $tipo_vt = verificarEmpty($row['idTipo_TarjetasVales']); #Tambien es para concursos pero la columna ya tiene ese nombre :) ?>
+
+									<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
+										<option class="text-titlecase" value <?= empty($tipo_vt) ? 'selected' : ''; ?>>Seleccione</option>
+										<option class="text-titlecase" value="1" <?= $tipo_vt == '1' ? 'selected' : ''; ?>>COMPRA</option>
+										<option class="text-titlecase" value="2" <?= $tipo_vt == '2' ? 'selected' : ''; ?>>RECARGA</option>
+									</select>
+								</div>
 								
 							</div>
 							<div class="fields">
@@ -228,7 +238,13 @@
 									<div class="ui sub header">Características para compras</div>
 									<input id="caracteristicasCompras" name="caracteristicasCompras" placeholder="Características" value="<?= !empty($row['caracteristicasCompras']) ? $row['caracteristicasCompras'] : '' ?>">
 								</div>
-								<div class="five wide field">
+								<div class="five wide field divTipoTarjValesConcurso <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Proveedor</div>
+									<select class="ui fluid search clearable dropdown simpleDropdown provList" onchange="$(this).closest('.body-item').find('.idProveedor').val(this.value);">
+										<?= htmlSelectOptionArray2(['query' => $listProveedor, 'id' => 'idProveedor', 'value' => 'razonSocial', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione', 'selected' => verificarEmpty($row['idProveedor'])]); ?>
+									</select>
+								</div>
+								<div class="five wide field <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? 'd-none' : '' ?>">
 									<div class="ui sub header">Características para proveedor</div>
 									<input id="caracteristicasProveedor" name="caracteristicasProveedor" placeholder="Características" value="<?= !empty($row['caracteristicasProveedor']) ? $row['caracteristicasProveedor'] : '' ?>">
 								</div>
@@ -346,8 +362,40 @@
 									?>
 								</div>
 							</div>
+							<!-- Monto -->
+							<div class="ui grid ml-0 div-features <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+								<div class="row ml-0 pt-4 d-none"> <!-- No se muestra los botones de agregar y eliminar, pendiente corregir error -->
+									<button type="button" class="ui button btn-add-sub-item-tarjVales teal ">
+										<i class="plus icon"></i>
+										Agregar
+									</button>
+									<button type="button" class="ui button btn-delete-sub-item-tarjVales red">
+										<i class="trash icon"></i>
+										Eliminar
+									</button>
+								</div>
+								<? if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) : ?>
+									<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
+										<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+										<div class="three column row divDetalleTarjVales">
+											<div class="column">
+												<div class="ui sub header">Descripción</div>
+												<input class="descripcionSubItemTarjVal" name="descripcionSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Cantidad</div>
+												<input class="cantidadSubItemTarjVal keyUpChange onlyNumbers" name="cantidadSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoTarjetasVales(this);" value="<?= $dataSubItem['cantidad'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Monto</div>
+												<input class="montoSubItemTarjVal keyUpChange onlyNumbers" name="montoSubItemTarjVal[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" onchange="Cotizacion.calcularMontoTarjetasVales(this);" value="<?= $dataSubItem['costoSubItem'] ?>">
+											</div>
+										</div>
+									<? endforeach; ?>
+								<? endif; ?>
+							</div>
 							<!-- Monto S/ -->
-							<div class="fields <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
+							<!-- <div class="fields <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
 								<?
 								if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']])) :
 									foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TARJETAS_VALES['id']] as $dataSubItem) : ?>
@@ -360,7 +408,7 @@
 									endforeach;
 								endif;
 								?>
-							</div>
+							</div> -->
 							<!-- Servicios -->
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>

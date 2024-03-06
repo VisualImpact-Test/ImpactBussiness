@@ -1149,7 +1149,8 @@ class M_Cotizacion extends MY_Model
 			umts.nombre as umTipoServicio,
 			cd.flagDetallePDV,
 			cd.flagPackingSolicitado,
-			cd.flagMostrarDetalle
+			cd.flagMostrarDetalle,
+			cd.idTipo_TarjetasVales
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
