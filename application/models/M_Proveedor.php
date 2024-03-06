@@ -233,6 +233,8 @@ class M_Proveedor extends MY_Model
 		SELECT DISTINCT
 		p.idProveedor
 		, p.razonSocial
+		,p.idProveedor as id
+		, p.razonSocial as value
 		, p.nroDocumento
 		, r.idRubro
 		, r.nombre AS rubro

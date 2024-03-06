@@ -959,7 +959,13 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		'anulacionExitosa' => createMessage(array("type" => 1, "message" => 'Se ha anulado la cotización correctamente')),
 		'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
 		'registroInvalido' => createMessage(array("type" => 2, "message" => 'Hubo un error al registrar los datos')),
-	];
+		'anulacionExitosaRI' => createMessage(array("type" => 1, "message" => 'Se ha anulado el requerimiento interno correctamente')),
+		'anulacionErroneaRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de este requerimiento interno')),
+		'rechazoExitosoRI' => createMessage(array("type" => 1, "message" => 'Se ha rechazado el requerimiento interno correctamente')),
+		'rechazoErroneoRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con el rechazo de este requerimiento interno')),
+		'aprobacionExitosaRI' => createMessage(array("type" => 1, "message" => 'Se ha aprobado el requerimiento interno correctamente')),
+		'aprobacionErroneaRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la aprobación de este requerimiento interno')),
+		];
 
 	return $mensaje[$tipoMensaje];
 }
@@ -2234,14 +2240,6 @@ function obtenerDatosCabecera($array, $head)
 	}
 	return $ar;
 }
-
-
-function formularSerie($numero)
-{
-    $numeroFormateado = str_pad($numero, 6, '0', STR_PAD_LEFT);
-    return  $numeroFormateado;
-}
-
 
 function sumarArrayPorCabecera($array, $head)
 {
