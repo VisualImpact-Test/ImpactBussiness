@@ -1,6 +1,4 @@
-<?
-$filas = 10;
-?>
+<? $filas = 10; ?>
 
 <div style="text-align:justify">
 	<table border="1" style="width: 100%; float: left;">
@@ -154,8 +152,14 @@ $filas = 10;
 				<?php else :  ?>
 					<tr>
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= ++$indexT ?></td>
-						<td style="text-align: left;" colspan="3" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['item'], 3) ?></td>
-						<td style="text-align: left;" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['unidadMedida'], 3) ?></td>
+						<td style="text-align: left;" colspan="<?= 3 + (empty($row['unidadMedida']) ? 1 : 0) ?>" rowspan="<?= $rowT; ?>">
+							<?= verificarEmpty($row['item'], 3) ?>
+						</td>
+						<?php if (!empty($row['unidadMedida'])) : ?>
+							<td style="text-align: left;" rowspan="<?= $rowT; ?>">
+								<?= verificarEmpty($row['unidadMedida'], 3) ?>
+							</td>
+						<?php endif; ?>
 						<?php if ($tieneTextil) :  ?>
 							<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
 						<?php endif; ?>

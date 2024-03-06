@@ -2408,22 +2408,22 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#cuentaForm', function () {
-			let control = $(this);
-			let cod = control.val();
-			let gap = 0;
+			// let control = $(this);
+			// let cod = control.val();
+			// let gap = 0;
 
-			$.each(Cotizacion.gapEmpresas, (k, v) => {
-				if (v.idEmpresa == cod) {
-					gap = v.gap;
-					return;
-				}
-			});
-			if (gap) {
-				$('.gapForm').val(gap);
-				$('.cantidadForm').keyup();
-			} else {
-				$('.gapForm').val('');
-			}
+			// $.each(Cotizacion.gapEmpresas, (k, v) => {
+			// 	if (v.idEmpresa == cod) {
+			// 		gap = v.gap;
+			// 		return;
+			// 	}
+			// });
+			// if (gap) {
+			// 	$('.gapForm').val(gap);
+			// 	$('.cantidadForm').keyup();
+			// } else {
+			// 	$('.gapForm').val('');
+			// }
 
 			$('#tipoItemForm').change();
 		});
@@ -2444,6 +2444,7 @@ var Cotizacion = {
 
 			let costoTotal = cantidadTabla + costoPacking + costoMovilidad + costoPersonal;
 			control.find('.costoForm').val(costoTotal);
+			control.find('.cantidadForm').change();
 
 		});
 
@@ -3783,13 +3784,14 @@ var Cotizacion = {
 
 		$.each(cantidad, function (index, value) {
 			rowCantidad = parseFloat($(value).val());
-			rowMonto = parseFloat($(monto[index]).val()) * rowCantidad;
+			rowMonto = parseFloat($(monto[index]).val());
 
 			cantTot += rowCantidad;
 			montoTot += rowMonto;
 		});
 		let montoProm = montoTot / cantTot;
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
+		_this.closest('.body-item').find('.costoFormLabel').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	},
 	calcularMontoConcurso: function (t) {

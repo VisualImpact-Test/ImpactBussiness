@@ -1186,6 +1186,7 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['detalleDistribucion'] = [];
 			$dataParaVista['detalleSubT'] = [];
 			if (!empty($data)) $dataParaVista['cabecera']['incluyeTransporte'] = false;
+			if (!empty($data)) $dataParaVista['cabecera']['incluyeTarjVales'] = false;
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
@@ -1212,6 +1213,8 @@ class Cotizacion extends MY_Controller
 					$dataParaVista['cabecera']['incluyePersonal'] = ($row['idItemTipo'] == COD_PERSONAL['id']);
 				if (!$dataParaVista['cabecera']['incluyeServicio'])
 					$dataParaVista['cabecera']['incluyeServicio'] = ($row['idItemTipo'] == COD_SERVICIO['id']);
+				if (!$dataParaVista['cabecera']['incluyeTarjVales'])
+					$dataParaVista['cabecera']['incluyeTarjVales'] = ($row['idItemTipo'] == COD_TARJETAS_VALES['id']);
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetallePersonal'] = $row['idCotizacionDetallePersonal'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
