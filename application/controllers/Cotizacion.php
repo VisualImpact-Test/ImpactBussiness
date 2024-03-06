@@ -508,7 +508,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		$insert = $this->model->insertarCotizacion($data);
-		
+
 		$data['idCotizacion'] = $insert['id'];
 		$idCotizacion = $data['idCotizacion'];
 		$insertAnexos = $this->model->insertarCotizacionAnexos($data);
@@ -2848,7 +2848,13 @@ class Cotizacion extends MY_Controller
 
 		$idCotizacion = implode(",", $ids);
 		$dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
-		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(
+			[
+				'idCotizacion' => $idCotizacion,
+				'cotizacionInterna' => false,
+				'noTipoItem' => COD_DISTRIBUCION['id'] . ',' . COD_PERSONAL['id']
+			]
+		)['query']->result_array();
 
 		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
 			$dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();
