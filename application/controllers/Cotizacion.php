@@ -508,7 +508,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		$insert = $this->model->insertarCotizacion($data);
-		
+
 		$data['idCotizacion'] = $insert['id'];
 		$idCotizacion = $data['idCotizacion'];
 		$insertAnexos = $this->model->insertarCotizacionAnexos($data);
@@ -1186,6 +1186,7 @@ class Cotizacion extends MY_Controller
 			$dataParaVista['detalleDistribucion'] = [];
 			$dataParaVista['detalleSubT'] = [];
 			if (!empty($data)) $dataParaVista['cabecera']['incluyeTransporte'] = false;
+			if (!empty($data)) $dataParaVista['cabecera']['incluyeTarjVales'] = false;
 			foreach ($data as $key => $row) {
 				$dataParaVista['cabecera']['idCotizacion'] = $row['idCotizacion'];
 				$dataParaVista['cabecera']['cotizacion'] = $row['cotizacion'];
@@ -1212,6 +1213,8 @@ class Cotizacion extends MY_Controller
 					$dataParaVista['cabecera']['incluyePersonal'] = ($row['idItemTipo'] == COD_PERSONAL['id']);
 				if (!$dataParaVista['cabecera']['incluyeServicio'])
 					$dataParaVista['cabecera']['incluyeServicio'] = ($row['idItemTipo'] == COD_SERVICIO['id']);
+				if (!$dataParaVista['cabecera']['incluyeTarjVales'])
+					$dataParaVista['cabecera']['incluyeTarjVales'] = ($row['idItemTipo'] == COD_TARJETAS_VALES['id']);
 				$dataParaVista['detalle'][$key]['idCotizacionDetalle'] = $row['idCotizacionDetalle'];
 				$dataParaVista['detalle'][$key]['idCotizacionDetallePersonal'] = $row['idCotizacionDetallePersonal'];
 				$dataParaVista['detalle'][$key]['item'] = $row['item'];
@@ -2387,6 +2390,7 @@ class Cotizacion extends MY_Controller
 		);
 
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+		//echo $this->db->last_query();exit();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
@@ -2554,6 +2558,8 @@ class Cotizacion extends MY_Controller
 		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
 		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
+		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
+
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}
@@ -2848,7 +2854,13 @@ class Cotizacion extends MY_Controller
 
 		$idCotizacion = implode(",", $ids);
 		$dataParaVista['cotizaciones'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->result_array();
-		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		$dataParaVista['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(
+			[
+				'idCotizacion' => $idCotizacion,
+				'cotizacionInterna' => false,
+				'noTipoItem' => COD_DISTRIBUCION['id'] . ',' . COD_PERSONAL['id']
+			]
+		)['query']->result_array();
 
 		foreach ($dataParaVista['cotizacionDetalle'] as $k => $v) {
 			$dataParaVista['cotizacionDetalleSub'][$v['idCotizacionDetalle']] = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $v['idCotizacionDetalle']])->result_array();

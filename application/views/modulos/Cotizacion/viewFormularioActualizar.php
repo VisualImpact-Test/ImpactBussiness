@@ -1204,7 +1204,7 @@
 				</div>
 			<? endforeach; ?>
 		</div>
-		<div class="ui black three column center aligned stackable divided grid segment">
+		<div class="ui black four column center aligned stackable divided grid segment">
 			<div class="column">
 				<div class="ui test toggle checkbox">
 					<input class="igvForm" name="igv" type="checkbox" onchange="Cotizacion.actualizarTotal();" <?= $cotizacion['igv'] ? 'checked' : '' ?>>
@@ -1221,7 +1221,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="column d-none">
+			<div class="column">
 				<div class="ui right labeled input">
 					<label for="feeForm3" class="ui label">Fee3: </label>
 					<input data-min='0' type="number decimal" id="feeForm3" class="onlyNumbers" name="feeForm3" placeholder="Fee" value="<?= !empty($cotizacion['feeTarjetaVales']) ? $cotizacion['feeTarjetaVales'] : '0' ?>" onkeyup="Cotizacion.actualizarTotal();">

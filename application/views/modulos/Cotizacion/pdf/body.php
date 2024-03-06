@@ -60,7 +60,7 @@
 				<th width="7%">ITEM</th>
 				<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
 				<th width="15%" class="text-center">
-					<?php if ($detalle[0]['idItemTipo'] != COD_DISTRIBUCION['id'] || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte'])) : ?>
+					<?php if ($detalle[0]['idItemTipo'] != COD_DISTRIBUCION['id'] || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte']) || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTarjVales'])) : ?>
 						CANTIDAD
 					<?php endif; ?>
 				</th>
@@ -210,35 +210,40 @@
 					<?php endforeach; ?>
 				<?php endif; ?>
 			<?php endif; ?>
-			<?php if ($row['idItemTipo'] == COD_CONCURSO['id']) : ?>
-				<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
-					<tr class="bg-gray">
-						<td class="text-center"></td>
-						<td class="text-left" colspan="4">
-							&nbsp; &nbsp; &nbsp;<?= $dsV['nombre'] ?>
-						</td>
-						<td class="text-center">
-							<?= floatval($dsV['cantidad'])  ?>
-						</td>
-						<td class="text-right">
-							<?= moneda(floatval($dsV['costo'])) ?>
-						</td>
-					</tr>
-					<?php if (!empty($dsV['porcentajeParaCosto'])) : ?>
+			<?php if ($row['idItemTipo'] == COD_CONCURSO['id'] || $row['idItemTipo'] == COD_TARJETAS_VALES['id']) : ?>
+				<?php if (!empty($detalleSub[$row['idCotizacionDetalle']])) : ?>
+					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
 						<tr class="bg-gray">
 							<td class="text-center"></td>
 							<td class="text-left" colspan="4">
-								&nbsp; &nbsp; &nbsp;Gasto administrativo concurso
+								&nbsp; &nbsp; &nbsp;<?= $dsV['nombre'] ?>
 							</td>
 							<td class="text-center">
-								-
+								<?= floatval($dsV['cantidad'])  ?>
 							</td>
 							<td class="text-right">
-								<?= moneda(floatval($dsV['costo']) * floatval($dsV['porcentajeParaCosto']) / 100) ?>
+								<?= moneda(floatval($dsV['costo'])) ?>
 							</td>
 						</tr>
-					<?php endif; ?>
-				<?php endforeach; ?>
+						<?php if (!empty($dsV['porcentajeParaCosto'])) : ?>
+							<tr class="bg-gray">
+								<td class="text-center"></td>
+								<td class="text-left" colspan="4">
+									&nbsp; &nbsp; &nbsp;Gasto administrativo concurso
+								</td>
+								<td class="text-center">
+									-
+								</td>
+								<td class="text-right">
+									<?= moneda(floatval($dsV['costo']) * floatval($dsV['porcentajeParaCosto']) / 100) ?>
+								</td>
+							</tr>
+						<?php endif; ?>
+					<?php endforeach; ?>
+					<tr class="bg-gray">
+						<td></td>
+					</tr>
+				<?php endif; ?>
 			<?php endif; ?>
 			<?php $montoSub += floatval($row['subtotal']); ?>
 		<?php endforeach; ?>
@@ -280,8 +285,8 @@
 			<td class="text-right bold" style="color:black">
 				<p>
 					<?=
-						// moneda(floatval($montoSub) + floatval($cabecera['fee_prc']));
-						moneda($cabecera['total_fee'])
+					// moneda(floatval($montoSub) + floatval($cabecera['fee_prc']));
+					moneda($cabecera['total_fee'])
 					?>
 				</p>
 			</td>
