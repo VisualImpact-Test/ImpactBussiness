@@ -208,7 +208,7 @@
 									<?= htmlSelectOptionArray2(['query' => $unidadMedida, 'id' => 'idUnidadMedida', 'value' => 'nombre', 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
-							<div class="four wide field divTipoConcurso divTipoTarjVales d-none">
+							<div class="three wide field divTipoConcurso divTipoTarjVales d-none">
 								<div class="ui sub header">Tipo</div>
 								<select class="ui fluid clearable dropdown simpleDropdown" name="tipoTarjVales">
 									<option class="text-titlecase" value>Seleccione</option>
@@ -216,6 +216,13 @@
 									<option class="text-titlecase" value="2">RECARGA</option>
 								</select>
 							</div>
+							<div class="two wide field divTipoTarjVales d-none">
+									<div class="ui sub header">Ver Detalle</div>
+									<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
+										<option class="text-titlecase" value="1" selected>SI</option>
+										<option class="text-titlecase" value="2" >NO</option>
+									</select>
+								</div>
 						</div>
 						<div class="fields">
 							<div class="five wide field no-personal">

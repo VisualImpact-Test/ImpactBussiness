@@ -317,6 +317,8 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+
+	//	var_dump($post);exit();
 		$data = [];
 		$data['tabla'] = 'compras.cotizacion';
 
@@ -574,7 +576,9 @@ class Cotizacion extends MY_Controller
 		$post['gratificacion_personal'] = checkAndConvertToArray($post['gratificacion_personal']);
 		$post['seguro_vida_personal'] = checkAndConvertToArray($post['seguro_vida_personal']);
 		$post['total_adicionales'] = checkAndConvertToArray($post['total_adicionales']);
-
+		$post['tipoTarjVales'] = checkAndConvertToArray($post['tipoTarjVales']);
+		
+		$post['verDetallePdf'] = checkAndConvertToArray($post['verDetallePdf']);
 		if (isset($post['cargo_personal'])) $post['cargo_personal'] = checkAndConvertToArray($post['cargo_personal']);
 
 		$post['cantidad_personal'] = checkAndConvertToArray($post['cantidad_personal']);
@@ -708,6 +712,7 @@ class Cotizacion extends MY_Controller
 					'mesInicio' => !empty($post['mes_inicio_personal'][$k]) ? $post['mes_inicio_personal'][$k] : 0,
 					'mesFin' => !empty($post['mesFin'][$k]) ? $post['mesFin'][$k] : 0,
 					'idTipo_TarjetasVales' => !empty($post['tipoTarjVales'][$k]) ? $post['tipoTarjVales'][$k] : NULL,
+					'flagDetalleTarjetasVales' => !empty($post['verDetallePdf'][$k]) ? $post['verDetallePdf'][$k] : NULL,
 				];
 
 				if ($post['flagPackingSolicitado'][$k] == '1') {
@@ -3235,7 +3240,7 @@ class Cotizacion extends MY_Controller
 	{
 		$this->db->trans_start();
 		$result = $this->result;
-
+//var_dump($post);
 		$data['tabla'] = 'compras.cotizacion';
 		$itemsTipoDistribucion = 0;
 		$data = [];
@@ -3366,6 +3371,8 @@ class Cotizacion extends MY_Controller
 			$post['flagMostrarDetalle'] = checkAndConvertToArray($post['flagMostrarDetalle']);
 			$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 			$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
+			$post['tipoTarjVales'] = checkAndConvertToArray($post['tipoTarjVales']);
+			$post['verDetallePdf'] = checkAndConvertToArray($post['verDetallePdf']);
 			if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
 
 			$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
@@ -3407,6 +3414,7 @@ class Cotizacion extends MY_Controller
 							'cantPdv' => !empty($post['cantidadPDV'][$k]) ? $post['cantidadPDV'][$k] : 0,
 							'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 							'idTipo_TarjetasVales' => !empty($post['tipoTarjVales'][$k]) ? $post['tipoTarjVales'][$k] : null,
+							'flagDetalleTarjetasVales' => !empty($post['verDetallePdf'][$k]) ? $post['verDetallePdf'][$k] : 0,
 						];
 
 						if (!empty($post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"])) {
@@ -3817,6 +3825,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionTarifario'] = $this->model->obtenerCotizacionDetalleTarifario(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
+		//echo $this->db->last_query(); exit();
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
