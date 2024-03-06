@@ -121,7 +121,12 @@ var Fn = {
 						$onclick = " onclick='" + config.btn[i].fn + "'";
 					}
 
-					modal += "<button type='button'" + $id + " class='btn " + css + "'" + $data + $onclick + " >" + config.btn[i].title + "</button>";
+					var $style = '';
+					if (typeof (config.btn[i].style) != 'undefined') {
+						$style = " style='" + config.btn[i].style + "'";
+					}
+
+					modal += "<button type='button'" + $id + " class='btn " + css + "'" + $data + $onclick + $style + " >" + config.btn[i].title + "</button>";
 				}
 			}
 			modal += "</div>";
