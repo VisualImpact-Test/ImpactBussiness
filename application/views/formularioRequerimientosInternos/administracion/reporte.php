@@ -21,7 +21,7 @@
 		<tbody>
 			<? $ix = 1; ?>
 			<? foreach ($datos['requerimientoInterno'] as $k => $row) : ?>
-				<tr data-id="<?= $row['idRequerimientoInterno'] ?>">
+				<tr data-id="<?= $row['idRequerimientoInterno'] ?>" data-estado="<?= $row['idRequerimientoInternoEstado'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td>
 						<? if ($row['estado'] != 'Anulado') { ?>

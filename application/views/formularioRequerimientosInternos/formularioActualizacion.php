@@ -90,11 +90,8 @@
 								<i class="square outline icon"></i>
 								<input type="checkbox" name="checkItem[<?= $row['idItem'] ?>]" class="checkItem d-none">
 							</a>
-							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
+							<a class="item btn-bloquear-detalle">
 								<i class="lock icon"></i>
-							</a>
-							<a class="item btn-eliminar-detalle btneliminarfila">
-								<i class="trash icon"></i>
 							</a>
 						</div>
 					</div>
@@ -135,8 +132,8 @@
 									<div class="ui sub header">Proveedor
 										<div class="ui btn-info-custom text-primary btn-info-proveedor"><i class="info circle icon"></i></div>
 									</div>
-									<select class="ui dropdown simpleDropdown search clearable" id="proveedorForm" name="proveedorForm" patron="requerido" data-correlativo="1">
-										<?= htmlSelectOptionArray2(['query' => $proveedor, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
+									<select class="ui dropdown simpleDropdown search clearable proveedorForm_" id="proveedorForm" name="proveedorForm" patron="requerido" data-correlativo="1" onchange="RequerimientoInterno.tomarPrecio(this)">
+										<?= htmlSelectOptionArray2(['query' => $proveedorSelect, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idProveedor']]); ?>
 									</select>
 								</div>
 							</div>
@@ -204,10 +201,20 @@
 							</div>
 							<div class="fields">
 								<div class="sixteen wide field">
-									<div class="ui sub header">Costo</div>
-									<div class="ui right action right labeled input">
+									<div class="ui sub header">Precio Referencial</div>
+									<div class="ui labeled input">
 										<label for="amount" class="ui label monedaSimbolo">S/</label>
 										<input class="costoForm" type="text" name="costoReferencialForm" placeholder="0.00" value="<?= verificarEmpty($row['costoReferencial']); ?>" readonly>
+
+									</div>
+								</div>
+							</div>
+							<div class="fields">
+								<div class="sixteen wide field">
+									<div class="ui sub header">Precio Tarifario Proveedor</div>
+									<div class="ui labeled input">
+										<label for="amount" class="ui label monedaSimbolo">S/</label>
+										<input class="precioTarifarioForm" type="text" name="costoProveedorTarifarioForm" placeholder="0.00" >
 
 									</div>
 								</div>

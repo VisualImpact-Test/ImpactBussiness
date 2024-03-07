@@ -33,8 +33,7 @@ class SolicitanteInterno extends MY_Controller
 			'assets/custom/js/RequerimientoInterno',
 			'assets/custom/js/dataTables.select.min'
 		);
-
-		//$config['view'] = 'formularioRequerimientosInternos/requerimientoInternoLista';
+		
 		$config['data']['title'] = 'Formulario Requerimiento Interno';
 		$config['data']['icon'] = 'fa fa-home';
 
@@ -188,7 +187,7 @@ class SolicitanteInterno extends MY_Controller
 			'nombre' => $post['nombre'],
 			'codRequerimientoInterno' => NULL,
 			'fechaEmision' => getActualDateTime(),
-			'idSolicitanteInterno' => $this->idUsuario,
+			'idUsuario' => $this->idUsuario,
 			'idCuenta' => $post['cuentaForm'],
 			'idCentroCosto' => $post['cuentaCentroCostoForm'],
 			'idUsuarioAprobacion' => $post['aprobacionForm'],
@@ -351,40 +350,17 @@ class SolicitanteInterno extends MY_Controller
 
 		echo json_encode($result);
 	}
-	public function anularRequerimientoInterno()
-	{
-		$result = $this->result;
-		$json = json_decode($this->input->post('data'));
-		$estadoAnulado = 2;
-		$datos = [
-			'estado' => 0,
-			'idRequerimientoInternoEstado' => $estadoAnulado
-		];
-		$where = "idRequerimientoInterno = " . $json;
-		$res = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
-		if ($res) {
-			$result['result'] = 1;
-			$result['msg']['content'] = getMensajeGestion('anulacionExitosaRI');
-		} else {
-			$result['result'] = 0;
-			$result['msg']['content'] = getMensajeGestion('anulacionErroneaRI');
-		}
-
-		echo json_encode($result);
-	}
 	public function enviarCorreo($params = [])
 	{
 		$email = [];
-
 		$data = [];
 		$dataParaVista = [];
 		$cc = !empty($params['cc']) ? $params['cc'] : [];
-
 		$email['to'] = $params['to'];
 		$email['cc'] = $cc;
 
 		$data = $this->model->obtenerInformacionRequerimientoInternoDetalle($params)['query']->result_array();
-
+		
 		foreach ($data as $key => $row) {
 			$dataParaVista['cabecera']['idRequerimientoInterno'] = $row['idRequerimientoInterno'];
 			$dataParaVista['cabecera']['requerimientoInterno'] = $row['requerimientoInterno'];

@@ -115,7 +115,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		}
 
 		$dataParaVista['itemServicio'] = $data['itemServicio'];
-		// $dataParaVista['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
+		$dataParaVista['proveedorSelect'] = $this->db->select('idProveedor AS id, razonSocial AS value')->get_where('compras.proveedor', 'idProveedorEstado = 1 OR idProveedorEstado = 2')->result_array();
 		$dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor', ['idProveedorEstado' => 2])->result_array();
 		$dataParaVista['usuarioAprobar'] = $this->model->obtenerUsuarioAprobar()['query']->result_array();
 		$dataParaVista['itemTipo'] = $this->model->obtenerItemTipo()['query']->result_array();
@@ -179,7 +179,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 	{
 		$result = $this->result;
 		$json = json_decode($this->input->post('data'));
-		$estadoAnulado = 2;
+		$estadoAnulado = 5;
 		$datos = [
 			'estado' => 0,
 			'idRequerimientoInternoEstado' => $estadoAnulado
@@ -187,6 +187,18 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		$where = "idRequerimientoInterno = " . $json;
 		$res = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
 		if ($res) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+
+			//$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$usuariosCompras = 'bill.salazar@visualimpact.com.pe';
+			$toCompras = [];
+			/*foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}*/
+			$toCompras[] = $usuariosCompras;
+			$this->enviarCorreo(['idRequerimientoInterno' => $json, 'to' => $toCompras]);
+
 			$result['result'] = 1;
 			$result['msg']['content'] = getMensajeGestion('anulacionExitosaRI');
 		} else {
@@ -214,6 +226,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 			$dataParaVista['cabecera']['requerimientoInterno'] = $row['requerimientoInterno'];
 			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'];
 			$dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
 			$dataParaVista['detalle'][$key]['item'] = $row['item'];
 			$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
@@ -223,9 +236,9 @@ class SolicitudRequerimientoInterno extends MY_Controller
 
 		$dataParaVista['link'] = base_url() . index_page() . 'requerimientoInterno';
 
-		$email['asunto'] = 'IMPACTBUSSINESS - NUEVO REQUERIMIENTO INTERNO GENERADO';
+		$email['asunto'] = 'IMPACTBUSSINESS - REQUERIMIENTO INTERNO '.strtoupper($dataParaVista['cabecera']['requerimientoInternoDetalleEstado']);
 
-		$html = $this->load->view("formularioRequerimientosInternos/correo/informacionCompras", $dataParaVista, true);
+		$html = $this->load->view("formularioRequerimientosInternos/correo/administracion/estadoRequerimiento", $dataParaVista, true);
 		$correo = $this->load->view("formularioRequerimientosInternos/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'SolicitanteInterno'], true);
 
 		$email['contenido'] = $correo;
@@ -242,6 +255,14 @@ class SolicitudRequerimientoInterno extends MY_Controller
 	public function obtenerProveedor()
 	{
 		$grupo['data']['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
+		echo json_encode($grupo);
+	}
+	public function obtenerPrecioProveedorTarifario()
+	{
+		$data = json_decode($this->input->post('data'));
+		var_dump($data);
+		exit;
+		$grupo['data'] = $this->model->obtenerItemServicio(['idProveedor' => $data['idProveedor']])['query']->result_array();
 		echo json_encode($grupo);
 	}
 	public function enviarSolicitudCostoProveedor()

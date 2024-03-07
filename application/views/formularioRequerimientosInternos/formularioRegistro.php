@@ -132,7 +132,6 @@
 									<input class="codItems" type='hidden' name='idItemForm'>
 									<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
-									<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
 								</div>
 								<div class="ui-widget">
 									<input class="itemTextoPdf d-none" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización">

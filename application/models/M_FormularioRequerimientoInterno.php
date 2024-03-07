@@ -42,8 +42,13 @@ class M_FormularioRequerimientoInterno extends MY_Model
 
 		return $this->resultado;
 	}
-	public function obtenerItemServicio()
+	public function obtenerItemServicio($params = [])
 	{
+		$filtros = "";
+		$filtros .= !empty($params['idProveedor']) ? ' AND it.idProveedor = ' . $params['idProveedor'] : '';
+		$filtros .= !empty($params['idItem']) ? ' AND i.idItem = ' . $params['idItem'] : '';
+		
+
 		$sql = "
 		DECLARE @fechaHoy DATE = GETDATE();
 				WITH listTarifario AS (
@@ -90,6 +95,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 				LEFT JOIN compras.proveedor pr ON it.idProveedor = pr.idProveedor
 				LEFT JOIN listImagenes img ON img.idItem = i.idItem
 				WHERE i.estado = 1 AND (iTipo.nombre = 'Articulo' OR iTipo.nombre = 'Servicio')
+				{$filtros}
 				order by 2
 		";
 
@@ -186,7 +192,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 			LEFT JOIN rrhh.dbo.Empresa c ON c.idEmpresa = ri.idCuenta
 			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = ri.idCentroCosto
 			LEFT JOIN compras.requerimientoInternoEstado rie ON rie.idRequerimientoInternoEstado = ri.idRequerimientoInternoEstado
-			WHERE ri.idSolicitanteInterno = " . $params . " 
+			WHERE ri.idUsuario = " . $params . " 
 			ORDER BY fechaEmision DESC
 		";
 
@@ -349,7 +355,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 	public function obtenerUsuarioAprobar($params = [])
 	{
 		$sql = "
-			SELECT DISTINCT u.idUsuario AS id, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno AS value,
+			SELECT DISTINCT riu.idUsuarioAprobacion AS id, u.nombres + ' ' + u.apePaterno + ' ' + u.apeMaterno AS value,
 				ut.nombre
 			FROM sistema.usuario u
 			INNER JOIN sistema.usuarioHistorico uh ON uh.idUsuario = uh.idUsuario
@@ -362,6 +368,33 @@ class M_FormularioRequerimientoInterno extends MY_Model
 		if ($query) {
 			$this->resultado['query'] = $query;
 			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerPrecioProveedorTarifario($params = [])
+	{
+		$filtros = "";
+		$filtros .= !empty($params['estadoProveedor']) ? ' AND p.idProveedorEstado != ' . $params['estadoProveedor'] : '';
+		$orden = !empty($params['order_by']) ? 'ORDER BY ' . $params['order_by'] : "ORDER BY p.idProveedor DESC";
+
+
+		$sql = "
+			SELECT p.idProveedor AS id, p.razonSocial AS value FROM compras.proveedor p
+			JOIN compras.proveedorEstado pe ON pe.idProveedorEstado = p.idProveedorEstado
+			WHERE 1 = 1
+			{$filtros}
+			{$orden}
+		";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+
+			//echo $this->db->last_query();
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+			// $this->CI->aSessTrack[] = [ 'idAccion' => 5, 'tabla' => 'General.dbo.ubigeo', 'id' => null ];
 		}
 
 		return $this->resultado;

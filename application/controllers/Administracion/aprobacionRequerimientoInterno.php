@@ -177,6 +177,18 @@ class AprobacionRequerimientoInterno extends MY_Controller
 		$where = "idRequerimientoInterno = " . $json;
 		$res = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
 		if ($res) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+
+			//$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$usuariosCompras = 'bill.salazar@visualimpact.com.pe';
+			$toCompras = [];
+			/*foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}*/
+			$toCompras[] = $usuariosCompras;
+			$this->enviarCorreo(['idRequerimientoInterno' => $json, 'to' => $toCompras]);
+
 			$result['result'] = 1;
 			$result['msg']['content'] = getMensajeGestion('aprobacionExitosaRI');
 		} else {
@@ -197,6 +209,18 @@ class AprobacionRequerimientoInterno extends MY_Controller
 		$where = "idRequerimientoInterno = " . $json;
 		$res = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
 		if ($res) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+
+			//$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$usuariosCompras = 'bill.salazar@visualimpact.com.pe';
+			$toCompras = [];
+			/*foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}*/
+			$toCompras[] = $usuariosCompras;
+			$this->enviarCorreo(['idRequerimientoInterno' => $json, 'to' => $toCompras]);
+
 			$result['result'] = 1;
 			$result['msg']['content'] = getMensajeGestion('rechazoExitosoRI');
 		} else {
@@ -206,15 +230,42 @@ class AprobacionRequerimientoInterno extends MY_Controller
 
 		echo json_encode($result);
 	}
-	public function getImagenes()
+	public function enviarCorreo($params = [])
 	{
-		$post = $this->input->post();
-		$imagenes = $this->db->where(['idItem' => $post['idItem'], 'estado' => 1])->get('compras.itemImagen')->result_array();
-		echo json_encode($imagenes);
-	}
-	public function obtenerProveedor()
-	{
-		$grupo['data']['proveedor'] = $this->model->obtenerInformacionProveedores(['estadoProveedor' => 3])['query']->result_array();
-		echo json_encode($grupo);
+		$email = [];
+
+		$data = [];
+		$dataParaVista = [];
+		$cc = !empty($params['cc']) ? $params['cc'] : [];
+
+		$email['to'] = $params['to'];
+		$email['cc'] = $cc;
+
+		$data = $this->model->obtenerInformacionRequerimientoInternoDetalle($params)['query']->result_array();
+
+		foreach ($data as $key => $row) {
+			$dataParaVista['cabecera']['idRequerimientoInterno'] = $row['idRequerimientoInterno'];
+			$dataParaVista['cabecera']['requerimientoInterno'] = $row['requerimientoInterno'];
+			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
+			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
+			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'] == 'En Compras' ? 'aprobado y se encuentra en compras' : $row['requerimientoInternoDetalleEstado'];
+			$dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
+			$dataParaVista['detalle'][$key]['item'] = $row['item'];
+			$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
+			$dataParaVista['detalle'][$key]['costoReferencial'] = $row['costoReferencial'];
+			$dataParaVista['detalle'][$key]['estadoItem'] = $row['estadoItem'];
+		}
+
+		$dataParaVista['link'] = base_url() . index_page() . 'requerimientoInterno';
+
+		$email['asunto'] = 'IMPACTBUSSINESS - REQUERIMIENTO INTERNO '.strtoupper($dataParaVista['cabecera']['requerimientoInternoDetalleEstado']);
+
+		$html = $this->load->view("formularioRequerimientosInternos/correo/administracion/estadoRequerimiento", $dataParaVista, true);
+		$correo = $this->load->view("formularioRequerimientosInternos/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'SolicitanteInterno'], true);
+
+		$email['contenido'] = $correo;
+		$estadoEmail = email($email);
+
+		return $estadoEmail;
 	}
 }
