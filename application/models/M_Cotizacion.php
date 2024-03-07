@@ -2868,14 +2868,15 @@ class M_Cotizacion extends MY_Model
 
 
 
-	public function obtenerCotizacionDetalleArchivos($params = [])
+	public function obtenerCotizacionDetalleArchivos($params = [],$idCotizacionDetalle)
 	{
 
 
 		$sql = "
 		select * from compras.cotizacionDetalleArchivos
 		where 1 = 1
-			AND idCotizacion = $params";
+		AND idCotizacion = $params
+		AND idCotizacionDetalle = $idCotizacionDetalle";
 
 		$query = $this->db->query($sql);
 

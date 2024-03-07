@@ -4908,7 +4908,6 @@ class Cotizacion extends MY_Controller
 
 		$cotizacion = $this->model->datosCotizacion($post)['query']->result_array();
 		$cotizacionDetalle = $this->model->obtenerCotizacionDetallada($post)['query']->result_array();
-		$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post)['query']->result_array();
 
 
 		$insertCotizacion = [
@@ -5077,26 +5076,31 @@ class Cotizacion extends MY_Controller
 				$this->db->insert('compras.cotizacionDetalleSub', $insertarCotizacionDetallesub);
 				$idNewCotizacionDetalleSub = $this->db->insert_id();
 			}
+			$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post,$v['idCotizacionDetalle'])['query']->result_array();
+
+			foreach ($cotizacionDetalleArchivos as $r => $p) {
+				$insertarCotizacionDetalleArchivos = [
+					'idCotizacion' => $idNewCotizacion,
+					'idCotizacionDetalle' => $idNewCotizacionDetalle,
+					'idTipoArchivo' => $p['idTipoArchivo'],
+					'nombre_inicial' => $p['nombre_inicial'],
+					'nombre_archivo' => $p['nombre_archivo'],
+					'nombre_unico' => $p['nombre_unico'],
+					'extension' => $p['extension'],
+					'estado' => 1,
+					'fechaReg' => getSoloFecha(),
+					'horaReg' => getSoloHora(),
+					'fechaModificacion' => null,
+					'idUsuarioReg' => $this->idUsuario,
+					'flag_anexo' => $p['flag_anexo'],
+					'idAutorizacion' => $p['idAutorizacion'],
+				];
+				$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
+			}
+
 		}
 
-		foreach ($cotizacionDetalleArchivos as $r => $p) {
-			$insertarCotizacionDetalleArchivos = [
-				'idCotizacion' => $idNewCotizacion,
-				'idTipoArchivo' => $p['idTipoArchivo'],
-				'nombre_inicial' => $p['nombre_inicial'],
-				'nombre_archivo' => $p['nombre_archivo'],
-				'nombre_unico' => $p['nombre_unico'],
-				'extension' => $p['extension'],
-				'estado' => 1,
-				'fechaReg' => getSoloFecha(),
-				'horaReg' => getSoloHora(),
-				'fechaModificacion' => null,
-				'idUsuarioReg' => $this->idUsuario,
-				'flag_anexo' => $p['flag_anexo'],
-				'idAutorizacion' => $p['idAutorizacion'],
-			];
-			$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
-		}
+		
 
 		$insertarEstadoHistorico = [
 			'idCotizacionEstado' => 1,
