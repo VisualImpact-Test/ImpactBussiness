@@ -660,6 +660,7 @@ var Cotizacion = {
 			parent.find('.personal').addClass('d-none');
 			parent.find('.divTipoTarjVales').addClass('d-none');
 			parent.find('.divTipoConcurso').addClass('d-none');
+			parent.find('.divTipoPagosFarmacias').addClass('d-none');
 			cotizacionInternaForm.val(1);
 			(parent.find('.cantPDV')).addClass('d-none');
 			control.closest('.body-item').find('.gapForm').removeAttr('readonly');
@@ -759,6 +760,19 @@ var Cotizacion = {
 				parent.find('.divCarProv').addClass('d-none');
 				parent.find('.divUnidadMedidida').addClass('d-none');
 				parent.find('.divTipoTarjVales').removeClass('d-none');
+				// patron
+				parent.find('div.provList').find('select').attr("patron", "requerido");
+				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
+				parent.find('.montoSubItemTarjVal').attr('patron', 'requerido');
+				parent.find('.cantidadSubItemTarjVal').attr('patron', 'requerido');
+				cotizacionInternaForm.val(0);
+				control.closest('.body-item').find('.gapForm').val('0');
+				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
+			} else if (idTipo == COD_PAGOS_FARMACIAS.id) {
+				// visibilidad
+				parent.find('.divCarProv').addClass('d-none');
+				parent.find('.divUnidadMedidida').addClass('d-none');
+				parent.find('.divTipoPagosFarmacias').removeClass('d-none');
 				// patron
 				parent.find('div.provList').find('select').attr("patron", "requerido");
 				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
@@ -1174,15 +1188,15 @@ var Cotizacion = {
 			let costo = Number(costoForm.val());
 			let subTotalSinGap = Fn.multiply(cantidad, costo);
 
-			if (	(gapForm.val() == '' || parseFloat(gapForm.val()) == 0) && 
-					subTotalSinGap >= GAP_MONTO_MINIMO && 
-					gapForm.val() < GAP_MINIMO && 
-					flagCuentaForm.val() == 0 && 
-					tipoItem.val() != COD_DISTRIBUCION.id && 
-					tipoItem.val() != COD_PERSONAL.id && 
-					tipoItem.val() != COD_TRANSPORTE.id && 
-					tipoItem.val() != COD_CONCURSO.id && 
-					tipoItem.val() != COD_TARJETAS_VALES.id) {
+			if ((gapForm.val() == '' || parseFloat(gapForm.val()) == 0) &&
+				subTotalSinGap >= GAP_MONTO_MINIMO &&
+				gapForm.val() < GAP_MINIMO &&
+				flagCuentaForm.val() == 0 &&
+				tipoItem.val() != COD_DISTRIBUCION.id &&
+				tipoItem.val() != COD_PERSONAL.id &&
+				tipoItem.val() != COD_TRANSPORTE.id &&
+				tipoItem.val() != COD_CONCURSO.id &&
+				tipoItem.val() != COD_TARJETAS_VALES.id) {
 				gapForm.val(GAP_MINIMO);
 			}
 
@@ -2084,6 +2098,22 @@ var Cotizacion = {
 				control.find('.divDetalleTarjVales').last().remove();
 			}
 			control.find('.divDetalleTarjVales').find('.montoSubItemTarjVal').first().change();
+		});
+		$(document).on('click', '.btn-add-sub-item-pagosFarmacias', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_PAGOS_FARMACIAS.id);
+			let html = control.find('.divDetallePagosFarmacias').first().prop('outerHTML');
+			control.append(html);
+			control.find('.divDetallePagosFarmacias').find('.montoSubItemPagosFarmacias').first().change();
+
+		});
+		$(document).on('click', '.btn-delete-sub-item-pagosFarmacias', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_PAGOS_FARMACIAS.id);
+			if (control.find('.divDetallePagosFarmacias').length > 1) {
+				control.find('.divDetallePagosFarmacias').last().remove();
+			}
+			control.find('.divDetallePagosFarmacias').find('.montoSubItemPagosFarmacias').first().change();
 		});
 		$(document).on('click', '.btn-add-sub-item-concurso', function () {
 			let _this = $(this);
@@ -3778,6 +3808,26 @@ var Cotizacion = {
 		let _this = $(t);
 		let cantidad = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id).find('.cantidadSubItemTarjVal');
 		let monto = _this.closest('.div-feature-' + COD_TARJETAS_VALES.id).find('.montoSubItemTarjVal');
+
+		let cantTot = 0;
+		let montoTot = 0;
+
+		$.each(cantidad, function (index, value) {
+			rowCantidad = parseFloat($(value).val());
+			rowMonto = parseFloat($(monto[index]).val());
+
+			cantTot += rowCantidad;
+			montoTot += rowMonto;
+		});
+		let montoProm = montoTot / cantTot;
+		_this.closest('.body-item').find('.costoForm').val(montoProm);
+		_this.closest('.body-item').find('.costoFormLabel').val(montoProm);
+		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
+	},
+	calcularMontoPagosFarmacias: function (t) {
+		let _this = $(t);
+		let cantidad = _this.closest('.div-feature-' + COD_PAGOS_FARMACIAS.id).find('.cantidadSubItemPagosFarmacias');
+		let monto = _this.closest('.div-feature-' + COD_PAGOS_FARMACIAS.id).find('.montoSubItemPagosFarmacias');
 
 		let cantTot = 0;
 		let montoTot = 0;

@@ -2305,24 +2305,21 @@ class FormularioProveedor extends MY_Controller
 						'idProveedor' => $post['idProveedor'],
 						'estado' => '1'
 					];
-					$dataTarifario = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->row_array();
-
+					$dataTarifario = $this->model->getWhereJoinMultiple('compras.itemTarifario', $datos)->result_array();
+					$esPrimerProveedor = empty($this->db->get_where('compras.itemTarifario', ['idItem' => $value])->result_array());
 					$dataIT = [
 						'idItem' => $value,
 						'idProveedor' => $post['idProveedor'],
 						'costo' => $post['costoUnitario'][$key],
 						'fechaVigencia' => $post['fechaValidez'][$key],
 						'estado' => '1',
-						'flag_actual' => '0'
+						'flag_actual' => $esPrimerProveedor //'0'
 					];
 					if (empty($dataTarifario)) { // Si aún no se registra el Item.
-						if (!empty($this->db->get_where('compras.itemTarifario', ['idItem' => $value, 'flag_actual' => '1'])->row_array())) {
-							$dataIT['flag_actual'] = '1';
-						}
 						$rpta = $this->db->insert('compras.itemTarifario', $dataIT);
 						$idItemTarifario = $this->db->insert_id();
 					} else {
-						$idItemTarifario = $dataTarifario['idItemTarifario'];
+						$idItemTarifario = $dataTarifario[0]['idItemTarifario'];
 						$this->db->update('compras.itemTarifario', $dataIT, ['idItemTarifario' => $idItemTarifario]);
 					}
 
