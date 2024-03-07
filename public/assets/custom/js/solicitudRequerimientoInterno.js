@@ -97,11 +97,10 @@ var RequerimientoInterno = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'RequerimientoInterno.seleccionProveedor()';
-				btn[1] = { title: 'Seleccionar', fn: fn[1] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formSeleccionProveedor", fn: "RequerimientoInterno.seleccionProveedor();", content: "Solo se tomara en cuenta los articulos del proveedor seleccionado" });';
+				btn[1] = { title: 'Continuar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '40%' });
-
 				RequerimientoInterno.actualizarAutocomplete();
 			});
 		});
@@ -400,23 +399,21 @@ var RequerimientoInterno = {
 		});
 	},
 	seleccionProveedor() {
-		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
-			let fnF = '';
-			if (config.fnFin) fnF = config.fnFin + ';';
-			if (a === true) {
-				++modalId;
-				var btn = new Array();
-				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
-				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
-				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: config.content, btn: btn });
-			}
-			else {
-				++modalId;
-				var btn = new Array();
-				btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
-				var content = "<div class='alert alert-danger'>Se encontraron incidencias en la operación. <strong>Verifique el formulario.</strong></div>";
-				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
-			}
+		++modalId;
+
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSeleccionProveedor')) };
+		let config = { 'url': RequerimientoInterno.url + 'formularioListadoRequerimientos', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then((a) => {
+			let btn = [];
+			let fn = [];
+
+			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			btn[0] = { title: 'Cerrar', fn: fn[0] };
+			// fn[1] = 'Fn.showConfirm({ idForm: "formSeleccionProveedor", fn: "RequerimientoInterno.seleccionProveedor();", content: "¿Esta seguro de registrar el requerimiento?" });';
+			// btn[1] = { title: 'Seleccionar', fn: fn[1] };
+
+			Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '40%' });
 		});
 	},
 	SimboloMoneda: function (t) {
