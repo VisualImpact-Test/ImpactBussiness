@@ -206,7 +206,7 @@ class SolicitanteInterno extends MY_Controller
 		$data['where'] = [
 			'idRequerimientoInterno' => $insert['id'],
 		];
-		$updateCotizacion = $this->model->actualizarRequerimientoInterno($data);
+		$updateRequerimientoInterno = $this->model->actualizarRequerimientoInterno($data);
 
 		$post['nameItem'] = checkAndConvertToArray($post['nameItem']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
@@ -255,6 +255,7 @@ class SolicitanteInterno extends MY_Controller
 					'costoReferencial' => !empty($post['costoReferencialForm'][$k]) ? $post['costoReferencialForm'][$k] : NULL,
 					'idCotizacionDetalleEstado' => 1,
 					'fechaCreacion' => getActualDateTime(),
+					'costo' => NULL,
 				];
 
 				if (!empty($post["file-name[$k]"])) {

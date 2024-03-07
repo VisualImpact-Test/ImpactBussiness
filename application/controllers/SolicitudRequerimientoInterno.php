@@ -139,7 +139,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 				$config['data']['itemTarifario'][$v['idItem']][$vp['idProveedor']] = $vp['costo'];
 			}
 		}
-		$config['data']['title'] = 'Registrar Nuevo Requerimiento';
+		$config['data']['title'] = 'Aprobar Requerimiento';
 		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioActualizacion", $dataParaVista, true);
 
 
@@ -178,6 +178,76 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		$result['msg']['title'] = 'Visualizar Requerimiento Interno';
 		$result['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioVisualizacion", $dataParaVista, true);
 
+		echo json_encode($result);
+	}
+	public function formularioSeleccionProveedor()
+	{
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+		$dataParaVista['proveedor'] = $this->model->obtenerInformacionRequerimientoInternoDetalle($post)['query']->result_array();
+		
+		$result['result'] = 1;
+		$config['data']['title'] = 'Generar OC - Requerimiento Interno';
+		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/SolicitudRequerimientoInterno/formularioProveedor", $dataParaVista, true);
+
+
+		echo json_encode($config);
+	}
+	public function actualizarAprobacionCompras()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$data = [];
+		$dataDetalle = [];
+
+		foreach ($post['nameItem'] as $k => $r) {
+			if (!empty($r)) {
+				$dataDetalle['update'][] = [
+					'idRequerimientoInternoDetalle' => $post['idRequerimientoInternoDetalle'][$k],
+					'idProveedor' => empty($post['proveedorForm'][$k]) ? NULL : $post['proveedorForm'][$k],
+					'costo' => !empty($post['costoProveedorTarifarioForm'][$k]) ? $post['costoProveedorTarifarioForm'][$k] : NULL,
+				];
+			}
+		}
+
+		//ACTUALIZAR DETALLE REQUERIMIENTO INTERNO
+		if (!empty($dataDetalle)) {
+			$updateDetalle = $this->model->actualizarMasivo('compras.requerimientoInternoDetalle', $dataDetalle['update'], 'idRequerimientoInternoDetalle');
+			//ESTADO ACTUALIZADO
+			$estadoAprobado = 4;
+			$datos = [
+				'idRequerimientoInternoEstado' => $estadoAprobado
+			];
+			$where = "idRequerimientoInterno = " . $post['idRequerimientoInterno'];
+			$estadoActualizado = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
+		}
+
+		if (!$updateDetalle['estado'] && $estadoActualizado) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+
+			//$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$usuariosCompras = 'bill.salazar@visualimpact.com.pe';
+			$toCompras = [];
+			/*foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}*/
+			$toCompras[] = $usuariosCompras;
+			$this->enviarCorreo(['idRequerimientoInterno' => $post['idRequerimientoInterno'], 'to' => $toCompras]);
+
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$this->db->trans_complete();
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		}
+
+		respuesta:
 		echo json_encode($result);
 	}
 	public function anularRequerimientoInterno()
@@ -231,7 +301,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 			$dataParaVista['cabecera']['requerimientoInterno'] = $row['requerimientoInterno'];
 			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
-			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'];
+			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'] ==  'Por Generar OC' ? 'aceptado en compras' : $row['requerimientoInternoDetalleEstado'];
 			$dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
 			$dataParaVista['detalle'][$key]['item'] = $row['item'];
 			$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
