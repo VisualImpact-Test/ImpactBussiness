@@ -16,6 +16,7 @@ var RequerimientoInterno = {
 
 			Fn.loadSemanticFunctions();
 			Fn.loadDimmerHover();
+			RequerimientoInterno.actualizarOnAddRow();
 			$('.simpleDropdown').dropdown();
 			$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 		});
@@ -26,7 +27,7 @@ var RequerimientoInterno = {
 				, 'url': RequerimientoInterno.url + ruta
 				, 'contentDetalle': RequerimientoInterno.contentDetalle
 			};
-			
+
 			Fn.loadReporte_new(config);
 		});
 		$(document).on("click", ".btn-viewSolicitudRequerimientoInterno", function (e) {
@@ -43,11 +44,8 @@ var RequerimientoInterno = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });RequerimientoInterno.nDetalle=1;';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				style[1] = 'background-color: #DECE0C;';
-				fn[1] = 'RequerimientoInterno.agregarSubItem();';
-				btn[1] = { title: 'Agregar', fn: fn[1], style: style[1] };
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroRequerimientoInterno", fn: "RequerimientoInterno.registrarRequerimientoInterno()", content: "¿Esta seguro de registrar el requerimiento?" });';
-				btn[2] = { title: 'Registrar', fn: fn[2] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroRequerimientoInterno", fn: "RequerimientoInterno.actualizarRequerimientoInterno()", content: "¿Esta seguro de registrar el requerimiento?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '100%' });
 
@@ -62,37 +60,25 @@ var RequerimientoInterno = {
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 			});
 		});
-		$(document).on("click", ".btnActualizarRequerimiento", function (e) {
+		$(document).on('click', '.btn-detalleRequerimientoInterno', function () {
 			++modalId;
+
 			let id = $(this).parents('tr:first').data('id');
 			let data = { 'idRequerimientoInterno': id };
+
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': RequerimientoInterno.url + 'formularioActualizacionRequerimientoInterno', 'data': jsonString };
+			let config = { 'url': RequerimientoInterno.url + 'formularioVisualizacionRequerimientoInterno', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-				let style = [];
 
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });RequerimientoInterno.nDetalle=1;';
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				style[1] = 'background-color: #DECE0C;';
-				fn[1] = 'RequerimientoInterno.agregarSubItem();';
-				btn[1] = { title: 'Agregar', fn: fn[1], style: style[1] };
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroRequerimientoInterno", fn: "RequerimientoInterno.actualizarRequerimientoInterno()", content: "¿Esta seguro de guardar este requerimiento?" });';
-				btn[2] = { title: 'Actualizar', fn: fn[2] };
 
-				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '100%' });
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
-				RequerimientoInterno.itemServicio = $.parseJSON($('#itemsServicio').val());
-				RequerimientoInterno.modalIdForm = modalId;
-				RequerimientoInterno.htmlG = $('.default-item').html();
 				RequerimientoInterno.actualizarAutocomplete();
-				RequerimientoInterno.actualizarOnAddRow();
-				Fn.loadSemanticFunctions();
-				Fn.loadDimmerHover();
-				$('.simpleDropdown').dropdown();
-				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 			});
 		});
 		$(document).on('click', '.btneliminarfila', function (e) {
@@ -312,29 +298,6 @@ var RequerimientoInterno = {
 				control.val('');
 			}
 		});
-		$(document).on('click', '.btn-detalleRequerimientoInterno', function () {
-			++modalId;
-
-			let id = $(this).parents('tr:first').data('id');
-			let data = { 'idRequerimientoInterno': id };
-
-			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': RequerimientoInterno.url + 'formularioVisualizacionRequerimientoInterno', 'data': jsonString };
-
-			$.when(Fn.ajax(config)).then((a) => {
-				let btn = [];
-				let fn = [];
-
-				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
-				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				//fn[1] = 'Fn.showConfirm({ idForm: "formvisualizacionRequerimientoInterno", fn: "RequerimientoInterno.duplicarCotizacion(' + id + ')", content: "¿Esta seguro de duplicar el Requerimiento Interno? " });';
-				//btn[1] = { title: 'Duplicar', fn: fn[1] };
-
-				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
-
-				RequerimientoInterno.actualizarAutocomplete();
-			});
-		});
 		$(document).on('click', '.btnAnularRequerimientoInterno', function () {
 			let id = $(this).data('id');
 			Fn.showConfirm({ fn: "RequerimientoInterno.anularRequerimientoInterno(" + id + ")", content: " ¿Está seguro de anular el requerimiento?" });
@@ -365,6 +328,50 @@ var RequerimientoInterno = {
 
 			});
 		});
+	},
+	actualizarRequerimientoInterno(){
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarRequerimientoInterno')) };
+		let url = RequerimientoInterno.url + "registrarRequerimientoInterno";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarRequerimientoInterno").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	tomarPrecio: function (t) {
+		let _t = $(t);
+		let div = _t.parents('.body-item');
+		let inputPrecio = div.find('input.precioTarifarioForm');
+
+		var idProveedor = div.find('#proveedorForm').val();
+		var idItem = div.find('#idItemForm').val();
+		var jsonString = {
+			'idProveedor': JSON.stringify(idProveedor),
+			'idItem': JSON.stringify(idItem)
+		};
+		
+		var config = {
+			url: RequerimientoInterno.url + "obtenerPrecioProveedorTarifario",
+			data: jsonString
+		};
+		
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.usuarioTipo.nombre && a.usuarioTipo.nombre.length > 0) {
+				value.empty();
+				inputPrecio.val('333');
+				//value.val(a.usuarioTipo.nombre);
+			}
+		});
+
 	},
 	registrarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroRequerimientoInterno')) };
@@ -792,6 +799,57 @@ var RequerimientoInterno = {
 			btn[0] = { title: 'Cerrar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
 		});
+	},
+	actualizarOnAddRow: () => {
+		$('.btn-add-file').dimmer({ on: 'hover' });
+		$('.btn-info-cantidad')
+			.popup(
+				{
+					title: `Si requiere más de ${LIMITE_COMPRAS}`,
+					content: `Será necesario cotizar nuevamente con el proveedor`
+				}
+			);
+		$('.btn-info-gap')
+			.popup(
+				{
+					title: `GAP`,
+					content: `Solo podrá completar el GAP cuando se haya confirmado un costo`
+				}
+			);
+
+		//Boton info archivos
+		$('.btn-info-archivo')
+			.popup(
+				{
+					title: `Puede subir como máximo ${MAX_ARCHIVOS}	archivos por detalle`,
+					content: `Solo se permiten ${KB_MAXIMO_ARCHIVO / 1024} MB por archivo.`
+				}
+			);
+
+		$('.btn-info-descripcion')
+			.popup(
+				{
+					title: `Cantidad de elementos`,
+					content: `Esta cantidad es referente al Item`
+				}
+			);
+		//Info dias validez
+		$('.btn-info-validez')
+			.popup(
+				{
+					title: `Días de validez`,
+					content: `Se cuentan a partir de que la cotización es enviada al cliente.`
+				}
+			);
+		//Info Proveedor
+		$('.btn-info-proveedor')
+			.popup(
+				{
+					title: `Si requiere agregar proveedores`,
+					content: `Considerar en caso de agregar nuevos proveedores se deben de aprobar`
+				}
+			);
+		$('.simpleDropdown').dropdown();
 	},
 }
 RequerimientoInterno.load();

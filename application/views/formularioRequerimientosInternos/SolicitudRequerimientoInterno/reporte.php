@@ -24,15 +24,22 @@
 				<tr data-id="<?= $row['idRequerimientoInterno'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td>
-						<? if ($row['estado'] != 'Anulado') { ?>
+						<? if ($row['idRequerimientoInternoEstado'] != '5') { ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleRequerimientoInterno btn-dp-<?= $row['idRequerimientoInterno']; ?>">
 								<i class="fa fa-lg fa-bars" title="Ver Detalle del Requerimiento Interno"></i>
 							</a>
+						<? } ?>
+						<? if ($row['idRequerimientoInternoEstado'] == '2') { ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-viewSolicitudRequerimientoInterno">
 								<i class="fa fa-lg fa-badge-dollar" title="Cotizar items sin precio"></i>
 							</a>
 							<a href="javascript:;" class="btn btn-outline-danger border-0 btnAnularRequerimientoInterno" data-id="<?= $row['idRequerimientoInterno'] ?>">
 								<i class="fas fa-trash" title="Anular Requerimiento Interno"></i>
+							</a>
+						<? } ?>
+						<? if ($row['idRequerimientoInternoEstado'] == '4') { ?>
+							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-viewGenerarOC">
+								<i class="fa fa-lg fa-badge-dollar" title="Generar Orden Compra"></i>
 							</a>
 						<? } ?>
 					</td>

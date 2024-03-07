@@ -39,29 +39,6 @@ var RequerimientoInterno = {
 				'</div>';
 			$('#extraCorreo').append(div);
 		});
-		/*$(document).on("click", ".btnLoginSolicitanteInterno", () => {
-			let idForm = 'frmLoginProveedor';
-			$.when(Fn.validateForm({ id: idForm })).then(function (a) {
-				if (a === true) {
-					let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject(idForm)) };
-					let url = RequerimientoInterno.url + "login";
-					let config = { url: url, data: jsonString };
-
-					$.when(Fn.ajax(config)).then(function (b) {
-						++modalId;
-						var btn = [];
-						let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-						if (b.result == 1) {
-							fn = 'Fn.showModal({ id: ' + modalId + ',show:false});Fn.goToUrl(`' + b.data.url + '`);';
-						}
-
-						btn[0] = { title: 'Continuar', fn: fn };
-						Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn });
-					});
-				}
-			});
-		});*/
 		$(document).on("click", "#btn-AgregarNuevoRequerimientoInterno", function (e) {
 			++modalId;
 			let jsonString = { 'data': '' };
@@ -807,4 +784,255 @@ var RequerimientoInterno = {
 		});
 	},
 }
+var Proveedor = {
+	url: 'Proveedor/',
+	divInfoBancData: '',
+
+	load: function () {
+		$(document).ready(function () {
+		});
+		$(document).on("click", ".btn-agregar-proveedor", function (e) {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Proveedor.url + 'formularioRegistroProveedor', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroProveedores", fn: "Proveedor.registrarProveedor()", content: "¿Esta seguro de registrar el proveedor?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				Fn.loadSemanticFunctions();
+				Fn.loadDimmerHover();
+				Proveedor.divInfoBancData = '<div class="row InfoBancData">' + $('#divInfoBancData').html() + '</div>';
+			});
+		});
+		$(document).on('change', '#region', function (e) {
+			e.preventDefault();
+			var idDepartamento = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			$('#distrito').html(html);
+
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#provincia').html(html);
+			Fn.selectOrderOption('provincia');
+		});
+		$(document).on('change', '#provincia', function (e) {
+			e.preventDefault();
+			var idDepartamento = $("#region").val();
+			var idProvincia = $(this).val();
+			var html = '<option value="">Seleccionar</option>';
+
+			if (typeof (distrito_ubigeo[idDepartamento]) == 'object' &&
+				typeof (distrito_ubigeo[idDepartamento][idProvincia]) == 'object'
+			) {
+				$.each(distrito_ubigeo[idDepartamento][idProvincia], function (i, v) {
+					html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+				});
+			}
+
+			$('#distrito').html(html);
+			Fn.selectOrderOption('distrito');
+		});
+		$(document).on('change', '.regionCobertura', function (e) {
+			e.preventDefault();
+			let idDepartamento = $(this).val();
+			let html = '<option value="">Seleccionar</option>';
+			let distritoCobertura = $(this).closest("tr").find(".distritoCobertura");
+			distritoCobertura.html(html);
+
+			// $.each(idDepartamento, function (i_departamento, v_departamento) {
+			if (typeof (provincia[idDepartamento]) == 'object') {
+				$.each(provincia[idDepartamento], function (i_provincia, v_provincia) {
+					// html += '<option value="' + idDepartamento + '-' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+					html += '<option value="' + i_provincia + '" data-departamento="' + idDepartamento + '" data-provincia="' + i_provincia + '">' + v_provincia['nombre'] + '</option>';
+				});
+			}
+			// });
+			let provinciaCobertura = $(this).closest("tr").find(".provinciaCobertura");
+			provinciaCobertura.html(html);
+			// Fn.selectOrderOption('provinciaCobertura');
+		});
+		$(document).on('change', '.provinciaCobertura', function (e) {
+			e.preventDefault();
+
+			let htmlSelectedProvincia = $(this).find(":selected");
+			let html = '<option value="">Seleccionar</option>';
+
+			$.each(htmlSelectedProvincia, function (i_provincia, v_provincia) {
+				let departamento = $(v_provincia).data('departamento');
+				let provincia = $(v_provincia).data('provincia');
+				if (typeof (distrito[departamento]) == 'object' &&
+					typeof (distrito[departamento][provincia]) == 'object'
+				) {
+					$.each(distrito[departamento][provincia], function (i_distrito, v_distrito) {
+						// html += '<option value="' + departamento + '-' + provincia + '-' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
+						html += '<option value="' + i_distrito + '">' + v_distrito['nombre'] + '</option>';
+					});
+				}
+			});
+			let distritoCobertura = $(this).closest("tr").find(".distritoCobertura");
+			distritoCobertura.html(html);
+			// Fn.selectOrderOption('distritoCobertura');
+		});
+		$(document).on("change", ".chkDetraccion", function () {
+			let this_ = $(this);
+			let check = this_.is(':checked');
+			if (check) {
+				$('.detraccion').removeClass('d-none');
+				$('.cuentaDetraccion').attr('patron', 'requerido')
+			} else {
+				$('.detraccion').addClass('d-none');
+				$('.cuentaDetraccion').removeAttr('patron')
+			}
+
+		});
+		$(document).on('click', '.btn-agregar-tipo-servicio', function (e) {
+			++modalId;
+
+			let jsonString = { 'data': '' };
+			let config = { 'url': Proveedor.url + 'formularioRegistroTipoServicio', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showAlert({ idForm: "formRegistroTipoServicio", fn: "Proveedor.registrarTipoServicio()", content: "¿Al registrar el Tipo de Servicio, se perderán los datos ingresados anteriormente. ¿Deseas continuar?" });';
+				btn[1] = { title: 'Registrar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
+				Fn.loadSemanticFunctions();
+				$('.simpleDropdown').dropdown();
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadDimmerHover();
+			});
+
+		});
+		$(document).on('click', '.btn-agregar-zona', function (e) {
+			let tbody = $(".tb-zona-cobertura > tbody");
+			let trParent = tbody.find(".trParent");
+
+			let combosZona = trParent.find("select").prop("disabled", false);
+			tbody.append(`<tr class="trChildren">${trParent.html()}</tr>`);
+			trParent.find("select").prop("disabled", true);
+
+		});
+		$(document).on('click', '.btn-eliminar-zona', function (e) {
+			let tr = $(this).closest("tr");
+
+			if ($(".trChildren").length <= 1) {
+				$('.btn-agregar-zona').click();
+			}
+			tr.remove();
+		});
+		$(document).on('click', '.btnEliminarCorreo', function (e) {
+			let tr = $(this).closest(".correoAdd");
+			tr.remove();
+		});
+	},
+	registrarProveedor() {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedores')) };
+		let url = Proveedor.url + "registrarProveedor";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(2);';
+				//Actualizar Proveedores Agregados
+				$("#proveedorForm").empty();
+				var obj = {
+					id: ''
+				}
+				var jsonString = {
+					'data': JSON.stringify(obj)
+				};
+
+				var config = {
+					url: RequerimientoInterno.url + "obtenerProveedor",
+					data: jsonString
+				};
+
+				$.when(Fn.ajax(config)).then(function (a) {
+					if (a.data.proveedor && a.data.proveedor.length > 0) {
+						var selectElement = $('#proveedorForm');
+						selectElement.empty();
+
+						$.each(a.data.proveedor, function (i, m) {
+							selectElement.append($('<option>', {
+								value: m.id, // Cambia 'valor' por el nombre del campo que contiene el valor deseado
+								text: m.value // Cambia 'texto' por el nombre del campo que contiene el texto deseado
+							}));
+						});
+					}
+				});
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	quitarInfBancaria: function (t, v) {
+		div = t.closest('div.InfoBancData');
+		var conteo = $('div.InfoBancData').length;
+		if (conteo > 1) {
+			$(div).remove();
+		}
+	},
+	generarInfBancaria: function (t, v) {
+		var nuevoDiv = $('.InfoBancData:last').clone();
+
+		// Limpiar los valores de los campos
+		nuevoDiv.find('input').val('');
+		nuevoDiv.find('.dropdown').dropdown('clear');
+		nuevoDiv.find('.file-semantic-upload').empty();
+		nuevoDiv.find('input.form-control#idProveedorInfoBancaria').removeAttr('value');
+
+		// Limpiar la visualización de la imagen
+		nuevoDiv.find('.content-lsck-capturas .img-lsck-capturas').empty();
+		nuevoDiv.find('.content-lsck-capturas img').attr('src', '');
+		nuevoDiv.find('.content-lsck-capturas:first').remove();
+		nuevoDiv.find('input').attr('data-name', 'cuentaPrincipal');
+
+		// Agregar el nuevo div al contenedor
+		$('.extraInfoBanc').append(nuevoDiv);
+		Fn.loadSemanticFunctions();
+		Fn.loadDimmerHover();
+	},
+	registrarTipoServicio: function () {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroTipoServicio')) };
+		let url = Proveedor.url + "registrarTipoServicio";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			alert(modalId);
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+}
 RequerimientoInterno.load();
+Proveedor.load();

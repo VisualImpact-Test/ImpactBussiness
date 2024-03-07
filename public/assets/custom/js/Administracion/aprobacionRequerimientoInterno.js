@@ -32,6 +32,8 @@ var AprobacionRequerimientoInterno = {
 		$(document).on("click", ".btn-viewSolicitudRequerimientoInterno", function (e) {
 			++modalId;
 			let id = $(this).parents('tr:first').data('id');
+			let estado = $(this).parents('tr:first').data('estado');
+			alert(estado);
 			let data = { 'idRequerimientoInterno': id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': AprobacionRequerimientoInterno.url + 'formularioActualizacionRequerimientoInterno', 'data': jsonString };
@@ -43,7 +45,14 @@ var AprobacionRequerimientoInterno = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });RequerimientoInterno.nDetalle=1;';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				style[1] = 'background-color: #DECE0C;';
+				if(estado !== 2 && estado !== 3 && estado !== 5) {
+					style[1] = 'background-color: #FF0000;';
+					fn[1] = 'AprobacionRequerimientoInterno.rechazarRequerimientoInterno();';
+					btn[1] = { title: 'Rechazar', fn: fn[1], style: style[1] };
+					style[2] = 'background-color: #26CC2E;';
+					fn[2] = 'AprobacionRequerimientoInterno.aprobarRequerimientoInterno();';
+					btn[2] = { title: 'Aprobar', fn: fn[2], style: style[2] };
+				}
 
 				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '100%' });
 
