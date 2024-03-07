@@ -331,7 +331,7 @@ var RequerimientoInterno = {
 	},
 	actualizarRequerimientoInterno(){
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarRequerimientoInterno')) };
-		let url = RequerimientoInterno.url + "registrarRequerimientoInterno";
+		let url = RequerimientoInterno.url + "actualizarAprobacionCompras";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {

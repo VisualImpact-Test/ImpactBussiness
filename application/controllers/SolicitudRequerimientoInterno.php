@@ -175,6 +175,62 @@ class SolicitudRequerimientoInterno extends MY_Controller
 
 		echo json_encode($result);
 	}
+	public function actualizarAprobacionCompras()
+	{
+		$this->db->trans_start();
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+		$data = [];
+		$dataDetalle = [];
+
+		foreach ($post['nameItem'] as $k => $r) {
+			if (!empty($r)) {
+				$dataDetalle['update'][] = [
+					'idRequerimientoInternoDetalle' => $post['idRequerimientoInternoDetalle'][$k],
+					'idProveedor' => empty($post['proveedorForm'][$k]) ? NULL : $post['proveedorForm'][$k],
+					'costo' => !empty($post['costoProveedorTarifarioForm'][$k]) ? $post['costoProveedorTarifarioForm'][$k] : NULL,
+				];
+			}
+		}
+
+		//ACTUALIZAR DETALLE REQUERIMIENTO INTERNO
+		if (!empty($dataDetalle)) {
+			$updateDetalle = $this->model->actualizarMasivo('compras.requerimientoInternoDetalle', $dataDetalle['update'], 'idRequerimientoInternoDetalle');
+			//ESTADO ACTUALIZADO
+			$estadoAprobado = 4;
+			$datos = [
+				'idRequerimientoInternoEstado' => $estadoAprobado
+			];
+			$where = "idRequerimientoInterno = " . $post['idRequerimientoInterno'];
+			$estadoActualizado = $this->model->actualizarSimple('compras.requerimientoInterno', $where, $datos);
+		}
+
+		if (!$updateDetalle['estado'] && $estadoActualizado) {
+			// Para no enviar Correos en modo prueba.
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_COORDINADOR_COMPRAS);
+
+			//$usuariosCompras = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$usuariosCompras = 'bill.salazar@visualimpact.com.pe';
+			$toCompras = [];
+			/*foreach ($usuariosCompras as $usuario) {
+				$toCompras[] = $usuario['email'];
+			}*/
+			$toCompras[] = $usuariosCompras;
+			$this->enviarCorreo(['idRequerimientoInterno' => $post['idRequerimientoInterno'], 'to' => $toCompras]);
+
+			$result['result'] = 1;
+			$result['msg']['title'] = 'Hecho!';
+			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$this->db->trans_complete();
+		} else {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = getMensajeGestion('registroErroneo');
+		}
+
+		respuesta:
+		echo json_encode($result);
+	}
 	public function anularRequerimientoInterno()
 	{
 		$result = $this->result;
@@ -236,7 +292,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 
 		$dataParaVista['link'] = base_url() . index_page() . 'requerimientoInterno';
 
-		$email['asunto'] = 'IMPACTBUSSINESS - REQUERIMIENTO INTERNO '.strtoupper($dataParaVista['cabecera']['requerimientoInternoDetalleEstado']);
+		$email['asunto'] = 'IMPACTBUSSINESS - REQUERIMIENTO INTERNO ' . strtoupper($dataParaVista['cabecera']['requerimientoInternoDetalleEstado']);
 
 		$html = $this->load->view("formularioRequerimientosInternos/correo/administracion/estadoRequerimiento", $dataParaVista, true);
 		$correo = $this->load->view("formularioRequerimientosInternos/correo/formato", ['html' => $html, 'link' => base_url() . index_page() . 'SolicitanteInterno'], true);
