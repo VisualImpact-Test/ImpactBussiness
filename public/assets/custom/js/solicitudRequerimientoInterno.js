@@ -82,6 +82,29 @@ var RequerimientoInterno = {
 				RequerimientoInterno.actualizarAutocomplete();
 			});
 		});
+		$(document).on('click', '.btn-viewGenerarOC', function () {
+			++modalId;
+
+			let id = $(this).parents('tr:first').data('id');
+			let data = { 'idRequerimientoInterno': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': RequerimientoInterno.url + 'formularioSeleccionProveedor', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'RequerimientoInterno.seleccionProveedor()';
+				btn[1] = { title: 'Seleccionar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '40%' });
+
+				RequerimientoInterno.actualizarAutocomplete();
+			});
+		});
 		$(document).on('click', '.btneliminarfila', function (e) {
 			e.preventDefault();
 			let body = $(this).parents('.body-item');
@@ -374,6 +397,26 @@ var RequerimientoInterno = {
 
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	seleccionProveedor() {
+		$.when(Fn.validateForm({ id: config.idForm })).then(function (a) {
+			let fnF = '';
+			if (config.fnFin) fnF = config.fnFin + ';';
+			if (a === true) {
+				++modalId;
+				var btn = new Array();
+				btn[0] = { title: 'Cerrar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
+				btn[1] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + config.fn + ';' + fnF };
+				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: config.content, btn: btn });
+			}
+			else {
+				++modalId;
+				var btn = new Array();
+				btn[0] = { title: 'Aceptar', fn: 'Fn.showModal({ id:"' + modalId + '",show:false });' + fnF };
+				var content = "<div class='alert alert-danger'>Se encontraron incidencias en la operación. <strong>Verifique el formulario.</strong></div>";
+				Fn.showModal({ id: modalId, show: true, title: 'Alerta', content: content, btn: btn });
+			}
 		});
 	},
 	SimboloMoneda: function (t) {

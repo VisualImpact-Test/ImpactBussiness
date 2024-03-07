@@ -222,7 +222,7 @@
 									<div class="ui sub header">Precio Tarifario Proveedor</div>
 									<div class="ui labeled input">
 										<label for="amount" class="ui label monedaSimbolo">S/</label>
-										<input class="precioTarifarioForm" type="text" name="costoProveedorTarifarioForm" placeholder="0.00"value="<?= $precioTarifario ?>">
+										<input class="precioTarifarioForm" type="text" name="costoProveedorTarifarioForm" placeholder="0.00"value="<?= $precioTarifario ?>" readonly>
 									</div>
 								</div>
 							</div>

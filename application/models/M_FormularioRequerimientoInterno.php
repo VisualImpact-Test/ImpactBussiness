@@ -238,7 +238,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 				ei.idItemEstado, riE.nombre AS requerimientoInternoDetalleEstado, CONVERT( VARCHAR, rid.fechaCreacion, 103) AS fechaCreacion, 
 				CONVERT( VARCHAR, rid.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, rid.fechaModificacion, 108) AS fechaModificacion,
 				p.razonSocial AS proveedor, ri.idTipoMoneda, ri.idUsuarioAprobacion, p.idProveedor,
-				ri.comentario, rid.idRequerimientoInternoDetalle, rid.idItem, rid.idItemTipo
+				ri.comentario, rid.idRequerimientoInternoDetalle, rid.idItem, rid.idItemTipo, p.idProveedor AS id, p.razonSocial AS value
 			FROM compras.requerimientoInterno ri
 			INNER JOIN compras.requerimientoInternoDetalle rid ON rid.idRequerimientoInterno = ri.idRequerimientoInterno
 			INNER JOIN compras.proveedor p ON p.idProveedor = rid.idProveedor

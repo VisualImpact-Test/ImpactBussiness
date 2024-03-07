@@ -139,7 +139,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 				$config['data']['itemTarifario'][$v['idItem']][$vp['idProveedor']] = $vp['costo'];
 			}
 		}
-		$config['data']['title'] = 'Registrar Nuevo Requerimiento';
+		$config['data']['title'] = 'Aprobar Requerimiento';
 		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioActualizacion", $dataParaVista, true);
 
 
@@ -179,6 +179,20 @@ class SolicitudRequerimientoInterno extends MY_Controller
 		$result['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioVisualizacion", $dataParaVista, true);
 
 		echo json_encode($result);
+	}
+	public function formularioSeleccionProveedor()
+	{
+		$post = json_decode($this->input->post('data'), true);
+
+		$dataParaVista = [];
+		$dataParaVista['proveedor'] = $this->model->obtenerInformacionRequerimientoInternoDetalle($post)['query']->result_array();
+		
+		$result['result'] = 1;
+		$config['data']['title'] = 'Generar OC - Requerimiento Interno';
+		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/SolicitudRequerimientoInterno/formularioProveedor", $dataParaVista, true);
+
+
+		echo json_encode($config);
 	}
 	public function actualizarAprobacionCompras()
 	{
@@ -287,7 +301,7 @@ class SolicitudRequerimientoInterno extends MY_Controller
 			$dataParaVista['cabecera']['requerimientoInterno'] = $row['requerimientoInterno'];
 			$dataParaVista['cabecera']['cuenta'] = $row['cuenta'];
 			$dataParaVista['cabecera']['cuentaCentroCosto'] = $row['cuentaCentroCosto'];
-			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'];
+			$dataParaVista['cabecera']['requerimientoInternoDetalleEstado'] = $row['requerimientoInternoDetalleEstado'] ==  'Por Generar OC' ? 'aceptado en compras' : $row['requerimientoInternoDetalleEstado'];
 			$dataParaVista['detalle'][$key]['itemTipo'] = $row['itemTipo'];
 			$dataParaVista['detalle'][$key]['item'] = $row['item'];
 			$dataParaVista['detalle'][$key]['cantidad'] = $row['cantidad'];
