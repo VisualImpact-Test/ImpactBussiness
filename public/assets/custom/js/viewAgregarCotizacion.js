@@ -36,6 +36,7 @@ var SolicitudCotizacion = {
 				});
 			$('.ui.stickyProveedores').sticky();
 			Cotizacion.actualizarTotal();
+			Cotizacion.validarFormatoTipo();
 		});
 
 		$(document).on('click', '.btn-preview-orden-compra', function () {
@@ -623,7 +624,7 @@ var Cotizacion = {
 			});
 
 			let control = $(this);
-			Cotizacion.validarFormatoTipo(control);
+			Cotizacion.validarFormatoTipo();
 			//console.log(control);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
@@ -3881,9 +3882,9 @@ var Cotizacion = {
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	},
-	validarFormatoTipo: function (control) {
+	validarFormatoTipo: function () {
 		var contVal=0;
-		let parent = control.closest('.body-item');
+	
 		$('select#tipoItemForm').each(function() {
 			// Verificar si la opción seleccionada tiene el valor 3
 			if ($(this).val() == COD_TARJETAS_VALES.id  || $(this).val() == COD_CONCURSO.id ) {
