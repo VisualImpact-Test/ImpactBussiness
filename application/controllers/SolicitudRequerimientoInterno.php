@@ -133,6 +133,11 @@ class SolicitudRequerimientoInterno extends MY_Controller
 				$list[] = $this->db->get_where('compras.proveedor', ['idProveedor' => $vp['idProveedor']])->row_array()['razonSocial'];
 			}
 			$dataParaVista['listProveedores'][$v['idItem']] = implode(', ', $list);
+			$dataParaVista['listProveedoresCosto'][$v['idItem']] = $listProveedorCosto = $this->db->get_where('compras.itemTarifario', ['idItem' => $v['idItem'], 'estado' => 1])->result_array();
+			foreach ($listProveedorCosto as $kp => $vp) {
+				$dataParaVista['listProveedoresCosto'][$v['idItem']][$kp]['proveedor'] = $this->db->get_where('compras.proveedor', ['idProveedor' => $vp['idProveedor']])->row_array()['razonSocial'];
+				$config['data']['itemTarifario'][$v['idItem']][$vp['idProveedor']] = $vp['costo'];
+			}
 		}
 		$config['data']['title'] = 'Registrar Nuevo Requerimiento';
 		$config['data']['html'] = $this->load->view("formularioRequerimientosInternos/formularioActualizacion", $dataParaVista, true);
