@@ -119,7 +119,6 @@
 										<input class="codItems" type='hidden' name='idItemForm' value="<?= $row['idItem'] ?>">
 										<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 										<input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : ""; ?>">
-
 									</div>
 								</div>
 								<div class="four wide field">
@@ -132,8 +131,17 @@
 									<div class="ui sub header">Proveedor
 										<div class="ui btn-info-custom text-primary btn-info-proveedor"><i class="info circle icon"></i></div>
 									</div>
-									<select class="ui dropdown simpleDropdown search clearable proveedorForm_" id="proveedorForm" name="proveedorForm" patron="requerido" data-correlativo="1" onchange="RequerimientoInterno.tomarPrecio(this)">
-										<?= htmlSelectOptionArray2(['query' => $proveedorSelect, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idProveedor']]); ?>
+									<select class="ui dropdown simpleDropdown search clearable proveedorForm" name="proveedorForm" patron="requerido" data-correlativo="1" onchange="RequerimientoInterno.tomarPrecio(this)">
+										<option value="">Seleccione</option>
+										<?php $precioTarifario = 0; ?>
+										<?php foreach ($listProveedoresCosto[$row['idItem']] as $vProveedor) : ?>
+											<option class="text-titlecase " value="<?= $vProveedor['idProveedor'] ?>" <?php if ($vProveedor['flag_actual'] == '1') : ?> selected <?php endif; ?>>
+												<?= $vProveedor['proveedor'] ?>
+											</option>
+											<?php if ($vProveedor['flag_actual'] == '1') : ?>
+												<?php $precioTarifario = $vProveedor['costo']; ?>
+											<?php endif; ?>
+										<?php endforeach; ?>
 									</select>
 								</div>
 							</div>
@@ -214,8 +222,7 @@
 									<div class="ui sub header">Precio Tarifario Proveedor</div>
 									<div class="ui labeled input">
 										<label for="amount" class="ui label monedaSimbolo">S/</label>
-										<input class="precioTarifarioForm" type="text" name="costoProveedorTarifarioForm" placeholder="0.00" >
-
+										<input class="precioTarifarioForm" type="text" name="costoProveedorTarifarioForm" placeholder="0.00"value="<?= $precioTarifario ?>">
 									</div>
 								</div>
 							</div>

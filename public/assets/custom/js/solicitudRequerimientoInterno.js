@@ -9,7 +9,7 @@ var RequerimientoInterno = {
 	detalleEliminado: [],
 	itemServicio: [],
 	anexoEliminado: [],
-
+	itemTarifario: [],
 	load: function () {
 		$(document).ready(function () {
 			$('#btn-filtrarRequerimientoInterno').click();
@@ -58,6 +58,7 @@ var RequerimientoInterno = {
 				Fn.loadDimmerHover();
 				$('.simpleDropdown').dropdown();
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				RequerimientoInterno.itemTarifario = a.data.itemTarifario;
 			});
 		});
 		$(document).on('click', '.btn-detalleRequerimientoInterno', function () {
@@ -329,9 +330,9 @@ var RequerimientoInterno = {
 			});
 		});
 	},
-	actualizarRequerimientoInterno(){
+	actualizarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarRequerimientoInterno')) };
-		let url = RequerimientoInterno.url + "registrarRequerimientoInterno";
+		let url = RequerimientoInterno.url + "actualizarAprobacionCompras";
 		let config = { url: url, data: jsonString };
 
 		$.when(Fn.ajax(config)).then(function (b) {
@@ -352,26 +353,10 @@ var RequerimientoInterno = {
 		let div = _t.parents('.body-item');
 		let inputPrecio = div.find('input.precioTarifarioForm');
 
-		var idProveedor = div.find('#proveedorForm').val();
-		var idItem = div.find('#idItemForm').val();
-		var jsonString = {
-			'idProveedor': JSON.stringify(idProveedor),
-			'idItem': JSON.stringify(idItem)
-		};
-		
-		var config = {
-			url: RequerimientoInterno.url + "obtenerPrecioProveedorTarifario",
-			data: jsonString
-		};
-		
-		$.when(Fn.ajax(config)).then(function (a) {
-			if (a.usuarioTipo.nombre && a.usuarioTipo.nombre.length > 0) {
-				value.empty();
-				inputPrecio.val('333');
-				//value.val(a.usuarioTipo.nombre);
-			}
-		});
+		var idProveedor = div.find('.proveedorForm').dropdown('get value');
+		var idItem = div.find('.codItems').val();
 
+		inputPrecio.val(RequerimientoInterno.itemTarifario?.[idItem]?.[idProveedor]);
 	},
 	registrarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroRequerimientoInterno')) };
