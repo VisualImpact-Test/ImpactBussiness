@@ -1150,7 +1150,8 @@ class M_Cotizacion extends MY_Model
 			cd.flagDetallePDV,
 			cd.flagPackingSolicitado,
 			cd.flagMostrarDetalle,
-			cd.idTipo_TarjetasVales
+			cd.idTipo_TarjetasVales,
+			cd.flagDetalleTarjetasVales
 			FROM
 			compras.cotizacion c
 			JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2275,7 +2276,8 @@ class M_Cotizacion extends MY_Model
 					cd.costoPersonal,
 					cd.flagMostrarDetalle,
 					cd.requiereOrdenCompra,
-					cd.idTipo_TarjetasVales
+					cd.idTipo_TarjetasVales,
+					cd.flagDetalleTarjetasVales
 				FROM
 					compras.cotizacion c
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2328,7 +2330,8 @@ class M_Cotizacion extends MY_Model
 				lt.costoPersonal,
 				lt.flagMostrarDetalle,
 				lt.requiereOrdenCompra,
-				lt.idTipo_TarjetasVales
+				lt.idTipo_TarjetasVales,
+				lt.flagDetalleTarjetasVales
 				FROM listItem lt
 			)
 			SELECT

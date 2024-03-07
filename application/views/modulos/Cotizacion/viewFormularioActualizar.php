@@ -665,13 +665,13 @@
 										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="<?= $row['cotizacionInterna'] ?>">
 									</div>
 								</div>
-								<div class="five wide field">
+								<div class="five wide field ">
 									<div class="ui sub header">Tipo Item</div>
 									<select class="ui dropdown simpleDropdown idTipoItem read-only" id="tipoItemForm" name="tipoItemForm" patron="requerido">
 										<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'selected' => $row['idItemTipo']]); ?>
 									</select>
 								</div>
-								<div class="four wide field divTipoTarjValesConcurso <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
+								<div class="three wide field divTipoTarjValesConcurso <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
 									<div class="ui sub header">Tipo</div>
 									<?php $tipo_vt = verificarEmpty($row['idTipo_TarjetasVales']); #Tambien es para concursos pero la columna ya tiene ese nombre :) ?>
 
@@ -679,6 +679,14 @@
 										<option class="text-titlecase" value <?= empty($tipo_vt) ? 'selected' : ''; ?>>Seleccione</option>
 										<option class="text-titlecase" value="1" <?= $tipo_vt == '1' ? 'selected' : ''; ?>>COMPRA</option>
 										<option class="text-titlecase" value="2" <?= $tipo_vt == '2' ? 'selected' : ''; ?>>RECARGA</option>
+									</select>
+								</div>
+								<div class="two wide field <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?>">
+									<div class="ui sub header">Ver Detalle</div>
+									<?php $tipo_vd = verificarEmpty($row['flagDetalleTarjetasVales']); #Tambien es para concursos pero la columna ya tiene ese nombre :) ?>
+									<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
+										<option class="text-titlecase" value="1" <?= $tipo_vd == '1' ? 'selected' : ''; ?>>SI</option>
+										<option class="text-titlecase" value="2" <?= $tipo_vd == '2' ? 'selected' : ''; ?>>NO</option>
 									</select>
 								</div>
 							</div>
