@@ -1264,6 +1264,7 @@ class Cotizacion extends MY_Controller
 				$dataParaVista['detalle'][$key]['fee2Monto'] = $row['fee2Monto'];
 				$dataParaVista['detalle'][$key]['montoFeeTarjValCon'] = $row['montoFeeTarjValCon'];
 				$dataParaVista['detalle'][$key]['montoFee'] = $row['montoFee'];
+				$dataParaVista['detalle'][$key]['flagDetalleTarjetasVales'] = $row['flagDetalleTarjetasVales'];
 
 				if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) {
 					$dataParaVista['detalleSub'][$row['idCotizacionDetalle']] = $this->model->obtenerCotizacionDetalleSub(['idCotizacionDetalle' => $row['idCotizacionDetalle']])->result_array();
@@ -1310,7 +1311,7 @@ class Cotizacion extends MY_Controller
 			}
 
 			if (count($dataParaVista) == 0) exit();
-
+			
 			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN', 'codigo' => 'COD: SIG-OPE-FOR-003'], true);
 			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", ['solicitante' => $dataParaVista['cabecera']['solicitante']], true);
 			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);

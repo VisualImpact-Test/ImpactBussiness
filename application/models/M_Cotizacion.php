@@ -764,7 +764,7 @@ class M_Cotizacion extends MY_Model
 				, p.feeTarjetaVales
 				, pd.subtotal * case when pd.idItemTipo in (8,10) then isnull(p.feeTarjetaVales, 0) end / 100 as montoFeeTarjValCon
 				, pd.subtotal * case when pd.idItemTipo not in (8,10) then isnull(p.fee, 0) end / 100 as montoFee
-				 
+				, pd.flagDetalleTarjetasVales
 			FROM compras.cotizacion p
 			JOIN compras.cotizacionDetalle pd ON p.idCotizacion = pd.idCotizacion
 			JOIN compras.itemTipo it ON pd.idItemTipo = it.idItemTipo

@@ -212,6 +212,7 @@
 			<?php endif; ?>
 			<?php if ($row['idItemTipo'] == COD_CONCURSO['id'] || $row['idItemTipo'] == COD_TARJETAS_VALES['id']) : ?>
 				<?php if (!empty($detalleSub[$row['idCotizacionDetalle']])) : ?>
+					<?php if($row['flagDetalleTarjetasVales'] != 2) : ?>
 					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
 						<tr class="bg-gray">
 							<td class="text-center"></td>
@@ -243,6 +244,7 @@
 					<tr class="bg-gray">
 						<td></td>
 					</tr>
+					<?php endif; ?>
 				<?php endif; ?>
 			<?php endif; ?>
 			<?php $montoSub += floatval($row['subtotal']); ?>
