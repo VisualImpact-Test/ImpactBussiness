@@ -3618,6 +3618,12 @@ var Cotizacion = {
 		let porcentajeC = parent.find('.porcentajeSubItemConcurso');
 		// FIN: CONCURSO
 
+		// PAGOS A FARMACIA
+		let descripcionFarmacia = parent.find('.descripcionSubItemPagosFarmacias');
+		let cantidadFarmacia = parent.find('.cantidadSubItemPagosFarmacias');
+		let montoFarmacia = parent.find('.montoSubItemPagosFarmacias');
+		// FIN: PAGOS A FARMACIA
+
 		// PERSONAL
 		let sueldo_personal = parent.find('.sueldo_personal');
 		let asignacion_familiar_personal = parent.find('.asignacion_familiar_personal');
@@ -3681,6 +3687,12 @@ var Cotizacion = {
 		montoC.attr('name', `montoSubItemConcurso[${number}]`);
 		porcentajeC.attr('name', `porcentajeSubItemConcurso[${number}]`);
 		// FIN: CONCURSO
+
+		// PAGOS A FARMACIA
+		descripcionFarmacia.attr('name', `descripcionSubItemPagosFarmacias[${number}]`);
+		cantidadFarmacia.attr('name', `cantidadSubItemPagosFarmacias[${number}]`);
+		montoFarmacia.attr('name', `montoSubItemPagosFarmacias[${number}]`);
+		// FIN: PAGOS A FARMACIA
 
 		// PERSONAL
 		// sueldo_personal.attr('name', `sueldo_personal[${number}]`);

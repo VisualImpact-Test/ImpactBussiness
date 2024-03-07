@@ -60,7 +60,7 @@
 					<label class="form-control col-md-4" style="border:0px;">Comentario</label>
 					<select name="incidencia" class="form-control col-md-8">
 						<option value="1">Finalizado con Incidencia</option>
-						<option value="0">Finalizado al 100%</option>
+						<option value="0" selected>Finalizado al 100%</option>
 					</select>
 				</div>
 			</fieldset>

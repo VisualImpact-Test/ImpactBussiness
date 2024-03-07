@@ -97,8 +97,6 @@ class Cotizacion extends MY_Controller
 		$data['datosCot'] = $this->model->obtenerInformacionCotizacionGR_ORDENCOMPRA($dataParaVista['idCotizacion'])->result_array();
 
 		$data['datosCotGR'] = $this->model->obtenerCotizacionGR($dataParaVista['idCotizacion'])->result_array();
-		//echo $this->db->last_query();exit();
-		//var_dump($data['datosCotGR']);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Indicar Datos';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioIndicarGR", $data, true);
@@ -318,7 +316,6 @@ class Cotizacion extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-	//	var_dump($post);exit();
 		$data = [];
 		$data['tabla'] = 'compras.cotizacion';
 
@@ -577,7 +574,7 @@ class Cotizacion extends MY_Controller
 		$post['seguro_vida_personal'] = checkAndConvertToArray($post['seguro_vida_personal']);
 		$post['total_adicionales'] = checkAndConvertToArray($post['total_adicionales']);
 		$post['tipoTarjVales'] = checkAndConvertToArray($post['tipoTarjVales']);
-		
+
 		$post['verDetallePdf'] = checkAndConvertToArray($post['verDetallePdf']);
 		if (isset($post['cargo_personal'])) $post['cargo_personal'] = checkAndConvertToArray($post['cargo_personal']);
 
@@ -1311,7 +1308,7 @@ class Cotizacion extends MY_Controller
 			}
 
 			if (count($dataParaVista) == 0) exit();
-			
+
 			$contenido['header'] = $this->load->view("modulos/Cotizacion/pdf/header", ['title' => 'FORMATO DE COTIZACIÓN', 'codigo' => 'COD: SIG-OPE-FOR-003'], true);
 			$contenido['footer'] = $this->load->view("modulos/Cotizacion/pdf/footer", ['solicitante' => $dataParaVista['cabecera']['solicitante']], true);
 			$contenido['body'] = $this->load->view("modulos/Cotizacion/pdf/body", $dataParaVista, true);
@@ -1604,8 +1601,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['periodo'] = $this->model->obtenerPeriodo()->result_array();
 		$config['data']['prioridadCotizacion'] = $this->model->obtenerPrioridadCotizacion()['query']->result_array();
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
-		//echo $this->db->last_query(); exit();
-		//var_dump($config['data']['tipoServicioCotizacion']);
+
 		$itemServicio = $this->model_item->obtenerItemServicio();
 		if (!empty($itemServicio)) {
 			foreach ($itemServicio as $key => $row) {
@@ -3241,7 +3237,6 @@ class Cotizacion extends MY_Controller
 	{
 		$this->db->trans_start();
 		$result = $this->result;
-//var_dump($post);
 		$data['tabla'] = 'compras.cotizacion';
 		$itemsTipoDistribucion = 0;
 		$data = [];
@@ -3491,6 +3486,15 @@ class Cotizacion extends MY_Controller
 										'costo' => $post["montoSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
 										'porcentajeParaCosto' => $post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"],
 										'subtotal' => floatval($post["cantidadSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) * (1 + (floatval($post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) / 100)),
+									]);
+									break;
+								case COD_PAGOS_FARMACIAS['id']:
+									$data['subDetalle'][$k] = getDataRefactorizada([
+										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+										'nombre' => $post["descripcionSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
+										'cantidad' => $post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
+										'costo' => $post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
+										'subtotal' => floatval($post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * (1 + (floatval($post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) / 100)),
 									]);
 									break;
 
@@ -5077,7 +5081,7 @@ class Cotizacion extends MY_Controller
 				$this->db->insert('compras.cotizacionDetalleSub', $insertarCotizacionDetallesub);
 				$idNewCotizacionDetalleSub = $this->db->insert_id();
 			}
-			$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post,$v['idCotizacionDetalle'])['query']->result_array();
+			$cotizacionDetalleArchivos = $this->model->obtenerCotizacionDetalleArchivos($post, $v['idCotizacionDetalle'])['query']->result_array();
 
 			foreach ($cotizacionDetalleArchivos as $r => $p) {
 				$insertarCotizacionDetalleArchivos = [
@@ -5098,10 +5102,9 @@ class Cotizacion extends MY_Controller
 				];
 				$this->db->insert('compras.cotizacionDetalleArchivos', $insertarCotizacionDetalleArchivos);
 			}
-
 		}
 
-		
+
 
 		$insertarEstadoHistorico = [
 			'idCotizacionEstado' => 1,
@@ -5167,8 +5170,6 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
 
-		//var_dump($post); exit();
-		//  echo $this->db->last_query();exit();
 		$archivoCotizacion = [
 			'base64' => $post['cotizacionFile-item'],
 			'name' => $post['cotizacionFile-name'],
