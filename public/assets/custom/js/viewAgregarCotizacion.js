@@ -586,7 +586,7 @@ var Cotizacion = {
 				'url': Cotizacion.url + 'formularioRegistroCotizacion',
 				'data': jsonString
 			};
-
+			
 			$.when(Fn.ajax(config1)).then((exa) => {
 				if (exa.data.existe == 0) {
 					Cotizacion.feeCuenta = exa.data.feeCuenta;
@@ -623,6 +623,8 @@ var Cotizacion = {
 			});
 
 			let control = $(this);
+			Cotizacion.validarFormatoTipo(control);
+			//console.log(control);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
 
@@ -3866,6 +3868,26 @@ var Cotizacion = {
 		let montoProm = montoTot / cantTot / cantTot;
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
+	},
+	validarFormatoTipo: function (control) {
+		var contVal=0;
+		let parent = control.closest('.body-item');
+		$('select#tipoItemForm').each(function() {
+			// Verificar si la opción seleccionada tiene el valor 3
+			if ($(this).val() == COD_TARJETAS_VALES.id  || $(this).val() == COD_CONCURSO.id ) {
+			  // Ejecutar la función para cada elemento que cumple la condición
+			  contVal++;
+			}
+		  });
+
+		console.log(contVal);
+		if (contVal > 0) {
+		//	parent.find('.feeValestarjetas').removeClass('d-none');
+			$('#feeValestarjetas').removeClass('d-none');
+		} else {
+			$('#feeValestarjetas').addClass('d-none');
+		//	parent.find('.feeValestarjetas').addClass('d-none');
+		}
 	}
 }
 
