@@ -3382,6 +3382,8 @@ var Cotizacion = {
 				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
 			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_CONCURSO.id) {
 				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
+			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_PAGOS_FARMACIAS.id) {
+				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
 			} else { // != COD_DISTRIBUCION.id
 				total = Number(total) + Number($(value).val());
 			}
@@ -3886,9 +3888,7 @@ var Cotizacion = {
 		var contVal=0;
 	
 		$('select#tipoItemForm').each(function() {
-			// Verificar si la opción seleccionada tiene el valor 3
-			if ($(this).val() == COD_TARJETAS_VALES.id  || $(this).val() == COD_CONCURSO.id ) {
-			  // Ejecutar la función para cada elemento que cumple la condición
+			if ($(this).val() == COD_TARJETAS_VALES.id  || $(this).val() == COD_CONCURSO.id || $(this).val() == COD_PAGOS_FARMACIAS.id) {
 			  contVal++;
 			}
 		  });
