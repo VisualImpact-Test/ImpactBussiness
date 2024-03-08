@@ -845,6 +845,21 @@ class Cotizacion extends MY_Controller
 						}
 						// $data['subDetalle'][$k] = getDataRefactorizada([]);
 						break;
+
+					case COD_PAGOS_FARMACIAS['id']:
+						$data['subDetalle'][$k] = [];
+						$post["descripcionSubItemPagosFarmacias[$k]"] = checkAndConvertToArray($post["descripcionSubItemPagosFarmacias[$k]"]);
+						$post["cantidadSubItemPagosFarmacias[$k]"] = checkAndConvertToArray($post["cantidadSubItemPagosFarmacias[$k]"]);
+						$post["montoSubItemPagosFarmacias[$k]"] = checkAndConvertToArray($post["montoSubItemPagosFarmacias[$k]"]);
+						foreach ($post["descripcionSubItemPagosFarmacias[$k]"] as $kti => $vti) {
+							$data['subDetalle'][$k][] = [
+								'nombre' => $post["descripcionSubItemPagosFarmacias[$k]"][$kti],
+								'cantidad' => $post["cantidadSubItemPagosFarmacias[$k]"][$kti],
+								'costo' => $post["montoSubItemPagosFarmacias[$k]"][$kti],
+								'subtotal' => floatval($post["cantidadSubItemPagosFarmacias[$k]"][$kti]) * floatval($post["montoSubItemPagosFarmacias[$k]"][$kti])
+							];
+						}
+						break;
 					default:
 						$data['subDetalle'][$k] = [];
 						break;
