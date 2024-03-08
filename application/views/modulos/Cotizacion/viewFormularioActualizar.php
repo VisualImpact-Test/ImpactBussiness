@@ -860,6 +860,35 @@
 									<? endforeach; ?>
 								<? endif; ?>
 							</div>
+								<!-- Pagos Farmacias -->
+						<div class="ui grid  ml-0 div-features <?= $row['idItemTipo'] == COD_PAGOS_FARMACIAS['id'] ? '' : 'd-none' ?> div-feature-<?= COD_PAGOS_FARMACIAS['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-pagosFarmacias teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-pagosFarmacias red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']] as $dataSubItem) : ?>
+							<div class="three column row divDetallePagosFarmacias">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemPagosFarmacias" name="descripcionSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemPagosFarmacias keyUpChange onlyNumbers" name="cantidadSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= $dataSubItem['cantidad'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemPagosFarmacias keyUpChange onlyNumbers" name="montoSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= $dataSubItem['costoSubItem'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+								</div>
+							</div>
+							<? endforeach; ?>
+						</div>
 							<!-- Concurso -->
 							<div class="ui grid ml-0 div-features <?= $row['idItemTipo'] == COD_CONCURSO['id'] ? '' : 'd-none' ?> div-feature-<?= COD_CONCURSO['id'] ?>">
 								<div class="row ml-0 pt-4 d-none"> <!-- No se muestra los botones de agregar y eliminar, pendiente corregir error -->
