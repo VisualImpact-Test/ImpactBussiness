@@ -778,9 +778,9 @@ var Cotizacion = {
 				parent.find('.divTipoPagosFarmacias').removeClass('d-none');
 				// patron
 				parent.find('div.provList').find('select').attr("patron", "requerido");
-				parent.find('.descripcionSubItemTarjVal').attr('patron', 'requerido');
-				parent.find('.montoSubItemTarjVal').attr('patron', 'requerido');
-				parent.find('.cantidadSubItemTarjVal').attr('patron', 'requerido');
+				parent.find('.descripcionSubItemPagosFarmacias').attr('patron', 'requerido');
+				parent.find('.montoSubItemPagosFarmacias').attr('patron', 'requerido');
+				parent.find('.cantidadSubItemPagosFarmacias').attr('patron', 'requerido');
 				cotizacionInternaForm.val(0);
 				control.closest('.body-item').find('.gapForm').val('0');
 				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
