@@ -196,15 +196,22 @@ class OrdenServicio extends MY_Controller
 
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
-							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
-						} elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
+							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] += $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
+						} elseif ($v2['idFrecuencia'] == '7') { // TRIMESTRAL
+							if ($nroMes == 1 || ($nroMes - 1) % 3 == 0) $keyCode = $kf;
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
+								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
+								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
+							if ($nroMes == 1 || ($nroMes - 1) % 3 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] += $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
+						}  elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
 							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
 								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
 
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
-							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] = $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
+							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] += $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
 						} elseif ($v2['idFrecuencia'] == '4') { // ANUAL
 							if ($nroMes == 1 || ($nroMes - 1) % 12 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])

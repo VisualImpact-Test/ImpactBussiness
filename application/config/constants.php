@@ -147,6 +147,7 @@ defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEX
 defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
 defined('COD_PAGOS_FARMACIAS')	or define('COD_PAGOS_FARMACIAS', ['id' => 11, 'nombre' => 'PAGOS FARMACIA']);
 defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
+defined('COD_RUTAS_VIAJERAS')		or define('COD_RUTAS_VIAJERAS', ['id' => 13, 'nombre' => 'RUTAS VIAJERAS']);
 
 //Wireframe
 
@@ -236,6 +237,7 @@ defined("OC_SERIADO") or define("OC_SERIADO", 2);
 defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 	['id' => 1, 'value' => 'MENSUAL'],
 	['id' => 2, 'value' => 'BIMENSUAL'],
+	['id' => 7, 'value' => 'TRIMESTRAL'],
 	['id' => 3, 'value' => 'SEMESTRAL'],
 	['id' => 4, 'value' => 'ANUAL'],
 	['id' => 5, 'value' => 'UNICO'],
@@ -245,6 +247,7 @@ defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', [
 	'1' => 'MENSUAL',
 	'2' => 'BIMENSUAL',
+	'7' => 'TRIMESTRAL',
 	'3' => 'SEMESTRAL',
 	'4' => 'ANUAL',
 	'5' => 'UNICO',

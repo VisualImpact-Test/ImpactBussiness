@@ -1109,6 +1109,23 @@ var OrdenServicio = {
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 					f = f + 1;
+				} else if (frecuencia == 7) { // TRIMESTRAL
+					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
+					maxFor = 3;
+					if (valorPorColumna.length - f < maxFor) maxFor = valorPorColumna.length - f;
+					valMaxCol = 0;
+					for (let id = 0; id < valorPorColumna.length; id++) {
+						valCol = valorPorColumna[id + f];
+						if (valCol > valMaxCol) valMaxCol = valCol;
+					}
+					// Fin: Calcular el valor máximo dentro del rango de tiempo.
+					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
+					totalFinalAcumulado += parseFloat(totalFinalClm);
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
+					f = f + 2;
+
 				} else if (frecuencia == 3) { // SEMESTRAL
 					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
 					maxFor = 6;
