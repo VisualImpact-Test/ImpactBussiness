@@ -3501,7 +3501,7 @@ class Cotizacion extends MY_Controller
 			$post['cantidadPDV'] = checkAndConvertToArray($post['cantidadPDV']);
 			$post['flagGenerarOC'] = checkAndConvertToArray($post['flagGenerarOC']);
 			$post['tipoTarjVales'] = checkAndConvertToArray($post['tipoTarjVales']);
-			$post['verDetallePdf'] = checkAndConvertToArray($post['verDetallePdf']);
+			$post['verDetallePdf'] = isset($post['verDetallePdf']) ? checkAndConvertToArray($post['verDetallePdf']) : [];
 			if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
 
 			$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
@@ -3623,7 +3623,6 @@ class Cotizacion extends MY_Controller
 									break;
 								case COD_PAGOS_FARMACIAS['id']:
 									$data['subDetalle'][$k] = getDataRefactorizada([
-										
 										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
 										'nombre' => $post["descripcionSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
 										'cantidad' => $post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
@@ -3652,7 +3651,6 @@ class Cotizacion extends MY_Controller
 									break;
 							}
 						}
-						
 						// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
 						if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k] && !empty($post['nameItemOriginal'][$k])) {
 							$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
