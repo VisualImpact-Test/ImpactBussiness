@@ -100,6 +100,7 @@ const COD_TEXTILES = { 'id': 9, 'nombre': 'TEXTILES' };
 const COD_TARJETAS_VALES = { 'id': 10, 'nombre': 'TARJETAS_VALES' };
 const COD_PAGOS_FARMACIAS = { 'id': 11, 'nombre': 'PAGOS FARMACIA' };
 const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
+const COD_RUTAS_VIAJERAS = { 'id': 12, 'nombre': 'RUTAS VIAJERAS' };
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
