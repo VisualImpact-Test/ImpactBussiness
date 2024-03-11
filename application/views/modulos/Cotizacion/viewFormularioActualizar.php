@@ -873,7 +873,9 @@
 								</button>
 							</div>
 							<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']] as $dataSubItem) : ?>
-							<div class="three column row divDetallePagosFarmacias">
+								<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
+								<div class="three column row divDetallePagosFarmacias">
 								<div class="column">
 									<div class="ui sub header">Descripción</div>
 									<input class="descripcionSubItemPagosFarmacias" name="descripcionSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
