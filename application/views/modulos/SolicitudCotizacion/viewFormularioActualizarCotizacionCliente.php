@@ -458,7 +458,37 @@
 										</div>
 									<? endforeach; ?>
 								<? endif; ?>
+							</div><!-- Pagos Farmacias -->
+						<div class="ui grid  ml-0 div-features <?= $row['idItemTipo'] == COD_PAGOS_FARMACIAS['id'] ? '' : 'd-none' ?> div-feature-<?= COD_PAGOS_FARMACIAS['id'] ?>">
+							<div class="row ml-0 pt-4 d-none" >
+								<button type="button" class="ui button btn-add-sub-item-pagosFarmacias teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-pagosFarmacias red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
 							</div>
+							<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']] as $dataSubItem) : ?>
+								<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+
+								<div class="three column row divDetallePagosFarmacias">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input readonly class="descripcionSubItemPagosFarmacias" name="descripcionSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input readonly class="cantidadSubItemPagosFarmacias keyUpChange onlyNumbers" name="cantidadSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= $dataSubItem['cantidad'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input readonly class="montoSubItemPagosFarmacias keyUpChange onlyNumbers" name="montoSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= $dataSubItem['costoSubItem'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+								</div>
+							</div>
+							<? endforeach; ?>
+						</div>
 							<!-- Servicios -->
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">
 								<h4 class="ui dividing header">SUB ITEMS</h4>
