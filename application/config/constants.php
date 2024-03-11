@@ -138,17 +138,17 @@ defined('MONTOGAP') or define('MONTOGAP', 1500);
 defined('COD_ARTICULO')			or define('COD_ARTICULO', ['id' => 1, 'nombre' => 'ARTICULO']);
 defined('COD_SERVICIO')			or define('COD_SERVICIO', ['id' => 2, 'nombre' => 'SERVICIO']);
 defined('COD_COMPUTO')			or define('COD_COMPUTO', ['id' => 3, 'nombre' => 'COMPUTO']);
-defined('COD_MOVIL')				or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL']);
+defined('COD_MOVIL')			or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL']);
 defined('COD_PERSONAL')			or define('COD_PERSONAL', ['id' => 5, 'nombre' => 'PERSONAL']);
 defined('COD_EVENTO')			or define('COD_EVENTO', ['id' => 6, 'nombre' => 'EVENTO']);
-defined('COD_DISTRIBUCION')	or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
+defined('COD_DISTRIBUCION')		or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
 defined('COD_CONCURSO')			or define('COD_CONCURSO', ['id' => 8, 'nombre' => 'CONCURSO']);
 defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
 defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
 defined('COD_PAGOS_FARMACIAS')	or define('COD_PAGOS_FARMACIAS', ['id' => 11, 'nombre' => 'PAGOS FARMACIA']);
 defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
 defined('COD_RUTAS_VIAJERAS')		or define('COD_RUTAS_VIAJERAS', ['id' => 13, 'nombre' => 'RUTAS VIAJERAS']);
-
+defined('COD_PAQUETE')			or define('COD_PAQUETE', ['id' => 14, 'nombre' => 'PAQUETE']);
 //Wireframe
 
 defined('RUTA_WIREFRAME') or define('RUTA_WIREFRAME', '../public/assets/images/wireframe/');
