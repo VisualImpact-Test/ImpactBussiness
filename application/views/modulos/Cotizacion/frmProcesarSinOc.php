@@ -16,7 +16,7 @@
 			<div class="fields">
 				<div class="sixteen wide field">
 					<label>Monto de OC:</label>
-					<input class="soloNumeros" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>">
+					<input class="onlyNumbers" id="motivo" name="monto_oc" patron="" placeholder="Monto de compra" value="<?= !empty($cotizacion['montoOrdenCompra']) ? $cotizacion['montoOrdenCompra'] : '' ?>">
 				</div>
 			</div>
 			<div class="fields">

@@ -537,11 +537,13 @@ var View = {
 		$(document).on('paste', '.onlyNumbers', function (e) {
 			t = $(this);
 			setTimeout(function () {
-				if (isNaN(parseFloat($(e.currentTarget).val()))) {
-					alert('No número');
-					t.val('0').change();
+				
+				var value = t.val();
+				var numberValue = value.match(/\d+(\.\d+)?/); 
+				if (numberValue) {
+				  t.val(parseFloat(numberValue[0])).keyup();
 				} else {
-					t.val(parseFloat($(e.currentTarget).val())).keyup();
+				  t.val('0').change();
 				}
 			}, 0);
 		});
