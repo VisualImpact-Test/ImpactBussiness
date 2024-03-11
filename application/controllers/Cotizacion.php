@@ -3505,11 +3505,12 @@ class Cotizacion extends MY_Controller
 									break;
 								case COD_PAGOS_FARMACIAS['id']:
 									$data['subDetalle'][$k] = getDataRefactorizada([
+										
 										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
 										'nombre' => $post["descripcionSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
 										'cantidad' => $post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
 										'costo' => $post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"],
-										'subtotal' => floatval($post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * (1 + (floatval($post["porcentajeSubItemConcurso[{$post['idCotizacionDetalle'][$k]}]"]) / 100)),
+										'subtotal' => floatval($post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]),
 									]);
 									break;
 
@@ -3533,7 +3534,7 @@ class Cotizacion extends MY_Controller
 									break;
 							}
 						}
-
+						
 						// Cambiar de nombre en la tabla Item en caso se haga una modificacion en el mismo.
 						if (!empty($post['idItemForm'][$k]) && $post['nameItem'][$k] != $post['nameItemOriginal'][$k] && !empty($post['nameItemOriginal'][$k])) {
 							$this->db->update('compras.item', ['nombre' => $post['nameItem'][$k]], ['idItem' => $post['idItemForm'][$k]]);
