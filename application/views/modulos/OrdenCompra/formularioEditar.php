@@ -155,14 +155,13 @@
 					</div>
 					<div class="form-group col-md-5">
 						<label class="font-weight-bold mb-0">Lugar de Entrega:</label>
-						<input class="form-control" name="entrega" value="<?= isset($oc[0]['entrega']) ? $oc[0]['entrega'] : '' ?>">
+						<input class="form-control inpEntrega" name="entrega" value="<?= isset($oc[0]['entrega']) ? $oc[0]['entrega'] : '' ?>">
 					</div>
 				</div>
 				<div class="form-row">
 					<div class="form-group col-md-10">
 						<label class="font-weight-bold mb-0">Observación:</label>
-						<input class="form-control" name="observacion" value="<?= isset($oc[0]['observacion']) ? $oc[0]['observacion'] : '' ?>">
-					</div>
+						<input class="form-control" name="observacion" value="<?= isset($oc[0]['observacion']) ? $oc[0]['observacion'] : 'En caso de incumplimiento en fecha de entrega, se estará ejecutando penalidad del 1% por cada día de retraso.' ?>">					</div>
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold mb-0">Mostrar Observación</label>
 						<div class="custom-control custom-switch custom-switch-lg">
