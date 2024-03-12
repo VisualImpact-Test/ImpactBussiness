@@ -645,7 +645,8 @@ var Oc = {
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
 		costo = parseFloat($(div).find('input.item_costo').val() || '0');
-		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		// gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		gap = 0;
 		cantPDV = 0;
 		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
