@@ -120,6 +120,7 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['moneda'] = $this->mMoneda->obtenerMonedasActivas()->result_array();
 		$dataParaVista['proveedor'] = $this->mProveedor->obtenerProveedoresActivos()->result_array();
 		$dataParaVista['metodoPago'] = $this->mFormProveedor->obtenerMetodoPago()->result_array();
+		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
 		//$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
 		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOC])->result_array();
@@ -129,8 +130,8 @@ class OrdenCompra extends MY_Controller
 		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Generar OC desde Oper libre';
-		//$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
-		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/Oper/formularioOperSinCotizar", $dataParaVista, true);
+		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
+		// $result['data']['html'] = $this->load->view("modulos/OrdenCompra/Oper/formularioOperSinCotizar", $dataParaVista, true);
 
 		echo json_encode($result);
 	}

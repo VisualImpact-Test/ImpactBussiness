@@ -160,7 +160,7 @@
 					<?php endif; ?>
 				<?php endif; ?>
 			<?php endforeach; ?>
-		<!--</tbody>
+			<!--</tbody>
 		<tfoot class="full-width">-->
 			<tr class="height:100px">
 				<td colspan="8" class="text-right">
@@ -177,6 +177,10 @@
 					<p><?= monedaNew(['valor' => $igv_total + $total, 'simbolo' => $data['simboloMoneda']]) ?></p>
 				</td>
 			</tr>
+		</tbody>
+	</table>
+	<table border="1" style="width: 100%;">
+		<tbody style="border:1px solid black;">
 			<tr>
 				<td colspan="4" class="bold">Son :</td>
 				<td colspan="8" class="text-left">
@@ -224,7 +228,7 @@
 					<?= !empty($data['poCliente']) ? $data['poCliente'] : '' ?>
 				</td>
 			</tr>
-			</tbody>
+		</tbody>
 	</table>
 </div>
 <div style="border: 2px solid black; text-align:justify;height:100px">
