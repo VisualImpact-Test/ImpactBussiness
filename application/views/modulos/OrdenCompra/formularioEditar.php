@@ -155,7 +155,7 @@
 					</div>
 					<div class="form-group col-md-5">
 						<label class="font-weight-bold mb-0">Lugar de Entrega:</label>
-						<input class="form-control" name="entrega" value="<?= isset($oc[0]['entrega']) ? $oc[0]['entrega'] : '' ?>">
+						<input class="form-control inpEntrega" name="entrega" value="<?= isset($oc[0]['entrega']) ? $oc[0]['entrega'] : '' ?>">
 					</div>
 				</div>
 				<div class="form-row">
