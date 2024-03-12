@@ -449,12 +449,15 @@ var Oc = {
 			Oc.itemsData = $.parseJSON($('#itemsData').val());
 			Oc.modalId = modalId;
 			Oc.itemInputComplete('all');
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
 		});
 	},
 
 	quitarItem: function (t, v) {
 		div = t.closest('div.itemData');
 		$(div).remove();
+		$('input.item_cantidad').first().change();
 	},
 	generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
