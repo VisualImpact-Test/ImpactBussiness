@@ -364,6 +364,7 @@ class Item extends MY_Controller
 		// foreach que agarra los indices, para poder guardar el array generado del post
 		foreach ($post['nombre'] as $k => $r) {
 			// En caso el tipoPresupuestoDetalle no se encuentre registrado.
+			
 			$idTipoPresupuestoDetalle = !empty($post['tipoPresupuestoDetalle'][$k]) ? $post['tipoPresupuestoDetalle'][$k] : NULL;
 			if (!empty($post['tipoPresupuesto'][$k]) && empty($post['tipoPresupuestoDetalle'][$k])) {
 				$insertTPD = [
@@ -404,7 +405,10 @@ class Item extends MY_Controller
 			$data['tabla'] = 'compras.item';
 
 			$insert = $this->model->insertarItem($data);
+			
 
+			$this->db->update('compras.tipoPresupuestoDetalle', ['idItem' => $insert['id']] , ['idTipoPresupuestoDetalle' => $idTipoPresupuestoDetalle]);
+			
 			// Imagen
 			if (!empty($post["file-name[$k]"])) {
 				$data['archivos_arreglo'][$k] = getDataRefactorizada([
@@ -539,11 +543,16 @@ class Item extends MY_Controller
 
 		$data = [];
 
+		if (!empty($post['idTipoPresupuestoDetalle'])) {
+			$this->db->update('compras.tipopresupuestoDetalle', ['estado' => 0], ['idTipoPresupuestoDetalle' => $post['idTipoPresupuestoDetalle']]);
+		}
+
 		// En caso el tipoPresupuestoDetalle no se encuentre registrado.
 		$idTipoPresupuestoDetalle = !empty($post['tipoPresupuestoDetalle']) ? $post['tipoPresupuestoDetalle'] : NULL;
 		if (!empty($post['tipoPresupuesto']) && empty($post['tipoPresupuestoDetalle'])) {
 			$insertTPD = [
 				'idTipoPresupuesto' => $post['tipoPresupuesto'],
+				'idItem' =>  $post['idItem'],
 				'nombre' => trim($post['nombre']),
 				'split' => '1',
 				'precioUnitario' => '0',
