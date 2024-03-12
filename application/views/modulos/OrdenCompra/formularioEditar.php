@@ -512,13 +512,11 @@
 								</div>
 								<div class="form-row">
 									<div class="form-group" onclick="Oc.generarSubItem(this, this.value);">
-										<?php
-										if ($value['idTipo'] == '2' || $value['idTipo'] == '9' || $value['idTipo'] == '10') {
-											$display = '';
-										} else {
-											$display = 'style="display:none;"';
-										}
-										?>
+										<?php if ($value['idTipo'] == '2' || $value['idTipo'] == '9' || $value['idTipo'] == '10') : ?>
+											<?php $display = ''; ?>
+										<?php else : ?>
+											<?php $display = 'style="display:none;"'; ?>
+										<?php endif; ?>
 										<a class="form-control btn btn-info btnAdicionar" <?= $display ?>><i class="fa fa-plus"></i> Adicionar</a>
 									</div>
 									<div class="form-group" onclick="Oc.quitarItem(this, this.value);">
