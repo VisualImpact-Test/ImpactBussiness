@@ -93,6 +93,16 @@ var Oc = {
 			Oc.agregarOperDat();
 		});
 
+		$(document).on('click', '.btn-descargarOper', function () {
+			let tipo = 'SinCotizacion';
+			let idOper = $(this).closest('tr').data('id');
+			let data = { idOper };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(site_url + 'Operaciones/Oper/' + 'descargarOper' + tipo, jsonString);
+			//console.log(site_url + Oper.url + 'descargarOper' + Oper.tipo, jsonString);zss
+		});
+
+
 		$(document).on('click', '#btn-registrarOC', function () {
 			++modalId;
 			let jsonString = { 'data': '' };
