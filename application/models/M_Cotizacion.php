@@ -279,6 +279,7 @@ class M_Cotizacion extends MY_Model
 				, nombre AS value
 			FROM compras.itemTipo
 			WHERE estado = 1
+			order by nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -342,7 +343,7 @@ class M_Cotizacion extends MY_Model
 		$filtros .= !empty($params['fechaDesde']) ? ' AND p.fechaEmision >= Convert(date,\'' . $params['fechaDesde'] . '\') ' : '';
 		$filtros .= !empty($params['fechaHasta']) ? ' AND p.fechaEmision <= Convert(date,\'' . $params['fechaHasta'] . '\') ' : '';
 		$filtros .= !empty($params['ocGenerado']) ? ($params['ocGenerado'] != '0' ? " AND p.idCotizacionEstado < 8 " : '') : '';
-		$filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
+		// $filtros .= $this->idTipoUsuario != '1' ? " AND p.idSolicitante != 1" : '';
 
 		$codTransporte = COD_TRANSPORTE['id'];
 		$sql = "
