@@ -161,7 +161,13 @@
 				<div class="form-row">
 					<div class="form-group col-md-10">
 						<label class="font-weight-bold mb-0">Observación:</label>
-						<input class="form-control" name="observacion" value="<?= isset($oc[0]['observacion']) ? $oc[0]['observacion'] : 'En caso de incumplimiento en fecha de entrega, se estará ejecutando penalidad del 1% por cada día de retraso.' ?>">					</div>
+						<?php if (isset($oc[0]['idOrdenCompraDetalle'])) : ?>
+							<?php $deOper = false; ?>
+						<?php else : ?>
+							<?php $deOper = true; ?>
+						<?php endif; ?>
+						<input class="form-control" name="observacion" value="<?= !$deOper ? $oc[0]['observacion'] : 'En caso de incumplimiento en fecha de entrega, se estará ejecutando penalidad del 1% por cada día de retraso.' ?>">
+					</div>
 					<div class="form-group col-md-2">
 						<label class="font-weight-bold mb-0">Mostrar Observación</label>
 						<div class="custom-control custom-switch custom-switch-lg">
