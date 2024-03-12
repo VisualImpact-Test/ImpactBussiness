@@ -62,7 +62,7 @@ var Oc = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Oc.agregarItem();';
 				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOC", fn: "Oc.editarOC()", content: "¿Esta seguro de realizar cambios en OC?" });';
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.editarOC()", content: "¿Esta seguro de realizar cambios en OC?" });';
 				btn[2] = { title: 'Guardar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
@@ -385,7 +385,7 @@ var Oc = {
 	},
 
 	editarOC: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOC')) };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOC')) };
 		let url = Oc.url + "editarOC" + Oc.tipo;
 		let config = { url: url, data: jsonString };
 
@@ -441,7 +441,7 @@ var Oc = {
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
 			fn[1] = 'Oc.agregarItem();';
 			btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Oper?" });';
+			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Orden de Compra?" });';
 			btn[2] = { title: 'Guardar', fn: fn[2] };
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 			Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';

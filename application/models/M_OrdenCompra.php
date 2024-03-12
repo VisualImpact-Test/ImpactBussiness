@@ -89,7 +89,7 @@ class M_OrdenCompra extends MY_Model
 	public function obtenerInformacionOperSinCotSubItem($params = [])
 	{
 		$this->db
-			->select('ocds.*, um.nombre as unidadMedida')
+			->select('ocds.*, um.nombre as unidadMedida, ocds.genero as idGenero')
 			->from('orden.operDetalleSub ocds')
 			->join('compras.unidadMedida um', 'um.idUnidadMedida = ocds.idUnidadMedida', 'left');
 
