@@ -4,6 +4,7 @@ var RequerimientoInterno = {
 	contentDetalle: 'idContentRequerimientoInterno',
 	htmlG: '',
 	nDetalle: 1,
+	divItemData: '',
 	modalIdForm: 0,
 	objetoParaAgregarImagen: null,
 	detalleEliminado: [],
@@ -35,7 +36,7 @@ var RequerimientoInterno = {
 			let id = $(this).parents('tr:first').data('id');
 			let data = { 'idRequerimientoInterno': id };
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': RequerimientoInterno.url + 'formularioActualizacionRequerimientoInterno', 'data': jsonString };
+			let config = { 'url': RequerimientoInterno.url + 'formularioAprobacionRequerimientoInterno', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -84,24 +85,20 @@ var RequerimientoInterno = {
 		});
 		$(document).on('click', '.btn-viewGenerarOC', function () {
 			++modalId;
-
 			let id = $(this).parents('tr:first').data('id');
 			let data = { 'idRequerimientoInterno': id };
-
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': RequerimientoInterno.url + 'formularioSeleccionProveedor', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Fn.showConfirm({ idForm: "formSeleccionProveedor", fn: "RequerimientoInterno.seleccionProveedor();", content: "Solo se tomara en cuenta los articulos del proveedor seleccionado" });';
 				btn[1] = { title: 'Continuar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '40%' });
-				RequerimientoInterno.actualizarAutocomplete();
 			});
 		});
 		$(document).on('click', '.btneliminarfila', function (e) {
@@ -151,7 +148,22 @@ var RequerimientoInterno = {
 		$(document).off('click', '.option-semantic-delete').on('click', '.option-semantic-delete', function (e) {
 			e.preventDefault();
 			var control = $(this);
+			let content = control.closest('.contentSemanticDiv');
+			let parent = $(this).closest(".content-lsck-capturas");
 			control.parents('.content-lsck-capturas:first').remove();
+
+			// Inicio: Para mantener el conteo correcto despues de eliminar.
+			// Si → tiene que estar al final.
+			var data = content.find('.file-semantic-upload').data();
+			let prefi_name = data.name;
+			let name = prefi_name + 'File-item';
+			var id = '';
+			if (data.id) id = '[' + data.id + ']';
+			var total = content.find('.file-semantic-upload').closest('.content-upload').find('input[name="' + name + id + '"]').length;
+			total += control.closest('.content-upload').parent('div').find('input.file-considerarAdjunto').length;
+			content.find('.' + prefi_name + 'Cantidad').val(total);
+			// Fin
+			content.find('.file-semantic-upload').change();
 		});
 		$(document).off('click', '.img-lsck-capturas-delete').on('click', '.img-lsck-capturas-delete', function (e) {
 			e.preventDefault();
@@ -195,7 +207,7 @@ var RequerimientoInterno = {
 			////////////
 			subTotalForm.val(subTotal);
 			subTotalFormLabel.val(moneyFormatter.format(subTotal));
-			RequerimientoInterno.actualizarTotal();
+			RequerimientoInterno.cantidadTotal();
 
 			// PARA EL FEE DE PERSONAL
 			let fee1 = thisControlParents.find('.fee1Form').val();
@@ -216,6 +228,7 @@ var RequerimientoInterno = {
 			let control = $(this);
 			let val = control.val();
 			let parent = control.closest('.nuevo');
+			control.closest('.divItem').find('.content-img').html('');
 			if (val.length == 0) {
 				RequerimientoInterno.cleanDetalle(parent);
 			}
@@ -351,6 +364,43 @@ var RequerimientoInterno = {
 
 			});
 		});
+		$(document).on('change', '#proveedor', function () {
+			$("#metodoPago").empty();
+
+			var idProveedor = $('#proveedor').val();
+
+			var obj = {
+				id: idProveedor
+			}
+			var jsonString = {
+				'data': JSON.stringify(obj)
+			};
+
+			var config = {
+				url: "OrdenCompra/metodoPago",
+				data: jsonString
+			};
+
+			$.when(Fn.ajax(config)).then(function (a) {
+				// Verifica si hay datos en a.data.metodo
+				if (a.data.metodo && a.data.metodo.length > 0) {
+					// Obtén la referencia al elemento select
+					var selectElement = $('#metodoPago');
+
+					// Limpiar opciones anteriores si es necesario
+					selectElement.empty();
+
+					// Itera sobre los datos y agrega opciones al select
+					$.each(a.data.metodo, function (i, m) {
+						// Agrega una opción al select por cada elemento en a.data.metodo
+						selectElement.append($('<option>', {
+							value: m.id, // Cambia 'valor' por el nombre del campo que contiene el valor deseado
+							text: m.value // Cambia 'texto' por el nombre del campo que contiene el texto deseado
+						}));
+					});
+				}
+			});
+		});
 	},
 	actualizarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizarRequerimientoInterno')) };
@@ -380,7 +430,7 @@ var RequerimientoInterno = {
 
 		inputPrecio.val(RequerimientoInterno.itemTarifario?.[idItem]?.[idProveedor]);
 	},
-	registrarRequerimientoInterno() {
+	/*registrarRequerimientoInterno() {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroRequerimientoInterno')) };
 		let url = RequerimientoInterno.url + "registrarRequerimientoInterno";
 		let config = { url: url, data: jsonString };
@@ -397,12 +447,11 @@ var RequerimientoInterno = {
 			btn[0] = { title: 'Continuar', fn: fn };
 			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
 		});
-	},
+	},*/
 	seleccionProveedor() {
 		++modalId;
-
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSeleccionProveedor')) };
-		let config = { 'url': RequerimientoInterno.url + 'formularioListadoRequerimientos', 'data': jsonString };
+		let config = { 'url': RequerimientoInterno.url + 'formularioRegistroOC', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then((a) => {
 			let btn = [];
@@ -410,10 +459,18 @@ var RequerimientoInterno = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
-			// fn[1] = 'Fn.showConfirm({ idForm: "formSeleccionProveedor", fn: "RequerimientoInterno.seleccionProveedor();", content: "¿Esta seguro de registrar el requerimiento?" });';
-			// btn[1] = { title: 'Seleccionar', fn: fn[1] };
+			fn[1] = 'RequerimientoInterno.agregarSubItem();';
+			btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
+			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "RequerimientoInterno.registrarOC()", content: "¿Esta seguro de registrar OC?" });';
+			btn[2] = { title: 'Guardar', fn: fn[2] };
 
-			Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '40%' });
+			Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '90%' });
+			RequerimientoInterno.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
+			RequerimientoInterno.itemServicio = a.data.itemsServicio;
+			RequerimientoInterno.modalIdForm = modalId;
+			RequerimientoInterno.cantidadTotal();
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
 		});
 	},
 	SimboloMoneda: function (t) {
@@ -427,41 +484,58 @@ var RequerimientoInterno = {
 
 	},
 	agregarSubItem() {
-		//e.preventDefault();
-		let defaultItem = $('.default-item');
-
-		defaultItem.append(RequerimientoInterno.htmlG);
-
-		let childInserted = defaultItem.children().last();
-		let childInsertedNumber = (++RequerimientoInterno.nDetalle);
-
-		childInserted.find('.idTipoItem select').attr('data-correlativo', childInsertedNumber);
-		//PERSONAL
-		childInserted.find('.personal_detalle').removeClass('personal_1');
-		childInserted.find('.personal_detalle').addClass('personal_' + childInsertedNumber);
-		childInserted.find('.periodo_contrato_personal').attr('data-obligatorio', childInsertedNumber);
-		childInserted.find('.cantidad_dias_personal').attr('data-dias', childInsertedNumber);
-		childInserted.find('.pago_diario_personal').attr('data-pago', childInsertedNumber);
-		childInserted.find('.sueldo_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.movilidad_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.refrigerio_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.incentivo_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.cantidad_personal').attr('data-cantidad', childInsertedNumber);
-
-		//FIN PERSONAl
-		childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5));
-		childInserted.find('.file-lsck-capturas').attr('data-row', childInserted.index());
-		//Para ordenar los select2 que se descuadran
-		$("html").animate({ scrollTop: defaultItem.height() }, 500);
-		childInserted.transition('glow');
-		RequerimientoInterno.actualizarAutocomplete();
-		RequerimientoInterno.actualizarOnAddRow(childInserted);
-		RequerimientoInterno.actualizarOnAddRowCampos(childInserted);
-		$('.ui.checkbox').checkbox();
-
+		$('.extraItem').append(RequerimientoInterno.divItemData).clone();
+		tot = $('.items').length - 1;
+		RequerimientoInterno.itemInputComplete(tot);
+		RequerimientoInterno.actualizarOnAddRow();
 		Fn.loadSemanticFunctions();
 		Fn.loadDimmerHover();
-		$('.unidadMed').dropdown({ allowAdditions: true });
+	},
+	itemInputComplete: function (ord) {
+		let tipo = 1;
+		let items = [];
+		let nro = 0;
+		$.each(RequerimientoInterno.itemServicio, function (index, value) {
+			items[nro] = value;
+			nro++;
+		});
+
+		if (ord == 'all') {
+			i = 0;
+			limit = $('.items').length;
+		} else {
+			i = ord;
+			limit = ord + 1;
+		}
+		for (i; i < limit; i++) {
+			let input = $(".items")[i];
+			$(input).autocomplete({
+				source: items,
+				select: function (event, ui) {
+					event.preventDefault();
+					let control = $(this).parents(".itemData");
+					//Llenamos los items con el nombre
+					$(this).val(ui.item.label);
+					//Llenamos una caja de texto invisible que contiene el ID del Artículo
+					control.find(".codItems").val(ui.item.value);
+					//Tipo Item
+					control.find(".tipo").val(ui.item.tipo).trigger('change');
+					let costo = Oc.itemTarifario?.[ui.item.value]?.[$('#proveedor').dropdown('get value')]?.costo;
+
+					if (typeof costo === "undefined") costo = 0;
+					control.find(".item_costo").val(costo).change();
+					$(this).focusout();
+					control.find('.content-img').html('');
+					control.find('.file-semantic-upload').change();
+					if (ui.item.cantidadImagenes > 0) {
+						//RequerimientoInterno.alertaParaAgregarItems(control, ui.item);
+					}
+				},
+				appendTo: "#modal-page-" + RequerimientoInterno.modalIdForm,
+				max: 5,
+				minLength: 3,
+			});
+		}
 	},
 	actualizarAutocomplete: function () {
 		let items = [];
@@ -475,59 +549,21 @@ var RequerimientoInterno = {
 			minLength: 0,
 			select: function (event, ui) {
 				event.preventDefault();
-				let control = $(this).parents(".nuevo");
-				//Tipo de Item
-				control.find(".idTipoItem").val(ui.item.tipo);
-				// control.find(".idTipoItem").addClass('read-only');
-				control.find(".idTipoItem").dropdown('set selected', ui.item.tipo);
-				control.find(".unidadMed").dropdown('set selected', ui.item.idUnidadMedida);
-				control.find(".caracteristicasCliente").val(ui.item.caracteristicas);
-				control.find(".flagCuentaSelect").dropdown('set selected', ui.item.flagCuenta);
-				control.find(`.div-feature-${ui.item.tipo}`).removeClass('d-none');
+				let control = $(this).parents(".itemData");
 				//Llenamos los items con el nombre
 				$(this).val(ui.item.label);
 				//Llenamos una caja de texto invisible que contiene el ID del Artículo
 				control.find(".codItems").val(ui.item.value);
-				//Llenamos el precio actual
-				if (ui.item.costo == null || ui.item.semaforoVigencia == "red") {
-					ui.item.costo = 0;
-				}
+				//Tipo Item
+				control.find(".tipo").val(ui.item.tipo).trigger('change');
+				let costo = ui.item.costo == 0 ? '' : ui.item.costo;
+
+				control.find(".item_costo").val(costo).change();
+				$(this).focusout();
+				control.find('.content-img').html('');
+				control.find('.file-semantic-upload').change();
 				if (ui.item.cantidadImagenes > 0) {
 					RequerimientoInterno.alertaParaAgregarItems(control, ui.item);
-				}
-
-				control.find(".costoForm").val(ui.item.costo == 0 ? '' : ui.item.costo);
-				control.find(".costoFormLabel").text((ui.item.costo == 0) ? '' : ui.item.costo);
-
-				//Llenar para poder redondear
-				control.find('.costoRedondeadoForm').val(Math.ceil(ui.item.costo));
-				control.find('.costoNoRedondeadoForm').val(ui.item.costo);
-				control.find(".flagRedondearForm").change(); //evento para que se redondee
-				//Llenamos el estado
-				control.find(".estadoItemForm").removeClass('fa-sparkles');
-				control.removeClass('nuevoItem');
-				control.find(".idEstadoItemForm").val(1);
-				control.find(".cotizacionInternaForm").val(`${ui.item.cotizacionInterna}`)
-
-				//Llenamos el proveedor
-				control.find(".proveedorForm").text(ui.item.proveedor);
-				control.find(".idProveedor").val(ui.item.idProveedor);
-
-				//LLenar semaforo
-				control.find(".semaforoForm").addClass('semaforoForm-' + ui.item.semaforoVigencia);
-				control.find('.semaforoForm').popup({ content: `Vigencia: ${ui.item.diasVigencia} días` });
-
-				//Validar boton ver caracteristicas del articulo
-				control.find(".verCaracteristicaArticulo").removeClass(`slash`);
-
-				//Validacion ID
-				control.find(".cantidadForm").attr('readonly', false);
-
-				let $cod = ui.item.value;
-				if ($cod != '') {
-					// $(this).attr('readonly', 'readonly');
-					control.find('.costoForm').attr('readonly', 'readonly');
-					control.find("select[name=tipoItemForm]").closest('td').addClass('disabled');
 				}
 			},
 			appendTo: "#modal-page-" + RequerimientoInterno.modalIdForm,
@@ -712,7 +748,7 @@ var RequerimientoInterno = {
 	},
 	actualizarTotal: function () {
 		let total = 0;
-		$.each($('.subtotalForm'), function (index, value) {
+		$.each($('.item_precio'), function (index, value) {
 			total = Number(total) + Number($(value).val());
 		})
 		let igvForm = $('.igvForm');
@@ -729,7 +765,6 @@ var RequerimientoInterno = {
 		$('.totalForm').val(total);
 	},
 	alertaParaAgregarItems: function (control, item) {
-
 		++modalId;
 		var btn = [];
 		let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
@@ -744,33 +779,39 @@ var RequerimientoInterno = {
 		$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 	},
 	agregarImagenes: function (id) {
-		$.post(site_url + RequerimientoInterno.url + 'getImagenes', {
+		$.post(site_url + 'OrdenCompra/getImagenesItem', {
 			idItem: id
 		}, function (data) {
 			data = jQuery.parseJSON(data);
-			divItem = RequerimientoInterno.objetoParaAgregarImagen;
-			control = divItem.find('.file-lsck-capturas');
+			if (data.nombre_inicial) {
+				divItem = RequerimientoInterno.objetoParaAgregarImagen;
+				var content = divItem.find('.content-img');
+				var fileApp = '';
 
-			var content = control.parents('.content-lsck-capturas:first').find('.content-lsck-galeria');
-			var content_files = control.parents('.content-lsck-capturas:first').find('.content-lsck-files');
-			var num = data.length;
-			var fileApp = '';
-			for (var i in data) {
+				var control = divItem.find('.file-semantic-upload');
+				let prefi_name = control.data('name');
+				let name = prefi_name + 'File-item';
+				let nameType = prefi_name + 'File-type';
+				let nameFile = prefi_name + 'File-name';
+				let nameEnlace = prefi_name + 'File-idOrigen';
 				fileApp += `
 				<div class="ui fluid image content-lsck-capturas dimmable">
 					<div class="ui dimmer dimmer-file-detalle">
 						<div class="content">
-							<p class="ui tiny inverted header">${data[i].nombre_inicial}</p>
+								<p class="ui tiny inverted header">${data.nombre_inicial}</p>
 						</div>
 					</div>
-					<input type="hidden" name="imagenDeItem[${data[i].idItem}]" value="${data[i].idItemImagen}">
-					<a class="ui red right floating label option-semantic-delete"><i class="trash icon"></i></a>
-					<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data[i].nombre_archivo}" class="img-responsive img-thumbnail">
-				</div>
-				`;
-
+					<input type="hidden" name="${name}" value="../item/">
+					<input type="hidden" name="${nameType}" value="idItemImagen">
+					<input type="hidden" name="${nameFile}" value="compras.itemImagen">
+					<input type="hidden" name="${nameEnlace}" value="${data.idItemImagen}">
+					<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>
+					<img height="100" src="https://s3.us-central-1.wasabisys.com/impact.business/item/${data.nombre_archivo}" class="img-responsive img-thumbnail">
+				</div>`;
+				content.html(fileApp);
+				// divItem.find('.adjuntoItemCantidad').val(1);
+				divItem.find('.file-semantic-upload').change();
 			}
-			content.html(fileApp);
 
 		});
 	},
@@ -875,6 +916,68 @@ var RequerimientoInterno = {
 				}
 			);
 		$('.simpleDropdown').dropdown();
+	},
+	quitarItem: function (t, v) {
+		div = t.closest('div.itemData');
+		let cantItems = $(div).length;
+		$(div).remove();
+	},
+	cantidadPorItem: function (t) {
+		div = $(t).closest('.itemData').find('div.itemValor');
+		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
+		costo = parseFloat($(div).find('input.item_costo').val() || '0');
+		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		cantPDV = 0;
+		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
+			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
+		}
+		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
+		$(div).find('input.item_precio').val(precio.toFixed(3));
+		$(div).find('input.item_precio_real').val(precio);
+		RequerimientoInterno.cantidadTotal();
+	},
+	cantidadTotal: function () {
+		let dd = $('input.item_precio_real');
+		let xd = $('.item_tipo');
+		let total = 0;
+		let totalNoFee = 0;
+		for (var i = 0; i < dd.length; i++) {
+			if (dd[i].value !== '') {
+				total += parseFloat(dd[i].value);
+			}
+		};
+		totalTotal = total + totalNoFee;
+		$('.totalTotal').val(totalTotal.toFixed(3));
+		$('#total_real').val(totalTotal);
+		fee = 0; //parseFloat($('#fee').val()||'0');
+		// $('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
+		igv = parseFloat($('#valorIGV').val()) / 100;
+		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
+		$('#totalFinal').val(totalFinal.toFixed(3));
+		$('#totalFinal_real').val(totalFinal);
+	},
+	registrarOC() {
+		++modalId;
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formGenerarOC')) };
+		let config = { 'url': RequerimientoInterno.url + 'regitrarOC', 'data': jsonString };
+
+		$.when(Fn.ajax(config)).then((a) => {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (a.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarRequerimientoInterno").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: a.msg.title, content: a.msg.content, btn: btn, width: '40%' });
+		});
+	},
+	editItemValue: function (t) {
+		control = $(t);
+		control.closest('.divItem').find('.items').attr('readonly', false);
+		control.closest('.divItem').find('.codItems').val('');
 	},
 }
 RequerimientoInterno.load();

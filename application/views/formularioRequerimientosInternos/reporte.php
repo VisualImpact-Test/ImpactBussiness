@@ -28,14 +28,6 @@
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleRequerimientoInterno btn-dp-<?= $row['idRequerimientoInterno']; ?>">
 								<i class="fa fa-lg fa-bars" title="Ver Detalle del Requerimiento Interno"></i>
 							</a>
-							<!--< ? if ($row['estado'] == 'Generado') { ?>
-								<a href="javascript:;" class="btn btn-outline-secondary border-0 btnActualizarRequerimiento btn-dp-<?= $row['idRequerimientoInterno']; ?>">
-									<i class="fa fa-lg fa-edit" title="Actualizar Requerimiento Interno"></i>
-								</a>
-							< ? } ?>
-							<a href="javascript:;" class="btn btn-outline-danger border-0 btnAnularRequerimientoInterno" data-id="<?= $row['idRequerimientoInterno'] ?>">
-								<i class="fas fa-trash" title="Anular Requerimiento Interno"></i>
-							</a>-->
 						<? } ?>
 					</td>
 					<td class="td-left"><?= $row['nombreRequerimiento']; ?></td>

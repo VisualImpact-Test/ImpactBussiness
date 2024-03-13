@@ -462,14 +462,35 @@
 								</div>
 							</div>
 						</div>
-						<!-- Rutas Viajeras -->
-						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?>">
-							<div class="row ml-0 pt-4">
-								<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+						<!-- Paquete -->
+						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_PAQUETE['id'] ?>">
+						<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-concurso teal ">
 									<i class="plus icon"></i>
-									Indicar Detalle
+									Agregar
 								</button>
-								<div class="datosRutasViajeras"></div>
+								<button type="button" class="ui button btn-delete-sub-item-concurso red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<div class="four column row divDetalleConcurso">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemConcurso" name="descripcionSubItemConcurso[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemConcurso keyUpChange onlyNumbers" name="cantidadSubItemConcurso[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemConcurso keyUpChange onlyNumbers" name="montoSubItemConcurso[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Porcentaje</div>
+									<input class="porcentajeSubItemConcurso keyUpChange onlyNumbers" name="porcentajeSubItemConcurso[0]" placeholder="Porcentaje" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
 							</div>
 						</div>
 						<!-- Personal -->
@@ -702,6 +723,10 @@
 										</div>
 									</div>
 									<div class="fields">
+										<div class="five wide field">
+											<div class="ui sub header">Tipo Móvil</div>
+											<input class="inpTipoMovilTransporte formTransporte tipoMovilTransporte_transporte" name="tipoMovilTransporte[0]" value="" readonly>
+										</div>
 										<div class="three wide field">
 											<div class="ui sub header">Csto Visual</div>
 											<input class="inpCostoVisual formTransporte costoVisual_transporte onlyNumbers" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>

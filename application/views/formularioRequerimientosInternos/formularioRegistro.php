@@ -131,7 +131,6 @@
 									</div>
 									<input class="codItems" type='hidden' name='idItemForm'>
 									<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
-									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
 								</div>
 								<div class="ui-widget">
 									<input class="itemTextoPdf d-none" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización">
@@ -145,7 +144,7 @@
 							</div>
 							<div class="five wide field">
 								<div class="ui sub header">Proveedor Referencial
-								<div class="ui btn-info-custom text-primary btn-info-proveedor"><i class="info circle icon"></i></div>
+									<div class="ui btn-info-custom text-primary btn-info-proveedor"><i class="info circle icon"></i></div>
 								</div>
 								<select class="ui dropdown simpleDropdown search clearable" id="proveedorForm" name="proveedorForm" patron="requerido" data-correlativo="1">
 									<?= htmlSelectOptionArray2(['query' => $proveedor, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>

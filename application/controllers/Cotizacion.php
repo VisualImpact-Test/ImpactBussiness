@@ -727,6 +727,7 @@ class Cotizacion extends MY_Controller
 							'porcentajeParaCosto' => $post["porcAdicionalTransporte[$k]"],
 							'dias' => $post["diasTransporte[$k]"],
 							'cantidad' => $post["cantidadTransporte[$k]"],
+							'tipo_movil' => $post["tipoMovilTransporte[$k]"],
 						]);
 						break;
 
@@ -903,6 +904,7 @@ class Cotizacion extends MY_Controller
 						'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
 						'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : NULL,
+						'tipo_movil' => !empty($subItem['tipo_movil']) ? $subItem['tipo_movil'] : NULL,
 					];
 				}
 
@@ -1651,7 +1653,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
 		$config['data']['tipoServicios'] = $this->model->obtenertipoServicios()['query']->result_array();
 		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
-		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
+		$config['data']['departamento'] = $this->db->distinct()->select('tzt.cod_departamento, u.departamento')->from('compras.tarifarioZonaTransporte tzt')->join('General.dbo.ubigeo u', 'u.cod_departamento = tzt.cod_departamento', 'INNER')->where('tzt.estado', 1)->order_by('u.departamento')->get()->result_array();
 		$config['data']['gapEmpresas'] = $this->model->obtenerGapEmpresas()['query']->result_array();
 		$config['data']['itemLogistica'] = $this->model_item->obtenerAllItemsLogistica();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
@@ -1671,7 +1673,12 @@ class Cotizacion extends MY_Controller
 
 	public function getAllProvincias()
 	{
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia as value, provincia as name')->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
+		$data = $this->db->distinct()
+		->select('tzt.cod_departamento, tzt.cod_provincia as value, u.provincia as name')
+		->from('compras.tarifarioZonaTransporte tzt')
+		->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento', 'INNER')
+		->where('tzt.estado', 1)
+		->order_by('u.provincia')->get()->result_array();
 		$provincias = [];
 		foreach ($data as $k => $v) {
 			$provincias[$v['cod_departamento']][] = $v;
@@ -1680,7 +1687,13 @@ class Cotizacion extends MY_Controller
 	}
 	public function getAllDistritos()
 	{
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, cod_distrito as value, distrito as name')->where('estado', 1)->order_by('distrito')->get('General.dbo.ubigeo')->result_array();
+		$data = $this->db->distinct()
+		->select('tzt.cod_departamento, tzt.cod_provincia, tzt.cod_distrito as value, u.provincia as name')
+		->from('compras.tarifarioZonaTransporte tzt')
+		->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento AND u.cod_distrito = tzt.cod_distrito', 'INNER')
+		->where('tzt.estado', 1)
+		->order_by('u.provincia')->get()->result_array();
+
 		$distritos = [];
 		foreach ($data as $k => $v) {
 			$distritos[$v['cod_departamento']][$v['cod_provincia']][] = $v;
@@ -1689,8 +1702,10 @@ class Cotizacion extends MY_Controller
 	}
 	public function getAllTiposDeTransporte()
 	{
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, cod_distrito, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
-			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
+		$data = $this->db->distinct()
+		->select('cod_departamento, cod_provincia, cod_distrito, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
+			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')
+			->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
 
 		$tarifarioZona = [];
 		foreach ($data as $k => $v) {
@@ -1700,7 +1715,7 @@ class Cotizacion extends MY_Controller
 	}
 	public function getAllCostoPorTipoDeTransporte()
 	{
-		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoVisual, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
+		$data = $this->db->distinct()->select('cod_departamento, cod_provincia, tz.idTipoServicioUbigeo, costoVisual, tipo_movil, costoCliente, idTarifarioZonaTransporte as value, ts.nombreAlternativo as name')
 			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
 
 		$tarifarioZona = [];
@@ -2629,7 +2644,13 @@ class Cotizacion extends MY_Controller
 	{
 		$post = $this->input->post();
 
-		$provincia = $this->db->distinct()->select('cod_provincia, provincia')->where('cod_departamento', $post['cod_dep'])->where('estado', 1)->order_by('provincia')->get('General.dbo.ubigeo')->result_array();
+		$provincia = $this->db->distinct()->select('tzt.cod_provincia, u.provincia')
+		->from('compras.tarifarioZonaTransporte tzt')
+		->join('General.dbo.ubigeo u', 
+		'u.cod_provincia = tzt.cod_provincia AND tzt.cod_departamento = u.cod_departamento', 'INNER')
+		->where('tzt.cod_departamento', $post['cod_dep'])
+		->where('tzt.estado', 1)
+		->order_by('u.provincia')->get()->result_array();
 
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_provincia', 'value' => 'provincia', 'query' => $provincia, 'class' => 'text-titlecase']);
 	}
@@ -2637,8 +2658,16 @@ class Cotizacion extends MY_Controller
 	{
 		$post = $this->input->post();
 
-		$distrito = $this->db->distinct()->select('cod_distrito, distrito')->where('cod_departamento', $post['cod_dep'])->where('cod_provincia', $post['cod_pro'])->where('estado', 1)->order_by('distrito')->get('General.dbo.ubigeo')->result_array();
-
+		$distrito = $this->db->distinct()->select('tzt.cod_distrito, u.distrito')
+		->from('compras.tarifarioZonaTransporte tzt')
+		->join('General.dbo.ubigeo u', 
+		'u.cod_distrito = tzt.cod_distrito AND tzt.cod_departamento = u.cod_departamento AND tzt.cod_provincia = u.cod_provincia', 'INNER')
+		->where('tzt.cod_departamento', $post['cod_dep'])
+		->where('tzt.cod_provincia', $post['cod_pro'])
+		->where('tzt.estado', 1)
+		->order_by('u.distrito')->get()->result_array();
+		var_dump($this->db->last_query());
+		exit;
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_distrito', 'value' => 'distrito', 'query' => $distrito, 'class' => 'text-titlecase']);
 	}
 	public function getImagenes()
@@ -3792,6 +3821,7 @@ class Cotizacion extends MY_Controller
 										'cantidad' => $post["cantidadTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 										'costo' => $post["costoClienteTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 										'costoVisual' => $post["costoVisualTransporte[{$post['idCotizacionDetalle'][$k]}]"],
+										'tipo_movil' => $post["tipoMovilTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 										'porcentajeParaCosto' => $post["porcAdicionalTransporte[{$post['idCotizacionDetalle'][$k]}]"],
 										'costoDistribucion' => null,
 										'dias' => $post["diasTransporte[{$post['idCotizacionDetalle'][$k]}]"],
@@ -3915,6 +3945,7 @@ class Cotizacion extends MY_Controller
 									'cantidad' => $post["cantidadTransporte[$k]"],
 									'costo' => $post["costoClienteTransporte[$k]"],
 									'costoVisual' => $post["costoVisualTransporte[$k]"],
+									'tipo_movil' => $post["tipoMovilTransporte[$k]"],
 									'porcentajeParaCosto' => $post["porcAdicionalTransporte[$k]"],
 									'costoDistribucion' => null,
 									'cod_departamento' => $post["departamentoTransporte[$k]"],
@@ -3956,6 +3987,7 @@ class Cotizacion extends MY_Controller
 									'gap' => !empty($subItem['gap']) ? $subItem['gap'] : NULL,
 									'pesoVisual' => !empty($subItem['pesoVisual']) ? $subItem['pesoVisual'] : NULL,
 									'costoVisual' => !empty($subItem['costoVisual']) ? $subItem['costoVisual'] : NULL,
+									'tipo_movil' => !empty($subItem['tipo_movil']) ? $subItem['tipo_movil'] : NULL,
 									'porcentajeParaCosto' => !empty($subItem['porcentajeParaCosto']) ? $subItem['porcentajeParaCosto'] : NULL,
 									'flagItemInterno' => !empty($subItem['flagItemInterno']) ? $subItem['flagItemInterno'] : NULL,
 									'flagOtrosPuntos' => !empty($subItem['flagOtrosPuntos']) ? $subItem['flagOtrosPuntos'] : NULL,
@@ -4125,7 +4157,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-		$config['data']['departamento'] = $this->db->distinct()->select('cod_departamento, departamento')->where('estado', 1)->order_by('departamento')->get('General.dbo.ubigeo')->result_array();
+		$config['data']['departamento'] = $this->db->distinct()->select('tzt.cod_departamento, u.departamento')->from('compras.tarifarioZonaTransporte tzt')->join('General.dbo.ubigeo u', 'u.cod_departamento = tzt.cod_departamento', 'INNER')->where('tzt.estado', 1)->order_by('u.departamento')->get()->result_array();
 		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
 
 		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
@@ -4137,7 +4169,7 @@ class Cotizacion extends MY_Controller
 
 		foreach ($config['data']['cotizacionTarifario'] as $k => $v) {
 			$config['data']['cotizacionDetalleSubItems'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idItem, isnull(peso, 0) as pesoCuenta, isnull(pesoVisual, 0) as pesoVisual, flagItemInterno')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
-			$config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idZona, flagOtrosPuntos, isnull(dias, 0) as dias, gap, costo, idTipoServicio, costoVisual, reembarque')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
+			$config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] = $this->db->distinct()->select('idZona, flagOtrosPuntos, isnull(dias, 0) as dias, gap, costo, idTipoServicio, costoVisual, tipo_movil, reembarque')->where('idCotizacionDetalle', $v['idCotizacionDetalle'])->get('compras.cotizacionDetalleSub')->result_array();
 			$i = 0;
 			foreach ($config['data']['cotizacionDetalleSubZonas'][$v['idCotizacionDetalle']] as $kz => $vz) {
 				$psTV = 0;
@@ -5427,14 +5459,14 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista['cabOperLog'] = $this->model->datosOperLog($post)['query']->result_array();
 		$idCuenta = $dataParaVista['cabOperLog'][0]['idCuenta'];
-		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->get()->result_array();
+		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.idItem , cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->where('cd.estado', 1)->get()->result_array();
+		//echo $this->db->last_query(); exit();
 		$agrupadoPorId = [];
 		foreach ($dcds as $kCds => $vCds) {
 			$idCotizacionDetalle = $vCds['idCotizacionDetalle'];
 			if (!isset($agrupadoPorId[$idCotizacionDetalle])) {
 				$agrupadoPorId[$idCotizacionDetalle] = array();
 			}
-
 			$vCds['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 			$agrupadoPorId[$idCotizacionDetalle][] = $vCds;
 		}
@@ -5457,33 +5489,54 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
 
-		$archivoCotizacion = [
-			'base64' => $post['cotizacionFile-item'],
-			'name' => $post['cotizacionFile-name'],
-			'type' => $post['cotizacionFile-type'],
-			'carpeta' => 'operlog/cotizaciones',
-			'nombreUnico' => uniqid()
-		];
-		$archivoNameCotizacion = $this->saveFileWasabi($archivoCotizacion);
+		// $archivoCotizacion = [
+		// 	'base64' => $post['cotizacionFile-item'],
+		// 	'name' => $post['cotizacionFile-name'],
+		// 	'type' => $post['cotizacionFile-type'],
+		// 	'carpeta' => 'operlog/cotizaciones',
+		// 	'nombreUnico' => uniqid()
+		// ];
+		// $archivoNameCotizacion = $this->saveFileWasabi($archivoCotizacion);
 		//$tipoArchivoCotizacion = explode('/', $archivo['type']);
 
-		$archivoOrdenCompra = [
-			'base64' => $post['ordenCompraFile-item'],
-			'name' => $post['ordenCompraFile-name'],
-			'type' => $post['ordenCompraFile-type'],
-			'carpeta' => 'operlog/ordenes',
-			'nombreUnico' => uniqid()
-		];
-		$archivoNameOrdenCompra = $this->saveFileWasabi($archivoOrdenCompra);
+		// $archivoOrdenCompra = [
+		// 	'base64' => $post['ordenCompraFile-item'],
+		// 	'name' => $post['ordenCompraFile-name'],
+		// 	'type' => $post['ordenCompraFile-type'],
+		// 	'carpeta' => 'operlog/ordenes',
+		// 	'nombreUnico' => uniqid()
+		// ];
+		// $archivoNameOrdenCompra = $this->saveFileWasabi($archivoOrdenCompra);
 
+		$idOperCod = array();
 
 		foreach ($cabOperLog as $f => $d) {
 			$insertarCabOperLog = [
-				'idCuenta' => $d['idCuenta'], 'idCuentaCentroCosto' => $d['idCentroCosto'], 'idCuentaUsuario' => $post['CuentaUsuario'], 'codCotizacion' => $d['codCotizacion'], 'nombreCotizacion' => $d['nombreCotizacion'], 'ordenCompra' => null, 'dirigido' => $d['nombre'], 'fotografico' => $d['fotografia'], 'guia' => $d['guia'], 'otros' => $d['otros'], 'archivoCotizacion' => $archivoNameCotizacion, 'archivoOrden' => $archivoNameOrdenCompra, 'idEstado' => $d['idEstado'], 'estado' => $d['estado'], 'fecReg' => getSoloFecha(), 'horReg' => getSoloHora(), 'idUsuario' => $this->idUsuario, 'updateCC' => null, 'fechaUltimaModificacion' => null, 'flagImpactBussiness' => 1
+				'idCuenta' => $d['idCuenta'], 
+				'idCuentaCentroCosto' => $d['idCentroCosto'], 
+				'idCuentaUsuario' => $post['CuentaUsuario'], 
+				'codCotizacion' => $d['codCotizacion'], 
+				'nombreCotizacion' => $d['nombreCotizacion'], 
+				'ordenCompra' => null, 
+				'dirigido' => $d['nombre'], 
+				'fotografico' => $d['fotografia'], 
+				'guia' => $d['guia'], 
+				'otros' => $d['otros'], 
+				// 'archivoCotizacion' => $archivoNameCotizacion, 
+				// 'archivoOrden' => $archivoNameOrdenCompra, 
+				'idEstado' => $d['idEstado'], 
+				'estado' => $d['estado'], 
+				'fecReg' => getSoloFecha(), 
+				'horReg' => getSoloHora(), 
+				'idUsuario' => $this->idUsuario, 
+				'updateCC' => null, 
+				'fechaUltimaModificacion' => null, 
+				'flagImpactBussiness' => 1
 				// flagImpactBussiness
 			];
 			$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
 			$idOperlog = $this->db->insert_id();
+			array_push($idOperCod, $idOperlog);
 
 			$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
 			// echo $this->db->last_query();exit();
@@ -5520,10 +5573,20 @@ class Cotizacion extends MY_Controller
 					}
 				}
 			}
+		
+			$this->db->update('compras.cotizacionDetalle', ['idOperLog' => $idOperlog], ['idCotizacionDetalle' => $d['idCotizacionDetalle']]);
 		}
 
 		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
-
+		$codConcat = "";
+		if (count($idOperCod) === 1) {
+			$codConcat = "Log-" . $idOperCod[0];
+		} else {
+			foreach ($idOperCod as $y => $t) {
+				$codConcat .= "Log-" . $t . ", ";
+			}
+			$codConcat = rtrim($codConcat, ", ");
+		}
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$result['result'] = 2;
@@ -5532,8 +5595,8 @@ class Cotizacion extends MY_Controller
 		} else {
 			$this->db->trans_commit();
 			$result['result'] = 1;
-			$result['msg']['title'] = 'OPERLOG creado';
-			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$result['msg']['title'] = 'OPERLOG creado ';
+			$result['msg']['content'] = '<div class="alert alert-success m-3 noResultado" role="alert">	<i class="fas fa-check"></i> El registro se realizó correctamente <b>'.$codConcat.'</b>. </div>';
 		}
 		echo json_encode($result);
 	}

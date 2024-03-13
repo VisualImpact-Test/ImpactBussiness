@@ -727,7 +727,23 @@ var FormularioProveedores = {
 		$(document).on("click", ".btnRefreshCotizaciones", () => {
 			FormularioProveedores.actualizarTable();
 		});
-
+		$(document).on("click", ".btnSeleccionarListado", (e) => {
+			++modalId;
+			let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSeleccionProveedor')) };
+			let config = { 'url': 'FormularioProveedor/formularioSeleccion', 'data': jsonString };
+	
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+	
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "FormularioProveedores.ListaProvedorSeleccion()", content: "¿Esta seguro de registrar OC?" });';
+				btn[1] = { title: 'Continuar', fn: fn[1] };
+	
+				Fn.showModal({ id: modalId, show: true, title: a.data.title, frm: a.data.html, btn: btn, width: '50%' });
+			});
+		});
 	},
 	actualizarTable: function () {
 		var ruta = 'cotizacionesListaRefresh';
@@ -963,7 +979,24 @@ var FormularioProveedores = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
 
 		});
-	}
+	},
+	ListaProvedorSeleccion() {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formSeleccionProveedor')) };
+		let url = "FormularioProveedor/formularioSeleccionLista";
+		let config = { url: url, data: jsonString };
 
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.goToUrl(`' + b.data.url + '`);';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+	},
 }
 FormularioProveedores.load();

@@ -24,14 +24,14 @@
 				<tr data-id="<?= $row['idRequerimientoInterno'] ?>" data-estado="<?= $row['idRequerimientoInternoEstado'] ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td>
-						<? if ($row['estado'] != 'Anulado') { ?>
+						<? if ($row['idRequerimientoInternoEstado'] != '5') { ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-detalleRequerimientoInterno btn-dp-<?= $row['idRequerimientoInterno']; ?>">
 								<i class="fa fa-lg fa-bars" title="Ver Detalle del Requerimiento Interno"></i>
 							</a>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-viewSolicitudRequerimientoInterno">
 								<i class="fa fa-lg fa-angle-double-down" title="Ver requerimiento Interno"></i>
 							</a>
-							<? if ($row['idRequerimientoInternoEstado'] != '3' && $row['idRequerimientoInternoEstado'] != '2') { ?>
+							<? if ($row['idRequerimientoInternoEstado'] == '1') { ?>
 								<a href="javascript:;" class="btn btn-outline-secondary border-0 btnAprobarRequerimientoInterno" data-id="<?= $row['idRequerimientoInterno'] ?>">
 									<i class="fa fa-lg fa-check" title="Aprobar Requerimiento Interno"></i></a>
 								<a href="javascript:;" class="btn btn-outline-danger border-0 btnAnularRequerimientoInterno" data-id="<?= $row['idRequerimientoInterno'] ?>">

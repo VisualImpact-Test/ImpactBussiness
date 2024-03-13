@@ -29,16 +29,6 @@ var RequerimientoInterno = {
 
 			Fn.loadReporte_new(config);
 		});
-		$(document).on('click', '.btnAddCorreo', function (e) {
-			let div = '<div class="input-group control-group child-divcenter row pt-2 correoAdd" style="width:85%">' +
-				'<label class="form-control col-md-4" for="correoContacto" style="border:0px;">Correo Adicional :</label>' +
-				'<input class="form-control col-md-8" id="correoContacto" name="correoAdicional" patron="requerido,email">' +
-				'<div class="input-group-append">' +
-				'<button class="btn btn-outline-danger btnEliminarCorreo" type="button"><i class="fa fa-trash"></i></button>' +
-				'</div>' +
-				'</div>';
-			$('#extraCorreo').append(div);
-		});
 		$(document).on("click", "#btn-AgregarNuevoRequerimientoInterno", function (e) {
 			++modalId;
 			let jsonString = { 'data': '' };
@@ -327,7 +317,7 @@ var RequerimientoInterno = {
 			let data = { 'idRequerimientoInterno': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': RequerimientoInterno.url + 'formularioVisualizacionRequerimientoInterno', 'data': jsonString };
+			let config = { 'url': 'SolicitudRequerimientoInterno/formularioVisualizacionRequerimientoInterno', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -335,17 +325,11 @@ var RequerimientoInterno = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				//fn[1] = 'Fn.showConfirm({ idForm: "formvisualizacionRequerimientoInterno", fn: "RequerimientoInterno.duplicarCotizacion(' + id + ')", content: "¿Esta seguro de duplicar el Requerimiento Interno? " });';
-				//btn[1] = { title: 'Duplicar', fn: fn[1] };
 
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
 
 				RequerimientoInterno.actualizarAutocomplete();
 			});
-		});
-		$(document).on('click', '.btnAnularRequerimientoInterno', function () {
-			let id = $(this).data('id');
-			Fn.showConfirm({ fn: "RequerimientoInterno.anularRequerimientoInterno(" + id + ")", content: " ¿Está seguro de anular el requerimiento?" });
 		});
 	},
 	registrarRequerimientoInterno() {
@@ -380,23 +364,50 @@ var RequerimientoInterno = {
 		//e.preventDefault();
 		let defaultItem = $('.default-item');
 
-		defaultItem.append(RequerimientoInterno.htmlG);
+		defaultItem.append(RequerimientoInterno.htmlG).clone();
 
 		let childInserted = defaultItem.children().last();
 		let childInsertedNumber = (++RequerimientoInterno.nDetalle);
 
 		childInserted.find('.idTipoItem select').attr('data-correlativo', childInsertedNumber);
-		//PERSONAL
-		childInserted.find('.personal_detalle').removeClass('personal_1');
-		childInserted.find('.personal_detalle').addClass('personal_' + childInsertedNumber);
-		childInserted.find('.periodo_contrato_personal').attr('data-obligatorio', childInsertedNumber);
-		childInserted.find('.cantidad_dias_personal').attr('data-dias', childInsertedNumber);
-		childInserted.find('.pago_diario_personal').attr('data-pago', childInsertedNumber);
-		childInserted.find('.sueldo_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.movilidad_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.refrigerio_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.incentivo_personal').attr('data-sueldo', childInsertedNumber);
-		childInserted.find('.cantidad_personal').attr('data-cantidad', childInsertedNumber);
+
+
+		//Actualizar Proveedores Agregados
+		childInserted.find("#proveedorForm").empty();
+		var obj = {
+			id: ''
+		}
+		var jsonString = {
+			'data': JSON.stringify(obj)
+		};
+
+		var config = {
+			url: RequerimientoInterno.url + "obtenerProveedor",
+			data: jsonString
+		};
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.data.proveedor && a.data.proveedor.length > 0) {
+				var selectElement = childInserted.find('#proveedorForm');
+				selectElement.empty();
+
+				//Opción predeterminada
+				selectElement.append($('<option>', {
+					value: "",  
+					text: "-- Seleccione --"
+				}));
+
+				$.each(a.data.proveedor, function (i, m) {
+					selectElement.append($('<option>', {
+						value: m.id, // Cambia 'valor' por el nombre del campo que contiene el valor deseado
+						text: m.value // Cambia 'texto' por el nombre del campo que contiene el texto deseado
+					}));
+				});
+			}
+		});
+
+
+
 
 		//FIN PERSONAl
 		childInserted.find('.title-n-detalle').text(Fn.generarCorrelativo(`${childInsertedNumber}`, 5));
@@ -760,28 +771,8 @@ var RequerimientoInterno = {
 		costoForm.val('');
 		costoFormLabel.val('');
 		gapForm.val('');
-
 		cantidadForm.val('');
-
 		cantidadForm.keyup();
-
-		// tachadoDistribucion.find('tbody').html('');
-		// tachadoDistribucion.addClass('d-none');
-	},
-	anularRequerimientoInterno: function (id) {
-		var jsonString = { 'data': JSON.stringify(id) };
-		var config = { url: RequerimientoInterno.url + 'anularRequerimientoInterno', data: jsonString };
-		$.when(Fn.ajax(config)).then(function (a) {
-			if (a.result === 2) return false;
-			++modalId;
-			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
-
-			if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarRequerimientoInterno").click();';
-
-			var btn = [];
-			btn[0] = { title: 'Cerrar', fn: fn };
-			Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
-		});
 	},
 }
 var Proveedor = {
