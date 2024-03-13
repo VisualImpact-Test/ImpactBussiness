@@ -883,6 +883,14 @@ var Cotizacion = {
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
 		});
 
+		$(document).on('click', '.btn-descargarCotizacionOper', function () {
+			let id = $(this).data('id');
+			let data = { id };
+			let jsonString = { 'data': JSON.stringify(data) };
+
+			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
+		});
+
 		$(document).on('click', '.btnAnularCotizacion', function () {
 			let id = $(this).data('id');
 			Fn.showConfirm({ fn: "Cotizacion.anularCotizacion(" + id + ")", content: " ¿Está seguro de anular esta cotización?" });

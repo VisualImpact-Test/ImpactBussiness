@@ -43,7 +43,7 @@ class M_ProveedorServicio extends MY_Model
 					FROM compras.cotizacionGr WHERE estado = 1 AND idCotizacion = c.idCotizacion
 					FOR XML PATH('')
 				), 1, 2, ''),'PENDIENTE') as numeroGR,
-				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg)), 103), '-', '/') AS fechaVencimiento")
+				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, o.fechaReg)), 103), '-', '/') AS fechaVencimiento , '' as poCliente ")
 			->from('compras.ordenCompraDetalle ocd')
 			->join('compras.ordenCompra o', 'o.idOrdenCompra = ocd.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = o.idProveedor', 'INNER')
@@ -113,7 +113,7 @@ class M_ProveedorServicio extends MY_Model
 					FROM orden.ordenCompraGr WHERE estado = 1 AND idOrdenCompra = cp.idOrdenCompra
 					FOR XML PATH('')
 				), 1, 2, ''),'PENDIENTE') as numeroGR,
-				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg)), 103), '-', '/') AS fechaVencimiento")
+				REPLACE(CONVERT(VARCHAR, DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg)), 103), '-', '/') AS fechaVencimiento , cd.poCliente")
 			->from('orden.ordenCompra cd')
 			->join('orden.ordenCompraDetalle cp', 'cd.idOrdenCompra = cp.idOrdenCompra', 'INNER')
 			->join('compras.proveedor pr', 'pr.idProveedor = cd.idProveedor', 'INNER')
@@ -134,7 +134,7 @@ class M_ProveedorServicio extends MY_Model
 				cd.estadoval,
 				CONVERT(DATE, cd.fechaReg),
 				mp.cantDias,
-				DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg))")
+				DATEADD(DAY, mp.cantDias, CONVERT(DATE, cd.fechaReg)) ,cd.poCliente ")
 			->order_by('cp.idOrdenCompra', 'DESC');
 
 		if ($this->idUsuario != 1) $this->db->where('pr.demo', 0);

@@ -59,10 +59,12 @@
 						<?php if ($row['status'] == 'Aprobado') : ?>
 							<?= verificarEmpty($row['motivoAprobacion'], 3) ?>
 						<?php endif; ?>
+						
 					</td>
 					<td>
 						<?php if ($row['status'] == 'Aprobado') : ?>
-							<?= verificarEmpty($row['codOrdenCompra'], 3) ?>
+							<?= verificarEmpty($row['poCliente'], 3) ?>
+							<!-- <?= verificarEmpty($row['codOrdenCompra'], 3) ?> -->
 						<?php endif; ?>
 					</td>
 					<td>

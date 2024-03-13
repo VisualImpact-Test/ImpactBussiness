@@ -462,6 +462,37 @@
 								</div>
 							</div>
 						</div>
+						<!-- Paquete -->
+						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_PAQUETE['id'] ?>">
+						<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-concurso teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-concurso red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<div class="four column row divDetalleConcurso">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemConcurso" name="descripcionSubItemConcurso[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemConcurso keyUpChange onlyNumbers" name="cantidadSubItemConcurso[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemConcurso keyUpChange onlyNumbers" name="montoSubItemConcurso[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Porcentaje</div>
+									<input class="porcentajeSubItemConcurso keyUpChange onlyNumbers" name="porcentajeSubItemConcurso[0]" placeholder="Porcentaje" onchange="Cotizacion.calcularMontoConcurso(this);">
+								</div>
+							</div>
+						</div>
 						<!-- Personal -->
 						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">
 							<table style="width: 100%;">

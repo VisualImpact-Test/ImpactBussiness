@@ -59,8 +59,9 @@ class ProveedorServicio extends MY_Controller
 		$dataParaVista = [];
 
 		$data1 = $this->model->obtenerDatosReporte($where)->result_array();
+		
 		$data2 = $this->model->obtenerDatosReporte1($where)->result_array();
-
+		//echo $this->db->last_query();exit();
 		$data = array_merge($data1, $data2);
 		$data = ordenarArrayPorColumna($data, 'seriado', SORT_DESC);
 
