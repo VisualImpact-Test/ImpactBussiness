@@ -17,10 +17,12 @@ class M_AprobacionUsuario extends MY_Model
 	public function obtenerInformacionUsuario($params = [])
 	{
 		$sql = "
-			SELECT 
-				u.idUsuario AS id, (u.nombres + ' ' + u.apeMaterno + ' ' + u.apePaterno) AS value
+			SELECT
+			u.idUsuario AS id,
+			(u.nombres + ' ' + u.apeMaterno + ' ' + u.apePaterno) AS value
 			FROM sistema.usuario u
-			INNER JOIN compras.requerimientoInternoUsuarioAprobacion riU ON riU.idUsuario != u.idUsuario
+			LEFT JOIN compras.requerimientoInternoUsuarioAprobacion riU ON u.idUsuario = riU.idUsuario
+			WHERE riU.idUsuario IS NULL;
 		";
 
 		$query = $this->db->query($sql);

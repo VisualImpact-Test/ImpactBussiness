@@ -29,7 +29,7 @@
 								<i class="fa fa-lg fa-bars" title="Ver Detalle del Requerimiento Interno"></i>
 							</a>
 						<? } ?>
-						<? if ($row['idRequerimientoInternoEstado'] != '2') { ?>
+						<? if ($row['idRequerimientoInternoEstado'] == '2') { ?>
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-viewSolicitudRequerimientoInterno">
 								<i class="fas fa-money-check-edit-alt" title="Cotizar items sin precio"></i>
 							</a>

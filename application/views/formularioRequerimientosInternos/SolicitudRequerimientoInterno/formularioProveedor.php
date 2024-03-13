@@ -27,6 +27,7 @@
 		<div class="fields">
 			<div class="eleven wide field">
 				<div class="ui sub header">Proveedor</div>
+				<input type="hidden" name="idRequerimientoInterno" value="<?= $requerimientoInterno['idRequerimientoInterno'] ?>">
 				<select class="ui search clearable dropdown semantic-dropdown" id="proveedor" name="proveedor" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $proveedor, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>

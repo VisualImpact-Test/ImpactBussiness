@@ -70,13 +70,8 @@
 						if ($class == 'active') $class = "disabled";
 						if ($value['nombre'] == $cabecera['requerimientoIEstado']) $class = "active";
 						if ($cabecera['requerimientoIEstado'] == "Finalizado") $class = 'completed';
+
 						// Visibilidad de los botones
-						if ($value['nombre'] == 'Enviado al cliente' && $class == 'completed') {
-							$btnCot = true;
-						}
-						if ($value['nombre'] == 'OPER Generado' && $class == 'completed') {
-							$btnOper = true;
-						}
 						if ($value['nombre'] == 'OC Generada' && $class == 'completed') {
 							$btnOC = true;
 						}
@@ -95,20 +90,10 @@
 			</div>
 			<!-- <button type="button" class="btn btn-outline-secondary btn-generarCotizacion" style="margin-bottom: 15px;">Generar Cotizacion</button> -->
 			<div class="pt-2">
-				<?php if ($btnCot) :  ?>
-					<button type="button" class="btn btn-trade-visual btn-descargarCotizacion" data-id="<?= verificarEmpty($cabecera['idRequerimientoInterno'], 3) ?>" style="margin-bottom: 15px;">Reporte Cotizacion
+				<?php if ($btnOC) :  ?>
+					<button type="button" class="btn btn-trade-visual btn-descargarOrdenCompra" data-id="< ?= verificarEmpty($cabecera['idOC'], 3) ?>" style="margin-bottom: 15px;">Reporte Orden Compra
 					</button>
 				<?php endif; ?>
-				<!--
-					< ?php if ($btnOper) :  ?>
-					<button type="button" class="btn btn-trade-visual btn-descargarOper" data-idoper="<?= verificarEmpty($cabecera['idOper'], 3) ?>" style="margin-bottom: 15px;">Reporte Oper
-					</button>
-				< ?php endif; ?>
-				< ?php if ($btnOC) :  ?>
-					<button type="button" class="btn btn-trade-visual btn-descargarOrdenCompra" data-id="<?= verificarEmpty($cabecera['idOC'], 3) ?>" style="margin-bottom: 15px;">Reporte Orden Compra
-					</button>
-				< ?php endif; ?>
-			-->
 			</div>
 			<div id="div-ajax-detalle" class="table-responsive" style="text-align:center">
 				<table class="mb-0 table table-bordered text-nowrap" id="listaItemsCotizacion">

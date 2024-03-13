@@ -33,7 +33,6 @@ var AprobacionRequerimientoInterno = {
 			++modalId;
 			let id = $(this).parents('tr:first').data('id');
 			let estado = $(this).parents('tr:first').data('estado');
-			alert(estado);
 			let data = { 'idRequerimientoInterno': id };
 			let jsonString = { 'data': JSON.stringify(data) };
 			let config = { 'url': AprobacionRequerimientoInterno.url + 'formularioActualizacionRequerimientoInterno', 'data': jsonString };
@@ -45,12 +44,12 @@ var AprobacionRequerimientoInterno = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });RequerimientoInterno.nDetalle=1;';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				if(estado !== 2 && estado !== 3 && estado !== 5) {
+				if(estado == 1) {
 					style[1] = 'background-color: #FF0000;';
-					fn[1] = 'AprobacionRequerimientoInterno.rechazarRequerimientoInterno();';
+					fn[1] = `AprobacionRequerimientoInterno.rechazarRequerimientoInterno(`+id+`);`;
 					btn[1] = { title: 'Rechazar', fn: fn[1], style: style[1] };
 					style[2] = 'background-color: #26CC2E;';
-					fn[2] = 'AprobacionRequerimientoInterno.aprobarRequerimientoInterno();';
+					fn[2] = `AprobacionRequerimientoInterno.aprobarRequerimientoInterno(`+id+`);`;
 					btn[2] = { title: 'Aprobar', fn: fn[2], style: style[2] };
 				}
 
@@ -74,7 +73,7 @@ var AprobacionRequerimientoInterno = {
 			let data = { 'idRequerimientoInterno': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
-			let config = { 'url': AprobacionRequerimientoInterno.url + 'formularioVisualizacionRequerimientoInterno', 'data': jsonString };
+			let config = { 'url': 'SolicitudRequerimientoInterno/formularioVisualizacionRequerimientoInterno', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
@@ -97,16 +96,6 @@ var AprobacionRequerimientoInterno = {
 			Fn.showConfirm({ fn: "AprobacionRequerimientoInterno.aprobarRequerimientoInterno(" + id + ")", content: " ¿Está seguro de aprobar el requerimiento?" });
 		});
 	},
-	SimboloMoneda: function (t) {
-		var ts = $(t).val();
-
-		if (ts == 1) {
-			$('.monedaSimbolo').text('S/');
-		} else {
-			$('.monedaSimbolo').text('$');
-		}
-
-	},
 	aprobarRequerimientoInterno: function (id) {
 		var jsonString = { 'data': JSON.stringify(id) };
 		var config = { url: AprobacionRequerimientoInterno.url + 'aprobarRequerimientoInterno', data: jsonString };
@@ -115,7 +104,7 @@ var AprobacionRequerimientoInterno = {
 			++modalId;
 			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-			if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarRequerimientoInterno").click();';
+			if (a.result == 1) fn += 'Fn.closeModals(' + modalId + ');Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarRequerimientoInterno").click();';
 
 			var btn = [];
 			btn[0] = { title: 'Cerrar', fn: fn };
@@ -130,7 +119,7 @@ var AprobacionRequerimientoInterno = {
 			++modalId;
 			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 
-			if (a.result == 1) fn += 'Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarRequerimientoInterno").click();';
+			if (a.result == 1) fn += 'Fn.closeModals(' + modalId + ');Fn.showModal({ id:' + modalId + ',show:false });$("#btn-filtrarRequerimientoInterno").click();';
 
 			var btn = [];
 			btn[0] = { title: 'Cerrar', fn: fn };

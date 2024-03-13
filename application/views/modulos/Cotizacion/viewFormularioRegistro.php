@@ -217,12 +217,12 @@
 								</select>
 							</div>
 							<div class="two wide field divTipoTarjVales d-none">
-									<div class="ui sub header">Ver Detalle</div>
-									<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
-										<option class="text-titlecase" value="1" selected>SI</option>
-										<option class="text-titlecase" value="2" >NO</option>
-									</select>
-								</div>
+								<div class="ui sub header">Ver Detalle</div>
+								<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
+									<option class="text-titlecase" value="1" selected>SI</option>
+									<option class="text-titlecase" value="2">NO</option>
+								</select>
+							</div>
 						</div>
 						<div class="fields">
 							<div class="five wide field no-personal">
@@ -692,6 +692,10 @@
 										</div>
 									</div>
 									<div class="fields">
+										<div class="five wide field">
+											<div class="ui sub header">Tipo Móvil</div>
+											<input class="inpTipoMovilTransporte formTransporte tipoMovilTransporte_transporte" name="tipoMovilTransporte[0]" value="" readonly>
+										</div>
 										<div class="three wide field">
 											<div class="ui sub header">Csto Visual</div>
 											<input class="inpCostoVisual formTransporte costoVisual_transporte onlyNumbers" name="costoVisualTransporte[0]" placeholder="0" value="" readonly>

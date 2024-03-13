@@ -765,4 +765,31 @@ class M_FormularioProveedor extends MY_Model
 
 		return $this->resultado;
 	}
+
+	public function obtenerItemPrecioProveedor($params)
+	{
+
+		$filtros = "WHERE csp.estado = 1";
+		$filtros .= !empty($params['idProveedor']) ? ' AND p.idProveedor = ' . $params['idProveedor'] : '';
+		
+		$sql = "
+				SELECT DISTINCT CONVERT(date, GETDATE()) AS fechaValidez, i.idItem, i.nombre AS nombreItem, ii.nombre_archivo,
+				p.idProveedor, csp.idSolicitudCostoProveedor
+				FROM compras.solicitudCostoProveedor csp
+				INNER JOIN compras.proveedor p ON p.idProveedor = csp.idProveedor
+				INNER JOIN compras.item i ON i.idItem = csp.idItem
+				INNER JOIN compras.itemTarifario itemT ON itemT.idProveedor = csp.idProveedor AND itemT.idItem != csp.idItem
+				INNER JOIN compras.itemImagen ii ON ii.idItem = csp.idItem
+				{$filtros}
+				";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
 }

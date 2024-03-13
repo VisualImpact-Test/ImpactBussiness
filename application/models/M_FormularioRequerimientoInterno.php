@@ -192,6 +192,27 @@ class M_FormularioRequerimientoInterno extends MY_Model
 			LEFT JOIN rrhh.dbo.Empresa c ON c.idEmpresa = ri.idCuenta
 			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = ri.idCentroCosto
 			LEFT JOIN compras.requerimientoInternoEstado rie ON rie.idRequerimientoInternoEstado = ri.idRequerimientoInternoEstado
+			ORDER BY fechaEmision DESC
+		";
+
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+	public function obtenerInformacionRequerimientoInternoSolicitante($params = [])
+	{
+		$sql = "
+			SELECT ri.idRequerimientoInterno, ri.codRequerimientoInterno, CONVERT(DATE, ri.fechaEmision) AS fechaEmision,
+			ri.nombre AS nombreRequerimiento, c.nombre AS cuenta, cc.canal AS centroCosto,
+			rie.nombre AS estado, rie.icono, ri.estado AS reqIntEstado, riE.idRequerimientoInternoEstado
+			FROM compras.requerimientoInterno ri
+			LEFT JOIN rrhh.dbo.Empresa c ON c.idEmpresa = ri.idCuenta
+			LEFT JOIN rrhh.dbo.empresa_Canal cc ON cc.idEmpresaCanal = ri.idCentroCosto
+			LEFT JOIN compras.requerimientoInternoEstado rie ON rie.idRequerimientoInternoEstado = ri.idRequerimientoInternoEstado
 			WHERE ri.idUsuario = " . $params . " 
 			ORDER BY fechaEmision DESC
 		";
@@ -230,6 +251,8 @@ class M_FormularioRequerimientoInterno extends MY_Model
 	{
 		$filtros = "";
 		$filtros .= !empty($params['idRequerimientoInterno']) ? ' AND ri.idRequerimientoInterno = ' . $params['idRequerimientoInterno'] : '';
+		$filtros .= !empty($params['flagProveedor']) ? ' AND rid.flagProveedor = ' . $params['flagProveedor'] : '';
+		$filtros .= !empty($params['proveedor']) ? ' AND rid.idProveedor = ' . $params['proveedor'] : '';
 		
 		$sql = "
 			SELECT ri.idRequerimientoInterno, ri.nombre AS requerimientoInterno, c.nombre AS cuenta, rid.costoReferencial,
@@ -237,8 +260,9 @@ class M_FormularioRequerimientoInterno extends MY_Model
 				ri.codRequerimientoInterno, riE.nombre AS requerimientoIEstado, CONVERT(VARCHAR, ri.fechaEmision, 103) AS fechaEmision,
 				ei.idItemEstado, riE.nombre AS requerimientoInternoDetalleEstado, CONVERT( VARCHAR, rid.fechaCreacion, 103) AS fechaCreacion, 
 				CONVERT( VARCHAR, rid.fechaModificacion, 103) + ' ' + CONVERT( VARCHAR, rid.fechaModificacion, 108) AS fechaModificacion,
-				p.razonSocial AS proveedor, ri.idTipoMoneda, ri.idUsuarioAprobacion, p.idProveedor,
-				ri.comentario, rid.idRequerimientoInternoDetalle, rid.idItem, rid.idItemTipo, p.idProveedor AS id, p.razonSocial AS value
+				p.razonSocial AS proveedor, ri.idTipoMoneda, ri.idUsuarioAprobacion, p.idProveedor, ri.idTipoMoneda, rid.costo,
+				ri.comentario, rid.idRequerimientoInternoDetalle, rid.idItem, rid.idItemTipo, p.idProveedor AS id, p.razonSocial AS value,
+				ri.idCuenta, ri.idCentroCosto
 			FROM compras.requerimientoInterno ri
 			INNER JOIN compras.requerimientoInternoDetalle rid ON rid.idRequerimientoInterno = ri.idRequerimientoInterno
 			INNER JOIN compras.proveedor p ON p.idProveedor = rid.idProveedor
@@ -248,6 +272,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 			INNER JOIN compras.requerimientoInternoEstado riE ON riE.idRequerimientoInternoEstado = ri.idRequerimientoInternoEstado
 			INNER JOIN visualImpact.logistica.cuenta c ON ri.idCuenta = c.idCuenta
 			INNER JOIN visualImpact.logistica.cuentaCentroCosto cc ON ri.idCentroCosto = cc.idCuentaCentroCosto
+			WHERE 1=1
 			{$filtros}
 			ORDER BY itemTipo, rid.idRequerimientoInternoDetalle
 		";
@@ -296,7 +321,7 @@ class M_FormularioRequerimientoInterno extends MY_Model
 		$filtros .= !empty($params['idTipoArchivo']) ? " AND rida.idTipoArchivo = {$params['idTipoArchivo']} " : "";
 
 		$sql = "
-			SELECT
+			SELECT DISTINCT
 				ri.idRequerimientoInterno,
 				rida.idRequerimientoInternoDetalleArchivo,
 				rida.idTipoArchivo,
