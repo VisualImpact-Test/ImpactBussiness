@@ -2036,7 +2036,155 @@ class Cotizacion extends MY_Controller
 		Respuesta:
 		echo json_encode($result);
 	}
+	public function procesarTablaDatosRutasViajeras()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+		$ht = $post['HT'][0];
+		array_pop($ht);
 
+		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
+			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$frecuencia = ['MENSUAL', 'BIMENSUAL', 'SEMESTRAL'];
+
+		$header = [];
+		$column = [];
+		$datosHt = [];
+
+		// DATOS
+		if (!empty($ht)) {
+			foreach ($ht as $k => $v) {
+				if (empty($v['origen']) && empty($v['destino'])) {
+					$result['result'] = 0;
+					$result['msg']['title'] = 'Origen y/o Destino sin indicar';
+					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Llenar los datos de Origen y Destino para obtener los costos.']);
+					goto Respuesta;
+				}
+
+				$tpdm = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1])->row_array();
+
+				logError($tpdm);
+				// $datosHt[$k]['itemLogistica'] = $itm['nombre'];
+				// $datosHt[$k]['codigoItemLogistica'] = $itm['codigo'];
+				// $datosHt[$k]['pesoCuenta'] = round($itm['pesoCuenta'], 4);
+				// $datosHt[$k]['pesoVisual'] = round($itm['pesoLogistica'], 4);
+			}
+		} else {
+			$datosHt[0]['codigoItemLogistica'] = null;
+			$datosHt[0]['itemLogistica'] = null;
+			$datosHt[0]['pesoCuenta'] = null;
+			$datosHt[0]['pesoVisual'] = null;
+		}
+
+
+		// HEADER & COLUMN & DATOS
+		$header[] = 'RESPONSABLE';
+		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250, 'source' => $origen];
+
+		$header[] = 'ORIGEN';
+		$column[] = ['data' => 'origen', 'type' => 'autocomplete', 'placeholder' => 'Origen', 'width' => 250, 'source' => $origen];
+
+		$header[] = 'DESTINO';
+		$column[] = ['data' => 'destino', 'type' => 'autocomplete', 'placeholder' => 'Destino', 'width' => 250, 'source' => $destino];
+
+		$header[] = 'CARGO';
+		$column[] = ['data' => 'cargo', 'type' => 'text', 'placeholder' => 'Cargo', 'width' => 200];
+
+		$header[] = 'DNI';
+		$column[] = ['data' => 'dni', 'type' => 'text', 'placeholder' => 'DNI', 'width' => 200];
+
+		$header[] = 'APELLIDOS Y NOMBRES';
+		$column[] = ['data' => 'persona', 'type' => 'text', 'placeholder' => 'Apellidos y Nombres', 'width' => 400];
+
+		$header[] = 'FRECUENCIA';
+		$column[] = ['data' => 'frecuencia', 'type' => 'myDropdown', 'placeholder' => 'Frecuencia', 'width' => 250, 'source' => $frecuencia];
+
+		$header[] = 'DIAS';
+		$column[] = ['data' => 'dias', 'type' => 'numeric', 'placeholder' => 'Días', 'width' => 250];
+
+		$header[] = 'AEREO';
+		$column[] = ['data' => 'aereo', 'type' => 'numeric', 'placeholder' => 'Aereo', 'width' => 250];
+
+		$header[] = 'TRANSPORTE';
+		$column[] = ['data' => 'transporte', 'type' => 'numeric', 'placeholder' => 'Transporte', 'width' => 250];
+
+		$header[] = 'MOVILIDAD INTERNA';
+		$column[] = ['data' => 'movilidad', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna', 'width' => 250];
+
+		$header[] = 'VIATICOS';
+		$column[] = ['data' => 'viaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos', 'width' => 250];
+
+		$header[] = 'ALOJAMIENTO';
+		$column[] = ['data' => 'alojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento', 'width' => 250];
+
+		$header[] = 'SUBTOTAL';
+		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
+
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'viajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+
+		$header[] = 'TOTAL MENSUAL';
+		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'TOTAL VI + TR. AEREO';
+		$column[] = ['data' => 'totalVi', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'TOTAL';
+		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'FRECUENCIA ANUAL';
+		$column[] = ['data' => 'frecuenciaAnual', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'CUENTA';
+		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250];
+
+		$header[] = 'TRASLADO';
+		$column[] = ['data' => 'traslado', 'type' => 'text', 'placeholder' => 'Traslado', 'width' => 250];
+		// FIN: HEADER & COLUMN
+
+		/**
+		 * !Esto es lo que estaba antes, borrar cuando se termine la funcion
+			$header[] = 'COD ITEM LOGISTICA*';
+			$column[] = ['data' => 'codigoItemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Item', 'width' => 150, 'source' => $itemLogisticaCod];
+			// $datosHt[$nro]['codigoItemLogistica'] = null;
+
+			$header[] = 'ITEM LOGISTICA*';
+			$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Zona', 'width' => 700, 'source' => $itemLogistica];
+			// $datosHt[$nro]['zona'] = null;
+
+			$header[] = 'PESO CUENTA';
+			$column[] = ['data' => 'pesoCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Cuenta', 'width' => 200, 'readOnly' => true];
+			// $datosHt[$nro]['pesoCuenta'] = null;
+
+			$header[] = 'PESO VISUAL';
+			$column[] = ['data' => 'pesoVisual', 'type' => 'numeric', 'placeholder' => 'Peso Visual', 'width' => 200, 'readOnly' => true];
+			// $datosHt[$nro]['pesoVisual'] = null;
+			// FIN: HEADER & COLUMN
+		 */
+
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Detalle Distribución',
+			'data' => $datosHt,
+			'headers' => $header,
+			'columns' => $column,
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+		$result['msg']['title'] = "Carga masiva detalle distribución";
+
+		Respuesta:
+		echo json_encode($result);
+	}
 	public function getSubDetalleDistribucionMasivo()
 	{
 		$result = $this->result;
@@ -2239,8 +2387,8 @@ class Cotizacion extends MY_Controller
 
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
 			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
-		$destino = $frecuencia = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
-
+		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$frecuencia = ['MENSUAL', 'BIMENSUAL', 'SEMESTRAL'];
 		// HEADER & COLUMN & DATOS
 		$header[] = 'RESPONSABLE';
 		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250, 'source' => $origen];
@@ -2295,29 +2443,36 @@ class Cotizacion extends MY_Controller
 		$datosHt[$nro]['alojamiento'] = null;
 
 		$header[] = 'SUBTOTAL';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250];
+		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['subtotal'] = null;
 
-		$header[] = 'VIAJES';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
-		$datosHt[$nro]['subtotal'] = null;
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'viajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+		$datosHt[$nro]['viajes'] = null;
 
 		$header[] = 'TOTAL MENSUAL';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250];
-		$datosHt[$nro]['subtotal'] = null;
+		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['totalMensual'] = null;
 
 		$header[] = 'TOTAL VI + TR. AEREO';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250];
-		$datosHt[$nro]['subtotal'] = null;
+		$column[] = ['data' => 'totalVi', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['totalVi'] = null;
 
 		$header[] = 'TOTAL';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250];
-		$datosHt[$nro]['subtotal'] = null;
+		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['total'] = null;
 
 		$header[] = 'FRECUENCIA ANUAL';
-		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250];
-		$datosHt[$nro]['subtotal'] = null;
+		$column[] = ['data' => 'frecuenciaAnual', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['frecuenciaAnual'] = null;
 
+		$header[] = 'CUENTA';
+		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250];
+		$datosHt[$nro]['cuenta'] = null;
+
+		$header[] = 'TRASLADO';
+		$column[] = ['data' => 'traslado', 'type' => 'text', 'placeholder' => 'Traslado', 'width' => 250];
+		$datosHt[$nro]['traslado'] = null;
 		// FIN: HEADER & COLUMN
 
 		//ARMANDO HANDSONTABLE

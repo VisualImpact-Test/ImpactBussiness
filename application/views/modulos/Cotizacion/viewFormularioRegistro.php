@@ -217,12 +217,12 @@
 								</select>
 							</div>
 							<div class="two wide field divTipoTarjVales d-none">
-									<div class="ui sub header">Ver Detalle</div>
-									<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
-										<option class="text-titlecase" value="1" selected>SI</option>
-										<option class="text-titlecase" value="2" >NO</option>
-									</select>
-								</div>
+								<div class="ui sub header">Ver Detalle</div>
+								<select class="ui fluid  dropdown simpleDropdown" name="verDetallePdf">
+									<option class="text-titlecase" value="1" selected>SI</option>
+									<option class="text-titlecase" value="2">NO</option>
+								</select>
+							</div>
 						</div>
 						<div class="fields">
 							<div class="five wide field no-personal">
@@ -460,6 +460,16 @@
 									<div class="ui sub header">Porcentaje</div>
 									<input class="porcentajeSubItemConcurso keyUpChange onlyNumbers" name="porcentajeSubItemConcurso[0]" placeholder="Porcentaje" onchange="Cotizacion.calcularMontoConcurso(this);">
 								</div>
+							</div>
+						</div>
+						<!-- Rutas Viajeras -->
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+									<i class="plus icon"></i>
+									Indicar Detalle
+								</button>
+								<div class="datosRutasViajeras"></div>
 							</div>
 						</div>
 						<!-- Personal -->
