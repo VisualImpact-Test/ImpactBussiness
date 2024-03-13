@@ -587,7 +587,7 @@ var Cotizacion = {
 				'url': Cotizacion.url + 'formularioRegistroCotizacion',
 				'data': jsonString
 			};
-			
+
 			$.when(Fn.ajax(config1)).then((exa) => {
 				if (exa.data.existe == 0) {
 					Cotizacion.feeCuenta = exa.data.feeCuenta;
@@ -625,7 +625,6 @@ var Cotizacion = {
 
 			let control = $(this);
 			Cotizacion.validarFormatoTipo();
-			//console.log(control);
 			let parent = control.closest('.body-item');
 			let idTipo = control.val();
 
@@ -2121,7 +2120,6 @@ var Cotizacion = {
 		$(document).on('click', '.btn-add-sub-item-concurso', function () {
 			let _this = $(this);
 			let control = _this.closest('.div-feature-' + COD_CONCURSO.id);
-			console.log(control);
 			let html = control.find('.divDetalleConcurso').first().prop('outerHTML');
 			control.append(html);
 			control.find('.divDetalleConcurso').find('.montoSubItemConcurso').first().change();
@@ -2767,6 +2765,15 @@ var Cotizacion = {
 			data = 0;
 		}
 		$(inp).val(data).change();
+
+		let inpTM = div.find('.inpTipoMovilTransporte');
+		let arData = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.tipo_movil;
+		if (typeof arData === "undefined") {
+			arData = '';
+		}
+		$(inpTM).val(arData).change();
+
+
 		let inpV = div.find('.inpCostoVisual');
 		let inpC = div.find('.inpCosto');
 		let dataV = Cotizacion.costosTransportes?.[dep]?.[pro]?.[ttr]?.[0]?.costoVisual;
@@ -3603,6 +3610,7 @@ var Cotizacion = {
 		let provinciaF = parent.find('.provincia_transporte').find('select');
 		let distritoF = parent.find('.distrito_transporte').find('select');
 		let tipoTransporteF = parent.find('.tipoTransporte_transporte').find('select');
+		let tipoMovilT = parent.find('.tipoMovilTransporte_transporte');
 		let costoVisualF = parent.find('.costoVisual_transporte');
 		let porcAd = parent.find('.inpPorcTransporte');
 		let costoClienteF = parent.find('.costoCliente_transporte');
@@ -3673,6 +3681,7 @@ var Cotizacion = {
 		provinciaF.attr('name', `provinciaTransporte[${number}]`);
 		distritoF.attr('name', `distritoTransporte[${number}]`);
 		tipoTransporteF.attr('name', `tipoTransporte[${number}]`);
+		tipoMovilT.attr('name', `tipoMovilTransporte[${number}]`);
 		costoVisualF.attr('name', `costoVisualTransporte[${number}]`);
 		porcAd.attr('name', `porcAdicionalTransporte[${number}]`);
 		costoClienteF.attr('name', `costoClienteTransporte[${number}]`);
@@ -3885,21 +3894,18 @@ var Cotizacion = {
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
 	},
 	validarFormatoTipo: function () {
-		var contVal=0;
-	
-		$('select#tipoItemForm').each(function() {
-			if ($(this).val() == COD_TARJETAS_VALES.id  || $(this).val() == COD_CONCURSO.id || $(this).val() == COD_PAGOS_FARMACIAS.id) {
-			  contVal++;
-			}
-		  });
+		var contVal = 0;
 
-		console.log(contVal);
+		$('select#tipoItemForm').each(function () {
+			if ($(this).val() == COD_TARJETAS_VALES.id || $(this).val() == COD_CONCURSO.id || $(this).val() == COD_PAGOS_FARMACIAS.id) {
+				contVal++;
+			}
+		});
+
 		if (contVal > 0) {
-		//	parent.find('.feeValestarjetas').removeClass('d-none');
 			$('#feeValestarjetas').removeClass('d-none');
 		} else {
 			$('#feeValestarjetas').addClass('d-none');
-		//	parent.find('.feeValestarjetas').addClass('d-none');
 		}
 	}
 }
