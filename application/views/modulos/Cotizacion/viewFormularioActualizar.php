@@ -1211,7 +1211,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">GAP</div>
 									<div class="ui right labeled input">
-										<input data-min='0' type="number" id="gapForm" class="onlyNumbers gapForm gapFormOperaciones" name="gapForm" placeholder="Gap" value="<?= !empty($row['gap']) ? $row['gap'] : '' ?>">
+										<input data-min='0' type="text" id="gapForm" class="onlyNumbers gapForm gapFormOperaciones" name="gapForm" placeholder="Gap" value="<?= !empty($row['gap']) ? $row['gap'] : '' ?>">
 										<div class="ui basic label">
 											%
 										</div>
