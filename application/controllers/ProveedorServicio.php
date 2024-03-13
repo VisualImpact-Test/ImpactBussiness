@@ -59,8 +59,9 @@ class ProveedorServicio extends MY_Controller
 		$dataParaVista = [];
 
 		$data1 = $this->model->obtenerDatosReporte($where)->result_array();
+		
 		$data2 = $this->model->obtenerDatosReporte1($where)->result_array();
-
+		//echo $this->db->last_query();exit();
 		$data = array_merge($data1, $data2);
 		$data = ordenarArrayPorColumna($data, 'seriado', SORT_DESC);
 
@@ -99,7 +100,7 @@ class ProveedorServicio extends MY_Controller
 				foreach ($listDetalleCotProv as $vt) {
 					$it = $this->db->get_where('orden.ordenCompraDetalle', ['idOrdenCompra' => $vt['idOrdenCompra'], 'estado' => 1])->row_array()['idTipo'];
 
-					if ($it == COD_SERVICIO['id'] || $it == COD_TEXTILES['id']) {
+					if ($it == COD_SERVICIO['id'] /* || $it == COD_TEXTILES['id'] */) { // Anghy dice que TEXTILES YA NO REQUIERE VALIDACION DE ARTE 2024-03-12
 						$data[$k]['requiereValidacion'] = '1';
 						$data[$k]['mostrarValidacion'] = '1';
 						$data[$k]['solicitarFecha'] = '0';

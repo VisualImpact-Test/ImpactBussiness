@@ -32,6 +32,9 @@
                     <button type="button" onclick="Oc.agregarOpersinCotizar(<?php echo $row['idOper']; ?>)" class="btn btn-outline-trade-visual border-0" id="btn-Agregar-Oper" title="Nuevo">
                         <i class="fas fa-plus"></i> <span class="txt_filtro"> Agregar</span>
                     </button>
+                    <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOper" title="Imprimir OPER">
+                        <i class="fa fa-lg fa-file-pdf"></i>
+                    </a>
                 </td>
               </tr>
               <? $ix++; ?>

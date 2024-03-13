@@ -432,6 +432,7 @@ class M_FormularioProveedor extends MY_Model
 			->join('visualImpact.logistica.cuenta cu', 'c.idCuenta = cu.idCuenta', 'INNER')
 			*/
 			->where('cd.estado', '1')
+			->where('oc.estado', '1')
 			->group_by("
 				ocd.idOrdenCompra, oc.seriado, CONVERT(VARCHAR, c.fechaEmision, 103), 
 				c.nombre, c.motivo, c.total, c.idCotizacion, cc.nombre, c.motivoAprobacion, 

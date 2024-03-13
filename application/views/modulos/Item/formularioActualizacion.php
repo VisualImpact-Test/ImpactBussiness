@@ -92,6 +92,9 @@
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $selected, 'query' => $tipoPresupuestoDetalle, 'simple' => true, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
+		
+			<input class="d-none" id="idTipoPresupuestoDetalle" name="idTipoPresupuestoDetalle"  value="<?= $selected  ?>">
+
 		</div>
 	</div>
 	<div class="row">

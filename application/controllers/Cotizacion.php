@@ -5304,14 +5304,14 @@ class Cotizacion extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista['cabOperLog'] = $this->model->datosOperLog($post)['query']->result_array();
 		$idCuenta = $dataParaVista['cabOperLog'][0]['idCuenta'];
-		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->get()->result_array();
+		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.idItem , cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->where('cd.estado', 1)->get()->result_array();
+		//echo $this->db->last_query(); exit();
 		$agrupadoPorId = [];
 		foreach ($dcds as $kCds => $vCds) {
 			$idCotizacionDetalle = $vCds['idCotizacionDetalle'];
 			if (!isset($agrupadoPorId[$idCotizacionDetalle])) {
 				$agrupadoPorId[$idCotizacionDetalle] = array();
 			}
-
 			$vCds['zona'] = $this->model->getZonas(['otroAlmacen' => $vCds['flagOtrosPuntos'], 'idZona' => $vCds['idZona']])->row_array()['nombre'];
 			$agrupadoPorId[$idCotizacionDetalle][] = $vCds;
 		}
@@ -5334,33 +5334,54 @@ class Cotizacion extends MY_Controller
 		$this->db->trans_begin();
 		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
 
-		$archivoCotizacion = [
-			'base64' => $post['cotizacionFile-item'],
-			'name' => $post['cotizacionFile-name'],
-			'type' => $post['cotizacionFile-type'],
-			'carpeta' => 'operlog/cotizaciones',
-			'nombreUnico' => uniqid()
-		];
-		$archivoNameCotizacion = $this->saveFileWasabi($archivoCotizacion);
+		// $archivoCotizacion = [
+		// 	'base64' => $post['cotizacionFile-item'],
+		// 	'name' => $post['cotizacionFile-name'],
+		// 	'type' => $post['cotizacionFile-type'],
+		// 	'carpeta' => 'operlog/cotizaciones',
+		// 	'nombreUnico' => uniqid()
+		// ];
+		// $archivoNameCotizacion = $this->saveFileWasabi($archivoCotizacion);
 		//$tipoArchivoCotizacion = explode('/', $archivo['type']);
 
-		$archivoOrdenCompra = [
-			'base64' => $post['ordenCompraFile-item'],
-			'name' => $post['ordenCompraFile-name'],
-			'type' => $post['ordenCompraFile-type'],
-			'carpeta' => 'operlog/ordenes',
-			'nombreUnico' => uniqid()
-		];
-		$archivoNameOrdenCompra = $this->saveFileWasabi($archivoOrdenCompra);
+		// $archivoOrdenCompra = [
+		// 	'base64' => $post['ordenCompraFile-item'],
+		// 	'name' => $post['ordenCompraFile-name'],
+		// 	'type' => $post['ordenCompraFile-type'],
+		// 	'carpeta' => 'operlog/ordenes',
+		// 	'nombreUnico' => uniqid()
+		// ];
+		// $archivoNameOrdenCompra = $this->saveFileWasabi($archivoOrdenCompra);
 
+		$idOperCod = array();
 
 		foreach ($cabOperLog as $f => $d) {
 			$insertarCabOperLog = [
-				'idCuenta' => $d['idCuenta'], 'idCuentaCentroCosto' => $d['idCentroCosto'], 'idCuentaUsuario' => $post['CuentaUsuario'], 'codCotizacion' => $d['codCotizacion'], 'nombreCotizacion' => $d['nombreCotizacion'], 'ordenCompra' => null, 'dirigido' => $d['nombre'], 'fotografico' => $d['fotografia'], 'guia' => $d['guia'], 'otros' => $d['otros'], 'archivoCotizacion' => $archivoNameCotizacion, 'archivoOrden' => $archivoNameOrdenCompra, 'idEstado' => $d['idEstado'], 'estado' => $d['estado'], 'fecReg' => getSoloFecha(), 'horReg' => getSoloHora(), 'idUsuario' => $this->idUsuario, 'updateCC' => null, 'fechaUltimaModificacion' => null, 'flagImpactBussiness' => 1
+				'idCuenta' => $d['idCuenta'], 
+				'idCuentaCentroCosto' => $d['idCentroCosto'], 
+				'idCuentaUsuario' => $post['CuentaUsuario'], 
+				'codCotizacion' => $d['codCotizacion'], 
+				'nombreCotizacion' => $d['nombreCotizacion'], 
+				'ordenCompra' => null, 
+				'dirigido' => $d['nombre'], 
+				'fotografico' => $d['fotografia'], 
+				'guia' => $d['guia'], 
+				'otros' => $d['otros'], 
+				// 'archivoCotizacion' => $archivoNameCotizacion, 
+				// 'archivoOrden' => $archivoNameOrdenCompra, 
+				'idEstado' => $d['idEstado'], 
+				'estado' => $d['estado'], 
+				'fecReg' => getSoloFecha(), 
+				'horReg' => getSoloHora(), 
+				'idUsuario' => $this->idUsuario, 
+				'updateCC' => null, 
+				'fechaUltimaModificacion' => null, 
+				'flagImpactBussiness' => 1
 				// flagImpactBussiness
 			];
 			$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
 			$idOperlog = $this->db->insert_id();
+			array_push($idOperCod, $idOperlog);
 
 			$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
 			// echo $this->db->last_query();exit();
@@ -5397,10 +5418,20 @@ class Cotizacion extends MY_Controller
 					}
 				}
 			}
+		
+			$this->db->update('compras.cotizacionDetalle', ['idOperLog' => $idOperlog], ['idCotizacionDetalle' => $d['idCotizacionDetalle']]);
 		}
 
 		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
-
+		$codConcat = "";
+		if (count($idOperCod) === 1) {
+			$codConcat = "Log-" . $idOperCod[0];
+		} else {
+			foreach ($idOperCod as $y => $t) {
+				$codConcat .= "Log-" . $t . ", ";
+			}
+			$codConcat = rtrim($codConcat, ", ");
+		}
 		if ($this->db->trans_status() === FALSE) {
 			$this->db->trans_rollback();
 			$result['result'] = 2;
@@ -5409,8 +5440,8 @@ class Cotizacion extends MY_Controller
 		} else {
 			$this->db->trans_commit();
 			$result['result'] = 1;
-			$result['msg']['title'] = 'OPERLOG creado';
-			$result['msg']['content'] = getMensajeGestion('registroExitoso');
+			$result['msg']['title'] = 'OPERLOG creado ';
+			$result['msg']['content'] = '<div class="alert alert-success m-3 noResultado" role="alert">	<i class="fas fa-check"></i> El registro se realizó correctamente <b>'.$codConcat.'</b>. </div>';
 		}
 		echo json_encode($result);
 	}

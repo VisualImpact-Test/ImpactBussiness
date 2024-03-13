@@ -279,6 +279,7 @@ class M_Cotizacion extends MY_Model
 				, nombre AS value
 			FROM compras.itemTipo
 			WHERE estado = 1
+			order by nombre
 		";
 
 		$query = $this->db->query($sql);
@@ -2733,6 +2734,7 @@ class M_Cotizacion extends MY_Model
 
 		$sql = "
 		select co.idCotizacion,
+		codd.idCotizacionDetalle,
 		co.idCuenta ,
 		co.idCentroCosto ,
 		c.razonSocial AS cuenta,
@@ -2749,7 +2751,8 @@ class M_Cotizacion extends MY_Model
 		cda.nombre_inicial,
 		'3' as idEstado ,
 		'1' as estado ,
-		codd.idCotizacionDetalle
+		codd.idCotizacionDetalle,
+		cda.nombre_archivo
 		from compras.cotizacion AS co
 		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion and codd.estado = 1 and codd.idItemTipo = 7
 		JOIN compras.solicitante AS so ON co.idSolicitante = so.idSolicitante

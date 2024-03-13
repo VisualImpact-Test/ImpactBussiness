@@ -62,7 +62,7 @@ var Oc = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Oc.agregarItem();';
 				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOC", fn: "Oc.editarOC()", content: "¿Esta seguro de realizar cambios en OC?" });';
+				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.editarOC()", content: "¿Esta seguro de realizar cambios en OC?" });';
 				btn[2] = { title: 'Guardar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
@@ -92,6 +92,16 @@ var Oc = {
 		$(document).on('click', '#btn-operSinCotizar', function () {
 			Oc.agregarOperDat();
 		});
+
+		$(document).on('click', '.btn-descargarOper', function () {
+			let tipo = 'SinCotizacion';
+			let idOper = $(this).closest('tr').data('id');
+			let data = { idOper };
+			let jsonString = { 'data': JSON.stringify(data) };
+			Fn.download(site_url + 'Operaciones/Oper/' + 'descargarOper' + tipo, jsonString);
+			//console.log(site_url + Oper.url + 'descargarOper' + Oper.tipo, jsonString);zss
+		});
+
 
 		$(document).on('click', '#btn-registrarOC', function () {
 			++modalId;
@@ -385,7 +395,7 @@ var Oc = {
 	},
 
 	editarOC: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOC')) };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOC')) };
 		let url = Oc.url + "editarOC" + Oc.tipo;
 		let config = { url: url, data: jsonString };
 
@@ -441,7 +451,7 @@ var Oc = {
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
 			fn[1] = 'Oc.agregarItem();';
 			btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Oper?" });';
+			fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOC", fn: "Oc.registrarOC()", content: "¿Esta seguro de registrar Orden de Compra?" });';
 			btn[2] = { title: 'Guardar', fn: fn[2] };
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 			Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
@@ -449,12 +459,15 @@ var Oc = {
 			Oc.itemsData = $.parseJSON($('#itemsData').val());
 			Oc.modalId = modalId;
 			Oc.itemInputComplete('all');
+			Fn.loadSemanticFunctions();
+			Fn.loadDimmerHover();
 		});
 	},
 
 	quitarItem: function (t, v) {
 		div = t.closest('div.itemData');
 		$(div).remove();
+		$('input.item_cantidad').first().change();
 	},
 	generarSubItem: function (t, v) {
 		div = t.closest('div.divItem');
@@ -632,7 +645,8 @@ var Oc = {
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
 		costo = parseFloat($(div).find('input.item_costo').val() || '0');
-		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		// gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		gap = 0;
 		cantPDV = 0;
 		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
