@@ -90,10 +90,10 @@
 								</td>
 								<?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
-										<a class="ui button green btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>">
+										<a class="ui button green btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento'];?>" data-ordencompra="<?= $row['idOrdenCompra']; ?>">
 											<i class="icon check"></i>
 										</a>
-										<a class="ui button red btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="0">
+										<a class="ui button red btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="0" data-ordencompra="<?= $row['idOrdenCompra']; ?>">
 											<i class="icon times"></i>
 										</a>
 									</td>
