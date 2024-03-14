@@ -2031,7 +2031,7 @@ class FormularioProveedor extends MY_Controller
 		//$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
 
 		if (!empty($daC)) {
-			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : ($this->idUsuario ? USER_FINANZAS : USER_COORDINADOR_COMPRAS));
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS);
 
 			$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toCorreo = [];
