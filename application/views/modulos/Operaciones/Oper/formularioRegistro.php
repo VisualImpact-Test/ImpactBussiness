@@ -69,12 +69,17 @@
 								</div>
 							</div>
 							<input class="codItems d-none" type='text' name='idItemForm'>
-							<input class="codProveedor d-none" type='text' name='idProveedor'>
 						</div>
-						<div class="form-group col-md-6">
+						<div class="form-group col-md-3">
 							<label class="font-weight-bold">Tipo:</label>
 							<select class="form-control tipo clearSubItem item_tipo" name="tipo" patron="requerido" data-live-search="true">
 								<?= htmlSelectOptionArray2(['simple' => 1, 'query' => $tipo, 'class' => 'text-titlecase', 'id' => 'idItemTipo', 'value' => 'nombre']); ?>
+							</select>
+						</div>
+						<div class="form-group col-md-3">
+							<label class="font-weight-bold">Proveedor:</label>
+							<select class="form-control dropdown simpleDropdown clearable tiny read-only codProveedor" name="idProveedor">
+								<?= htmlSelectOptionArray2(['title' => 'Sin indicar', 'simple' => 1, 'query' => $proveedor, 'class' => 'text-titlecase', 'id' => 'idProveedor', 'value' => 'razonSocial']); ?>
 							</select>
 						</div>
 						<div class="form-row col-md-12 subItem"></div>

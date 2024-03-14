@@ -474,9 +474,9 @@ var Oper = {
 					//Llenamos una caja de texto invisible que contiene el ID del Artículo
 					control.find(".codItems").val(ui.item.value);
 					//Tipo Item
-					control.find(".tipo").val(ui.item.tipo).trigger('change');
 					control.find('.item_costo').val(ui.item.costo).change();
-					control.find('.codProveedor').val(ui.item.idProveedor);
+					control.find('.codProveedor').dropdown('set selected', ui.item.idProveedor);
+					control.find(".tipo").val(ui.item.tipo).trigger('change');
 
 					$(this).focusout();
 				},
@@ -492,7 +492,7 @@ var Oper = {
 		control = $(t);
 		control.closest('.divItem').find('.items').attr('readonly', false);
 		control.closest('.divItem').find('.codItems').val('');
-		control.closest('.divItem').find('.codProveedor').val('');
+		control.closest('.divItem').find('.codProveedor').dropdown('clear');
 		control.closest('.itemData').find('.item_costo').val('0').change();
 	},
 	calcularTextilPrecio: function (t) {

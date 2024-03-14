@@ -2669,6 +2669,73 @@ var Cotizacion = {
 			});
 		});
 		// FIN COTIZACION PERSONAL
+
+		$(document).on('click', '.btn-datos-rutasViajeras', function (e) {
+			e.preventDefault();
+			var this_ = $(this);
+			Cotizacion.temp = this_;
+
+			let dataPrevia = this_.closest('.div-features').find('.datosRutasViajeras').html();
+
+			let data = {};
+			data.dataPrevia = dataPrevia;
+			let jsonString = { 'data': JSON.stringify(data) };
+			var config = { 'url': Cotizacion.url + 'getSubDetalleRutasViajeras', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				console.log(a);
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				var btn = [];
+				if (a.result === 1) {
+					// var fn1 = `Cotizacion.buscarPesos(${modalId});`;
+					// var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
+					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+					var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+					var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+
+					btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+					btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+					btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+
+				}
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			});
+		});
+	},
+	procesarPreciosRutasViajeras: function (modalId, buscarCosto) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['buscarCosto'] = buscarCosto;
+
+		var config = { 'url': Cotizacion.url + 'procesarTablaDatosRutasViajeras', 'data': data };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			if (a.result === 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				var fn1 = `Cotizacion.buscarPesos(${modalId});`;
+				var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
+
+				btn[1] = { title: 'Procesar', fn: fn1 };
+				btn[2] = { title: 'Guardar', fn: fn2 };
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			}
+			if (a.result === 0) {
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+			}
+
+		});
 	},
 	buscarPesos: function (idModalHT) {
 		var data = Fn.formSerializeObject('formCargaMasiva');

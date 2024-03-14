@@ -101,6 +101,7 @@ class Oper extends MY_Controller
 		$dataParaVista['tipo'] = $this->model->obtenerTipo()->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
+		$dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor', ['idProveedorEstado' => 2])->result_array();
 		$dataParaVista['oper'] = $this->model->obtenerInformacionOper(['idOper' => $idOper])->result_array();
 
 		foreach ($dataParaVista['oper'] as $key => $value) {
@@ -126,6 +127,7 @@ class Oper extends MY_Controller
 		$dataParaVista['tipo'] = $this->model->obtenerTipo()->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
+		$dataParaVista['proveedor'] = $this->db->get_where('compras.proveedor', ['idProveedorEstado' => 2])->result_array();
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Oper';
@@ -450,7 +452,7 @@ class Oper extends MY_Controller
 
 		$where = ['soloCargosOcupados' => true];
 		if (!empty($post['idCuenta'])) $where['idCuenta'] = $post['idCuenta'];
-		if($post['tipo'] != 0) {
+		if ($post['tipo'] != 0) {
 			$dataParaVista['tipo'] = $post['tipo'];
 		} else {
 			$dataParaVista['tipo'] = 0;
