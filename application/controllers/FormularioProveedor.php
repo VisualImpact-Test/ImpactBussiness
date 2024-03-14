@@ -1966,8 +1966,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => $this->idUsuario ? 1 : 0,
-					'flagAprobado' => $this->idUsuario ? 1 : 0,
+					'flagRevisado' => 1,
+					'flagAprobado' => 1,
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
