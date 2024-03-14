@@ -29,6 +29,7 @@
                 <td class="td-center style-icons">
                   <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-editar" title="Editar OPER"><i class="fa fa-lg fa-edit"></i></a>
                   <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-descargarOper" title="Imprimir OPER"><i class="fa fa-lg fa-file-pdf"></i></a>
+                  <a href="javascript:;" class="btn btn-outline-secondary border-0 btn-duplicar" title="Duplicar OPER"><i class="fa fa-lg fa-copy"></i></a>
                 </td>
                 <td class="td-center"><?= verificarEmpty($row['concepto'], 3); ?></td>
                 <td class="td-center"><?= verificarEmpty($row['requerimiento'], 3); ?></td>

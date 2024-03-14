@@ -66,7 +66,29 @@ var Oper = {
 				Oper.modalId = modalId;
 				Oper.itemInputComplete('all');
 			});
+		});
+		$(document).on('click', '.btn-duplicar', function () {
+			let id = $(this).parents('tr:first').data('id');
+			++modalId;
+			let jsonString = { 'data': id };
+			let config = { 'url': Oper.url + 'formularioEditarOper' + Oper.tipo, 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
 
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Oper.agregarItem();';
+				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
+				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOper", fn: "Oper.registrarOper()", content: "¿Esta seguro de guardar el OPER?" });';
+				btn[2] = { title: 'Guardar', fn: fn[2] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
+				Oper.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
+				$('#divItemData').html('');
+				Oper.itemsData = $.parseJSON($('#itemsData').val());
+				Oper.modalId = modalId;
+				Oper.itemInputComplete('all');
+			});
 		});
 		$(document).on('click', '#btn-registrarOper', function () {
 			++modalId;
@@ -81,7 +103,7 @@ var Oper = {
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				fn[1] = 'Oper.agregarItem();';
 				btn[1] = { title: 'Agregar', fn: fn[1], class: 'btn-warning' };
-				fn[2] = 'Fn.showConfirm({ idForm: "formRegistroOper", fn: "Oper.registrarOper()", content: "¿Esta seguro de registrar OPER?" });';
+				fn[2] = 'Fn.showConfirm({ idForm: "formEditarOper", fn: "Oper.registrarOper()", content: "¿Esta seguro de registrar OPER?" });';
 				btn[2] = { title: 'Registrar', fn: fn[2] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 				Oper.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
@@ -137,7 +159,7 @@ var Oper = {
 	},
 
 	registrarOper: function () {
-		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOper')) };
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formEditarOper')) };
 		let url = Oper.url + "registrarOper" + Oper.tipo;
 		let config = { url: url, data: jsonString };
 
