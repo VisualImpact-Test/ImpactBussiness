@@ -117,6 +117,7 @@ var ProveedorServicio = {
 			dataForm.flag = $(this).data('flag');
 			dataForm.cotizacion = $(this).data('idcot');
 			dataForm.idformat = $(this).data('idformat');
+			dataForm.ordencompra = $(this).data('ordencompra');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoComprobanteEstado', 'data': jsonString };
