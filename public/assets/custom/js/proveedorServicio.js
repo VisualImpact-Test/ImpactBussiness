@@ -379,7 +379,7 @@ var ProveedorServicio = {
 			$.when(Fn.ajax(config)).then((a) => {
 				let btn = [];
 				let fn = [];
-				
+
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
 				// TODO : El actualizar cierra y vuelve a abrir el modal, buscar una forma de optimizar
@@ -490,7 +490,7 @@ var ProveedorServicio = {
 		// Inicio: File Uploaded
 		$(document).off('change', '.file-uploadedd').on('change', '.file-uploadedd', function (e) {
 			var control = $(this);
-			
+
 
 			if (control.val()) {
 				var num = control.get(0).files.length;
@@ -785,6 +785,20 @@ var ProveedorServicio = {
 				}
 			}
 		});
+		$(document).on('keyup', '#nfactura', function () {
+			var valor = this.value;
+			var advertencia = document.getElementById('advertencia');
+			var advertencia1 = document.getElementById('advertencia1');
+
+			// Verificar si el valor contiene al menos una letra
+			if (!/[a-zA-Z]/.test(valor)) {
+				advertencia.style.display = 'inline'; // Mostrar la advertencia si no hay letras
+				advertencia1.style.display = 'none';
+			} else {
+				advertencia.style.display = 'none';
+				advertencia1.style.display = 'inline'; // Ocultar la advertencia si hay al menos una letra
+			}
+		});
 		// Fin: File uploaded
 
 		HTCustom.load();
@@ -979,7 +993,7 @@ var ProveedorServicio = {
 		dataForm.nameAdjunto = ProveedorServicio.name;
 
 		let jsonString = { 'data': JSON.stringify(dataForm) };
-		
+
 		var jsonString1 = dataForm.data;
 		var jsonObject = JSON.parse(jsonString1);
 		var archivo = document.querySelector(".file-uploadedd");

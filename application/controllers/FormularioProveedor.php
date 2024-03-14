@@ -1140,6 +1140,7 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['flag'] = $post['flagoclibre'];
 		$dataParaVista['requiereguia'] = $post['requiereguia'];
 		$dataParaVista['cotizacion'] = $post['cotizacion'];
+		$dataParaVista['tipoComprobante'] = $this->db->get_where('compras.comprobante', 'idComprobante != 2')->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Sustento';
 		$result['data']['html'] = $this->load->view("formularioProveedores/formularioRegistroSustento", $dataParaVista, true);
@@ -1579,8 +1580,7 @@ class FormularioProveedor extends MY_Controller
 			['idSustentoAdjunto' => $post['id']]
 		);
 
-		$validarAprobados = $this->db->get_where('sustento.comprobante', ['idCotizacion' => $post['cotizacion'], 'idProveedor' => $post['proveedor'], 'flagoclibre' => $post['flag'], 'flagAprobado' => 0, 'flagRevisado' => 0])->result_array();
-
+		/*$validarAprobados = $this->db->get_where('sustento.comprobante', ['idCotizacion' => $post['cotizacion'], 'idProveedor' => $post['proveedor'], 'flagoclibre' => $post['flag'], 'flagAprobado' => 0, 'flagRevisado' => 0])->result_array();
 		if (count($validarAprobados) <= 1) {
 			$daD = $this->db->distinct()->select('idFormatoDocumento')->where('estado', 1)->where('idCotizacion', $post['cotizacion'])->where('idProveedor', $post['proveedor'])->get('sustento.comprobante')->result_array();
 			$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
@@ -1613,7 +1613,7 @@ class FormularioProveedor extends MY_Controller
 			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
 			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro, 'formatos' => $daD, 'ocG' => $ocG, 'flag' => $flag], true);
 			$this->sendEmail($cfg);
-		}
+		}*/
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -1898,8 +1898,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => $this->idUsuario ? 1 : 0,
-					'flagAprobado' => $this->idUsuario ? 1 : 0,
+					'flagRevisado' => 1,
+					'flagAprobado' => 1,
 					'numeroDocumento' => $post['nguia'] ? $post['nguia'] : NULL
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
@@ -1934,10 +1934,11 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => $this->idUsuario ? 1 : 0,
-					'flagAprobado' => $this->idUsuario ? 1 : 0,
+					'flagRevisado' => 1,
+					'flagAprobado' => 1,
 					'numeroDocumento' => $post['nfactura'],
-					'fechaEmision' => $post['fechaEmision']
+					'fechaEmision' => $post['fechaEmision'],
+					'idTipoComprobante' => $post['tipoComprobante']
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
@@ -1969,8 +1970,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => $this->idUsuario ? 1 : 0,
-					'flagAprobado' => $this->idUsuario ? 1 : 0,
+					'flagRevisado' => 1,
+					'flagAprobado' => 1,
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
@@ -2002,8 +2003,8 @@ class FormularioProveedor extends MY_Controller
 					'flagoclibre' => $post['flag'],
 					'idProveedor' => $post['proveedor'],
 					'flagIncidencia' => $post['incidencia'],
-					'flagRevisado' => $this->idUsuario ? 1 : 0,
-					'flagAprobado' => $this->idUsuario ? 1 : 0,
+					'flagRevisado' => 1,
+					'flagAprobado' => 1,
 				];
 				$this->db->insert('sustento.comprobante', $insertArchivos);
 			}
@@ -2031,7 +2032,7 @@ class FormularioProveedor extends MY_Controller
 		//$cot = $this->db->where('idCotizacion', $post['cotizacion'])->get('compras.cotizacion')->row_array();
 
 		if (!empty($daC)) {
-			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : ($this->idUsuario ? USER_FINANZAS : USER_COORDINADOR_COMPRAS));
+			$idTipoParaCorreo = ($this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS);
 
 			$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
 			$toCorreo = [];

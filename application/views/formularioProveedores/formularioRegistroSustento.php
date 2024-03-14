@@ -29,8 +29,18 @@
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Factura</label>
 					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido">
+					<label class="form-control col-md-4" style="border:0px;"></label>
+					<span class="pl-3" id="advertencia" style="color: orange; display: none;">
+						Por favor, llenar serie y N° Comprobante
+					</span>
+					<span class="col-md-8" id="advertencia1" style="color: orange;">
+					</span>
 					<label class="form-control col-md-4" style="border:0px;">Fecha Emisión</label>
 					<input type="date" class="form-control col-md-8" id="fechaEmision" name="fechaEmision" patron="requerido">
+					<label class="form-control col-md-4" style="border:0px;">Tipo de Comprobante</label>
+					<select class="form-control col-md-8 simpleDropdown" id="tipoComprobante" name="tipoComprobante" patron="requerido">
+						<?= htmlSelectOptionArray2(['id' => 'idComprobante', 'value' => 'nombre', 'query' => $tipoComprobante, 'class' => 'none']); ?>
+					</select>
 				</div>
 			</fieldset>
 		</div>
@@ -58,7 +68,7 @@
 				<legend class="scheduler-border">Adicional</legend>
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Comentario</label>
-					<select name="incidencia" class="form-control col-md-8">
+					<select name="incidencia" class="form-control col-md-8 simpleDropdown">
 						<option value="1">Finalizado con Incidencia</option>
 						<option value="0" selected>Finalizado al 100%</option>
 					</select>
@@ -68,6 +78,10 @@
 	</div>
 	<div class="row">
 		<div class="col-md-10 child-divcenter">
+			<!-- Mensaje de advertencia -->
+			<div class="ui bottom attached warning message">
+				<i class="icon warning"></i>LLENAR SERIE Y NUMERO DE FACTURA
+			</div>
 			<div class="ui bottom attached warning message">
 				<i class="icon warning"></i>CONSIDERAR QUE LA FACTURA CARGADA DEBE TENER FECHA DE EMISION DEL MES EN CURSO
 			</div>
