@@ -1,4 +1,4 @@
-<form class="form" role="form" id="formRegistroOper" method="post" autocomplete="off">
+<form class="form" role="form" id="formEditarOper" method="post" autocomplete="off">
 	<div class="row">
 		<div class="col-md-12 child-divcenter">
 			<fieldset class="scheduler-border">

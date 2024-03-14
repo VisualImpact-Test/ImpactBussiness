@@ -108,12 +108,12 @@ class OrdenCompra extends MY_Controller
 	public function formularioOperSinCotizarCarga()
 	{
 		$result = $this->result;
-		$idOC = json_decode($this->input->post('data'), true);
-		$post = json_decode($this->input->post('data'), true);
+		$idOper = json_decode($this->input->post('idOper'), true);
+		$idProveedor = json_decode($this->input->post('idProveedor'), true);
 		$dataParaVista = [];
 		$dataParaVista['cuenta'] = $this->model_cotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->model_cotizacion->obtenerCuentaCentroCosto()['query']->result_array();
-		$dataParaVista['item'] = $this->model_item->obtenerItemServicio();
+		// $dataParaVista['item'] = $this->model_item->obtenerItemServicio();
 		$dataParaVista['tipo'] = $this->mTipo->obtenerInformacionTiposArticulo()['query']->result_array();
 		$dataParaVista['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$dataParaVista['tipoServicios'] = $this->model_cotizacion->obtenertipoServicios()['query']->result_array();
@@ -123,14 +123,30 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista['almacenes'] = $this->db->where('estado', '1')->get('visualImpact.logistica.almacen')->result_array();
 
 		//$dataParaVista['oc'] = $this->model->obtenerOrdenCompraLista(['idOrdenCompra' => $idOC])->result_array();
-		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOC])->result_array();
-		//echo $this->db->last_query(); exit();
-		foreach ($dataParaVista['oc'] as $key => $value) {
+		$dataParaVista['oc'] = $this->model->obtenerInformacionOperSinCot(['idOper' => $idOper, 'idProveedor' => $idProveedor])->result_array();
+		foreach ($dataParaVista['oc'] as $value) {
 			$dataParaVista['ocSubItem'][$value['idOperDetalle']] = $this->model->obtenerInformacionOperSinCotSubItem(['idOperDetalle' => $value['idOperDetalle']])->result_array();
+			// $dataParaBista['ocAdjunto'][$value['idOperDetalle']] = 
+			$adjuntos = $this->db->get_where('compras.itemImagen', ['estado' => 1, 'idItem' => $value['idItem']])->result_array();
+
+			if (empty($adjuntos)) $dataParaVista['ocAdjunto'][$value['idOperDetalle']] = [];
+			else {
+				foreach ($adjuntos as $adj) {
+					$dataParaVista['ocAdjunto'][$value['idOperDetalle']][] = [
+						'id' => $adj['idItemImagen'],
+						'nombre' => $adj['nombre_archivo'],
+						'idTipoArchivo' => $adj['idTipoArchivo'],
+						'origenBD' => 'compras.itemImagen',
+						'columnaBD' => 'idItemImagen',
+						'carpeta' => 'item/',
+					];
+				}
+			}
 		}
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Generar OC desde Oper libre';
 		$result['data']['html'] = $this->load->view("modulos/OrdenCompra/formularioEditar", $dataParaVista, true);
+		$result['data']['item'] = $this->model_item->obtenerItemServicio();
 		// $result['data']['html'] = $this->load->view("modulos/OrdenCompra/Oper/formularioOperSinCotizar", $dataParaVista, true);
 
 		echo json_encode($result);
@@ -245,9 +261,12 @@ class OrdenCompra extends MY_Controller
 		$dataParaVista = [];
 
 		$data = $this->mOper->obtenerInformacionOper($post)->result_array();
+
 		foreach ($data as $key => $row) {
-			$dataParaVista[$row['idOper']] = [
+			$dataParaVista[$row['idOper'] . 'P' . $row['idProveedor']] = [
 				'idOper' => $row['idOper'],
+				'idProveedor' => $row['idProveedor'],
+				'razonSocial' => $row['razonSocial'],
 				'concepto' => $row['concepto'],
 				'requerimiento' => $row['requerimiento'],
 				'fechaRequerimiento' => date_change_format($row['fechaRequerimiento']),
@@ -260,12 +279,11 @@ class OrdenCompra extends MY_Controller
 				'observacion' => $row['observacion'],
 				'estado' => $row['estado']
 			];
-			$item[$row['idOper']][$row['idItem']] = $row['idItem'];
+			$item[$row['idOper'] . 'P' . $row['idProveedor']][$row['idItem']] = $row['idItem'];
 		}
 
 		foreach ($dataParaVista as $key => $row) {
 			$dataParaVista[$key]['item'] = implode(', ', $item[$key]);
-			// var_dump($dataParaVista[$key]['item']);
 		}
 
 		$html = getMensajeGestion('noRegistros');
@@ -384,10 +402,11 @@ class OrdenCompra extends MY_Controller
 				$post['adjuntoItemFile-name'] = checkAndConvertToArray($post['adjuntoItemFile-name']);
 				$post['adjuntoItemFile-item'] = checkAndConvertToArray($post['adjuntoItemFile-item']);
 				$post['adjuntoItemFile-type'] = checkAndConvertToArray($post['adjuntoItemFile-type']);
-				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // Si la imagen viene del item
+				// ? Si se tiene dudas consultar en "my_helper.php → htmlSemanticCargaDeArchivos()"
+				if (!empty($post['adjuntoItemFile-idOrigen'][$ordenAdjunto])) { // * Si la imagen viene de una tabla distinta
 					$ii = $this->db->get_where($post['adjuntoItemFile-name'][$ordenAdjunto], [$post['adjuntoItemFile-type'][$ordenAdjunto] => $post['adjuntoItemFile-idOrigen'][$ordenAdjunto]])->row_array();
 					$ii['nombre_archivo'] = $post['adjuntoItemFile-item'][$ordenAdjunto] . $ii['nombre_archivo'];
-				} else { // Si la imagen es cargada en la OC
+				} else { // * Si la imagen es cargada en la OC
 					$archivo = [
 						'base64' => $post['adjuntoItemFile-item'][$ordenAdjunto],
 						'name' => $post['adjuntoItemFile-name'][$ordenAdjunto],
@@ -493,7 +512,7 @@ class OrdenCompra extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		if(!isset($post['item'])) {
+		if (!isset($post['item'])) {
 			$result['result'] = 0;
 			$result['msg']['title'] = 'Alerta!';
 			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe agregar al menos un Item']);

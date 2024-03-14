@@ -437,10 +437,10 @@ var Oc = {
 		});
 	},
 
-	agregarOpersinCotizar: function (t) {
-		let id = t;
+	agregarOpersinCotizar: function (idOper, idProveedor) {
+		let id = idOper;
 		++modalId;
-		let jsonString = { 'data': id };
+		let jsonString = { 'idOper': id, 'idProveedor': idProveedor };
 		let config = { 'url': Oc.url + 'formularioOperSinCotizarCarga', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then((a) => {
@@ -456,11 +456,13 @@ var Oc = {
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '90%' });
 			Oc.divItemData = '<div class="row itemData">' + $('#divItemData').html() + '</div>';
 			$('#divItemData').html('');
-			Oc.itemsData = $.parseJSON($('#itemsData').val());
+			Oc.itemsData = a.data.item; // $.parseJSON($('#itemsData').val());
 			Oc.modalId = modalId;
 			Oc.itemInputComplete('all');
 			Fn.loadSemanticFunctions();
 			Fn.loadDimmerHover();
+			$('.item_cantidad').first().change();
+			console.log($('.item_cantidad').first());
 		});
 	},
 
