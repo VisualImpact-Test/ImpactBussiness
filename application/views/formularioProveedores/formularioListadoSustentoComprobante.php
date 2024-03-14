@@ -14,9 +14,9 @@
 							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Nombre Archivo</th>
 							<th style="width: 50%; background-color: #2586da;color: white;" class="text-center header">Estado</th>
 							<th style="width: 15%; background-color: #2586da;color: white;" class="text-center header">Opciones</th>
-							<?php if ($mostrarOpcionesExt) :  ?>
+							<!--< ?php if ($mostrarOpcionesExt) :  ?>
 								<th style="width: 15%; background-color: #2586da;color: white;" class="text-center header">Validación</th>
-							<?php endif; ?>
+							< ?php endif; ?>-->
 						</tr>
 					</thead>
 					<tbody>
@@ -88,7 +88,7 @@
 										</a>
 									<?php endif; ?>
 								</td>
-								<?php if ($mostrarOpcionesExt) :  ?>
+								<!-- < ?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
 										<a class="ui button green btn-estadoSustComprobante" data-id="<?= $row['idSustentoAdjunto'] ?>" data-estado="1" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento'];?>" data-ordencompra="<?= $row['idOrdenCompra']; ?>">
 											<i class="icon check"></i>
@@ -97,7 +97,7 @@
 											<i class="icon times"></i>
 										</a>
 									</td>
-								<?php endif; ?>
+								< ?php endif; ?>-->
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
