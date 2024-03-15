@@ -37,16 +37,18 @@ class M_Oper extends MY_Model
 							od.gap AS gap_item,
 							od.costoSubTotal AS cs_item,
 							od.costoSubTotalGap AS csg_item,
-							od.idProveedor,
+							isnull(od.idProveedor, 0) as idProveedor,
 							i.nombre AS item,
 							'Coordinadora de compras' AS usuarioReceptor,
 							ue.nombres + ' ' + ISNULL(ue.apePaterno,'') + ' ' + ISNULL(ue.apeMaterno,'') AS usuarioRegistro,
 							cu.nombre AS cuenta,
-							cc.subcanal AS centroCosto
+							cc.subcanal AS centroCosto,
+							p.razonSocial
 							")
 			->from('orden.oper o')
 			->join('orden.operDetalle od', 'od.idOper = o.idOper and od.estado=1')
 			->join('compras.item i', 'i.idItem = od.idItem', 'LEFT')
+			->join('compras.proveedor p', 'p.idProveedor = od.idProveedor', 'LEFT')
 			->join('sistema.usuario ue', 'ue.idUsuario = o.idUsuarioReg', 'LEFT')
 			->join('rrhh.dbo.empresa cu', 'cu.idEmpresa=o.idCuenta', 'LEFT')
 			->join('rrhh.dbo.empresa_canal cc', 'cc.idEmpresaCanal=o.idCentroCosto', 'LEFT');

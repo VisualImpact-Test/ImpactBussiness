@@ -127,6 +127,13 @@ class M_OrdenCompra extends MY_Model
 		if (isset($params['idOper'])) {
 			$this->db->where('o.idOper', $params['idOper']);
 		}
+		if (isset($params['idProveedor'])) {
+			if (!empty($params['idProveedor'])) {
+				$this->db->where('od.idProveedor', $params['idProveedor']);
+			}else{
+				$this->db->where('od.idProveedor is null');
+			}
+		}
 
 		$this->db->order_by('o.idOper', 'DESC');
 		return $this->db->get();

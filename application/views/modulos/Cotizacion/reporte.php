@@ -50,16 +50,16 @@
 								<?php if ($row['idCotizacionEstado'] == ESTADO_OC_CONFIRMADA) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-finalizarCotizacion btn-dp-26"><i class="check icon" title="Finalizar Cotizacion"></i></a>
 								<?php endif; ?>
-								<?php if ($row['idCotizacionEstado'] == 1 || $row['idCotizacionEstado'] == 2 || $row['idCotizacionEstado'] == 3) : ?>
-									<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
-								<?php endif; ?>
 								<?php if ($row['idCotizacionEstado'] == ESTADO_COTIZACION_APROBADA) : ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-completarDatos btn-dp-<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-glasses" title="Ver Detalle de Cotizacion"></i></a>
 								<?php endif; ?>
 								<?php if ($row['cantidadTransporte'] >= 1 && $row['flagOperlog'] == 0) :  ?>
-								<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-operlog" data-id="<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-truck" title="Ver Oper LOG"></i></a>
+									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-operlog" data-id="<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-truck" title="Ver Oper LOG"></i></a>
 								<?php endif; ?>
 							</div>
+							<?php if ($row['idCotizacionEstado'] <= ESTADO_ENVIADO_CLIENTE) : ?>
+								<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
+							<?php endif; ?>
 						<?php endif; ?>
 					</td>
 					<td class="td-center"><?= verificarEmpty($row['fechaEmision'], 3); ?></td>

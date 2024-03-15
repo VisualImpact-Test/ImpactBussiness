@@ -448,7 +448,7 @@
 															</div>
 															<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 																<label class="font-weight-bold mb-0">Color:</label>
-																<input class="form-control" name="subItem_color" patron="requerido" value="<?= $si_v['color'] ?>">
+																<input class="form-control" name="subItem_color" value="<?= $si_v['color'] ?>">
 															</div>
 														</div>
 														<div class="form-group col-md-2">
@@ -505,14 +505,20 @@
 								<div class="form-row col-md-12 contentSemanticDiv divParaCarga">
 									<?php if (!$deOper) : ?>
 										<?php $count = isset($ocAdjunto[$value['idOrdenCompraDetalle']]) ? count($ocAdjunto[$value['idOrdenCompraDetalle']]) : 0; ?>
-										<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="<?= $count ?>">
+										<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="<?= $count > 1 ? 1 : $count ?>">
 										<?= htmlSemanticCargaDeArchivos([
 											'classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*',
 											'name' => 'adjuntoItem',
 											'data' => $ocAdjunto[$value['idOrdenCompraDetalle']]
 										], 2) ?>
 									<?php else : ?>
-										<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="0">
+										<?php $count = isset($ocAdjunto[$value['idOperDetalle']]) ? count($ocAdjunto[$value['idOperDetalle']]) : 0; ?>
+										<input class="adjuntoItemCantidad" type="hidden" name="adjuntoItemCantidad" value="<?= $count > 1 ? 1 : $count ?>">
+										<?= htmlSemanticCargaDeArchivos([
+											'classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*',
+											'name' => 'adjuntoItem',
+											'data' => $ocAdjunto[$value['idOperDetalle']]
+										], 2) ?>
 									<?php endif; ?>
 								</div>
 								<div class="form-row">

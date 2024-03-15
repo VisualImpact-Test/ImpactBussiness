@@ -277,14 +277,14 @@ function getDateTime($fecha)
 	// $newfecha = explode(" ", $newfecha);
 	// $newfecha = implode("T", $newfecha);
 	$newfecha = date('Y-m-d\TH:i:s', strtotime($fecha));
-	 return $newfecha;
+	return $newfecha;
 }
 
 function formularCodCotizacion($codCotizacion)
 {
-	$caracteres = str_repeat("0", 3); 
+	$caracteres = str_repeat("0", 3);
 
-	return $caracteres.$codCotizacion;
+	return $caracteres . $codCotizacion;
 }
 
 function isArrayAssoc($array)
@@ -960,12 +960,12 @@ function getMensajeGestion($tipoMensaje, $input = [])
 		'anulacionErronea' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de esta cotización')),
 		'registroInvalido' => createMessage(array("type" => 2, "message" => 'Hubo un error al registrar los datos')),
 		'anulacionExitosaRI' => createMessage(array("type" => 1, "message" => 'Se ha anulado el requerimiento interno correctamente')),
-		'anulacionErroneaRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la anulación de este requerimiento interno')),
+		'anulacionErroneaRI' => createMessage(array("type" => 2, "message" => 'Ha ocurrido un problema con la anulación de este requerimiento interno')),
 		'rechazoExitosoRI' => createMessage(array("type" => 1, "message" => 'Se ha rechazado el requerimiento interno correctamente')),
-		'rechazoErroneoRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con el rechazo de este requerimiento interno')),
+		'rechazoErroneoRI' => createMessage(array("type" => 2, "message" => 'Ha ocurrido un problema con el rechazo de este requerimiento interno')),
 		'aprobacionExitosaRI' => createMessage(array("type" => 1, "message" => 'Se ha aprobado el requerimiento interno correctamente')),
-		'aprobacionErroneaRI' => createMessage(array("type" => 1, "message" => 'Ha ocurrido un problema con la aprobación de este requerimiento interno')),
-		];
+		'aprobacionErroneaRI' => createMessage(array("type" => 2, "message" => 'Ha ocurrido un problema con la aprobación de este requerimiento interno')),
+	];
 
 	return $mensaje[$tipoMensaje];
 }
@@ -1463,11 +1463,13 @@ function htmlSemanticCargaDeArchivos($params = [], $tipo = 1)
 	$html .= '		<div class="sixteen wide field">';
 	$html .= '			<div class="ui tiny images content-img">';
 	if (!empty($datos)) {
+		$count = 0;
 		foreach ($datos as $data) {
-			if ($data['idTipoArchivo']) {
+			$count++;
+			if ($data['idTipoArchivo'] && $count <= intval($maxFiles)) {
 				$html .= '			<div class="ui fluid image content-lsck-capturas">';
 				$html .= '				<a class="ui red right floating label option-semantic-delete"><i class="trash icon m-0"></i></a>';
-				$html .= "				<input type='hidden' name='" . $name . "File-item'>";
+				$html .= "				<input type='hidden' name='" . $name . "File-item' value='" . (isset($data['carpeta']) ? ('../' . $data['carpeta']) : '') . "'>";
 				$html .= "				<input type='hidden' name='" . $name . "File-type' value='" . $data['columnaBD'] . "'>";
 				$html .= "				<input type='hidden' name='" . $name . "File-name' value='" . $data['origenBD'] . "'>";
 				$html .= "				<input type='hidden' name='" . $name . "File-idOrigen' value='" . $data['id'] . "'>";
@@ -1554,10 +1556,10 @@ function email($email = array())
 
 		$config = array(
 			'protocol' => 'smtp',
-			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_port' => 465,
-			// 'smtp_host' => 'aspmx.l.google.com',
-			// 'smtp_port' => '25',
+			// 'smtp_host' => 'ssl://smtp.googlemail.com',
+			// 'smtp_port' => 465,
+			'smtp_host' => 'aspmx.l.google.com',
+			'smtp_port' => '25',
 			'smtp_user' => 'teamsystem@visualimpact.com.pe',
 			'smtp_pass' => '#nVi=0sN0ti$',
 			'mailtype' => 'html',

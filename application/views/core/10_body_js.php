@@ -14,7 +14,9 @@
 		<script type="text/javascript" src="assets/libs/daterangepicker/daterangepicker.js?v=<?= $this->version; ?>"></script>
 		<!-- <script type="text/javascript" src="assets/libs/semanticui/semantic.min.js?v=<?= $this->version; ?>"></script> -->
 		<!-- <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script> -->
-
+		
+		<script src="assets/libs/autoNumeric/autoNumeric.min.js?v=<?= $this->version; ?>"></script>
+		
 		<script src="assets/libs/semantic_2.8.8/jquery.dataTables.min.js?v=<?= $this->version; ?>"></script>
 		<script src="assets/libs/tableTools/TableTools.js?v=<?= $this->version; ?>"></script>
 
