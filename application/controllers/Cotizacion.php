@@ -5445,4 +5445,162 @@ class Cotizacion extends MY_Controller
 		}
 		echo json_encode($result);
 	}
+
+	public function descargar_oper_excel()
+	{
+		require_once '../PHPExcel/Classes/PHPExcel.php';
+		$objPHPExcel = new PHPExcel();
+	//	$datos = $this->model->obtenerItemExcel()['query']->result_array();
+		//$post = $this->input->post('data');
+		$post = json_decode($this->input->post('data'), true);
+		//echo $post['id']; exit();
+
+		
+		/**ESTILOS**/
+		$estilo_cabecera =
+			array(
+				'alignment' => array(
+					'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+					'vertical' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER
+				),
+				'fill' => array(
+					'type' => PHPExcel_Style_Fill::FILL_SOLID,
+					'color' => array('rgb' => 'E60000')
+				),
+				'font' => array(
+					'color' => array('rgb' => 'ffffff'),
+					'size' => 11,
+					'name' => 'Calibri'
+				)
+			);
+		$estilo_titulo = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
+			],
+			'fill' =>	[
+				'type' => PHPExcel_Style_Fill::FILL_SOLID,
+				'startcolor' => ['rgb' => '00A985']
+			],
+			'font'  => [
+				'size' => 12,
+				'name'  => 'Calibri',
+				'color' => array('rgb' => 'FFFFFF'),
+			],
+			'borders' => [
+				'allborders' => [
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+					'color' => ['rgb' => '000000'] // Color negro en RGB
+				]
+			]
+		];
+		$estilo_detalle = [
+			'alignment' => [
+				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
+				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
+			],
+		
+			'font' => [
+				'size' => 11,
+				'name' => 'Calibri'
+			],
+			'borders' => [
+				'allborders' => [
+					'style' => PHPExcel_Style_Border::BORDER_THIN,
+					'color' => ['rgb' => '000000'] // Color negro en RGB
+				]
+			]
+		];
+	
+		/**FIN ESTILOS**/
+
+		$objPHPExcel->getActiveSheet()->getStyle('B1:E1')->getAlignment()->setWrapText(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+
+		$objPHPExcel->getProperties()
+			->setCreator("Visual Impact")
+			->setLastModifiedBy("Visual Impact")
+			->setTitle("FORMATO")
+			->setSubject("FORMATO")
+			->setDescription("Visual Impact")
+			->setKeywords("usuarios phpexcel")
+			->setCategory("FORMATO");
+
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('A2', 'RECOJO')
+			->setCellValue('B2', 'TIPO ENVIO')
+			// ->setCellValue('C2', 'TIPO ORIGEN')
+			// ->setCellValue('D2', 'COD ORIGEN')
+			// ->setCellValue('E2', 'ORIGEN')
+			->setCellValue('C2', 'TIPO DESTINO')
+			->setCellValue('D2', 'COD DESTINO')
+			->setCellValue('E2', 'DESTINO')
+			->getStyle("A1:E2")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+			;
+		
+			$col = "F";
+			$row = "1";
+			$celdaFinal="";
+			$celda = $col . $row;
+			$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
+			foreach ($cabOperLog as $k => $d) {
+			$celda = $col . $row;
+				$cabOperLogDetalleSub = $this->model->cabOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
+					foreach ($cabOperLogDetalleSub as $l => $m) {
+						$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue($celda, $m['idItem'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+						$row++;
+						$celda = $col . $row;
+						$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue($celda, $m['nombre'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+						$row++;
+						$celda = $col . $row;
+						$row2 = $row;
+						$col2 =  "A";
+						$zonasOper = $this->model->zonaOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
+						//echo $this->db->last_query(); exit();
+						foreach ($zonasOper as $z => $a) {
+							//$tituDet = $col2 . $row2;
+							$objPHPExcel->setActiveSheetIndex(0)
+							->setCellValue( "A" . $row2, "")
+							->setCellValue( "B" . $row2, $a['idTipoTransporte'])
+							->setCellValue( "C" . $row2, $a['flagOtrosPuntos'] == 1 ? 2 : 1)
+							->setCellValue( "D" . $row2, $a['idZona'])
+							->setCellValue( "E" . $row2, $a['nombreLocal']);
+							
+							$row2++;
+								$detOper = $this->model->detalleOperLogDetalleSub($d['idCotizacionDetalle'], $m['idItem'] , $a['idZona'])['query']->result_array();
+								//	echo $this->db->last_query(); exit();
+								$objPHPExcel->setActiveSheetIndex(0)
+								->setCellValue($celda, $detOper[0]['cantidad']);
+								$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+								$celdaFinal=$celda;
+								$row++;
+								$celda = $col . $row;
+						}
+						$col++;
+						$row = "1";
+						$celda = $col . $row;
+					
+						
+					}
+					
+			}
+
+		$objPHPExcel->setActiveSheetIndex(0)->getStyle("A2:" . $celdaFinal)->applyFromArray($estilo_detalle)->getFont()->setBold(true);
+
+		$nIni = 2;
+		$objPHPExcel->getActiveSheet()->setTitle('FORMATO');
+
+	
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="Formato.xls"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$objWriter->save('php://output');
+	}
+	
 }
