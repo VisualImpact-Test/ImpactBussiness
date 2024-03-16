@@ -2864,13 +2864,16 @@ class Cotizacion extends MY_Controller
 		$post = $this->input->post();
 
 		$distrito = $this->db->distinct()->select('tzt.cod_distrito, u.distrito')
-		->from('compras.tarifarioZonaTransporte tzt')
-		->join('General.dbo.ubigeo u', 
-		'u.cod_distrito = tzt.cod_distrito AND tzt.cod_departamento = u.cod_departamento AND tzt.cod_provincia = u.cod_provincia', 'INNER')
-		->where('tzt.cod_departamento', $post['cod_dep'])
-		->where('tzt.cod_provincia', $post['cod_pro'])
-		->where('tzt.estado', 1)
-		->order_by('u.distrito')->get()->result_array();
+			->from('compras.tarifarioZonaTransporte tzt')
+			->join(
+				'General.dbo.ubigeo u',
+				'u.cod_distrito = tzt.cod_distrito AND tzt.cod_departamento = u.cod_departamento AND tzt.cod_provincia = u.cod_provincia',
+				'INNER'
+			)
+			->where('tzt.cod_departamento', $post['cod_dep'])
+			->where('tzt.cod_provincia', $post['cod_pro'])
+			->where('tzt.estado', 1)
+			->order_by('u.distrito')->get()->result_array();
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_distrito', 'value' => 'distrito', 'query' => $distrito, 'class' => 'text-titlecase']);
 	}
 	public function getImagenes()
@@ -5813,12 +5816,12 @@ class Cotizacion extends MY_Controller
 	{
 		require_once '../PHPExcel/Classes/PHPExcel.php';
 		$objPHPExcel = new PHPExcel();
-	//	$datos = $this->model->obtenerItemExcel()['query']->result_array();
+		//	$datos = $this->model->obtenerItemExcel()['query']->result_array();
 		//$post = $this->input->post('data');
 		$post = json_decode($this->input->post('data'), true);
 		//echo $post['id']; exit();
 
-		
+
 		/**ESTILOS**/
 		$estilo_cabecera =
 			array(
@@ -5862,7 +5865,7 @@ class Cotizacion extends MY_Controller
 				'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
 				'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER
 			],
-		
+
 			'font' => [
 				'size' => 11,
 				'name' => 'Calibri'
@@ -5874,7 +5877,7 @@ class Cotizacion extends MY_Controller
 				]
 			]
 		];
-	
+
 		/**FIN ESTILOS**/
 
 		$objPHPExcel->getActiveSheet()->getStyle('B1:E1')->getAlignment()->setWrapText(true);
@@ -5901,69 +5904,64 @@ class Cotizacion extends MY_Controller
 			->setCellValue('C2', 'TIPO DESTINO')
 			->setCellValue('D2', 'COD DESTINO')
 			->setCellValue('E2', 'DESTINO')
-			->getStyle("A1:E2")->applyFromArray($estilo_titulo)->getFont()->setBold(true);
-			;
-		
-			$col = "F";
-			$row = "1";
-			$celdaFinal="";
+			->getStyle("A1:E2")->applyFromArray($estilo_titulo)->getFont()->setBold(true);;
+
+		$col = "F";
+		$row = "1";
+		$celdaFinal = "";
+		$celda = $col . $row;
+		$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
+		foreach ($cabOperLog as $k => $d) {
 			$celda = $col . $row;
-			$cabOperLog = $this->model->datosOperLog($post)['query']->result_array();
-			foreach ($cabOperLog as $k => $d) {
-			$celda = $col . $row;
-				$cabOperLogDetalleSub = $this->model->cabOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
-					foreach ($cabOperLogDetalleSub as $l => $m) {
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($celda, $m['idItem'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
-						$row++;
-						$celda = $col . $row;
-						$objPHPExcel->setActiveSheetIndex(0)
-						->setCellValue($celda, $m['nombre'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
-						$row++;
-						$celda = $col . $row;
-						$row2 = $row;
-						$col2 =  "A";
-						$zonasOper = $this->model->zonaOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
-						//echo $this->db->last_query(); exit();
-						foreach ($zonasOper as $z => $a) {
-							//$tituDet = $col2 . $row2;
-							$objPHPExcel->setActiveSheetIndex(0)
-							->setCellValue( "A" . $row2, "")
-							->setCellValue( "B" . $row2, $a['idTipoTransporte'])
-							->setCellValue( "C" . $row2, $a['flagOtrosPuntos'] == 1 ? 2 : 1)
-							->setCellValue( "D" . $row2, $a['idZona'])
-							->setCellValue( "E" . $row2, $a['nombreLocal']);
-							
-							$row2++;
-								$detOper = $this->model->detalleOperLogDetalleSub($d['idCotizacionDetalle'], $m['idItem'] , $a['idZona'])['query']->result_array();
-								//	echo $this->db->last_query(); exit();
-								$objPHPExcel->setActiveSheetIndex(0)
-								->setCellValue($celda, $detOper[0]['cantidad']);
-								$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
-								$celdaFinal=$celda;
-								$row++;
-								$celda = $col . $row;
-						}
-						$col++;
-						$row = "1";
-						$celda = $col . $row;
-					
-						
-					}
-					
+			$cabOperLogDetalleSub = $this->model->cabOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
+			foreach ($cabOperLogDetalleSub as $l => $m) {
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue($celda, $m['idItem'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;
+				$objPHPExcel->setActiveSheetIndex(0)
+					->setCellValue($celda, $m['nombre'])->getStyle($celda)->applyFromArray($estilo_titulo)->getFont()->setBold(true);
+				$row++;
+				$celda = $col . $row;
+				$row2 = $row;
+				$col2 =  "A";
+				$zonasOper = $this->model->zonaOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
+				//echo $this->db->last_query(); exit();
+				foreach ($zonasOper as $z => $a) {
+					//$tituDet = $col2 . $row2;
+					$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue("A" . $row2, "")
+						->setCellValue("B" . $row2, $a['idTipoTransporte'])
+						->setCellValue("C" . $row2, $a['flagOtrosPuntos'] == 1 ? 2 : 1)
+						->setCellValue("D" . $row2, $a['idZona'])
+						->setCellValue("E" . $row2, $a['nombreLocal']);
+
+					$row2++;
+					$detOper = $this->model->detalleOperLogDetalleSub($d['idCotizacionDetalle'], $m['idItem'], $a['idZona'])['query']->result_array();
+					//	echo $this->db->last_query(); exit();
+					$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue($celda, $detOper[0]['cantidad']);
+					$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
+					$celdaFinal = $celda;
+					$row++;
+					$celda = $col . $row;
+				}
+				$col++;
+				$row = "1";
+				$celda = $col . $row;
 			}
+		}
 
 		$objPHPExcel->setActiveSheetIndex(0)->getStyle("A2:" . $celdaFinal)->applyFromArray($estilo_detalle)->getFont()->setBold(true);
 
 		$nIni = 2;
 		$objPHPExcel->getActiveSheet()->setTitle('FORMATO');
 
-	
+
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="Formato.xls"');
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 		$objWriter->save('php://output');
 	}
-	
 }
