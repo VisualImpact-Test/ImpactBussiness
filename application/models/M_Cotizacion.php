@@ -979,7 +979,6 @@ class M_Cotizacion extends MY_Model
 						'cantidadReal' => !empty($subItem['cantidadReal']) ? $subItem['cantidadReal'] : NULL,
 						'requiereOrdenCompra' => !empty($subItem['requiereOrdenCompra']) ? $subItem['requiereOrdenCompra'] : '0',
 						'peso' => !empty($subItem['peso']) ? $subItem['peso'] : '0',
-						//
 						'idZona' => !empty($subItem['idZona']) ? $subItem['idZona'] : NULL,
 						'reembarque' => !empty($subItem['reembarque']) ? $subItem['reembarque'] : NULL,
 						'dias' => !empty($subItem['dias']) ? $subItem['dias'] : NULL,
@@ -996,6 +995,19 @@ class M_Cotizacion extends MY_Model
 						'cod_provincia' => !empty($subItem['cod_provincia']) ? $subItem['cod_provincia'] : null,
 						'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : null,
 						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
+						// *Agregado de Rutas Viajeras
+						'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : null,
+						'origen' => !empty($subItem['origen']) ? $subItem['origen'] : null,
+						'destino' => !empty($subItem['destino']) ? $subItem['destino'] : null,
+						'responsable' => !empty($subItem['responsable']) ? $subItem['responsable'] : null,
+						'cargo' => !empty($subItem['cargo']) ? $subItem['cargo'] : null,
+						'dni' => !empty($subItem['dni']) ? $subItem['dni'] : null,
+						'costoAereo' => !empty($subItem['costoAereo']) ? $subItem['costoAereo'] : null,
+						'costoTransporte' => !empty($subItem['costoTransporte']) ? $subItem['costoTransporte'] : null,
+						'costoMovilidadInterna' => !empty($subItem['costoMovilidadInterna']) ? $subItem['costoMovilidadInterna'] : null,
+						'costoViaticos' => !empty($subItem['costoViaticos']) ? $subItem['costoViaticos'] : null,
+						'costoAlojamiento' => !empty($subItem['costoAlojamiento']) ? $subItem['costoAlojamiento'] : null,
+						'cantidadViajes' => !empty($subItem['cantidadViajes']) ? $subItem['cantidadViajes'] : null,
 					];
 				}
 			}

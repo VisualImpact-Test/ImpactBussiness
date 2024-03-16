@@ -1503,6 +1503,11 @@ function generarCorrelativo($num, $max_cifras)
 	return $cadena;
 }
 
+function numeroPorcentaje($nro = 0)
+{
+	$nro = floatval($nro);
+	return ($nro + 100) / 100;
+}
 function getDataRefactorizada($post, $push_all = array())
 {
 	$dataRefactorizada = [];

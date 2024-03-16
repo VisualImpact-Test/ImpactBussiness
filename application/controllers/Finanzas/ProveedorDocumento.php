@@ -49,7 +49,7 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-	
+
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
 
 		$datos = array_merge($datos1, $datos2);
@@ -245,7 +245,7 @@ class ProveedorDocumento extends MY_Controller
 
 		$nIni = 2;
 		foreach ($data as $k => $v) {
-			if($v['numeroDocumento'] == null) {
+			if ($v['numeroDocumento'] == null) {
 				$numFactura = '-';
 			} else {
 				$numFactura = $v['numeroDocumento'];
@@ -335,7 +335,17 @@ class ProveedorDocumento extends MY_Controller
 			goto respuesta;
 		}
 
-		$this->db->update('sustento.comprobante', ['observacionRechazoFinanza' => $post['observacionRechazoFinanza'], 'flagAprobadoFinanza' => $post['flagAprobadoFinanza']], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
+		$this->db->update(
+			'sustento.comprobante',
+			[
+				'observacionRechazoFinanza' => $post['observacionRechazoFinanza'],
+				'flagAprobadoFinanza' => $post['flagAprobadoFinanza'],
+				'fechaAprobadoFinanza' => getActualDateTime()
+			],
+			[
+				'idSustentoAdjunto' => $post['idSustentoAdjunto']
+			]
+		);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Completo';
 		$result['data']['html'] = getMensajeGestion('registroExitoso');

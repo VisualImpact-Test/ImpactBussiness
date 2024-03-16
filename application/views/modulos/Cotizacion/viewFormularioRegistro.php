@@ -464,7 +464,7 @@
 						</div>
 						<!-- Paquete -->
 						<div class="ui form attached fluid segment my-3 d-none div-features div-feature-<?= COD_PAQUETE['id'] ?>">
-						<div class="row ml-0 pt-4">
+							<div class="row ml-0 pt-4">
 								<button type="button" class="ui button btn-add-sub-item-concurso teal ">
 									<i class="plus icon"></i>
 									Agregar
@@ -492,6 +492,17 @@
 									<input class="porcentajeSubItemConcurso keyUpChange onlyNumbers" name="porcentajeSubItemConcurso[0]" placeholder="Porcentaje" onchange="Cotizacion.calcularMontoConcurso(this);">
 								</div>
 							</div>
+						</div>
+						<!-- Rutas Viajeras -->
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+									<i class="plus icon"></i>
+									Indicar Detalle
+								</button>
+								<div class="datosRutasViajeras d-none"></div>
+							</div>
+							<div class="ui grid content-body-sub-item"></div>
 						</div>
 						<!-- Personal -->
 						<div class="d-none div-features div-feature-<?= COD_PERSONAL['id'] ?> personal_detalle personal_1" style="border: 1px solid;padding: 15px;">

@@ -583,8 +583,8 @@ class Cotizacion extends MY_Controller
 		$post['mes_inicio_personal'] = checkAndConvertToArray($post['mes_inicio_personal']);
 		$post['mes_fin_personal'] = checkAndConvertToArray($post['mes_fin_personal']);
 
-		$ttt = 0;
 		$n = 0; // Cantidad de items en la tabla de distribución.
+		$cantRutViaj = 0; // Cantidad de items en la tabla de Rutas Viajeras.
 
 		if (isset($post['idTipoServicio'])) $post['idTipoServicio'] = checkAndConvertToArray($post['idTipoServicio']);
 		if (isset($post['item'])) $post['item'] = checkAndConvertToArray($post['item']);
@@ -730,7 +730,56 @@ class Cotizacion extends MY_Controller
 							'tipo_movil' => $post["tipoMovilTransporte[$k]"],
 						]);
 						break;
+					case COD_RUTAS_VIAJERAS['id']:
+						if (!isset($post['cantidadItemsRutasViajeras'])) {
+							$result['result'] = 0;
+							$result['msg']['title'] = 'Alerta!';
+							$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Debe indicar items con su cantidad y costo en la cotización de distribución']);
+							goto respuesta;
+						}
+						$post['cantidadItemsRutasViajeras'] = checkAndConvertToArray($post['cantidadItemsRutasViajeras']);
 
+						$nro = isset($post['cantidadItemsRutasViajeras'][$k]) ? $post['cantidadItemsRutasViajeras'][$k] : 0;
+						$cantidad = intval($nro);
+						$data['subDetalle'][$k] = [];
+						for ($it = 0; $it < $cantidad; $it++) {
+							$name = 'Ruta Viajera de ' . $post['subDetRutViajOrigen'][$cantRutViaj];
+							$name .= ' a ';
+							$destinos = explode('-', $post['subDetRutViajDestino'][$cantRutViaj]);
+							if (count($destinos) == 1) $name .= $destinos[0];
+							else {
+								foreach ($destinos as $kr => $ruta) {
+									if ($kr != 0) $name .= ' / ' . $destinos[$kr - 1] . ' a ';
+									$name .= $destinos[$kr];
+								}
+							}
+							$data['subDetalle'][$k][] = [
+								'nombre' => $name,
+								'origen' => strval($post['subDetRutViajOrigen'][$cantRutViaj]),
+								'destino' => strval($post['subDetRutViajDestino'][$cantRutViaj]),
+								'responsable' => strval($post['subDetRutViajResponsable'][$cantRutViaj]),
+								'cargo' => strval($post['subDetRutViajCargo'][$cantRutViaj]),
+								'dni' => strval($post['subDetRutViajDni'][$cantRutViaj]),
+								'razonSocial' => strval($post['subDetRutViajRazonSocial'][$cantRutViaj]), //
+								'frecuencia' => strval($post['subDetRutViajFrecuencia'][$cantRutViaj]), //
+								'dias' => strval($post['subDetRutViajDias'][$cantRutViaj]), //
+								'costoAereo' => strval($post['subDetRutViajCostoAereo'][$cantRutViaj]),
+								'costoTransporte' => strval($post['subDetRutViajCostoTransporte'][$cantRutViaj]),
+								'costoMovilidadInterna' => strval($post['subDetRutViajCostoMovilidadInterna'][$cantRutViaj]),
+								'costoViaticos' => strval($post['subDetRutViajCostoViaticos'][$cantRutViaj]),
+								'costoAlojamiento' => strval($post['subDetRutViajCostoAlojamiento'][$cantRutViaj]),
+								'cantidadViajes' => strval($post['subDetRutViajCantidadViajes'][$cantRutViaj]),
+								'costoVisual' => strval($post['subDetRutViajCostoVisual'][$cantRutViaj]), //
+								'gap' => strval($post['subDetRutViajGap'][$cantRutViaj]), //
+								'costo' => strval($post['subDetRutViajCosto'][$cantRutViaj]), //
+								'cantidadReal' => strval($post['subDetRutViajCantidadReal'][$cantRutViaj]), //
+								'cantidad' => strval(round(floatval($post['subDetRutViajCantidadReal'][$cantRutViaj]) / 12, 2)), //
+								'tipo_movil' => strval($post['subDetRutViajTipoMovil'][$cantRutViaj]),
+								'subtotal' => strval($post['subDetRutViajSubTotal'][$cantRutViaj]),
+							];
+							$cantRutViaj++;
+						}
+						break;
 					case COD_DISTRIBUCION['id']:
 						if (!isset($post['cantidadDatosTabla'])) {
 							$result['result'] = 0;
@@ -878,7 +927,7 @@ class Cotizacion extends MY_Controller
 						'color' => !empty($subItem['color']) ? $subItem['color'] : NULL,
 						'genero' => isset($subItem['genero']) ? $subItem['genero'] : NULL,
 						'monto' => !empty($subItem['monto']) ? $subItem['monto'] : NULL,
-						'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
+						// 'subTotal' => !empty($subItem['costo']) && !empty($subItem['cantidad']) ? ($subItem['costo'] * $subItem['cantidad']) : NULL,
 						'costoDistribucion' => !empty($post['costoDistribucion']) ? $post['costoDistribucion'] : NULL, //$post
 						'cantidadPdv' => !empty($subItem['cantidadPdv']) ? $subItem['cantidadPdv'] : NULL,
 						'idItem' => !empty($subItem['idItemLogistica']) ? $subItem['idItemLogistica'] : NULL,
@@ -905,6 +954,18 @@ class Cotizacion extends MY_Controller
 						'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
 						'subtotal' => !empty($subItem['subtotal']) ? $subItem['subtotal'] : NULL,
 						'tipo_movil' => !empty($subItem['tipo_movil']) ? $subItem['tipo_movil'] : NULL,
+						// * De rutas Viajeras
+						'origen' => !empty($subItem['origen']) ? $subItem['origen'] : NULL,
+						'destino' => !empty($subItem['destino']) ? $subItem['destino'] : NULL,
+						'responsable' => !empty($subItem['responsable']) ? $subItem['responsable'] : NULL,
+						'cargo' => !empty($subItem['cargo']) ? $subItem['cargo'] : NULL,
+						'dni' => !empty($subItem['dni']) ? $subItem['dni'] : NULL,
+						'costoAereo' => !empty($subItem['costoAereo']) ? $subItem['costoAereo'] : NULL,
+						'costoTransporte' => !empty($subItem['costoTransporte']) ? $subItem['costoTransporte'] : NULL,
+						'costoMovilidadInterna' => !empty($subItem['costoMovilidadInterna']) ? $subItem['costoMovilidadInterna'] : NULL,
+						'costoViaticos' => !empty($subItem['costoViaticos']) ? $subItem['costoViaticos'] : NULL,
+						'costoAlojamiento' => !empty($subItem['costoAlojamiento']) ? $subItem['costoAlojamiento'] : NULL,
+						'cantidadViajes' => !empty($subItem['cantidadViajes']) ? $subItem['cantidadViajes'] : NULL,
 					];
 				}
 
@@ -1674,11 +1735,11 @@ class Cotizacion extends MY_Controller
 	public function getAllProvincias()
 	{
 		$data = $this->db->distinct()
-		->select('tzt.cod_departamento, tzt.cod_provincia as value, u.provincia as name')
-		->from('compras.tarifarioZonaTransporte tzt')
-		->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento', 'INNER')
-		->where('tzt.estado', 1)
-		->order_by('u.provincia')->get()->result_array();
+			->select('tzt.cod_departamento, tzt.cod_provincia as value, u.provincia as name')
+			->from('compras.tarifarioZonaTransporte tzt')
+			->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento', 'INNER')
+			->where('tzt.estado', 1)
+			->order_by('u.provincia')->get()->result_array();
 		$provincias = [];
 		foreach ($data as $k => $v) {
 			$provincias[$v['cod_departamento']][] = $v;
@@ -1688,11 +1749,11 @@ class Cotizacion extends MY_Controller
 	public function getAllDistritos()
 	{
 		$data = $this->db->distinct()
-		->select('tzt.cod_departamento, tzt.cod_provincia, tzt.cod_distrito as value, u.provincia as name')
-		->from('compras.tarifarioZonaTransporte tzt')
-		->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento AND u.cod_distrito = tzt.cod_distrito', 'INNER')
-		->where('tzt.estado', 1)
-		->order_by('u.provincia')->get()->result_array();
+			->select('tzt.cod_departamento, tzt.cod_provincia, tzt.cod_distrito as value, u.provincia as name')
+			->from('compras.tarifarioZonaTransporte tzt')
+			->join('General.dbo.ubigeo u', 'u.cod_provincia = tzt.cod_provincia AND u.cod_departamento = tzt.cod_departamento AND u.cod_distrito = tzt.cod_distrito', 'INNER')
+			->where('tzt.estado', 1)
+			->order_by('u.provincia')->get()->result_array();
 
 		$distritos = [];
 		foreach ($data as $k => $v) {
@@ -1703,7 +1764,7 @@ class Cotizacion extends MY_Controller
 	public function getAllTiposDeTransporte()
 	{
 		$data = $this->db->distinct()
-		->select('cod_departamento, cod_provincia, cod_distrito, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
+			->select('cod_departamento, cod_provincia, cod_distrito, tz.idTipoServicioUbigeo as value, ts.nombreAlternativo as name')
 			->join('compras.tipoServicioUbigeo ts', 'ts.idTipoServicioUbigeo = tz.idTipoServicioUbigeo')
 			->where('tz.estado', 1)->get('compras.tarifarioZonaTransporte tz')->result_array();
 
@@ -2077,19 +2138,89 @@ class Cotizacion extends MY_Controller
 					goto Respuesta;
 				}
 
-				$tpdm = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1])->row_array();
+				$tpdm = $this->db->get_where(
+					'compras.tipoPresupuestoDetalleMovilidad',
+					[
+						'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
+					]
+				)->row_array();
 
-				logError($tpdm);
-				// $datosHt[$k]['itemLogistica'] = $itm['nombre'];
-				// $datosHt[$k]['codigoItemLogistica'] = $itm['codigo'];
-				// $datosHt[$k]['pesoCuenta'] = round($itm['pesoCuenta'], 4);
-				// $datosHt[$k]['pesoVisual'] = round($itm['pesoLogistica'], 4);
+				$datosHt[$k] = $v;
+				if (empty($v['gap'])) $datosHt[$k]['gap'] = 0;
+				if ($post['buscarCosto'] == 'true') { // * Esta asi porque desde el js lo pasa como string
+					if (empty($tpdm)) {
+						$datosHt[$k]['aereo'] =
+							$datosHt[$k]['transporte'] =
+							$datosHt[$k]['movilidad'] =
+							$datosHt[$k]['viaticos'] =
+							$datosHt[$k]['alojamiento'] = 0;
+					} else {
+						$datosHt[$k]['aereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['transporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['movilidad'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['viaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['alojamiento'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2)) * floatval($v['dias']);
+					}
+				}
+				$datosHt[$k]['subtotal'] =
+					floatval($datosHt[$k]['aereo']) +
+					floatval($datosHt[$k]['transporte']) +
+					floatval($datosHt[$k]['movilidad']) +
+					floatval($datosHt[$k]['viaticos']) +
+					floatval($datosHt[$k]['alojamiento']);
+
+				$datosHt[$k]['totalMensual'] = round(floatval($datosHt[$k]['subtotal']) * floatval($v['viajes']), 4);
+				$datosHt[$k]['totalVi'] = round($datosHt[$k]['totalMensual'] + floatval($datosHt[$k]['aereo']), 4);
+				$datosHt[$k]['total'] = round($datosHt[$k]['totalVi'] * numeroPorcentaje($v['gap']), 4);
+				// ? Revisar si se puede poner estas variables en constants.php o en una tabla en la BDs
+				switch ($v['frecuencia']) {
+					case 'QUINCENAL':
+						$datosHt[$k]['frecuenciaAnual'] = 24;
+						break;
+					case 'MENSUAL':
+						$datosHt[$k]['frecuenciaAnual'] = 12;
+						break;
+					case 'BIMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 6;
+						break;
+					case 'TRIMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 4;
+						break;
+					case 'SEMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 2;
+						break;
+					case 'ANUAL':
+						$datosHt[$k]['frecuenciaAnual'] = 1;
+						break;
+					default:
+						$datosHt[$k]['frecuenciaAnual'] = 0;
+						break;
+				}
+				$datosHt[$k]['cuenta'] = round($datosHt[$k]['total'] * $datosHt[$k]['frecuenciaAnual'] / 12, 4);
 			}
 		} else {
-			$datosHt[0]['codigoItemLogistica'] = null;
-			$datosHt[0]['itemLogistica'] = null;
-			$datosHt[0]['pesoCuenta'] = null;
-			$datosHt[0]['pesoVisual'] = null;
+			$datosHt[0]['responsable'] =
+				$datosHt[0]['origen'] =
+				$datosHt[0]['destino'] =
+				$datosHt[0]['cargo'] =
+				$datosHt[0]['dni'] =
+				$datosHt[0]['persona'] =
+				$datosHt[0]['frecuencia'] =
+				$datosHt[0]['dias'] =
+				$datosHt[0]['aereo'] =
+				$datosHt[0]['transporte'] =
+				$datosHt[0]['movilidad'] =
+				$datosHt[0]['viaticos'] =
+				$datosHt[0]['alojamiento'] =
+				$datosHt[0]['subtotal'] =
+				$datosHt[0]['viajes'] =
+				$datosHt[0]['totalMensual'] =
+				$datosHt[0]['totalVi'] =
+				$datosHt[0]['gap'] =
+				$datosHt[0]['total'] =
+				$datosHt[0]['frecuenciaAnual'] =
+				$datosHt[0]['cuenta'] =
+				$datosHt[0]['traslado'] = NULL;
 		}
 
 
@@ -2145,6 +2276,9 @@ class Cotizacion extends MY_Controller
 		$header[] = 'TOTAL VI + TR. AEREO';
 		$column[] = ['data' => 'totalVi', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
 
+		$header[] = 'GAP %';
+		$column[] = ['data' => 'gap', 'type' => 'numeric', 'placeholder' => 'Gap', 'width' => 250];
+
 		$header[] = 'TOTAL';
 		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
 
@@ -2152,32 +2286,11 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'frecuenciaAnual', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250, 'readOnly' => true];
 
 		$header[] = 'CUENTA';
-		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250];
+		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250, 'readOnly' => true];
 
 		$header[] = 'TRASLADO';
 		$column[] = ['data' => 'traslado', 'type' => 'text', 'placeholder' => 'Traslado', 'width' => 250];
 		// FIN: HEADER & COLUMN
-
-		/**
-		 * !Esto es lo que estaba antes, borrar cuando se termine la funcion
-			$header[] = 'COD ITEM LOGISTICA*';
-			$column[] = ['data' => 'codigoItemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Item', 'width' => 150, 'source' => $itemLogisticaCod];
-			// $datosHt[$nro]['codigoItemLogistica'] = null;
-
-			$header[] = 'ITEM LOGISTICA*';
-			$column[] = ['data' => 'itemLogistica', 'type' => 'myDropdown', 'placeholder' => 'Zona', 'width' => 700, 'source' => $itemLogistica];
-			// $datosHt[$nro]['zona'] = null;
-
-			$header[] = 'PESO CUENTA';
-			$column[] = ['data' => 'pesoCuenta', 'type' => 'numeric', 'placeholder' => 'Peso Cuenta', 'width' => 200, 'readOnly' => true];
-			// $datosHt[$nro]['pesoCuenta'] = null;
-
-			$header[] = 'PESO VISUAL';
-			$column[] = ['data' => 'pesoVisual', 'type' => 'numeric', 'placeholder' => 'Peso Visual', 'width' => 200, 'readOnly' => true];
-			// $datosHt[$nro]['pesoVisual'] = null;
-			// FIN: HEADER & COLUMN
-		 */
-
 
 		//ARMANDO HANDSONTABLE
 		$HT[0] = [
@@ -2195,7 +2308,7 @@ class Cotizacion extends MY_Controller
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
 
-		$result['msg']['title'] = "Carga masiva detalle distribución";
+		$result['msg']['title'] = "Carga masiva detalle rutas viajeras";
 
 		Respuesta:
 		echo json_encode($result);
@@ -2473,6 +2586,10 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'totalVi', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['totalVi'] = null;
 
+		$header[] = 'GAP %';
+		$column[] = ['data' => 'gap', 'type' => 'numeric', 'placeholder' => 'Gap', 'width' => 250];
+		$datosHt[$nro]['gap'] = null;
+
 		$header[] = 'TOTAL';
 		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['total'] = null;
@@ -2482,7 +2599,7 @@ class Cotizacion extends MY_Controller
 		$datosHt[$nro]['frecuenciaAnual'] = null;
 
 		$header[] = 'CUENTA';
-		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250];
+		$column[] = ['data' => 'cuenta', 'type' => 'numeric', 'placeholder' => 'Cuenta', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['cuenta'] = null;
 
 		$header[] = 'TRASLADO';
@@ -2498,8 +2615,6 @@ class Cotizacion extends MY_Controller
 			'columns' => $column,
 			// 'colWidths' => 200,
 		];
-
-		logError($header);
 
 		//MOSTRANDO VISTA
 		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
@@ -2640,17 +2755,107 @@ class Cotizacion extends MY_Controller
 		Respuesta:
 		echo json_encode($result);
 	}
+	function generarDatosTablaRutasViajeras()
+	{
+		$post = $this->input->post();
+		$ht = $post['HT'][0];
+		array_pop($ht);
+
+		$arrayDatos = [];
+		$n = 0;
+
+		foreach ($ht as $k => $v) {
+			if (empty($v['origen']) || empty($v['destino'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Origen & Destino']);
+				goto Respuesta;
+			}
+			if (empty($v['dias'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Cantidad de días']);
+				goto Respuesta;
+			}
+			if (empty($v['cuenta'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Es necesario que la cuenta tenga un monto']);
+				goto Respuesta;
+			}
+			$idTipoPresupuestoDetalleMovilidad = null;
+			$tpdm = $this->db->get_where(
+				'compras.tipoPresupuestoDetalleMovilidad',
+				[
+					'origen' => $v['origen'],
+					'destino' => $v['destino'],
+					'estado' => 1,
+				]
+			)->row_array();
+
+
+			if (!empty($tpdm)) $idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
+			else {
+				// * Buscar si hay un id con estado 0;
+				$tpdm = $this->db->get_where(
+					'compras.tipoPresupuestoDetalleMovilidad',
+					[
+						'origen' => $v['origen'],
+						'destino' => $v['destino']
+					]
+				)->row_array();
+
+				$datosInsertOrUpdate = [
+					'estado' => 1,
+					'precioBus' => floatval(verificarEmpty($v['transporte'], 2)) / floatval($v['dias']),
+					'precioHospedaje' => floatval(verificarEmpty($v['alojamiento'], 2)) / floatval($v['dias']),
+					'precioViaticos' => floatval(verificarEmpty($v['viaticos'], 2)) / floatval($v['dias']),
+					'precioMovilidadInterna' => floatval(verificarEmpty($v['movilidad'], 2)) / floatval($v['dias']),
+					'precioAereo' => floatval(verificarEmpty($v['aereo'], 2)) / floatval($v['dias']),
+				];
+
+				if (!empty($tpdm)) { // * Si encontramos 1 se activa y actualizan los costos.
+					$idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
+					$this->db->update(
+						'compras.tipoPresupuestoDetalleMovilidad',
+						$datosInsertOrUpdate,
+						['idTipoPresupuestoDetalleMovilidad' => $tpdm['idTipoPresupuestoDetalleMovilidad']]
+					);
+				} else {
+					$datosInsertOrUpdate['origen'] = $v['origen'];
+					$datosInsertOrUpdate['destino'] = $v['destino'];
+					$datosInsertOrUpdate['idUsuario'] = $this->idUsuario;
+					$datosInsertOrUpdate['fechaReg'] = getActualDateTime();
+					$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $datosInsertOrUpdate);
+					$idTipoPresupuestoDetalleMovilidad = $this->db->insert_id();
+				}
+			}
+
+
+			// $item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
+			$arrayDatos[$n] = $v;
+			$arrayDatos[$n]['idFrecuencia'] = $this->db->get_where('dbo.frecuencia', ['nombre' => $v['frecuencia']])->row_array()['idFrecuencia'];
+			$arrayDatos[$n]['idTPDM'] = $idTipoPresupuestoDetalleMovilidad;
+			$n++;
+		}
+
+		$result = $this->result;
+		$result['result'] = 1;
+		$result['msg']['content'] = $arrayDatos;
+		Respuesta:
+		echo json_encode($result);
+	}
 	public function getProvincia()
 	{
 		$post = $this->input->post();
 
 		$provincia = $this->db->distinct()->select('tzt.cod_provincia, u.provincia')
-		->from('compras.tarifarioZonaTransporte tzt')
-		->join('General.dbo.ubigeo u', 
-		'u.cod_provincia = tzt.cod_provincia AND tzt.cod_departamento = u.cod_departamento', 'INNER')
-		->where('tzt.cod_departamento', $post['cod_dep'])
-		->where('tzt.estado', 1)
-		->order_by('u.provincia')->get()->result_array();
+			->from('compras.tarifarioZonaTransporte tzt')
+			->join(
+				'General.dbo.ubigeo u',
+				'u.cod_provincia = tzt.cod_provincia AND tzt.cod_departamento = u.cod_departamento',
+				'INNER'
+			)
+			->where('tzt.cod_departamento', $post['cod_dep'])
+			->where('tzt.estado', 1)
+			->order_by('u.provincia')->get()->result_array();
 
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_provincia', 'value' => 'provincia', 'query' => $provincia, 'class' => 'text-titlecase']);
 	}
@@ -2659,13 +2864,16 @@ class Cotizacion extends MY_Controller
 		$post = $this->input->post();
 
 		$distrito = $this->db->distinct()->select('tzt.cod_distrito, u.distrito')
-		->from('compras.tarifarioZonaTransporte tzt')
-		->join('General.dbo.ubigeo u', 
-		'u.cod_distrito = tzt.cod_distrito AND tzt.cod_departamento = u.cod_departamento AND tzt.cod_provincia = u.cod_provincia', 'INNER')
-		->where('tzt.cod_departamento', $post['cod_dep'])
-		->where('tzt.cod_provincia', $post['cod_pro'])
-		->where('tzt.estado', 1)
-		->order_by('u.distrito')->get()->result_array();
+			->from('compras.tarifarioZonaTransporte tzt')
+			->join(
+				'General.dbo.ubigeo u',
+				'u.cod_distrito = tzt.cod_distrito AND tzt.cod_departamento = u.cod_departamento AND tzt.cod_provincia = u.cod_provincia',
+				'INNER'
+			)
+			->where('tzt.cod_departamento', $post['cod_dep'])
+			->where('tzt.cod_provincia', $post['cod_pro'])
+			->where('tzt.estado', 1)
+			->order_by('u.distrito')->get()->result_array();
 		var_dump($this->db->last_query());
 		exit;
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_distrito', 'value' => 'distrito', 'query' => $distrito, 'class' => 'text-titlecase']);
@@ -5512,25 +5720,25 @@ class Cotizacion extends MY_Controller
 
 		foreach ($cabOperLog as $f => $d) {
 			$insertarCabOperLog = [
-				'idCuenta' => $d['idCuenta'], 
-				'idCuentaCentroCosto' => $d['idCentroCosto'], 
-				'idCuentaUsuario' => $post['CuentaUsuario'], 
-				'codCotizacion' => $d['codCotizacion'], 
-				'nombreCotizacion' => $d['nombreCotizacion'], 
-				'ordenCompra' => null, 
-				'dirigido' => $d['nombre'], 
-				'fotografico' => $d['fotografia'], 
-				'guia' => $d['guia'], 
-				'otros' => $d['otros'], 
+				'idCuenta' => $d['idCuenta'],
+				'idCuentaCentroCosto' => $d['idCentroCosto'],
+				'idCuentaUsuario' => $post['CuentaUsuario'],
+				'codCotizacion' => $d['codCotizacion'],
+				'nombreCotizacion' => $d['nombreCotizacion'],
+				'ordenCompra' => null,
+				'dirigido' => $d['nombre'],
+				'fotografico' => $d['fotografia'],
+				'guia' => $d['guia'],
+				'otros' => $d['otros'],
 				// 'archivoCotizacion' => $archivoNameCotizacion, 
 				// 'archivoOrden' => $archivoNameOrdenCompra, 
-				'idEstado' => $d['idEstado'], 
-				'estado' => $d['estado'], 
-				'fecReg' => getSoloFecha(), 
-				'horReg' => getSoloHora(), 
-				'idUsuario' => $this->idUsuario, 
-				'updateCC' => null, 
-				'fechaUltimaModificacion' => null, 
+				'idEstado' => $d['idEstado'],
+				'estado' => $d['estado'],
+				'fecReg' => getSoloFecha(),
+				'horReg' => getSoloHora(),
+				'idUsuario' => $this->idUsuario,
+				'updateCC' => null,
+				'fechaUltimaModificacion' => null,
 				'flagImpactBussiness' => 1
 				// flagImpactBussiness
 			];
@@ -5573,7 +5781,7 @@ class Cotizacion extends MY_Controller
 					}
 				}
 			}
-		
+
 			$this->db->update('compras.cotizacionDetalle', ['idOperLog' => $idOperlog], ['idCotizacionDetalle' => $d['idCotizacionDetalle']]);
 		}
 
@@ -5596,7 +5804,7 @@ class Cotizacion extends MY_Controller
 			$this->db->trans_commit();
 			$result['result'] = 1;
 			$result['msg']['title'] = 'OPERLOG creado ';
-			$result['msg']['content'] = '<div class="alert alert-success m-3 noResultado" role="alert">	<i class="fas fa-check"></i> El registro se realizó correctamente <b>'.$codConcat.'</b>. </div>';
+			$result['msg']['content'] = '<div class="alert alert-success m-3 noResultado" role="alert">	<i class="fas fa-check"></i> El registro se realizó correctamente <b>' . $codConcat . '</b>. </div>';
 		}
 		echo json_encode($result);
 	}

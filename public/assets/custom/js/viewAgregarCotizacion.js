@@ -795,6 +795,8 @@ var Cotizacion = {
 				cotizacionInternaForm.val(0);
 				control.closest('.body-item').find('.gapForm').val('0');
 				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
+			} else if (idTipo == COD_RUTAS_VIAJERAS.id) {
+				cotizacionInternaForm.val(0); //Sin cotizacion Interna
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -2704,8 +2706,21 @@ var Cotizacion = {
 			});
 		});
 	},
-	procesarPreciosRutasViajeras: function (modalId, buscarCosto) {
+	procesarPreciosRutasViajeras: function (idModalHT, buscarCosto) {
 		var data = Fn.formSerializeObject('formCargaMasiva');
+		var contColsInvalid = 0;
+		contColsInvalid = $('#divTablaCargaMasiva .htInvalid').length;
+
+		if (contColsInvalid > 0) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = new Array();
+			btn[0] = { title: 'Cerrar', fn: fn };
+			var message = Fn.message({ 'type': 2, 'message': 'Se encontró datos obligatorios que no fueron ingresados, verificar los datos remarcados <label style="color:red">en rojo</label>' });
+			Fn.showModal({ id: modalId, title: 'Alerta', frm: message, btn: btn, show: true });
+			return false;
+		}
+
 		var HT = [];
 		$.each(HTCustom.HTObjects, function (i, v) {
 			if (typeof v !== 'undefined') HT.push(v.getSourceData());
@@ -2721,11 +2736,13 @@ var Cotizacion = {
 			var btn = [];
 			if (a.result === 1) {
 				Fn.showModal({ id: idModalHT, show: false });
-				var fn1 = `Cotizacion.buscarPesos(${modalId});`;
-				var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
+				var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+				var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+				var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-				btn[1] = { title: 'Procesar', fn: fn1 };
-				btn[2] = { title: 'Guardar', fn: fn2 };
+				btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+				btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+				btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);
@@ -3029,6 +3046,76 @@ var Cotizacion = {
 				HT[0].pop();
 				Cotizacion.temp.closest('.div-features').find('.content-body-sub-item').html(html);
 				Cotizacion.temp.closest('.div-features').find('.arrayDatosItems').html(JSON.stringify(HT[0]));
+			} else {
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			}
+		});
+	},
+	llenarCamposEnTablaRutasViajeras: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		// var jsonString = { 'data': data };
+		// var config = { 'url': Cotizacion.url + 'generarDatosPesosItem', 'data': jsonString };
+		var config = { 'url': Cotizacion.url + 'generarDatosTablaRutasViajeras', 'data': data };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result === 2) return false;
+
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+
+			if (a.result == 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				datosDeHT = JSON.parse(JSON.stringify(a.msg.content));
+				html = `<input type="hidden" name="cantidadItemsRutasViajeras" value="${datosDeHT.length}">`;
+				let costoTotal = 0;
+				for (let i = 0; i < datosDeHT.length; i++) {
+					row = datosDeHT[i];
+					html += `
+					<div class="three column row">
+						<div class="column">
+							<div class="ui sub header">Origen</div>
+							<input value="${row.origen}" readonly name="subDetRutViajOrigen">
+						</div>
+						<div class="column">
+							<div class="ui sub header">Destino</div>
+							<input value="${row.destino}" readonly name="subDetRutViajDestino">
+						</div>
+						<div class="column">
+							<div class="ui sub header">Total</div>
+							<input value="${row.cuenta}" readonly name="subDetRutViajSubTotal">
+						</div>
+						<div class="column"><input type="hidden" value="${row.responsable}" name="subDetRutViajResponsable"></div>
+						<div class="column"><input type="hidden" value="${row.cargo}" name="subDetRutViajCargo"></div>
+						<div class="column"><input type="hidden" value="${row.dni}" name="subDetRutViajDni"></div>
+						<div class="column"><input type="hidden" value="${row.persona}" name="subDetRutViajRazonSocial"></div>
+						<div class="column"><input type="hidden" value="${row.idFrecuencia}" name="subDetRutViajFrecuencia"></div>
+						<div class="column"><input type="hidden" value="${row.dias}" name="subDetRutViajDias"></div>
+						<div class="column"><input type="hidden" value="${row.aereo}" name="subDetRutViajCostoAereo"></div>
+						<div class="column"><input type="hidden" value="${row.transporte}" name="subDetRutViajCostoTransporte"></div>
+						<div class="column"><input type="hidden" value="${row.movilidad}" name="subDetRutViajCostoMovilidadInterna"></div>
+						<div class="column"><input type="hidden" value="${row.viaticos}" name="subDetRutViajCostoViaticos"></div>
+						<div class="column"><input type="hidden" value="${row.alojamiento}" name="subDetRutViajCostoAlojamiento"></div>
+						<div class="column"><input type="hidden" value="${row.viajes}" name="subDetRutViajCantidadViajes"></div>
+						<div class="column"><input type="hidden" value="${row.totalVi}" name="subDetRutViajCostoVisual"></div>
+						<div class="column"><input type="hidden" value="${row.gap}" name="subDetRutViajGap"></div>
+						<div class="column"><input type="hidden" value="${row.total}" name="subDetRutViajCosto"></div>
+						<div class="column"><input type="hidden" value="${row.frecuenciaAnual}" name="subDetRutViajCantidadReal"></div>
+						<div class="column"><input type="hidden" value="${row.traslado}" name="subDetRutViajTipoMovil"></div>
+					</div>`;
+					costoTotal += parseFloat(row.cuenta);
+				}
+				Cotizacion.temp.closest('.body-item').find('.costoForm').val(costoTotal);
+				Cotizacion.temp.closest('.body-item').find('.cantidadForm').val(1).keyup();
+				HT[0].pop();
+				Cotizacion.temp.closest('.div-features').find('.content-body-sub-item').html(html);
+				Cotizacion.temp.closest('.div-features').find('.datosRutasViajeras').html(JSON.stringify(HT[0]));
 			} else {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
 			}
