@@ -996,6 +996,7 @@ class M_Cotizacion extends MY_Model
 						'cod_distrito' => !empty($subItem['cod_distrito']) ? $subItem['cod_distrito'] : null,
 						'idTipoServicioUbigeo' => !empty($subItem['idTipoServicioUbigeo']) ? $subItem['idTipoServicioUbigeo'] : null,
 						// *Agregado de Rutas Viajeras
+						'razonSocial' => !empty($subItem['razonSocial']) ? $subItem['razonSocial'] : null,
 						'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : null,
 						'origen' => !empty($subItem['origen']) ? $subItem['origen'] : null,
 						'destino' => !empty($subItem['destino']) ? $subItem['destino'] : null,
@@ -1939,6 +1940,18 @@ class M_Cotizacion extends MY_Model
 							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
 							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
 							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
+							// * Rutas Viajeras
+							'origen' => !empty($subItem['origen']) ? $subItem['origen'] : null,
+							'destino' => !empty($subItem['destino']) ? $subItem['destino'] : null,
+							'responsable' => !empty($subItem['responsable']) ? $subItem['responsable'] : null,
+							'cargo' => !empty($subItem['cargo']) ? $subItem['cargo'] : null,
+							'dni' => !empty($subItem['dni']) ? $subItem['dni'] : null,
+							'costoAereo' => !empty($subItem['costoAereo']) ? $subItem['costoAereo'] : null,
+							'costoTransporte' => !empty($subItem['costoTransporte']) ? $subItem['costoTransporte'] : null,
+							'costoMovilidadInterna' => !empty($subItem['costoMovilidadInterna']) ? $subItem['costoMovilidadInterna'] : null,
+							'costoViaticos' => !empty($subItem['costoViaticos']) ? $subItem['costoViaticos'] : null,
+							'costoAlojamiento' => !empty($subItem['costoAlojamiento']) ? $subItem['costoAlojamiento'] : null,
+							'cantidadViajes' => !empty($subItem['cantidadViajes']) ? $subItem['cantidadViajes'] : null,
 						];
 					} else {
 						$insertSubItem[] = [
@@ -1984,6 +1997,18 @@ class M_Cotizacion extends MY_Model
 							'idConcepto' => !empty($subItem['idConcepto']) ? $subItem['idConcepto'] : NULL,
 							'flagConcepto' => !empty($subItem['flagConcepto']) ? $subItem['flagConcepto'] : NULL,
 							'frecuencia' => !empty($subItem['frecuencia']) ? $subItem['frecuencia'] : NULL,
+							// * Rutas Viajeras
+							'origen' => !empty($subItem['origen']) ? $subItem['origen'] : null,
+							'destino' => !empty($subItem['destino']) ? $subItem['destino'] : null,
+							'responsable' => !empty($subItem['responsable']) ? $subItem['responsable'] : null,
+							'cargo' => !empty($subItem['cargo']) ? $subItem['cargo'] : null,
+							'dni' => !empty($subItem['dni']) ? $subItem['dni'] : null,
+							'costoAereo' => !empty($subItem['costoAereo']) ? $subItem['costoAereo'] : null,
+							'costoTransporte' => !empty($subItem['costoTransporte']) ? $subItem['costoTransporte'] : null,
+							'costoMovilidadInterna' => !empty($subItem['costoMovilidadInterna']) ? $subItem['costoMovilidadInterna'] : null,
+							'costoViaticos' => !empty($subItem['costoViaticos']) ? $subItem['costoViaticos'] : null,
+							'costoAlojamiento' => !empty($subItem['costoAlojamiento']) ? $subItem['costoAlojamiento'] : null,
+							'cantidadViajes' => !empty($subItem['cantidadViajes']) ? $subItem['cantidadViajes'] : null,
 						];
 					}
 				}
@@ -2805,7 +2830,7 @@ class M_Cotizacion extends MY_Model
 		}
 		return $this->resultado;
 	}
-	
+
 
 	public function cabOperLogDetalleSub($params = [])
 	{
@@ -2842,7 +2867,7 @@ class M_Cotizacion extends MY_Model
 	}
 
 
-	public function detalleOperLogDetalleSub($params = [] , $iditem,$idZona)
+	public function detalleOperLogDetalleSub($params = [], $iditem, $idZona)
 	{
 		$sql = "
 		select * from compras.cotizacionDetalleSub
@@ -2943,7 +2968,7 @@ class M_Cotizacion extends MY_Model
 
 
 
-	public function obtenerCotizacionDetalleArchivos($params = [],$idCotizacionDetalle)
+	public function obtenerCotizacionDetalleArchivos($params = [], $idCotizacionDetalle)
 	{
 
 

@@ -3094,20 +3094,20 @@ var Cotizacion = {
 						<div class="column"><input type="hidden" value="${row.responsable}" name="subDetRutViajResponsable"></div>
 						<div class="column"><input type="hidden" value="${row.cargo}" name="subDetRutViajCargo"></div>
 						<div class="column"><input type="hidden" value="${row.dni}" name="subDetRutViajDni"></div>
-						<div class="column"><input type="hidden" value="${row.persona}" name="subDetRutViajRazonSocial"></div>
+						<div class="column"><input type="hidden" value="${row.razonSocial}" name="subDetRutViajRazonSocial"></div>
 						<div class="column"><input type="hidden" value="${row.idFrecuencia}" name="subDetRutViajFrecuencia"></div>
 						<div class="column"><input type="hidden" value="${row.dias}" name="subDetRutViajDias"></div>
-						<div class="column"><input type="hidden" value="${row.aereo}" name="subDetRutViajCostoAereo"></div>
-						<div class="column"><input type="hidden" value="${row.transporte}" name="subDetRutViajCostoTransporte"></div>
-						<div class="column"><input type="hidden" value="${row.movilidad}" name="subDetRutViajCostoMovilidadInterna"></div>
-						<div class="column"><input type="hidden" value="${row.viaticos}" name="subDetRutViajCostoViaticos"></div>
-						<div class="column"><input type="hidden" value="${row.alojamiento}" name="subDetRutViajCostoAlojamiento"></div>
-						<div class="column"><input type="hidden" value="${row.viajes}" name="subDetRutViajCantidadViajes"></div>
-						<div class="column"><input type="hidden" value="${row.totalVi}" name="subDetRutViajCostoVisual"></div>
+						<div class="column"><input type="hidden" value="${row.costoAereo}" name="subDetRutViajCostoAereo"></div>
+						<div class="column"><input type="hidden" value="${row.costoTransporte}" name="subDetRutViajCostoTransporte"></div>
+						<div class="column"><input type="hidden" value="${row.costoMovilidadInterna}" name="subDetRutViajCostoMovilidadInterna"></div>
+						<div class="column"><input type="hidden" value="${row.costoViaticos}" name="subDetRutViajCostoViaticos"></div>
+						<div class="column"><input type="hidden" value="${row.costoAlojamiento}" name="subDetRutViajCostoAlojamiento"></div>
+						<div class="column"><input type="hidden" value="${row.cantidadViajes}" name="subDetRutViajCantidadViajes"></div>
+						<div class="column"><input type="hidden" value="${row.costoVisual}" name="subDetRutViajCostoVisual"></div>
 						<div class="column"><input type="hidden" value="${row.gap}" name="subDetRutViajGap"></div>
 						<div class="column"><input type="hidden" value="${row.total}" name="subDetRutViajCosto"></div>
 						<div class="column"><input type="hidden" value="${row.frecuenciaAnual}" name="subDetRutViajCantidadReal"></div>
-						<div class="column"><input type="hidden" value="${row.traslado}" name="subDetRutViajTipoMovil"></div>
+						<div class="column"><input type="hidden" value="${row.tipo_movil}" name="subDetRutViajTipoMovil"></div>
 					</div>`;
 					costoTotal += parseFloat(row.cuenta);
 				}

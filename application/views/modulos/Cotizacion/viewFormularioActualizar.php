@@ -965,6 +965,54 @@
 									<? endforeach; ?>
 								<? endif; ?>
 							</div>
+							<!-- Rutas Viajeras -->
+							<div class="ui grid ml-0 mb-2 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?> <?= $row['idItemTipo'] == COD_RUTAS_VIAJERAS['id'] ? '' : 'd-none' ?>">
+								<div class="row ml-0 pt-4">
+									<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+										<i class="plus icon"></i>
+										Indicar Detalle
+									</button>
+									<div class="datosRutasViajeras d-none">
+										<?= json_encode($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>
+									</div>
+								</div>
+								<div class="ui grid content-body-sub-item">
+									<input type="hidden" name="cantidadItemsRutasViajeras" value="<?= count($dataRutasViajeras[$row['idCotizacionDetalle']]) ?>">
+									<?php foreach ($dataRutasViajeras[$row['idCotizacionDetalle']] as $rutaViajera) : ?>
+										<div class="three column row">
+											<div class="column">
+												<div class="ui sub header">Origen</div>
+												<input value="<?= $rutaViajera['origen'] ?>" readonly name="subDetRutViajOrigen">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Destino</div>
+												<input value="<?= $rutaViajera['destino'] ?>" readonly name="subDetRutViajDestino">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Total</div>
+												<input value="<?= $rutaViajera['cuenta'] ?>" readonly name="subDetRutViajSubTotal">
+											</div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['responsable'] ?>" name="subDetRutViajResponsable"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['cargo'] ?>" name="subDetRutViajCargo"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['dni'] ?>" name="subDetRutViajDni"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['razonSocial'] ?>" name="subDetRutViajRazonSocial"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['idFrecuencia'] ?>" name="subDetRutViajFrecuencia"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['dias'] ?>" name="subDetRutViajDias"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAereo'] ?>" name="subDetRutViajCostoAereo"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoTransporte'] ?>" name="subDetRutViajCostoTransporte"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoMovilidadInterna'] ?>" name="subDetRutViajCostoMovilidadInterna"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoViaticos'] ?>" name="subDetRutViajCostoViaticos"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAlojamiento'] ?>" name="subDetRutViajCostoAlojamiento"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['cantidadViajes'] ?>" name="subDetRutViajCantidadViajes"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoVisual'] ?>" name="subDetRutViajCostoVisual"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['gap'] ?>" name="subDetRutViajGap"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['total'] ?>" name="subDetRutViajCosto"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['frecuenciaAnual'] ?>" name="subDetRutViajCantidadReal"></div>
+											<div class="column"><input type="hidden" value="<?= $rutaViajera['tipo_movil'] ?>" name="subDetRutViajTipoMovil"></div>
+										</div>
+									<?php endforeach; ?>
+								</div>
+							</div>
 							<!-- TRANSPORTE -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) : ?>
 								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
