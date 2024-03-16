@@ -882,13 +882,23 @@ var Cotizacion = {
 
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
 		});
-
+		
 		$(document).on('click', '.btn-descargarCotizacionOper', function () {
 			let id = $(this).data('id');
 			let data = { id };
 			let jsonString = { 'data': JSON.stringify(data) };
 
 			Fn.download(site_url + Cotizacion.url + 'generarCotizacionPDF', jsonString);
+		});
+
+		$(document).on('click', '.btn-descargarOperExcel', function () {
+			let idCotizacion = $(this).data('id');
+			let data = { idCotizacion };
+			let jsonString = { 'data': JSON.stringify(data) };
+			var url = site_url + Cotizacion.url + 'descargar_oper_excel';
+			$.when(Fn.download(url, jsonString)).then(function (a) {
+				Fn.showLoading(false);
+			});
 		});
 
 		$(document).on('click', '.btnAnularCotizacion', function () {

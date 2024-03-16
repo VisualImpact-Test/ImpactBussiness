@@ -2294,7 +2294,9 @@ class M_Cotizacion extends MY_Model
 					cd.flagMostrarDetalle,
 					cd.requiereOrdenCompra,
 					cd.idTipo_TarjetasVales,
-					cd.flagDetalleTarjetasVales
+					cd.flagDetalleTarjetasVales,
+					cd.flagAlternativo,
+					cd.nombreAlternativo
 				FROM
 					compras.cotizacion c
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2348,7 +2350,9 @@ class M_Cotizacion extends MY_Model
 				lt.flagMostrarDetalle,
 				lt.requiereOrdenCompra,
 				lt.idTipo_TarjetasVales,
-				lt.flagDetalleTarjetasVales
+				lt.flagDetalleTarjetasVales,
+				lt.flagAlternativo,
+				lt.nombreAlternativo
 				FROM listItem lt
 			)
 			SELECT
@@ -2801,7 +2805,58 @@ class M_Cotizacion extends MY_Model
 		}
 		return $this->resultado;
 	}
+	
 
+	public function cabOperLogDetalleSub($params = [])
+	{
+		$sql = "
+		select idItem , nombre from compras.cotizacionDetallesub
+		where idCotizacionDetalle = " . $params . "
+		group by idItem , nombre
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+
+	public function zonaOperLogDetalleSub($params = [])
+	{
+		$sql = "
+		select idZona, nombreLocal , cds.flagOtrosPuntos , ts.idTipoTransporte from compras.cotizacionDetalleSub as cds
+		left join visualImpact.logistica.localesTerceros as vllt on cds.idzona = vllt.idLocalTercero and cds.flagOtrosPuntos = 1
+		left join compras.tipoServicio as ts on cds.idTipoServicio = ts.idTipoServicio 
+		where idCotizacionDetalle = " . $params . "
+		and idZona IS NOT NULL
+		group by idzona ,nombreLocal , cds.flagOtrosPuntos , ts.idTipoTransporte
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+
+	public function detalleOperLogDetalleSub($params = [] , $iditem,$idZona)
+	{
+		$sql = "
+		select * from compras.cotizacionDetalleSub
+		where idCotizacionDetalle = " . $params . "
+		and idItem = " . $iditem . "
+		and idZona = " . $idZona . "
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
 
 	public function datosOperLogDetalleSub($params = [])
 	{

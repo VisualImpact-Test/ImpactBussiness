@@ -24,7 +24,7 @@
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $Almacen, 'class' => 'text-titlecase', 'selected' => 1]); ?>
 				</select>
 			</div>
-			<div class="five wide field">
+			<div class="three wide field">
 				<label>Cotizacion:</label>
 				<a href="javascript:;" download="" class="btn btn-outline-secondary border-0 btn-descargarCotizacionOper" data-id="<?= $cabOperLog[0]['idCotizacion'] ?>">
 					<i class="file pdf icon large" title="Generar PDF cotizacion"></i>
@@ -32,14 +32,20 @@
 
 				<!-- <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'cotizacion', 'visible' => false, 'tipo' => 2]) ?> -->
 			</div>
-			<div class="five wide field">
+			<div class="three wide field">
 				<label>Orden de compra:</label>
 				<?php $direccion = RUTA_WASABI . 'cotizacion/' . $cabOperLog[0]['nombre_archivo']; ?>
-				<a class="ui button" href="<?= $direccion ?>" target="_blank"><i class="icon eye"></i></a>
+				<a class="btn btn-outline-secondary border-0" href="<?= $direccion ?>" target="_blank"><i class="file pdf icon large"></i></a>
 				<!-- <?= htmlSemanticCargaDeArchivos(['classDivBase' => 'divParaCarga', 'maxFiles' => 1, 'archivosPermitidos' => 'image/*,.pdf', 'name' => 'ordenCompra', 'visible' => false, 'tipo' => 2]) ?> -->
 			</div>
+			<div class="three wide field">
+				<label>Detalle OPERLOG:</label>
+				<a href="javascript:;" download="" class="btn btn-outline-secondary border-0 btn-descargarOperExcel" data-id="<?= $cabOperLog[0]['idCotizacion'] ?>">
+					<i class="file excel icon large" title="Generar PDF cotizacion"></i>
+				</a>
+			</div>
 		</div>
-		<!-- <?php if (!empty($distribucion)) : ?>
+		<?php if (!empty($distribucion)) : ?>
 			<?php foreach ($distribucion as $key => $rows) : ?>
 				<table class="ui celled table">
 					<thead>
@@ -63,6 +69,6 @@
 					</tbody>
 				</table>
 			<?php endforeach; ?>
-		<?php endif; ?> -->
+		<?php endif; ?>
 	</div>
 </form>
