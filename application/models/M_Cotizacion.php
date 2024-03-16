@@ -2282,7 +2282,9 @@ class M_Cotizacion extends MY_Model
 					cd.flagMostrarDetalle,
 					cd.requiereOrdenCompra,
 					cd.idTipo_TarjetasVales,
-					cd.flagDetalleTarjetasVales
+					cd.flagDetalleTarjetasVales,
+					cd.flagAlternativo,
+					cd.nombreAlternativo
 				FROM
 					compras.cotizacion c
 				JOIN compras.cotizacionDetalle cd ON c.idCotizacion = cd.idCotizacion
@@ -2336,7 +2338,9 @@ class M_Cotizacion extends MY_Model
 				lt.flagMostrarDetalle,
 				lt.requiereOrdenCompra,
 				lt.idTipo_TarjetasVales,
-				lt.flagDetalleTarjetasVales
+				lt.flagDetalleTarjetasVales,
+				lt.flagAlternativo,
+				lt.nombreAlternativo
 				FROM listItem lt
 			)
 			SELECT
@@ -2841,9 +2845,6 @@ class M_Cotizacion extends MY_Model
 		}
 		return $this->resultado;
 	}
-
-
-
 
 	public function datosOperLogDetalleSub($params = [])
 	{

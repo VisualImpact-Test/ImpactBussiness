@@ -2666,8 +2666,6 @@ class Cotizacion extends MY_Controller
 		->where('tzt.cod_provincia', $post['cod_pro'])
 		->where('tzt.estado', 1)
 		->order_by('u.distrito')->get()->result_array();
-		var_dump($this->db->last_query());
-		exit;
 		echo htmlSelectOptionArray2(['title' => 'Seleccione', 'id' => 'cod_distrito', 'value' => 'distrito', 'query' => $distrito, 'class' => 'text-titlecase']);
 	}
 	public function getImagenes()
@@ -3689,6 +3687,7 @@ class Cotizacion extends MY_Controller
 			if (isset($post['flagCuenta'])) $post['flagCuenta'] = checkAndConvertToArray($post['flagCuenta']);
 
 			$post['flagRedondearForm'] = checkAndConvertToArray($post['flagRedondearForm']);
+			$post['itemTextoPdf'] = checkAndConvertToArray($post['itemTextoPdf']);
 			$n = 0; // Cantidad de items en la tabla de distribución.
 			foreach ($post['nameItem'] as $k => $r) {
 				if (!empty($r)) {
@@ -3717,6 +3716,8 @@ class Cotizacion extends MY_Controller
 							'enlaces' => !empty($post['linkForm'][$k]) ? $post['linkForm'][$k] : NULL,
 							'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 							'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
+							'flagAlternativo' => !empty($post['itemTextoPdf'][$k]) ? '1' : '0',
+							'nombreAlternativo' => !empty($post['itemTextoPdf'][$k]) ? $post['itemTextoPdf'][$k] : NULL,
 							'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,
 							'costoPacking' => !empty($post['costoPacking'][$k]) ? $post['costoPacking'][$k] : 0,
 							'flagMovilidadSolicitado' => !empty($post['flagMovilidadSolicitado'][$k]) ? $post['flagMovilidadSolicitado'][$k] : 0,
@@ -3879,6 +3880,8 @@ class Cotizacion extends MY_Controller
 							'caracteristicasCompras' => !empty($post['caracteristicasCompras'][$k]) ? $post['caracteristicasCompras'][$k] : NULL,
 							'flagCuenta' => !empty($post['flagCuenta'][$k]) ? $post['flagCuenta'][$k] : 0,
 							'flagRedondear' => !empty($post['flagRedondearForm'][$k]) ? $post['flagRedondearForm'][$k] : 0,
+							'flagAlternativo' => !empty($post['itemTextoPdf'][$k]) ? '1' : '0',
+							'nombreAlternativo' => !empty($post['itemTextoPdf'][$k]) ? $post['itemTextoPdf'][$k] : NULL,
 							'caracteristicasProveedor' => !empty($post['caracteristicasProveedor'][$k]) ? $post['caracteristicasProveedor'][$k] : NULL,
 							'requiereOrdenCompra' => !empty($post['flagGenerarOC'][$k]) ? $post['flagGenerarOC'][$k] : 0,
 							'flagPackingSolicitado' => !empty($post['flagPackingSolicitado'][$k]) ? $post['flagPackingSolicitado'][$k] : 0,

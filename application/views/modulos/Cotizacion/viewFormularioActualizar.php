@@ -162,6 +162,10 @@
 				<input type="hidden" name="idCotizacionDetalle" value="0">
 				<div class="ui right floated header">
 					<div class="ui icon menu">
+						<a class="item chk-itemTextoPdf" onclick="$(this).find('i').toggleClass('check square');$(this).find('i').toggleClass('square outline'); $(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); $(this).find('i').hasClass('check square') ? $(this).closest('.body-item').find('.itemTextoPdf').removeClass('d-none') : $(this).closest('.body-item').find('.itemTextoPdf').addClass('d-none');">
+							<i class="icon square outline"></i>
+							<input type="checkbox" name="chkItemTextoPdf" class="checkItemTextoPdf d-none">
+						</a>
 						<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 							<i class="unlock icon"></i>
 						</a>
@@ -199,6 +203,9 @@
 									<input class="idProveedor" type='hidden' name='idProveedorForm' value="">
 									<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="1">
 								</div>
+								<div class="ui-widget">
+									<input class="itemTextoPdf d-none" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización">
+								</div>
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Tipo Item</div>
@@ -218,7 +225,7 @@
 						<div class="fields">
 							<div class="five wide field">
 								<div class="ui sub header">Características para el cliente</div>
-								<div class="ui right labeled input w-100">
+								<div class="ui labeled input w-100">
 									<input class="" type='text' id="caracteristicasItem" name='caracteristicasItem' placeholder="Características del item">
 								</div>
 							</div>
@@ -640,6 +647,14 @@
 					<input type="hidden" class="idCotizacionDetalle" name="idCotizacionDetalle" value="<?= $row['idCotizacionDetalle'] ?>">
 					<div class="ui right floated header">
 						<div class="ui icon menu">
+							<a class="item chk-itemTextoPdf" onclick="$(this).find('i').toggleClass('check square');
+							$(this).find('i').toggleClass('square outline');
+							$(this).find('i').hasClass('check square') ? $(this).find('input').prop('checked', true) : $(this).find('input').prop('checked', false); 
+							$(this).find('i').hasClass('check square') ? 
+							$(this).closest('.body-item').find('.itemTextoPdf').removeClass('d-none') : $(this).closest('.body-item').find('.itemTextoPdf').addClass('d-none'); $(this).closest('.body-item').find('.itemTextoPdf').val('');">
+								<i class="icon <?= empty($row['nombreAlternativo']) ? "square outline" : "check square"; ?>"></i>
+								<input type="checkbox" name="chkItemTextoPdf" class="checkItemTextoPdf d-none">
+							</a>
 							<a class="item btn-bloquear-detalle" onclick="$(this).find('i').toggleClass('unlock');$(this).find('i').toggleClass('lock')">
 								<i class="lock icon"></i>
 							</a>
@@ -667,6 +682,9 @@
 										<input class="idEstadoItemForm" type='hidden' name='idEstadoItemForm' value="2">
 										<input class="idProveedor" type='hidden' name='idProveedorForm' value="<?= !empty($row['idProveedor']) ? $row['idProveedor'] : ""; ?>">
 										<input class="cotizacionInternaForm" type="hidden" name="cotizacionInternaForm" value="<?= $row['cotizacionInterna'] ?>">
+									</div>
+									<div class="ui-widget">
+										<input class="itemTextoPdf <?= empty($row['nombreAlternativo']) ? "d-none" : ""; ?>" type='text' name='itemTextoPdf' placeholder="Descripción de Item para Cotización" value="<?= empty($row['nombreAlternativo']) ? "" : $row['nombreAlternativo']; ?>">
 									</div>
 								</div>
 								<div class="five wide field ">
