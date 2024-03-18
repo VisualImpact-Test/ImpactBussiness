@@ -1844,7 +1844,7 @@ class FormularioProveedor extends MY_Controller
 		$r = $this->db->where('fecha', $fechaHoy)->get('General.dbo.tiempo')->row_array();
 
 		$params['idUsuario'] = $this->session->userdata('idUsuario');
-		if (empty($params['idUsuario'])) {
+		// if (empty($params['idUsuario'])) {
 			if ($r['idDia'] != 2 && $r['idDia'] != 4) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
@@ -1857,7 +1857,7 @@ class FormularioProveedor extends MY_Controller
 				$result['msg']['title'] = 'Alerta!';
 				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
 				goto respuesta;
-			}
+			// }
 		}
 
 		$post = json_decode($this->input->post('data'), true);
