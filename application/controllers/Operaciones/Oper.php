@@ -148,7 +148,9 @@ class Oper extends MY_Controller
 		$post['cantidad'] = checkAndConvertToArray($post['cantidad']);
 		$post['cantidadSubItem'] = checkAndConvertToArray($post['cantidadSubItem']);
 		$post['costo'] = checkAndConvertToArray($post['costo']);
+		$post['costoTarifario'] = checkAndConvertToArray($post['costoTarifario']);
 		$post['gap'] = checkAndConvertToArray($post['gap']);
+		$post['costoGap'] = checkAndConvertToArray($post['costoGap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
 
 		if (isset($post['subItem_monto'])) {
@@ -218,9 +220,11 @@ class Oper extends MY_Controller
 				'cantidad' => $post['cantidad'][$key],
 				'costoSubTotal' => number_format($post['costo'][$key] * $post['cantidad'][$key], 2, '.', ''),
 				'gap' => $post['gap'][$key],
+				'costoTarifario' => $post['costoTarifario'][$key],
+				'costoGap' => $post['costoGap'][$key],
 				'costoSubTotalGap' => $post['precio'][$key]
 			];
-
+			
 			$insert = $this->db->insert('orden.operDetalle', $insertData);
 			$idOperDet = $this->db->insert_id();
 			/////////////////////

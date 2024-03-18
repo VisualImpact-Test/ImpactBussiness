@@ -47,7 +47,7 @@
 				<label>CantidadPDV</label>
 				<input name="subItem_cantidadPdv" patron="requerido">
 			</div>
-			<div class="field <?= $tipo == COD_TEXTILES['id'] ? '' : 'd-none'; ?>">
+			<div class="field <?= $tipo == COD_TEXTILES['id'] ? 'd-none' : ''; ?> ">
 				<label>Costo</label>
 				<input class="SbItCosto keyUpChange" name="subItem_costo" patron="requerido" 
 					onchange="Oper.calcularCostoPromedioTextil(this);"

@@ -105,17 +105,30 @@
 							<label class="font-weight-bold">CantidadSubItem:</label>
 							<input class="form-control cantidadSubItem" name="cantidadSubItem" patron="requerido" value="0">
 						</div>
-						<div class="form-group">
-							<label class="font-weight-bold">Costo:</label>
-							<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
+						<div class="form-row">
+							
+							<div class="form-group col-md-6">
+								<label class="font-weight-bold ">Costo Presupuesto:</label>
+								<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
+							</div>
+							<div class="form-group col-md-6">
+								<label class="font-weight-bold ">Costo Tarifario:</label>
+								<input readonly class="form-control item_costo" name="costoTarifario" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
+							</div>
 						</div>
-
 						<div class="form-row">
 							<div class="form-group col-md-6">
 								<label class="font-weight-bold">GAP:</label>
 								<input class="form-control item_GAP" name="gap" patron="requerido" onkeyup="Oper.cantidadPorItem(this);" value="15">
 							</div>
 							<div class="form-group col-md-6">
+								<label class="font-weight-bold">Costo GAP:</label>
+								<input class="form-control item_GAP_costo readOnly" name="costoGap" patron="requerido" onkeyup="" value="0">
+							</div>
+							
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-12">
 								<label class="font-weight-bold">Sub Total:</label>
 								<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);">
 							</div>

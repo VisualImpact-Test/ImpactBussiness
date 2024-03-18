@@ -242,12 +242,12 @@
 														<label class="font-weight-bold">Cantidad:</label>
 														<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" value="<?= $si_v['cantidad'] ?>">
 													</div>
-													<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
+													<div class="form-group col-md-6 d-none" style="padding-right: 3px;padding-left: 3px;">
 														<label class="font-weight-bold">Costo:</label>
 														<input class="form-control SbItCosto" name="subItem_costo" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');" value="<?= $si_v['costo'] ?>">
 													</div>
 												</div>
-												<div class="form-group col-md-2">
+												<div class="form-group col-md-2 d-none">
 													<label class="font-weight-bold">Sb Tot:</label>
 													<input class="form-control SbItSubTotal" name="subItem_st" patron="requerido" readonly onchange="Oper.calcularTextilPrecio(this);" value="<?= $si_v['cantidad'] * $si_v['costo'] ?>">
 												</div>

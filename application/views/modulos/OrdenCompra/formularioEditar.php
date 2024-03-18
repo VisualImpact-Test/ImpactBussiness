@@ -313,11 +313,11 @@
 															<label class="font-weight-bold mb-0">Cantidad:</label>
 															<input class="form-control SbItCantidad keyUpChange" name="subItem_cantidad" value="<?= $si_v['cantidad'] ?>" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 														</div>
-														<div class="form-group col-md-2">
+														<div class="form-group col-md-2 d-none">
 															<label class="font-weight-bold mb-0">Costo:</label>
 															<input class="form-control SbItCosto keyUpChange" name="subItem_costo" patron="requerido" value="<?= $si_v['costo'] ?>" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 														</div>
-														<div class="form-group col-md-2">
+														<div class="form-group col-md-2 d-none">
 															<label class="font-weight-bold mb-0">Sb Tot:</label>
 															<input class="form-control SbItSubTotal" name="subItem_st" patron="requerido" readonly onchange="Oc.calcularTextilPrecio(this);" value="<?= $si_v['cantidad'] * $si_v['costo'] ?>">
 														</div>
@@ -441,7 +441,7 @@
 																<option class="item" value="3" <?= $si_v['idGenero'] == '3' ? 'selected' : ''; ?>>UNISEX</option>
 															</select>
 														</div>
-														<div class=" col-md-3" style="display: flex;">
+														<div class=" col-md-5" style="display: flex;">
 															<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 																<label class="font-weight-bold mb-0">Tela:</label>
 																<input class="form-control" name="subItem_tela" value="<?= $si_v['tela'] ?>">
@@ -455,11 +455,11 @@
 															<label class="font-weight-bold mb-0">Cantidad:</label>
 															<input class="form-control SbItCantidad keyUpChange" name="subItem_cantidad" value="<?= $si_v['cantidad'] ?>" patron="requerido" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 														</div>
-														<div class="form-group col-md-2">
+														<div class="form-group col-md-2 d-none">
 															<label class="font-weight-bold mb-0">Costo:</label>
 															<input class="form-control SbItCosto keyUpChange" name="subItem_costo" patron="requerido" value="<?= $si_v['costo'] ?>" onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');">
 														</div>
-														<div class="form-group col-md-2">
+														<div class="form-group col-md-2 d-none">
 															<label class="font-weight-bold mb-0">Sb Tot:</label>
 															<input class="form-control SbItSubTotal" name="subItem_st" patron="requerido" readonly onchange="Oc.calcularTextilPrecio(this);" value="<?= $si_v['cantidad'] * $si_v['costo'] ?>">
 														</div>

@@ -147,7 +147,7 @@ var Oper = {
 			div.remove();
 			let cantidadSubItems = $(divItem).find('.subItemSpace').length;
 			$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
-
+			$(espacio).find('.SbItCantidad').first().change();
 
 		});
 		$(document).on('change', '.clearSubItem', function () {
@@ -218,11 +218,13 @@ var Oper = {
 				site_url + Oper.url + 'generarRowParaOper', {
 				'tipo': tipo
 			});
-
+		
 			post1.done(function (data) {
 				btnAd.show();
+				
 				$(div).find('div.subItem').append(data);
 				$(espacio).find('div.field.d-none').find('input').removeAttr('patron');
+
 				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				Fn.loadSemanticFunctions();
 			}).always(function () {
@@ -231,6 +233,8 @@ var Oper = {
 
 			let cantidadSubItems = $(div).find('div.subItemSpace').length + 1;
 			$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
+		
+			
 		} else {
 			btnAd.hide();
 		}
@@ -419,8 +423,12 @@ var Oper = {
 		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
+		gapPrecio =  costo + (costo * gap / 100);
+		$(div).find('input.item_GAP_costo').val(gapPrecio.toFixed(2));
+		
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
 		$(div).find('input.item_precio').val(precio.toFixed(2));
+		
 
 		Oper.cantidadTotal();
 	},
@@ -430,7 +438,7 @@ var Oper = {
 		_t.closest('.subItem').find('.SbItCantidad').each(function (i, v) {
 			cantTotal += parseFloat($(v).val());
 		});
-		_t.closest('.itemData').find('.item_cantidad').val(cantTotal);
+		_t.closest('.itemData').find('.item_cantidad').val(cantTotal).change();
 	},
 	calcularCostoPromedioTextil: function (t) {
 		let _t = $(t);
@@ -513,6 +521,7 @@ var Oper = {
 	editItemValue: function (t) {
 		control = $(t);
 		control.closest('.divItem').find('.items').attr('readonly', false);
+		control.closest('.divItem').find('.items').val("");
 		control.closest('.divItem').find('.codItems').val('');
 		control.closest('.divItem').find('.codProveedor').dropdown('clear');
 		control.closest('.itemData').find('.item_costo').val('0').change();
