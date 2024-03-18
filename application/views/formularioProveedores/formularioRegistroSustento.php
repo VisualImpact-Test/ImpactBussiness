@@ -86,7 +86,7 @@
 				<i class="icon warning"></i>CONSIDERAR QUE LA FACTURA CARGADA DEBE TENER FECHA DE EMISION DEL MES EN CURSO
 			</div>
 			<div class="ui bottom attached warning message">
-				<i class="icon warning"></i>SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00
+				<i class="icon warning"></i>SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00
 			</div>
 		</div>
 	</div>

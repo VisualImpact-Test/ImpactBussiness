@@ -1845,17 +1845,17 @@ class FormularioProveedor extends MY_Controller
 
 		$params['idUsuario'] = $this->session->userdata('idUsuario');
 		if (empty($params['idUsuario'])) {
-			if ($r['idDia'] == 6 && $r['idDia'] == 7) {
+			if ($r['idDia'] != 2 && $r['idDia'] != 4) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00']);
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
 				goto respuesta;
 			}
 
 			if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
 				$result['result'] = 0;
 				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS DE LUNES A VIERNES DE 00:00 AM HASTA LAS 14:00']);
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
 				goto respuesta;
 			}
 		}
