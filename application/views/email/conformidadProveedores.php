@@ -81,7 +81,7 @@
 
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">
-		<legend>Archivos</legend>
+		<legend>Datos</legend>
 		<div>
 			<div id="div-ajax-detalle" class="table-responsive" style="text-align:center">
 				<table class="tabla" id="listaItemsPresupuesto" style="background:#ffffff;color:#666666" width="100%" class="tabla">
