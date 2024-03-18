@@ -27,7 +27,7 @@
 			<? $ix = 0; ?>
 			<?php foreach ($datos as $k => $row) : ?>
 				<? $ix++; ?>
-				<tr data-id="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>">
+				<tr data-id="<?= $row['idOrdenCompra'] ?>" data-flag="<?= $row['flagOcLibre'] ?>" data-monto="<?= $row['monto'] * (1 + ($row['igv'] / 100)); ?>">
 					<td class="td-center"><?= $ix; ?></td>
 					<td class="td-left"><?= date_change_format($row['fechaRegOC']); ?></td>
 					<td class="td-center">

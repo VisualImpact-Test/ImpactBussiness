@@ -119,4 +119,52 @@ class M_ProveedorDocumento extends MY_Model
 
 		return $this->db->get();
 	}
+
+	public function obtenerOCEmail($params = [])
+	{
+		$this->db
+			->distinct()
+			->select("mp.nombre AS metodoPago, mp.cantDias, c.fechaAprobadoFinanza,
+			DATENAME(month, c.fechaAprobadoFinanza) AS mesAprobacionFinanza,
+			p.nroDocumento AS ruc, p.razonSocial, oc.descripcionFinanzas AS descripcionCompras,
+			cc.canal + ' - ' + cc.subcanal centroCosto, oc.seriado numeroOC, oc.pocliente,
+			tc.nombre AS tipoComprobante, c.numeroDocumento AS serieFactura", false)
+			->from('compras.ordenCompra oc')
+			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'INNER')
+			->join('sustento.comprobante c', 'c.idOrdenCompra = oc.idOrdenCompra AND c.estado = 1', 'INNER')
+			->join('compras.proveedor p', 'p.idProveedor = oc.idProveedor', 'INNER')
+			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto', 'LEFT')
+			->join('compras.comprobante tc', 'tc.idComprobante = c.idTipoComprobante', 'LEFT');
+
+		$this->db->where("numeroDocumento IS NOT NULL AND numeroDocumento != ''");
+		if (!empty($params['idOrdenCompra'])) $this->db->where('oc.idOrdenCompra', $params['idOrdenCompra']);
+
+		$this->db->order_by('tipoComprobante', 'DESC');
+
+		return $this->db->get();
+	}
+
+	public function obtenerOCLibreEmail($params = [])
+	{
+		$this->db
+			->distinct()
+			->select("mp.nombre AS metodoPago, mp.cantDias, c.fechaAprobadoFinanza,
+			DATENAME(month, c.fechaAprobadoFinanza) AS mesAprobacionFinanza,
+			p.nroDocumento AS ruc, p.razonSocial, oc.descripcionCompras,
+			cc.canal + ' - ' + cc.subcanal centroCosto, oc.seriado numeroOC, oc.pocliente,
+			tc.nombre AS tipoComprobante, c.numeroDocumento AS serieFactura", false)
+			->from('orden.ordenCompra oc')
+			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'INNER')
+			->join('sustento.comprobante c', 'c.idOrdenCompra = oc.idOrdenCompra AND c.estado = 1', 'INNER')
+			->join('compras.proveedor p', 'p.idProveedor = oc.idProveedor', 'INNER')
+			->join('rrhh.dbo.empresa_Canal cc', 'cc.idEmpresaCanal = oc.idCentroCosto', 'LEFT')
+			->join('compras.comprobante tc', 'tc.idComprobante = c.idTipoComprobante', 'LEFT');
+
+		$this->db->where("numeroDocumento IS NOT NULL AND numeroDocumento != ''");
+		if (!empty($params['idOrdenCompra'])) $this->db->where('oc.idOrdenCompra', $params['idOrdenCompra']);
+
+		$this->db->order_by('tipoComprobante', 'DESC');
+
+		return $this->db->get();
+	}
 }

@@ -82,10 +82,10 @@
 									</a>
 								</td>
 								<td class="text-center">
-									<a class="ui button btn-estadoSustComprobante green" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="1">
+									<a class="ui button btn-estadoSustComprobante green" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="1" data-idordencompra = "<?= $idOrdenCompra; ?>" data-monto = "<?= $monto; ?>">
 										<i class="icon check"></i>
 									</a>
-									<a class="ui button btn-estadoSustComprobante red" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="0">
+									<a class="ui button btn-estadoSustComprobante red" data-id="<?= $row['idSustentoAdjunto'] ?>" data-idprov="<?= $row['idProveedor']; ?>" data-flag="<?= $row['flagoclibre']; ?>" data-idcot="<?= $row['idCotizacion']; ?>" data-idformat="<?= $row['idFormatoDocumento']; ?>" data-estado="0" data-idordencompra = "<?= $idOrdenCompra; ?>" data-monto = "<?= $monto; ?>">
 										<i class="icon times"></i>
 									</a>
 								</td>

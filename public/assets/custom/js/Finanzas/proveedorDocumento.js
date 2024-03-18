@@ -25,9 +25,10 @@ var ProveedorDocumento = {
 
 			let id = tr.data('id');
 			let flag = tr.data('flag');
+			let monto = tr.data('monto');
 
 			++modalId;
-			let jsonString = { 'idOrdenCompra': id, 'flagOcLibre': flag };
+			let jsonString = { 'idOrdenCompra': id, 'flagOcLibre': flag, 'monto': monto };
 			let config = { 'url': ProveedorDocumento.url + 'formularioSustentosCargados', 'data': jsonString };
 
 			$.when(Fn.ajax(config)).then((a) => {
@@ -75,7 +76,9 @@ var ProveedorDocumento = {
 		if (data.estado == '1') ProveedorDocumento.dataTemporal.observacion = null;
 
 		++modalId;
-		let jsonString = { 'idSustentoAdjunto': data.id, 'flagAprobadoFinanza': data.estado, 'observacionRechazoFinanza': data.observacion };
+		let jsonString = { 'idSustentoAdjunto': data.id, 'flagAprobadoFinanza': data.estado, 
+		'observacionRechazoFinanza': data.observacion, 'proveedor': data.idprov, 'cotizacion': data.idcot, 
+		'flagOcLibre': data.flag, 'ordenCompra': data.idordencompra, 'monto': data.monto };
 		let config = { 'url': ProveedorDocumento.url + 'actualizarEstadoSustentoFinanza', 'data': jsonString };
 
 		$.when(Fn.ajax(config)).then((a) => {

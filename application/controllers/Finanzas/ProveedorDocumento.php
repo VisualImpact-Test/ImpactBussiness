@@ -10,6 +10,7 @@ class ProveedorDocumento extends MY_Controller
 		parent::__construct();
 		$this->load->model('M_ProveedorDocumento', 'model');
 		$this->load->model('M_Cotizacion', 'mCotizacion');
+		$this->load->model('M_control', 'model_control');
 	}
 
 	public function index()
@@ -49,7 +50,6 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [];
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
-
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
 
 		$datos = array_merge($datos1, $datos2);
@@ -307,6 +307,7 @@ class ProveedorDocumento extends MY_Controller
 		$dataParaVista = [
 			'idOrdenCompra' => $post['idOrdenCompra'],
 			'flagOcLibre' => $post['flagOcLibre'],
+			'monto' => $post['monto'],
 		];
 		$dataParaVista['sustentosCargados'] = $this->db->get_where(
 			'sustento.comprobante',
@@ -335,17 +336,42 @@ class ProveedorDocumento extends MY_Controller
 			goto respuesta;
 		}
 
-		$this->db->update(
-			'sustento.comprobante',
-			[
-				'observacionRechazoFinanza' => $post['observacionRechazoFinanza'],
-				'flagAprobadoFinanza' => $post['flagAprobadoFinanza'],
-				'fechaAprobadoFinanza' => getActualDateTime()
-			],
-			[
-				'idSustentoAdjunto' => $post['idSustentoAdjunto']
-			]
-		);
+		$this->db->update('sustento.comprobante', ['observacionRechazoFinanza' => $post['observacionRechazoFinanza'], 'flagAprobadoFinanza' => $post['flagAprobadoFinanza']], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
+		
+		if ($post['flagOcLibre'] == 1) {
+			$validarAprobados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $post['ordenCompra'],'idProveedor' => $post['proveedor'],'flagoclibre' => $post['flagOcLibre'],'flagAprobadoFinanza' => 0])->result_array();
+		} else {
+			$validarAprobados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $post['ordenCompra'], 'idCotizacion' => $post['cotizacion'],'idProveedor' => $post['proveedor'],'flagoclibre' => $post['flagOcLibre'],'flagAprobadoFinanza' => 0])->result_array();
+		}
+
+		if (count($validarAprobados) < 1) {
+			$pro = $this->db->where('idProveedor', $post['proveedor'])->get('compras.proveedor')->row_array();
+			if ($post['flagOcLibre'] == 0) {
+				$ordenCompra = $this->model->obtenerOCEmail(['idOrdenCompra' => $post['ordenCompra']])->row_array();
+				$ordenCompra['monto'] = $post['monto'];
+			} else {
+				$ordenCompra = $this->model->obtenerOCLibreEmail(['idOrdenCompra' => $post['ordenCompra']])->row_array();
+				$ordenCompra['monto'] = $post['monto'];
+			}
+
+			if ($this->idUsuario == '1') {
+				$idTipoParaCorreo = USER_ADMIN;
+				$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+				$toCorreo = [];
+				foreach ($usuariosCorreo as $usuario) {
+					$toCorreo[] = $usuario['email'];
+				}
+			} else {
+				$toCorreo = [$pro['correoContacto']];
+			}
+
+			$cfg['to'] = ['bill.salazar@visualimpact.com.pe', 'eder.alata@visualimpact.com.pe', 'luis.durand@visualimpact.com.pe'];
+			$cfg['asunto'] = 'CONFIRMACION DE RECEPCION DE FACTURAS: ' . $pro['razonSocial'];
+			$cfg['contenido'] = $this->load->view("email/conformidadProveedores", ['data' => $ordenCompra], true);
+			
+			$this->sendEmail($cfg);
+		}
+
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Completo';
 		$result['data']['html'] = getMensajeGestion('registroExitoso');
