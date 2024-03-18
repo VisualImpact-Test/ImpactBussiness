@@ -97,7 +97,6 @@
 							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header">CENTRO COSTO</th>
 							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header">N° OC</th>
 							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header">PO/OC Cliente</th>
-							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header"></th>
 							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header">TIPO COMPROBANTE</th>
 							<th style="width: 10%;background-color: #2586da;color: white;" class="text-center header">SERIE FACTURA</th>
 							<th style="width: 15%;background-color: #2586da;color: white;" class="text-center header"></th>
@@ -115,7 +114,6 @@
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['centroCosto'], 3); ?></td>
 							<td style="background-color: #EEF509;color: red;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['numeroOC'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['pocliente'], 3); ?></td>
-							<td style="background-color: #71BC75;"></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['tipoComprobante'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['serieFactura'], 3); ?></td>
 							<td style="background-color: #FFFFFF;" class="text-center header"></td>

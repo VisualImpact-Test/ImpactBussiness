@@ -148,7 +148,7 @@ class M_ProveedorDocumento extends MY_Model
 	{
 		$this->db
 			->distinct()
-			->select("mp.nombre AS metodoPago, mp.cantDias, CONVERT(VARCHAR(10), c.fechaAprobadoFinanza, 103) AS fechaAprobadoFinanza,
+			->select("CASE WHEN mp.idMetodoPago = 1 THEN 'AL CONTADO' ELSE 'CRÉDITO' END AS metodoPago, mp.cantDias, CONVERT(VARCHAR(10), c.fechaAprobadoFinanza, 103) AS fechaAprobadoFinanza,
 			DATENAME(month, c.fechaAprobadoFinanza) AS mesAprobacionFinanza,
 			p.nroDocumento AS ruc, p.razonSocial, oc.descripcionCompras,
 			cc.canal + ' - ' + cc.subcanal centroCosto, oc.seriado numeroOC, oc.pocliente,
