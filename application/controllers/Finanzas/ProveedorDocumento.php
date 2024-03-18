@@ -336,12 +336,39 @@ class ProveedorDocumento extends MY_Controller
 			goto respuesta;
 		}
 
-		$this->db->update('sustento.comprobante', ['observacionRechazoFinanza' => $post['observacionRechazoFinanza'], 'flagAprobadoFinanza' => $post['flagAprobadoFinanza']], ['idSustentoAdjunto' => $post['idSustentoAdjunto']]);
-		
+		$this->db->update(
+			'sustento.comprobante',
+			[
+				'observacionRechazoFinanza' => $post['observacionRechazoFinanza'],
+				'flagAprobadoFinanza' => $post['flagAprobadoFinanza'],
+				'fechaAprobadoFinanza' => getActualDateTime()
+			],
+			['idSustentoAdjunto' => $post['idSustentoAdjunto']]
+		);
+
 		if ($post['flagOcLibre'] == 1) {
-			$validarAprobados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $post['ordenCompra'],'idProveedor' => $post['proveedor'],'flagoclibre' => $post['flagOcLibre'],'flagAprobadoFinanza' => 0])->result_array();
+			$validarAprobados = $this->db->get_where(
+				'sustento.comprobante',
+				[
+					'idOrdenCompra' => $post['ordenCompra'],
+					'idProveedor' => $post['proveedor'],
+					'flagoclibre' => $post['flagOcLibre'],
+					'flagAprobadoFinanza' => 0,
+					'estado' => 1
+				]
+			)->result_array();
 		} else {
-			$validarAprobados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $post['ordenCompra'], 'idCotizacion' => $post['cotizacion'],'idProveedor' => $post['proveedor'],'flagoclibre' => $post['flagOcLibre'],'flagAprobadoFinanza' => 0])->result_array();
+			$validarAprobados = $this->db->get_where(
+				'sustento.comprobante',
+				[
+					'idOrdenCompra' => $post['ordenCompra'],
+					'idCotizacion' => $post['cotizacion'],
+					'idProveedor' => $post['proveedor'],
+					'flagoclibre' => $post['flagOcLibre'],
+					'flagAprobadoFinanza' => 0,
+					'estado' => 1
+				]
+			)->result_array();
 		}
 
 		if (count($validarAprobados) < 1) {
@@ -368,7 +395,7 @@ class ProveedorDocumento extends MY_Controller
 			$cfg['to'] = ['bill.salazar@visualimpact.com.pe', 'eder.alata@visualimpact.com.pe', 'luis.durand@visualimpact.com.pe'];
 			$cfg['asunto'] = 'CONFIRMACION DE RECEPCION DE FACTURAS: ' . $pro['razonSocial'];
 			$cfg['contenido'] = $this->load->view("email/conformidadProveedores", ['data' => $ordenCompra], true);
-			
+
 			$this->sendEmail($cfg);
 		}
 
