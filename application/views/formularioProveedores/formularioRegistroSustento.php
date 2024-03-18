@@ -57,7 +57,7 @@
 				<div class="control-group child-divcenter row" style="width:85%">
 					<label class="form-control col-md-4" style="border:0px;">Doc Adicional</label>
 					<div class="form-control custom-file col-md-8">
-						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip" multiple>
+						<input type="file" class="custom-file-input files-upload_da file-upload_da" lang="es" accept=".xlsx, .zip, .ppt, .pptx" multiple>
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 				</div>
