@@ -19,7 +19,7 @@
             <? $ix = 1; ?>
             <?php foreach ($datos as $key => $row): ?>
               
-              <tr data-id="<?= $key ?>">
+              <tr data-id="<?= verificarEmpty($row['idOper'], 3); ?>">
                 <td class="td-center"><?= $ix; ?></td>
                 <td class="td-left"><?= verificarEmpty($row['concepto'], 3); ?></td>
                 <td class="td-center"><?= verificarEmpty($row['requerimiento'], 3); ?></td>
