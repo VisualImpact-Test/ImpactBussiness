@@ -583,7 +583,10 @@ var View = {
 				$(this).val(monto.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			}
 		});
-		$(document).on('keyup', '.moneda', function (e) {
+		$(document).on('input', '.moneda', function (e) {
+			$(this).addClass("keyUpChange");
+		});
+		$(document).on('change', '.moneda', function (e) {
 			var montoSinFormato = $(this).val().replace(/\D/g, '');
 			if (montoSinFormato != "") {
 				var monto = parseFloat(montoSinFormato) / 100;
