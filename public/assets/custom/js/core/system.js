@@ -100,7 +100,8 @@ const COD_TEXTILES = { 'id': 9, 'nombre': 'TEXTILES' };
 const COD_TARJETAS_VALES = { 'id': 10, 'nombre': 'TARJETAS_VALES' };
 const COD_PAGOS_FARMACIAS = { 'id': 11, 'nombre': 'PAGOS FARMACIA' };
 const COD_TRANSPORTE = { 'id': 12, 'nombre': 'TRANSPORTE' };
-const COD_RUTAS_VIAJERAS = { 'id': 12, 'nombre': 'RUTAS VIAJERAS' };
+const COD_RUTAS_VIAJERAS = { 'id': 13, 'nombre': 'RUTAS VIAJERAS' };
+const COD_SERVICIO_GENERAL = { 'id': 15, 'nombre': 'SERVICIOS GENERALES' };
 
 const moneyFormatter = new Intl.NumberFormat('en-US', {
 	style: 'currency',
