@@ -417,17 +417,19 @@ var Oper = {
 	cantidadPorItem: function (t) {
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
-		costo = parseFloat($(div).find('input.item_costo').val() || '0');
-		gap = parseFloat($(div).find('input.item_GAP').val() || '0');
+		var costo1 = parseFloat($(div).find('input.item_costo').val().replace(/,/g, ''));
+		costo = parseFloat(costo1 || '0');
+		var gap1 = parseFloat($(div).find('input.item_GAP').val().replace(/,/g, ''));
+		gap = parseFloat(gap1 || '0');
 		cantPDV = 0;
 		if ($(t).closest('.itemData').find('input.cantidadPDV').length > 0) {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
 		gapPrecio =  costo + (costo * gap / 100);
-		$(div).find('input.item_GAP_costo').val(gapPrecio.toFixed(2));
+		$(div).find('input.item_GAP_costo').val(gapPrecio.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
-		$(div).find('input.item_precio').val(precio.toFixed(2));
+		$(div).find('input.item_precio').val(precio.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		
 
 		Oper.cantidadTotal();
@@ -446,13 +448,13 @@ var Oper = {
 		let cantidadTotal = 0;
 
 		_t.closest('.subItem').find('.SbItCantidad').each(function (i, v) {
-			costo = parseFloat($(_t.closest('.subItem').find('.SbItCosto')[i]).val());
+			costo = parseFloat($(_t.closest('.subItem').find('.SbItCosto')[i]).val().replace(/,/g, ''));
 			cantidad = parseFloat($(v).val());
 
 			costoTotal += costo * cantidad;
 			cantidadTotal += cantidad;
 		});
-		_t.closest('.itemData').find('.item_costo').val(costoTotal / cantidadTotal).change();
+		_t.closest('.itemData').find('.item_costo').val((costoTotal / cantidadTotal).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).change();
 	},
 	cantidadTotal: function () {
 		let dd = $('input.item_precio');
@@ -461,17 +463,17 @@ var Oper = {
 		let totalNoFee = 0;
 		for (var i = 0; i < dd.length; i++) {
 			if (xd[i].value == '7') {
-				totalNoFee += parseFloat(dd[i].value);
+				totalNoFee += parseFloat(dd[i].value.replace(/,/g, ''));
 			} else {
-				total += parseFloat(dd[i].value);
+				total += parseFloat(dd[i].value.replace(/,/g, ''));
 			}
 		};
-		$('#total').val(total.toFixed(2));
+		$('#total').val(total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		fee = parseFloat($('#fee').val() || '0');
-		$('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
+		$('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		igv = parseFloat($('#valorIGV').val()) / 100;
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
-		$('#totalFinal').val(totalFinal.toFixed(2));
+		$('#totalFinal').val(totalFinal.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 	},
 	itemInputComplete: function (ord) {
 		let tipo = 1;
@@ -504,7 +506,7 @@ var Oper = {
 					//Llenamos una caja de texto invisible que contiene el ID del Artículo
 					control.find(".codItems").val(ui.item.value);
 					//Tipo Item
-					control.find('.item_costo').val(ui.item.costo).change();
+					control.find('.item_costo').val(ui.item.costo.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).change();
 					control.find('.codProveedor').dropdown('set selected', ui.item.idProveedor);
 					control.find(".tipo").val(ui.item.tipo).trigger('change');
 

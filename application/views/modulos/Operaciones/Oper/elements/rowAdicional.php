@@ -49,7 +49,7 @@
 			</div>
 			<div class="field <?= $tipo == COD_TEXTILES['id'] ? 'd-none' : ''; ?> ">
 				<label>Costo</label>
-				<input class="SbItCosto keyUpChange" name="subItem_costo" patron="requerido" 
+				<input class="SbItCosto keyUpChange <?= $tipo == COD_TEXTILES['id'] ? '' : 'moneda'; ?>" name="subItem_costo" patron="requerido" 
 					onchange="Oper.calcularCostoPromedioTextil(this);"
 				>
 			</div>

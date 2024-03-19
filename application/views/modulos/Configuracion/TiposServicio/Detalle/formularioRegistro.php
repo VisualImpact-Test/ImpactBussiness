@@ -42,11 +42,11 @@
   <div class="form-row">
     <div class="col-md-6 mb-3">
       <label>Costo Cuenta</label>
-      <input class="form-control" name="costo" patron="requerido">
+      <input class="form-control moneda" name="costo" patron="requerido">
     </div>
     <div class="col-md-6 mb-3">
       <label>Costo</label>
-      <input class="form-control" name="costoVisual" patron="requerido">
+      <input class="form-control moneda" name="costoVisual" patron="requerido">
     </div>
   </div>
   <div class="form-row">

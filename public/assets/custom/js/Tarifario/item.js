@@ -17,6 +17,10 @@ var Item = {
 		});
 
 		$(document).on('click', '#btn-filtrarItemTarifario', function () {
+			var precioMaximo = $('#precioMaximo').data('value');
+			$('#precioMaximo').val(precioMaximo);
+			var montominSinFormato = $('#precioMinimo').data('value');
+			$('#precioMinimo').val(montominSinFormato);
 			var ruta = 'reporte';
 			var config = {
 				'idFrm': Item.frm
@@ -234,6 +238,8 @@ var Item = {
 	},
 
 	registrarItemTarifario: function () {
+		var montoSinFormato = $('#costo').data('value');
+		$('#costo').val(montoSinFormato);
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroItemTarifarios')) };
 		let url = Item.url + "registrarItemTarifario";
 		let config = { url: url, data: jsonString };
@@ -282,6 +288,10 @@ var Item = {
 	},
 
 	actualizarItemTarifario: function () {
+		var montoSinFormato = $('#costo').data('value');
+		if (montoSinFormato > 0) {
+			$('#costo').val(montoSinFormato);
+		}
 		++modalId;
 
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionItemTarifarios')) };

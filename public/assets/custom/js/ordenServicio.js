@@ -835,7 +835,7 @@ var OrdenServicio = {
 				</div>
 				<div class="three wide field">
 					<div class="ui sub header">Sueldo</div>
-					<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Sueldo" value="${sueldoPrimero}" patron="requerido">
+					<input type="text" class="ui onlyNumbers inSueldo moneda" name="sueldoCargo" placeholder="Sueldo" value="${sueldoPrimero}" patron="requerido">
 				</div>
 				<div class="one wide field">
 					<div class="ui sub header text-white">.</div>
@@ -1009,7 +1009,7 @@ var OrdenServicio = {
 		var detalle = $(t).data('detalle');
 		var detalleSub = $(t).data('detallesub');
 		let split = control.closest('tr').find('td.splitDetalle').find('input').val();
-		var precioUnitario = parseFloat(control.closest('tr').find('.precioUnitarioDetalle').find('input').val()) * parseFloat(split);
+		var precioUnitario = parseFloat(control.closest('tr').find('.precioUnitarioDetalle').find('input').val().replace(/,/g, '')) * parseFloat(split);
 		var gapT = control.closest('tr').find('.gapDetalle').find('input').val();
 		var gap = 1 + (parseFloat(gapT) / 100);
 
@@ -1043,9 +1043,9 @@ var OrdenServicio = {
 		});
 		// Fin: Calcular el valor por columna
 
-		valorCalc = parseFloat($(t).val());
+		valorCalc = parseFloat($(t).val().replace(/,/g, ''));
 		totalFinal = (valorCalc * gap * parseFloat(precioUnitario) / split).toFixed(2);
-		control.closest('tr').find('.totalCantidadSplit').find('input').val(totalFinal);
+		control.closest('tr').find('.totalCantidadSplit').find('input').val(totalFinal.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		frecuencia = control.closest('tr').find('td.frecuenciaDetalle').find('.frecuenciaID').dropdown('get value');
 		totalFinalAcumulado = 0;
 		let firstUnico = true;
@@ -1072,7 +1072,7 @@ var OrdenServicio = {
 
 				totalFinalAcumulado += parseFloat(totalFinalClm);
 
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm).change();
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).change();
 			}
 		} else if (frecuencia == 6) { // FRACCIONADO
 			let maxColV = 0;
@@ -1085,14 +1085,14 @@ var OrdenServicio = {
 			for (let ix = 0; ix < valorPorColumna.length; ix++) {
 				totalFinalClm = (totalFinal / valorPorColumna.length).toFixed(2);
 				totalFinalAcumulado += parseFloat(totalFinalClm);
-				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm).change();
+				$('#montoLDS_' + detalle + '_' + detalleSub + '_' + ix).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).change();
 			}
 		} else {
 			for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 				if (frecuencia == 1) { // MENSUAL
 					totalFinalClm = (valorPorColumna[f] * gap * parseFloat(precioUnitario)).toFixed(2);
 					totalFinalAcumulado += parseFloat(totalFinalClm);
-					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					f = f + 0;
 				} else if (frecuencia == 2) { // BIMENSUAL
 					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
@@ -1106,7 +1106,7 @@ var OrdenServicio = {
 					// Fin: Calcular el valor máximo dentro del rango de tiempo.
 					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
 					totalFinalAcumulado += parseFloat(totalFinalClm);
-					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 					f = f + 1;
 				} else if (frecuencia == 7) { // TRIMESTRAL
@@ -1121,7 +1121,7 @@ var OrdenServicio = {
 					// Fin: Calcular el valor máximo dentro del rango de tiempo.
 					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
 					totalFinalAcumulado += parseFloat(totalFinalClm);
-					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
 					f = f + 2;
@@ -1138,7 +1138,7 @@ var OrdenServicio = {
 					// Fin: Calcular el valor máximo dentro del rango de tiempo.
 					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
 					totalFinalAcumulado += parseFloat(totalFinalClm);
-					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
@@ -1157,7 +1157,7 @@ var OrdenServicio = {
 					// Fin: Calcular el valor máximo dentro del rango de tiempo.
 					totalFinalClm = (valMaxCol * gap * parseFloat(precioUnitario)).toFixed(2);
 					totalFinalAcumulado += parseFloat(totalFinalClm);
-					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm).trigger('change');
+					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 1)).val('0.00').trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 2)).val('0.00').trigger('change');
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + (f + 3)).val('0.00').trigger('change');
@@ -1173,7 +1173,7 @@ var OrdenServicio = {
 				}
 			}
 		}
-		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado.toFixed(2)).trigger('change');
+		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado).trigger('change');
 
 	},
 	calcularTotalColumna: function (t) {
@@ -1183,10 +1183,10 @@ var OrdenServicio = {
 		for (let f = 0; f < OrdenServicio.arrayFechas.length; f++) {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
-				cn += parseFloat($('#montoLDS_' + detalle + '_' + i + '_' + f).val());
+				cn += parseFloat($('#montoLDS_' + detalle + '_' + i + '_' + f).val().replace(/,/g, ''));
 			}
 			tot += cn;
-			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
+			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		}
 		$('#totPresupuesto_' + detalle).val(tot);
 		OrdenServicio.calcularTotalFinal();
@@ -1199,10 +1199,10 @@ var OrdenServicio = {
 			let cn = 0;
 			for (let i = 0; i < control.length; i++) {
 				let td = $(control[i]).find('td')[f + 1];
-				cn += parseFloat($(td).find('input').val())
+				cn += parseFloat($(td).find('input').val().replace(/,/g, ''))
 			}
 			tot += cn;
-			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2));
+			$('#totalColumna_' + detalle + '_' + f).val(cn.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		}
 		$('#totPresupuesto_' + detalle).val(tot);
 		OrdenServicio.calcularTotalFinal();
@@ -1214,7 +1214,7 @@ var OrdenServicio = {
 			adicional = parseFloat($('#movilidadAdicionales_' + k).val());
 			tot = parseFloat(viaje) + parseFloat(adicional);
 			totPr += tot;
-			$('#totalColumna_8_' + k).val(tot.toFixed(2));
+			$('#totalColumna_8_' + k).val(tot.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		});
 		$('#totPresupuesto_8').val(totPr.toFixed(2));
 		OrdenServicio.calcularTotalFinal();
@@ -1237,7 +1237,7 @@ var OrdenServicio = {
 		let trAd = $('#tablaSueldoAdicional > tbody > tr');
 		let totalIncentivoAdicional = 0;
 		trAd.each(function (i) {
-			totalIncentivoAdicional += parseFloat($(this).find('.montoSueldoAdicional').val());
+			totalIncentivoAdicional += parseFloat($(this).find('.montoSueldoAdicional').val().replace(/,/g, ''));
 		});
 		$('#txtIncentivoAdicionalTotal').val(totalIncentivoAdicional.toFixed(2));
 		// Fin: Calcular Incentivo Adicional
@@ -1260,12 +1260,12 @@ var OrdenServicio = {
 			let tipo = $('#rowTipo_Sueldo' + row).val();
 
 			for (let p = 0; p < nroPersonal; p++) {
-				montoPersonal[p].push($('#rowMonto_Sueldo' + row + '-' + p).val());
+				montoPersonal[p].push($('#rowMonto_Sueldo' + row + '-' + p).val().replace(/,/g, ''));
 				if (tipo == 1 || tipo == 3) {
-					montoParaBono[p].push($('#rowMonto_Sueldo' + row + '-' + p).val());
+					montoParaBono[p].push($('#rowMonto_Sueldo' + row + '-' + p).val().replace(/,/g, ''));
 				}
 				if (tipo == 3) {
-					montoIncentivo[p].push($('#rowMonto_Sueldo' + row + '-' + p).val());
+					montoIncentivo[p].push($('#rowMonto_Sueldo' + row + '-' + p).val().replace(/,/g, ''));
 				}
 			}
 		}
@@ -1275,12 +1275,28 @@ var OrdenServicio = {
 			for (let n = 0; n < montoPersonal[i].length; n++) {
 				calc += parseFloat(montoPersonal[i][n]);
 			}
-			$('#sTotalSueldo_' + i).val(calc);
+			$('#sTotalSueldo_' + i).val(calc.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 
 			valorSCTR = 0;
 			if ($('#txtVSctr').length == 1) {
-				valorSCTR = ((calc + parseFloat($('#restoSueldoMinimo').val())) * parseFloat($('#txtVSctr').val()) / 100);
-				$('#txtSctr_' + i).val(valorSCTR.toFixed(4));
+				var valorSCTR = ((calc + parseFloat($('#restoSueldoMinimo').val())) * parseFloat($('#txtVSctr').val()) / 100);
+
+// Formatear el valor SCTR con cuatro decimales
+valorSCTR = valorSCTR.toFixed(4);
+
+// Separar la parte entera de la decimal
+var partesSCTR = valorSCTR.split('.');
+var parteEnteraSCTR = partesSCTR[0];
+var parteDecimalSCTR = partesSCTR[1];
+
+// Formatear la parte entera del valor SCTR con separadores de coma para los miles
+parteEnteraSCTR = parteEnteraSCTR.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+// Unir la parte entera y la parte decimal del valor SCTR con un punto
+valorSCTR = parteEnteraSCTR + '.' + parteDecimalSCTR;
+
+// Asignar el valor al campo de entrada del valor SCTR
+$('#txtSctr_' + i).val(valorSCTR);
 			}
 
 			$('#tablaFechaPersona > tbody > tr').each(function () {
@@ -1317,12 +1333,22 @@ var OrdenServicio = {
 				let cl = $('#rowPorCL_Sueldo' + fRow).val();
 
 				if (fRow != undefined) {
-					nuevoCalc = (calc * parseFloat(cl) / 100).toFixed(4);
+					var nuevoCalc = (calc * parseFloat(cl) / 100).toFixed(4);
+					var partes = nuevoCalc.split('.');
+					var parteEntera = partes[0];
+					var parteDecimal = partes[1];
+					parteEntera = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+					nuevoCalc = parteEntera + '.' + parteDecimal;
 					$('#rowMontoBeneficio_Sueldo' + fRow + '_' + i).val(nuevoCalc);
-					acumulado += parseFloat($('#rowMontoBeneficio_Sueldo' + fRow + '_' + i).val());
+					acumulado += parseFloat($('#rowMontoBeneficio_Sueldo' + fRow + '_' + i).val().replace(/,/g, ''));
 				}
 			}
-			totalTotal = (parseFloat($('#sTotalSueldo_' + i).val()) + acumulado).toFixed(4);
+			var totalTotal = (parseFloat($('#sTotalSueldo_' + i).val().replace(/,/g, '')) + acumulado).toFixed(4);
+			var partes = totalTotal.split('.');
+			var parteEntera = partes[0];
+			var parteDecimal = partes[1];
+			parteEntera = parteEntera.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			totalTotal = parteEntera + '.' + parteDecimal;
 			$('#totalSueldo_' + i).val(totalTotal);
 		}
 
@@ -1336,8 +1362,12 @@ var OrdenServicio = {
 			}
 			incentivo = (calc * (parseFloat($('#totalPorcentaje').html()) + 100) / 100).toFixed(4);
 			$('#txtIncentivo_' + i).val(incentivo);
-
-			sueldo = ($('#totalSueldo_' + i).val() - parseFloat(incentivo)).toFixed(4);
+			var sueldo = ($('#totalSueldo_' + i).val().replace(/,/g, '') - parseFloat(incentivo)).toFixed(4);
+			var partesSueldo = sueldo.split('.');
+			var parteEnteraSueldo = partesSueldo[0];
+			var parteDecimalSueldo = partesSueldo[1];
+			parteEnteraSueldo = parteEnteraSueldo.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			sueldo = parteEnteraSueldo + '.' + parteDecimalSueldo;
 			$('#txtSueldo_' + i).val(sueldo);
 
 			totalTotalSueldo = 0;
@@ -1345,19 +1375,19 @@ var OrdenServicio = {
 
 			for (let f = 0; f < (OrdenServicio.arrayFechas).length; f++) {
 				cntSuel = $(($(($('#tablaFechaPersona > tbody').find('tr'))[i]).find('td'))[f + 1]).find('input').val();
-				sueldoPorCantidad = (parseFloat(sueldo) * parseFloat(cntSuel)).toFixed(2);
+				sueldoPorCantidad = (parseFloat(sueldo.replace(/,/g, '')) * parseFloat(cntSuel)).toFixed(2);
 
-				$('#txtSueldoCantidad_' + i).val(sueldoPorCantidad);
+				$('#txtSueldoCantidad_' + i).val(sueldoPorCantidad.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 
-				$("#montoSueldo_" + i + "_" + f).val(sueldoPorCantidad).trigger('change');
+				$("#montoSueldo_" + i + "_" + f).val(sueldoPorCantidad.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 				totalTotalSueldo += parseFloat(sueldoPorCantidad);
 
 				if (typeof cantInc[f] === 'undefined') cantInc[f] = 0;
 				cantInc[f] += (parseFloat(incentivo) * parseFloat(cntSuel));
 				incentivoPorCantidad = (parseFloat(incentivo) * parseFloat(cntSuel)).toFixed(2);
-				$('#txtIncentivoCantidad_' + i).val(incentivoPorCantidad);
+				$('#txtIncentivoCantidad_' + i).val(incentivoPorCantidad.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 
-				$('#montoIncentivo_' + f).val((parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional)).toFixed(2));
+				$('#montoIncentivo_' + f).val((parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional)).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 
 				totalTotalIncentivo += parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional);
 			}
@@ -1486,7 +1516,7 @@ var OrdenServicio = {
 		$('.idTP').each(function () {
 			valor = $(this).val();
 			$.each(OrdenServicio.arrayFechas, function (k, v) {
-				tc = $('#totalColumna_' + valor + '_' + k).val();
+				tc = $('#totalColumna_' + valor + '_' + k).val().replace(/,/g, '');
 				if (isNaN(tc)) tc = 0;
 				if (typeof totF[k] === 'undefined') totF[k] = 0;
 				totF[k] += parseFloat(tc);
@@ -1501,29 +1531,29 @@ var OrdenServicio = {
 		let sumTotal = 0;
 
 		$.each(totF, function (k, v) {
-			$('#subtotalFinal_' + k).val(v.toFixed(2));
+			$('#subtotalFinal_' + k).val(v.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			sumSubTotal += v;
 
-			tS = parseFloat($('#totalColumna_1_' + k).val());
+			tS = parseFloat($('#totalColumna_1_' + k).val().replace(/,/g, ''));
 			fee1 = parseFloat($('.fee1V').val());
 			if (isNaN(fee1)) fee1 = 0;
-			$('#fee1_' + k).val((tS * fee1 / 100).toFixed(2));
+			$('#fee1_' + k).val((tS * fee1 / 100).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			sumFee1 += (tS * fee1 / 100);
 
 			fee2 = parseFloat($('.fee2V').val());
 			if (isNaN(fee2)) fee2 = 0;
-			$('#fee2_' + k).val((tS * fee2 / 100).toFixed(2));
+			$('#fee2_' + k).val((tS * fee2 / 100).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			sumFee2 += (tS * fee2 / 100);
 
 			tF = v - tS;
 			fee3 = parseFloat($('.fee3V').val());
 			if (isNaN(fee3)) fee3 = 0;
-			$('#fee3_' + k).val((tF * fee3 / 100).toFixed(2));
+			$('#fee3_' + k).val((tF * fee3 / 100).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			sumFee3 += (tF * fee3 / 100);
 
 			// if (typeof toFin[k] === 'undefined') toFin[k] = 0;
 			tt = (v + (tS * fee1 / 100) + (tS * fee2 / 100) + (tF * fee3 / 100));
-			$('#totalFinal_' + k).val(tt.toFixed(2));
+			$('#totalFinal_' + k).val(tt.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			sumTotal += tt;
 		});
 

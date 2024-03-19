@@ -101,7 +101,6 @@ var Proveedor = {
 			}
 			control.parents('.content-lsck-capturas:first').remove();
 		});
-
 		$(document).on('change', '.regionCobertura', function (e) {
 			e.preventDefault();
 			let idDepartamento = $(this).val();
@@ -215,13 +214,13 @@ var Proveedor = {
 			});
 		});
 
-		$(document).on("change", ".chkDetraccion", function(){
+		$(document).on("change", ".chkDetraccion", function () {
 			let this_ = $(this);
 			let check = this_.is(':checked');
-			if(check){
+			if (check) {
 				$('.detraccion').removeClass('d-none');
 				$('.cuentaDetraccion').attr('patron', 'requerido')
-			}else{
+			} else {
 				$('.detraccion').addClass('d-none');
 				$('.cuentaDetraccion').removeAttr('patron')
 			}
@@ -250,7 +249,6 @@ var Proveedor = {
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);
 			});
 		});
-		
 		$(document).on('click', '.btn-agregar-tipo-servicio', function (e) {
 			++modalId;
 
@@ -269,7 +267,7 @@ var Proveedor = {
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '50%' });
 				Fn.loadSemanticFunctions();
 				$('.simpleDropdown').dropdown();
-            	$('.dropdownSingleAditions').dropdown({allowAdditions: true	});
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
 				Fn.loadDimmerHover();
 			});
 
@@ -320,6 +318,8 @@ var Proveedor = {
 	},
 
 	registrarProveedor: function () {
+		var montoSinFormato = $('#costo').data('value');
+		$('#costo').val(montoSinFormato);
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedores')) };
 		let url = Proveedor.url + "registrarProveedor";
 		let config = { url: url, data: jsonString };
@@ -358,6 +358,10 @@ var Proveedor = {
 	},
 
 	actualizarProveedor: function () {
+		var montoSinFormato = $('#costo').data('value');
+		if(montoSinFormato > 0) {
+			$('#costo').val(montoSinFormato);
+		}
 		++modalId;
 		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
 		dataFn.idProveedorEstado = '1';
@@ -381,6 +385,10 @@ var Proveedor = {
 	},
 
 	validarProveedor: function () {
+		var montoSinFormato = $('#costo').data('value');
+		if (montoSinFormato > 0) {
+			$('#costo').val(montoSinFormato);
+		}
 		++modalId;
 		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
 		dataFn.idProveedorEstado = '1';
@@ -411,7 +419,6 @@ var Proveedor = {
 
 	generarInfBancaria: function (t, v) {
 		var nuevoDiv = $('.InfoBancData:last').clone();
-		
 		// Limpiar los valores de los campos
 		nuevoDiv.find('input').val('');
 		nuevoDiv.find('.dropdown').dropdown('clear');

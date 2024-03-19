@@ -200,7 +200,7 @@
 												</div>
 												<div class="form-group col-md-3">
 													<label class="font-weight-bold">Costo:</label>
-													<input class="form-control costoSubItem" name="subItem_costo" patron="requerido" readonly onchange="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.cantidadSI').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')" onkeyup="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.cantidadSI').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')" value="<?= $si_v['costo'] ?>">
+													<input class="form-control costoSubItem moneda" name="subItem_costo" patron="requerido" readonly onchange="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.cantidadSI').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')" onkeyup="$(this).closest('.itemData').find('.item_costo').val((parseFloat($(this).closest('.subItemSpace').find('.cantidadSI').val()||0) * parseFloat(this.value||0)).toFixed(2)).trigger('change')" value="<?= $si_v['costo'] ?>">
 												</div>
 												<div class="d-none">
 													<input type="hidden" name="subItem_nombre" value="">
@@ -315,7 +315,7 @@
 								</div>
 								<div class="form-group">
 									<label class="font-weight-bold">Costo:</label>
-									<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="<?= $value['costo_item'] ?>">
+									<input class="form-control item_costo moneda" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="<?= numeroVistaMoneda($value['costo_item']); ?>">
 								</div>
 								<div class="form-row">
 									<div class="form-group col-md-6">
@@ -324,7 +324,7 @@
 									</div>
 									<div class="form-group col-md-6">
 										<label class="font-weight-bold">Sub Total:</label>
-										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="<?= $value['csg_item'] ?>">
+										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="<?= numeroVistaMoneda($value['csg_item']); ?>">
 									</div>
 								</div>
 							</div>
@@ -352,15 +352,15 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold">Total:</label>
-						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oper.cantidadTotal();" onkeyup="Oper.cantidadTotal();" value="<?= $value['total'] ?>">
+						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oper.cantidadTotal();" onkeyup="Oper.cantidadTotal();" value="<?= numeroVistaMoneda($value['total']); ?>">
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold">TotalFee:</label>
-						<input class="form-control" name="totalFee" patron="requerido" id="totalFee" onchange="Oper.cantidadTotal();" onkeyup="Oper.cantidadTotal();" value="<?= $value['totalFee'] ?>">
+						<input class="form-control" name="totalFee" patron="requerido" id="totalFee" onchange="Oper.cantidadTotal();" onkeyup="Oper.cantidadTotal();" value="<?= numeroVistaMoneda($value['totalFee']); ?>">
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold">Total:</label>
-						<input class="form-control" name="totalFeeIGV" patron="requerido" id="totalFinal" readOnly value="<?= $value['totalFeeIGV'] ?>">
+						<input class="form-control" name="totalFeeIGV" patron="requerido" id="totalFinal" readOnly value="<?= numeroVistaMoneda($value['totalFeeIGV']); ?>">
 					</div>
 				</div>
 			</fieldset>

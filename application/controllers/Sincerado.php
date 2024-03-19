@@ -619,6 +619,46 @@ class Sincerado extends MY_Controller
 		$post['tpdS'] = checkAndConvertToArray($post['tpdS']);
 		$post['clS'] = checkAndConvertToArray($post['clS']);
 
+		$post['sinc_montoOriginal'] = is_array($post['sinc_montoOriginal']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['sinc_montoOriginal']) : number_format(floatval(str_replace(',', '', $post['sinc_montoOriginal'])), 2, '.', '');
+		$post['sinc_montoSincerado'] = is_array($post['sinc_montoSincerado']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['sinc_montoSincerado']) : number_format(floatval(str_replace(',', '', $post['sinc_montoSincerado'])), 2, '.', '');
+		$post['sueldo_montoOriginal'] = is_array($post['sueldo_montoOriginal']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['sueldo_montoOriginal']) : number_format(floatval(str_replace(',', '', $post['sueldo_montoOriginal'])), 2, '.', '');
+		$post['otros_montoOriginal'] = is_array($post['otros_montoOriginal']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['otros_montoOriginal']) : number_format(floatval(str_replace(',', '', $post['otros_montoOriginal'])), 2, '.', '');
+		$post['otros_montoSincerado'] = is_array($post['otros_montoSincerado']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['otros_montoSincerado']) : number_format(floatval(str_replace(',', '', $post['otros_montoSincerado'])), 2, '.', '');
+		$post['sueldo_montoSincerado'] = is_array($post['sueldo_montoSincerado']) ? array_map(function ($costo) {
+			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+		}, $post['sueldo_montoSincerado']) : number_format(floatval(str_replace(',', '', $post['sueldo_montoSincerado'])), 2, '.', '');
+		$post['presupuestoSubTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoSubTotal'])), 2, '.', '');
+		$post['head_sbtotalOriginal'] = number_format(floatval(str_replace(',', '', $post['head_sbtotalOriginal'])), 2, '.', '');
+		$post['head_sbtotalSincerado'] = number_format(floatval(str_replace(',', '', $post['head_sbtotalSincerado'])), 2, '.', '');
+		$post['presupuestoFee1'] = number_format(floatval(str_replace(',', '', $post['presupuestoFee1'])), 2, '.', '');
+		$post['head_fee1Original'] = number_format(floatval(str_replace(',', '', $post['head_fee1Original'])), 2, '.', '');
+		$post['head_fee1Sincerado'] = number_format(floatval(str_replace(',', '', $post['head_fee1Sincerado'])), 2, '.', '');
+		$post['presupuestoFee2'] = number_format(floatval(str_replace(',', '', $post['presupuestoFee2'])), 2, '.', '');
+		$post['head_fee2Original'] = number_format(floatval(str_replace(',', '', $post['head_fee2Original'])), 2, '.', '');
+		$post['head_fee2Sincerado'] = number_format(floatval(str_replace(',', '', $post['head_fee2Sincerado'])), 2, '.', '');
+		$post['presupuestoFee3'] = number_format(floatval(str_replace(',', '', $post['presupuestoFee3'])), 2, '.', '');
+		$post['head_fee3Original'] = number_format(floatval(str_replace(',', '', $post['head_fee3Original'])), 2, '.', '');
+		$post['head_fee3Sincerado'] = number_format(floatval(str_replace(',', '', $post['head_fee3Sincerado'])), 2, '.', '');
+		$post['head_totalOriginal'] = number_format(floatval(str_replace(',', '', $post['head_totalOriginal'])), 2, '.', '');
+		$post['head_totalSincerado'] = number_format(floatval(str_replace(',', '', $post['head_totalSincerado'])), 2, '.', '');
+		if (!empty($post['montoSueldoAdicional'])) {
+			$post['montoSueldoAdicional'] = number_format(floatval(str_replace(',', '', $post['montoSueldoAdicional'])), 2, '.', '');
+		}
+		if (!empty($post['movilidadSueldoAdicional'])) {
+			$post['movilidadSueldoAdicional'] = number_format(floatval(str_replace(',', '', $post['movilidadSueldoAdicional'])), 2, '.', '');
+		}
+
+
 		if (!isset($post['idSincerado'])) { // NUEVO
 			$insertSincerado = [
 				'idPresupuesto' => $post['idPresupuesto'],
@@ -722,6 +762,9 @@ class Sincerado extends MY_Controller
 				// compras.sinceradoDetalleSueldo
 				$insertSinceradoDetalleSueldo = [];
 				foreach ($post['cargoList'] as $vc) {
+					$post["monto[$vc]"] = is_array($post["monto[$vc]"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["monto[$vc]"]) : number_format(floatval(str_replace(',', '', $post["monto[$vc]"])), 2, '.', '');
 					$post["monto[$vc]"] = checkAndConvertToArray($post["monto[$vc]"]);
 					foreach ($post['tpdS'] as $kds => $vds) {
 						$insertSinceradoDetalleSueldo[] = [
@@ -881,6 +924,12 @@ class Sincerado extends MY_Controller
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);
 
 					foreach ($post["tipoPresupuestoDetalleSub[$vd]"] as $kds => $vds) {
+						$post["precioUnitarioDS[$vd]"] = is_array($post["precioUnitarioDS[$vd]"]) ? array_map(function ($costo) {
+							return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+						}, $post["precioUnitarioDS[$vd]"]) : number_format(floatval(str_replace(',', '', $post["precioUnitarioDS[$vd]"])), 2, '.', '');
+						$post["montoDS[$vd]"] = is_array($post["montoDS[$vd]"]) ? array_map(function ($costo) {
+							return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+						}, $post["montoDS[$vd]"]) : number_format(floatval(str_replace(',', '', $post["montoDS[$vd]"])), 2, '.', '');
 						$post["splitDS[$vd]"] = checkAndConvertToArray($post["splitDS[$vd]"]);
 						$post["precioUnitarioDS[$vd]"] = checkAndConvertToArray($post["precioUnitarioDS[$vd]"]);
 						$post["cantidadDS[$vd]"] = checkAndConvertToArray($post["cantidadDS[$vd]"]);

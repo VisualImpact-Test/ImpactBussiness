@@ -140,7 +140,14 @@ class Oper extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
+		$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
+		$post['costoTarifario'] = is_array($post['costoTarifario']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costoTarifario']) : number_format(floatval(str_replace(',', '', $post['costoTarifario'])), 2, '.', '');
+		$post['costoGap'] = is_array($post['costoGap']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costoGap']) : number_format(floatval(str_replace(',', '', $post['costoGap'])), 2, '.', '');
+		$post['precio'] = is_array($post['precio']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['precio']) : number_format(floatval(str_replace(',', '', $post['precio'])), 2, '.', '');
+		$post['totalFeeIGV'] = number_format(floatval(str_replace(',', '', $post['totalFeeIGV'])), 2, '.', '');
+		$post['total'] = number_format(floatval(str_replace(',', '', $post['total'])), 2, '.', '');
+		$post['totalFee'] = number_format(floatval(str_replace(',', '', $post['totalFee'])), 2, '.', '');
+		
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['idProveedor'] = checkAndConvertToArray($post['idProveedor']);
@@ -154,6 +161,7 @@ class Oper extends MY_Controller
 		$post['precio'] = checkAndConvertToArray($post['precio']);
 
 		if (isset($post['subItem_monto'])) {
+			$post['subItem_costo'] = is_array($post['subItem_costo']) ? array_map(function ($subItem_monto) { return $subItem_monto !== "" ? number_format(floatval(str_replace(',', '', $subItem_monto)), 2, '.', '') : ""; }, $post['subItem_costo']) : ($post['subItem_costo'] !== "" ? number_format(floatval(str_replace(',', '', $post['subItem_costo'])), 2, '.', '') : "");
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
 			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
 			$post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);
@@ -289,6 +297,12 @@ class Oper extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
+		$post['precio'] = is_array($post['precio']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['precio']) : number_format(floatval(str_replace(',', '', $post['precio'])), 2, '.', '');
+		$post['totalFeeIGV'] = number_format(floatval(str_replace(',', '', $post['totalFeeIGV'])), 2, '.', '');
+		$post['total'] = number_format(floatval(str_replace(',', '', $post['total'])), 2, '.', '');
+		$post['totalFee'] = number_format(floatval(str_replace(',', '', $post['totalFee'])), 2, '.', '');
+		
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
@@ -298,6 +312,7 @@ class Oper extends MY_Controller
 		$post['gap'] = checkAndConvertToArray($post['gap']);
 		$post['precio'] = checkAndConvertToArray($post['precio']);
 		if (isset($post['subItem_monto'])) {
+			$post['subItem_costo'] = is_array($post['subItem_costo']) ? array_map(function ($subItem_monto) { return $subItem_monto !== "" ? number_format(floatval(str_replace(',', '', $subItem_monto)), 2, '.', '') : ""; }, $post['subItem_costo']) : ($post['subItem_costo'] !== "" ? number_format(floatval(str_replace(',', '', $post['subItem_costo'])), 2, '.', '') : "");
 			$post['subItem_monto'] = checkAndConvertToArray($post['subItem_monto']);
 			$post['subItem_tipoServ'] = checkAndConvertToArray($post['subItem_tipoServ']);
 			$post['subItem_idUm'] = checkAndConvertToArray($post['subItem_idUm']);

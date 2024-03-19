@@ -18,7 +18,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">S/</span>
                     </div>
-                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros" id="costo" value="" patron="requerido, numeros" autocomplete="off">
+                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros moneda" id="costo" value="" patron="requerido, numeros" autocomplete="off">
                 </div>
             </div>
             <div class="control-group child-divcenter row w-100">

@@ -47,7 +47,7 @@
                                 <th style="width: 15%;">Tipo de Item</th>
                                 <th style="width: 50%;">Item</th>
                                 <th style="width: 15%;" class="text-center">Cantidad</th>
-                                <th style="width: 7%;">Costo Actual</th>
+                                <th style="width: 11%;">Costo Actual</th>
                                 <th style="width: 8%;">Estado</th>
                                 <!-- <th style="width: 8%;">Opciones</th> -->
                             </tr>
@@ -58,7 +58,7 @@
                                 <td>Equipos Moviles</td>
                                 <td>EQUIPO MOVIL SAMSUNG A10</td>
                                 <td>2</td>
-                                <td><input class="form-control" type="number"></td>
+                                <td><input class="form-control moneda" type="number"></td>
                                 <td>Entregado</td>
                                 <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="23" data-nombrearticulo="EQUIPO MOVIL SAMSUNG A10"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                             </tr>
@@ -120,7 +120,7 @@
                                 <th style="width: 15%;">Tipo de Item</th>
                                 <th style="width: 50%;">Item</th>
                                 <th style="width: 15%;" class="text-center">Cantidad</th>
-                                <th style="width: 7%;">Costo Actual</th>
+                                <th style="width: 11%;">Costo Actual</th>
                                 <th style="width: 8%;">Estado</th>
                                 <!-- <th style="width: 8%;">Opciones</th> -->
                             </tr>
@@ -131,7 +131,7 @@
                                 <td>Equipos Moviles</td>
                                 <td>EQUIPO MOVIL SAMSUNG A20</td>
                                 <td>5</td>
-                                <td><input class="form-control" type="number" readonly value="1200"></td>
+                                <td><input class="form-control" type="text" readonly value="<?= number_format(1200, 2, '.', ','); ?>"></td>
                                 <td>Confirmado</td>
                         </tbody>
                     </table>
@@ -191,7 +191,7 @@
                                 <th style="width: 15%;">Tipo de Item</th>
                                 <th style="width: 50%;">Item</th>
                                 <th style="width: 15%;" class="text-center">Cantidad</th>
-                                <th style="width: 7%;">Costo Actual</th>
+                                <th style="width: 11%;">Costo Actual</th>
                                 <th style="width: 8%;">Estado</th>
                                 <!-- <th style="width: 8%;">Opciones</th> -->
                             </tr>
@@ -202,7 +202,7 @@
                                 <td>Equipos Moviles</td>
                                 <td>SAMSUNG A10 32 GB</td>
                                 <td>5</td>
-                                <td><input class="form-control" type="number" readonly value="750"></td>
+                                <td><input class="form-control" type="text" readonly value="<?= number_format(750, 2, '.', ','); ?>"></td>
                                 <td>Confirmado</td>
                                 <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="25" data-nombrearticulo="SAMSUNG A10 32 GB"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                             </tr>
@@ -211,7 +211,7 @@
                                 <td>Equipos Moviles</td>
                                 <td>IPHONE XR 128 GB</td>
                                 <td>1</td>
-                                <td><input class="form-control" type="number" readonly value="2500"></td>
+                                <td><input class="form-control" type="text" readonly value="<?= number_format(2500, 2, '.', ','); ?>"></td>
                                 <td>Confirmado</td>
                                 <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="25" data-nombrearticulo="IPHONE XR 128 GB"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                             </tr>
@@ -220,7 +220,7 @@
                                 <td>Equipos Moviles</td>
                                 <td>MOTOROLA E PLUS 32GB</td>
                                 <td>12</td>
-                                <td><input class="form-control" type="number" readonly value="670"></td>
+                                <td><input class="form-control" type="text" readonly value="<?= number_format(670, 2, '.', ','); ?>"></td>
                                 <td>Confirmado</td>
                                 <!-- <td><a href="javascript:;" class="btn btn-outline-secondary border-0 btn-agregarArticulo" data-idcotizacion="25" data-nombrearticulo="MOTOROLA E PLUS 32GB"><i class="fa fa-lg fa-plus" title="Agregar articulo al sistema"></i></a></td> -->
                             </tr>

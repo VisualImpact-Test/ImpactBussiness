@@ -62,7 +62,7 @@
 					</div>
 					<div class="control-group child-divcenter row pt-2 fijo <?= ($proveedorServicioPago[0]['flagFijo'] == 1) ?  ''  :  'd-none' ?> " style="width:50%">
 						<label class="form-control border-0 col-md-4">Monto:</label>
-						<input class="form-control col-md-8 onlyNumbers" type="number" id="monto" name="monto" value="<?= $proveedorServicioPago[0]['monto'] ?>">
+						<input class="form-control col-md-8 onlyNumbers moneda" type="text" id="monto" name="monto" value="<?= $proveedorServicioPago[0]['monto'] ?>">
 					</div>
 				</div>
 				<div class="row">

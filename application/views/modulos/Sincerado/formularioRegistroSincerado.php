@@ -468,7 +468,7 @@
 													</td>
 													<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 														<td>
-															<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1[$vp['idCargo']]['monto'] ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
+															<input class="form-control text-right keyUpChange moneda" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= numeroVistaMoneda($v1[$vp['idCargo']]['monto']); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
 															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) : ?>
 																<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - floatval($v1[$vp['idCargo']]['monto']) ?>">
 															<?php endif; ?>
@@ -967,7 +967,7 @@
 												</td>
 												<td class="precioUnitarioDetalle">
 													<div class="ui input fluid">
-														<input type="text" class="text-right onlyNumbers keyUpChange" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['precioUnitario']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<input type="text" class="text-right onlyNumbers keyUpChange moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="gapDetalle">

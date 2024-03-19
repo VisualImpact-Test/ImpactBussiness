@@ -498,9 +498,6 @@ var View = {
 				}
 			}
 		});
-
-
-
 		$(document).on('keyup', '.onlyNumbers', function (e) {
 			let puntos = 0;
 			let cadenaAnalizar = $(this).val();
@@ -548,7 +545,6 @@ var View = {
 				}
 			}, 0);
 		});
-
 		$(document).on('keypress', '.onlyNumbers', function (e) {
 			let control = $(this);
 			if (!$.isNumeric(e.key) && e.key != '.' && e.keyCode != 13) {
@@ -577,6 +573,22 @@ var View = {
 					$(this).val(nmin).change(); // Comentado para que no escriba automaticamente el valor minimo.
 					// $(this).val('');
 				}
+			}
+		});
+		$(document).on('input', '.moneda', function (e) {
+			var montoSinFormato = $(this).val().replace(/\D/g, '');
+			if (montoSinFormato != "") {
+				var monto = parseFloat(montoSinFormato) / 100;
+				$(this).data('value', monto);
+				$(this).val(monto.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+			}
+		});
+		$(document).on('click', '.moneda', function (e) {
+			var montoSinFormato = $(this).val();
+			if (montoSinFormato != "") {
+				var monto = parseFloat(montoSinFormato.replace(/,/g, ''));
+				$(this).data('value', monto);
+				$(this).val(monto.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
 			}
 		});
 

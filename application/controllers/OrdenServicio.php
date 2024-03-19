@@ -204,7 +204,7 @@ class OrdenServicio extends MY_Controller
 							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
 							if ($nroMes == 1 || ($nroMes - 1) % 3 == 0) $calculoCargoFechaServicio[$k1][$k2][$keyCode] += $valorMax[$kc] * floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100;
-						}  elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
+						} elseif ($v2['idFrecuencia'] == '3') { // SEMESTRAL
 							if ($nroMes == 1 || ($nroMes - 1) % 6 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
 								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
@@ -732,6 +732,7 @@ class OrdenServicio extends MY_Controller
 		$idCuenta = null;
 		$idCentroCosto = null;
 
+		$post['sueldoCargo'] = is_array($post['sueldoCargo']) ? array_map(function ($sueldo) { return number_format(floatval(str_replace(',', '', $sueldo)), 2, '.', ''); }, $post['sueldoCargo']) : number_format(floatval(str_replace(',', '', $post['sueldoCargo'])), 2, '.', '');
 		$buscarDuplicado = $this->db->get_where('compras.ordenServicio', ['estado' => 1, 'nombre' => $post['nombre']])->result_array();
 		if (!empty($buscarDuplicado)) {
 			$result['result'] = 2;
@@ -928,7 +929,7 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['versionesAnteriores'] = $this->model->getVersionesAnteriores($idOrdenServicio)->result_array();
 		//VALIDAR VERSIÓN PRESUPUESTO ENVIADO
 		foreach ($dataParaVista['versionesAnteriores'] as $vt) {
-			$result = $this->db->get_where('compras.presupuestoValido',['idPresupuestoHistorico' => $vt['idPresupuestoHistorico'], 'estado' => 1])->row_array();
+			$result = $this->db->get_where('compras.presupuestoValido', ['idPresupuestoHistorico' => $vt['idPresupuestoHistorico'], 'estado' => 1])->row_array();
 			if (!empty($result)) {
 				$dataParaVista['aprobado'] = $result['idPresupuestoHistorico'];
 			}
@@ -1052,6 +1053,7 @@ class OrdenServicio extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
+		$post['sueldoCargo'] = is_array($post['sueldoCargo']) ? array_map(function ($sueldo) { return number_format(floatval(str_replace(',', '', $sueldo)), 2, '.', ''); }, $post['sueldoCargo']) : number_format(floatval(str_replace(',', '', $post['sueldoCargo'])), 2, '.', '');
 		$idCliente = null;
 		$idCuenta = null;
 		$idCentroCosto = null;

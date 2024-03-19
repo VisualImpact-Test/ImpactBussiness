@@ -205,9 +205,10 @@ class M_PagosGenerados extends MY_Model
 		psnc.numNota,
 		psnc.nombre_archivo as nombre_archivo_nota,
 		pspe.idServicioPagoEfectuado,
-		pspe.fechaPagoComprobante as fechaPagoComprobantePago  , 
+		pspe.fechaPagoComprobante as fechaPagoComprobantePago, 
 		pspe.idTipoComprobante as idTipoPago,
-		pspe.numeroComprobante as numComprobantePago , 
+		pspe.idMetodoPago,
+		pspe.numeroComprobante as numComprobantePago, 
 		pspe.montoPagado,
 		pspe.idCuenta,
 		pspe.idCentroCosto,
@@ -215,7 +216,8 @@ class M_PagosGenerados extends MY_Model
 		pspe.porcentajeDetraccion,
 		pspe.montoDetraccion ,
 		pspe.idEstadoPago ,
-		pspe.nombre_archivo as nombre_archivo_pago
+		pspe.nombre_archivo as nombre_archivo_pago,
+		psc.idMoneda
 		from finanzas.proveedorServicioPagoComprobante as psc
 		left join finanzas.proveedorServicioPagoNotaCredito as psnc on psc.idServicioPagoComprobante = psnc.idServicioPagoComprobante
 		left join finanzas.proveedorServicioPagoEfectuados as pspe on pspe.idServicioPagoComprobante = psc.idServicioPagoComprobante
