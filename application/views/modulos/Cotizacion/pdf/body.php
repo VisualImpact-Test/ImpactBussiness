@@ -59,11 +59,17 @@
 			<tr style="background-color: #FFE598;">
 				<th width="7%">ITEM</th>
 				<th width="63%" class="text-left" colspan="4">DESCRIPCIÓN</th>
+				<?php if ($cabecera['incluyeServicio']) : ?>
+					<th></th>
+				<?php endif; ?>
 				<th width="15%" class="text-center">
 					<?php if ($detalle[0]['idItemTipo'] != COD_DISTRIBUCION['id'] || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTransporte']) || ($detalle[0]['idItemTipo'] == COD_DISTRIBUCION['id'] && $cabecera['incluyeTarjVales'])) : ?>
 						CANTIDAD
 					<?php endif; ?>
 				</th>
+				<?php if ($cabecera['incluyeServicio']) : ?>
+					<th></th>
+				<?php endif; ?>
 				<th width="15%">TOTAL</th>
 			</tr>
 		<?php endif; ?>
@@ -143,7 +149,13 @@
 				<tr style="background-color: #F6FAFD;">
 					<td class="text-center"><?= $key + 1 ?></td>
 					<td class="text-left" colspan="4"> <?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item']; ?> </td>
+					<?php if ($cabecera['incluyeServicio']) : ?>
+						<td class="text-center"></td>
+					<?php endif; ?>
 					<td class="text-left" style="font-size: 11px;"> <?= $cantidadMoviles; ?> MOV. X <?= $cantidadDias; ?> DÍAS</td>
+					<?php if ($cabecera['incluyeServicio']) : ?>
+						<td class="text-center"></td>
+					<?php endif; ?>
 					<td class="text-right"><?= empty($row['subtotal']) ? "-" : moneda($row['subtotal']); ?></td>
 				</tr>
 			<?php endif; ?>
@@ -153,6 +165,9 @@
 					<td class="text-left" colspan="4">
 						<?= $row['flagAlternativo'] ? $row['nombreAlternativo'] : $row['item'] ?> <?= verificarEmpty($row['caracteristicas'], 1, '(', ')'); ?>
 					</td>
+					<?php if ($cabecera['incluyeServicio']) : ?>
+						<td class="text-center"></td>
+					<?php endif; ?>
 					<td class="text-center">
 						<?php if ($row['idItemTipo'] != COD_DISTRIBUCION['id']) : ?>
 							<?= verificarEmpty($row['cantidad'], 3) ?>
@@ -160,6 +175,9 @@
 							-
 						<?php endif; ?>
 					</td>
+					<?php if ($cabecera['incluyeServicio']) : ?>
+						<td class="text-center"></td>
+					<?php endif; ?>
 					<td class="text-right">
 						<?php if (!empty($row['costoPacking'])) : ?>
 							<?php $totalPacking += 0; //floatval($row['costoPacking']); 
@@ -191,6 +209,10 @@
 								<td colspan="<?= 3 - count($dataGenero); ?>" class="bold"></td>
 							<?php endif; ?>
 						<?php endif; ?>
+						<?php if ($cabecera['incluyeServicio']) : ?>
+							<td class="text-center"></td>
+							<td class="text-center"></td>
+						<?php endif; ?>
 						<td></td>
 						<td></td>
 					</tr>
@@ -204,6 +226,10 @@
 							<?php if (3 - count($dataGenero) > 0) : ?>
 								<td colspan="<?= 3 - count($dataGenero); ?>"></td>
 							<?php endif; ?>
+							<?php if ($cabecera['incluyeServicio']) : ?>
+								<td class="text-center"></td>
+								<td class="text-center"></td>
+							<?php endif; ?>
 							<td></td>
 							<td></td>
 						</tr>
@@ -212,38 +238,50 @@
 			<?php endif; ?>
 			<?php if ($row['idItemTipo'] == COD_CONCURSO['id'] || $row['idItemTipo'] == COD_TARJETAS_VALES['id'] || $row['idItemTipo'] == COD_PAGOS_FARMACIAS['id']) : ?>
 				<?php if (!empty($detalleSub[$row['idCotizacionDetalle']])) : ?>
-					<?php if($row['flagDetalleTarjetasVales'] != 2) : ?>
-					<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
-						<tr class="bg-gray">
-							<td class="text-center"></td>
-							<td class="text-left" colspan="4">
-								&nbsp; &nbsp; &nbsp;<?= $dsV['nombre'] ?>
-							</td>
-							<td class="text-center">
-								<?= floatval($dsV['cantidad'])  ?>
-							</td>
-							<td class="text-right">
-								<?= moneda(floatval($dsV['costo'])) ?>
-							</td>
-						</tr>
-						<?php if (!empty($dsV['porcentajeParaCosto'])) : ?>
+					<?php if ($row['flagDetalleTarjetasVales'] != 2) : ?>
+						<?php foreach ($detalleSub[$row['idCotizacionDetalle']] as $dsK => $dsV) : ?>
 							<tr class="bg-gray">
 								<td class="text-center"></td>
 								<td class="text-left" colspan="4">
-									&nbsp; &nbsp; &nbsp;Gasto administrativo concurso
+									&nbsp; &nbsp; &nbsp;<?= $dsV['nombre'] ?>
 								</td>
+								<?php if ($cabecera['incluyeServicio']) : ?>
+									<td class="text-center"></td>
+								<?php endif; ?>
 								<td class="text-center">
-									-
+									<?= floatval($dsV['cantidad'])  ?>
 								</td>
+								<?php if ($cabecera['incluyeServicio']) : ?>
+									<td class="text-center"></td>
+								<?php endif; ?>
 								<td class="text-right">
-									<?= moneda(floatval($dsV['costo']) * floatval($dsV['porcentajeParaCosto']) / 100) ?>
+									<?= moneda(floatval($dsV['costo'])) ?>
 								</td>
 							</tr>
-						<?php endif; ?>
-					<?php endforeach; ?>
-					<tr class="bg-gray">
-						<td></td>
-					</tr>
+							<?php if (!empty($dsV['porcentajeParaCosto'])) : ?>
+								<tr class="bg-gray">
+									<td class="text-center"></td>
+									<td class="text-left" colspan="4">
+										&nbsp; &nbsp; &nbsp;Gasto administrativo concurso
+									</td>
+									<?php if ($cabecera['incluyeServicio']) : ?>
+										<td class="text-center"></td>
+									<?php endif; ?>
+									<td class="text-center">
+										-
+									</td>
+									<?php if ($cabecera['incluyeServicio']) : ?>
+										<td class="text-center"></td>
+									<?php endif; ?>
+									<td class="text-right">
+										<?= moneda(floatval($dsV['costo']) * floatval($dsV['porcentajeParaCosto']) / 100) ?>
+									</td>
+								</tr>
+							<?php endif; ?>
+						<?php endforeach; ?>
+						<tr class="bg-gray">
+							<td></td>
+						</tr>
 					<?php endif; ?>
 				<?php endif; ?>
 			<?php endif; ?>
