@@ -536,13 +536,12 @@ var View = {
 		$(document).on('paste', '.onlyNumbers', function (e) {
 			t = $(this);
 			setTimeout(function () {
-				
 				var value = t.val();
-				var numberValue = value.match(/\d+(\.\d+)?/); 
+				var numberValue = value.match(/\d+(\.\d+)?/);
 				if (numberValue) {
-				  t.val(parseFloat(numberValue[0])).keyup();
+					t.val(parseFloat(numberValue[0])).keyup();
 				} else {
-				  t.val('0').change();
+					t.val('0').change();
 				}
 			}, 0);
 		});
@@ -576,7 +575,15 @@ var View = {
 				}
 			}
 		});
-		$(document).on('input', '.moneda', function (e) {
+		$(document).on('paste', '.moneda', function (e) {
+			var montoSinFormato = $(this).val();
+			if (montoSinFormato != "") {
+				var monto = parseFloat(montoSinFormato.replace(/,/g, ''));
+				$(this).data('value', monto);
+				$(this).val(monto.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+			}
+		});
+		$(document).on('keyup', '.moneda', function (e) {
 			var montoSinFormato = $(this).val().replace(/\D/g, '');
 			if (montoSinFormato != "") {
 				var monto = parseFloat(montoSinFormato) / 100;
