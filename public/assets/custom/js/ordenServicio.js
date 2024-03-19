@@ -1012,7 +1012,8 @@ var OrdenServicio = {
 		var precioUnitario = parseFloat(control.closest('tr').find('.precioUnitarioDetalle').find('input').val().replace(/,/g, '')) * parseFloat(split);
 		var gapT = control.closest('tr').find('.gapDetalle').find('input').val();
 		var gap = 1 + (parseFloat(gapT) / 100);
-
+		var preciogap = precioUnitario + (precioUnitario * (parseFloat(gapT) / 100));
+		control.closest('tr').find('.precioGapDetalle').find('input').val(preciogap.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		// Inicio: Calcular valor por columna
 		let nrofila = $(t).closest('tr').data('nrofila');
 		let trCantCarg = $(t).closest('tbody').find('.cantidadCargo_' + nrofila);

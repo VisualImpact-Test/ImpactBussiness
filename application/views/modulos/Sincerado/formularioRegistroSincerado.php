@@ -738,7 +738,7 @@
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= $vm['precioTaxi']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
+													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'],2); ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
 												</div>
 											</td>
 											<td>
@@ -940,6 +940,7 @@
 										<th>Split</th>
 										<th>Precio Unitario</th>
 										<th>GAP</th>
+										<th>Precio GAP</th>
 										<th class="cantidadDeTabla">Cantidad</th>
 										<th>Total</th>
 										<th>Frecuencia</th>
@@ -974,6 +975,11 @@
 													<div class="ui right labeled input fluid">
 														<input type="text" class="text-right onlyNumbers keyUpChange" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['gap']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 														<div class="ui basic label"> % </div>
+													</div>
+												</td>
+												<td class="precioGapDetalle">
+													<div class="ui labeled input transparent fluid">
+														<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * ($value['gap'] / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="cantidadDeTabla">

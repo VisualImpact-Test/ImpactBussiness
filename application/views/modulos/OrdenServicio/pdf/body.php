@@ -4,7 +4,13 @@
 		<tr>
 			<th></th>
 			<?php foreach ($fechas as $k => $v) : ?>
-				<th><?= date_change_format($k) ?></th>
+				<th><?php 
+					setlocale(LC_TIME, 'es_ES.UTF-8');
+					$fecha = $k;
+					$nueva_fecha = strftime("%b-%y", strtotime($fecha));
+					$nueva_fecha = str_replace('.', '', $nueva_fecha);
+					$nueva_fecha = ucfirst($nueva_fecha); 
+					echo $nueva_fecha; ?></th>
 			<?php endforeach ?>
 			<th>TOTAL</th>
 		</tr>
