@@ -54,14 +54,14 @@
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto Comprobante:</label>
-                                <input id="montoComprobante_<?= $id ?>" name="montoComprobante_<?= $id ?>" patron="requerido" value="<?= $v['montoFactura']; ?>" disabled>
+                                <input id="montoComprobante_<?= $id ?>" name="montoComprobante_<?= $id ?>" patron="requerido" value="<?= $v['idMoneda'] == 1 ? 'S/ '. numeroVistaMoneda($v['montoFactura']) : '$/ '. numeroVistaMoneda($v['montoFactura']); ?>" disabled>
                                 </div>
                             </div>  
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Metodo de Pago:</label>
                                     <select class="form-control  semantic-dropdown" id="metodoPago_P<?= $id ?>" name="metodoPago_P<?= $id ?>"   patron="requerido">
-                                    <?= htmlSelectOptionArray2(['query' => $motodoPago,'selected' => $v['idTipoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
+                                    <?= htmlSelectOptionArray2(['query' => $metodoPago,'selected' => $v['idMetodoPago'] , 'class' => 'text-titlecase', 'title' => 'Seleccione' ]); ?>
                                     </select>
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto:</label>
-                                <input class="form-control  onlyNumbers monto" data-id="<?= $id ?>" id="monto_P<?= $id ?>" name="monto_P<?= $id ?>" patron="requerido" value="<?= $v['montoPagado']; ?>">
+                                <input class="form-control  onlyNumbers monto moneda" data-id="<?= $id ?>" id="monto_P<?= $id ?>" name="monto_P<?= $id ?>" patron="requerido" value="<?= $v['montoPagado']; ?>">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
@@ -127,7 +127,7 @@
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto Detracción:</label>
-                                <input class="form-control  " readonly id="montoDetraccion_P<?= $id ?>" name="montoDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['montoDetraccion']; ?>">
+                                <input class="form-control moneda" readonly id="montoDetraccion_P<?= $id ?>" name="montoDetraccion_P<?= $id ?>" patron="requerido" value="<?= $v['montoDetraccion']; ?>">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">

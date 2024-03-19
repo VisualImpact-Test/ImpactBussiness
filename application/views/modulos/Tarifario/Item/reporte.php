@@ -50,14 +50,14 @@
 							&& $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['estaVigente']
 						) : ?>
 							<th nowrap class="text-center" style="color: green; <?= $flag ? 'background-color: #FFFC96;' : ''; ?>">
-								<?= isset($dataItemProveedor[$row['idItem']][$idProveedor]['costo']) ? $dataItemProveedor[$row['idItem']][$idProveedor]['costo'] : '-'; ?>
+								<?= isset($dataItemProveedor[$row['idItem']][$idProveedor]['costo']) ? 'S/ ' . numeroVistaMoneda($dataItemProveedor[$row['idItem']][$idProveedor]['costo']) : '-'; ?>
 								<br>
 								<br>
 								<?= isset($dataItemProveedor[$row['idItem']][$idProveedor]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$idProveedor]['fechaVigencia']) : '-'; ?>
 							</th>
 						<?php else : ?>
 							<th nowrap class="text-center" style="color: red; <?= $flag ? 'background-color: #FFFC96;' : ''; ?>">
-								<?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? $dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo'] : '-'; ?>
+								<?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) ? 'S/ ' . numeroVistaMoneda($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['costo']) : '-'; ?>
 								<br>
 								<br>
 								<?= isset($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) ?  date_change_format($dataItemProveedor[$row['idItem']][$rProveedor['idProveedor']]['fechaVigencia']) : '-'; ?>

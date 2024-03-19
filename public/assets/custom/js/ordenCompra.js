@@ -583,21 +583,21 @@ var Oc = {
 						<div class="form-group col-md-6" style="padding-right: 3px;padding-left: 3px;">
 							<label class="font-weight-bold">Cantidad:</label>
 							<input class="form-control SbItCantidad" name="subItem_cantidad" patron="requerido"
-										onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
-										onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
+										onchange="Oc.calcularSubTotalTextilSub('cantidad', this);"
+										onkeyup="Oc.calcularSubTotalTextilSub('cantidad', this);"
 							>
 						</div>
-						<div class="form-group col-md-6 d-none" style="padding-right: 3px;padding-left: 3px; ">
+						<div class="form-group col-md-6 d-none" style="padding-right: 3px;padding-left: 3px;">
 						<label class="font-weight-bold">Costo:</label>
-						<input class="form-control SbItCosto" name="subItem_costo" 
-									 onchange="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
-									 onkeyup="$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCantidad').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');"
+						<input class="form-control SbItCosto moneda" name="subItem_costo"
+									onchange="Oc.calcularSubTotalTextilSub('subTotal', this);"
+									onkeyup="Oc.calcularSubTotalTextilSub('subTotal', this);"
 						>
 						</div>
 					</div>
 					<div class="form-group col-md-2 d-none">
 						<label class="font-weight-bold">Sb Tot:</label>
-						<input class="form-control SbItSubTotal" name="subItem_st" patron="requerido" readonly onchange="Oc.calcularTextilPrecio(this);">
+						<input class="form-control SbItSubTotal moneda" name="subItem_st" patron="requerido" readonly onchange="Oc.calcularTextilPrecio(this);">
 					</div>
 					<div class="form-group col-md-1">
 						<label class="font-weight-bold" style="color: white;">:</label>
@@ -620,7 +620,7 @@ var Oc = {
 				<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 					<div class="form-group col-md-12">
 						<label class="font-weight-bold">Monto:</label>
-						<input class="form-control" name="subItem_monto" patron="requerido">
+						<input class="form-control moneda" name="subItem_monto" patron="requerido">
 					</div>
 					<div class="d-none">
 						<input type="hidden" name="subItem_tipoServ" value="">
@@ -643,10 +643,25 @@ var Oc = {
 		let cantidadSubItems = $(div).find('.subItemSpace').length;
 		$(espacio).find('input.cantidadSubItem').val(cantidadSubItems);
 	},
+	calcularSubTotalTextilSub: function (ex, element) {
+		if(ex === 'cantidad') {
+			var costo = parseFloat($(element).closest('.subItemSpace').find('.SbItCosto').val().replace(/,/g, '')) || 0;
+			var value = parseFloat(element.value.replace(/,/g, '')) || 0;
+			var subtotal = (costo * value).toFixed(2);
+			$(element).closest('.subItemSpace').find('.SbItSubTotal').val(subtotal).trigger('change');
+		} else {
+			$(this).closest('.subItemSpace').find('.SbItSubTotal').val((parseFloat($(this).closest('.subItemSpace').find('.SbItCosto').val() || 0) * parseFloat(this.value || 0)).toFixed(2)).trigger('change');
+			var cantidad = parseFloat($(element).closest('.subItemSpace').find('.SbItCantidad').val().replace(/,/g, '')) || 0;
+			var value = parseFloat(element.value.replace(/,/g, '')) || 0;
+			var subtotal = (cantidad * value).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+			$(element).closest('.subItemSpace').find('.SbItSubTotal').val(subtotal).trigger('change');
+		}
+	},
 	cantidadPorItem: function (t) {
 		div = $(t).closest('.itemData').find('div.itemValor');
 		cantidad = parseFloat($(div).find('input.item_cantidad').val() || '0');
-		costo = parseFloat($(div).find('input.item_costo').val() || '0');
+		var costo1 = parseFloat($(div).find('input.item_costo').val().replace(/,/g, ''));
+		costo = parseFloat(costo1 || '0');
 		// gap = parseFloat($(div).find('input.item_GAP').val() || '0');
 		gap = 0;
 		cantPDV = 0;
@@ -654,7 +669,7 @@ var Oc = {
 			cantPDV = parseFloat($(t).closest('.itemData').find('input.cantidadPDV').val() || '0') * parseFloat($(div).find('input.item_cantidad').val() || '0');
 		}
 		let precio = (cantidad * costo) + (cantidad * costo * gap / 100) + cantPDV;
-		$(div).find('input.item_precio').val(precio.toFixed(3));
+		$(div).find('input.item_precio').val(precio.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		$(div).find('input.item_precio_real').val(precio);
 		Oc.cantidadTotal();
 	},
@@ -671,13 +686,13 @@ var Oc = {
 			}
 		};
 		totalTotal = total + totalNoFee;
-		$('#total').val(totalTotal.toFixed(3));
+		$('#total').val(totalTotal.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		$('#total_real').val(totalTotal);
 		fee = 0; //parseFloat($('#fee').val()||'0');
 		// $('#totalFee').val((totalNoFee + total + (total * fee / 100)).toFixed(2));
 		igv = parseFloat($('#valorIGV').val()) / 100;
 		totalFinal = (totalNoFee + total) * igv + (total * igv * fee / 100);
-		$('#totalFinal').val(totalFinal.toFixed(3));
+		$('#totalFinal').val(totalFinal.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		$('#totalFinal_real').val(totalFinal);
 	},
 	itemInputComplete: function (ord) {
@@ -802,7 +817,7 @@ var Oc = {
 			cantidad += parseFloat($(ct[i]).val() || 0);
 		}
 		$(control).closest('.itemData').find('.item_cantidad').val(cantidad);
-		$(control).closest('.itemData').find('.item_costo').val(total / cantidad).trigger('change');
+		$(control).closest('.itemData').find('.item_costo').val($(control).closest('.itemData').find('.item_costo').val()).trigger('change');
 	},
 	addGr: function () {
 		let grBase = $('#grBase').html();

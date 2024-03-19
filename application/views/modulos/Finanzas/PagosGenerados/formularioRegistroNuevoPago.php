@@ -125,7 +125,7 @@
                             <div class="field" style="width:15%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto:</label>
-                                <input class="form-control  onlyNumbers monto" id="monto_M" name="monto_M" patron="requerido" value="">
+                                <input class="form-control  onlyNumbers monto moneda" id="monto_M" name="monto_M" patron="requerido" value="">
                                 </div>
                             </div>
                             <div class="field" style="width:15%;margin-left: 0px;margin-right: 0px;">
@@ -137,7 +137,7 @@
                             <div class="field" style="width:15%;margin-left: 0px;margin-right: 0px;">
                                 <div class="field sixteen">
                                 <label>Monto Detracción:</label>
-                                <input class="form-control  " readonly id="montoDetraccion_M" name="montoDetraccion_M" patron="requerido" value="">
+                                <input class="form-control moneda" readonly id="montoDetraccion_M" name="montoDetraccion_M" patron="requerido" value="">
                                 </div>
                             </div>
                             <div class="field" style="width:20%;margin-left: 0px;margin-right: 0px;">

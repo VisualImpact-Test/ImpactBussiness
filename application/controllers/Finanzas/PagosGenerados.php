@@ -72,10 +72,8 @@ class PagosGenerados extends MY_Controller
 		$post = json_decode($this->input->post('data'), true);
 		$dataParaVista = [];
 		$dataParaVista['pagosGenerados'] = $this->model->ObtenerDatosPagosGenerados($post)['query']->result_array();
-		//echo $this->db->last_query();exit();
 		$dataParaVista['tipoComprobante'] = $this->model->ObtenerDatosTipoComprobante($post)['query']->result_array();
-		$dataParaVista['motodoPago'] = $this->model->ObtenerDatosMetodoPago($post)['query']->result_array();
-
+		$dataParaVista['metodoPago'] = $this->model->ObtenerDatosMetodoPago($post)['query']->result_array();
 		$dataParaVista['cuenta'] = $this->mCotizacion->obtenerCuenta()['query']->result_array();
 		$dataParaVista['centroCosto'] = $this->mCotizacion->obtenerCuentaCentroCosto(['estadoCentroCosto' => true])['query']->result_array();
 		$dataParaVista['facturas'] = $this->model->ObtenerDatosFacturas($post)['query']->result_array();
@@ -164,8 +162,6 @@ class PagosGenerados extends MY_Controller
 				'extension' => FILES_WASABI[$tipoArchivo[1]],
 				'usuarioRegistro' => $this->idUsuario,
 			];
-			//echo var_dump($insertFactura); exit;
-			
 		}
 		$this->db->insert_batch('finanzas.proveedorServicioPagoComprobante', $insertFactura);
 		}

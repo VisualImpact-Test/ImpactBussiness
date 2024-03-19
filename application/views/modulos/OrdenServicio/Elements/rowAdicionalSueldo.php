@@ -11,12 +11,12 @@
 	</td>
 	<td>
 		<div class="ui input">
-			<input class="onlyNumbers keyUpChange montoSueldoAdicional" patron="requerido" type="text" value="0" name="montoSueldoAdicional" onchange="$('#calculateTablaSueldo').click();">
+			<input class="onlyNumbers keyUpChange montoSueldoAdicional moneda" patron="requerido" type="text" value="<?= numeroVistaMoneda(0) ?>" name="montoSueldoAdicional" onchange="$('#calculateTablaSueldo').click();">
 		</div>
 	</td>
 	<td>
 		<div class="ui input">
-			<input class="onlyNumbers keyUpChange movilidadSueldoAdicional" type="text" value="0" name="movilidadSueldoAdicional" onchange="OrdenServicio.calcularMovilidad();">
+			<input class="onlyNumbers keyUpChange movilidadSueldoAdicional moneda" type="text" value="<?= numeroVistaMoneda(0) ?>" name="movilidadSueldoAdicional" onchange="OrdenServicio.calcularMovilidad();">
 		</div>
 	</td>
 </tr>

@@ -19,8 +19,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">S/</span>
                     </div>
-                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros" id="costo" patron="requerido, numeros" value="<?= $informacionItem['costo'] ?>">
-                    <input type="text" lang="en" name="costoAnterior" class="d-none" id="costoAnterior" value="<?= $informacionItem['costo'] ?>">
+                    <input type="text" lang="en" name="costo" class="form-control input-sm soloNumeros moneda" id="costo" patron="requerido, numeros" value="<?= $informacionItem['costo']; ?>">
+                    <input type="text" lang="en" name="costoAnterior" class="d-none" id="costoAnterior" value="<?= $informacionItem['costo']; ?>">
                 </div>
             </div>
             <div class="control-group child-divcenter row w-100">

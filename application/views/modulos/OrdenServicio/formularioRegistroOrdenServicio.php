@@ -159,7 +159,7 @@
 							</div>
 							<div class="three wide field">
 								<div class="ui sub header">Sueldo</div>
-								<input type="text" class="ui onlyNumbers inSueldo" name="sueldoCargo" placeholder="Cantidad" value="<?= $vC['sueldo']; ?>" patron="requerido">
+								<input type="text" class="ui onlyNumbers inSueldo moneda" name="sueldoCargo" placeholder="Cantidad" value="<?= numeroVistaMoneda($vC['sueldo']); ?>" patron="requerido">
 							</div>
 							<div class="one wide field">
 								<div class="ui sub header text-white">.</div>

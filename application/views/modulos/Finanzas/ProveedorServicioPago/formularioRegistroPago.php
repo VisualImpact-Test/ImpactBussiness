@@ -58,7 +58,7 @@
 					</div>
 					<div class="control-group child-divcenter row pt-2 fijo d-none" style="width:50%">
 						<label class="form-control border-0 col-md-4">Monto:</label>
-						<input class="form-control col-md-8 onlyNumbers" type="number" id="monto" name="monto">
+						<input class="form-control col-md-8 onlyNumbers moneda" type="text" id="monto" name="monto">
 					</div>
 				</div>
 				<div class="row">

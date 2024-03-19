@@ -109,7 +109,7 @@
 							
 							<div class="form-group col-md-6">
 								<label class="font-weight-bold ">Costo Presupuesto:</label>
-								<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
+								<input class="form-control item_costo moneda" name="costo" patron="requerido" onchange="Oper.cantidadPorItem(this);" onkeyup="Oper.cantidadPorItem(this);" value="0">
 							</div>
 							<div class="form-group col-md-6">
 								<label class="font-weight-bold ">Costo Tarifario:</label>

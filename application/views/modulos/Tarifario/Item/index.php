@@ -94,11 +94,11 @@
 								<legend class="scheduler-border" style="font-size: 15px;margin-bottom: 0;">Precio</legend>
 								<div class="control-group" style="width:45%; display: inline-block;">
 									<label class="form-control" for="precioMinimo" style="border:0px;">Mínimo</label>
-									<input class="form-control soloNumeros" id="precioMinimo" name="precioMinimo">
+									<input class="form-control soloNumeros moneda" id="precioMinimo" name="precioMinimo">
 								</div>
 								<div class="control-group" style="width:45%; display: inline-block;">
 									<label class="form-control" for="precioMaximo" style="border:0px;">Máximo</label>
-									<input class="form-control soloNumeros" id="precioMaximo" name="precioMaximo">
+									<input class="form-control soloNumeros moneda" id="precioMaximo" name="precioMaximo">
 								</div>
 							</fieldset>
 						</div>

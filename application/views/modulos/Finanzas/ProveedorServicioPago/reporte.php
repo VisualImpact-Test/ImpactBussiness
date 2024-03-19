@@ -7,8 +7,8 @@
 				<th>TIPO DOCUMENTO</th>
 				<th>NUM DOCUMENTO</th>
 				<th>DATOS</th>
-				<th>MONTO</th>
-				<th>FRECUENCIA PAGO</th>
+				<th style="width: 150px;">MONTO</th>
+				<th style="width: 100px;">FRECUENCIA PAGO</th>
 				<th>DIA PAGO</th>
 				<th>FECHA INICIO</th>
 				<th>FECHA FIN</th>
@@ -38,7 +38,7 @@
 					<td><?= verificarEmpty($row['numDocumento'], 3); ?></td>
 					<td><?= verificarEmpty($row['datosProveedor'], 3); ?></td>
 					<? if ($row['monto'] != null) { ?>
-						<td><?= verificarEmpty($row['simbolo'] . ' ' . $row['monto'], 3); ?></td>
+						<td><?= verificarEmpty($row['simbolo'] . ' ' . numeroVistaMoneda($row['monto']), 3); ?></td>
 					<? } else { ?>
 						<td>-</td>
 					<? } ?>

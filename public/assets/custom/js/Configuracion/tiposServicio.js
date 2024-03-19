@@ -85,6 +85,14 @@ var TiposServicio = {
 		});
 	},
 	registrarTiposServicio: function () {
+		var costo = $('#costo').data('value');
+		var costoVisual = $('#costoVisual').data('value');
+		if (costo > 0) {
+			$('#costo').val(costo);
+		}
+		if (costoVisual > 0) {
+			$('#costoVisual').val(costoVisual);
+		}
 		$.when(Fn.validateForm({ id: 'formRegistroTiposServicio' })).then(function (a) {
 			if (a === true) {
 				let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroTiposServicio')) };
@@ -107,6 +115,14 @@ var TiposServicio = {
 		});
 	},
 	actualizarTipoServicio: function () {
+		var costo = $('#costo').data('value');
+		var costoVisual = $('#costoVisual').data('value');
+		if (costo > 0) {
+			$('#costo').val(costo);
+		}
+		if (costoVisual > 0) {
+			$('#costoVisual').val(costoVisual);
+		}
 		++modalId;
 
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formActualizacionTiposServicio')) };

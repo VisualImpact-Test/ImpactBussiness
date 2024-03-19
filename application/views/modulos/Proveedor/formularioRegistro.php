@@ -168,7 +168,7 @@
 				<legend class="scheduler-border">Costo</legend>
 				<div class="control-group child-divcenter row pt-2" style="width:85%">
 					<label class="form-control border-0 col-md-4">Costo (S/) :</label>
-					<input class="form-control col-md-8 onlyNumbers" id="costo" name="costo" patron="numeros" value="0">
+					<input class="form-control col-md-8 onlyNumbers moneda" id="costo" name="costo" value="0">
 				</div>
 			</fieldset>
 		</div>

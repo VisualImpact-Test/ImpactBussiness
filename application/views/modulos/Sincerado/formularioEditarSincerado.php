@@ -110,7 +110,7 @@ endforeach;  ?>
 								<tr>
 									<th class="one wide pr-0">
 										<div class="ui input transparent fluid pr-0">
-											<input class="text-right pasteFijarMonto" name="sinc_montoOriginal" value="<?= $vd['montoOriginal'] ?>" readonly>
+											<input class="text-right pasteFijarMonto" name="sinc_montoOriginal" value="<?= numeroVistaMoneda($vd['montoOriginal']); ?>" readonly>
 										</div>
 									</th>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
@@ -138,7 +138,7 @@ endforeach;  ?>
 													<input class="text-right d-none" type="text" value="0" readonly id="totalLineaSueldo_<?= $k ?>">
 													<!-- Fin -->
 													<input class="text-right d-none" name="sueldo_idCargo" value="<?= $v['idCargo'] ?>">
-													<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= $sinceradoDetalleSueldo_Det[$v['idCargo']]['montoOriginal'] ?>" readonly>
+													<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= numeroVistaMoneda($sinceradoDetalleSueldo_Det[$v['idCargo']]['montoOriginal']); ?>" readonly>
 													<input class="text-right d-none" name="sueldo_flagIncentivo" value="0">
 												</div>
 											</td>
@@ -163,7 +163,7 @@ endforeach;  ?>
 												<input class="text-right d-none" type="text" value="0" readonly id="totalLineaIncentivo" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumnaSueldo(this);">
 												<!-- Fin -->
 												<input class="text-right d-none" name="sueldo_idCargo" value="0">
-												<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= $sinceradoDetalleSueldo_Det['0']['montoOriginal'] ?>" readonly>
+												<input class="text-right pasteFijarMonto" name="sueldo_montoOriginal" value="<?= numeroVistaMoneda($sinceradoDetalleSueldo_Det['0']['montoOriginal']); ?>" readonly>
 												<input class="text-right d-none" name="sueldo_flagIncentivo" value="1">
 											</div>
 										</td>
@@ -241,7 +241,7 @@ endforeach;  ?>
 														<input class="text-right totalFila d-none" type="text" value="0" readonly id="totalLineaDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>" onchange="OrdenServicio.calcularTotalColumna(this);">
 														<!-- Fin -->
 														<input class="text-right d-none" name="otros_idTipoPresupuestoDetalle" value="<?= $vLDS['idTipoPresupuestoDetalle'] ?>">
-														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="<?= $sincerado_Det[$vLDS['idTipoPresupuestoDetalle']]['montoOriginal'] ?>" readonly>
+														<input class="text-right pasteFijarMonto" name="otros_montoOriginal" value="<?= numeroVistaMoneda($sincerado_Det[$vLDS['idTipoPresupuestoDetalle']]['montoOriginal']); ?>" readonly>
 														<input class="text-right d-none" name="otros_flagSctr" value="0">
 													</div>
 												</td>
@@ -300,7 +300,7 @@ endforeach;  ?>
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaSubtotalFinal" name="presupuestoSubTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="<?= $sincerado['subTotalOriginal'] ?>" name="head_sbtotalOriginal" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= numeroVistaMoneda($sincerado['subTotalOriginal']); ?>" name="head_sbtotalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -331,7 +331,7 @@ endforeach;  ?>
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee1Final" name="presupuestoTotalFee1" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee1Original']; ?>" name="head_fee1Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= numeroVistaMoneda($sincerado['totalFee1Original']); ?>" name="head_fee1Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -362,7 +362,7 @@ endforeach;  ?>
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee2Final" name="presupuestoTotalFee2" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee2Original']; ?>" name="head_fee2Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= numeroVistaMoneda($sincerado['totalFee2Original']); ?>" name="head_fee2Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -393,7 +393,7 @@ endforeach;  ?>
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaFee3Final" name="presupuestoTotalFee3" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalFee3Original']; ?>" name="head_fee3Original" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= numeroVistaMoneda($sincerado['totalFee3Original']); ?>" name="head_fee3Original" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -418,7 +418,7 @@ endforeach;  ?>
 										<!-- Ocultado para el sincerado -->
 										<input class="text-right d-none" value="0" id="sumaTotalFinal" name="presupuestoTotal" readonly>
 										<!-- Fin -->
-										<input class="text-right pasteFijarMonto" value="<?= $sincerado['totalOriginal']; ?>" name="head_totalOriginal" readonly>
+										<input class="text-right pasteFijarMonto" value="<?= numeroVistaMoneda($sincerado['totalOriginal']); ?>" name="head_totalOriginal" readonly>
 										<!-- <div class="ui left corner label">
 											<i class="equals icon"></i>
 										</div> -->
@@ -489,7 +489,7 @@ endforeach;  ?>
 													</td>
 													<?php foreach ($cargoDelPre as $kp => $vp) : ?>
 														<td>
-															<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1[$vp['idCargo']]['monto'] ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
+															<input class="form-control text-right keyUpChange moneda" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= numeroVistaMoneda($v1[$vp['idCargo']]['monto']); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
 															<?php if ($v1[$vp['idCargo']]['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) :  ?>
 																<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - floatval($v1[$vp['idCargo']]['monto']) ?>">
 															<?php endif; ?>
@@ -673,12 +673,12 @@ endforeach;  ?>
 												</td>
 												<td>
 													<div class="ui input">
-														<input class="onlyNumbers keyUpChange montoSueldoAdicional" type="text" value="<?= verificarEmpty($dsa['monto'], 2); ?>" patron="requerido" name="montoSueldoAdicional" onchange="$('#calculateTablaSueldo').click();">
+														<input class="onlyNumbers keyUpChange montoSueldoAdicional moneda" type="text" value="<?= verificarEmpty(numeroVistaMoneda($dsa['monto']), 2); ?>" patron="requerido" name="montoSueldoAdicional" onchange="$('#calculateTablaSueldo').click();">
 													</div>
 												</td>
 												<td>
 													<div class="ui input">
-														<input class="onlyNumbers keyUpChange movilidadSueldoAdicional" type="text" value="<?= verificarEmpty($dsa['montoMovilidad'], 2); ?>" name="movilidadSueldoAdicional" onchange="OrdenServicio.calcularMovilidad();">
+														<input class="onlyNumbers keyUpChange movilidadSueldoAdicional moneda" type="text" value="<?= verificarEmpty(numeroVistaMoneda($dsa['montoMovilidad']), 2); ?>" name="movilidadSueldoAdicional" onchange="OrdenServicio.calcularMovilidad();">
 													</div>
 												</td>
 											</tr>
@@ -967,7 +967,7 @@ endforeach;  ?>
 												</td>
 												<td class="precioUnitarioDetalle">
 													<div class="ui input fluid">
-														<input type="text" class="text-right onlyNumbers keyUpChange" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['precioUnitario']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<input type="text" class="text-right onlyNumbers keyUpChange moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="gapDetalle">

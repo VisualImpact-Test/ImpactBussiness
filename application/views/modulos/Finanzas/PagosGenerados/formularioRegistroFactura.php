@@ -27,7 +27,7 @@
                         </div>
                         <div class="control-group child-divcenter row" style="width:25%;">
                             <label class="form-control col-md-5" for="montoTotal" style="border:0px;">Monto Total :</label>
-                            <input class="form-control col-md-6" id="montoTotal" name="montoTotal"  value="<?= $pagosGenerados[0]['monto_total'] ?>">
+                            <input class="form-control col-md-6 moneda" id="montoTotal" name="montoTotal"  value="<?= $pagosGenerados[0]['monto_total'] ?>">
                         </div>
                         
                         <div class="control-group child-divcenter row" style="width:10%;">
@@ -107,7 +107,7 @@
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
                             <div class="field sixteen" >
                                 <label>Monto</label>
-                                <input class="onlyNumbers" id="monto_reg" name="monto_reg" patron="requerido" value="<?= $v['montoFactura']; ?>">
+                                <input class="onlyNumbers moneda" id="monto_reg" name="monto_reg" patron="requerido" value="<?= $v['montoFactura']; ?>">
                             </div>
                         </div>
                         <div class="field" style="width:25%;margin-left: 0px;margin-right: 0px;">
