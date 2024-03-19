@@ -1809,6 +1809,7 @@ var View = {
 			$.extend($.fn.dataTable.defaults, {
 				language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
 			});
+			$(".moneda").addClass("keyUpChange");
 		});
 
 		$(document).on("click", '.btn-datatable-excel', function (e) {
