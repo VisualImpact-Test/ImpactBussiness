@@ -583,7 +583,10 @@ var View = {
 				$(this).val(monto.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			}
 		});
-		$(document).on('keyup', '.moneda', function (e) {
+		$(document).on('input', '.moneda', function (e) {
+			$(this).addClass("keyUpChange");
+		})
+		$(document).on('change', '.moneda', function (e) {
 			var montoSinFormato = $(this).val().replace(/\D/g, '');
 			if (montoSinFormato != "") {
 				var monto = parseFloat(montoSinFormato) / 100;
@@ -1806,6 +1809,7 @@ var View = {
 			$.extend($.fn.dataTable.defaults, {
 				language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' }
 			});
+			$(".moneda").addClass("keyUpChange");
 		});
 
 		$(document).on("click", '.btn-datatable-excel', function (e) {
