@@ -588,7 +588,7 @@ var View = {
 			if (montoSinFormato != "") {
 				var monto = parseFloat(montoSinFormato.replace(/,/g, ''));
 				$(this).data('value', monto);
-				$(this).val(monto.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+				$(this).val(monto.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			}
 		});
 
