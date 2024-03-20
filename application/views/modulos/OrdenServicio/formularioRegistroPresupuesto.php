@@ -473,18 +473,18 @@ endforeach;  ?>
 												</td>
 											<?php endforeach; ?>
 										</tr>
-										<?php if ($utilizaSCTR) : ?>
+										<!--< ?php if ($utilizaSCTR) : ?>
 											<tr>
 												<td>SCTR</td>
-												<?php foreach ($ordenServicioCargo as $k => $v) : ?>
+												< ?php foreach ($ordenServicioCargo as $k => $v) : ?>
 													<td>
 														<div class="ui transparent input">
-															<input class="text-right" id="txtSctr_<?= $k ?>" value="0.00" readonly>
+															<input class="text-right" id="txtSctr_< ?= $k ?>" value="0.00" readonly>
 														</div>
 													</td>
-												<?php endforeach; ?>
+												< ?php endforeach; ?>
 											</tr>
-										<?php endif; ?>
+										< ?php endif; ?>-->
 										<tr>
 											<td>Incentivo Adicional</td>
 											<td colspan="<?= count($ordenServicioCargo); ?>">

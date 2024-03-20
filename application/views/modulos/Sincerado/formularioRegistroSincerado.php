@@ -620,18 +620,18 @@ endforeach;  ?>
 												</td>
 											<?php endforeach; ?>
 										</tr>
-										<?php if ($presupuesto['sctr'] !== NULL) : ?>
+										<!--< ?php if ($presupuesto['sctr'] !== NULL) : ?>
 											<tr>
 												<td>SCTR</td>
-												<?php foreach ($cargoDelPre as $k => $v) : ?>
+												< ?php foreach ($cargoDelPre as $k => $v) : ?>
 													<td>
 														<div class="ui transparent input">
 															<input class="text-right" id="txtSctr_<?= $k ?>" readonly>
 														</div>
 													</td>
-												<?php endforeach; ?>
+												< ?php endforeach; ?>
 											</tr>
-										<?php endif; ?>
+										< ?php endif; ?>-->
 										<tr>
 											<td>Incentivo Adicional</td>
 											<td colspan="<?= count($cargoDelPre); ?>">
