@@ -590,7 +590,7 @@
 							<div class="sixteen wide field">
 								<div class="ui sub header">Costo</div>
 								<div class="ui right action right labeled input">
-									<label for="amount" class="ui label monedaSimbolo">S/</label>
+									<label class="ui label monedaSimbolo">S/</label>
 									<input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
 								</div>
 							</div>
@@ -610,7 +610,7 @@
 							<div class="eight wide field">
 								<div class="ui sub header">Precio</div>
 								<div class="ui right labeled input">
-									<label for="amount" class="ui label monedaSimbolo">S/</label>
+									<label class="ui label monedaSimbolo">S/</label>
 									<input class="precioFormLabel" type="text" placeholder="0.00" readonly>
 									<input class="precioForm" type="hidden" name="precioForm" placeholder="0.00" readonly>
 								</div>
@@ -620,7 +620,7 @@
 							<div class="sixteen wide field">
 								<div class="ui sub header">Subtotal</div>
 								<div class="ui right labeled input">
-									<label for="amount" class="ui label teal monedaSimbolo">S/</label>
+									<label class="ui label teal monedaSimbolo">S/</label>
 									<input class="subtotalFormLabel" type="text" placeholder="0.00" readonly>
 									<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" readonly>
 									<input type="hidden" class="costoRedondeadoForm" name="costoRedondeadoForm" placeholder="0" value="0">
@@ -668,7 +668,7 @@
 					</div>
 					<div class="ui clearing divider"></div>
 					<div class="ui grid">
-						<div class="sixteen wide tablet twelve wide computer column itemDet_1">
+						<div class="tablet twelve wide computer column itemDet_1">
 							<div class="fields">
 								<div class="six wide field">
 									<div class="ui sub header">Item</div>
@@ -852,7 +852,7 @@
 									Agregar Sub Item
 								</button>
 							</div>
-							<!-- Monto -->
+							<!-- Tarjetas y Vales -->
 							<div class="ui grid ml-0 div-features <?= $row['idItemTipo'] == COD_TARJETAS_VALES['id'] ? '' : 'd-none' ?> div-feature-<?= COD_TARJETAS_VALES['id'] ?>">
 								<div class="row ml-0 pt-4 d-none"> <!-- No se muestra los botones de agregar y eliminar, pendiente corregir error -->
 									<button type="button" class="ui button btn-add-sub-item-tarjVales teal ">
@@ -965,54 +965,56 @@
 									<? endforeach; ?>
 								<? endif; ?>
 							</div>
-							<!-- Rutas Viajeras -->
-							<div class="ui grid ml-0 mb-2 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?> <?= $row['idItemTipo'] == COD_RUTAS_VIAJERAS['id'] ? '' : 'd-none' ?>">
-								<div class="row ml-0 pt-4">
-									<button type="button" class="ui button btn-datos-rutasViajeras teal ">
-										<i class="plus icon"></i>
-										Indicar Detalle
-									</button>
-									<div class="datosRutasViajeras d-none">
-										<?= json_encode($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>
+							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_RUTAS_VIAJERAS['id']])) : ?>
+								<!-- Rutas Viajeras -->
+								<div class="ui grid ml-0 mb-2 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?> <?= $row['idItemTipo'] == COD_RUTAS_VIAJERAS['id'] ? '' : 'd-none' ?>">
+									<div class="row ml-0 pt-4">
+										<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+											<i class="plus icon"></i>
+											Indicar Detalle
+										</button>
+										<div class="datosRutasViajeras d-none">
+											<?= json_encode($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>
+										</div>
+									</div>
+									<div class="ui grid content-body-sub-item">
+										<input type="hidden" name="cantidadItemsRutasViajeras" value="<?= count($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>">
+										<?php foreach ($dataRutasViajeras[$row['idCotizacionDetalle']] as $rutaViajera) : ?>
+											<div class="three column row">
+												<div class="column">
+													<div class="ui sub header">Origen</div>
+													<input value="<?= $rutaViajera['origen'] ?>" readonly name="subDetRutViajOrigen">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Destino</div>
+													<input value="<?= $rutaViajera['destino'] ?>" readonly name="subDetRutViajDestino">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Total</div>
+													<input value="<?= $rutaViajera['cuenta'] ?>" readonly name="subDetRutViajSubTotal">
+												</div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['responsable'] ?>" name="subDetRutViajResponsable"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['cargo'] ?>" name="subDetRutViajCargo"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['dni'] ?>" name="subDetRutViajDni"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['razonSocial'] ?>" name="subDetRutViajRazonSocial"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['idFrecuencia'] ?>" name="subDetRutViajFrecuencia"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['dias'] ?>" name="subDetRutViajDias"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAereo'] ?>" name="subDetRutViajCostoAereo"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoTransporte'] ?>" name="subDetRutViajCostoTransporte"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoMovilidadInterna'] ?>" name="subDetRutViajCostoMovilidadInterna"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoViaticos'] ?>" name="subDetRutViajCostoViaticos"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAlojamiento'] ?>" name="subDetRutViajCostoAlojamiento"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['cantidadViajes'] ?>" name="subDetRutViajCantidadViajes"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoVisual'] ?>" name="subDetRutViajCostoVisual"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['gap'] ?>" name="subDetRutViajGap"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['total'] ?>" name="subDetRutViajCosto"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['frecuenciaAnual'] ?>" name="subDetRutViajCantidadReal"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['tipo_movil'] ?>" name="subDetRutViajTipoMovil"></div>
+											</div>
+										<?php endforeach; ?>
 									</div>
 								</div>
-								<div class="ui grid content-body-sub-item">
-									<input type="hidden" name="cantidadItemsRutasViajeras" value="<?= count($dataRutasViajeras[$row['idCotizacionDetalle']]) ?>">
-									<?php foreach ($dataRutasViajeras[$row['idCotizacionDetalle']] as $rutaViajera) : ?>
-										<div class="three column row">
-											<div class="column">
-												<div class="ui sub header">Origen</div>
-												<input value="<?= $rutaViajera['origen'] ?>" readonly name="subDetRutViajOrigen">
-											</div>
-											<div class="column">
-												<div class="ui sub header">Destino</div>
-												<input value="<?= $rutaViajera['destino'] ?>" readonly name="subDetRutViajDestino">
-											</div>
-											<div class="column">
-												<div class="ui sub header">Total</div>
-												<input value="<?= $rutaViajera['cuenta'] ?>" readonly name="subDetRutViajSubTotal">
-											</div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['responsable'] ?>" name="subDetRutViajResponsable"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['cargo'] ?>" name="subDetRutViajCargo"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['dni'] ?>" name="subDetRutViajDni"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['razonSocial'] ?>" name="subDetRutViajRazonSocial"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['idFrecuencia'] ?>" name="subDetRutViajFrecuencia"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['dias'] ?>" name="subDetRutViajDias"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAereo'] ?>" name="subDetRutViajCostoAereo"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoTransporte'] ?>" name="subDetRutViajCostoTransporte"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoMovilidadInterna'] ?>" name="subDetRutViajCostoMovilidadInterna"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoViaticos'] ?>" name="subDetRutViajCostoViaticos"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAlojamiento'] ?>" name="subDetRutViajCostoAlojamiento"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['cantidadViajes'] ?>" name="subDetRutViajCantidadViajes"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['costoVisual'] ?>" name="subDetRutViajCostoVisual"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['gap'] ?>" name="subDetRutViajGap"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['total'] ?>" name="subDetRutViajCosto"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['frecuenciaAnual'] ?>" name="subDetRutViajCantidadReal"></div>
-											<div class="column"><input type="hidden" value="<?= $rutaViajera['tipo_movil'] ?>" name="subDetRutViajTipoMovil"></div>
-										</div>
-									<?php endforeach; ?>
-								</div>
-							</div>
+							<?php endif; ?>
 							<!-- TRANSPORTE -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_TRANSPORTE['id']])) : ?>
 								<div class="div-features pb-5 div-feature-<?= COD_TRANSPORTE['id'] ?> <?= $row['idItemTipo'] == COD_TRANSPORTE['id'] ? '' : 'd-none' ?>" data-tipo="<?= COD_TRANSPORTE['id'] ?>">
@@ -1096,7 +1098,6 @@
 									</button>
 								</div>
 							<?php endif; ?>
-							<!-- Servicios -->
 
 							<!-- Distribucion -->
 							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_DISTRIBUCION['id']])) : ?>
@@ -1173,7 +1174,50 @@
 								</div>
 							<?php endif; ?>
 
-							<div class="fields">
+							<!-- Servicio General -->
+							<div class="ui grid  ml-0 div-features <?= $row['idItemTipo'] == COD_SERVICIO_GENERAL['id'] ? '' : 'd-none' ?> div-feature-<?= COD_SERVICIO_GENERAL['id'] ?>">
+								<div class="row ml-0 pt-4">
+									<button type="button" class="ui button btn-add-sub-item-servicioGeneral teal ">
+										<i class="plus icon"></i>
+										Agregar
+									</button>
+									<button type="button" class="ui button btn-delete-sub-item-servicioGeneral red">
+										<i class="trash icon"></i>
+										Eliminar
+									</button>
+								</div>
+								<div class="row ml-0 pt-4">
+									<div class="ui bottom attached warning message fluid" style="display: block;">
+										<i class="icon info"></i>Si la suma de montos es "0" se enviara a compras para que solicite el costo.
+									</div>
+								</div>
+								<div class="row ml-0">
+									<div class="ui bottom attached warning message fluid" style="display: block;">
+										<i class="icon info"></i>El subdetalle no se guardara si no se indica una descripción.
+									</div>
+								</div>
+								<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']])) : ?>
+									<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']] as $dataSubItem) : ?>
+										<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+										<div class="three column row divDetalleServicioGeneral">
+											<div class="column">
+												<div class="ui sub header">Descripción</div>
+												<input class="descripcionSubItemServicioGeneral" name="descripcionSubItemServicioGeneral[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Cantidad</div>
+												<input class="cantidadSubItemServicioGeneral keyUpChange onlyNumbers" name="cantidadSubItemServicioGeneral[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoServicioGeneral(this);" value="<?= $dataSubItem['cantidad'] ?>">
+											</div>
+											<div class="column">
+												<div class="ui sub header">Monto</div>
+												<input class="montoSubItemServicioGeneral keyUpChange onlyNumbers" name="montoSubItemServicioGeneral[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" onchange="Cotizacion.calcularMontoServicioGeneral(this);" value="<?= verificarEmpty($dataSubItem['costoSubItem'], 2) ?>">
+											</div>
+										</div>
+									<?php endforeach; ?>
+								<?php endif; ?>
+							</div>
+
+							<div class="fields pt-3">
 								<div class="four wide field">
 									<div class="ui sub header">Archivos <div class="ui btn-info-custom text-primary btn-info-archivo"><i class="info circle icon"></i></div>
 									</div>
@@ -1267,7 +1311,7 @@
 								<div class="sixteen wide field">
 									<div class="ui sub header">Costo</div>
 									<div class="ui right action right labeled input">
-										<label for="amount" class="ui label monedaSimbolo">S/</label>
+										<label class="ui label monedaSimbolo">S/</label>
 										<input class="costoForm" type="text" name="costoForm" placeholder="0.00" value="<?= verificarEmpty($row['costoCotizacion']); ?>" readonly>
 
 									</div>
@@ -1286,7 +1330,7 @@
 								<div class="eight wide field">
 									<div class="ui sub header">Precio</div>
 									<div class="ui right labeled input">
-										<label for="amount" class="ui label monedaSimbolo">S/</label>
+										<label class="ui label monedaSimbolo">S/</label>
 										<input class=" precioFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['precio']) ? $row['precio'] : '' ?>">
 										<input class=" precioForm" type="hidden" name="precioForm" placeholder="0.00" value="<?= !empty($row['precio']) ? ($row['precio']) : '' ?>">
 									</div>
@@ -1296,7 +1340,7 @@
 								<div class="sixteen wide field">
 									<div class="ui sub header">Subtotal</div>
 									<div class="ui right labeled input">
-										<label for="amount" class="ui label teal monedaSimbolo">S/</label>
+										<label class="ui label teal monedaSimbolo">S/</label>
 										<input class="subtotalFormLabel" type="text" placeholder="0.00" value="<?= !empty($row['subtotal']) ? $row['subtotal'] : '' ?>">
 										<input class="subtotalForm" type="hidden" name="subtotalForm" placeholder="0.00" value="<?= !empty($row['subtotal']) ? ($row['subtotal']) : '' ?>">
 
@@ -1329,7 +1373,7 @@
 			<div class="column">
 				<!-- <div class="ui sub header">Total</div> -->
 				<div class="ui right labeled input">
-					<label for="feeForm" class="ui label">Fee: </label>
+					<label class="ui label">Fee: </label>
 					<input data-min='0' type="number decimal" id="feeForm" class="onlyNumbers" name="feeForm" placeholder="Fee" value="<?= !empty($cotizacion['fee']) ? $cotizacion['fee'] : '' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
@@ -1338,7 +1382,7 @@
 			</div>
 			<div class="column feeValestarjetas d-none" id="feeValestarjetas">
 				<div class="ui right labeled input">
-					<label for="feeForm3" class="ui label">Fee3: </label>
+					<label class="ui label">Fee3: </label>
 					<input data-min='0' type="number decimal" id="feeForm3" class="onlyNumbers" name="feeForm3" placeholder="Fee" value="<?= !empty($cotizacion['feeTarjetaVales']) ? $cotizacion['feeTarjetaVales'] : '0' ?>" onkeyup="Cotizacion.actualizarTotal();">
 					<div class="ui basic label">
 						%
@@ -1347,7 +1391,7 @@
 			</div>
 			<div class="column">
 				<div class="ui right labeled input">
-					<label for="totalForm" class="ui label green">Total: </label>
+					<label class="ui label green">Total: </label>
 					<input class=" totalFormLabel" type="text" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? $cotizacion['total'] : '0.00' ?>">
 					<input class=" totalFormFeeIgv" type="hidden" name="totalFormFeeIgv" placeholder="0.00" value="<?= !empty($cotizacion['total']) ? ($cotizacion['total']) : '0.00' ?>">
 					<input class=" totalFormFee" type="hidden" name="totalFormFee" placeholder="0.00">

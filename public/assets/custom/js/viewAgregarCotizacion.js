@@ -797,6 +797,11 @@ var Cotizacion = {
 				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
 			} else if (idTipo == COD_RUTAS_VIAJERAS.id) {
 				cotizacionInternaForm.val(0); //Sin cotizacion Interna
+			} else if (idTipo == COD_SERVICIO_GENERAL.id) {
+				parent.find('.montoSubItemServicioGeneral').attr('patron', 'requerido');
+				cotizacionInternaForm.val(0);
+				control.closest('.body-item').find('.gapForm').val('0');
+				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -1146,8 +1151,7 @@ var Cotizacion = {
 				thisSubTotalForm.val(sTotal.toFixed(2));
 				let cantidad = parseFloat(thisCantidadForm.val());
 				newCost = sTotal / cantidad;
-
-				newCost = parseFloat(newCost.toFixed(2)) / ((100 + parseFloat(thisGapForm.val())) / 100);
+				newCost = parseFloat(newCost.toFixed(2)) / ((100 + parseFloat(thisGapForm.val() == '' ? 0 : thisGapForm.val())) / 100);
 
 				thisCostoForm.val(newCost.toFixed(4));
 
@@ -1999,8 +2003,7 @@ var Cotizacion = {
 				let detalleSubItem = proveedorSubCotizacion.find((detalle) => {
 					return (detalle.idCotizacionDetalleSub == idCotizacionDetalleSub.val())
 				})
-
-				if (detalleSubItem !== void 0) { // !== undefined
+				if (detalleSubItem !== void 0) {
 					costoSubItem.val(detalleSubItem.costo);
 					subtotalSubItem.val(detalleSubItem.subTotal);
 				}
@@ -2133,6 +2136,25 @@ var Cotizacion = {
 				control.find('.divDetalleConcurso').last().remove();
 			}
 			control.find('.divDetalleConcurso').find('.montoSubItemConcurso').first().change();
+		});
+		$(document).on('click', '.btn-add-sub-item-servicioGeneral', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_SERVICIO_GENERAL.id);
+			let html = control.find('.divDetalleServicioGeneral').first().prop('outerHTML');
+			control.append(html);
+			// control.find('.divDetalleServicioGeneral').find('.montoSubItemServicioGeneral').first().change();
+			// * Poner valores null a los inputs agregados
+			control.find('.divDetalleServicioGeneral').find('.descripcionSubItemServicioGeneral').last().val('');
+			control.find('.divDetalleServicioGeneral').find('.cantidadSubItemServicioGeneral').last().val('');
+			control.find('.divDetalleServicioGeneral').find('.montoSubItemServicioGeneral').last().val('0').change();
+		});
+		$(document).on('click', '.btn-delete-sub-item-servicioGeneral', function () {
+			let _this = $(this);
+			let control = _this.closest('.div-feature-' + COD_SERVICIO_GENERAL.id);
+			if (control.find('.divDetalleServicioGeneral').length > 1) {
+				control.find('.divDetalleServicioGeneral').last().remove();
+			}
+			control.find('.divDetalleServicioGeneral').find('.montoSubItemServicioGeneral').first().change();
 		});
 		$(document).on('click', '.btn-add-sub-item2', function () {
 			let control = $(this);
@@ -3545,13 +3567,16 @@ var Cotizacion = {
 				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
 			} else if ($(value).closest('.nuevo').find('.idTipoItem').find('select').val() == COD_PAGOS_FARMACIAS.id) {
 				totalValesTarjetas = Number(totalValesTarjetas) + Number($(value).val());
-			} else { // != COD_DISTRIBUCION.id
+			} else {
 				total = Number(total) + Number($(value).val());
 			}
 		})
 		let fee = Number($("#feeForm").val());
+		if (isNaN(fee)) fee = 0;
 		let fee3 = Number($("#feeForm3").val());
+		if (isNaN(fee3)) fee3 = 0;
 		let igvForm = $('.igvForm');
+		// if(isNaN(igvForm)) igvForm = 0;
 		let igv = 0;
 
 		if (igvForm.is(":checked")) {
@@ -3559,6 +3584,7 @@ var Cotizacion = {
 		}
 		// let totalFee = ((total) + (total * (fee / 100))) + totalDistribucion; -- Antes: distribucion no tenia FEE
 		let totalFee = ((total + totalDistribucion) + ((total + totalDistribucion) * (fee / 100))) + totalPersonal + (totalValesTarjetas + (totalValesTarjetas * (fee3 / 100)));
+
 		totalFee += feePersonal;
 		let totalFeeIgv = (totalFee) + (totalFee * igv);
 
@@ -3785,6 +3811,12 @@ var Cotizacion = {
 		let porcentajeC = parent.find('.porcentajeSubItemConcurso');
 		// FIN: CONCURSO
 
+		// SERVICIO GENERAL
+		let descripcionSG = parent.find('.descripcionSubItemServicioGeneral');
+		let cantidadSG = parent.find('.cantidadSubItemServicioGeneral');
+		let montoSG = parent.find('.montoSubItemServicioGeneral');
+		// FIN: SERVICIO GENERAL
+
 		// PAGOS A FARMACIA
 		let descripcionFarmacia = parent.find('.descripcionSubItemPagosFarmacias');
 		let cantidadFarmacia = parent.find('.cantidadSubItemPagosFarmacias');
@@ -3855,6 +3887,12 @@ var Cotizacion = {
 		montoC.attr('name', `montoSubItemConcurso[${number}]`);
 		porcentajeC.attr('name', `porcentajeSubItemConcurso[${number}]`);
 		// FIN: CONCURSO
+
+		// SERVICIO GENERAL
+		descripcionSG.attr('name', `descripcionSubItemServicioGeneral[${number}]`);
+		cantidadSG.attr('name', `cantidadSubItemServicioGeneral[${number}]`);
+		montoSG.attr('name', `montoSubItemServicioGeneral[${number}]`);
+		// FIN: SERVICIO GENERAL
 
 		// PAGOS A FARMACIA
 		descripcionFarmacia.attr('name', `descripcionSubItemPagosFarmacias[${number}]`);
@@ -4046,6 +4084,25 @@ var Cotizacion = {
 		let montoProm = montoTot / cantTot / cantTot;
 		_this.closest('.body-item').find('.costoForm').val(montoProm);
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
+	},
+	calcularMontoServicioGeneral: function (t) {
+		let _this = $(t);
+		let monto = _this.closest('.div-feature-' + COD_SERVICIO_GENERAL.id).find('.montoSubItemServicioGeneral');
+
+		let montoTot = 0;
+
+		$.each(monto, function (index, value) {
+			rowMonto = parseFloat($(value).val());
+			montoTot += isNaN(rowMonto) ? 0 : rowMonto;
+		});
+		// let montoProm = montoTot;
+		_this.closest('.body-item').find('.costoForm').val(montoTot);
+		if (montoTot > 0) {
+			_this.closest('.body-item').find('.cotizacionInternaForm').val(0);
+		} else {
+			_this.closest('.body-item').find('.cotizacionInternaForm').val(1);
+		}
+		_this.closest('.body-item').find('.cantidadForm').val(1).keyup();
 	},
 	validarFormatoTipo: function () {
 		var contVal = 0;

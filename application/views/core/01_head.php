@@ -23,9 +23,9 @@
 	<link href="assets/libs/font-awesome/5.15.3/css/all.min.css?v=<?= $this->version; ?>" rel="stylesheet">
 	<link href="assets/libs/daterangepicker/daterangepicker.css?v=<?= $this->version; ?>" rel="stylesheet">
 	<link href="assets/libs/select2/4.0.13/css/select2.min.css?v=<?= $this->version; ?>" rel="stylesheet">
-	<!-- <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css"> -->
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
 	<!-- <link href="assets/libs/datatables/datatables.bootstrap4.min.css" rel="stylesheet"> -->
-	<link href="assets/libs/semantic_2.8.8/Fomantic-UI-CSS-master/semantic.min.css" rel="stylesheet">
+	<!-- <link href="assets/libs/semantic_2.8.8/Fomantic-UI-CSS-master/semantic.min.css" rel="stylesheet"> -->
 	<link href="assets/libs/semantic_2.8.8/dataTables.semanticui.min.css" rel="stylesheet">
 	<link href="assets/libs/jquery-ui-1.12.1/css/jquery-ui-1.12.1.css" rel="stylesheet">
 

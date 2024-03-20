@@ -363,6 +363,7 @@ var FormularioProveedores = {
 		for (let index = 0; index < $(control).find('.subtotal').length; index++) {
 			input = $(control).find('.subtotal')[index];
 			valor = $(input).val();
+			if(valor == '') valor = 0;
 			subSubtotal += parseFloat(valor);
 		}
 		cantidad = $('#cantidad_' + idCDPD).val();

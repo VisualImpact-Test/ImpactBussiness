@@ -1075,6 +1075,15 @@ class SolicitudCotizacion extends MY_Controller
 							'subtotal' => $post["subtotalTextil[{$post['idCotizacionDetalle'][$k]}]"],
 						]);
 						break;
+					case COD_SERVICIO_GENERAL['id']:
+						$data['subDetalle'][$k] = getDataRefactorizada([
+							'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+							'nombre' => $post["nombreSubItemServGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+							'cantidad' => $post["cantidadSubItemServGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+							'costo' => $post["costoSubItemServGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+							'subtotal' => floatval($post["cantidadSubItemServGeneral[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["costoSubItemServGeneral[{$post['idCotizacionDetalle'][$k]}]"]),
+						]);
+						break;
 
 					case COD_TARJETAS_VALES['id']:
 						$data['subDetalle'][$k] = getDataRefactorizada([
@@ -1110,7 +1119,6 @@ class SolicitudCotizacion extends MY_Controller
 
 		$data['tabla'] = 'compras.cotizacionDetalle';
 		$data['where'] = 'idCotizacionDetalle';
-
 		$updateDetalle = $this->model->actualizarCotizacionDetalleArchivos($data);
 		$data = [];
 
@@ -1251,7 +1259,7 @@ class SolicitudCotizacion extends MY_Controller
 			$data['select'][] = $idCotizacionDetalle_;
 		}
 
-		// No deberia activarse esta alerta, debido a que existe una validación con las funciones del semantic
+		// !No deberia activarse esta alerta, debido a que existe una validación con las funciones del semantic
 		if (empty($data['select'])) {
 			$result['result'] = 1;
 			$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Debe seleccionar al menos un item']);
@@ -1649,7 +1657,7 @@ class SolicitudCotizacion extends MY_Controller
 		$config['data']['itemServicio'] = $data['itemServicio'];
 
 		$config['single'] = true;
-		
+
 		$config['data']['icon'] = 'fas fa-money-check-edit-alt';
 		$config['data']['title'] = 'Cotizacion';
 		$config['data']['message'] = 'Lista de Cotizacions';
@@ -2159,7 +2167,7 @@ class SolicitudCotizacion extends MY_Controller
 			'idTipo_TarjetasVales' => $post['tipoTarjVales'],
 			// 'caracteristicasCompras' => $post['caracteristicasCompras'],
 		]);
-		
+
 
 		$provCompare = [];
 		$tarjCompare = [];
@@ -2188,7 +2196,7 @@ class SolicitudCotizacion extends MY_Controller
 		}
 		$dataParaVista['dataOper']['tituloAsunto'] = $titulo;
 		$dataParaVista['dataOper']['enlaces'] = $enlace;
-		
+
 		foreach ($dataParaVista['detalle'] as $dd => $row) {
 			$idCotizacionDetalle_ = $post['idCotizacionDetalle'][$dd];
 			if (empty($post["checkItem[{$idCotizacionDetalle_}]"])) continue;

@@ -89,7 +89,7 @@
 		</div>
 
 		<div class="fields">
-			
+
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Servicio</div>
 				<select class="ui dropdown semantic-dropdown read-only" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">
@@ -99,7 +99,7 @@
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Moneda</div>
 				<select class="ui dropdown semantic-dropdown read-only" id="tipoMoneda" name="tipoMoneda" patron="requerido" onchange="Cotizacion.SimboloMoneda(this)">
-					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoMoneda, 'class' => 'text-titlecase','selected' => !empty($cotizacion['idTipoMoneda']) ? $cotizacion['idTipoMoneda'] : '']); ?>
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $tipoMoneda, 'class' => 'text-titlecase', 'selected' => !empty($cotizacion['idTipoMoneda']) ? $cotizacion['idTipoMoneda'] : '']); ?>
 				</select>
 			</div>
 		</div>
@@ -345,7 +345,31 @@
 									endif;
 									?>
 								</div>
-
+							</div>
+							<!-- SERVICIOS GENERALES -->
+							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO_GENERAL['id'] ? '' : 'd-none' ?> div-feature-<?= COD_SERVICIO_GENERAL['id'] ?>">
+								<h4 class="ui dividing header">SUB ITEMS</h4>
+								<div class="content-body-sub-item">
+									<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']])) : ?>
+										<?php foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']] as $dataSubItem) : ?>
+											<div class="fields body-sub-item ">
+												<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+												<div class="six wide field">
+													<div class="ui sub header">Nombre</div>
+													<input readonly name="nombreSubItemServGeneral[<?= $row['idCotizacionDetalle'] ?>]" value="<?= !empty($dataSubItem['nombre']) ? $dataSubItem['nombre'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Cantidad</div>
+													<input readonly class="onlyNumbers cantidadSubItemAcumulativo" name="cantidadSubItemServGeneral[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= !empty($dataSubItem['cantidad']) ? $dataSubItem['cantidad'] : '' ?>">
+												</div>
+												<div class="five wide field">
+													<div class="ui sub header">Costo</div>
+													<input patron="requerido" readonly class="onlyNumbers subtotalSubItem" name="costoSubItemServGeneral[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Costo" value="<?= !empty($dataSubItem['costo']) ? $dataSubItem['costo'] : '0' ?>">
+												</div>
+											</div>
+										<?php endforeach; ?>
+									<?php endif; ?>
+								</div>
 							</div>
 
 							<!-- Monto S/ -->

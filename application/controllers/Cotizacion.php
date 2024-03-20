@@ -878,6 +878,19 @@ class Cotizacion extends MY_Controller
 							'subtotal' => floatval($post["cantidadSubItemTarjVal[$k]"]) * floatval($post["montoSubItemTarjVal[$k]"])
 						]);
 						break;
+					case COD_SERVICIO_GENERAL['id']:
+						$data['subDetalle'][$k] = [];
+						if (!empty($post["descripcionSubItemServicioGeneral[$k]"])) {
+							foreach ($post["descripcionSubItemServicioGeneral[$k]"] as $ksg => $vsg){
+								$data['subDetalle'][$k][] = [
+									'nombre' => $vsg,
+									'cantidad' => $post["cantidadSubItemServicioGeneral[$k]"][$ksg],
+									'costo' => $post["montoSubItemServicioGeneral[$k]"][$ksg],
+									'subtotal' => floatval($post["cantidadSubItemServicioGeneral[$k]"][$ksg]) * $post["montoSubItemServicioGeneral[$k]"][$ksg]
+								];
+							}
+						}
+						break;
 					case COD_CONCURSO['id']:
 						$data['subDetalle'][$k] = [];
 						$post["descripcionSubItemConcurso[$k]"] = checkAndConvertToArray($post["descripcionSubItemConcurso[$k]"]);
@@ -4071,7 +4084,17 @@ class Cotizacion extends MY_Controller
 										'subtotal' => floatval($post["cantidadSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemPagosFarmacias[{$post['idCotizacionDetalle'][$k]}]"]),
 									]);
 									break;
-
+								case COD_SERVICIO_GENERAL['id']:
+									// * Si se omite "idCotizacionDetalleSub" se inserta la nueva informacion por eso se hace un delete → no hay columna estado
+									$this->db->delete('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $post['idCotizacionDetalle'][$k]]);
+									$data['subDetalle'][$k] = getDataRefactorizada([
+										// 'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],
+										'nombre' => $post["descripcionSubItemServicioGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+										'cantidad' => $post["cantidadSubItemServicioGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+										'costo' => $post["montoSubItemServicioGeneral[{$post['idCotizacionDetalle'][$k]}]"],
+										'subtotal' => floatval($post["cantidadSubItemServicioGeneral[{$post['idCotizacionDetalle'][$k]}]"]) * floatval($post["montoSubItemServicioGeneral[{$post['idCotizacionDetalle'][$k]}]"]),
+									]);
+									break;
 								case COD_TRANSPORTE['id']:
 									$data['subDetalle'][$k] = getDataRefactorizada([
 										'idCotizacionDetalleSub' => $post["idCotizacionDetalleSub[{$post['idCotizacionDetalle'][$k]}]"],

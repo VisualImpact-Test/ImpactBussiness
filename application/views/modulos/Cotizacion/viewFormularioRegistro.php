@@ -493,6 +493,43 @@
 								</div>
 							</div>
 						</div>
+						<!-- Servicio General -->
+						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_SERVICIO_GENERAL['id'] ?>">
+							<div class="row ml-0 pt-4">
+								<button type="button" class="ui button btn-add-sub-item-servicioGeneral teal ">
+									<i class="plus icon"></i>
+									Agregar
+								</button>
+								<button type="button" class="ui button btn-delete-sub-item-servicioGeneral red">
+									<i class="trash icon"></i>
+									Eliminar
+								</button>
+							</div>
+							<div class="row ml-0 pt-4">
+								<div class="ui bottom attached warning message fluid" style="display: block;">
+									<i class="icon info"></i>Si la suma de montos es "0" se enviara a compras para que solicite el costo.
+								</div>
+							</div>
+							<div class="row ml-0">
+								<div class="ui bottom attached warning message fluid" style="display: block;">
+									<i class="icon info"></i>El subdetalle no se guardara si no se indica una descripción.
+								</div>
+							</div>
+							<div class="three column row divDetalleServicioGeneral">
+								<div class="column">
+									<div class="ui sub header">Descripción</div>
+									<input class="descripcionSubItemServicioGeneral" name="descripcionSubItemServicioGeneral[0]" placeholder="Descripción">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Cantidad</div>
+									<input class="cantidadSubItemServicioGeneral keyUpChange onlyNumbers" name="cantidadSubItemServicioGeneral[0]" placeholder="Cantidad" onchange="Cotizacion.calcularMontoServicioGeneral(this);">
+								</div>
+								<div class="column">
+									<div class="ui sub header">Monto</div>
+									<input class="montoSubItemServicioGeneral keyUpChange onlyNumbers" name="montoSubItemServicioGeneral[0]" placeholder="Monto" onchange="Cotizacion.calcularMontoServicioGeneral(this);" value="0">
+								</div>
+							</div>
+						</div>
 						<!-- Rutas Viajeras -->
 						<div class="ui grid d-none ml-0 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?>">
 							<div class="row ml-0 pt-4">

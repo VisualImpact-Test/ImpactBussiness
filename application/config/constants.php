@@ -135,20 +135,21 @@ defined('GAP') or define('GAP', 15);
 defined('MONTOGAP') or define('MONTOGAP', 1500);
 
 //Tipos de Item
-defined('COD_ARTICULO')			or define('COD_ARTICULO', ['id' => 1, 'nombre' => 'ARTICULO']);
-defined('COD_SERVICIO')			or define('COD_SERVICIO', ['id' => 2, 'nombre' => 'SERVICIO']);
-defined('COD_COMPUTO')			or define('COD_COMPUTO', ['id' => 3, 'nombre' => 'COMPUTO']);
-defined('COD_MOVIL')			or define('COD_MOVIL', ['id' => 4, 'nombre' => 'MOVIL']);
-defined('COD_PERSONAL')			or define('COD_PERSONAL', ['id' => 5, 'nombre' => 'PERSONAL']);
-defined('COD_EVENTO')			or define('COD_EVENTO', ['id' => 6, 'nombre' => 'EVENTO']);
-defined('COD_DISTRIBUCION')		or define('COD_DISTRIBUCION', ['id' => 7, 'nombre' => 'DISTRIBUCION']);
-defined('COD_CONCURSO')			or define('COD_CONCURSO', ['id' => 8, 'nombre' => 'CONCURSO']);
-defined('COD_TEXTILES')			or define('COD_TEXTILES', ['id' => 9, 'nombre' => 'TEXTILES']);
-defined('COD_TARJETAS_VALES')	or define('COD_TARJETAS_VALES', ['id' => 10, 'nombre' => 'TARJETAS_VALES']);
-defined('COD_PAGOS_FARMACIAS')	or define('COD_PAGOS_FARMACIAS', ['id' => 11, 'nombre' => 'PAGOS FARMACIA']);
-defined('COD_TRANSPORTE')		or define('COD_TRANSPORTE', ['id' => 12, 'nombre' => 'TRANSPORTE']);
-defined('COD_RUTAS_VIAJERAS')		or define('COD_RUTAS_VIAJERAS', ['id' => 13, 'nombre' => 'RUTAS VIAJERAS']);
-defined('COD_PAQUETE')			or define('COD_PAQUETE', ['id' => 14, 'nombre' => 'PAQUETE']);
+defined('COD_ARTICULO')				or define('COD_ARTICULO', 				['id' => 1, 'nombre' => 'ARTICULO']);
+defined('COD_SERVICIO')				or define('COD_SERVICIO', 				['id' => 2, 'nombre' => 'SERVICIO']);
+defined('COD_COMPUTO')				or define('COD_COMPUTO', 				['id' => 3, 'nombre' => 'COMPUTO']);
+defined('COD_MOVIL')					or define('COD_MOVIL', 					['id' => 4, 'nombre' => 'MOVIL']);
+defined('COD_PERSONAL')				or define('COD_PERSONAL', 				['id' => 5, 'nombre' => 'PERSONAL']);
+defined('COD_EVENTO')				or define('COD_EVENTO', 				['id' => 6, 'nombre' => 'EVENTO']);
+defined('COD_DISTRIBUCION')		or define('COD_DISTRIBUCION', 		['id' => 7, 'nombre' => 'DISTRIBUCION']);
+defined('COD_CONCURSO')				or define('COD_CONCURSO', 				['id' => 8, 'nombre' => 'CONCURSO']);
+defined('COD_TEXTILES')				or define('COD_TEXTILES', 				['id' => 9, 'nombre' => 'TEXTILES']);
+defined('COD_TARJETAS_VALES')		or define('COD_TARJETAS_VALES', 		['id' => 10, 'nombre' => 'TARJETAS_VALES']);
+defined('COD_PAGOS_FARMACIAS')	or define('COD_PAGOS_FARMACIAS', 	['id' => 11, 'nombre' => 'PAGOS FARMACIA']);
+defined('COD_TRANSPORTE')			or define('COD_TRANSPORTE', 			['id' => 12, 'nombre' => 'TRANSPORTE']);
+defined('COD_RUTAS_VIAJERAS')		or define('COD_RUTAS_VIAJERAS', 		['id' => 13, 'nombre' => 'RUTAS VIAJERAS']);
+defined('COD_PAQUETE')				or define('COD_PAQUETE', 				['id' => 14, 'nombre' => 'PAQUETE']);
+defined('COD_SERVICIO_GENERAL')	or define('COD_SERVICIO_GENERAL',	['id' => 15, 'nombre' => 'SERVICIOS GENERALES']);
 //Wireframe
 
 defined('RUTA_WIREFRAME') or define('RUTA_WIREFRAME', '../public/assets/images/wireframe/');
@@ -233,15 +234,15 @@ defined('COD_SCTR') or define('COD_SCTR', '31'); // ImpactBussiness.compras.tipo
 defined("OPER_SERIADO") or define("OPER_SERIADO", 1);
 defined("OC_SERIADO") or define("OC_SERIADO", 2);
 
-
+// ! Ya se creo la tabla ImpactBussiness.dbo.frecuencia
 defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 	['id' => 1, 'value' => 'MENSUAL'],
 	['id' => 2, 'value' => 'BIMENSUAL'],
-	['id' => 7, 'value' => 'TRIMESTRAL'],
 	['id' => 3, 'value' => 'SEMESTRAL'],
 	['id' => 4, 'value' => 'ANUAL'],
 	['id' => 5, 'value' => 'UNICO'],
 	['id' => 6, 'value' => 'FRACCIONADO'],
+	['id' => 7, 'value' => 'TRIMESTRAL'],
 ]);
 
 defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', [
