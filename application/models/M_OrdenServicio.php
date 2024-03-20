@@ -199,6 +199,19 @@ class M_OrdenServicio extends MY_Model
 		return $query;
 	}
 
+	public function tipoPresupuestoDetalleCostoItem($idTipoPresupuesto)
+	{
+		$query = $this->db
+			->select('*')
+			->from('compras.tipoPresupuestoDetalle tpd')
+			->join('compras.itemTarifario as itm', 'itm.idItem = tpd.idItem and flag_actual = 1', 'LEFT')
+			->where('tpd.estado', 1)
+			->where('tpd.idTipoPresupuesto', $idTipoPresupuesto)
+			->order_by('tpd.idItem desc')
+			->get();
+		return $query;
+	}
+
 	public function getPresupuestoDetalle($id)
 	{
 		$query = $this->db

@@ -2038,7 +2038,9 @@ class OrdenServicio extends MY_Controller
 
 		$post = $this->input->post();
 
-		$dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
+		 $dataParaVista['tipoPresupuestoDetalle'] = $this->model->tipoPresupuestoDetalleCostoItem($post['detalle'])->result_array();
+		// $dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
+		//	echo $this->db->last_query(); exit();
 		$dataParaVista['cargos'] = $post['cargos'];
 
 		$dataParaVista['idTipoPresupuesto'] = $post['detalle'];
@@ -2048,7 +2050,7 @@ class OrdenServicio extends MY_Controller
 		foreach ($post['cargos'] as $cargo) {
 			$dataParaVista['totalCargo'] += intval($cargo['cantidad']);
 		}
-
+		
 		echo $this->load->view('modulos/OrdenServicio/Elements/rowParaPresupuesto_1', $dataParaVista, true);
 	}
 
