@@ -1026,15 +1026,11 @@ var OrdenServicio = {
 			minimoPorCargo[OrdenServicio.arrayCargo[i].idCargo] = minimoCadaDoce[i];
 		}
 
-		$('.subCantDS').each(function () {
-			var cargoId = $(this).attr('name').match(/\[(\d+)\]/)[1];
-			var valorMinimo = minimoPorCargo[cargoId];
-
+		$('.subCantDS').each(function (index) {
+			var valorMinimo = minimoCadaDoce[index % minimoCadaDoce.length];
 			$(this).val(valorMinimo);
 			$(this).change();
 		});
-
-
 	},
 	calcularSTotal: function (t) {
 		var control = $(t).closest('td.cantidadDeTabla');
