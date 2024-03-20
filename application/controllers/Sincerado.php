@@ -1320,7 +1320,12 @@ class Sincerado extends MY_Controller
 		foreach ($datosFechas as $k => $v) {
 			$row = "4";
 			$celda = $col . $row;
-			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $v['fecha'])->getStyle($celda)->applyFromArray($estilo_fecha)->getFont()->setBold(true);
+			setlocale(LC_TIME, 'es_ES.UTF-8');
+			$fecha = $k;
+			$nueva_fecha = strftime("%b-%y", strtotime($v['fecha']));
+			$nueva_fecha = str_replace('.', '', $nueva_fecha);
+			$nueva_fecha = ucfirst($nueva_fecha); 
+			$objPHPExcel->setActiveSheetIndex(0)->setCellValue($celda, $nueva_fecha)->getStyle($celda)->applyFromArray($estilo_fecha)->getFont()->setBold(true);
 			$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
 
 			$row++;
