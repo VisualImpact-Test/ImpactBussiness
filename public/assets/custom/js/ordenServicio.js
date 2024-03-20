@@ -1202,7 +1202,7 @@ var OrdenServicio = {
 				}
 			}
 		}
-		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado).trigger('change');
+		$('#totalLineaDS_' + detalle + '_' + detalleSub).val(totalFinalAcumulado.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 
 	},
 	calcularTotalColumna: function (t) {
@@ -1239,8 +1239,8 @@ var OrdenServicio = {
 	calcularTotalColumnaMovilidad: function () {
 		totPr = 0;
 		$.each(OrdenServicio.arrayFechas, function (k, v) {
-			viaje = parseFloat($('#movilidadViajes_' + k).val());
-			adicional = parseFloat($('#movilidadAdicionales_' + k).val());
+			viaje = parseFloat($('#movilidadViajes_' + k).val().replace(/,/g, ''));
+			adicional = parseFloat($('#movilidadAdicionales_' + k).val().replace(/,/g, ''));
 			tot = parseFloat(viaje) + parseFloat(adicional);
 			totPr += tot;
 			$('#totalColumna_8_' + k).val(tot.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
@@ -1421,7 +1421,7 @@ var OrdenServicio = {
 				totalTotalIncentivo += parseFloat(cantInc[f]) + parseFloat(totalIncentivoAdicional);
 			}
 
-			$('#totalLineaSueldo_' + i).val(totalTotalSueldo.toFixed(2));
+			$('#totalLineaSueldo_' + i).val(totalTotalSueldo.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			$('#totalLineaIncentivo').val(totalTotalIncentivo.toFixed(2)).trigger('change');
 		}
 
@@ -1484,7 +1484,7 @@ var OrdenServicio = {
 			inpPreSbT.val(sbt.toFixed(2));
 
 			tot = sbt * frecuencia;
-			inpPreTot.val(tot.toFixed(2));
+			inpPreTot.val(tot.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 
 			if (tot > 0) {
 				html += `<tr>
@@ -1534,10 +1534,10 @@ var OrdenServicio = {
 		totV = 0;
 		$.each(OrdenServicio.arrayFechas, function (k, v) {
 			if (typeof arT[k] === 'undefined') arT[k] = 0;
-			$('#movilidadViajes_' + k).val(arT[k]);
+			$('#movilidadViajes_' + k).val(arT[k].toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 			totV += arT[k];
 		});
-		$('#totalMovilidadViajes').val(totV);
+		$('#totalMovilidadViajes').val(totV.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 		OrdenServicio.calcularTotalColumnaMovilidad();
 	},
 	calcularTotalFinal: function () {
@@ -1586,11 +1586,11 @@ var OrdenServicio = {
 			sumTotal += tt;
 		});
 
-		$('#sumaSubtotalFinal').val(sumSubTotal.toFixed(2));
-		$('#sumaFee1Final').val(sumFee1.toFixed(2));
-		$('#sumaFee2Final').val(sumFee2.toFixed(2));
-		$('#sumaFee3Final').val(sumFee3.toFixed(2));
-		$('#sumaTotalFinal').val(sumTotal.toFixed(2));
+		$('#sumaSubtotalFinal').val(sumSubTotal.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$('#sumaFee1Final').val(sumFee1.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$('#sumaFee2Final').val(sumFee2.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$('#sumaFee3Final').val(sumFee3.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+		$('#sumaTotalFinal').val(sumTotal.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
 	},
 
 	uptEstado_almacenDetalle: function (id, est) {
