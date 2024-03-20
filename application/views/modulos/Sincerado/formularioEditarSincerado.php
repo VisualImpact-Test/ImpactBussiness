@@ -36,12 +36,8 @@ endforeach;  ?>
 						<thead>
 							<tr>
 								<th rowspan="2" class="three wide p-0 "><label class="text-white">________________</label></th>
-								<?php
-								foreach ($contadorMeses as $anio => $meses) {
-									$totalMeses = array_sum($meses); ?>
-									<th class="one wide p-0 " colspan="<?php echo '1' //$totalMeses 
-																					?>" style="text-align: center;"><?php echo $anio ?></th>
-								<?php } ?>
+								<?php $anio = date('Y', strtotime($fechaSincerado)); ?>
+								<th class="one wide" style="text-align: center;"><?= $anio ?></th>
 								<th class="one wide p-0 " rowspan="2"></th>
 							</tr>
 							<tr>

@@ -1,4 +1,10 @@
 <?php $dataRow = 0; ?>
+<?php foreach ($fechaDelPre as $k => $v) : 
+$anio = date('Y', strtotime($v['fecha'])); 
+$mes = date('n', strtotime($v['fecha']));
+if (!isset($contadorMeses[$anio])) { $contadorMeses[$anio] = array_fill(1, 12, 0); }
+$contadorMeses[$anio][$mes]++; 
+endforeach;  ?>
 <form class="form" role="form" id="formRegistroSincerado" method="post" autoComplete="off">
 	<input type="hidden" id="idCuenta" value="<?= $idCuenta; ?>">
 	<div class="row pt-4">
@@ -29,20 +35,36 @@
 					<table class="ui table" id="tablaFechaPersona">
 						<thead>
 							<tr>
-								<th class="two wide"><label class="text-white">________________</label><button type="button" class="btn-valoresFijosSincerado d-none">FIJAR VALORES</button></th>
+								<th rowspan = "2" class="two wide"><label class="text-white">________________</label><button type="button" class="btn-valoresFijosSincerado d-none">FIJAR VALORES</button></th>
+						
+								<?php $anio = date('Y', strtotime($fechaSincerado)); ?>
+								<th class="one wide" style="text-align: center;"><?= $anio ?></th>
+								<th class="one wide" rowspan = "2"></th>
+							</tr>
+							
+							<tr>
 								<?php foreach ($fechaDelPre as $k => $v) : ?>
 									<?php $visible = '' ?>
 									<?php if ($v['fecha'] != $fechaSincerado) : ?>
 										<?php $visible = 'd-none' ?>
 									<?php endif; ?>
+
+									<?php $numeroMes = date('n', strtotime($v['fecha'])); ?>
+									
 									<th class="one wide p-0 <?= $visible ?>">
-										<div class="ui input transparent">
-											<input type="text" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+										<div class="ui input transparent" style=" width: 100%;">
+											<input type="hidden" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
+											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes];?>">
+											
 										</div>
 									</th>
 								<?php endforeach; ?>
-								<th class="one wide"></th>
+							
 							</tr>
+
+
+						
+
 						</thead>
 						<tbody>
 							<?php foreach ($cargoDelPre as $kp => $vp) : ?>
