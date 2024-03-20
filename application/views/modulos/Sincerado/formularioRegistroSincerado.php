@@ -57,7 +57,7 @@
 										<?php endif; ?>
 										<td class="one wide <?= $visible ?>">
 											<div class="ui input">
-												<input name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $presupuestoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" patron="requerido">
+												<input name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $presupuestoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" onkeyup="OrdenServicio.cantidadMenorFecha(this);" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
