@@ -1,14 +1,15 @@
 <?php $dataRow = 0; ?>
 <?php $utilizaSCTR = false; ?>
-<?php foreach ($ordenServicioFecha as $k => $v) : 
-$anio = date('Y', strtotime($v['fecha'])); 
-$mes = date('n', strtotime($v['fecha']));
-if (!isset($contadorMeses[$anio])) { $contadorMeses[$anio] = array_fill(1, 12, 0); }
-$contadorMeses[$anio][$mes]++; 
+<?php foreach ($ordenServicioFecha as $k => $v) :
+	$anio = date('Y', strtotime($v['fecha']));
+	$mes = date('n', strtotime($v['fecha']));
+	if (!isset($contadorMeses[$anio])) {
+		$contadorMeses[$anio] = array_fill(1, 12, 0);
+	}
+	$contadorMeses[$anio][$mes]++;
 endforeach;  ?>
 
 <form class="form" role="form" id="formRegistroPresupuesto" method="post" autoComplete="off">
-	
 	<input type="hidden" id="idCuenta" value="<?= $ordenServicio['idCuenta']; ?>">
 	<div class="row pt-4">
 		<?php $cantidadCargo = 0; ?>
@@ -28,27 +29,25 @@ endforeach;  ?>
 				<div id="divTabla" class="ui table">
 					<table class="ui sortable table" id="tablaFechaPersona">
 						<thead>
-						<tr><th rowspan = "2" class = "three wide p-0 " ><label class="text-white">________________</label></th>
-						<?php
-							foreach ($contadorMeses as $anio => $meses) {
-								$totalMeses = array_sum($meses); ?>
-								<th  class = "one wide p-0 " colspan="<?php echo $totalMeses ?>" style="text-align: center; " ><?php echo $anio ?></th>
-							<?php } ?>
-							<th rowspan = "2" class = "one wide p-0 " ></th>
+							<tr>
+								<th rowspan="2" class="three wide p-0 "><label class="text-white">________________</label></th>
+								<?php
+								foreach ($contadorMeses as $anio => $meses) {
+									$totalMeses = array_sum($meses); ?>
+									<th class="one wide p-0 " colspan="<?php echo $totalMeses ?>" style="text-align: center; "><?php echo $anio ?></th>
+								<?php } ?>
+								<th rowspan="2" class="one wide p-0 "></th>
 							</tr>
 							<tr>
 								<?php foreach ($ordenServicioFecha as $k => $v) : ?>
 									<?php $numeroMes = date('n', strtotime($v['fecha'])); ?>
-									
-									<th class = "one wide p-0 ">
+									<th class="one wide p-0 ">
 										<div class="ui input transparent">
 											<input type="hidden" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
-											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes];?>">
-											
+											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes]; ?>">
 										</div>
 									</th>
 								<?php endforeach; ?>
-							
 							</tr>
 						</thead>
 						<tbody>
@@ -345,7 +344,7 @@ endforeach;  ?>
 													<?php foreach ($ordenServicioCargo as $kp => $vp) : ?>
 														<td>
 															<div class="ui input">
-																<input class="form-control text-right keyUpChange" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? $vp['sueldo'] : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
+																<input class="form-control text-right keyUpChange moneda" name="monto[<?= $vp['idCargo'] ?>]" data-persona="<?= $kp ?>" id="rowMonto_Sueldo<?= $dataRow ?>-<?= $kp ?>" value="<?= $v1['idTipoPresupuestoDetalle'] == COD_SUELDOMINIMO ? numeroVistaMoneda($vp['sueldo']) : ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? numeroVistaMoneda(floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) : '0'); ?>" onchange="OrdenServicio.calcularTablaSueldo()" <?= $v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR ? 'readonly' : ''; ?>>
 																<?php if ($v1['idTipoPresupuestoDetalle'] == COD_ASIGNACIONFAMILIAR) : ?>
 																	<input type="hidden" id="restoSueldoMinimo" value="<?= (floatval($sueldoMinimo) * 0.1) - (floatval($sueldoMinimo) * (floatval($v1['valorPorcentual']) / 100) / 10) ?>">
 																<?php endif; ?>
@@ -583,7 +582,7 @@ endforeach;  ?>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= $vm['precioTaxi']; ?>" value="0" name="movPrecTaxi" readonly>
+													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'],2); ?>" value="0" name="movPrecTaxi" readonly>
 												</div>
 											</td>
 											<td>
@@ -593,7 +592,7 @@ endforeach;  ?>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= $vm['frecuencia']; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= empty($vm['frecuencia']) ? 0 : $vm['frecuencia']; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
 												</div>
 											</td>
 											<td>
@@ -754,6 +753,7 @@ endforeach;  ?>
 										<th>Split</th>
 										<th>Precio Unitario</th>
 										<th>GAP</th>
+										<th>Precio GAP</th>
 										<th class="cantidadDeTabla">Cantidad</th>
 										<th>Total</th>
 										<th>Frecuencia</th>
@@ -772,9 +772,7 @@ endforeach;  ?>
 													</td>
 													<td colspan="2">
 														<div class="ui right input fluid">
-															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" 
-															type="text" id="txtVSctr" value="0" 
-															onchange="OrdenServicio.calcularTablaSueldo()">
+															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="0" onchange="OrdenServicio.calcularTablaSueldo()">
 															<!--<div class="ui basic label">S/.</div>-->
 														</div>
 													</td>
@@ -796,18 +794,23 @@ endforeach;  ?>
 
 													<td class="splitDetalle">
 														<div class="ui input fluid">
-															<input type="text" class="onlyNumbers" name="splitDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['split']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+															<input type="text" class="onlyNumbers" name="splitDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['split']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);" onkeyup="OrdenServicio.cantidadSplitCargo(this);">
 														</div>
 													</td>
 													<td class="precioUnitarioDetalle">
 														<div class="ui input fluid">
-															<input type="text" class="text-right" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $vd['mostrarDetalle'] == '1' ? verificarEmpty($value['precioUnitario'], 2) : $value['costo']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+															<input type="text" class="text-right moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $vd['mostrarDetalle'] == '1' ? verificarEmpty(numeroVistaMoneda($value['precioUnitario']), 2) : numeroVistaMoneda($value['costo']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 														</div>
 													</td>
 													<td class="gapDetalle">
 														<div class="ui right labeled input fluid">
 															<input type="text" class="text-right onlyNumbers keyUpChange" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
 															<div class="ui basic label"> % </div>
+														</div>
+													</td>
+													<td class="precioGapDetalle">
+														<div class="ui labeled input transparent fluid">
+															<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * (isset($value['gap']) ? $value['gap'] : 0 / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 														</div>
 													</td>
 													<td class="cantidadDeTabla">
