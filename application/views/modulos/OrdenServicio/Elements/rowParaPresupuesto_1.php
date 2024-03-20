@@ -4,7 +4,7 @@
 			<select class="ui fluid search dropdown dropdownSingleAditions cboTPD keyUpChange" name="tipoPresupuestoDetalleSub[<?= $idTipoPresupuesto; ?>]" onchange="$('#textDescripcionDetalle_<?= $idTipoPresupuesto ?>_<?= $numeroDeFila ?>').html(this.options[this.selectedIndex].text);">
 				<option value=""></option>
 				<?php foreach ($tipoPresupuestoDetalle as $tpd) : ?>
-					<option value="<?= $tpd['idTipoPresupuestoDetalle']; ?>" data-preciounitario="0" data-split="<?= $tpd['split']; ?>" data-frecuencia="<?= $tpd['frecuencia']; ?>"><?= $tpd['nombre']; ?></option>
+					<option value="<?= $tpd['idTipoPresupuestoDetalle']; ?>" data-preciounitario="<?= $tpd['precioUnitario']; ?>" data-split="<?= $tpd['split']; ?>" data-frecuencia="<?= $tpd['frecuencia']; ?>"><?= $tpd['nombre']; ?></option>
 				<?php endforeach; ?>
 			</select>
 			<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $numeroDeFila ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a>
