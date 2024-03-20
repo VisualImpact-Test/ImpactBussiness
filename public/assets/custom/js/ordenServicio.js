@@ -307,7 +307,7 @@ var OrdenServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroPresupuesto", fn: "OrdenServicio.registrarPresupuesto()", content: "¿Esta seguro de registrar el resupuesto?" });';
+				fn[1] = 'Fn.showConfirm({ idForm: "formRegistroPresupuesto", fn: "OrdenServicio.registrarPresupuesto()", content: "¿Esta seguro de registrar el presupuesto?" });';
 				btn[1] = { title: 'Registrar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '98%' });
 
@@ -1004,6 +1004,34 @@ var OrdenServicio = {
 		valorCalc = Math.ceil(valorCalc);
 		control.find('.ui.action.input').find('input').val(valorCalc).trigger('change');
 	},
+	cantidadMenorFecha: function (t) {
+		var valores = [];
+		$('input.cntColmFC').each(function (index) {
+			valores.push(parseFloat($(this).val()));
+		});
+
+		var minimoCadaDoce = [];
+		var tempArray = [];
+
+		for (var i = 0; i < valores.length; i++) {
+			tempArray.push(valores[i]);
+			if ((i + 1) % 12 === 0 || i === valores.length - 1) {
+				minimoCadaDoce.push(Math.min.apply(null, tempArray));
+				tempArray = [];
+			}
+		}
+
+		var minimoPorCargo = {};
+		for (var i = 0; i < OrdenServicio.arrayCargo.length; i++) {
+			minimoPorCargo[OrdenServicio.arrayCargo[i].idCargo] = minimoCadaDoce[i];
+		}
+
+		$('.subCantDS').each(function (index) {
+			var valorMinimo = minimoCadaDoce[index % minimoCadaDoce.length];
+			$(this).val(valorMinimo);
+			$(this).change();
+		});
+	},
 	calcularSTotal: function (t) {
 		var control = $(t).closest('td.cantidadDeTabla');
 		var detalle = $(t).data('detalle');
@@ -1282,22 +1310,22 @@ var OrdenServicio = {
 			if ($('#txtVSctr').length == 1) {
 				var valorSCTR = ((calc + parseFloat($('#restoSueldoMinimo').val())) * parseFloat($('#txtVSctr').val()) / 100);
 
-// Formatear el valor SCTR con cuatro decimales
-valorSCTR = valorSCTR.toFixed(4);
+				// Formatear el valor SCTR con cuatro decimales
+				valorSCTR = valorSCTR.toFixed(4);
 
-// Separar la parte entera de la decimal
-var partesSCTR = valorSCTR.split('.');
-var parteEnteraSCTR = partesSCTR[0];
-var parteDecimalSCTR = partesSCTR[1];
+				// Separar la parte entera de la decimal
+				var partesSCTR = valorSCTR.split('.');
+				var parteEnteraSCTR = partesSCTR[0];
+				var parteDecimalSCTR = partesSCTR[1];
 
-// Formatear la parte entera del valor SCTR con separadores de coma para los miles
-parteEnteraSCTR = parteEnteraSCTR.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				// Formatear la parte entera del valor SCTR con separadores de coma para los miles
+				parteEnteraSCTR = parteEnteraSCTR.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-// Unir la parte entera y la parte decimal del valor SCTR con un punto
-valorSCTR = parteEnteraSCTR + '.' + parteDecimalSCTR;
+				// Unir la parte entera y la parte decimal del valor SCTR con un punto
+				valorSCTR = parteEnteraSCTR + '.' + parteDecimalSCTR;
 
-// Asignar el valor al campo de entrada del valor SCTR
-$('#txtSctr_' + i).val(valorSCTR);
+				// Asignar el valor al campo de entrada del valor SCTR
+				$('#txtSctr_' + i).val(valorSCTR);
 			}
 
 			$('#tablaFechaPersona > tbody > tr').each(function () {

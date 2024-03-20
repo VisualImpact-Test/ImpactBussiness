@@ -61,7 +61,7 @@ endforeach;  ?>
 									<?php foreach ($fechaDelPre as $kf => $vf) : ?>
 										<td class="one wide">
 											<div class="ui input">
-												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $presupuestoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" patron="requerido">
+												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $presupuestoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC <?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" onkeyup="OrdenServicio.cantidadMenorFecha(this);" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>

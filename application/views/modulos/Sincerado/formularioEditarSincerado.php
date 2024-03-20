@@ -71,7 +71,7 @@ endforeach;  ?>
 										<td class="one wide <?= $visible ?>">
 											<div class="ui input fluid">
 												<input type="text" name="cantidadCargoFecha[<?= $vp['idCargo'] ?>][<?= $kf ?>]" value="<?= $sinceradoCargo[$vf['fecha']][$vp['idCargo']]['cantidad']; ?>" class="form-control text-center keyUpChange cntColmFC 
-												<?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" patron="requerido">
+												<?= $kf == 0 ? 'cloneAll' : ('cloned' . $kp) ?>" <?php if ($kf == 0) : ?> id="cargoCantidad_<?= $kp ?>" <?php endif; ?> data-personal="<?= $kp ?>" data-cargo="<?= $vp['idCargo'] ?>" onkeyup="OrdenServicio.cantidadMenorFecha(this);" patron="requerido">
 											</div>
 										</td>
 									<?php endforeach; ?>
