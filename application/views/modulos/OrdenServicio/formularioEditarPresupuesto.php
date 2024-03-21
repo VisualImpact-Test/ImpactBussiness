@@ -412,7 +412,7 @@ endforeach;  ?>
 													</td>
 													<td style="background: #fff">
 														<div class="ui right labeled input">
-															<input class="porCL" value="<?= $preDetSu['porCL']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>" readonly name="clS">
+															<input class="porCL keyUpChange" value="<?= $preDetSu['porCL']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>"  name="clS">
 															<div class="ui basic label"> % </div>
 														</div>
 													</td>
