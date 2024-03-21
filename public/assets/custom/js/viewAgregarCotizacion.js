@@ -420,6 +420,7 @@ var Cotizacion = {
 			let defaultItem = $('.default-item');
 
 			defaultItem.append(Cotizacion.htmlG);
+		
 
 			let childInserted = defaultItem.children().last();
 			let childInsertedNumber = (++Cotizacion.nDetalle);
@@ -427,7 +428,15 @@ var Cotizacion = {
 			//childInserted.find('.idTipoItem select').addClass('personal_'+childInsertedNumber);
 			childInserted.find('.idTipoItem select').attr('data-correlativo', childInsertedNumber);
 			//PERSONAL
+			var cuentaFrom = $("#cuentaForm").val();
+			if (cuentaFrom != '') {
+				childInserted.find('.idTipoItem').removeClass('read-only');
+			}
+			
 			childInserted.find('.personal_detalle').removeClass('personal_1');
+
+			
+
 			childInserted.find('.personal_detalle').addClass('personal_' + childInsertedNumber);
 			childInserted.find('.periodo_contrato_personal').attr('data-obligatorio', childInsertedNumber);
 			childInserted.find('.cantidad_dias_personal').attr('data-dias', childInsertedNumber);
@@ -578,6 +587,9 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#tipoItemForm', function (e) {
+			
+			
+			//$("#cuentaForm").addClass('read-only');
 			//ACTUALIZAR FEE
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
@@ -2441,6 +2453,10 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#cuentaForm', function () {
+			//console.log("holas");
+			
+			$('.idTipoItem').removeClass('read-only');
+			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
 			$('.feeForm').val(0);
 			$('.fee2Form').val(0);
 

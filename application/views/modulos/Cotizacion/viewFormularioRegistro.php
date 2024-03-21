@@ -198,7 +198,7 @@
 							</div>
 							<div class="four wide field">
 								<div class="ui sub header">Tipo Item</div>
-								<select class="ui dropdown simpleDropdown idTipoItem" id="tipoItemForm" name="tipoItemForm" patron="requerido" data-correlativo="1">
+								<select class="ui dropdown simpleDropdown idTipoItem read-only" id="tipoItemForm" name="tipoItemForm" patron="requerido" data-correlativo="1">
 									<?= htmlSelectOptionArray2(['query' => $itemTipo, 'class' => 'text-titlecase ', 'simple' => true, 'title' => 'Seleccione']); ?>
 								</select>
 							</div>
