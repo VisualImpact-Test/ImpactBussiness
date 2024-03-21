@@ -143,14 +143,16 @@ class OrdenServicio extends MY_Controller
 		$presupuestoCargoFecha = $this->db->get_where('compras.presupuestoCargo', ['idPresupuesto' => $id])->result_array();
 		$dataParaVista['cantidadPorCargoFecha'] = $presupuestoCargoFecha = changeKeyInArray($presupuestoCargoFecha, 'idCargo', 'fecha');
 
-		$tipoPresupuesto = $this->db->get_where('compras.tipoPresupuesto', ['estado' => 1])->result_array();
+		$tipoPresupuesto = $this->db->order_by('orden', 'ASC')->get_where('compras.tipoPresupuesto', ['estado' => 1])->result_array();
 		$dataParaVista['tiposPresupuesto'] = changeKeyInArray($tipoPresupuesto, 'idTipoPresupuesto');
 
-		$tipoPresupuestoDetalle = $this->db->get_where('compras.tipoPresupuestoDetalle', ['estado' => 1])->result_array();
+		$tipoPresupuestoDetalle = $this->db->order_by('idTipoPresupuesto')->get_where('compras.tipoPresupuestoDetalle', ['estado' => 1])->result_array();
 		$dataParaVista['tiposPresupuestoDetalle'] = $tipoPresupuestoDetalle = changeKeyInArray($tipoPresupuestoDetalle, 'idTipoPresupuestoDetalle');
 
 		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
-		$presupuestoDet = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id])->result_array();
+		$presupuestoDet = $this->db->order_by('CASE WHEN idTipoPresupuesto = 7 THEN 0 WHEN idTipoPresupuesto = 9 THEN 1
+			WHEN idTipoPresupuesto = 10 THEN 2 WHEN idTipoPresupuesto = 11 THEN 3 WHEN idTipoPresupuesto = 8 THEN 4
+            ELSE 5 END DESC', '', false)->order_by('idTipoPresupuesto', 'ASC')->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id])->result_array();
 		$dataParaVista['presupuestoDetalle'] = $pd = changeKeyInArray($presupuestoDet, 'idPresupuestoDetalle');
 		$whereIdPreDet = obtenerDatosCabecera($presupuestoDet, 'idPresupuestoDetalle');
 
