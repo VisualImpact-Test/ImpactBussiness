@@ -184,7 +184,7 @@
 			<tr>
 				<td colspan="4" class="bold">Son :</td>
 				<td colspan="8" class="text-left">
-					<?= moneyToText(['numero' => ($igv_total + $total), 'moneda' => $data['monedaPlural']]) ?>
+					<?= numeroVistaMoneda($igv_total + $total) ?>
 				</td>
 			</tr>
 			<? if (!empty($data['entrega'])) { ?>
