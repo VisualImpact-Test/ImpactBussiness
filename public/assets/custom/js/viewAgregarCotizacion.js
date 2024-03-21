@@ -587,8 +587,7 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#tipoItemForm', function (e) {
-			
-			
+
 			//$("#cuentaForm").addClass('read-only');
 			//ACTUALIZAR FEE
 			var idCuenta = $('#cuentaForm').val();
@@ -814,6 +813,8 @@ var Cotizacion = {
 				cotizacionInternaForm.val(0);
 				control.closest('.body-item').find('.gapForm').val('0');
 				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
+				control.closest('.body-item').find('.costoForm').removeAttr('readonly', 'readonly');
+				
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -4104,8 +4105,14 @@ var Cotizacion = {
 	calcularMontoServicioGeneral: function (t) {
 		let _this = $(t);
 		let monto = _this.closest('.div-feature-' + COD_SERVICIO_GENERAL.id).find('.montoSubItemServicioGeneral');
-
+		let cantidad = _this.closest('.div-feature-' + COD_SERVICIO_GENERAL.id).find('.cantidadSubItemServicioGeneral');
 		let montoTot = 0;
+		let cantTot = 0;
+
+		$.each(cantidad, function (index, value) {
+			rowCantidad = parseFloat($(value).val());
+			cantTot += isNaN(rowCantidad) ? 0 : rowCantidad;
+		});
 
 		$.each(monto, function (index, value) {
 			rowMonto = parseFloat($(value).val());
@@ -4118,7 +4125,9 @@ var Cotizacion = {
 		} else {
 			_this.closest('.body-item').find('.cotizacionInternaForm').val(1);
 		}
-		_this.closest('.body-item').find('.cantidadForm').val(1).keyup();
+		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
+
+	
 	},
 	validarFormatoTipo: function () {
 		var contVal = 0;
