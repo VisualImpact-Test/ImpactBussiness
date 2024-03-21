@@ -67,7 +67,7 @@ class M_OrdenServicio extends MY_Model
 		if (!empty($filtros)) {
 			$this->db->where($filtros);
 		}
-		
+
 		$this->db->order_by('l.idOrdenServicio desc');
 		return $this->db->get();
 	}
@@ -248,6 +248,21 @@ class M_OrdenServicio extends MY_Model
 		return $query;
 	}
 
+	public function getPresupuestoCargoZona($id, $idH = null)
+	{
+		$this->db->distinct()
+			->select('pc.idCargo, pc.idPresupuesto, pc.idPresupuestoHistorico, c.nombre as cargo')
+			->from('compras.presupuestoCargoZona pc')
+			->join('rrhh.dbo.CargoTrabajo c', 'c.idCargoTrabajo = pc.idCargo', 'LEFT')
+			->where('pc.idPresupuesto', $id);
+
+		if (!empty($idH)) $this->db->where('pc.idPresupuestoHistorico', $idH);
+		else $this->db->where('pc.estado', 1);
+
+		$query = $this->db->get();
+		return $query;
+	}
+
 	public function getSinceradoCargo($id, $idH = null)
 	{
 		$this->db
@@ -336,6 +351,7 @@ class M_OrdenServicio extends MY_Model
 
 		$this->db->update('compras.presupuesto', ['estado' => 0], ['idPresupuesto' => $id]);
 		$this->db->update('compras.presupuestoHistorico', ['estado' => 0], ['idPresupuesto' => $id]);
+		$this->db->update('compras.presupuestoCargoZona', ['estado' => 0], ['idPresupuesto' => $id]);
 		$this->db->update('compras.presupuestoCargo', ['estado' => 0], ['idPresupuesto' => $id]);
 		$this->db->update('compras.presupuestoDetalle', ['estado' => 0], ['idPresupuesto' => $id]);
 		$this->db->update_batch('compras.presupuestoDetalleSueldo', $updateDet, 'idPresupuestoDetalle');

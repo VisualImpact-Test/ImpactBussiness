@@ -1,14 +1,16 @@
 <?php $dataRow = 0; ?>
 <?php $utilizaSCTR = false; ?>
-<?php foreach ($ordenServicioFecha as $k => $v) : 
-$anio = date('Y', strtotime($v['fecha'])); 
-$mes = date('n', strtotime($v['fecha']));
-if (!isset($contadorMeses[$anio])) { $contadorMeses[$anio] = array_fill(1, 12, 0); }
-$contadorMeses[$anio][$mes]++; 
+<?php foreach ($ordenServicioFecha as $k => $v) :
+	$anio = date('Y', strtotime($v['fecha']));
+	$mes = date('n', strtotime($v['fecha']));
+	if (!isset($contadorMeses[$anio])) {
+		$contadorMeses[$anio] = array_fill(1, 12, 0);
+	}
+	$contadorMeses[$anio][$mes]++;
 endforeach;  ?>
 
 <form class="form" role="form" id="formRegistroPresupuesto" method="post" autoComplete="off">
-	
+
 	<input type="hidden" id="idCuenta" value="<?= $ordenServicio['idCuenta']; ?>">
 	<div class="row pt-4">
 		<?php $cantidadCargo = 0; ?>
@@ -28,27 +30,28 @@ endforeach;  ?>
 				<div id="divTabla" class="ui table">
 					<table class="ui sortable table" id="tablaFechaPersona">
 						<thead>
-						<tr><th rowspan = "2" class = "three wide p-0 " ><label class="text-white">________________</label></th>
-						<?php
-							foreach ($contadorMeses as $anio => $meses) {
-								$totalMeses = array_sum($meses); ?>
-								<th  class = "one wide p-0 " colspan="<?php echo $totalMeses ?>" style="text-align: center; " ><?php echo $anio ?></th>
-							<?php } ?>
-							<th rowspan = "2" class = "one wide p-0 " ></th>
+							<tr>
+								<th rowspan="2" class="three wide p-0 "><label class="text-white">________________</label></th>
+								<?php
+								foreach ($contadorMeses as $anio => $meses) {
+									$totalMeses = array_sum($meses); ?>
+									<th class="one wide p-0 " colspan="<?php echo $totalMeses ?>" style="text-align: center; "><?php echo $anio ?></th>
+								<?php } ?>
+								<th rowspan="2" class="one wide p-0 "></th>
 							</tr>
 							<tr>
 								<?php foreach ($ordenServicioFecha as $k => $v) : ?>
 									<?php $numeroMes = date('n', strtotime($v['fecha'])); ?>
-									
-									<th class = "one wide p-0 ">
+
+									<th class="one wide p-0 ">
 										<div class="ui input transparent">
 											<input type="hidden" name="fechaList" value="<?= strpos($v['fecha'], '-') ? date_change_format($v['fecha']) : $v['fecha']; ?>" class="form-control text-center" patron="requerido" readonly>
-											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes];?>">
-											
+											<input type="text" class="form-control text-center" value="<?= NOMBRE_MES_REDU[$numeroMes]; ?>">
+
 										</div>
 									</th>
 								<?php endforeach; ?>
-							
+
 							</tr>
 						</thead>
 						<tbody>
@@ -772,9 +775,7 @@ endforeach;  ?>
 													</td>
 													<td colspan="2">
 														<div class="ui right input fluid">
-															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" 
-															type="text" id="txtVSctr" value="0" 
-															onchange="OrdenServicio.calcularTablaSueldo()">
+															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="0" onchange="OrdenServicio.calcularTablaSueldo()">
 															<!--<div class="ui basic label">S/.</div>-->
 														</div>
 													</td>
@@ -850,10 +851,11 @@ endforeach;  ?>
 																			<td class="text-center">
 																				<div class="fields">
 																					<div class="ui checkbox">
-																						<input type="checkbox" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" data-cargo="<?= $i; ?>" checked onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change();">
+																						<input type="checkbox" data-cargo="<?= $i; ?>" checked onchange="$(this).closest('.cantidadCargo_<?= $key ?>').closest('tbody').find('tr.detalleTr_<?= $key ?>').find('.onlyNumbers').change(); $(this).closest('td').find('.chk').val((	$(this).is(':checked') ? 1 : 0))">
 																						<label style="font-size: 1.5em;"></label>
 																					</div>
 																				</div>
+																				<input type="text" class="chk" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" value="1">
 																			</td>
 																			<td><?= $cargo['cargo']; ?></td>
 																			<td>

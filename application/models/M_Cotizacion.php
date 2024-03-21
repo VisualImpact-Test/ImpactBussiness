@@ -2665,6 +2665,8 @@ class M_Cotizacion extends MY_Model
 					OR ec.fecFin >= GETDATE()
 				)
 			)");
+		if (isset($params['idCargo']))
+			$this->db->where('ct.idCargoTrabajo', $params['idCargo']);
 
 		return $this->db->get();
 	}

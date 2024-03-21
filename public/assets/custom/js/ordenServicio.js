@@ -12,6 +12,7 @@ var OrdenServicio = {
 	distrito: {},
 	documentoCont: 0,
 	pruebaConteo: 0,
+	thisTemporal: null,
 	load: function () {
 
 		$(document).on('dblclick', '.card-body > ul > li > a', function (e) {
@@ -126,6 +127,35 @@ var OrdenServicio = {
 			$('#tablaSueldo tbody tr input.keyUpChange:first').change();
 		})
 
+		$(document).on('click', '.btnDetallarPorZona', function () {
+
+			OrdenServicio.thisTemporal = this;
+			let idCargo = $(this).data('cargo');
+			let dataPrevia = $(this).closest('td').find('.dataZona').val();
+			++modalId;
+
+			let data = {
+				'idCargo': idCargo,
+				'fechas': OrdenServicio.arrayFechas,
+				'dataPrevia': dataPrevia
+			};
+
+			// let config = { 'url': OrdenServicio.url + 'formularioActualizacionOrdenServicio', 'data': data };
+			let config = { 'url': OrdenServicio.url + 'formularioEditarZonas', 'data': data };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formDatosDeZona", fn: "OrdenServicio.guardarZona(' + modalId + ')", content: "¿Esta seguro de las zonas indicadas?" });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '80%' });
+				$('.dropdownSingleAditions').dropdown({ allowAdditions: true });
+				Fn.loadSemanticFunctions();
+			});
+		});
 		$(document).on('click', '.btn-editar', function () {
 			++modalId;
 
@@ -1654,7 +1684,6 @@ var OrdenServicio = {
 				html2 += '<i class="fal fa-lg fa-toggle-off"></i>';
 			}
 			html2 += '</a>';
-			console.log(html2);
 			$('#est_movili_' + id).html(html);
 			$('#upt_mov_' + id).html(html2);
 		});
@@ -1731,7 +1760,6 @@ var OrdenServicio = {
 		++modalId;
 		let jsonString = { 'data': JSON.stringify(jsonData) };
 		let config = { 'url': OrdenServicio.url + 'save_udtMovilidadDetalle', 'data': jsonString };
-		console.log(config);
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result == 1) {
 				let btn = [];
@@ -1743,6 +1771,76 @@ var OrdenServicio = {
 			}
 		});
 	},
+	agregarZona: function (t) {
+		let _this = $(t);
+		let tbody = _this.closest('table').find('tbody');
+		let meses = _this.data('meses');
+		let idCargo = _this.data('idcargo');
+		let config = { 'url': OrdenServicio.url + 'getTrDeZona', 'data': { meses: meses, idCargo: idCargo } };
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result == 1) {
+				OrdenServicio.provincia = a.data.provincia;
+				OrdenServicio.distrito = a.data.distrito;
+				tbody.append(a.data.html);
+			}
+		});
+	},
+	buscarProvincia: function (t, closest) {
+		var idDepartamento = $(t).val();
+		var html = '<option value="">Seleccionar</option>';
+
+		$(t).closest(closest).find('.cboDistrito').html(html);
+
+		if (typeof (OrdenServicio.provincia[idDepartamento]) == 'object') {
+			$.each(OrdenServicio.provincia[idDepartamento], function (i, v) {
+				html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+			});
+		}
+
+		$(t).closest(closest).find('.cboProvincia').html(html);
+		$(t).closest(closest).find('.divRegion').addClass('d-none');
+		$(t).closest(closest).find('.divProvincia').removeClass('d-none');
+		$(t).closest(closest).find('.divDistrito').addClass('d-none');
+	},
+	buscarDistrito: function (t, closest) {
+		var idDepartamento = $(t).closest(closest).find('.cboRegion').val();
+		var idProvincia = $(t).val();
+		var html = '<option value="">Seleccionar</option>';
+
+		if (typeof (OrdenServicio.distrito[idDepartamento][idProvincia]) == 'object') {
+			$.each(OrdenServicio.distrito[idDepartamento][idProvincia], function (i, v) {
+				html += '<option value="' + i + '">' + v['nombre'] + '</option>';
+			});
+		}
+
+		$(t).closest(closest).find('.cboDistrito').html(html);
+		$(t).closest(closest).find('.divRegion').addClass('d-none');
+		$(t).closest(closest).find('.divProvincia').addClass('d-none');
+		$(t).closest(closest).find('.divDistrito').removeClass('d-none');
+	},
+	calcularMontoZonaMes: function (t) {
+		let mesNro = $(t).data('nromes');
+		let tbody = $(t).closest('table').find('tbody');
+
+		inputs = tbody.find('.mesNro' + mesNro);
+		cantidadTotal = 0;
+		inputs.each(function (i, input) {
+			cantidadTotal += parseFloat($(input).val());
+		});
+
+		$(t).closest('table').find('tfoot').find('.mesNro' + mesNro).val(cantidadTotal);
+	},
+	guardarZona: function (mId) {
+		let data = Fn.formSerializeObject('formDatosDeZona');
+
+		$(OrdenServicio.thisTemporal).closest('td').find('textarea').val(JSON.stringify(data));
+
+		for (let i = 0; i < data.cantidadFechas; i++) {
+			$(OrdenServicio.thisTemporal).closest('tr').find('input[name="cantidadCargoFecha[' + data.idCargo + '][' + i + ']"]').val(data['cantidadCargoFechaTotal[' + data.idCargo + '][' + i + ']']).change();
+		}
+
+		Fn.showModal({ id: mId, show: false });
+	}
 }
 
 OrdenServicio.load();
