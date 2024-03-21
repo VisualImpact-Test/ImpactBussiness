@@ -300,11 +300,11 @@ class OrdenCompra extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
+		/*$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
 		$post['subItem_monto'] = is_array($post['subItem_monto']) ? array_map(function ($subItem_monto) {
 			return $subItem_monto !== "" ? number_format(floatval(str_replace(',', '', $subItem_monto)), 2, '.', '') : "";
 		}, $post['subItem_monto']) : ($post['subItem_monto'] !== "" ? number_format(floatval(str_replace(',', '', $post['subItem_monto'])), 2, '.', '') : "");
-		
+		*/
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
@@ -523,11 +523,11 @@ class OrdenCompra extends MY_Controller
 			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe agregar al menos un Item']);
 			goto respuesta;
 		}
-		$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
+		/*$post['costo'] = is_array($post['costo']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['costo']) : number_format(floatval(str_replace(',', '', $post['costo'])), 2, '.', '');
 		$post['subItem_monto'] = is_array($post['subItem_monto']) ? array_map(function ($subItem_monto) {
 			return $subItem_monto !== "" ? number_format(floatval(str_replace(',', '', $subItem_monto)), 2, '.', '') : "";
 		}, $post['subItem_monto']) : ($post['subItem_monto'] !== "" ? number_format(floatval(str_replace(',', '', $post['subItem_monto'])), 2, '.', '') : "");
-		
+		*/
 		$post['item'] = checkAndConvertToArray($post['item']);
 		$post['idItemForm'] = checkAndConvertToArray($post['idItemForm']);
 		$post['tipo'] = checkAndConvertToArray($post['tipo']);
