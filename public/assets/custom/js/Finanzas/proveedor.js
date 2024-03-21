@@ -289,8 +289,6 @@ var Proveedor = {
 	},
 
 	registrarProveedor: function () {
-		var montoSinFormato = $('#costo').data('value');
-		$('#costo').val(montoSinFormato);
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroProveedores')) };
 		let url = Proveedor.url + "registrarProveedor";
 		let config = { url: url, data: jsonString };
@@ -310,10 +308,6 @@ var Proveedor = {
 	},
 
 	actualizarProveedor: function () {
-		var montoSinFormato = $('#costo').data('value');
-		if(montoSinFormato > 0) {
-			$('#costo').val(montoSinFormato);
-		}
 		++modalId;
 		var dataFn = Fn.formSerializeObject('formActualizacionProveedores');
 		dataFn.idProveedorEstado = '1';

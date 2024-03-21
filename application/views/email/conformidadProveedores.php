@@ -117,7 +117,7 @@
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['tipoComprobante'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['serieFactura'], 3); ?></td>
 							<td style="background-color: #FFFFFF;" class="text-center header"></td>
-							<td style="background-color: #FFFFFF;color: black;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['monto'], 3); ?></td>
+							<td style="background-color: #FFFFFF;color: black;font-weight: bold;" class="text-center header"><?= verificarEmpty(numeroVistaMoneda($data['monto']), 3); ?></td>
 						</tr>
 					</tbody>
 				</table>

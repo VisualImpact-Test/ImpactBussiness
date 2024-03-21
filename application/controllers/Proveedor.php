@@ -270,7 +270,8 @@ class Proveedor extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
+		$post['costo'] = monedaFormat($post['costo']);
+		
 		$data = [];
 		$data['insert'] = [
 			'razonSocial' => $post['razonSocial'],
@@ -570,6 +571,7 @@ class Proveedor extends MY_Controller
 		$data = [];
 		$enviarCorreo = false;
 		$rptaCorreo = true;
+		$post['costo'] = monedaFormat($post['costo']);
 
 		$data['update'] = [
 			'idProveedor' => $post['idProveedor'],

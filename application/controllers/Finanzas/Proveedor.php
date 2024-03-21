@@ -255,6 +255,7 @@ class Proveedor extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$post['costo'] = monedaFormat($post['costo']);
 
 		$data = [];
 		$data['insert'] = [
@@ -531,6 +532,7 @@ class Proveedor extends MY_Controller
 
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$post['costo'] = monedaFormat($post['costo']);
 
 		$data = [];
 
