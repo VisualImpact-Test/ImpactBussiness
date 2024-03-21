@@ -1355,8 +1355,13 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-
 		$idOrdenServicio = $post['idOrdenServicio'];
+		$post['presupuestoSubTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoSubTotal'])), 2, '.', '');
+		$post['presupuestoTotalFee1'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee1'])), 2, '.', '');
+		$post['presupuestoTotalFee2'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee2'])), 2, '.', '');
+		$post['presupuestoTotalFee3'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee3'])), 2, '.', '');
+		$post['presupuestoTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotal'])), 2, '.', '');
+		$post['clS'] = number_format(floatval(str_replace(',', '', $post['clS'])), 2, '.', '');
 
 		$post['fechaList'] = checkAndConvertToArray($post['fechaList']);
 		$post['cargoList'] = array_unique(checkAndConvertToArray($post['cargoList'])); // * En caso cargos repetidos solo tenga 1 vez el valor del cargo
@@ -1425,6 +1430,7 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleSueldo
 				$insertPresupuestoDetalleSueldo = [];
 				foreach ($post['cargoList'] as $vc) {
+					$post["monto[$vc]"] = is_array($post["monto[$vc]"]) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post["monto[$vc]"]) : number_format(floatval(str_replace(',', '', $post["monto[$vc]"])), 2, '.', '');
 					$post["monto[$vc]"] = checkAndConvertToArray($post["monto[$vc]"]);
 					foreach ($post['tpdS'] as $kds => $vds) {
 						$insertPresupuestoDetalleSueldo[] = [
@@ -1874,6 +1880,12 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$post['presupuestoSubTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoSubTotal'])), 2, '.', '');
+		$post['presupuestoTotalFee1'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee1'])), 2, '.', '');
+		$post['presupuestoTotalFee2'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee2'])), 2, '.', '');
+		$post['presupuestoTotalFee3'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee3'])), 2, '.', '');
+		$post['presupuestoTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotal'])), 2, '.', '');
+		$post['clS'] = is_array($post['clS']) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post['clS']) : number_format(floatval(str_replace(',', '', $post['clS'])), 2, '.', '');
 
 		$idOrdenServicio = $post['idOrdenServicio'];
 		$idPresupuesto = $post['idPresupuesto'];
@@ -1971,6 +1983,7 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleSueldo
 				$insertPresupuestoDetalleSueldo = [];
 				foreach ($post['cargoList'] as $vc) {
+					$post["monto[$vc]"] = is_array($post["monto[$vc]"]) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post["monto[$vc]"]) : number_format(floatval(str_replace(',', '', $post["monto[$vc]"])), 2, '.', '');
 					$post["monto[$vc]"] = checkAndConvertToArray($post["monto[$vc]"]);
 					foreach ($post['tpdS'] as $kds => $vds) {
 						$insertPresupuestoDetalleSueldo[] = [
@@ -2091,6 +2104,8 @@ class OrdenServicio extends MY_Controller
 				if (isset($post["tipoPresupuestoDetalleSub[$vd]"])) {
 					$post["tipoPresupuestoDetalleSub[$vd]"] = checkAndConvertToArray($post["tipoPresupuestoDetalleSub[$vd]"]);
 					foreach ($post["tipoPresupuestoDetalleSub[$vd]"] as $kds => $vds) {
+						$post["precioUnitarioDS[$vd]"] = is_array($post["precioUnitarioDS[$vd]"]) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post["precioUnitarioDS[$vd]"]) : number_format(floatval(str_replace(',', '', $post["precioUnitarioDS[$vd]"])), 2, '.', '');
+						$post["montoDS[$vd]"] = is_array($post["montoDS[$vd]"]) ? array_map(function ($costo) { return number_format(floatval(str_replace(',', '', $costo)), 2, '.', ''); }, $post["montoDS[$vd]"]) : number_format(floatval(str_replace(',', '', $post["montoDS[$vd]"])), 2, '.', '');
 						$post["splitDS[$vd]"] = checkAndConvertToArray($post["splitDS[$vd]"]);
 						$post["precioUnitarioDS[$vd]"] = checkAndConvertToArray($post["precioUnitarioDS[$vd]"]);
 						$post["cantidadDS[$vd]"] = checkAndConvertToArray($post["cantidadDS[$vd]"]);
@@ -2204,7 +2219,9 @@ class OrdenServicio extends MY_Controller
 
 		$post = $this->input->post();
 
-		$dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
+		 $dataParaVista['tipoPresupuestoDetalle'] = $this->model->tipoPresupuestoDetalleCostoItem($post['detalle'])->result_array();
+		// $dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
+		//	echo $this->db->last_query(); exit();
 		$dataParaVista['cargos'] = $post['cargos'];
 
 		$dataParaVista['idTipoPresupuesto'] = $post['detalle'];
@@ -2214,7 +2231,7 @@ class OrdenServicio extends MY_Controller
 		foreach ($post['cargos'] as $cargo) {
 			$dataParaVista['totalCargo'] += intval($cargo['cantidad']);
 		}
-
+		
 		echo $this->load->view('modulos/OrdenServicio/Elements/rowParaPresupuesto_1', $dataParaVista, true);
 	}
 

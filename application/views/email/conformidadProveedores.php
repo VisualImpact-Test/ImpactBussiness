@@ -107,7 +107,7 @@
 							<td style="background-color: #FFFFFF;color: black;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['metodoPago'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;font-weight: bold;" class="text-center header"><?= $data['cantDias']; ?></td>
 							<td style="background-color: #EEF509;color: red;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['fechaAprobadoFinanza'], 3); ?></td>
-							<td style="background-color: #EEF509;color: red;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['fechaAprobadoFinanza'], 3); ?></td>
+							<td style="background-color: #EEF509;color: red;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['mesAprobacionFinanza'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= $data['ruc']; ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= $data['razonSocial']; ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['descripcionCompras'], 4); ?></td>
