@@ -46,7 +46,7 @@
 		</div>
 		<div class="form-group">
 			<label class="font-weight-bold mb-0">Costo:</label>
-			<input class="form-control item_costo moneda" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="0">
+			<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="0">
 		</div>
 		<div class="form-row">
 			<div class="form-group col-md-6">
@@ -55,7 +55,7 @@
 			</div>
 			<div class="form-group col-md-6">
 				<label class="font-weight-bold mb-0">Sub Total:</label>
-				<input class="form-control item_precio moneda" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
+				<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);">
 			</div>
 			<div class="form-group col-md-6 d-none">
 				<label class="font-weight-bold mb-0">Sub Total real:</label>
@@ -481,7 +481,7 @@
 													<div class="form-row subItemSpace col-md-12 border-bottom pt-2">
 														<div class="form-group col-md-12">
 															<label class="font-weight-bold mb-0">Monto:</label>
-															<input class="form-control" name="subItem_monto" patron="requerido" value="<?= numeroVistaMoneda($si_v['monto']); ?>">
+															<input class="form-control" name="subItem_monto" patron="requerido" value="<?= $si_v['monto']; ?>">
 														</div>
 														<div class="d-none">
 															<input type="hidden" name="subItem_tipoServ" value="">
@@ -546,7 +546,7 @@
 								</div>
 								<div class="form-group">
 									<label class="font-weight-bold mb-0">Costo:</label>
-									<input class="form-control item_costo moneda" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= numeroVistaMoneda($value['costo_item']) ?>">
+									<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['costo_item'] ?>">
 								</div>
 								<div class="form-row">
 									<div class="form-group col-md-6 d-none">
@@ -555,7 +555,7 @@
 									</div>
 									<div class="form-group col-md-12">
 										<label class="font-weight-bold mb-0">Sub Total:</label>
-										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= numeroVistaMoneda($value['csg_item']); ?>">
+										<input class="form-control item_precio" name="precio" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="<?= $value['csg_item']; ?>">
 									</div>
 									<div class="form-group col-md-12 d-none">
 										<label class="font-weight-bold mb-0">Sub Total real:</label>
@@ -583,13 +583,13 @@
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
-						<input class="form-control moneda" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= numeroVistaMoneda($value['total']); ?>">
+						<input class="form-control" name="total" patron="requerido" id="total" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total']; ?>">
 						<input type="hidden" class="form-control" name="total_real" patron="requerido" id="total_real" onchange="Oc.cantidadTotal();" onkeyup="Oc.cantidadTotal();" value="<?= $value['total'] ?>">
 
 					</div>
 					<div class="form-group col-md-4">
 						<label class="font-weight-bold mb-0">Total:</label>
-						<input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= numeroVistaMoneda((isset($value['totalIGV']) ? $value['totalIGV'] : $value['total']));  ?>">
+						<input class="form-control" name="totalIGV" patron="requerido" id="totalFinal" readOnly value="<?= (isset($value['totalIGV']) ? $value['totalIGV'] : $value['total']);  ?>">
 						<input type="hidden" class="form-control" name="totalIGV_real" patron="requerido" id="totalFinal_real" readOnly value="<?= (isset($value['totalIGV']) ? $value['totalIGV'] : $value['total']) ?>">
 
 					</div>

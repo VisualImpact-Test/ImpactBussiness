@@ -161,7 +161,7 @@
 						</div>
 						<div class="form-group">
 							<label class="font-weight-bold mb-0">Costo:</label>
-							<input class="form-control item_costo moneda" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="0">
+							<input class="form-control item_costo" name="costo" patron="requerido" onchange="Oc.cantidadPorItem(this);" onkeyup="Oc.cantidadPorItem(this);" value="0">
 						</div>
 						<div class="form-row">
 							<div class="form-group col-md-6 d-none">
