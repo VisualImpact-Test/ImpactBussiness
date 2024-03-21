@@ -190,7 +190,12 @@ class OrdenServicio extends MY_Controller
 
 						$montoTot = floatval($v2['monto']);
 						if ($v2['idFrecuencia'] == '1') { // MENSUAL
-							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100 * floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
+								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
+							if ($valorMax[$kc] > floatval($presupuestoDetalleSubCargo[$kc]['cantidad']))
+								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
+
+							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100 * $valorMax[$kc];
 						} elseif ($v2['idFrecuencia'] == '2') { // BIMENSUAL
 							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
@@ -1485,7 +1490,6 @@ class OrdenServicio extends MY_Controller
 					$post["movilidadSueldoAdicional"] = is_array($post["movilidadSueldoAdicional"]) ? array_map(function ($costo) {
 						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
 					}, $post["movilidadSueldoAdicional"]) : number_format(floatval(str_replace(',', '', $post["movilidadSueldoAdicional"])), 2, '.', '');
-					
 					$post['cargoSueldoAdicional'] = checkAndConvertToArray($post['cargoSueldoAdicional']);
 					$post['empleadoSueldoAdicional'] = checkAndConvertToArray($post['empleadoSueldoAdicional']);
 					$post['montoSueldoAdicional'] = checkAndConvertToArray($post['montoSueldoAdicional']);

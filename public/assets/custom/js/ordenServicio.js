@@ -519,6 +519,14 @@ var OrdenServicio = {
 			let porCL = $(this).parent('td').parent('tr').find('input.porCL');
 			porCL.val(cl);
 		})
+
+		$(document).on('change', '.porCL', function () {
+			
+			$(this).closest('table').find('.moneda').first().change();
+
+			//console.log(tipo);
+		})
+
 		$(document).on('change', '.cboBeneficio', function () {
 			let tipo = $(this).find(':selected').data('porcentaje');
 			let control = $(this).parent('td').parent('tr').find('input.porcentajeSueldo');
