@@ -17,7 +17,7 @@
 	</td>
 	<td class="precioUnitarioDetalle">
 		<div class="ui input fluid">
-			<input type="text" class="text-right keyUpChange" name="precioUnitarioDS[<?= $idTipoPresupuesto ?>]" value="0" onchange="OrdenServicio.cantidadSplitCargo(this);">
+			<input type="text" class="text-right moneda" name="precioUnitarioDS[<?= $idTipoPresupuesto ?>]" value="0" onchange="OrdenServicio.cantidadSplitCargo(this);">
 		</div>
 	</td>
 	<td class="gapDetalle">

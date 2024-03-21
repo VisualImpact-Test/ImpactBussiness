@@ -1499,6 +1499,11 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleMovilidad
 				$insertPresupuestoDetalleMovilidad = [];
 				if (isset($post['movOrigen'])) {
+					$post["movTotal"] = is_array($post["movTotal"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["movTotal"]) : number_format(floatval(str_replace(',', '', $post["movTotal"])), 2, '.', '');
+					$post["movTotal"] = checkAndConvertToArray($post["movTotal"]);
+
 					$post['movIdTPDM'] = checkAndConvertToArray($post['movIdTPDM']);
 					$post['movOrigen'] = checkAndConvertToArray($post['movOrigen']);
 					$post['movDestino'] = checkAndConvertToArray($post['movDestino']);
@@ -1913,9 +1918,6 @@ class OrdenServicio extends MY_Controller
 		$post['presupuestoTotalFee2'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee2'])), 2, '.', '');
 		$post['presupuestoTotalFee3'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotalFee3'])), 2, '.', '');
 		$post['presupuestoTotal'] = number_format(floatval(str_replace(',', '', $post['presupuestoTotal'])), 2, '.', '');
-		$post['clS'] = is_array($post['clS']) ? array_map(function ($costo) {
-			return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
-		}, $post['clS']) : number_format(floatval(str_replace(',', '', $post['clS'])), 2, '.', '');
 
 		$idOrdenServicio = $post['idOrdenServicio'];
 		$idPresupuesto = $post['idPresupuesto'];
@@ -2056,6 +2058,11 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleMovilidad
 				$insertPresupuestoDetalleMovilidad = [];
 				if (isset($post['movOrigen'])) {
+					$post["movTotal"] = is_array($post["movTotal"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["movTotal"]) : number_format(floatval(str_replace(',', '', $post["movTotal"])), 2, '.', '');
+					$post["movTotal"] = checkAndConvertToArray($post["movTotal"]);
+
 					$post['movIdTPDM'] = checkAndConvertToArray($post['movIdTPDM']);
 					$post['movOrigen'] = checkAndConvertToArray($post['movOrigen']);
 					$post['movDestino'] = checkAndConvertToArray($post['movDestino']);

@@ -849,7 +849,7 @@ endforeach;  ?>
 												</td>
 												<td class="precioUnitarioDetalle">
 													<div class="ui input fluid">
-														<input type="text" class="text-right onlyNumbers keyUpChange moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<input type="text" class="text-right onlyNumbers moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
 													</div>
 												</td>
 												<td class="gapDetalle">

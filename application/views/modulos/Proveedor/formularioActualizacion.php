@@ -232,7 +232,7 @@
 				<div class="<?= ($disabled) ? "disabled" : "" ?>">
 					<div class="control-group child-divcenter row" style="width:85%">
 						<label class="form-control col-md-4" for="costo" style="border:0px;">Costo (S/):</label>
-						<input class="form-control col-md-8 moneda" id="costo" name="costo" patron="requerido" value="<?= verificarEmpty($costo, 2); ?>">
+						<input class="form-control col-md-8 moneda" id="costo" name="costo" patron="requerido" value="<?= verificarEmpty(numeroVistaMoneda($costo), 2); ?>">
 					</div>
 				</div>
 			</fieldset>
