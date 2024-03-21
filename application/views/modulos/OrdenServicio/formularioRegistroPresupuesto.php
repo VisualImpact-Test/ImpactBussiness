@@ -65,7 +65,10 @@ endforeach;  ?>
 											</div>
 										</td>
 									<?php endforeach; ?>
-									<td></td>
+									<td>
+										<button class="btn btn-secondary btnDetallarPorZona" data-cargo="<?= $vp['idCargo'] ?>" type="button">Detallar</button>
+										<textarea name="subDetalleZonaCantidadCargo[<?= $vp['idCargo'] ?>]" class="dataZona d-none"></textarea>
+									</td>
 								</tr>
 							<?php endforeach; ?>
 						</tbody>
@@ -586,7 +589,7 @@ endforeach;  ?>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'],2); ?>" value="0" name="movPrecTaxi" readonly>
+													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'], 2); ?>" value="0" name="movPrecTaxi" readonly>
 												</div>
 											</td>
 											<td>

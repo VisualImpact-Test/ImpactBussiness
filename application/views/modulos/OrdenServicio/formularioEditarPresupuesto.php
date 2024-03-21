@@ -69,8 +69,7 @@ endforeach;  ?>
 									<?php endforeach; ?>
 									<td>
 										<button class="btn btn-secondary btnDetallarPorZona" data-cargo="<?= $vp['idCargo'] ?>" type="button">Detallar</button>
-										<!-- <input type="text" class="dataZona" value="<?= json_encode($cargoZona[$vp['idCargo']]) ?>"> -->
-										<textarea name="subDetalleZonaCantidadCargo[<?= $vp['idCargo'] ?>]" class="dataZona"><?= json_encode($cargoZona[$vp['idCargo']]) ?></textarea>
+										<textarea name="subDetalleZonaCantidadCargo[<?= $vp['idCargo'] ?>]" class="dataZona d-none"><?= json_encode($cargoZona[$vp['idCargo']]) ?></textarea>
 									</td>
 								</tr>
 							<?php endforeach; ?>
