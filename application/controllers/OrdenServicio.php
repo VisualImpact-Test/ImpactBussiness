@@ -1477,6 +1477,13 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleSueldoAdicional
 				$insertPresupuestoDetalleSueldoAdicional = [];
 				if (isset($post['cargoSueldoAdicional'])) {
+					$post["montoSueldoAdicional"] = is_array($post["montoSueldoAdicional"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["montoSueldoAdicional"]) : number_format(floatval(str_replace(',', '', $post["montoSueldoAdicional"])), 2, '.', '');
+					$post["movilidadSueldoAdicional"] = is_array($post["movilidadSueldoAdicional"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["movilidadSueldoAdicional"]) : number_format(floatval(str_replace(',', '', $post["movilidadSueldoAdicional"])), 2, '.', '');
+					
 					$post['cargoSueldoAdicional'] = checkAndConvertToArray($post['cargoSueldoAdicional']);
 					$post['empleadoSueldoAdicional'] = checkAndConvertToArray($post['empleadoSueldoAdicional']);
 					$post['montoSueldoAdicional'] = checkAndConvertToArray($post['montoSueldoAdicional']);
@@ -2036,6 +2043,13 @@ class OrdenServicio extends MY_Controller
 				// compras.presupuestoDetalleSueldoAdicional
 				$insertPresupuestoDetalleSueldoAdicional = [];
 				if (isset($post['cargoSueldoAdicional'])) {
+					$post["montoSueldoAdicional"] = is_array($post["montoSueldoAdicional"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["montoSueldoAdicional"]) : number_format(floatval(str_replace(',', '', $post["montoSueldoAdicional"])), 2, '.', '');
+					$post["movilidadSueldoAdicional"] = is_array($post["movilidadSueldoAdicional"]) ? array_map(function ($costo) {
+						return number_format(floatval(str_replace(',', '', $costo)), 2, '.', '');
+					}, $post["movilidadSueldoAdicional"]) : number_format(floatval(str_replace(',', '', $post["movilidadSueldoAdicional"])), 2, '.', '');
+
 					$post['cargoSueldoAdicional'] = checkAndConvertToArray($post['cargoSueldoAdicional']);
 					$post['empleadoSueldoAdicional'] = checkAndConvertToArray($post['empleadoSueldoAdicional']);
 					$post['montoSueldoAdicional'] = checkAndConvertToArray($post['montoSueldoAdicional']);
