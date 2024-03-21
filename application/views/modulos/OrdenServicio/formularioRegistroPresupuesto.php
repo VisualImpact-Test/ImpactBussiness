@@ -392,7 +392,7 @@ endforeach;  ?>
 													</td>
 													<td style="background: #fff">
 														<div class="ui right labeled input">
-															<input class="porCL" value="<?= $v1['porCl']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>" readonly name="clS">
+															<input class="porCL keyUpChange" value="<?= $v1['porCl']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>"  name="clS">
 															<div class="ui basic label"> % </div>
 														</div>
 													</td>
