@@ -920,7 +920,7 @@
 								<div class="ui sub header">Costo</div>
 								<div class="ui right action right labeled input">
 									<label for="amount" class="ui label monedaSimbolo">S/</label>
-									<input class="costoForm" type="text" name="costoForm" placeholder="0.00" readonly>
+									<input class="costoForm" type="text" name="costoForm" placeholder="0.00"  onchange="$(this).closest('.body-item').find('.cantidadForm').keyup();" readonly>
 								</div>
 							</div>
 						</div>
