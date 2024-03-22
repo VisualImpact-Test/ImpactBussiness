@@ -90,7 +90,12 @@
 			</div>
 		</div>
 		<div class="fields">
-
+			<div class="five  wide field">
+				<div class="ui sub header">Presupuestos</div>
+				<select id="ordenServicioSelect" name="ordenServicioSelect" class="ui dropdown clearable semantic-dropdown ">
+					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'selected' => $cotizacion['idOrdenServicio'] ,'query' => $ordenServicio, 'class' => 'text-titlecase']); ?>
+				</select>
+			</div>
 			<div class="three wide field">
 				<div class="ui sub header">Tipo Servicio</div>
 				<select class="ui dropdown semantic-dropdown read-only" id="tipoServicioCotizacion" name="tipoServicioCotizacion" patron="requerido">

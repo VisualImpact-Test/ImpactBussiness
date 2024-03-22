@@ -3129,7 +3129,8 @@ class Cotizacion extends MY_Controller
 		$config['data']['tipoMoneda'] = $this->model->obtenertipoMoneda()['query']->result_array();
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
-
+		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
+		
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}
@@ -4493,9 +4494,10 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/core/gestion',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
-
+		
 		$config['data']['btnEnviar'] = false;
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
+		//echo $this->db->last_query(); exit();
 		if ($config['data']['cotizacion']['idCotizacionEstado'] == '1') {
 			$config['data']['btnEnviar'] = true;
 		}
@@ -4507,6 +4509,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
+		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
 		$config['data']['itemLogistica'] = $this->model_item->obtenerItemServicio(['logistica' => true]);
 		$config['data']['tachadoDistribucion'] = $this->model->getTachadoDistribucion()['query']->result_array();
 		$archivos = $this->model->obtenerInformacionDetalleCotizacionArchivos(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
