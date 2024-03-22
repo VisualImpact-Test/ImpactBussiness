@@ -113,16 +113,31 @@ class OrdenServicio extends MY_Controller
 		echo json_encode($result);
 	}
 
+	public function formularioPDFDetallePresupuesto()
+	{
+		$result = $this->result;
+		$id = json_decode($this->input->post('id'), true);
+
+		$dataParaVista['id'] = $id;
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Indicar Detalle Presupuesto';
+		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioPDFIndicarDetalle", $dataParaVista, true);
+
+		echo json_encode($result);
+	}
 	public function generarPdf($id, $version = 0, $saveData = false)
 	{
 		$data = [];
 		require_once('../mpdf/mpdf.php');
 		// ini_set('memory_limit', '1024M');
 		// set_time_limit(0);
-
-		// $post = json_decode($this->input->post('data'), true);
 		$dataParaVista = [];
-
+		if(!empty($this->input->post('data'))) {
+			$post = json_decode($this->input->post('data'), true);
+			$dataParaVista['reqDetalle'] = $post['detalle'];
+		} else {
+			$dataParaVista['reqDetalle'] = 1;
+		}
 		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
 		$dataParaVista['presupuesto'] = $pr = $this->db->get_where('compras.presupuestoHistorico', ['idPresupuesto' => $id])->row_array();
 		$dataParaVista['ordenServicio'] = $oS = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $pr['idOrdenServicio']])->row_array();

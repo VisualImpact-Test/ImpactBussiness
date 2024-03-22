@@ -34,7 +34,7 @@
 							<a href="javascript:;" class="btn btn-outline-secondary border-0 btnPresupuesto<?= $row['chkPresupuesto'] ? 'Edit' : '' ?>" title="Generar Presupuesto"><i class="icon dollar"></i></a>
 						<?php } ?> 
 						<?php if ($row['chkPresupuesto']) : ?>
-							<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-download" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>
+							<a class="btn btn-outline-secondary border-0 btn-downloadPDF" data-ruta="OrdenServicio/generarPdf/<?= $row['idPresupuesto'] ?>" data-id="<?= $row['idPresupuesto'] ?>" title="Imprimir"><i class="icon file pdf"></i></a>
 						<?php endif; ?>
 						<?php if ($row['chkPresupuesto']) : ?>
 						<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-version-presupuesto" title="Versiones Presupuesto"><i class="fa fa-lg fa-book"></i></a>

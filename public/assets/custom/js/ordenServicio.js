@@ -518,7 +518,25 @@ var OrdenServicio = {
 			let cl = $(this).find(':selected').data('cl');
 			let porCL = $(this).parent('td').parent('tr').find('input.porCL');
 			porCL.val(cl);
-		})
+		});
+		$(document).on('click', '.btn-downloadPDF', function () {
+			++modalId;
+			let id = $(this).parents('tr:first').data('id');
+			let jsonString = { 'id': id };
+
+			let config = { 'url': OrdenServicio.url + 'formularioPDFDetallePresupuesto', 'data': jsonString };
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				
+				fn[1] = `Fn.showConfirm({ idForm: "formPDFIndicarDetalle", fn: "OrdenServicio.generarPDF(`+ id + `)", content: "¿Está seguro de continuar?" });`;
+				btn[1] = { title: 'Continuar', fn: fn[1] };
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
+			});
+		});
 
 		$(document).on('change', '.porCL', function () {
 			
@@ -543,7 +561,16 @@ var OrdenServicio = {
 		HTCustom.load();
 
 	},
-
+	generarPDF: function (id) {
+		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formPDFIndicarDetalle')) };
+		let url = OrdenServicio.url + "generarPdf/"  + id;
+		
+		if (url != "") {
+			$.when(Fn.download(url, jsonString)).then(function (a) {
+				console.log('Descarga correcta');
+			});
+		}
+	},
 	registrarOrdenServicio: function () {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formRegistroOrdenServicio')) };
 		// let jsonString = { 'data': Fn.formSerializeObject('formRegistroOrdenServicio') };

@@ -4,12 +4,12 @@
 		<tr>
 			<th></th>
 			<?php foreach ($fechas as $k => $v) : ?>
-				<th><?php 
+				<th><?php
 					setlocale(LC_TIME, 'es_ES.UTF-8');
 					$fecha = $k;
 					$nueva_fecha = strftime("%b-%y", strtotime($fecha));
 					$nueva_fecha = str_replace('.', '', $nueva_fecha);
-					$nueva_fecha = ucfirst($nueva_fecha); 
+					$nueva_fecha = ucfirst($nueva_fecha);
 					echo $nueva_fecha; ?></th>
 			<?php endforeach ?>
 			<th>TOTAL</th>
@@ -36,64 +36,66 @@
 				<td class="text-right bold"><?= moneda($totalCargoFechaServicio['totalFinal'][$k_pd]) ?></td>
 			</tr>
 			<!-- Para Sueldo -->
-			<?php if ($v_pd['idTipoPresupuesto'] == COD_SUELDO) : ?>
-				<?php $k_pd_sueldo = $k_pd; ?>
-				<?php foreach ($cargosOS as $kC => $vC) : ?>
-					<tr>
-						<td><?= $cargos[$kC]['cargo'] ?></td>
-						<?php foreach ($fechas as $kF => $vF) : ?>
-							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd][$kC][$kF]) ?></td>
-						<?php endforeach ?>
-						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio'][$kC]) ?></td>
-					</tr>
-				<?php endforeach ?>
-				<tr>
-					<td>INCENTIVO</td>
-					<?php foreach ($fechas as $kF => $vF) : ?>
-						<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['incentivo'][$kF]) ?></td>
+			<?php if ($reqDetalle == 1) : ?>
+				<?php if ($v_pd['idTipoPresupuesto'] == COD_SUELDO) : ?>
+					<?php $k_pd_sueldo = $k_pd; ?>
+					<?php foreach ($cargosOS as $kC => $vC) : ?>
+						<tr>
+							<td><?= $cargos[$kC]['cargo'] ?></td>
+							<?php foreach ($fechas as $kF => $vF) : ?>
+								<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd][$kC][$kF]) ?></td>
+							<?php endforeach ?>
+							<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio'][$kC]) ?></td>
+						</tr>
 					<?php endforeach ?>
-					<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['incentivo']) ?></td>
-				</tr>
-			<?php endif; ?>
+					<tr>
+						<td>INCENTIVO</td>
+						<?php foreach ($fechas as $kF => $vF) : ?>
+							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['incentivo'][$kF]) ?></td>
+						<?php endforeach ?>
+						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['incentivo']) ?></td>
+					</tr>
+				<?php endif; ?>
 
-			<!-- Para Movilidad -->
-			<?php if ($v_pd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
-				<tr>
-					<td>VIAJES SUPERVISIÓN</td>
-					<?php foreach ($fechas as $kF => $vF) : ?>
-						<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['viajes'][$kF]) ?></td>
-					<?php endforeach ?>
-					<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['viajes']) ?></td>
-				</tr>
-				<tr>
-					<td>ADICIONALES</td>
-					<?php foreach ($fechas as $kF => $vF) : ?>
-						<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['movAdicional'][$kF]) ?></td>
-					<?php endforeach ?>
-					<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['movAdicional']) ?></td>
-				</tr>
-			<?php endif; ?>
+				<!-- Para Movilidad -->
+				<?php if ($v_pd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
+					<tr>
+						<td>VIAJES SUPERVISIÓN</td>
+						<?php foreach ($fechas as $kF => $vF) : ?>
+							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['viajes'][$kF]) ?></td>
+						<?php endforeach ?>
+						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['viajes']) ?></td>
+					</tr>
+					<tr>
+						<td>ADICIONALES</td>
+						<?php foreach ($fechas as $kF => $vF) : ?>
+							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['movAdicional'][$kF]) ?></td>
+						<?php endforeach ?>
+						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['movAdicional']) ?></td>
+					</tr>
+				<?php endif; ?>
 
-			<!-- Para Detalle PresupuestoDetalleSubCargo -->
-			<?php if (!empty($presupuestoDetalleSub[$k_pd])) : ?>
-				<?php foreach ($presupuestoDetalleSub[$k_pd] as $k_pds => $v_pds) : ?>
-					<tr>
-						<td><?= $tiposPresupuestoDetalle[$k_pds]['nombre'] ?></td>
-						<?php foreach ($fechas as $kF => $vF) : ?>
-							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd][$k_pds][$kF]) ?></td>
-						<?php endforeach ?>
-						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio'][$k_pds]) ?></td>
-					</tr>
-				<?php endforeach ?>
-				<!-- Para SCTR -->
-				<?php if ($v_pd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] > 0) : ?>
-					<tr>
-						<td>SCTR</td>
-						<?php foreach ($fechas as $kF => $vF) : ?>
-							<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['sctr'][$kF]) ?></td>
-						<?php endforeach ?>
-						<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['sctr']) ?></td>
-					</tr>
+				<!-- Para Detalle PresupuestoDetalleSubCargo -->
+				<?php if (!empty($presupuestoDetalleSub[$k_pd])) : ?>
+					<?php foreach ($presupuestoDetalleSub[$k_pd] as $k_pds => $v_pds) : ?>
+						<tr>
+							<td><?= $tiposPresupuestoDetalle[$k_pds]['nombre'] ?></td>
+							<?php foreach ($fechas as $kF => $vF) : ?>
+								<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd][$k_pds][$kF]) ?></td>
+							<?php endforeach ?>
+							<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio'][$k_pds]) ?></td>
+						</tr>
+					<?php endforeach ?>
+					<!-- Para SCTR -->
+					<?php if ($v_pd['idTipoPresupuesto'] == COD_GASTOSADMINISTRATIVOS && $presupuesto['sctr'] > 0) : ?>
+						<tr>
+							<td>SCTR</td>
+							<?php foreach ($fechas as $kF => $vF) : ?>
+								<td class="text-right"><?= moneda($calculoCargoFechaServicio[$k_pd]['sctr'][$kF]) ?></td>
+							<?php endforeach ?>
+							<td class="text-right"><?= moneda($totalCargoFechaServicio['totalServicio']['sctr']) ?></td>
+						</tr>
+					<?php endif; ?>
 				<?php endif; ?>
 			<?php endif; ?>
 		<?php endforeach ?>
