@@ -781,7 +781,7 @@ class M_Cotizacion extends MY_Model
 			LEFT JOIN rrhh.dbo.CargoTrabajo ctt ON ctt.idCargoTrabajo=pd.idCargo 																			
 			WHERE 1 = 1 and pd.estado = 1
 			{$filtros}
-			ORDER BY itemTipo, pd.idCotizacionDetalle
+			ORDER BY pd.idCotizacionDetalle
 		";
 		$query = $this->db->query($sql);
 		if ($query) {
