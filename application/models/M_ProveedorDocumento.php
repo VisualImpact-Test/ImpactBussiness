@@ -31,6 +31,17 @@ class M_ProveedorDocumento extends MY_Model
 										  WHERE ifb_inner.idProveedor = ibp.idProveedor
 										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
 								   '&#x0D;&#x0A;', '') as cuentas_bancos,
+						REPLACE(
+									STUFF((SELECT CHAR(13) + CHAR(10) + 'CCI' + 
+										CASE 
+										WHEN ifb_inner.cuenta = '-' THEN ''
+											ELSE ' - ' + ifb_inner.cci
+										END
+									FROM compras.informacionBancariaProveedor as ifb_inner
+									INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+									WHERE ifb_inner.idProveedor = ibp.idProveedor
+										FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+										'&#x0D;&#x0A;', '') as ccis_bancos,
 								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '0' AND flagRevisado = 1 AND estado = 1 AND flagAprobadoFinanza = 1) + 1 as aprobados,
 								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '0' AND flagRevisado = 1 AND estado = 1 ) + 1 as totalDocumentos", false)
 			->from('compras.ordenCompraDetalle ocd')
@@ -89,6 +100,17 @@ class M_ProveedorDocumento extends MY_Model
 										  WHERE ifb_inner.idProveedor = ibp.idProveedor
 										  FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
 								   '&#x0D;&#x0A;', '') as cuentas_bancos ,
+						REPLACE(
+									STUFF((SELECT CHAR(13) + CHAR(10) + 'CCI' + 
+										CASE 
+										WHEN ifb_inner.cuenta = '-' THEN ''
+											ELSE ' - ' + ifb_inner.cci
+										END
+									FROM compras.informacionBancariaProveedor as ifb_inner
+									INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+									WHERE ifb_inner.idProveedor = ibp.idProveedor
+										FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+										'&#x0D;&#x0A;', '') as ccis_bancos,
 								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '1' AND flagRevisado = 1 AND estado = 1 AND flagAprobadoFinanza = 1) + 1 as aprobados,
 								   (SELECT COUNT(*) FROM sustento.comprobante WHERE idOrdenCompra = oc.idOrdenCompra AND flagOcLibre = '1' AND flagRevisado = 1 AND estado = 1 ) + 1 as totalDocumentos", false)
 			->from('orden.ordenCompraDetalle ocd')

@@ -2136,7 +2136,7 @@ class Cotizacion extends MY_Controller
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
 			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
-		$frecuencia = ['MENSUAL', 'BIMESTRAL', 'SEMESTRAL'];
+		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 
 		$header = [];
 		$column = [];
@@ -2204,6 +2204,9 @@ class Cotizacion extends MY_Controller
 						$datosHt[$k]['frecuenciaAnual'] = 2;
 						break;
 					case 'ANUAL':
+						$datosHt[$k]['frecuenciaAnual'] = 1;
+						break;
+					case 'UNICA':
 						$datosHt[$k]['frecuenciaAnual'] = 1;
 						break;
 					default:
@@ -2530,7 +2533,7 @@ class Cotizacion extends MY_Controller
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
 			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
-		$frecuencia = ['MENSUAL', 'BIMESTRAL', 'SEMESTRAL'];
+		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 		// HEADER & COLUMN & DATOS
 		$header[] = 'RESPONSABLE';
 		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250, 'source' => $origen];

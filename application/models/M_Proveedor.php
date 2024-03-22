@@ -263,8 +263,20 @@ class M_Proveedor extends MY_Model
 			INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
 			WHERE ifb_inner.idProveedor = ibp.idProveedor
 				FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
-				'&#x0D;&#x0A;', '') as cuentas_bancos
-				
+				'&#x0D;&#x0A;', '') as cuentas_bancos	
+		
+		, REPLACE(
+			STUFF((SELECT CHAR(13) + CHAR(10) + 'CCI' + 
+				CASE 
+				WHEN ifb_inner.cuenta = '-' THEN ''
+					ELSE ' - ' + ifb_inner.cci
+				END
+			FROM compras.informacionBancariaProveedor as ifb_inner
+			INNER JOIN dbo.banco as b ON ifb_inner.idBanco = b.idBanco
+			WHERE ifb_inner.idProveedor = ibp.idProveedor
+				FOR XML PATH(''), TYPE).value('.', 'VARCHAR(MAX)'), 1, 2, ''), 
+				'&#x0D;&#x0A;', '') as ccis_bancos
+
 		, p.nombreContacto
 		, p.correoContacto
 		, p.numeroContacto
