@@ -53,7 +53,26 @@
                     <td class="td-left"><?= verificarEmpty($row['razonSocial'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['nroDocumento'], 3); ?></td>
                     <td class="td-left"><?= verificarEmpty($row['rubros'], 3); ?></td>
-                    <td class="td-left"><?= verificarEmpty($row['cuentas_bancos'], 3); ?></td>
+                    <td class="td-left">
+                        <?php if (preg_match('/\d/', $row['cuentas_bancos'])) : ?>
+                            <?= verificarEmpty($row['cuentas_bancos'], 3); ?>
+                            <style>
+                                .td-left hr {
+                                    border: none;
+                                    border-top: 1px solid grey;
+                                    margin: 5px 0;
+                                }
+                            </style>
+                            <hr>
+                            <?php if (preg_match('/\d/', $row['ccis_bancos'])) : ?>
+                                <?= verificarEmpty($row['ccis_bancos'], 3); ?>
+                            <?php else : ?>
+                                -
+                            <?php endif; ?>
+                        <?php else : ?>
+                            -
+                        <?php endif; ?>
+                    </td>
                     <td class="td-left"><?= verificarEmpty($row['metodosPago'], 3); ?></td>
 
                     <td class="td-left" style="display: none;"><?= verificarEmpty($row['tipoServicio'], 3); ?></td>
