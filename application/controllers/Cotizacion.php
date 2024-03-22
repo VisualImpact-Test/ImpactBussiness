@@ -881,7 +881,7 @@ class Cotizacion extends MY_Controller
 					case COD_SERVICIO_GENERAL['id']:
 						$data['subDetalle'][$k] = [];
 						if (!empty($post["descripcionSubItemServicioGeneral[$k]"])) {
-							foreach ($post["descripcionSubItemServicioGeneral[$k]"] as $ksg => $vsg){
+							foreach ($post["descripcionSubItemServicioGeneral[$k]"] as $ksg => $vsg) {
 								$data['subDetalle'][$k][] = [
 									'nombre' => $vsg,
 									'cantidad' => $post["cantidadSubItemServicioGeneral[$k]"][$ksg],
@@ -2940,6 +2940,34 @@ class Cotizacion extends MY_Controller
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
+		// * Para rutas Viajeras
+		$listIdCotizacionDetalle = refactorizarDataHT(
+			[
+				"data" => $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $idCotizacion, 'idItemTipo' => COD_RUTAS_VIAJERAS['id']])->result_array(),
+				"value" => "idCotizacionDetalle"
+			]
+		);
+		if (!empty($listIdCotizacionDetalle)) {
+			foreach ($listIdCotizacionDetalle as $idCotizacionDetalle) {
+				$this->db->select('*')
+					->select('frecuencia as idFrecuencia')
+					->select('(SELECT nombre FROM dbo.frecuencia WHERE idFrecuencia = frecuencia) as frecuencia', false)
+					->select('(
+						isnull(costoAereo, 0) +
+						isnull(costoTransporte, 0) +
+						isnull(costoMovilidadInterna, 0) +
+						isnull(costoViaticos, 0) +
+						isnull(costoAlojamiento, 0)
+					) * cantidadViajes as totalMensual')
+					->select('costoVisual * (100 + isnull(gap, 0)) / 100 as total')
+					->select('(SELECT frecuenciaAnual FROM dbo.frecuencia WHERE idFrecuencia = frecuencia) as frecuenciaAnual', false)
+					->select('subtotal as cuenta');
+				$rpta = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $idCotizacionDetalle])->result_array();
+				$config['data']['dataRutasViajeras'][$idCotizacionDetalle] = $rpta;
+			}
+		}
+		// * Fin: Para Rutas Viajeras
+		
 		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion

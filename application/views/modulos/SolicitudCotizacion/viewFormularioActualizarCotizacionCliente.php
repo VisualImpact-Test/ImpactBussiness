@@ -446,7 +446,53 @@
 									<? endforeach; ?>
 								<? endif; ?>
 							</div>
-							<!-- Concurso -->
+							<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_RUTAS_VIAJERAS['id']])) : ?>
+								<!-- Rutas Viajeras -->
+								<div class="ui grid ml-0 mb-2 div-features div-feature-<?= COD_RUTAS_VIAJERAS['id'] ?> <?= $row['idItemTipo'] == COD_RUTAS_VIAJERAS['id'] ? '' : 'd-none' ?>">
+									<div class="row ml-0 pt-4">
+										<div class="datosRutasViajeras d-none">
+											<?= json_encode($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>
+										</div>
+									</div>
+									<div class="ui grid content-body-sub-item">
+										<input type="hidden" name="cantidadItemsRutasViajeras" value="<?= count($dataRutasViajeras[$row['idCotizacionDetalle']]); ?>">
+										<?php foreach ($dataRutasViajeras[$row['idCotizacionDetalle']] as $rutaViajera) : ?>
+											<div class="three column row">
+												<div class="column">
+													<div class="ui sub header">Origen</div>
+													<input value="<?= $rutaViajera['origen'] ?>" readonly name="subDetRutViajOrigen">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Destino</div>
+													<input value="<?= $rutaViajera['destino'] ?>" readonly name="subDetRutViajDestino">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Total</div>
+													<input value="<?= $rutaViajera['cuenta'] ?>" readonly name="subDetRutViajSubTotal">
+												</div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['responsable'] ?>" name="subDetRutViajResponsable"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['cargo'] ?>" name="subDetRutViajCargo"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['dni'] ?>" name="subDetRutViajDni"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['razonSocial'] ?>" name="subDetRutViajRazonSocial"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['idFrecuencia'] ?>" name="subDetRutViajFrecuencia"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['dias'] ?>" name="subDetRutViajDias"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAereo'] ?>" name="subDetRutViajCostoAereo"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoTransporte'] ?>" name="subDetRutViajCostoTransporte"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoMovilidadInterna'] ?>" name="subDetRutViajCostoMovilidadInterna"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoViaticos'] ?>" name="subDetRutViajCostoViaticos"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoAlojamiento'] ?>" name="subDetRutViajCostoAlojamiento"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['cantidadViajes'] ?>" name="subDetRutViajCantidadViajes"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['costoVisual'] ?>" name="subDetRutViajCostoVisual"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['gap'] ?>" name="subDetRutViajGap"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['total'] ?>" name="subDetRutViajCosto"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['frecuenciaAnual'] ?>" name="subDetRutViajCantidadReal"></div>
+												<div class="column"><input type="hidden" value="<?= $rutaViajera['tipo_movil'] ?>" name="subDetRutViajTipoMovil"></div>
+											</div>
+										<?php endforeach; ?>
+									</div>
+								</div>
+							<?php endif; ?>
+							<!-- Servicio General -->
 							<div class="ui grid ml-0 div-features <?= $row['idItemTipo'] == COD_SERVICIO_GENERAL['id'] ? '' : 'd-none' ?> div-feature-<?= COD_SERVICIO_GENERAL['id'] ?>">
 								<? if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']])) : ?>
 									<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_SERVICIO_GENERAL['id']] as $dataSubItem) : ?>
@@ -480,24 +526,28 @@
 										Eliminar
 									</button>
 								</div>
-								<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']] as $dataSubItem) : ?>
-									<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
+								<?php if (isset($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']])) : ?>
+									<?php if (!empty($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']])) : ?>
+										<? foreach ($cotizacionDetalleSub[$row['idCotizacionDetalle']][COD_PAGOS_FARMACIAS['id']] as $dataSubItem) : ?>
+											<input class="idCotizacionDetalleSubForm" type="hidden" name="idCotizacionDetalleSub[<?= $row['idCotizacionDetalle'] ?>]" value="<?= $dataSubItem['idCotizacionDetalleSub'] ?>">
 
-									<div class="three column row divDetallePagosFarmacias">
-										<div class="column">
-											<div class="ui sub header">Descripción</div>
-											<input readonly class="descripcionSubItemPagosFarmacias" name="descripcionSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
-										</div>
-										<div class="column">
-											<div class="ui sub header">Cantidad</div>
-											<input readonly class="cantidadSubItemPagosFarmacias keyUpChange onlyNumbers" name="cantidadSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= $dataSubItem['cantidad'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
-										</div>
-										<div class="column">
-											<div class="ui sub header">Monto</div>
-											<input readonly class="montoSubItemPagosFarmacias keyUpChange onlyNumbers" name="montoSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= $dataSubItem['costoSubItem'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
-										</div>
-									</div>
-								<? endforeach; ?>
+											<div class="three column row divDetallePagosFarmacias">
+												<div class="column">
+													<div class="ui sub header">Descripción</div>
+													<input readonly class="descripcionSubItemPagosFarmacias" name="descripcionSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Descripción" value="<?= $dataSubItem['nombre'] ?>">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Cantidad</div>
+													<input readonly class="cantidadSubItemPagosFarmacias keyUpChange onlyNumbers" name="cantidadSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Cantidad" value="<?= $dataSubItem['cantidad'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+												</div>
+												<div class="column">
+													<div class="ui sub header">Monto</div>
+													<input readonly class="montoSubItemPagosFarmacias keyUpChange onlyNumbers" name="montoSubItemPagosFarmacias[<?= $row['idCotizacionDetalle'] ?>]" placeholder="Monto" value="<?= $dataSubItem['costoSubItem'] ?>" onchange="Cotizacion.calcularMontoPagosFarmacias(this);">
+												</div>
+											</div>
+										<? endforeach; ?>
+									<?php endif; ?>
+								<?php endif; ?>
 							</div>
 							<!-- Servicios -->
 							<div class="ui form attached fluid segment my-3 <?= $row['idItemTipo'] == COD_SERVICIO['id'] ? '' : 'd-none' ?> div-features div-feature-<?= COD_SERVICIO['id'] ?>" data-tipo="<?= COD_SERVICIO['id'] ?>">

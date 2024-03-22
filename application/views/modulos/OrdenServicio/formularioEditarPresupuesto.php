@@ -69,7 +69,7 @@ endforeach;  ?>
 									<?php endforeach; ?>
 									<td>
 										<button class="btn btn-secondary btnDetallarPorZona" data-cargo="<?= $vp['idCargo'] ?>" type="button">Detallar</button>
-										<textarea name="subDetalleZonaCantidadCargo[<?= $vp['idCargo'] ?>]" class="dataZona d-none"><?= json_encode($cargoZona[$vp['idCargo']]) ?></textarea>
+										<textarea name="subDetalleZonaCantidadCargo[<?= $vp['idCargo'] ?>]" class="dataZona d-none"><?= isset($cargoZona[$vp['idCargo']]) ? json_encode($cargoZona[$vp['idCargo']]) : '' ?></textarea>
 									</td>
 								</tr>
 							<?php endforeach; ?>
@@ -412,7 +412,7 @@ endforeach;  ?>
 													</td>
 													<td style="background: #fff">
 														<div class="ui right labeled input">
-															<input class="porCL keyUpChange" value="<?= $preDetSu['porCL']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>"  name="clS">
+															<input class="porCL keyUpChange" value="<?= $preDetSu['porCL']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>" name="clS">
 															<div class="ui basic label"> % </div>
 														</div>
 													</td>
@@ -641,7 +641,7 @@ endforeach;  ?>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'],2); ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
+													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'], 2); ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
 												</div>
 											</td>
 											<td>
@@ -859,10 +859,10 @@ endforeach;  ?>
 													</div>
 												</td>
 												<td class="precioGapDetalle">
-														<div class="ui labeled input transparent fluid">
-															<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * (isset($value['gap']) ? $value['gap'] : 0 / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
-														</div>
-													</td>
+													<div class="ui labeled input transparent fluid">
+														<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * (isset($value['gap']) ? $value['gap'] : 0 / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+													</div>
+												</td>
 												<td class="cantidadDeTabla">
 													<div class="ui action input fluid">
 														<input type="text" value="<?= $value['cantidad'] ?>" readonly name="cantidadDS[<?= $vd['idTipoPresupuesto'] ?>]" onchange="OrdenServicio.calcularSTotal(this);" data-detallesub="<?= $key ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>">
