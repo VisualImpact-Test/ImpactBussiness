@@ -174,7 +174,7 @@
 							<div class="eight wide field">
 								<div class="ui sub header">Item</div>
 								<div class="ui-widget">
-									<div class="ui right action left icon input w-100">
+									<div class="ui right action left icon input w-100 dbldisable">
 										<i class="semaforoForm flag link icon"></i>
 										<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
 										<div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
