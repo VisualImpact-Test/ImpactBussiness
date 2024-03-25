@@ -208,6 +208,7 @@ class Cotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$jsonData = json_decode($this->input->post('jsonData'), true);
 
 		$dataParaVista = [];
 
@@ -237,6 +238,7 @@ class Cotizacion extends MY_Controller
 		$result['msg']['title'] = 'Registrar Cotizacion';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioRegistro", $dataParaVista, true);
 		$result['data']['itemServicio'] = $data['itemServicio'];
+		$result['data']['feeCuenta'] = $this->model->obtenerFeeCuenta($jsonData)['query']->result_array();
 
 		echo json_encode($result);
 	}
