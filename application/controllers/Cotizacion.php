@@ -2170,7 +2170,7 @@ class Cotizacion extends MY_Controller
 							$datosHt[$k]['costoViaticos'] =
 							$datosHt[$k]['costoAlojamiento'] = 0;
 					} else {
-						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2));
 						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
 						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
 						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
