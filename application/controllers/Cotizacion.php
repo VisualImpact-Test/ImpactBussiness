@@ -5878,6 +5878,7 @@ class Cotizacion extends MY_Controller
 				'fotografico' => $d['fotografia'],
 				'guia' => $d['guia'],
 				'otros' => $d['otros'],
+				'ordenCompra' => $d['codOrdenCompra'],
 				// 'archivoCotizacion' => $archivoNameCotizacion, 
 				// 'archivoOrden' => $archivoNameOrdenCompra, 
 				'idEstado' => $d['idEstado'],
@@ -5933,7 +5934,7 @@ class Cotizacion extends MY_Controller
 			$this->db->update('compras.cotizacionDetalle', ['idOperLog' => $idOperlog], ['idCotizacionDetalle' => $d['idCotizacionDetalle']]);
 		}
 
-		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
+	//	$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
 		$codConcat = "";
 		if (count($idOperCod) === 1) {
 			$codConcat = "Log-" . $idOperCod[0];

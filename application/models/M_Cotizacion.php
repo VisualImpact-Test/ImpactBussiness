@@ -2796,7 +2796,8 @@ class M_Cotizacion extends MY_Model
 		'3' as idEstado ,
 		'1' as estado ,
 		codd.idCotizacionDetalle,
-		cda.nombre_archivo
+		cda.nombre_archivo,
+		co.codOrdenCompra
 		from compras.cotizacion AS co
 		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion and codd.estado = 1 and codd.idItemTipo = 7
 		JOIN compras.solicitante AS so ON co.idSolicitante = so.idSolicitante
