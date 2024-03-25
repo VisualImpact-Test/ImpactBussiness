@@ -2134,7 +2134,7 @@ class Cotizacion extends MY_Controller
 		array_pop($ht);
 
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
 		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 
@@ -2153,7 +2153,7 @@ class Cotizacion extends MY_Controller
 				}
 
 				$tpdm = $this->db->get_where(
-					'compras.tipoPresupuestoDetalleMovilidad',
+					'compras.presupuestoDetalleMovilidad',
 					[
 						'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
 					]
@@ -2532,7 +2532,7 @@ class Cotizacion extends MY_Controller
 
 		$dataParaVista['presupuesto'] = empty($post->{'presupuesto'}) ? 0 : json_decode(json_encode(json_decode($post->{'presupuesto'})));
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
 		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 		// HEADER & COLUMN & DATOS
@@ -2800,7 +2800,7 @@ class Cotizacion extends MY_Controller
 			}
 			$idTipoPresupuestoDetalleMovilidad = null;
 			$tpdm = $this->db->get_where(
-				'compras.tipoPresupuestoDetalleMovilidad',
+				'compras.presupuestoDetalleMovilidad',
 				[
 					'origen' => $v['origen'],
 					'destino' => $v['destino'],
@@ -2813,7 +2813,7 @@ class Cotizacion extends MY_Controller
 			else {
 				// * Buscar si hay un id con estado 0;
 				$tpdm = $this->db->get_where(
-					'compras.tipoPresupuestoDetalleMovilidad',
+					'compras.presupuestoDetalleMovilidad',
 					[
 						'origen' => $v['origen'],
 						'destino' => $v['destino']
@@ -2832,7 +2832,7 @@ class Cotizacion extends MY_Controller
 				if (!empty($tpdm)) { // * Si encontramos 1 se activa y actualizan los costos.
 					$idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
 					$this->db->update(
-						'compras.tipoPresupuestoDetalleMovilidad',
+						'compras.presupuestoDetalleMovilidad',
 						$datosInsertOrUpdate,
 						['idTipoPresupuestoDetalleMovilidad' => $tpdm['idTipoPresupuestoDetalleMovilidad']]
 					);
@@ -2841,7 +2841,7 @@ class Cotizacion extends MY_Controller
 					$datosInsertOrUpdate['destino'] = $v['destino'];
 					$datosInsertOrUpdate['idUsuario'] = $this->idUsuario;
 					$datosInsertOrUpdate['fechaReg'] = getActualDateTime();
-					$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $datosInsertOrUpdate);
+					$this->db->insert('compras.presupuestoDetalleMovilidad', $datosInsertOrUpdate);
 					$idTipoPresupuestoDetalleMovilidad = $this->db->insert_id();
 				}
 			}
