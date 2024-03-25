@@ -2176,6 +2176,33 @@ class Cotizacion extends MY_Controller
 						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
 						$datosHt[$k]['costoAlojamiento'] = floatval((verificarEmpty($tpdm['precioHospedaje'], 2)) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
 					}
+				} else {
+					if (floatval($datosHt[$k]['costoAereo']) < verificarEmpty($tpdm['precioAereo'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO AÉREO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoTransporte']) < verificarEmpty($tpdm['precioBus'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE TRANSPORTE ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoMovilidadInterna']) < verificarEmpty($tpdm['precioMovilidadInterna'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE MOVILIDAD INTERNA ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoViaticos']) < verificarEmpty($tpdm['precioViaticos'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE VIÁTICOS ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoAlojamiento']) < verificarEmpty($tpdm['precioHospedaje'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE ALOJAMIENTO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					}
 				}
 				$datosHt[$k]['subtotal'] =
 					floatval($datosHt[$k]['costoAereo']) +
