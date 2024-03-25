@@ -420,7 +420,7 @@ var Cotizacion = {
 			let defaultItem = $('.default-item');
 
 			defaultItem.append(Cotizacion.htmlG);
-		
+
 
 			let childInserted = defaultItem.children().last();
 			let childInsertedNumber = (++Cotizacion.nDetalle);
@@ -432,11 +432,8 @@ var Cotizacion = {
 			if (cuentaFrom != '') {
 				childInserted.find('.idTipoItem').removeClass('read-only');
 			}
-			
+
 			childInserted.find('.personal_detalle').removeClass('personal_1');
-
-			
-
 			childInserted.find('.personal_detalle').addClass('personal_' + childInsertedNumber);
 			childInserted.find('.periodo_contrato_personal').attr('data-obligatorio', childInsertedNumber);
 			childInserted.find('.cantidad_dias_personal').attr('data-dias', childInsertedNumber);
@@ -814,7 +811,6 @@ var Cotizacion = {
 				control.closest('.body-item').find('.gapForm').val('0');
 				control.closest('.body-item').find('.gapForm').attr('readonly', 'readonly');
 				control.closest('.body-item').find('.costoForm').removeAttr('readonly', 'readonly');
-				
 			} else {
 				control.closest('.body-item').find('.cantidadForm').val('0');
 				(parent.find('.cCompras')).removeClass('d-none');
@@ -2454,8 +2450,6 @@ var Cotizacion = {
 		});
 
 		$(document).on('change', '#cuentaForm', function () {
-			//console.log("holas");
-			
 			$('.idTipoItem').removeClass('read-only');
 			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
 			$('.feeForm').val(0);
@@ -2717,8 +2711,12 @@ var Cotizacion = {
 			Cotizacion.temp = this_;
 
 			let dataPrevia = this_.closest('.div-features').find('.datosRutasViajeras').html();
+			let presupuesto;
+			if ($('#ordenServicioSelect').val() == '') {
+				presupuesto = 1;
+			}
 
-			let data = {};
+			let data = { 'presupuesto': presupuesto };
 			data.dataPrevia = dataPrevia;
 			let jsonString = { 'data': JSON.stringify(data) };
 			var config = { 'url': Cotizacion.url + 'getSubDetalleRutasViajeras', 'data': jsonString };
@@ -2730,14 +2728,21 @@ var Cotizacion = {
 				if (a.result === 1) {
 					// var fn1 = `Cotizacion.buscarPesos(${modalId});`;
 					// var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
-					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
-					var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-					var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+					if ($('#ordenServicioSelect').val() == '') {
+						var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+						var fn2 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-					btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
-					btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
-					btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+						btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
+						btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
+					} else {
+						var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+						var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+						var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
+						btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+						btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+						btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+					}
 				}
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
@@ -4126,8 +4131,6 @@ var Cotizacion = {
 			_this.closest('.body-item').find('.cotizacionInternaForm').val(1);
 		}
 		_this.closest('.body-item').find('.cantidadForm').val(cantTot).keyup();
-
-	
 	},
 	validarFormatoTipo: function () {
 		var contVal = 0;

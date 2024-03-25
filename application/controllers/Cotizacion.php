@@ -2530,6 +2530,7 @@ class Cotizacion extends MY_Controller
 		$datosHt = $dataPrevia;
 		$nro = count($datosHt);
 
+		$dataParaVista['presupuesto'] = empty($post->{'presupuesto'}) ? 0 : json_decode(json_encode(json_decode($post->{'presupuesto'})));
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
 			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
@@ -2967,7 +2968,6 @@ class Cotizacion extends MY_Controller
 			}
 		}
 		// * Fin: Para Rutas Viajeras
-		
 		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion
@@ -3130,7 +3130,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
 		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
-		
+
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}
@@ -4494,7 +4494,7 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/core/gestion',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
-		
+
 		$config['data']['btnEnviar'] = false;
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
 		//echo $this->db->last_query(); exit();

@@ -2,9 +2,9 @@
 
 <? if ($hojas[0] === 'Tarifario Actualizar') { ?>
 
-<button type="button" class="btn btn-outline-trade-visual border-0" onclick="iniciarExportacionAExcel()" title="Excell">
-    <i class="far fa-file-excel"></i>
-</button>
+    <button type="button" class="btn btn-outline-trade-visual border-0" onclick="iniciarExportacionAExcel()" title="Excell">
+        <i class="far fa-file-excel"></i>
+    </button>
 
 <? } ?>
 
@@ -38,7 +38,9 @@
                     </div>
                 <?php } ?>
             </div>
-
+            <?php if (!empty($presupuesto)) { ?>
+                <p><?= $presupuesto == 1 ? 'No se ha seleccionado ningún presupuesto en la cotización, los costos serán libres.' : '' ?></p>
+            <?php } ?>
         </div>
     </div>
 </form>
