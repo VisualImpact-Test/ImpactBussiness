@@ -2770,7 +2770,11 @@ var Cotizacion = {
 		});
 		data['HT'] = HT;
 		data['buscarCosto'] = buscarCosto;
-
+		let presupuesto;
+		if ($('#ordenServicioSelect').val() == '') {
+			presupuesto = 1;
+		}
+		data['presupuesto'] = presupuesto;
 		var config = { 'url': Cotizacion.url + 'procesarTablaDatosRutasViajeras', 'data': data };
 
 		$.when(Fn.ajax(config)).then(function (a) {
@@ -2779,13 +2783,21 @@ var Cotizacion = {
 			var btn = [];
 			if (a.result === 1) {
 				Fn.showModal({ id: idModalHT, show: false });
-				var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
-				var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-				var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+				if ($('#ordenServicioSelect').val() == '') {
+					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+					var fn2 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-				btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
-				btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
-				btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+					btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
+					btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
+				} else {
+					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+					var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+					var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+
+					btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+					btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+					btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+				}
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);

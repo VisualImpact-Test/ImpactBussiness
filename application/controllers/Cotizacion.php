@@ -2133,6 +2133,7 @@ class Cotizacion extends MY_Controller
 		$ht = $post['HT'][0];
 		array_pop($ht);
 
+		$dataParaVista['presupuesto'] = empty($post['presupuesto']) ? 0 : $post['presupuesto'];
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
 			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
@@ -2170,10 +2171,10 @@ class Cotizacion extends MY_Controller
 							$datosHt[$k]['costoAlojamiento'] = 0;
 					} else {
 						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoAlojamiento'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
+						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoAlojamiento'] = floatval((verificarEmpty($tpdm['precioHospedaje'], 2)) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
 					}
 				}
 				$datosHt[$k]['subtotal'] =
