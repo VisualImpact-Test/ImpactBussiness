@@ -105,7 +105,7 @@ class M_OrdenCompra extends MY_Model
 							od.idOperDetalle,
 							od.idItem,
 							od.idTipo,
-							od.costoUnitario AS costo_item,
+							od.costoTarifario AS costo_item,
 							od.cantidad AS cantidad_item,
 							od.gap AS gap_item,
 							od.costoSubTotal AS csg_item,

@@ -1620,6 +1620,15 @@ function arrayToString($input = [])
 	return $output;
 }
 
+function monedaFormat($input)
+{
+	$variable = is_array($input) ? array_map(function ($moneda) {
+		return number_format(floatval(str_replace(',', '', $moneda)), 2, '.', '');
+	}, $input) : number_format(floatval(str_replace(',', '', $input)), 2, '.', '');
+
+	return $variable;
+}
+
 function ocultarEmail($email)
 {
 	if (filter_var($email, FILTER_VALIDATE_EMAIL)) {

@@ -87,9 +87,9 @@
 								<td style="text-align: center;" colspan="1" rowspan="1"><?= $vcds[$kg]['cantidad']; ?></td>
 							<?php endforeach; ?>
 							<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['cantidad_item'], 3) ?></td>
-							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costo_item']) ? "-" : moneda($row['costo_item']); ?></td>
-							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['cs_item']) ? moneda($row['cs_item']) : '-' ?></td>
-							<?php $sbTotal += floatval($row['cs_item']) ?>
+							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costoTarifario']) ? "-" : moneda($row['costoTarifario']); ?></td>
+							<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['costoTarifario']) ? moneda($row['costoTarifario'] * $row['cantidad_item']) : '-' ?></td>
+							<?php $sbTotal += floatval($row['costoTarifario'] * $row['cantidad_item']) ?>
 						</tr>
 					<?php else : ?>
 						<tr>
@@ -146,9 +146,9 @@
 							<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
 						<?php endif; ?>
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= $row['cantidad_item']; ?></td>
-						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['costo_item']); ?></td>
-						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['cs_item']); ?></td>
-						<?php $sbTotal += floatval($row['cs_item']); ?>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['costoTarifario']); ?></td>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= moneda($row['costoTarifario'] * $row['cantidad_item']); ?></td>
+						<?php $sbTotal += floatval($row['costoTarifario'] * $row['cantidad_item']); ?>
 					</tr>
 				<?php else : ?>
 					<tr>
@@ -159,9 +159,9 @@
 							<td style="text-align: center;" colspan="<?= $colGen + 1; ?>" rowspan="<?= $rowT; ?>">-</td>
 						<?php endif; ?>
 						<td style="text-align: center;" rowspan="<?= $rowT; ?>"><?= verificarEmpty($row['cantidad_item'], 3) ?></td>
-						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costo_item']) ? "-" : moneda($row['costo_item']); ?></td>
-						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['cs_item']) ? moneda($row['cs_item']) : '-' ?></td>
-						<?php $sbTotal += floatval($row['cs_item']) ?>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= empty($row['costoTarifario']) ? "-" : moneda($row['costoTarifario']); ?></td>
+						<td style="text-align: right;" rowspan="<?= $rowT; ?>"><?= !empty($row['costoTarifario']) ? moneda($row['costoTarifario'] * $row['cantidad_item']) : '-' ?></td>
+						<?php $sbTotal += floatval($row['costoTarifario'] * $row['cantidad_item']) ?>
 					</tr>
 				<?php endif; ?>
 			<?php endif; ?>

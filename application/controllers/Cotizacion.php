@@ -208,6 +208,7 @@ class Cotizacion extends MY_Controller
 	{
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
+		$jsonData = json_decode($this->input->post('jsonData'), true);
 
 		$dataParaVista = [];
 
@@ -237,6 +238,7 @@ class Cotizacion extends MY_Controller
 		$result['msg']['title'] = 'Registrar Cotizacion';
 		$result['data']['html'] = $this->load->view("modulos/Cotizacion/formularioRegistro", $dataParaVista, true);
 		$result['data']['itemServicio'] = $data['itemServicio'];
+		$result['data']['feeCuenta'] = $this->model->obtenerFeeCuenta($jsonData)['query']->result_array();
 
 		echo json_encode($result);
 	}
@@ -881,7 +883,7 @@ class Cotizacion extends MY_Controller
 					case COD_SERVICIO_GENERAL['id']:
 						$data['subDetalle'][$k] = [];
 						if (!empty($post["descripcionSubItemServicioGeneral[$k]"])) {
-							foreach ($post["descripcionSubItemServicioGeneral[$k]"] as $ksg => $vsg){
+							foreach ($post["descripcionSubItemServicioGeneral[$k]"] as $ksg => $vsg) {
 								$data['subDetalle'][$k][] = [
 									'nombre' => $vsg,
 									'cantidad' => $post["cantidadSubItemServicioGeneral[$k]"][$ksg],
@@ -2133,8 +2135,9 @@ class Cotizacion extends MY_Controller
 		$ht = $post['HT'][0];
 		array_pop($ht);
 
+		$dataParaVista['presupuesto'] = empty($post['presupuesto']) ? 0 : $post['presupuesto'];
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
 		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 
@@ -2153,7 +2156,7 @@ class Cotizacion extends MY_Controller
 				}
 
 				$tpdm = $this->db->get_where(
-					'compras.tipoPresupuestoDetalleMovilidad',
+					'compras.presupuestoDetalleMovilidad',
 					[
 						'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
 					]
@@ -2169,11 +2172,38 @@ class Cotizacion extends MY_Controller
 							$datosHt[$k]['costoViaticos'] =
 							$datosHt[$k]['costoAlojamiento'] = 0;
 					} else {
-						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2)) * floatval($v['dias']);
-						$datosHt[$k]['costoAlojamiento'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2)) * floatval($v['dias']);
+						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2));
+						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
+						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoAlojamiento'] = floatval((verificarEmpty($tpdm['precioHospedaje'], 2)) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+					}
+				} else {
+					if (floatval($datosHt[$k]['costoAereo']) < verificarEmpty($tpdm['precioAereo'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO AÉREO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoTransporte']) < verificarEmpty($tpdm['precioBus'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE TRANSPORTE ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoMovilidadInterna']) < verificarEmpty($tpdm['precioMovilidadInterna'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE MOVILIDAD INTERNA ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoViaticos']) < verificarEmpty($tpdm['precioViaticos'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE VIÁTICOS ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
+					} else if (floatval($datosHt[$k]['costoAlojamiento']) < verificarEmpty($tpdm['precioHospedaje'], 2)) {
+						$result['result'] = 0;
+						$result['msg']['title'] = 'Costo menor al Presupuesto';
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE ALOJAMIENTO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						goto Respuesta;
 					}
 				}
 				$datosHt[$k]['subtotal'] =
@@ -2530,8 +2560,9 @@ class Cotizacion extends MY_Controller
 		$datosHt = $dataPrevia;
 		$nro = count($datosHt);
 
+		$dataParaVista['presupuesto'] = empty($post->{'presupuesto'}) ? 0 : json_decode(json_encode(json_decode($post->{'presupuesto'})));
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
 		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 		// HEADER & COLUMN & DATOS
@@ -2799,7 +2830,7 @@ class Cotizacion extends MY_Controller
 			}
 			$idTipoPresupuestoDetalleMovilidad = null;
 			$tpdm = $this->db->get_where(
-				'compras.tipoPresupuestoDetalleMovilidad',
+				'compras.presupuestoDetalleMovilidad',
 				[
 					'origen' => $v['origen'],
 					'destino' => $v['destino'],
@@ -2812,7 +2843,7 @@ class Cotizacion extends MY_Controller
 			else {
 				// * Buscar si hay un id con estado 0;
 				$tpdm = $this->db->get_where(
-					'compras.tipoPresupuestoDetalleMovilidad',
+					'compras.presupuestoDetalleMovilidad',
 					[
 						'origen' => $v['origen'],
 						'destino' => $v['destino']
@@ -2831,7 +2862,7 @@ class Cotizacion extends MY_Controller
 				if (!empty($tpdm)) { // * Si encontramos 1 se activa y actualizan los costos.
 					$idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
 					$this->db->update(
-						'compras.tipoPresupuestoDetalleMovilidad',
+						'compras.presupuestoDetalleMovilidad',
 						$datosInsertOrUpdate,
 						['idTipoPresupuestoDetalleMovilidad' => $tpdm['idTipoPresupuestoDetalleMovilidad']]
 					);
@@ -2840,7 +2871,7 @@ class Cotizacion extends MY_Controller
 					$datosInsertOrUpdate['destino'] = $v['destino'];
 					$datosInsertOrUpdate['idUsuario'] = $this->idUsuario;
 					$datosInsertOrUpdate['fechaReg'] = getActualDateTime();
-					$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $datosInsertOrUpdate);
+					$this->db->insert('compras.presupuestoDetalleMovilidad', $datosInsertOrUpdate);
 					$idTipoPresupuestoDetalleMovilidad = $this->db->insert_id();
 				}
 			}
@@ -2940,6 +2971,33 @@ class Cotizacion extends MY_Controller
 		$cotizacionProveedores = $this->model->obtenerInformacionDetalleCotizacionProveedores(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$cotizacionProveedoresVista = $this->model->obtenerInformacionDetalleCotizacionProveedoresParaVista(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 
+		// * Para rutas Viajeras
+		$listIdCotizacionDetalle = refactorizarDataHT(
+			[
+				"data" => $this->db->get_where('compras.cotizacionDetalle', ['idCotizacion' => $idCotizacion, 'idItemTipo' => COD_RUTAS_VIAJERAS['id']])->result_array(),
+				"value" => "idCotizacionDetalle"
+			]
+		);
+		if (!empty($listIdCotizacionDetalle)) {
+			foreach ($listIdCotizacionDetalle as $idCotizacionDetalle) {
+				$this->db->select('*')
+					->select('frecuencia as idFrecuencia')
+					->select('(SELECT nombre FROM dbo.frecuencia WHERE idFrecuencia = frecuencia) as frecuencia', false)
+					->select('(
+						isnull(costoAereo, 0) +
+						isnull(costoTransporte, 0) +
+						isnull(costoMovilidadInterna, 0) +
+						isnull(costoViaticos, 0) +
+						isnull(costoAlojamiento, 0)
+					) * cantidadViajes as totalMensual')
+					->select('costoVisual * (100 + isnull(gap, 0)) / 100 as total')
+					->select('(SELECT frecuenciaAnual FROM dbo.frecuencia WHERE idFrecuencia = frecuencia) as frecuenciaAnual', false)
+					->select('subtotal as cuenta');
+				$rpta = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $idCotizacionDetalle])->result_array();
+				$config['data']['dataRutasViajeras'][$idCotizacionDetalle] = $rpta;
+			}
+		}
+		// * Fin: Para Rutas Viajeras
 		$cotizacionDetalleSub = $this->model->obtenerInformacionDetalleCotizacionSubdis(
 			[
 				'idCotizacion' => $idCotizacion
@@ -3102,7 +3160,7 @@ class Cotizacion extends MY_Controller
 		$config['data']['tipoServicioCotizacion'] = $this->model->obtenerTipoServicioCotizacion()['query']->result_array();
 		$config['data']['listProveedor'] = $this->db->order_by('razonSocial')->get_where('compras.proveedor', ['idProveedorEstado' => 2, 'flagTarjetasVales' => 1])->result_array();
 		$config['data']['ordenServicio'] = $this->model->obtenerOrdenServicio()['query']->result_array();
-		
+
 		foreach ($config['data']['tachadoDistribucion'] as $tachado) {
 			$config['data']['detalleTachado'][$tachado['idItem']][] = $tachado;
 		}
@@ -4466,7 +4524,7 @@ class Cotizacion extends MY_Controller
 			'assets/custom/js/core/gestion',
 			'assets/custom/js/viewAgregarCotizacion'
 		);
-		
+
 		$config['data']['btnEnviar'] = false;
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
 		//echo $this->db->last_query(); exit();

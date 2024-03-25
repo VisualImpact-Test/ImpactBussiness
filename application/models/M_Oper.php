@@ -33,6 +33,7 @@ class M_Oper extends MY_Model
 							od.idItem,
 							od.idTipo,
 							od.costoUnitario AS costo_item,
+							od.costoTarifario,
 							od.cantidad AS cantidad_item,
 							od.gap AS gap_item,
 							od.costoSubTotal AS cs_item,
@@ -182,6 +183,7 @@ class M_Oper extends MY_Model
 			SELECT 
 				o.*, od.idOperDetalle, od.idItem,
 				od.idTipo, od.costoUnitario AS costo_item,
+				od.costoTarifario,
 				od.cantidad AS cantidad_item, od.gap AS gap_item,
 				od.costoSubTotal AS cs_item, od.costoSubTotalGap AS csg_item,
 				i.nombre AS item, 'Coordinadora de compras' AS usuarioReceptor,

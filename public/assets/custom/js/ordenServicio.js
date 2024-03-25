@@ -521,7 +521,7 @@ var OrdenServicio = {
 		});
 		$(document).on('click', '.btn-downloadPDF', function () {
 			++modalId;
-			let id = $(this).parents('tr:first').data('id');
+			let id = $(this).parents('tr:first').data('presupuesto');
 			let jsonString = { 'id': id };
 
 			let config = { 'url': OrdenServicio.url + 'formularioPDFDetallePresupuesto', 'data': jsonString };
