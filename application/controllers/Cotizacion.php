@@ -5951,6 +5951,39 @@ class Cotizacion extends MY_Controller
 			];
 			$this->db->insert('VisualImpact.logistica.operLog', $insertarCabOperLog);
 			$idOperlog = $this->db->insert_id();
+			$idUsuarioLog = $this->model->usuarioLogistica($this->idUsuario)['query']->result_array();
+			$requerimiento = [
+				'fecha' => getSoloFecha(),
+				'idUsuario' => $idUsuarioLog[0]['idUsuarioLogistica'],
+				'idOperLog' => $idOperlog,
+				'idAlmacen' => '1',
+				'idCuenta' => $d['idCuenta'],
+				'idCentroCosto' => $d['idCentroCosto'],
+				'idCuentaUsuario' => $post['CuentaUsuario'],
+				'idUsuarioReg' => $idUsuarioLog[0]['idUsuarioLogistica'],
+				'idEstado' => 1,
+				'fechaReg' => getSoloFecha(),
+				'horaReg' => getSoloHora(),
+			];
+			$this->db->insert('VisualImpact.logistica.requerimiento', $requerimiento);
+			$idRequerimiento = $this->db->insert_id();
+			$CantArticulo = $this->model->datosOperLogCantArticulo($d['idCotizacionDetalle'])['query']->result_array();
+			//var_dump($CantArticulo); exit();
+			foreach ($CantArticulo as $z => $x) {
+				$requerimientoDet = [
+					'idRequerimiento' => $idRequerimiento,
+					'idArticulo' => $x['idItem'],
+					'idUnidadMedida' => $x['idUnidadMedida'],
+					'cantidad' => $x['cantidad'],
+					'idArticuloEstado' => 1,
+					'equivalente' => $x['cantidad'],
+					'idUsuarioReg' => $idUsuarioLog[0]['idUsuarioLogistica'],
+					'fechaReg' => getSoloFecha(),
+					'horaReg' => getSoloHora(),
+				];
+				$this->db->insert('VisualImpact.logistica.requerimiento_det', $requerimientoDet);
+				}
+			
 			array_push($idOperCod, $idOperlog);
 
 			$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
@@ -5992,7 +6025,8 @@ class Cotizacion extends MY_Controller
 			$this->db->update('compras.cotizacionDetalle', ['idOperLog' => $idOperlog], ['idCotizacionDetalle' => $d['idCotizacionDetalle']]);
 		}
 
-	//	$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
+		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
+		
 		$codConcat = "";
 		if (count($idOperCod) === 1) {
 			$codConcat = "Log-" . $idOperCod[0];

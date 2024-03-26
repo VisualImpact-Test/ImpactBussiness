@@ -2919,6 +2919,22 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function datosOperLogCantArticulo($idCotizacionDetalle)
+	{
+		$sql = "
+		select idItem , SUM(cds.cantidad) as cantidad , la.idUnidadMedida from compras.cotizacionDetalleSub as cds
+		join visualImpact.logistica.articulo  as  la on cds.idItem = la.idArticulo
+		where 1 = 1
+		and idCotizacionDetalle = " . $idCotizacionDetalle . "
+		group by idItem ,la.idUnidadMedida
+		";
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
 
 
 
@@ -3029,4 +3045,24 @@ class M_Cotizacion extends MY_Model
 
 		return $this->resultado;
 	}
+
+
+	public function usuarioLogistica($params)
+	{
+
+
+		$sql = "
+		select * from sistema.usuario
+		where idUsuario = $params";
+
+		$query = $this->db->query($sql);
+
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+
+		return $this->resultado;
+	}
+	
 }
