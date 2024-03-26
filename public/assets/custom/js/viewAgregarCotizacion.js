@@ -2393,11 +2393,37 @@ var Cotizacion = {
 			let control = $(this);
 			let val = control.val();
 			let parent = control.closest('.nuevo');
-			if (val.length == 0) {
+			let cotInt = parent.find('.codItems').val();
+			
+			if (val.length == 0 || cotInt != "" || cotInt != 0 ) {
 				Cotizacion.cleanDetalle(parent);
 			}
+			
 		});
 
+
+
+
+		// $(document).on('dblclick', '.dblclick', function (event) {
+		// 	if ($(event.target).is('.items:disabled')) {
+		// 		console.log("Doble clic en un elemento disabled");
+		// 		// Tu código aquí
+		// 	}
+		// });
+	// 	$(document).ready(function() {
+	// 	$(document).on('dblclick', '.dbldisable', function (event) {
+	// 		if ($(event.target).is('.items:disabled')) {
+	// 			console.log(" clic ");
+	// 			// Tu código aquí
+	// 		}
+	// 		if ($(event.target).is('.items')) {
+	// 			console.log(" dat ");
+	// 			// Tu código aquí
+	// 		}
+	// 		console.log("Doble");
+	// 	});
+	// });
+		
 		$(document).on('change', '#cuentaCentroCostoForm', function () {
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
@@ -3336,6 +3362,7 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
+			//	$(this).attr("disabled", "disabled");
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
@@ -3939,6 +3966,7 @@ var Cotizacion = {
 		// FIN: PERSONAL
 	},
 	cleanDetalle: (parent) => {
+		console.log();
 		let tipoForm = parent.find('#tipoItemForm');
 		let costoForm = parent.find('.costoForm');
 		let costoFormLabel = parent.find('.costoFormLabel');
@@ -3949,7 +3977,8 @@ var Cotizacion = {
 		let cotizacionInternaForm = parent.find('.cotizacionInternaForm');
 		let semaforoForm = parent.find('.semaforoForm');
 		let tachadoDistribucion = parent.find('.tbDistribucionTachado');
-
+		let caracteristicasCliente = parent.find('.caracteristicasCliente');
+		
 		codItems.val('');
 		idProveedor.val('');
 		if (tipoForm.val() == COD_DISTRIBUCION.id) {
@@ -3964,6 +3993,7 @@ var Cotizacion = {
 		semaforoForm.popup('destroy');
 
 		costoForm.val('');
+		caracteristicasCliente.val('');
 		costoFormLabel.val('');
 		gapForm.val('');
 

@@ -56,6 +56,11 @@ class ProveedorDocumento extends MY_Controller
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
 
 		foreach ($datos as $k => $v) {
+			$v['adjuntosCargados']= false;
+			$buscarCargados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1])->result_array();
+			if (!empty($buscarCargados)) $v['adjuntosCargados'] = true;
+
+			if (($post['estDocumento'] == 1 && $v['aprobados'] == $v['totalDocumentos'] && !empty($v['adjuntosCargados']) ) || ($post['estDocumento'] == 2 && $v['aprobados'] != $v['totalDocumentos']) || ( empty($post['estDocumento'])) ) {
 			if (!isset($dataParaVista['datos'][$v['ordenCompra']])) {
 				$dataParaVista['datos'][$v['ordenCompra']] = $v;
 				$dataParaVista['datos'][$v['ordenCompra']]['monto'] = 0;
@@ -65,6 +70,7 @@ class ProveedorDocumento extends MY_Controller
 				if (!empty($buscarCargados)) $dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = true;
 			}
 			$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
+			} 
 		}
 
 		$html = getMensajeGestion('noRegistros');
