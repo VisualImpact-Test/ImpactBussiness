@@ -74,29 +74,8 @@
 </style>
 <h3 style="margin: 0px;">Estimados</h3>
 <br>
-<h3 style="margin: 0px;">Se adjunta documentos para la programación de abonos.</h3>
+<h3 style="margin: 0px;">Se adjunta documentos para la programación de abonos del proveedor "<?= $proveedor['razonSocial'] ?>".</h3>
 <br>
-<!--<table>
-	<tbody>
-		<tr>
-			<td>
-				<h3 style="margin: 0px;">Descripción de PO: </h3>
-			</td>
-			<td>
-				<h4>< ?= $cotizacion['motivoAprobacion']; ?></h4>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<h3 style="margin: 0px;">Número de PO: </h3>
-			</td>
-			<td>
-				<h4>< ?= $cotizacion['codOrdenCompra']; ?></h4>
-			</td>
-		</tr>
-	</tbody>
-</table>-->
-
 <br>
 <h3 style="margin: 0px;">Formatos cargados:</h3>
 <?php $aGuia = false; ?>
@@ -110,16 +89,29 @@
 	<?php if ($v['idFormatoDocumento'] == '4') $aAdicional = true;  ?>
 <?php endforeach; ?>
 
+<table>
+	<tr>
+		<td>Orden Compra</td>
+		<td style="text-align: left;">✔</td>
+	</tr>
+	<tr>
+		<td>Guia</td>
+		<td style="text-align: left;"><?= ($aGuia ? '✔' : '✘'); ?></td>
+	</tr>
+	<tr>
+		<td>Factura</td>
+		<td style="text-align: left;"><?= ($aFactura ? '✔' : '✘'); ?></td>
+	</tr>
+	<tr>
+		<td>XML</td>
+		<td style="text-align: left;"><?= ($aXml ? '✔' : '✘'); ?></td>
+	</tr>
+	<tr>
+		<td>Adicional</td>
+		<td style="text-align: left;"><?= ($aAdicional ? '✔' : '✘'); ?></td>
+	</tr>
+</table>
 <br>
-<h4 style="margin: 0px;"> Orden Compra ✔</h4>
-<br>
-<h4 style="margin: 0px;"> Guia <?= str_repeat('&nbsp;', 17) . ($aGuia ? '✔' : '✘'); ?></h4>
-<br>
-<h4 style="margin: 0px;"> Factura <?= str_repeat('&nbsp;', 12) . ($aFactura ? '✔' : '✘'); ?></h4>
-<br>
-<h4 style="margin: 0px;"> XML <?= str_repeat('&nbsp;', 17) . ($aXml ? '✔' : '✘'); ?></h4>
-<br>
-<h4 style="margin: 0px;"> Adicional <?= str_repeat('&nbsp;', 8) . ($aAdicional ? '✔' : '✘'); ?></h4>
 
 <div style="margin-top: 15px;">
 	<fieldset style="margin-top:15px;margin-bottom:15px;">
@@ -136,14 +128,6 @@
 						</tr>
 					</thead>
 					<tbody>
-						<!--< ?php foreach ($ocG as $key => $row) : ?>
-							<tr class="default">
-								<td> < ?= $key + 1; ?> </td>
-								<td>Orden de Compra</td>
-								<td> OC < ?= $row['idOrdenCompra']; ?></td>
-								<td><a class="ui button" href="< ?= base_url() . 'OrdenCompra/visualizarPdfOCDescargar/' . $row['idOrdenCompra']; ?>?flag=< ?= $flag ?>" target="_blank">Descargar</a></td>
-							</tr>
-						< ?php endforeach; ?>-->
 						<?php foreach ($data as $key => $row) : ?>
 							<tr class="default">
 								<td><?= $key + 1 /*+ count($ocG)*/ ?></td>
