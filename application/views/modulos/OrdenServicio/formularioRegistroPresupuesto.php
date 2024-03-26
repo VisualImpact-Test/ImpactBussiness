@@ -7,7 +7,7 @@
 		$contadorMeses[$anio] = array_fill(1, 12, 0);
 	}
 	$contadorMeses[$anio][$mes]++;
-endforeach;  ?>
+endforeach; ?>
 
 <form class="form" role="form" id="formRegistroPresupuesto" method="post" autoComplete="off">
 
@@ -392,7 +392,7 @@ endforeach;  ?>
 													</td>
 													<td style="background: #fff">
 														<div class="ui right labeled input">
-															<input class="porCL keyUpChange" value="<?= $v1['porCl']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>"  name="clS">
+															<input class="porCL keyUpChange" value="<?= $v1['porCl']; ?>" id="rowPorCL_Sueldo<?= $dataRow ?>" name="clS">
 															<div class="ui basic label"> % </div>
 														</div>
 													</td>
@@ -524,6 +524,13 @@ endforeach;  ?>
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
 						<div class="ui table">
+							<div class="div-features">
+								<button type="button" class="ui button btn-datos-rutasViajeras teal ">
+									<i class="plus icon"></i>
+									Indicar Detalle
+								</button>
+								<div class="datosRutasViajeras d-none"></div>
+							</div>
 							<table class="ui celled table" id="tablaMovilidad" data-personal="<?= count($ordenServicioCargo); ?>">
 								<thead>
 									<tr>
@@ -532,83 +539,16 @@ endforeach;  ?>
 										<th class="two wide">Split</th>
 										<th class="one wide">Días</th>
 										<th class="one wide">Prec Bus</th>
+										<th class="one wide">Prec Aereo</th>
 										<th class="one wide">Prec Hospedaje</th>
 										<th class="one wide">Prec Viaticos</th>
 										<th class="one wide">Prec Movilidad Interna</th>
-										<th class="one wide">Prec Taxi</th>
 										<th class="one wide">SubTotal</th>
 										<th class="one wide">Frecuencia</th>
 										<th class="two wide">Total</th>
 									</tr>
 								</thead>
 								<tbody>
-									<?php foreach ($tipoPresupuestoDetalleMovilidad as $km => $vm) : ?>
-										<tr class="data">
-											<td>
-												<div class="ui input fluid">
-													<input type="hidden" name="movIdTPDM" value="<?= $vm['idTipoPresupuestoDetalleMovilidad']; ?>" readonly>
-													<input class="tbMov_origen" value="<?= $vm['origen']; ?>" name="movOrigen">
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_destino" value="<?= $vm['destino']; ?>" name="movDestino" readonly>
-												</div>
-											</td>
-											<td>
-												<select class="tbMov_freOpc ui compact fluid selection semantic-dropdown dropdown" name="movFrecuenciaOpc" onchange="OrdenServicio.calcularTotalesMovilidad();">
-													<option selected value="1">1 vez por mes</option>
-													<option value="2">1 vez cada 2 meses</option>
-													<option value="3">1 vez cada 3 meses</option>
-												</select>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="0" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();">
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_bus text-right" value="<?= $vm['precioBus']; ?>" name="movPrecBus" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_hosp text-right" data-costobase="<?= $vm['precioHospedaje']; ?>" value="0" name="movPrecHosp" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_viat text-right" data-costobase="<?= $vm['precioViaticos']; ?>" value="0" name="movPrecViaticos" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_movInt text-right" data-costobase="<?= $vm['precioMovilidadInterna']; ?>" value="0" name="movPrecMovInt" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'], 2); ?>" value="0" name="movPrecTaxi" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_sbto text-right" value="0" name="movSubTotal" readonly>
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= empty($vm['frecuencia']) ? 0 : $vm['frecuencia']; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
-												</div>
-											</td>
-											<td>
-												<div class="ui input fluid">
-													<input class="tbMov_tot text-right" value="0" name="movTotal" readonly>
-												</div>
-											</td>
-										</tr>
-									<?php endforeach; ?>
 								</tbody>
 								<tfoot>
 									<tr>

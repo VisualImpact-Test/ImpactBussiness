@@ -29,6 +29,7 @@ class OrdenServicio extends MY_Controller
 			'assets/libs/handsontable@7.4.2/dist/pikaday/pikaday',
 			'assets/libs/fileDownload/jquery.fileDownload',
 			'assets/custom/js/core/HTCustom',
+			'assets/custom/js/core/gestion',
 			'assets/custom/js/ordenServicio'
 		);
 
@@ -132,7 +133,7 @@ class OrdenServicio extends MY_Controller
 		// ini_set('memory_limit', '1024M');
 		// set_time_limit(0);
 		$dataParaVista = [];
-		if(!empty($this->input->post('data'))) {
+		if (!empty($this->input->post('data'))) {
 			$post = json_decode($this->input->post('data'), true);
 			$dataParaVista['reqDetalle'] = $post['detalle'];
 		} else {
@@ -167,10 +168,9 @@ class OrdenServicio extends MY_Controller
 		$version != 0 ? $this->db->where('idPresupuestoHistorico', $version) : $this->db->where('estado', 1);
 		$presupuestoDet = $this->db->order_by('CASE WHEN idTipoPresupuesto = 7 THEN 0 WHEN idTipoPresupuesto = 9 THEN 1
 			WHEN idTipoPresupuesto = 10 THEN 2 WHEN idTipoPresupuesto = 11 THEN 3 WHEN idTipoPresupuesto = 8 THEN 4
-            ELSE 5 END DESC', '', false)->order_by('idTipoPresupuesto', 'ASC')->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id])->result_array();
+				ELSE 5 END DESC', '', false)->order_by('idTipoPresupuesto', 'ASC')->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $id])->result_array();
 		$dataParaVista['presupuestoDetalle'] = $pd = changeKeyInArray($presupuestoDet, 'idPresupuestoDetalle');
 		$whereIdPreDet = obtenerDatosCabecera($presupuestoDet, 'idPresupuestoDetalle');
-
 		$presupuestoDetSub = $this->db->where_in('idPresupuestoDetalle', $whereIdPreDet)->get('compras.presupuestoDetalleSub')->result_array();
 		$dataParaVista['presupuestoDetalleSub'] = $presupuestoDetSub = changeKeyInArray($presupuestoDetSub, 'idPresupuestoDetalle', 'idTipoPresupuestoDetalle');
 
@@ -397,6 +397,398 @@ class OrdenServicio extends MY_Controller
 
 	}
 
+	public function getSubDetalleRutasViajeras()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'));
+
+		$dataPrevia = json_decode(json_encode(json_decode($post->{'dataPrevia'})));
+
+		$header = [];
+		$column = [];
+		$datosHt = $dataPrevia;
+		$nro = count($datosHt);
+
+		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
+			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$destino = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, destino')
+			->group_by('destino')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$destino = refactorizarDataHT(["data" => $destino, "value" => "destino"]);
+		$frecuencia = ['UNICO', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
+
+		// HEADER & COLUMN & DATOS
+		$header[] = 'ORIGEN';
+		$column[] = ['data' => 'origen', 'type' => 'autocomplete', 'placeholder' => 'Origen', 'width' => 250, 'source' => $origen];
+		$datosHt[$nro]['origen'] = null;
+
+		$header[] = 'DESTINO';
+		$column[] = ['data' => 'destino', 'type' => 'autocomplete', 'placeholder' => 'Destino', 'width' => 250, 'source' => $destino];
+		$datosHt[$nro]['destino'] = null;
+
+		$header[] = 'FRECUENCIA';
+		$column[] = ['data' => 'frecuencia', 'type' => 'myDropdown', 'placeholder' => 'Frecuencia', 'width' => 250, 'source' => $frecuencia];
+		$datosHt[$nro]['frecuencia'] = null;
+
+		$header[] = 'DIAS';
+		$column[] = ['data' => 'dias', 'type' => 'numeric', 'placeholder' => 'Días', 'width' => 250];
+		$datosHt[$nro]['dias'] = null;
+
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+		$datosHt[$nro]['cantidadViajes'] = null;
+
+		$header[] = 'AEREO';
+		$column[] = ['data' => 'costoAereo', 'type' => 'numeric', 'placeholder' => 'Aereo', 'width' => 250];
+		$datosHt[$nro]['costoAereo'] = null;
+
+		$header[] = 'TRANSPORTE';
+		$column[] = ['data' => 'costoTransporte', 'type' => 'numeric', 'placeholder' => 'Transporte', 'width' => 250];
+		$datosHt[$nro]['costoTransporte'] = null;
+
+		$header[] = 'MOVILIDAD INTERNA x DIA';
+		$column[] = ['data' => 'costoMovilidadInternaDia', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna x día', 'width' => 250];
+		$datosHt[$nro]['costoMovilidadInternaDia'] = null;
+
+		$header[] = 'MOVILIDAD INTERNA TOTAL';
+		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoMovilidadInterna'] = null;
+
+		$header[] = 'VIATICOS x DIA';
+		$column[] = ['data' => 'costoViaticosDia', 'type' => 'numeric', 'placeholder' => 'Viaticos x día', 'width' => 250];
+		$datosHt[$nro]['costoViaticosDia'] = null;
+
+		$header[] = 'VIATICOS TOTAL';
+		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoViaticos'] = null;
+
+		$header[] = 'ALOJAMIENTO x DIA';
+		$column[] = ['data' => 'costoAlojamientoDia', 'type' => 'numeric', 'placeholder' => 'Alojamiento x día', 'width' => 250];
+		$datosHt[$nro]['costoAlojamientoDia'] = null;
+
+		$header[] = 'ALOJAMIENTO TOTAL';
+		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoAlojamiento'] = null;
+
+		$header[] = 'SUBTOTAL';
+		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['subtotal'] = null;
+
+		$header[] = 'TOTAL MENSUAL';
+		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['totalMensual'] = null;
+
+		$header[] = 'TOTAL VI + TR. AEREO';
+		$column[] = ['data' => 'costoVisual', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoVisual'] = null;
+
+		$header[] = 'TOTAL';
+		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['total'] = null;
+
+		$header[] = 'FRECUENCIA ANUAL';
+		$column[] = ['data' => 'frecuenciaAnual', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['frecuenciaAnual'] = null;
+		// FIN: HEADER & COLUMN
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Detalle de Rutas Viajeras',
+			'data' => $datosHt,
+			'headers' => $header,
+			'columns' => $column,
+			// 'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+		$result['msg']['title'] = "Detalle de Rutas Viajeras";
+		Respuesta:
+		echo json_encode($result);
+	}
+	public function procesarTablaDatosRutasViajeras()
+	{
+		$result = $this->result;
+		$post = $this->input->post();
+		$ht = $post['HT'][0];
+		array_pop($ht);
+
+		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
+			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$destino = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, destino')
+			->group_by('destino')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$destino = refactorizarDataHT(["data" => $destino, "value" => "destino"]);
+		$frecuencia = ['UNICO', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
+
+		$header = [];
+		$column = [];
+		$datosHt = [];
+
+		// DATOS
+		if (!empty($ht)) {
+			foreach ($ht as $k => $v) {
+				if (empty($v['origen']) && empty($v['destino'])) {
+					$result['result'] = 0;
+					$result['msg']['title'] = 'Origen y/o Destino sin indicar';
+					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Llenar los datos de Origen y Destino para obtener los costos.']);
+					goto Respuesta;
+				}
+
+				$tpdm = $this->db->get_where(
+					'compras.tipoPresupuestoDetalleMovilidad',
+					[
+						'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
+					]
+				)->row_array();
+
+				$datosHt[$k] = $v;
+				$v['gap'] = 0;
+				// if (empty($v['gap'])) $datosHt[$k]['gap'] = 0;
+
+				if ($v['costoAereo'] == '') $datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2));
+				if ($v['costoTransporte'] == '') $datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
+				if ($v['costoMovilidadInternaDia'] == '') $datosHt[$k]['costoMovilidadInternaDia'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2));
+				$datosHt[$k]['costoMovilidadInterna'] = $datosHt[$k]['costoMovilidadInternaDia'] * floatval($v['dias']);
+				if ($v['costoViaticosDia'] == '') $datosHt[$k]['costoViaticosDia'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2));
+				$datosHt[$k]['costoViaticos'] = $datosHt[$k]['costoViaticosDia'] * floatval($v['dias']);
+				if ($v['costoAlojamientoDia'] == '') $datosHt[$k]['costoAlojamientoDia'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2));
+				$datosHt[$k]['costoAlojamiento'] = $datosHt[$k]['costoAlojamientoDia'] * floatval($v['dias']);
+
+				$datosHt[$k]['subtotal'] =
+					floatval($datosHt[$k]['costoAereo']) +
+					floatval($datosHt[$k]['costoTransporte']) +
+					floatval($datosHt[$k]['costoMovilidadInterna']) +
+					floatval($datosHt[$k]['costoViaticos']) +
+					floatval($datosHt[$k]['costoAlojamiento']);
+
+				$datosHt[$k]['totalMensual'] = round(floatval($datosHt[$k]['subtotal']) * floatval($v['cantidadViajes']), 4);
+				$datosHt[$k]['costoVisual'] = round($datosHt[$k]['totalMensual'] + floatval($datosHt[$k]['costoAereo']), 4);
+				$datosHt[$k]['total'] = round($datosHt[$k]['costoVisual'] * numeroPorcentaje($v['gap']), 4);
+				// ? Revisar si se puede poner estas variables en constants.php o en una tabla en la BDs
+				switch ($v['frecuencia']) {
+					case 'QUINCENAL':
+						$datosHt[$k]['frecuenciaAnual'] = 24;
+						break;
+					case 'MENSUAL':
+						$datosHt[$k]['frecuenciaAnual'] = 12;
+						break;
+					case 'BIMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 6;
+						break;
+					case 'TRIMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 4;
+						break;
+					case 'SEMESTRAL':
+						$datosHt[$k]['frecuenciaAnual'] = 2;
+						break;
+					case 'ANUAL':
+						$datosHt[$k]['frecuenciaAnual'] = 1;
+						break;
+					case 'UNICO':
+						$datosHt[$k]['frecuenciaAnual'] = 1;
+						break;
+					default:
+						$datosHt[$k]['frecuenciaAnual'] = 0;
+						break;
+				}
+				$datosHt[$k]['cuenta'] = round($datosHt[$k]['total'] * $datosHt[$k]['frecuenciaAnual'] / 12, 4);
+			}
+		} else {
+			$datosHt[0]['responsable'] =
+				$datosHt[0]['origen'] =
+				$datosHt[0]['destino'] =
+				$datosHt[0]['cargo'] =
+				$datosHt[0]['dni'] =
+				$datosHt[0]['razonSocial'] =
+				$datosHt[0]['frecuencia'] =
+				$datosHt[0]['dias'] =
+				$datosHt[0]['costoAereo'] =
+				$datosHt[0]['costoTransporte'] =
+				$datosHt[0]['costoMovilidadInterna'] =
+				$datosHt[0]['costoViaticos'] =
+				$datosHt[0]['costoAlojamiento'] =
+				$datosHt[0]['subtotal'] =
+				$datosHt[0]['cantidadViajes'] =
+				$datosHt[0]['totalMensual'] =
+				$datosHt[0]['costoVisual'] =
+				// $datosHt[0]['gap'] =
+				$datosHt[0]['total'] =
+				$datosHt[0]['frecuenciaAnual'] =
+				$datosHt[0]['cuenta'] =
+				$datosHt[0]['tipo_movil'] = NULL;
+		}
+
+
+		// HEADER & COLUMN & DATOS
+		$header[] = 'ORIGEN';
+		$column[] = ['data' => 'origen', 'type' => 'autocomplete', 'placeholder' => 'Origen', 'width' => 250, 'source' => $origen];
+
+		$header[] = 'DESTINO';
+		$column[] = ['data' => 'destino', 'type' => 'autocomplete', 'placeholder' => 'Destino', 'width' => 250, 'source' => $destino];
+
+		$header[] = 'FRECUENCIA';
+		$column[] = ['data' => 'frecuencia', 'type' => 'myDropdown', 'placeholder' => 'Frecuencia', 'width' => 250, 'source' => $frecuencia];
+
+		$header[] = 'DIAS';
+		$column[] = ['data' => 'dias', 'type' => 'numeric', 'placeholder' => 'Días', 'width' => 250];
+
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+
+		$header[] = 'AEREO';
+		$column[] = ['data' => 'costoAereo', 'type' => 'numeric', 'placeholder' => 'Aereo', 'width' => 250];
+
+		$header[] = 'TRANSPORTE';
+		$column[] = ['data' => 'costoTransporte', 'type' => 'numeric', 'placeholder' => 'Transporte', 'width' => 250];
+
+		$header[] = 'MOVILIDAD INTERNA X DIA';
+		$column[] = ['data' => 'costoMovilidadInternaDia', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna x día', 'width' => 250];
+
+		$header[] = 'MOVILIDAD INTERNA TOTAL';
+		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna total', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'VIATICOS X DIA';
+		$column[] = ['data' => 'costoViaticosDia', 'type' => 'numeric', 'placeholder' => 'Viaticos x día', 'width' => 250];
+
+		$header[] = 'VIATICOS TOTAL';
+		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos total', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'ALOJAMIENTO X DIA';
+		$column[] = ['data' => 'costoAlojamientoDia', 'type' => 'numeric', 'placeholder' => 'Alojamiento x día', 'width' => 250];
+
+		$header[] = 'ALOJAMIENTO TOTAL';
+		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento total', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'SUBTOTAL';
+		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'TOTAL MENSUAL';
+		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'TOTAL VI + TR. AEREO';
+		$column[] = ['data' => 'costoVisual', 'type' => 'numeric', 'placeholder' => 'Total VI + Tr. Aereo', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'TOTAL';
+		$column[] = ['data' => 'total', 'type' => 'numeric', 'placeholder' => 'Total', 'width' => 250, 'readOnly' => true];
+
+		$header[] = 'FRECUENCIA ANUAL';
+		$column[] = ['data' => 'frecuenciaAnual', 'type' => 'numeric', 'placeholder' => 'Frecuencia Anual', 'width' => 250, 'readOnly' => true];
+		// FIN: HEADER & COLUMN
+
+		//ARMANDO HANDSONTABLE
+		$HT[0] = [
+			'nombre' => 'Detalle Distribución',
+			'data' => $datosHt,
+			'headers' => $header,
+			'columns' => $column,
+			'colWidths' => 200,
+		];
+
+		//MOSTRANDO VISTA
+		$dataParaVista['hojas'] = [0 => $HT[0]['nombre']];
+		$result['result'] = 1;
+		$result['data']['width'] = '95%';
+		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
+		$result['data']['ht'] = $HT;
+
+		$result['msg']['title'] = "Carga masiva detalle rutas viajeras";
+
+		Respuesta:
+		echo json_encode($result);
+	}
+	function generarDatosTablaRutasViajeras()
+	{
+		$post = $this->input->post();
+		$ht = $post['HT'][0];
+		array_pop($ht);
+
+		$arrayDatos = [];
+		$n = 0;
+
+		foreach ($ht as $k => $v) {
+			if (empty($v['origen']) || empty($v['destino'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Origen & Destino']);
+				goto Respuesta;
+			}
+			if (empty($v['dias'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Indicar Cantidad de días']);
+				goto Respuesta;
+			}
+			if (empty($v['total'])) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Es necesario un monto']);
+				goto Respuesta;
+			}
+			$idTipoPresupuestoDetalleMovilidad = null;
+			$tpdm = $this->db->get_where(
+				'compras.tipoPresupuestoDetalleMovilidad',
+				[
+					'origen' => $v['origen'],
+					'destino' => $v['destino'],
+					'estado' => 1,
+				]
+			)->row_array();
+
+
+			if (!empty($tpdm)) $idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
+			else {
+				// * Buscar si hay un id con estado 0;
+				$tpdm = $this->db->get_where(
+					'compras.tipoPresupuestoDetalleMovilidad',
+					[
+						'origen' => $v['origen'],
+						'destino' => $v['destino']
+					]
+				)->row_array();
+
+				$datosInsertOrUpdate = [
+					'estado' => 1,
+					'precioBus' => floatval(verificarEmpty($v['costoTransporte'], 2)) / floatval($v['dias']),
+					'precioHospedaje' => floatval(verificarEmpty($v['costoAlojamiento'], 2)) / floatval($v['dias']),
+					'precioViaticos' => floatval(verificarEmpty($v['costoViaticos'], 2)) / floatval($v['dias']),
+					'precioMovilidadInterna' => floatval(verificarEmpty($v['costoMovilidadInterna'], 2)) / floatval($v['dias']),
+					'precioAereo' => floatval(verificarEmpty($v['costoAereo'], 2)) / floatval($v['dias']),
+				];
+
+				if (!empty($tpdm)) { // * Si encontramos 1 se activa y actualizan los costos.
+					$idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
+					$this->db->update(
+						'compras.tipoPresupuestoDetalleMovilidad',
+						$datosInsertOrUpdate,
+						['idTipoPresupuestoDetalleMovilidad' => $tpdm['idTipoPresupuestoDetalleMovilidad']]
+					);
+				} else {
+					$datosInsertOrUpdate['origen'] = $v['origen'];
+					$datosInsertOrUpdate['destino'] = $v['destino'];
+					$datosInsertOrUpdate['idUsuario'] = $this->idUsuario;
+					$datosInsertOrUpdate['fechaReg'] = getActualDateTime();
+					$this->db->insert('compras.tipoPresupuestoDetalleMovilidad', $datosInsertOrUpdate);
+					$idTipoPresupuestoDetalleMovilidad = $this->db->insert_id();
+				}
+			}
+
+
+			// $item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
+			$arrayDatos[$n] = $v;
+			$arrayDatos[$n]['idFrecuencia'] = $this->db->get_where('dbo.frecuencia', ['nombre' => $v['frecuencia']])->row_array()['idFrecuencia'];
+			$arrayDatos[$n]['idTPDM'] = $idTipoPresupuestoDetalleMovilidad;
+			$n++;
+		}
+
+		$result = $this->result;
+		$result['result'] = 1;
+		$result['msg']['content'] = $arrayDatos;
+		Respuesta:
+		echo json_encode($result);
+	}
 	public function formularioRegistroOrdenServicio()
 	{
 		$result = $this->result;
@@ -1361,7 +1753,7 @@ class OrdenServicio extends MY_Controller
 			$tipoPresupuestoDetalle[$v['idTipoPresupuesto']][] = $v;
 		}
 		$dataParaVista['tipoPresupuestoDetalle'] = $tipoPresupuestoDetalle;
-		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		// $dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Registrar Presupuesto';
@@ -1541,7 +1933,7 @@ class OrdenServicio extends MY_Controller
 					$post['movPrecHosp'] = checkAndConvertToArray($post['movPrecHosp']);
 					$post['movPrecViaticos'] = checkAndConvertToArray($post['movPrecViaticos']);
 					$post['movPrecMovInt'] = checkAndConvertToArray($post['movPrecMovInt']);
-					$post['movPrecTaxi'] = checkAndConvertToArray($post['movPrecTaxi']);
+					$post['movPrecAereo'] = checkAndConvertToArray($post['movPrecAereo']);
 					$post['movSubTotal'] = checkAndConvertToArray($post['movSubTotal']);
 					$post['movFrecuenciaCnt'] = checkAndConvertToArray($post['movFrecuenciaCnt']);
 					$post['movTotal'] = checkAndConvertToArray($post['movTotal']);
@@ -1558,7 +1950,7 @@ class OrdenServicio extends MY_Controller
 							'precioHospedaje' => $post['movPrecHosp'][$kmov],
 							'precioViaticos' => $post['movPrecViaticos'][$kmov],
 							'precioMovilidadInterna' => $post['movPrecMovInt'][$kmov],
-							'precioTaxi' => $post['movPrecTaxi'][$kmov],
+							'precioAereo' => $post['movPrecAereo'][$kmov],
 							'subtotal' => $post['movSubTotal'][$kmov],
 							'frecuencia' => $post['movFrecuenciaCnt'][$kmov],
 							'total' => $post['movTotal'][$kmov],
@@ -1723,7 +2115,6 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista['idCuenta'] = $this->db->get_where('compras.ordenServicio', ['idOrdenServicio' => $dataParaVista['presupuesto']['idOrdenServicio']])->row_array()['idCuenta'];
 		$dataParaVista['cargos'] = $this->mCotizacion->getAll_Cargos(['soloCargosOcupados' => true, 'idCuenta' => $dataParaVista['idCuenta']])->result_array();
 		$dataParaVista['empleados'] = $this->model->getAll_RRHHEmpleados(['activo' => true])->result_array();
-		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = $this->db->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
 		$dataParaVista['tipoPresupuestoDetalleAlmacen'] = $this->db->get_where('compras.tipoPresupuestoDetalleAlmacen', ['estado' => 1])->result_array();
 		$dataParaVista['sueldoMinimo'] = $this->db->where('fechaFin', NULL)->get('compras.sueldoMinimo')->row_array()['monto'];
 
@@ -1733,6 +2124,20 @@ class OrdenServicio extends MY_Controller
 		}
 		// Para traer presupuestoDetalleAlmacen y presupuestoDetalleAlmacenRecursos
 		$idPreDet_Almacen = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $idPresupuesto, 'idTipoPresupuesto' => COD_ALMACEN, 'estado' => 1])->row_array()['idPresupuestoDetalle'];
+		$idPreDet_Movilidad = $this->db->get_where('compras.presupuestoDetalle', ['idPresupuesto' => $idPresupuesto, 'idTipoPresupuesto' => COD_MOVILIDAD, 'estado' => 1])->row_array()['idPresupuestoDetalle'];
+
+		$dMov = $this->db->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1, 'idPresupuestoDetalle' => $idPreDet_Movilidad])->result_array();
+		$dataParaVista['tipoPresupuestoDetalleMovilidad'] = [];
+		foreach ($dMov as $k => $v) {
+			$v['costoAereo'] = $v['precioAereo'];
+			$v['costoTransporte'] = $v['precioBus'];
+			$v['costoMovilidadInterna'] = $v['precioMovilidadInterna'];
+			$v['costoViaticos'] = $v['precioViaticos'];
+			$v['costoAlojamiento'] = $v['precioHospedaje'];
+			$v['cantidadViajes'] = $v['frecuencia'];
+			$v['frecuencia'] = RESULT_FRECUENCIA[$v['split']];
+			$dataParaVista['tipoPresupuestoDetalleMovilidad'][$k] = $v;
+		}
 
 		$arTPDA = $this->db->get_where('compras.presupuestoDetalleAlmacen', ['idPresupuestoDetalle' => $idPreDet_Almacen])->result_array();
 		foreach ($arTPDA as $v) {
@@ -2104,10 +2509,10 @@ class OrdenServicio extends MY_Controller
 					$post['movFrecuenciaOpc'] = checkAndConvertToArray($post['movFrecuenciaOpc']);
 					$post['movDias'] = checkAndConvertToArray($post['movDias']);
 					$post['movPrecBus'] = checkAndConvertToArray($post['movPrecBus']);
+					$post['movPrecAereo'] = checkAndConvertToArray($post['movPrecAereo']);
 					$post['movPrecHosp'] = checkAndConvertToArray($post['movPrecHosp']);
 					$post['movPrecViaticos'] = checkAndConvertToArray($post['movPrecViaticos']);
 					$post['movPrecMovInt'] = checkAndConvertToArray($post['movPrecMovInt']);
-					$post['movPrecTaxi'] = checkAndConvertToArray($post['movPrecTaxi']);
 					$post['movSubTotal'] = checkAndConvertToArray($post['movSubTotal']);
 					$post['movFrecuenciaCnt'] = checkAndConvertToArray($post['movFrecuenciaCnt']);
 					$post['movTotal'] = checkAndConvertToArray($post['movTotal']);
@@ -2121,10 +2526,10 @@ class OrdenServicio extends MY_Controller
 							'split' => $post['movFrecuenciaOpc'][$kmov],
 							'dias' => $post['movDias'][$kmov],
 							'precioBus' => $post['movPrecBus'][$kmov],
+							'precioAereo' => $post['movPrecAereo'][$kmov],
 							'precioHospedaje' => $post['movPrecHosp'][$kmov],
 							'precioViaticos' => $post['movPrecViaticos'][$kmov],
 							'precioMovilidadInterna' => $post['movPrecMovInt'][$kmov],
-							'precioTaxi' => $post['movPrecTaxi'][$kmov],
 							'subtotal' => $post['movSubTotal'][$kmov],
 							'frecuencia' => $post['movFrecuenciaCnt'][$kmov],
 							'total' => $post['movTotal'][$kmov],

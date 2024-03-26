@@ -569,13 +569,16 @@ endforeach;  ?>
 							</div>
 						</div>
 					<?php elseif ($vd['idTipoPresupuesto'] == COD_MOVILIDAD) : ?>
-
-						<div style="display: flex;flex-direction: row-reverse;">
-							<a class="ui whatsapp button" onclick="OrdenServicio.listado_movilidad();">Listado</a>
-							<a class="ui blue button" onclick="OrdenServicio.agregar_movilidad();">Agregar</a>
-						</div>
 						<div class="ui table">
-
+							<div class="div-features">
+								<button type="button" class="ui button btn-datos-rutasViajeras teal">
+									<i class="plus icon"></i>
+									Indicar Detalle
+								</button>
+								<div class="datosRutasViajeras d-none">
+									<?= json_encode($tipoPresupuestoDetalleMovilidad) ?>
+								</div>
+							</div>
 							<table class="ui celled table" id="tablaMovilidad" data-personal="<?= count($cargoDelPre); ?>">
 								<thead>
 									<tr>
@@ -584,10 +587,10 @@ endforeach;  ?>
 										<th class="two wide">Split</th>
 										<th class="one wide">Días</th>
 										<th class="one wide">Prec Bus</th>
+										<th class="one wide">Prec Aereo</th>
 										<th class="one wide">Prec Hospedaje</th>
 										<th class="one wide">Prec Viaticos</th>
 										<th class="one wide">Prec Movilidad Interna</th>
-										<th class="one wide">Prec Taxi</th>
 										<th class="one wide">SubTotal</th>
 										<th class="one wide">Frecuencia</th>
 										<th class="two wide">Total</th>
@@ -598,65 +601,63 @@ endforeach;  ?>
 										<tr class="data">
 											<td>
 												<div class="ui input fluid">
-													<input type="hidden" name="movIdTPDM" value="<?= $vm['idTipoPresupuestoDetalleMovilidad']; ?>">
-													<input class="tbMov_origen" value="<?= $vm['origen']; ?>" name="movOrigen">
+													<input type="hidden" name="movIdTPDM" value="<?= $vm['idTipoPresupuestoDetalleMovilidad']; ?>" readonly>
+													<input class="tbMov_origen" value="<?= $vm['origen']; ?>" name="movOrigen" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_destino" value="<?= $vm['destino']; ?>" name="movDestino">
+													<input class="tbMov_destino" value="<?= $vm['destino']; ?>" name="movDestino" readonly>
 												</div>
 											</td>
 											<td>
-												<select class="tbMov_freOpc ui compact fluid selection semantic-dropdown dropdown" name="movFrecuenciaOpc" onchange="OrdenServicio.calcularTotalesMovilidad();">
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '1' ? 'selected' : '') : 'selected'; ?> value="1">1 vez por mes</option>
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '2' ? 'selected' : '') : ''; ?> value="2">1 vez cada 2 meses</option>
-													<option <?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split']) ? ($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['split'] == '3' ? 'selected' : '') : ''; ?> value="3">1 vez cada 3 meses</option>
+												<select class="tbMov_freOpc ui compact fluid selection semantic-dropdown dropdown read-only" name="movFrecuenciaOpc" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<option selected value="<?= $vm['split']; ?>"><?= RESULT_FRECUENCIA[$vm['split']] ?></option>
 												</select>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['dias'] : '0'; ?>" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="<?= $vm['dias']; ?>" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_bus text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioBus'] : '0'; ?>" name="movPrecBus" readonly>
+													<input class="tbMov_bus text-right" value="<?= $vm['precioBus']; ?>" name="movPrecBus" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_hosp text-right" data-costobase="<?= $vm['precioHospedaje']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioHospedaje'] : '0'; ?>" name="movPrecHosp" readonly>
+													<input class="tbMov_aereo text-right" value="<?= $vm['precioAereo']; ?>" name="movPrecAereo" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_viat text-right" data-costobase="<?= $vm['precioViaticos']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioViaticos'] : '0'; ?>" name="movPrecViaticos" readonly>
+													<input class="tbMov_hosp text-right" data-costobase="<?= $vm['precioHospedaje'] / $vm['dias']; ?>" value="<?= $vm['precioHospedaje']; ?>" name="movPrecHosp" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_movInt text-right" data-costobase="<?= $vm['precioMovilidadInterna']; ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioMovilidadInterna'] : '0'; ?>" name="movPrecMovInt" readonly>
+													<input class="tbMov_viat text-right" data-costobase="<?= $vm['precioViaticos'] / $vm['dias']; ?>" value="<?= $vm['precioViaticos']; ?>" name="movPrecViaticos" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_taxi text-right" data-costobase="<?= verificarEmpty($vm['precioTaxi'], 2); ?>" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['precioTaxi'] : '0'; ?>" name="movPrecTaxi" readonly>
+													<input class="tbMov_movInt text-right" data-costobase="<?= $vm['precioMovilidadInterna'] / $vm['dias']; ?>" value="<?= $vm['precioMovilidadInterna']; ?>" name="movPrecMovInt" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_sbto text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['subtotal'] : '0'; ?>" name="movSubTotal" readonly>
+													<input class="tbMov_sbto text-right" value="<?= $vm['total']; ?>" name="movSubTotal" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['frecuencia'] : '1'; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();">
+													<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="<?= $vm['cantidadViajes']; ?>" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();" readonly>
 												</div>
 											</td>
 											<td>
 												<div class="ui input fluid">
-													<input class="tbMov_tot text-right" value="<?= isset($presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]) ? $presupuestoDetalleMovilidad[$vm['idTipoPresupuestoDetalleMovilidad']]['total'] : '0'; ?>" name="movTotal" readonly>
+													<input class="tbMov_tot text-right" value="0" name="movTotal" readonly>
 												</div>
 											</td>
 										</tr>

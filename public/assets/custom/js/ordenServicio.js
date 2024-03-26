@@ -206,7 +206,6 @@ var OrdenServicio = {
 
 			let id = $(this).parents('tr:first').data('id');
 			let estado = $(this).parents('tr:first').data('estado');
-			//console.log(estado);
 			let data = { 'idOrdenServicio': id, 'idOrdenServicioEstado': estado };
 
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -363,7 +362,6 @@ var OrdenServicio = {
 			++modalId;
 
 			let id = $(this).parents('tr:first').data('presupuesto');
-			console.log(id);
 			let data = { 'idPresupuesto': id };
 
 			let jsonString = { 'data': JSON.stringify(data) };
@@ -531,18 +529,15 @@ var OrdenServicio = {
 
 				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				btn[0] = { title: 'Cerrar', fn: fn[0] };
-				
-				fn[1] = `Fn.showConfirm({ idForm: "formPDFIndicarDetalle", fn: "OrdenServicio.generarPDF(`+ id + `)", content: "¿Está seguro de continuar?" });`;
+
+				fn[1] = `Fn.showConfirm({ idForm: "formPDFIndicarDetalle", fn: "OrdenServicio.generarPDF(` + id + `)", content: "¿Está seguro de continuar?" });`;
 				btn[1] = { title: 'Continuar', fn: fn[1] };
 				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '30%' });
 			});
 		});
 
 		$(document).on('change', '.porCL', function () {
-			
 			$(this).closest('table').find('.moneda').first().change();
-
-			//console.log(tipo);
 		})
 
 		$(document).on('change', '.cboBeneficio', function () {
@@ -558,13 +553,198 @@ var OrdenServicio = {
 				$('#btn-addCargo').addClass('disabled');
 			}
 		})
+		$(document).on('click', '.btn-datos-rutasViajeras', function (e) {
+			e.preventDefault();
+			var this_ = $(this);
+			OrdenServicio.thisTemporal = this_;
+
+			let dataPrevia = this_.closest('.div-features').find('.datosRutasViajeras').html();
+			// let presupuesto;
+			// if ($('#ordenServicioSelect').val() == '') {
+			// 	presupuesto = 1;
+			// }
+			let data = { 'presupuesto': 0 };
+			data.dataPrevia = dataPrevia;
+			let jsonString = { 'data': JSON.stringify(data) };
+			var config = { 'url': OrdenServicio.url + 'getSubDetalleRutasViajeras', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				++modalId;
+				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				var btn = [];
+				if (a.result === 1) {
+					var fn1 = `OrdenServicio.procesarPreciosRutasViajeras(${modalId}, false);`;
+					var fn2 = `OrdenServicio.llenarCamposEnTablaRutasViajeras(${modalId});`;
+
+					btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
+					btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
+				}
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			});
+		});
 		HTCustom.load();
 
 	},
+	procesarPreciosRutasViajeras: function (idModalHT, buscarCosto) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var contColsInvalid = 0;
+		contColsInvalid = $('#divTablaCargaMasiva .htInvalid').length;
+
+		if (contColsInvalid > 0) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = new Array();
+			btn[0] = { title: 'Cerrar', fn: fn };
+			var message = Fn.message({ 'type': 2, 'message': 'Se encontró datos obligatorios que no fueron ingresados, verificar los datos remarcados <label style="color:red">en rojo</label>' });
+			Fn.showModal({ id: modalId, title: 'Alerta', frm: message, btn: btn, show: true });
+			return false;
+		}
+
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		data['buscarCosto'] = buscarCosto;
+		let presupuesto;
+		if ($('#ordenServicioSelect').val() == '') {
+			presupuesto = 1;
+		}
+		data['presupuesto'] = presupuesto;
+		var config = { 'url': OrdenServicio.url + 'procesarTablaDatosRutasViajeras', 'data': data };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			if (a.result === 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				var fn1 = `OrdenServicio.procesarPreciosRutasViajeras(${modalId}, false);`;
+				var fn2 = `OrdenServicio.llenarCamposEnTablaRutasViajeras(${modalId});`;
+
+				btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
+				btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+				HTCustom.llenarHTObjectsFeatures(a.data.ht);
+			}
+			if (a.result === 0) {
+				btn[0] = { title: 'Cerrar', fn: fn };
+				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
+			}
+
+		});
+	},
+	llenarCamposEnTablaRutasViajeras: function (idModalHT) {
+		var data = Fn.formSerializeObject('formCargaMasiva');
+		var HT = [];
+		$.each(HTCustom.HTObjects, function (i, v) {
+			if (typeof v !== 'undefined') HT.push(v.getSourceData());
+		});
+		data['HT'] = HT;
+		var config = { 'url': OrdenServicio.url + 'generarDatosTablaRutasViajeras', 'data': data };
+
+		$.when(Fn.ajax(config)).then(function (a) {
+			if (a.result === 2) return false;
+
+			++modalId;
+			var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+			var btn = [];
+			btn[0] = { title: 'Cerrar', fn: fn };
+
+			if (a.result == 1) {
+				Fn.showModal({ id: idModalHT, show: false });
+				datosDeHT = JSON.parse(JSON.stringify(a.msg.content));
+				html = `<input type="hidden" name="cantidadItemsRutasViajeras" value="${datosDeHT.length}">`;
+				let costoTotal = 0;
+				for (let i = 0; i < datosDeHT.length; i++) {
+					row = datosDeHT[i];
+					cstDiaAlojamiento = row.costoAlojamiento / row.dias;
+					cstDiaViaticos = row.costoViaticos / row.dias;
+					cstDiaMovilidadInterna = row.costoMovilidadInterna / row.dias;
+
+					html += `
+					<tr class="data">
+						<td>
+							<div class="ui input fluid">
+								<input type="hidden" name="movIdTPDM" value="${row.idTPDM}" readonly>
+								<input class="tbMov_origen" value="${row.origen}" name="movOrigen" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_destino" value="${row.destino}" name="movDestino" readonly>
+							</div>
+						</td>
+						<td>
+							<select class="tbMov_freOpc ui compact fluid selection semantic-dropdown dropdown read-only" name="movFrecuenciaOpc" onchange="OrdenServicio.calcularTotalesMovilidad();">
+								<option selected value="${row.idFrecuencia}">${row.frecuencia}</option>
+							</select>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_dias text-right keyUpChange onlyNumbers" value="${row.dias}" name="movDias" onchange="OrdenServicio.calcularTotalesMovilidad();" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_bus text-right" value="${row.costoTransporte}" name="movPrecBus" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_aereo text-right" value="${row.costoAereo}" name="movPrecAereo" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_hosp text-right" data-costobase="${cstDiaAlojamiento}" value="${row.costoAlojamiento}" name="movPrecHosp" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_viat text-right" data-costobase="${cstDiaViaticos}" value="${row.costoViaticos}" name="movPrecViaticos" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_movInt text-right" data-costobase="${cstDiaMovilidadInterna}" value="${row.costoMovilidadInterna}" name="movPrecMovInt" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_sbto text-right" value="${row.total}" name="movSubTotal" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_fre text-right keyUpChange onlyNumbers" value="${row.cantidadViajes}" name="movFrecuenciaCnt" onchange="OrdenServicio.calcularTotalesMovilidad();" readonly>
+							</div>
+						</td>
+						<td>
+							<div class="ui input fluid">
+								<input class="tbMov_tot text-right" value="0" name="movTotal" readonly>
+							</div>
+						</td>
+					</tr>
+					`;
+					costoTotal += parseFloat(row.cuenta);
+				}
+				OrdenServicio.thisTemporal.closest('.body-item').find('.costoForm').val(costoTotal);
+				OrdenServicio.thisTemporal.closest('.body-item').find('.cantidadForm').val(1).keyup();
+				HT[0].pop();
+				OrdenServicio.thisTemporal.closest('.table').find('table').find('tbody').html(html);
+				OrdenServicio.thisTemporal.closest('.table').find('.datosRutasViajeras').html(JSON.stringify(HT[0]));
+				OrdenServicio.calcularTotalesMovilidad();
+			} else {
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, btn: btn, frm: a.msg.content });
+			}
+		});
+	},
 	generarPDF: function (id) {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('formPDFIndicarDetalle')) };
-		let url = OrdenServicio.url + "generarPdf/"  + id;
-		
+		let url = OrdenServicio.url + "generarPdf/" + id;
 		if (url != "") {
 			$.when(Fn.download(url, jsonString)).then(function (a) {
 				console.log('Descarga correcta');
@@ -804,8 +984,6 @@ var OrdenServicio = {
 
 			fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
 			btn[0] = { title: 'Cerrar', fn: fn[0] };
-			// fn[1] = 'Fn.showConfirm({ idForm: "formRegistroCotizacion", fn: "Cotizacion.registrarCotizacion(5)", content: "¿Esta seguro de enviar esta cotizacion?" });';
-			// btn[1] = { title: 'Aprobar <i class="fas fa-paper-plane"></i>', fn: fn[1] };
 
 			Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
 
@@ -856,10 +1034,8 @@ var OrdenServicio = {
 		let jsonString = { 'data': JSON.stringify(Fn.formSerializeObject('form_almacen_save')) };
 		let url = OrdenServicio.url + "registrarNuevoAlmacen";
 		let config = { url: url, data: jsonString };
-		//console.log(config);
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result == 1) {
-				console.log("todo bien");
 				let btn = [];
 				let fn = [];
 
@@ -1524,18 +1700,19 @@ var OrdenServicio = {
 			dias = parseFloat($(this).find('.tbMov_dias').val());
 			frecuencia = parseFloat($(this).find('.tbMov_fre').val());
 			frecuenciaOpcion = $(this).find('.tbMov_freOpc').dropdown('get value');
-
 			inpOrigen = $(this).find('.tbMov_origen');
 			inpDestin = $(this).find('.tbMov_destino');
 			inpPreBus = $(this).find('.tbMov_bus');
+			inpPreAer = $(this).find('.tbMov_aereo');
 			inpPreHsp = $(this).find('.tbMov_hosp');
 			inpPreVia = $(this).find('.tbMov_viat');
 			inpPreInt = $(this).find('.tbMov_movInt');
-			inpPreTxi = $(this).find('.tbMov_taxi');
+			// inpPreTxi = $(this).find('.tbMov_taxi');
 			inpPreSbT = $(this).find('.tbMov_sbto');
 			inpPreTot = $(this).find('.tbMov_tot');
 
 			sbt = dias == 0 ? 0 : parseFloat(inpPreBus.val());
+			sbt += dias == 0 ? 0 : parseFloat(inpPreAer.val());
 
 			cal = parseFloat(inpPreHsp.data('costobase')) * dias; sbt += cal;
 			inpPreHsp.val(cal.toFixed(2));
@@ -1543,8 +1720,8 @@ var OrdenServicio = {
 			inpPreVia.val(cal.toFixed(2));
 			cal = parseFloat(inpPreInt.data('costobase')) * dias; sbt += cal;
 			inpPreInt.val(cal.toFixed(2));
-			cal = parseFloat(inpPreTxi.data('costobase')) * dias; sbt += cal;
-			inpPreTxi.val(cal.toFixed(2));
+			// cal = parseFloat(inpPreTxi.data('costobase')) * dias; sbt += cal;
+			// inpPreTxi.val(cal.toFixed(2));
 
 			inpPreSbT.val(sbt.toFixed(2));
 
@@ -1557,14 +1734,12 @@ var OrdenServicio = {
 
 				nro = 0;
 
-				console.log(OrdenServicio.arrayFechas);
 				$.each(OrdenServicio.arrayFechas, function (k, v) {
 					if (typeof arT[k] === 'undefined') arT[k] = 0;
 
-					if (frecuenciaOpcion == '1') {
+					if (frecuenciaOpcion == '1') { //* MENSUAL
 						rpta = tot;
-
-					} else if (frecuenciaOpcion == '2') {
+					} else if (frecuenciaOpcion == '2') { //* BIMESTRAL
 						nro += 0.5;
 						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
 							rpta = tot;
@@ -1572,7 +1747,31 @@ var OrdenServicio = {
 						} else {
 							rpta = 0;
 						}
-					} else if (frecuenciaOpcion == '3') {
+					} else if (frecuenciaOpcion == '3') { //* SEMESTRAL
+						nro += 0.17;
+						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+							rpta = tot;
+							nro = 0;
+						} else {
+							rpta = 0;
+						}
+					} else if (frecuenciaOpcion == '4') { //* ANUAL
+						nro += 0.09;
+						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
+							rpta = tot;
+							nro = 0;
+						} else {
+							rpta = 0;
+						}
+					} else if (frecuenciaOpcion == '5') { //* UNICO
+						nro += 0;
+						if (nro >= 1 || k == 0) {
+							rpta = tot;
+							nro = 0;
+						} else {
+							rpta = 0;
+						}
+					} else if (frecuenciaOpcion == '7') { //* TRIMESTRAL
 						nro += 0.34;
 						if (nro >= 1 || k + 1 == (OrdenServicio.arrayFechas).length) {
 							rpta = tot;
@@ -1686,7 +1885,6 @@ var OrdenServicio = {
 				html2 += '<i class="fal fa-lg fa-toggle-off"></i>';
 			}
 			html2 += '</a>';
-			console.log(html2);
 			$('#est_almacen_' + id).html(html);
 			$('#upt_almacen_' + id).html(html2);
 		});
@@ -1736,7 +1934,6 @@ var OrdenServicio = {
 		++modalId;
 		let jsonString = { 'data': JSON.stringify(jsonData) };
 		let config = { 'url': OrdenServicio.url + 'save_almacenDetalle', 'data': jsonString };
-		// console.log(config);
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result == 1) {
 				let btn = [];
@@ -1754,7 +1951,6 @@ var OrdenServicio = {
 		let url = OrdenServicio.url + "registrarOrdenServicioDatosOC";
 		let config = { url: url, data: jsonString };
 
-		//console.log(config);
 		$.when(Fn.ajax(config)).then(function (a) {
 			if (a.result == 1) {
 				let btn = [];
@@ -1774,7 +1970,6 @@ var OrdenServicio = {
 		//var split = $('#up_split_'+id).val();
 		var split = $('select[name="up_split_' + id + '"]').val();
 
-		//console.log(split);
 		var prebus = $('#up_preBus_' + id).val();
 		var prehosp = $('#up_preHosp_' + id).val();
 		var previa = $('#up_preVia_' + id).val();
