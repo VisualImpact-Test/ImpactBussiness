@@ -18,8 +18,8 @@
 				<th>Moneda</th>
 				<th>PO Cliente</th>
 				<th>GR</th>
-				<th>N° Factura</th>
 				<th>N° Serie</th>
+				<th>N° Factura</th>
 				<th>Estado</th>
 				<th>Cuenta</th>
 			</tr>
@@ -59,8 +59,8 @@
 					<td class="td-center"><?= $row['nombreMoneda']; ?></td>
 					<td class="td-center"><?= $row['poCliente']; ?></td>
 					<td class="td-center"><?= $row['numeroGR']; ?></td>
-					<td class="td-center"><?= verificarEmpty(strtoupper($row['numeroDocumento']), 3); ?></td>
 					<td class="td-center"><?= verificarEmpty($row['numeroSerie'], 3); ?></td>
+					<td class="td-center"><?= verificarEmpty(strtoupper($row['numeroDocumento']), 3); ?></td>
 					<td>
 						<?php if (empty($row['adjuntosCargados'])) : ?>
 							<span class="ui grey large label">

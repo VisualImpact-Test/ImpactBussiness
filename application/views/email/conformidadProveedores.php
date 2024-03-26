@@ -115,8 +115,8 @@
 							<td style="background-color: #EEF509;color: red;font-weight: bold;" class="text-center header"><?= verificarEmpty($data['numeroOC'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['pocliente'], 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['tipoComprobante'], 3); ?></td>
-							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty(strtoupper($data['numeroFactura']), 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty($data['numeroSerie'], 3); ?></td>
+							<td style="background-color: #FFFFFF;color: black;" class="text-center header"><?= verificarEmpty(strtoupper($data['numeroFactura']), 3); ?></td>
 							<td style="background-color: #FFFFFF;color: black;font-weight: bold;" class="text-center header"><?= verificarEmpty(numeroVistaMoneda($data['monto']), 3); ?></td>
 						</tr>
 					</tbody>
