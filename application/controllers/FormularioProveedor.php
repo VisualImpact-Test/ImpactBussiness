@@ -927,6 +927,7 @@ class FormularioProveedor extends MY_Controller
 
 		$dataParaVista = [];
 
+		$dataParaVista['sustentoAp'] = 0;
 		$dataParaVista['mostrarOpcionesExt'] = false;
 		if (isset($post['mostrarOpcionesExt'])) {
 			$dataParaVista['mostrarOpcionesExt'] = true;
@@ -937,10 +938,13 @@ class FormularioProveedor extends MY_Controller
 		$dataParaVista['idProveedor'] = $post['idpro'];
 		$dataParaVista['flagoclibre'] = $post['flagoclibre'];
 
-		if (!empty($post['id']))
-			$where = ['idOrdenCompra' => $post['id'], 'flagoclibre' => $post['flagoclibre'], 'estado' => '1'];
-		else
-			$where = ['idCotizacion' => $post['idcot'], 'flagoclibre' => $post['flagoclibre'], 'idProveedor' => $post['idpro'], 'estado' => '1'];
+		if (!empty($post['id'])) {
+			$where = ['idOrdenCompra' => $post['id'], 'flagoclibre' => $post['flagoclibre']];
+			$whereComp = ['idOrdenCompra' => $post['id'], 'flagoclibre' => $post['flagoclibre'], 'estado' => 1, 'flagRevisado' => 1, 'flagAprobado' => 1];
+		} else {
+			$where = ['idCotizacion' => $post['idcot'], 'flagoclibre' => $post['flagoclibre'], 'idProveedor' => $post['idpro']];
+			$whereComp = ['idCotizacion' => $post['idcot'], 'flagoclibre' => $post['flagoclibre'], 'idProveedor' => $post['idpro'], 'estado' => 1, 'flagRevisado' => 1, 'flagAprobado' => 1];
+		}
 
 		$dataParaVista['sustentosCargados'] = $this->db
 			->get_where(
@@ -948,6 +952,11 @@ class FormularioProveedor extends MY_Controller
 				$where
 			)
 			->result_array();
+		$dataSustentoAp = $this->db->get_where(
+			'sustento.sustentoAdjunto', $whereComp)->result_array();
+		if(!empty($dataSustentoAp)) {
+			$dataParaVista['sustentoAp'] = 1;
+		}
 		// $dataParaVista['cotizacion'] = $post['cotizacion'];
 		// $dataParaVista['artes'] = $this->db->where('idProveedor', $post['proveedor'])->where('idCotizacion', $post['cotizacion'])->where('estado', 1)->get('compras.validacionArte')->result_array();
 		$result['result'] = 1;
@@ -1552,11 +1561,19 @@ class FormularioProveedor extends MY_Controller
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
 
-		$this->db->update(
-			'sustento.sustentoAdjunto',
-			['flagAprobado' => $post['estado'], 'flagRevisado' => '1'],
-			['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]
-		);
+		if (isset($post['estadoSustento'])) {
+			$this->db->update(
+				'sustento.sustentoAdjunto',
+				['flagAprobado' => $post['estado'], 'flagRevisado' => '1', 'estado' => 0],
+				['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]
+			);
+		} else {
+			$this->db->update(
+				'sustento.sustentoAdjunto',
+				['flagAprobado' => $post['estado'], 'flagRevisado' => '1'],
+				['idCotizacionDetalleProveedorSustentoCompra' => $post['id']]
+			);
+		}
 
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Hecho!';
@@ -1845,18 +1862,18 @@ class FormularioProveedor extends MY_Controller
 
 		$params['idUsuario'] = $this->session->userdata('idUsuario');
 		// if (empty($params['idUsuario'])) {
-			if ($r['idDia'] != 2 && $r['idDia'] != 4) {
-				$result['result'] = 0;
-				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
-				goto respuesta;
-			}
+		if ($r['idDia'] != 2 && $r['idDia'] != 4) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
+			goto respuesta;
+		}
 
-			if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
-				$result['result'] = 0;
-				$result['msg']['title'] = 'Alerta!';
-				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
-				goto respuesta;
+		if ($hora > $horaLimiteMax || $hora < $horaLimiteMin) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Alerta!';
+			$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'SUBIR SUSTENTOS LOS DIAS MARTES Y JUEVES DE 00:00 AM HASTA LAS 14:00']);
+			goto respuesta;
 			// }
 		}
 
