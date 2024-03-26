@@ -30,7 +30,7 @@
 					<label class="form-control col-md-4" style="border:0px;">N° Factura</label>
 					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido">
 					<label class="form-control col-md-4" style="border:0px;"></label>
-					<span class="pl-3" id="advertencia" style="color: orange; display: none;">
+					<span class="col-md-8" id="advertencia" style="color: orange; display: none;">
 						Por favor, llenar serie y N° Comprobante
 					</span>
 					<span class="col-md-8" id="advertencia1" style="color: orange;">

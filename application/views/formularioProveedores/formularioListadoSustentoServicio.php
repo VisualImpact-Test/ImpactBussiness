@@ -43,19 +43,31 @@
 										<i class="icon eye"></i>
 									</a>
 									<?php if ($row['flagRevisado'] == '1' && $row['flagAprobado'] != '1') :  ?>
-										<a class="ui button formEditSustentoServ" data-idcotdetprov="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-id="<?= $row['idOrdenCompra'] ?>" data-flagoclibre="<?= $row['flagoclibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
-											<i class="icon edit"></i>
-										</a>
+										<?php if ($sustentoAp == '0') :  ?>
+											<a class="ui button formEditSustentoServ" data-idcotdetprov="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-id="<?= $row['idOrdenCompra'] ?>" data-flagoclibre="<?= $row['flagoclibre'] ?>" data-idcot="<?= $row['idCotizacion'] ?>" data-idpro="<?= $row['idProveedor'] ?>">
+												<i class="icon edit"></i>
+											</a>
+										<?php endif; ?>
 									<?php endif; ?>
 								</td>
 								<?php if ($mostrarOpcionesExt) :  ?>
 									<td class="text-center">
-										<a class="ui button green btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="1">
-											<i class="icon check"></i>
-										</a>
-										<a class="ui button red btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="0">
-											<i class="icon times"></i>
-										</a>
+										<?php if ($row['flagRevisado'] == '0') :  ?>
+											<a class="ui button green btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="1">
+												<i class="icon check"></i>
+											</a>
+											<a class="ui button red btn-estadoSustServicio" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="0">
+												<i class="icon times"></i>
+											</a>
+										<?php else :  ?>
+											<?php if ($sustentoAp == '0') :  ?>
+												<a class="ui button red formDeleteSustentoServ" data-id="<?= $row['idCotizacionDetalleProveedorSustentoCompra'] ?>" data-estado="0">
+													<i class="icon trash"></i>
+												</a>
+											<?php else :  ?>
+												-
+											<?php endif; ?>
+										<?php endif; ?>
 									</td>
 								<?php endif; ?>
 							</tr>

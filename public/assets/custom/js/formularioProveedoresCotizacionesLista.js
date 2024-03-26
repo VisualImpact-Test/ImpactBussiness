@@ -211,6 +211,10 @@ var FormularioProveedores = {
 			++modalId;
 			var dataForm = {};
 			dataForm.id = $(this).data('id');
+			dataForm.idcotdetprov = $(this).data('idcotdetprov');
+			dataForm.idcot = $(this).data('idcot');
+			dataForm.idpro = $(this).data('idpro');
+			dataForm.flagoclibre = $(this).data('flagoclibre');
 
 			let jsonString = { 'data': JSON.stringify(dataForm) };
 
