@@ -380,6 +380,31 @@ var Cotizacion = {
 			});
 		});
 
+
+		$(document).on('click', '.btnRutasViajeras', function () {
+			++modalId;
+
+			let id = $(this).data('id');
+			let data = { 'idCotizacion': id };
+
+			let jsonString = { 'data': JSON.stringify(data) };
+			let config = { 'url': Cotizacion.url + 'formularioRutasViajeras', 'data': jsonString };
+
+			$.when(Fn.ajax(config)).then((a) => {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false });';
+				btn[0] = { title: 'Cerrar', fn: fn[0] };
+				fn[1] = 'Fn.showConfirm({ idForm: "formDatosRutasViajeras", fn: "Cotizacion.actualizarRutasViajeras(' + id + ')", content: "¿Esta seguro de Actualizar Rutas Viajeras? " });';
+				btn[1] = { title: 'Actualizar', fn: fn[1] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.data.html, btn: btn, width: '60%' });
+				Fn.loadSemanticFunctions();
+		
+			});
+		});
+
 		$(document).on('click', '.btn-agregarItem', function () {
 			++modalId;
 
@@ -1342,7 +1367,27 @@ var Cotizacion = {
 		
 	
 		});
-	}
+	},
+	actualizarRutasViajeras: function () {
+		let formValues = Fn.formSerializeObject('formDatosRutasViajeras');
+		let jsonString = { 'data': JSON.stringify(formValues) };
+		let url = Cotizacion.url + "actualizarRutasViajeras";
+		let config = { url: url, data: jsonString };
+
+		$.when(Fn.ajax(config)).then(function (b) {
+			++modalId;
+			var btn = [];
+			let fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
+
+			if (b.result == 1) {
+				fn = 'Fn.closeModals(' + modalId + ');$("#btn-filtrarCotizacion").click();';
+			}
+
+			btn[0] = { title: 'Continuar', fn: fn };
+			Fn.showModal({ id: modalId, show: true, title: b.msg.title, content: b.msg.content, btn: btn, width: '40%' });
+		});
+
+	},
 }
 
 Cotizacion.load();
