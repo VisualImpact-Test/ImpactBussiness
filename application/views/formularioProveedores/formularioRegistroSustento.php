@@ -28,13 +28,8 @@
 						<label class="custom-file-label labelImagen" lang="es">Agregar Archivos</label>
 					</div>
 					<label class="form-control col-md-4" style="border:0px;">N° Factura</label>
-					<input class="form-control col-md-8" id="nfactura" name="nfactura" patron="requerido">
-					<label class="form-control col-md-4" style="border:0px;"></label>
-					<span class="col-md-8" id="advertencia" style="color: orange; display: none;">
-						Por favor, llenar serie y N° Comprobante
-					</span>
-					<span class="col-md-8" id="advertencia1" style="color: orange;">
-					</span>
+					<input class="form-control col-md-4" placeholder="N° Serie" id="nserie" name="nserie" patron="requerido">
+					<input class="form-control col-md-4" placeholder="N° Factura" id="nfactura" name="nfactura" patron="requerido">
 					<label class="form-control col-md-4" style="border:0px;">Fecha Emisión</label>
 					<input type="date" class="form-control col-md-8" id="fechaEmision" name="fechaEmision" patron="requerido">
 					<label class="form-control col-md-4" style="border:0px;">Tipo de Comprobante</label>

@@ -107,6 +107,36 @@ var ProveedorServicio = {
 			});
 
 		});
+		$(document).on('click', '.formDeleteSustentoServ', function () {
+			control = $(this);
+			++modalId;
+			var dataForm = {};
+			dataForm.id = $(this).data('id');
+			dataForm.flagoclibre = $(this).data('flagoclibre');
+			dataForm.estado = $(this).data('estado');
+			dataForm.estadoSustento = 0;
+
+			let jsonString = { 'data': JSON.stringify(dataForm) };
+			let config = { 'url': ProveedorServicio.url_FormularioProveedor + 'editarSustentoServicioEstado', 'data': jsonString };
+			$.when(Fn.ajax(config)).then(function (a) {
+				let btn = [];
+				let fn = [];
+
+				fn[0] = 'Fn.showModal({ id:' + modalId + ',show:false }); $(".rstSustServ").click();$("#btn-filtrarProveedorServicio").click();';
+				if (a.result == 1) {
+					if (control.data('estado') == '1') {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui green basic label large">Aprobado</label>');
+					} else {
+						control.closest('tr.default').find('.tdEstado').html('<label class="ui red basic label large">Rechazado</label>');
+					}
+					// fn[0] = 'Fn.closeModals(' + modalId + ');';
+				}
+				btn[0] = { title: 'Continuar', fn: fn[0] };
+
+				Fn.showModal({ id: modalId, show: true, title: a.msg.title, frm: a.msg.content, btn: btn, width: '40%' });
+			});
+
+		});
 		$(document).on('click', '.btn-estadoSustComprobante', function () {
 			control = $(this);
 			++modalId;
@@ -783,20 +813,6 @@ var ProveedorServicio = {
 					}
 
 				}
-			}
-		});
-		$(document).on('keyup', '#nfactura', function () {
-			var valor = this.value;
-			var advertencia = document.getElementById('advertencia');
-			var advertencia1 = document.getElementById('advertencia1');
-
-			// Verificar si el valor contiene al menos una letra
-			if (!/[a-zA-Z]/.test(valor)) {
-				advertencia.style.display = 'inline'; // Mostrar la advertencia si no hay letras
-				advertencia1.style.display = 'none';
-			} else {
-				advertencia.style.display = 'none';
-				advertencia1.style.display = 'inline'; // Ocultar la advertencia si hay al menos una letra
 			}
 		});
 		// Fin: File uploaded

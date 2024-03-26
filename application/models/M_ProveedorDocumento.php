@@ -11,7 +11,7 @@ class M_ProveedorDocumento extends MY_Model
 	public function obtenerRegistrosParaFinanzas($params = [])
 	{
 		$this->db
-			->select("comp.numeroDocumento,comp.fechaEmision,oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
+			->select("comp.numeroDocumento,comp.numeroSerie,comp.fechaEmision,oc.seriado as ordenCompra, ocd.idOrdenCompra, cast(oc.fechaReg as DATE) as fechaRegOC, 
 						oc.idProveedor, 
 						0 as flagOcLibre,
 						pr.razonSocial, pr.nroDocumento as rucProveedor, 
@@ -70,7 +70,7 @@ class M_ProveedorDocumento extends MY_Model
 	{
 		$this->db
 			->distinct()
-			->select("comp.numeroDocumento,comp.fechaEmision,oc.seriado as ordenCompra,
+			->select("comp.numeroDocumento,comp.numeroSerie,comp.fechaEmision,oc.seriado as ordenCompra,
 						oc.idOrdenCompra as idOrdenCompra, 
 						1 as flagOcLibre,
 						cast(oc.fechaReg as DATE) as fechaRegOC, 
@@ -146,11 +146,12 @@ class M_ProveedorDocumento extends MY_Model
 	{
 		$this->db
 			->distinct()
-			->select("mp.nombre AS metodoPago, mp.cantDias, c.fechaAprobadoFinanza,
+			->select("CASE WHEN mp.idMetodoPago = 1 THEN 'AL CONTADO' ELSE 'CRÉDITO' END AS metodoPago, mp.cantDias, 
+			CONVERT(VARCHAR(10), DATEADD(day, mp.cantDias, c.fechaAprobadoFinanza), 103) AS fechaAprobadoFinanza,
 			DATENAME(month, c.fechaAprobadoFinanza) AS mesAprobacionFinanza,
 			p.nroDocumento AS ruc, p.razonSocial, oc.descripcionFinanzas AS descripcionCompras,
 			cc.canal + ' - ' + cc.subcanal centroCosto, oc.seriado numeroOC, oc.pocliente,
-			tc.nombre AS tipoComprobante, c.numeroDocumento AS serieFactura", false)
+			tc.nombre AS tipoComprobante, c.numeroDocumento AS numeroFactura, c.numeroSerie", false)
 			->from('compras.ordenCompra oc')
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'INNER')
 			->join('sustento.comprobante c', 'c.idOrdenCompra = oc.idOrdenCompra AND c.estado = 1', 'INNER')
@@ -175,7 +176,7 @@ class M_ProveedorDocumento extends MY_Model
     		DATENAME(month, DATEADD(day, mp.cantDias, c.fechaAprobadoFinanza)) AS mesAprobacionFinanza,
 			p.nroDocumento AS ruc, p.razonSocial, oc.descripcionCompras,
 			cc.canal + ' - ' + cc.subcanal centroCosto, oc.seriado numeroOC, oc.pocliente,
-			tc.nombre AS tipoComprobante, c.numeroDocumento AS serieFactura", false)
+			tc.nombre AS tipoComprobante, c.numeroDocumento AS numeroFactura, c.numeroSerie", false)
 			->from('orden.ordenCompra oc')
 			->join('compras.metodoPago mp', 'mp.idMetodoPago = oc.idMetodoPago', 'INNER')
 			->join('sustento.comprobante c', 'c.idOrdenCompra = oc.idOrdenCompra AND c.estado = 1', 'INNER')

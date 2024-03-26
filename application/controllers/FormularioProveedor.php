@@ -1953,6 +1953,7 @@ class FormularioProveedor extends MY_Controller
 					'flagIncidencia' => $post['incidencia'],
 					'flagRevisado' => 1,
 					'flagAprobado' => 1,
+					'numeroSerie' => $post['nserie'],
 					'numeroDocumento' => $post['nfactura'],
 					'fechaEmision' => $post['fechaEmision'],
 					'idTipoComprobante' => $post['tipoComprobante']

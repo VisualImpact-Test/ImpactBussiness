@@ -51,26 +51,25 @@ class ProveedorDocumento extends MY_Controller
 
 		$datos1 = $this->model->obtenerRegistrosParaFinanzas($post)->result_array();
 		$datos2 = $this->model->obtenerRegistrosParaFinanzasLibre($post)->result_array();
-
 		$datos = array_merge($datos1, $datos2);
 		$datos = ordenarArrayPorColumna($datos, 'ordenCompra', SORT_DESC);
 
 		foreach ($datos as $k => $v) {
-			$v['adjuntosCargados']= false;
+			$v['adjuntosCargados'] = false;
 			$buscarCargados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1])->result_array();
 			if (!empty($buscarCargados)) $v['adjuntosCargados'] = true;
 
-			if (($post['estDocumento'] == 1 && $v['aprobados'] == $v['totalDocumentos'] && !empty($v['adjuntosCargados']) ) || ($post['estDocumento'] == 2 && $v['aprobados'] != $v['totalDocumentos']) || ( empty($post['estDocumento'])) ) {
-			if (!isset($dataParaVista['datos'][$v['ordenCompra']])) {
-				$dataParaVista['datos'][$v['ordenCompra']] = $v;
-				$dataParaVista['datos'][$v['ordenCompra']]['monto'] = 0;
+			if (($post['estDocumento'] == 1 && $v['aprobados'] == $v['totalDocumentos'] && !empty($v['adjuntosCargados'])) || ($post['estDocumento'] == 2 && $v['aprobados'] != $v['totalDocumentos']) || (empty($post['estDocumento']))) {
+				if (!isset($dataParaVista['datos'][$v['ordenCompra']])) {
+					$dataParaVista['datos'][$v['ordenCompra']] = $v;
+					$dataParaVista['datos'][$v['ordenCompra']]['monto'] = 0;
 
-				$dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = false;
-				$buscarCargados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1])->result_array();
-				if (!empty($buscarCargados)) $dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = true;
+					$dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = false;
+					$buscarCargados = $this->db->get_where('sustento.comprobante', ['idOrdenCompra' => $v['idOrdenCompra'], 'flagOcLibre' => $v['flagOcLibre'], 'estado' => 1])->result_array();
+					if (!empty($buscarCargados)) $dataParaVista['datos'][$v['ordenCompra']]['adjuntosCargados'] = true;
+				}
+				$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
 			}
-			$dataParaVista['datos'][$v['ordenCompra']]['monto'] += $v['subtotal'];
-			} 
 		}
 
 		$html = getMensajeGestion('noRegistros');
@@ -387,18 +386,17 @@ class ProveedorDocumento extends MY_Controller
 				$ordenCompra['monto'] = $post['monto'];
 			}
 
-			if ($this->idUsuario == '1') {
-				$idTipoParaCorreo = USER_ADMIN;
-				$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
-				$toCorreo = [];
-				foreach ($usuariosCorreo as $usuario) {
-					$toCorreo[] = $usuario['email'];
-				}
-			} else {
-				$toCorreo = [$pro['correoContacto']];
+			$idTipoParaCorreo = $this->idUsuario == '1' ? USER_ADMIN : USER_FINANZAS;
+			$usuariosCorreo = $this->model_control->getUsuarios(['tipoUsuario' => $idTipoParaCorreo])['query']->result_array();
+			$toCorreoFinanzas = [];
+			$toCorreo = [];
+			foreach ($usuariosCorreo as $usuario) {
+				$toCorreoFinanzas[] = $usuario['email'];
 			}
+			$toCorreo = $this->idUsuario == 1 ? ['bill.salazar@visualimpact.com.pe', 'eder.alata@visualimpact.com.pe', 'luis.durand@visualimpact.com.pe'] : [$pro['correoContacto']];
 
-			$cfg['to'] = ['bill.salazar@visualimpact.com.pe', 'eder.alata@visualimpact.com.pe', 'luis.durand@visualimpact.com.pe'];
+			$cfg['to'] = $toCorreo;
+			$cfg['cc'] = $toCorreoFinanzas;
 			$cfg['asunto'] = 'CONFIRMACION DE RECEPCION DE FACTURAS: ' . $pro['razonSocial'];
 			$cfg['contenido'] = $this->load->view("email/conformidadProveedores", ['data' => $ordenCompra], true);
 
