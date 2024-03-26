@@ -57,6 +57,15 @@
 							</select>
 						</div>
 						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
+							<span class="tooltiptext">Estados Documentos</span>
+							<select class="form-control form-control-sm ui " name="estDocumento">
+								<option value="">Todos</option>
+								<option value="1">Completos</option>
+								<option value="2">Pendientes</option>
+								
+							</select>
+						</div>
+						<div class="mb-2 mr-sm-2 position-relative form-group custom_tooltip">
 							<span class="tooltiptext">Fecha Inicio</span>
 							<div class="ui fluid calendar date-semantic" data-fechainicio="#fechaFinFiltro" id="fechaInicioFiltro">
 								<div class="ui mini input left fluid">
