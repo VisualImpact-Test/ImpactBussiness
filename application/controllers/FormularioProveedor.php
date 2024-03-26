@@ -953,8 +953,10 @@ class FormularioProveedor extends MY_Controller
 			)
 			->result_array();
 		$dataSustentoAp = $this->db->get_where(
-			'sustento.sustentoAdjunto', $whereComp)->result_array();
-		if(!empty($dataSustentoAp)) {
+			'sustento.sustentoAdjunto',
+			$whereComp
+		)->result_array();
+		if (!empty($dataSustentoAp)) {
 			$dataParaVista['sustentoAp'] = 1;
 		}
 		// $dataParaVista['cotizacion'] = $post['cotizacion'];
@@ -2058,7 +2060,7 @@ class FormularioProveedor extends MY_Controller
 			}
 
 			$cfg['to'] = $toCorreo;
-			$cfg['asunto'] = 'IMPACT BUSSINESS - Sustentos Cargados';
+			$cfg['asunto'] = 'IMPACT BUSSINESS - ' . $pro['razonSocial'] . ': Sustentos Cargados';
 			$cfg['contenido'] = $this->load->view("email/sustentos", ['data' => $daC, 'proveedor' => $pro/*, 'cotizacion' => $cot*/, 'formatos' => $daD, 'ocG' => $ocG, 'flag' => $flag], true);
 			$this->sendEmail($cfg);
 		}
