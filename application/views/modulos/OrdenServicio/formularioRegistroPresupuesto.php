@@ -1,5 +1,4 @@
 <?php $dataRow = 0; ?>
-<?php $utilizaSCTR = false; ?>
 <?php foreach ($ordenServicioFecha as $k => $v) :
 	$anio = date('Y', strtotime($v['fecha']));
 	$mes = date('n', strtotime($v['fecha']));
@@ -168,7 +167,7 @@ endforeach; ?>
 												<?php foreach ($ordenServicioFecha as $kf => $vf) : ?>
 													<td>
 														<div class="ui input transparent fluid">
-															<input class="text-right <?= $vLDS['idTipoPresupuestoDetalle'] == COD_SCTR ? 'inputSctr' : ''; ?>" type="text" data-sctr="<?= $kLDS; ?>" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
+															<input class="text-right" type="text" data-sctr="<?= $kLDS; ?>" value="0" readonly id="montoLDS_<?= $vd['idTipoPresupuesto'] ?>_<?= $kLDS ?>_<?= $kf ?>">
 														</div>
 													</td>
 												<?php endforeach; ?>
@@ -480,18 +479,6 @@ endforeach; ?>
 												</td>
 											<?php endforeach; ?>
 										</tr>
-										<!--< ?php if ($utilizaSCTR) : ?>
-											<tr>
-												<td>SCTR</td>
-												< ?php foreach ($ordenServicioCargo as $k => $v) : ?>
-													<td>
-														<div class="ui transparent input">
-															<input class="text-right" id="txtSctr_< ?= $k ?>" value="0.00" readonly>
-														</div>
-													</td>
-												< ?php endforeach; ?>
-											</tr>
-										< ?php endif; ?>-->
 										<tr>
 											<td>Incentivo Adicional</td>
 											<td colspan="<?= count($ordenServicioCargo); ?>">
@@ -709,75 +696,59 @@ endforeach; ?>
 								<tbody>
 									<?php if (!empty($ordenServicioDetalleSub[$vd['idTipoPresupuesto']])) : ?>
 										<?php foreach ($ordenServicioDetalleSub[$vd['idTipoPresupuesto']] as $key => $value) : ?>
-											<?php if ($value['idTipoPresupuestoDetalle'] == COD_SCTR) : ?>
-												<?php $utilizaSCTR = true; ?>
-												<tr>
-													<td>
-														<div class="ui input fluid">
-															<input value="SCTR">
-														</div>
-													</td>
-													<td colspan="2">
-														<div class="ui right input fluid">
-															<input class="text-right keyUpChange onlyNumbers" name="pesupuestoSctr" type="text" id="txtVSctr" value="0" onchange="OrdenServicio.calcularTablaSueldo()">
-															<!--<div class="ui basic label">S/.</div>-->
-														</div>
-													</td>
-													<td colspan="4"></td>
-												</tr>
-											<?php else : ?>
-												<tr class="detalleTr_<?= $key ?>" data-nrofila="<?= $key ?>">
-													<td>
-														<div class="ui action input fluid">
-															<select class="ui fluid search dropdown semantic-dropdown cboTPD read-only" name="tipoPresupuestoDetalleSub[<?= $vd['idTipoPresupuesto'] ?>]">
-																<option value="">Sueldo</option>
-																<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $vPD) : ?>
-																	<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
-																<?php endforeach; ?>
-															</select>
-															<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a>
-														</div>
-													</td>
 
-													<td class="splitDetalle">
-														<div class="ui input fluid">
-															<input type="text" class="onlyNumbers" name="splitDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['split']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);" onkeyup="OrdenServicio.cantidadSplitCargo(this);">
-														</div>
-													</td>
-													<td class="precioUnitarioDetalle">
-														<div class="ui input fluid">
-															<input type="text" class="text-right moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $vd['mostrarDetalle'] == '1' ? verificarEmpty(numeroVistaMoneda($value['precioUnitario']), 2) : numeroVistaMoneda($value['costo']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
-														</div>
-													</td>
-													<td class="gapDetalle">
-														<div class="ui right labeled input fluid">
-															<input type="text" class="text-right onlyNumbers keyUpChange" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
-															<div class="ui basic label"> % </div>
-														</div>
-													</td>
-													<td class="precioGapDetalle">
-														<div class="ui labeled input transparent fluid">
-															<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * (isset($value['gap']) ? $value['gap'] : 0 / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
-														</div>
-													</td>
-													<td class="cantidadDeTabla">
-														<div class="ui action input fluid">
-															<input type="text" value="<?= $cantidadCargo * floatval($value['split']); ?>" readonly name="cantidadDS[<?= $vd['idTipoPresupuesto'] ?>]" onchange="OrdenServicio.calcularSTotal(this);" data-detallesub="<?= $key ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>">
-															<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadCargo_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
-														</div>
-													</td>
-													<td>
-														<div class="ui input transparent totalCantidadSplit fluid">
-															<input type="text" class="text-right" value="<?= $cantidadCargo * floatval($value['split']) * floatval($value['precioUnitario']); ?>" readonly name="montoDS[<?= $vd['idTipoPresupuesto'] ?>]">
-														</div>
-													</td>
-													<td class="frecuenciaDetalle">
-														<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[<?= $vd['idTipoPresupuesto'] ?>]">
-															<?= htmlSelectOptionArray2(['title' => 'Frecuencia', 'query' => LIST_FRECUENCIA, 'class' => 'text-titlecase', 'selected' => $value['frecuencia']]); ?>
+											<tr class="detalleTr_<?= $key ?>" data-nrofila="<?= $key ?>">
+												<td>
+													<div class="ui action input fluid">
+														<select class="ui fluid search dropdown semantic-dropdown cboTPD read-only" name="tipoPresupuestoDetalleSub[<?= $vd['idTipoPresupuesto'] ?>]">
+															<option value="">Sueldo</option>
+															<?php foreach ($tipoPresupuestoDetalle[$vd['idTipoPresupuesto']] as $vPD) : ?>
+																<option value="<?= $vPD['idTipoPresupuestoDetalle']; ?>" <?= $vPD['idTipoPresupuestoDetalle'] == $value['idTipoPresupuestoDetalle'] ? 'selected' : ''; ?>><?= $vPD['nombre']; ?></option>
+															<?php endforeach; ?>
 														</select>
-													</td>
-												</tr>
-											<?php endif; ?>
+														<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadElementos_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('open');"><i class="icon folder outline"></i></a>
+													</div>
+												</td>
+
+												<td class="splitDetalle">
+													<div class="ui input fluid">
+														<input type="text" class="onlyNumbers" name="splitDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $value['split']; ?>" onchange="OrdenServicio.cantidadSplitCargo(this);" onkeyup="OrdenServicio.cantidadSplitCargo(this);">
+													</div>
+												</td>
+												<td class="precioUnitarioDetalle">
+													<div class="ui input fluid">
+														<input type="text" class="text-right moneda" name="precioUnitarioDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= $vd['mostrarDetalle'] == '1' ? verificarEmpty(numeroVistaMoneda($value['precioUnitario']), 2) : numeroVistaMoneda($value['costo']); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+													</div>
+												</td>
+												<td class="gapDetalle">
+													<div class="ui right labeled input fluid">
+														<input type="text" class="text-right onlyNumbers keyUpChange" name="gapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="15" onchange="OrdenServicio.cantidadSplitCargo(this);">
+														<div class="ui basic label"> % </div>
+													</div>
+												</td>
+												<td class="precioGapDetalle">
+													<div class="ui labeled input transparent fluid">
+														<input type="text" readonly class="text-right onlyNumbers keyUpChange" name="precioGapDS[<?= $vd['idTipoPresupuesto'] ?>]" value="<?= numeroVistaMoneda($value['precioUnitario'] + ($value['precioUnitario'] * (isset($value['gap']) ? $value['gap'] : 0 / 100))); ?>" onchange="OrdenServicio.cantidadSplitCargo(this);">
+													</div>
+												</td>
+												<td class="cantidadDeTabla">
+													<div class="ui action input fluid">
+														<input type="text" value="<?= $cantidadCargo * floatval($value['split']); ?>" readonly name="cantidadDS[<?= $vd['idTipoPresupuesto'] ?>]" onchange="OrdenServicio.calcularSTotal(this);" data-detallesub="<?= $key ?>" data-detalle="<?= $vd['idTipoPresupuesto'] ?>">
+														<a class="ui button" onclick="$(this).closest('tbody').find('tr.cantidadCargo_<?= $key ?>').toggleClass('d-none'); $(this).find('i').toggleClass('slash');"><i class="icon user slash"></i></a>
+													</div>
+												</td>
+												<td>
+													<div class="ui input transparent totalCantidadSplit fluid">
+														<input type="text" class="text-right" value="<?= $cantidadCargo * floatval($value['split']) * floatval($value['precioUnitario']); ?>" readonly name="montoDS[<?= $vd['idTipoPresupuesto'] ?>]">
+													</div>
+												</td>
+												<td class="frecuenciaDetalle">
+													<select class="ui fluid search dropdown toast semantic-dropdown frecuenciaID" onchange="OrdenServicio.cantidadSplitCargo(this);" name="frecuenciaDS[<?= $vd['idTipoPresupuesto'] ?>]">
+														<?= htmlSelectOptionArray2(['title' => 'Frecuencia', 'query' => LIST_FRECUENCIA, 'class' => 'text-titlecase', 'selected' => $value['frecuencia']]); ?>
+													</select>
+												</td>
+											</tr>
+
 											<tr class="cantidadCargo_<?= $key ?> d-none">
 												<td colspan="7">
 													<h4 class="ui horizontal divider header" style="background: none; overflow: inherit;">
@@ -804,7 +775,7 @@ endforeach; ?>
 																						<label style="font-size: 1.5em;"></label>
 																					</div>
 																				</div>
-																				<input type="text" class="chk" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" value="1">
+																				<input type="hidden" class="chk" name="chkDS[<?= $cargo['idCargo']; ?>][<?= $vd['idTipoPresupuesto'] ?>][<?= $key ?>]" value="1">
 																			</td>
 																			<td><?= $cargo['cargo']; ?></td>
 																			<td>

@@ -1144,6 +1144,12 @@ class OrdenServicio extends MY_Controller
 		$idCuenta = null;
 		$idCentroCosto = null;
 
+		if (!isset($post['sueldoCargo'])) {
+			$result['result'] = 0;
+			$result['msg']['title'] = 'Registro Erroneo!';
+			$result['msg']['content'] = getMensajeGestion('alertaPersonalizada', ['message' => 'Debe indicar al menos un cargo']);
+			goto respuesta;
+		}
 		$post['sueldoCargo'] = is_array($post['sueldoCargo']) ? array_map(function ($sueldo) {
 			return number_format(floatval(str_replace(',', '', $sueldo)), 2, '.', '');
 		}, $post['sueldoCargo']) : number_format(floatval(str_replace(',', '', $post['sueldoCargo'])), 2, '.', '');
