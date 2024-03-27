@@ -237,7 +237,7 @@ defined("OC_SERIADO") or define("OC_SERIADO", 2);
 // ! Ya se creo la tabla ImpactBussiness.dbo.frecuencia
 defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 	['id' => 1, 'value' => 'MENSUAL'],
-	['id' => 2, 'value' => 'BIMENSUAL'],
+	['id' => 2, 'value' => 'BIMESTRAL'],
 	['id' => 3, 'value' => 'SEMESTRAL'],
 	['id' => 4, 'value' => 'ANUAL'],
 	['id' => 5, 'value' => 'UNICO'],
@@ -247,7 +247,7 @@ defined('LIST_FRECUENCIA') or define('LIST_FRECUENCIA', [
 
 defined('RESULT_FRECUENCIA') or define('RESULT_FRECUENCIA', [
 	'1' => 'MENSUAL',
-	'2' => 'BIMENSUAL',
+	'2' => 'BIMESTRAL',
 	'7' => 'TRIMESTRAL',
 	'3' => 'SEMESTRAL',
 	'4' => 'ANUAL',

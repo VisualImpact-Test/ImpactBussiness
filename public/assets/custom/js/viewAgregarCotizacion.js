@@ -421,7 +421,6 @@ var Cotizacion = {
 
 			defaultItem.append(Cotizacion.htmlG);
 
-
 			let childInserted = defaultItem.children().last();
 			let childInsertedNumber = (++Cotizacion.nDetalle);
 
@@ -475,11 +474,6 @@ var Cotizacion = {
 			$("#centroCosto_oculto .item").hide();
 
 		});
-
-		// $("#centroCosto_visible .item").click(function(){
-		// 	alert("go");
-		// 	// $("#centroCosto_oculto .item").removeAttr("style", "display");
-		//	});
 
 		$(document).on('click', '#centroCosto_visible .item', function () {
 			$("#centroCosto_oculto .item").removeAttr("style", "display");
@@ -870,7 +864,6 @@ var Cotizacion = {
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
 			var jsonData = JSON.stringify(idCuenta);
-			//alert(idCuenta + idCosto);
 			var jsonString = { jsonData: jsonData };
 			let config1 = {
 				'url': Cotizacion.url + 'formularioRegistroCotizacion',
@@ -881,7 +874,6 @@ var Cotizacion = {
 				if (exa.data.existe == 0) {
 					Cotizacion.feeCuenta = exa.data.feeCuenta;
 				}
-				//alert(JSON.stringify(Cotizacion.feeCuenta));
 				var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
 				var parsedResponse = JSON.parse(jsonResponse);
 
@@ -2394,41 +2386,17 @@ var Cotizacion = {
 			let val = control.val();
 			let parent = control.closest('.nuevo');
 			let cotInt = parent.find('.codItems').val();
-			
-			if (val.length == 0 || cotInt != "" || cotInt != 0 ) {
+
+			if (val.length == 0 || cotInt != "" || cotInt != 0) {
 				Cotizacion.cleanDetalle(parent);
 			}
-			
+
 		});
 
-
-
-
-		// $(document).on('dblclick', '.dblclick', function (event) {
-		// 	if ($(event.target).is('.items:disabled')) {
-		// 		console.log("Doble clic en un elemento disabled");
-		// 		// Tu código aquí
-		// 	}
-		// });
-	// 	$(document).ready(function() {
-	// 	$(document).on('dblclick', '.dbldisable', function (event) {
-	// 		if ($(event.target).is('.items:disabled')) {
-	// 			console.log(" clic ");
-	// 			// Tu código aquí
-	// 		}
-	// 		if ($(event.target).is('.items')) {
-	// 			console.log(" dat ");
-	// 			// Tu código aquí
-	// 		}
-	// 		console.log("Doble");
-	// 	});
-	// });
-		
 		$(document).on('change', '#cuentaCentroCostoForm', function () {
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
 			var jsonData = JSON.stringify(idCuenta);
-			//alert(idCuenta + idCosto);
 			var jsonString = { jsonData: jsonData };
 			let config1 = {
 				'url': Cotizacion.url + 'formularioRegistroCotizacion',
@@ -2439,7 +2407,6 @@ var Cotizacion = {
 				if (exa.data.existe == 0) {
 					Cotizacion.feeCuenta = exa.data.feeCuenta;
 				}
-				//alert(JSON.stringify(Cotizacion.feeCuenta));
 				var jsonResponse = JSON.stringify(Cotizacion.feeCuenta);
 				var parsedResponse = JSON.parse(jsonResponse);
 
@@ -2746,28 +2713,17 @@ var Cotizacion = {
 			let jsonString = { 'data': JSON.stringify(data) };
 			var config = { 'url': Cotizacion.url + 'getSubDetalleRutasViajeras', 'data': jsonString };
 			$.when(Fn.ajax(config)).then(function (a) {
-				console.log(a);
 				++modalId;
 				var fn = 'Fn.showModal({ id:' + modalId + ',show:false });';
 				var btn = [];
 				if (a.result === 1) {
-					// var fn1 = `Cotizacion.buscarPesos(${modalId});`;
-					// var fn2 = `Cotizacion.llenarCamposEnTabla(${modalId});`;
-					if ($('#ordenServicioSelect').val() == '') {
-						var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-						var fn2 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+					var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+					var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-						btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
-						btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
-					} else {
-						var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
-						var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-						var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
-
-						btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
-						btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
-						btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
-					}
+					btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+					btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+					btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
 				}
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
@@ -2796,11 +2752,8 @@ var Cotizacion = {
 		});
 		data['HT'] = HT;
 		data['buscarCosto'] = buscarCosto;
-		let presupuesto;
-		if ($('#ordenServicioSelect').val() == '') {
-			presupuesto = 1;
-		}
-		data['presupuesto'] = presupuesto;
+
+		data['idOrdenServicio'] = $('#ordenServicioSelect').dropdown('get value');
 		var config = { 'url': Cotizacion.url + 'procesarTablaDatosRutasViajeras', 'data': data };
 
 		$.when(Fn.ajax(config)).then(function (a) {
@@ -2809,21 +2762,21 @@ var Cotizacion = {
 			var btn = [];
 			if (a.result === 1) {
 				Fn.showModal({ id: idModalHT, show: false });
-				if ($('#ordenServicioSelect').val() == '') {
-					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-					var fn2 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+				// if ($('#ordenServicioSelect').val() == '') {
+				// 	var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+				// 	var fn2 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-					btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
-					btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
-				} else {
-					var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
-					var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
-					var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
+				// 	btn[1] = { title: 'Procesar Totales', fn: fn1, class: 'ui yellow button' };
+				// 	btn[2] = { title: 'Guardar', fn: fn2, class: 'ui teal button' };
+				// } else {
+				var fn1 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, true);`;
+				var fn2 = `Cotizacion.procesarPreciosRutasViajeras(${modalId}, false);`;
+				var fn3 = `Cotizacion.llenarCamposEnTablaRutasViajeras(${modalId});`;
 
-					btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
-					btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
-					btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
-				}
+				btn[1] = { title: 'Procesar Con Precios Asignados', fn: fn1, class: 'ui blue button' };
+				btn[2] = { title: 'Procesar Totales', fn: fn2, class: 'ui yellow button' };
+				btn[3] = { title: 'Guardar', fn: fn3, class: 'ui teal button' };
+				// }
 				btn[0] = { title: 'Cerrar', fn: fn };
 				Fn.showModal({ id: modalId, show: true, class: 'modalCargaMasiva', title: a.msg.title, frm: a.data.html, btn: btn, width: a.data.width });
 				HTCustom.llenarHTObjectsFeatures(a.data.ht);
@@ -2937,7 +2890,6 @@ var Cotizacion = {
 			arData = '';
 		}
 		$(inpTM).val(arData).change();
-
 
 		let inpV = div.find('.inpCostoVisual');
 		let inpC = div.find('.inpCosto');
@@ -3362,7 +3314,7 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
-			//	$(this).attr("disabled", "disabled");
+				//	$(this).attr("disabled", "disabled");
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
@@ -3966,7 +3918,6 @@ var Cotizacion = {
 		// FIN: PERSONAL
 	},
 	cleanDetalle: (parent) => {
-		console.log();
 		let tipoForm = parent.find('#tipoItemForm');
 		let costoForm = parent.find('.costoForm');
 		let costoFormLabel = parent.find('.costoFormLabel');
@@ -3978,7 +3929,7 @@ var Cotizacion = {
 		let semaforoForm = parent.find('.semaforoForm');
 		let tachadoDistribucion = parent.find('.tbDistribucionTachado');
 		let caracteristicasCliente = parent.find('.caracteristicasCliente');
-		
+
 		codItems.val('');
 		idProveedor.val('');
 		if (tipoForm.val() == COD_DISTRIBUCION.id) {
@@ -4000,9 +3951,6 @@ var Cotizacion = {
 		cantidadForm.val('');
 
 		cantidadForm.keyup();
-
-		// tachadoDistribucion.find('tbody').html('');
-		// tachadoDistribucion.addClass('d-none');
 	},
 	actualizarCotizacionView: function (updateEstado) {
 		let formValues = Fn.formSerializeObject('formActualizarCotizacion');
