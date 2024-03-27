@@ -5933,6 +5933,7 @@ class Cotizacion extends MY_Controller
 		}
 		$dataParaVista['distribucion'] = $agrupadoPorId;
 		$dataParaVista['CuentaUsuario'] = $this->model->datosCuentaUsuario($idCuenta)['query']->result_array();
+		//echo $this->db->last_query(); exit();
 		$dataParaVista['Almacen'] = $this->model->datosAlmacenOrigen($idCuenta)['query']->result_array();
 
 		$result['result'] = 1;
@@ -6248,5 +6249,61 @@ class Cotizacion extends MY_Controller
 		header('Cache-Control: max-age=0');
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 		$objWriter->save('php://output');
+	}
+	public function descargarRutasViajeras()
+	{
+		require_once '../PHPExcel/Classes/PHPExcel.php';
+		$objPHPExcel = new PHPExcel();
+		//	$datos = $this->model->obtenerItemExcel()['query']->result_array();
+		//$post = $this->input->post('data');
+		$post = json_decode($this->input->post('data'), true);
+		//echo $post['idCotizacion']; exit();
+		$objPHPExcel->getActiveSheet()->getStyle('B1:E1')->getAlignment()->setWrapText(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+		$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+
+		$objPHPExcel->getProperties()
+			->setCreator("Visual Impact")
+			->setLastModifiedBy("Visual Impact")
+			->setTitle("FORMATO")
+			->setSubject("FORMATO")
+			->setDescription("Visual Impact")
+			->setKeywords("usuarios phpexcel")
+			->setCategory("FORMATO");
+
+		$objPHPExcel->setActiveSheetIndex(0)
+			->setCellValue('A2', 'RECOJO')
+			->setCellValue('B2', 'TIPO ENVIO')
+			// ->setCellValue('C2', 'TIPO ORIGEN')
+			// ->setCellValue('D2', 'COD ORIGEN')
+			// ->setCellValue('E2', 'ORIGEN')
+			->setCellValue('C2', 'TIPO DESTINO')
+			->setCellValue('D2', 'COD DESTINO')
+			->setCellValue('E2', 'DESTINO');
+
+			$objPHPExcel->createSheet(); // Crea la segunda hoja
+			$objPHPExcel->createSheet(); // Crea la tercera hoja
+			$objPHPExcel->setActiveSheetIndex(1); // Establece la segunda hoja como activa (índice 1)
+			$objPHPExcel->getActiveSheet()
+			->setTitle('Segunda Hoja')
+			->setCellValue('A1', 'Datos en la segunda hoja')
+			->setCellValue('A2', 'Dato 1')
+			->setCellValue('B2', 'Dato 2');
+
+			$objPHPExcel->setActiveSheetIndex(2); // Establece la tercera hoja como activa (índice 2)
+			$objPHPExcel->getActiveSheet()
+				->setTitle('Tercera Hoja')
+				->setCellValue('A1', 'Datos en la tercera hoja')
+				->setCellValue('A2', 'Dato 1')
+				->setCellValue('B2', 'Dato 2');
+		$objPHPExcel->getActiveSheet()->setTitle('FORMATO');
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="Formato.xls"');
+		header('Cache-Control: max-age=0');
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+		$objWriter->save('php://output');
+
 	}
 }
