@@ -416,11 +416,11 @@ var Cotizacion = {
 		});
 
 
-		document.addEventListener('keydown', function(event) {
+		document.addEventListener('keydown', function (event) {
 			if (event.key === 'Tab') {
-			  event.preventDefault();
+				event.preventDefault();
 			}
-		  });
+		});
 
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
@@ -438,7 +438,7 @@ var Cotizacion = {
 			if (cuentaFrom != '') {
 				childInserted.find('.idTipoItem').removeClass('read-only');
 				childInserted.find('.items').removeAttr('readonly');
-				
+
 			}
 
 			childInserted.find('.personal_detalle').removeClass('personal_1');
@@ -534,11 +534,11 @@ var Cotizacion = {
 			let body = $(this).parents('.body-item');
 			let div_locked = body.find('.btn-bloquear-detalle');
 			if (div_locked.find('i').hasClass('lock')) {
-				body.find('.items ').attr('disabled','disabled');
-			}else{
+				body.find('.items ').attr('disabled', 'disabled');
+			} else {
 				body.find('.items ').removeAttr('disabled');
 			}
-			
+
 		});
 
 		$(document).on('click', '.btneliminarfila', function (e) {
@@ -3337,7 +3337,7 @@ var Cotizacion = {
 				let control = $(this).parents(".nuevo");
 				$(this).attr("disabled", "disabled");
 				control.find(".btn-bloquear-detalle").click();
-				
+
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');

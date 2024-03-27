@@ -73,7 +73,7 @@
 			</div>
 			<div class="six wide field">
 				<div class="ui sub header">Centro de costo</div>
-				<select class="ui dropdown clearable semantic-dropdown centro-ocultado childdependienteSemantic" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
+				<select class="ui dropdown clearable semantic-dropdown search centro-ocultado childdependienteSemantic read-only" id="cuentaCentroCostoForm" name="cuentaCentroCostoForm" patron="requerido">
 					<?= htmlSelectOptionArray2(['title' => 'Seleccione', 'query' => $cuentaCentroCosto, 'class' => 'text-titlecase']); ?>
 				</select>
 			</div>
