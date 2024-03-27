@@ -5695,37 +5695,6 @@ class Cotizacion extends MY_Controller
 		
 		echo json_encode($result);
 	}
-	
-	public function actualizarRutasViajeras()
-	{
-		$result = $this->result;
-		$post = json_decode($this->input->post('data'), true);
-
-		$post['idCotizacionDetalleSub'] = checkAndConvertToArray($post['idCotizacionDetalleSub']);
-		$post['responsable'] = checkAndConvertToArray($post['responsable']);
-		$post['cargo'] = checkAndConvertToArray($post['cargo']);
-		$post['dni'] = checkAndConvertToArray($post['dni']);
-		$post['fechaFin'] = checkAndConvertToArray($post['fechaFin']);
-		$post['fechaInicio'] = checkAndConvertToArray($post['fechaInicio']);
-		
-		foreach ($post['responsable'] as $k => $v) {
-			$datRutasViajeras[] = [
-				'idCotizacionDetalleSub' => $post['idCotizacionDetalleSub'][$k],
-				'responsable' => $post['responsable'][$k],
-				'cargo' => $post['cargo'][$k],
-				'dni' => $post['dni'][$k],
-				'fechaInicio' => $post['fechaInicio'][$k],
-				'fechaFin' => $post['fechaFin'][$k],
-			];
-
-		}
-		$this->db->update_batch('compras.cotizacionDetalleSub', $datRutasViajeras, 'idCotizacionDetalleSub');
-		$result['result'] = 1;
-		$result['msg']['title'] = 'Hecho!';
-		$result['msg']['content'] = getMensajeGestion('actualizacionExitosa');
-		
-		echo json_encode($result);
-	}
 
 	public function actualizarValidez()
 	{
