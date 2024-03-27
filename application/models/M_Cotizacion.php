@@ -2819,6 +2819,22 @@ class M_Cotizacion extends MY_Model
 		return $this->resultado;
 	}
 
+	public function datosCabRutasViajeras($params = [])
+	{
+		$sql = "SELECT cods.* 
+		from compras.cotizacion AS co
+		JOIN compras.cotizacionDetalle AS codd ON co.idCotizacion = codd.idCotizacion and codd.estado = 1 and codd.idItemTipo = 13
+		JOIN compras.cotizacionDetalleSub AS cods ON codd.idCotizacionDetalle = cods.idCotizacionDetalle
+		where co.idCotizacion = " . $params['idCotizacion'];
+		$query = $this->db->query($sql);
+		if ($query) {
+			$this->resultado['query'] = $query;
+			$this->resultado['estado'] = true;
+		}
+		return $this->resultado;
+	}
+
+
 	public function datosOperLogDetalle($params = [])
 	{
 		$sql = "

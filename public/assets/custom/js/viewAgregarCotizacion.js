@@ -415,6 +415,13 @@ var Cotizacion = {
 			});
 		});
 
+
+		document.addEventListener('keydown', function(event) {
+			if (event.key === 'Tab') {
+			  event.preventDefault();
+			}
+		  });
+
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
 			let defaultItem = $('.default-item');
@@ -430,6 +437,8 @@ var Cotizacion = {
 			var cuentaFrom = $("#cuentaForm").val();
 			if (cuentaFrom != '') {
 				childInserted.find('.idTipoItem').removeClass('read-only');
+				childInserted.find('.items').removeAttr('readonly');
+				
 			}
 
 			childInserted.find('.personal_detalle').removeClass('personal_1');
@@ -519,6 +528,17 @@ var Cotizacion = {
 
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
+		});
+		$(document).on('click', '.btn-bloquear-detalle', function (e) {
+			e.preventDefault();
+			let body = $(this).parents('.body-item');
+			let div_locked = body.find('.btn-bloquear-detalle');
+			if (div_locked.find('i').hasClass('lock')) {
+				body.find('.items ').attr('disabled','disabled');
+			}else{
+				body.find('.items ').removeAttr('disabled');
+			}
+			
 		});
 
 		$(document).on('click', '.btneliminarfila', function (e) {
@@ -2444,6 +2464,7 @@ var Cotizacion = {
 
 		$(document).on('change', '#cuentaForm', function () {
 			$('.idTipoItem').removeClass('read-only');
+			$('.items').removeAttr('readonly');
 			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
 			$('.feeForm').val(0);
 			$('.fee2Form').val(0);
@@ -3314,7 +3335,9 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
-				//	$(this).attr("disabled", "disabled");
+				$(this).attr("disabled", "disabled");
+				control.find(".btn-bloquear-detalle").click();
+				
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
