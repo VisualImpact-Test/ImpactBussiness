@@ -159,7 +159,6 @@ class Cotizacion extends MY_Controller
 		} else {
 			$dataParaVista = $this->model->obtenerInformacionCotizacion($post)['query']->result_array();
 		}
-		//echo $this->db->last_query();exit();
 
 		$html = getMensajeGestion('noRegistros');
 		if (!empty($dataParaVista)) {
@@ -2135,11 +2134,14 @@ class Cotizacion extends MY_Controller
 		$ht = $post['HT'][0];
 		array_pop($ht);
 
-		$dataParaVista['presupuesto'] = empty($post['presupuesto']) ? 0 : $post['presupuesto'];
+		// $dataParaVista['presupuesto'] = empty($post['presupuesto']) ? 0 : $post['presupuesto'];
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
-		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
-		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
+			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$destino = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, destino')
+			->group_by('destino')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$destino = refactorizarDataHT(["data" => $destino, "value" => "destino"]);
+		$frecuencia = ['UNICO', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 
 		$header = [];
 		$column = [];
@@ -2148,61 +2150,95 @@ class Cotizacion extends MY_Controller
 		// DATOS
 		if (!empty($ht)) {
 			foreach ($ht as $k => $v) {
-				if (empty($v['origen']) && empty($v['destino'])) {
+				if (empty($v['origen']) || empty($v['destino'])) {
 					$result['result'] = 0;
 					$result['msg']['title'] = 'Origen y/o Destino sin indicar';
 					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'Llenar los datos de Origen y Destino para obtener los costos.']);
 					goto Respuesta;
 				}
 
-				$tpdm = $this->db->get_where(
-					'compras.presupuestoDetalleMovilidad',
-					[
-						'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
-					]
-				)->row_array();
+				if (empty($v['dias'])) {
+					$result['result'] = 0;
+					$result['msg']['title'] = 'Cantidad de días';
+					$result['data']['html'] = createMessage(['type' => 2, 'message' => 'DEBE INDICAR UNA CANTIDAD DE DÍAS']);
+					goto Respuesta;
+				}
+
+				if (!empty($post['idOrdenServicio'])) {
+					$idPresupuesto = $this->db->get_where('compras.presupuesto', ['estado' => 1, 'idOrdenServicio' => $post['idOrdenServicio']])->row_array()['idPresupuesto'];
+					$idPresupuestoDetalle_Mov = $this->db->get_where('compras.presupuestoDetalle', ['estado' => 1, 'idPresupuesto' => $idPresupuesto, 'idTipoPresupuesto' => COD_MOVILIDAD])->row_array()['idPresupuestoDetalle'];
+					$tpdm = $this->db->get_where(
+						'compras.presupuestoDetalleMovilidad',
+						[
+							'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1, 'idPresupuestoDetalle' => $idPresupuestoDetalle_Mov, 'dias>' => 0
+						]
+					)->row_array();
+				}
+				if (empty($post['idOrdenServicio']) || empty($tpdm)) {
+					$tpdm = $this->db->get_where(
+						'compras.tipoPresupuestoDetalleMovilidad',
+						[
+							'origen' => $v['origen'], 'destino' => $v['destino'], 'estado' => 1
+						]
+					)->row_array();
+					$tpdm['dias'] = 1;
+				}
 
 				$datosHt[$k] = $v;
+
 				if (empty($v['gap'])) $datosHt[$k]['gap'] = 0;
 				if ($post['buscarCosto'] == 'true') { // * Esta asi porque desde el js lo pasa como string
 					if (empty($tpdm)) {
 						$datosHt[$k]['costoAereo'] =
 							$datosHt[$k]['costoTransporte'] =
+							$datosHt[$k]['costoMovilidadInternaDia'] =
+							$datosHt[$k]['costoViaticosDia'] =
+							$datosHt[$k]['costoAlojamientoDia'] =
 							$datosHt[$k]['costoMovilidadInterna'] =
 							$datosHt[$k]['costoViaticos'] =
 							$datosHt[$k]['costoAlojamiento'] = 0;
 					} else {
+						$tpdm['precioAereo'] = empty($tpdm['precioAereo']) ? 0 : $tpdm['precioAereo'];
+						$tpdm['precioBus'] = empty($tpdm['precioBus']) ? 0 : $tpdm['precioBus'];
+						$tpdm['precioMovilidadInterna'] = empty($tpdm['precioMovilidadInterna']) ? 0 : $tpdm['precioMovilidadInterna'];
+						$tpdm['dias'] = empty($tpdm['dias']) ? 1 : $tpdm['dias'];
+						$tpdm['precioViaticos'] = empty($tpdm['precioViaticos']) ? 0 : $tpdm['precioViaticos'];
+						$tpdm['precioHospedaje'] = empty($tpdm['precioHospedaje']) ? 0 : $tpdm['precioHospedaje'];
+
 						$datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2));
 						$datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
 						$datosHt[$k]['costoMovilidadInterna'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoMovilidadInternaDia'] = $datosHt[$k]['costoMovilidadInterna'] / floatval($v['dias']);
 						$datosHt[$k]['costoViaticos'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoViaticosDia'] = $datosHt[$k]['costoViaticos'] / floatval($v['dias']);
 						$datosHt[$k]['costoAlojamiento'] = floatval((verificarEmpty($tpdm['precioHospedaje'], 2)) / verificarEmpty($tpdm['dias'], 2) * floatval($v['dias']));
+						$datosHt[$k]['costoAlojamientoDia'] = $datosHt[$k]['costoAlojamiento'] / floatval($v['dias']);
 					}
 				} else {
 					if (floatval($datosHt[$k]['costoAereo']) < verificarEmpty($tpdm['precioAereo'], 2)) {
 						$result['result'] = 0;
 						$result['msg']['title'] = 'Costo menor al Presupuesto';
-						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO AÉREO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO AÉREO ES MENOR A LO INDICADO']);
 						goto Respuesta;
 					} else if (floatval($datosHt[$k]['costoTransporte']) < verificarEmpty($tpdm['precioBus'], 2)) {
 						$result['result'] = 0;
 						$result['msg']['title'] = 'Costo menor al Presupuesto';
-						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE TRANSPORTE ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE TRANSPORTE ES MENOR A LO INDICADO']);
 						goto Respuesta;
-					} else if (floatval($datosHt[$k]['costoMovilidadInterna']) < verificarEmpty($tpdm['precioMovilidadInterna'], 2)) {
+					} else if (floatval($datosHt[$k]['costoMovilidadInternaDia']) < verificarEmpty($tpdm['precioMovilidadInterna'], 2) / $tpdm['dias']) {
 						$result['result'] = 0;
 						$result['msg']['title'] = 'Costo menor al Presupuesto';
-						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE MOVILIDAD INTERNA ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE MOVILIDAD INTERNA ES MENOR A LO INDICADO']);
 						goto Respuesta;
-					} else if (floatval($datosHt[$k]['costoViaticos']) < verificarEmpty($tpdm['precioViaticos'], 2)) {
+					} else if (floatval($datosHt[$k]['costoViaticosDia']) < verificarEmpty($tpdm['precioViaticos'], 2) / $tpdm['dias']) {
 						$result['result'] = 0;
 						$result['msg']['title'] = 'Costo menor al Presupuesto';
-						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE VIÁTICOS ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE VIÁTICOS ES MENOR A LO INDICADO']);
 						goto Respuesta;
-					} else if (floatval($datosHt[$k]['costoAlojamiento']) < verificarEmpty($tpdm['precioHospedaje'], 2)) {
+					} else if (floatval($datosHt[$k]['costoAlojamientoDia']) < verificarEmpty($tpdm['precioHospedaje'], 2) / $tpdm['dias']) {
 						$result['result'] = 0;
 						$result['msg']['title'] = 'Costo menor al Presupuesto';
-						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE ALOJAMIENTO ES MENOR A LO INDICADO EN EL PRESUPUESTO']);
+						$result['data']['html'] = createMessage(['type' => 2, 'message' => 'EL COSTO DE ALOJAMIENTO ES MENOR A LO INDICADO']);
 						goto Respuesta;
 					}
 				}
@@ -2236,7 +2272,7 @@ class Cotizacion extends MY_Controller
 					case 'ANUAL':
 						$datosHt[$k]['frecuenciaAnual'] = 1;
 						break;
-					case 'UNICA':
+					case 'UNICO':
 						$datosHt[$k]['frecuenciaAnual'] = 1;
 						break;
 					default:
@@ -2270,7 +2306,6 @@ class Cotizacion extends MY_Controller
 				$datosHt[0]['tipo_movil'] = NULL;
 		}
 
-
 		// HEADER & COLUMN & DATOS
 		$header[] = 'RESPONSABLE';
 		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250, 'source' => $origen];
@@ -2296,26 +2331,35 @@ class Cotizacion extends MY_Controller
 		$header[] = 'DIAS';
 		$column[] = ['data' => 'dias', 'type' => 'numeric', 'placeholder' => 'Días', 'width' => 250];
 
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+
 		$header[] = 'AEREO';
 		$column[] = ['data' => 'costoAereo', 'type' => 'numeric', 'placeholder' => 'Aereo', 'width' => 250];
 
 		$header[] = 'TRANSPORTE';
 		$column[] = ['data' => 'costoTransporte', 'type' => 'numeric', 'placeholder' => 'Transporte', 'width' => 250];
 
-		$header[] = 'MOVILIDAD INTERNA';
-		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna', 'width' => 250];
+		$header[] = 'MOVILIDAD INTERNA X DIA';
+		$column[] = ['data' => 'costoMovilidadInternaDia', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna día', 'width' => 250];
 
-		$header[] = 'VIATICOS';
-		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos', 'width' => 250];
+		$header[] = 'MOVILIDAD INTERNA TOTAL';
+		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna Total', 'width' => 250];
 
-		$header[] = 'ALOJAMIENTO';
-		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento', 'width' => 250];
+		$header[] = 'VIATICOS X DIA';
+		$column[] = ['data' => 'costoViaticosDia', 'type' => 'numeric', 'placeholder' => 'Viaticos día', 'width' => 250];
+
+		$header[] = 'VIATICOS TOTAL';
+		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos Total', 'width' => 250];
+
+		$header[] = 'ALOJAMIENTO X DIA';
+		$column[] = ['data' => 'costoAlojamientoDia', 'type' => 'numeric', 'placeholder' => 'Alojamiento día', 'width' => 250];
+
+		$header[] = 'ALOJAMIENTO TOTAL';
+		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento Total', 'width' => 250];
 
 		$header[] = 'SUBTOTAL';
 		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
-
-		$header[] = '# VIAJES';
-		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
 
 		$header[] = 'TOTAL MENSUAL';
 		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
@@ -2562,12 +2606,15 @@ class Cotizacion extends MY_Controller
 
 		$dataParaVista['presupuesto'] = empty($post->{'presupuesto'}) ? 0 : json_decode(json_encode(json_decode($post->{'presupuesto'})));
 		$origen = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, origen')
-			->group_by('origen')->get_where('compras.presupuestoDetalleMovilidad', ['estado' => 1])->result_array();
-		$destino = $origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
-		$frecuencia = ['UNICA', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
+			->group_by('origen')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$destino = $this->db->select('min(idTipoPresupuestoDetalleMovilidad) as idTipoPresupuestoDetalleMovilidad, destino')
+			->group_by('destino')->get_where('compras.tipoPresupuestoDetalleMovilidad', ['estado' => 1])->result_array();
+		$origen = refactorizarDataHT(["data" => $origen, "value" => "origen"]);
+		$destino = refactorizarDataHT(["data" => $destino, "value" => "destino"]);
+		$frecuencia = ['UNICO', 'MENSUAL', 'BIMESTRAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'];
 		// HEADER & COLUMN & DATOS
 		$header[] = 'RESPONSABLE';
-		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250, 'source' => $origen];
+		$column[] = ['data' => 'responsable', 'type' => 'text', 'placeholder' => 'Responsable', 'width' => 250];
 		$datosHt[$nro]['responsable'] = null;
 
 		$header[] = 'ORIGEN';
@@ -2579,15 +2626,15 @@ class Cotizacion extends MY_Controller
 		$datosHt[$nro]['destino'] = null;
 
 		$header[] = 'CARGO';
-		$column[] = ['data' => 'cargo', 'type' => 'text', 'placeholder' => 'Cargo', 'width' => 200 /*, 'readOnly' => true*/];
+		$column[] = ['data' => 'cargo', 'type' => 'text', 'placeholder' => 'Cargo', 'width' => 200];
 		$datosHt[$nro]['cargo'] = null;
 
 		$header[] = 'DNI';
-		$column[] = ['data' => 'dni', 'type' => 'text', 'placeholder' => 'DNI', 'width' => 200 /*, 'readOnly' => true*/];
+		$column[] = ['data' => 'dni', 'type' => 'text', 'placeholder' => 'DNI', 'width' => 200];
 		$datosHt[$nro]['dni'] = null;
 
 		$header[] = 'APELLIDOS Y NOMBRES';
-		$column[] = ['data' => 'razonSocial', 'type' => 'text', 'placeholder' => 'Apellidos y Nombres', 'width' => 400 /*, 'readOnly' => true*/];
+		$column[] = ['data' => 'razonSocial', 'type' => 'text', 'placeholder' => 'Apellidos y Nombres', 'width' => 400];
 		$datosHt[$nro]['razonSocial'] = null;
 
 		$header[] = 'FRECUENCIA';
@@ -2598,6 +2645,10 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'dias', 'type' => 'numeric', 'placeholder' => 'Días', 'width' => 250];
 		$datosHt[$nro]['dias'] = null;
 
+		$header[] = '# VIAJES';
+		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
+		$datosHt[$nro]['cantidadViajes'] = null;
+
 		$header[] = 'AEREO';
 		$column[] = ['data' => 'costoAereo', 'type' => 'numeric', 'placeholder' => 'Aereo', 'width' => 250];
 		$datosHt[$nro]['costoAereo'] = null;
@@ -2606,25 +2657,33 @@ class Cotizacion extends MY_Controller
 		$column[] = ['data' => 'costoTransporte', 'type' => 'numeric', 'placeholder' => 'Transporte', 'width' => 250];
 		$datosHt[$nro]['costoTransporte'] = null;
 
-		$header[] = 'MOVILIDAD INTERNA';
-		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna', 'width' => 250];
+		$header[] = 'MOVILIDAD INTERNA X DIA';
+		$column[] = ['data' => 'costoMovilidadInternaDia', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna x día', 'width' => 250];
 		$datosHt[$nro]['costoMovilidadInterna'] = null;
 
-		$header[] = 'VIATICOS';
-		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos', 'width' => 250];
+		$header[] = 'MOVILIDAD INTERNA TOTAL';
+		$column[] = ['data' => 'costoMovilidadInterna', 'type' => 'numeric', 'placeholder' => 'Movilidad Interna Total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoMovilidadInterna'] = null;
+
+		$header[] = 'VIATICOS X DIA';
+		$column[] = ['data' => 'costoViaticosDia', 'type' => 'numeric', 'placeholder' => 'Viaticos x día', 'width' => 250];
 		$datosHt[$nro]['costoViaticos'] = null;
 
-		$header[] = 'ALOJAMIENTO';
-		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento', 'width' => 250];
+		$header[] = 'VIATICOS TOTAL';
+		$column[] = ['data' => 'costoViaticos', 'type' => 'numeric', 'placeholder' => 'Viaticos Total', 'width' => 250, 'readOnly' => true];
+		$datosHt[$nro]['costoViaticos'] = null;
+
+		$header[] = 'ALOJAMIENTO X DIA';
+		$column[] = ['data' => 'costoAlojamientoDia', 'type' => 'numeric', 'placeholder' => 'Alojamiento x día', 'width' => 250];
+		$datosHt[$nro]['costoAlojamiento'] = null;
+
+		$header[] = 'ALOJAMIENTO TOTAL';
+		$column[] = ['data' => 'costoAlojamiento', 'type' => 'numeric', 'placeholder' => 'Alojamiento Total', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['costoAlojamiento'] = null;
 
 		$header[] = 'SUBTOTAL';
 		$column[] = ['data' => 'subtotal', 'type' => 'numeric', 'placeholder' => 'SubTotal', 'width' => 250, 'readOnly' => true];
 		$datosHt[$nro]['subtotal'] = null;
-
-		$header[] = '# VIAJES';
-		$column[] = ['data' => 'cantidadViajes', 'type' => 'numeric', 'placeholder' => 'Viajes', 'width' => 250];
-		$datosHt[$nro]['cantidadViajes'] = null;
 
 		$header[] = 'TOTAL MENSUAL';
 		$column[] = ['data' => 'totalMensual', 'type' => 'numeric', 'placeholder' => 'Total Mensual', 'width' => 250, 'readOnly' => true];
@@ -2671,7 +2730,7 @@ class Cotizacion extends MY_Controller
 		$result['data']['html'] = $this->load->view("formCargaMasivaGeneral", $dataParaVista, true);
 		$result['data']['ht'] = $HT;
 
-		$result['msg']['title'] = "Detalle de Rutas Viajerass";
+		$result['msg']['title'] = "Detalle de Rutas Viajeras";
 		Respuesta:
 		echo json_encode($result);
 	}
@@ -2838,7 +2897,6 @@ class Cotizacion extends MY_Controller
 				]
 			)->row_array();
 
-
 			if (!empty($tpdm)) $idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
 			else {
 				// * Buscar si hay un id con estado 0;
@@ -2875,7 +2933,6 @@ class Cotizacion extends MY_Controller
 					$idTipoPresupuestoDetalleMovilidad = $this->db->insert_id();
 				}
 			}
-
 
 			// $item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
 			$arrayDatos[$n] = $v;
@@ -2963,7 +3020,6 @@ class Cotizacion extends MY_Controller
 		);
 
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
-		//echo $this->db->last_query();exit();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
@@ -4527,7 +4583,6 @@ class Cotizacion extends MY_Controller
 
 		$config['data']['btnEnviar'] = false;
 		$config['data']['cotizacion'] = $this->model->obtenerInformacionCotizacion(['id' => $idCotizacion])['query']->row_array();
-		//echo $this->db->last_query(); exit();
 		if ($config['data']['cotizacion']['idCotizacionEstado'] == '1') {
 			$config['data']['btnEnviar'] = true;
 		}
@@ -4535,7 +4590,6 @@ class Cotizacion extends MY_Controller
 		$config['data']['anexos'] = $this->model->obtenerInformacionCotizacionArchivos(['idCotizacion' => $idCotizacion, 'anexo' => true])['query']->result_array();
 		//Obteniendo Solo los Items Nuevos para verificacion de los proveedores
 		$config['data']['cotizacionTarifario'] = $this->model->obtenerCotizacionDetalleTarifario(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
-		//echo $this->db->last_query(); exit();
 		$config['data']['cotizacionDetalle'] = $this->model->obtenerInformacionDetalleCotizacion(['idCotizacion' => $idCotizacion, 'cotizacionInterna' => false])['query']->result_array();
 		$config['data']['proveedorDistribucion'] = $this->model_proveedor->obtenerProveedorDistribucion()->result_array();
 		$config['data']['costoDistribucion'] = $this->model->obtenerCostoDistribucion()['query']->row_array();
@@ -4574,7 +4628,10 @@ class Cotizacion extends MY_Controller
 					) * cantidadViajes as totalMensual')
 					->select('costoVisual * (100 + isnull(gap, 0)) / 100 as total')
 					->select('(SELECT frecuenciaAnual FROM dbo.frecuencia WHERE idFrecuencia = frecuencia) as frecuenciaAnual', false)
-					->select('subtotal as cuenta');
+					->select('subtotal as cuenta')
+					->select('isnull(costoMovilidadInterna, 0) / dias as costoMovilidadInternaDia')
+					->select('isnull(costoViaticos, 0) / dias as costoViaticosDia')
+					->select('isnull(costoAlojamiento, 0) / dias as costoAlojamientoDia');;
 				$rpta = $this->db->get_where('compras.cotizacionDetalleSub', ['idCotizacionDetalle' => $idCotizacionDetalle])->result_array();
 				$config['data']['dataRutasViajeras'][$idCotizacionDetalle] = $rpta;
 			}
@@ -5638,6 +5695,37 @@ class Cotizacion extends MY_Controller
 		
 		echo json_encode($result);
 	}
+	
+	public function actualizarRutasViajeras()
+	{
+		$result = $this->result;
+		$post = json_decode($this->input->post('data'), true);
+
+		$post['idCotizacionDetalleSub'] = checkAndConvertToArray($post['idCotizacionDetalleSub']);
+		$post['responsable'] = checkAndConvertToArray($post['responsable']);
+		$post['cargo'] = checkAndConvertToArray($post['cargo']);
+		$post['dni'] = checkAndConvertToArray($post['dni']);
+		$post['fechaFin'] = checkAndConvertToArray($post['fechaFin']);
+		$post['fechaInicio'] = checkAndConvertToArray($post['fechaInicio']);
+		
+		foreach ($post['responsable'] as $k => $v) {
+			$datRutasViajeras[] = [
+				'idCotizacionDetalleSub' => $post['idCotizacionDetalleSub'][$k],
+				'responsable' => $post['responsable'][$k],
+				'cargo' => $post['cargo'][$k],
+				'dni' => $post['dni'][$k],
+				'fechaInicio' => $post['fechaInicio'][$k],
+				'fechaFin' => $post['fechaFin'][$k],
+			];
+
+		}
+		$this->db->update_batch('compras.cotizacionDetalleSub', $datRutasViajeras, 'idCotizacionDetalleSub');
+		$result['result'] = 1;
+		$result['msg']['title'] = 'Hecho!';
+		$result['msg']['content'] = getMensajeGestion('actualizacionExitosa');
+		
+		echo json_encode($result);
+	}
 
 	public function actualizarValidez()
 	{
@@ -5677,7 +5765,6 @@ class Cotizacion extends MY_Controller
 
 		$cotizacion = $this->model->datosCotizacion($post)['query']->result_array();
 		$cotizacionDetalle = $this->model->obtenerCotizacionDetallada($post)['query']->result_array();
-
 
 		$insertCotizacion = [
 			'nombre' => $cotizacion[0]['nombre'] . " - COPIA",
@@ -5796,7 +5883,6 @@ class Cotizacion extends MY_Controller
 
 			$cotizacionDetalleSub = $this->model->obtenerDuplicadoCotizacionDetalleSub($v['idCotizacionDetalle'])['query']->result_array();
 
-			//echo $this->db->last_query();exit();
 			foreach ($cotizacionDetalleSub as $j => $i) {
 				$insertarCotizacionDetallesub = [
 					'idCotizacionDetalle' => $idNewCotizacionDetalle,
@@ -5868,8 +5954,6 @@ class Cotizacion extends MY_Controller
 			}
 		}
 
-
-
 		$insertarEstadoHistorico = [
 			'idCotizacionEstado' => 1,
 			'idCotizacionInternaEstado' => null,
@@ -5921,7 +6005,6 @@ class Cotizacion extends MY_Controller
 		$dataParaVista['cabOperLog'] = $this->model->datosOperLog($post)['query']->result_array();
 		$idCuenta = $dataParaVista['cabOperLog'][0]['idCuenta'];
 		$dcds = $this->db->select('cd.idCotizacionDetalle, cdt.idItem , cdt.nombre, cdt.cantidad, cdt.idZona, cdt.flagOtrosPuntos')->from('compras.cotizacionDetalle cd')->join('compras.cotizacionDetalleSub cdt', 'cdt.idCotizacionDetalle = cd.idCotizacionDetalle', 'INNER')->where('cd.idCotizacion', $post['idCotizacion'])->where('cd.idItemTipo', 7)->where('cd.estado', 1)->get()->result_array();
-		//echo $this->db->last_query(); exit();
 		$agrupadoPorId = [];
 		foreach ($dcds as $kCds => $vCds) {
 			$idCotizacionDetalle = $vCds['idCotizacionDetalle'];
@@ -5942,7 +6025,6 @@ class Cotizacion extends MY_Controller
 
 		echo json_encode($result);
 	}
-
 
 	public function generarOperLogCotizacion()
 	{
@@ -6016,7 +6098,6 @@ class Cotizacion extends MY_Controller
 			$this->db->insert('VisualImpact.logistica.requerimiento', $requerimiento);
 			$idRequerimiento = $this->db->insert_id();
 			$CantArticulo = $this->model->datosOperLogCantArticulo($d['idCotizacionDetalle'])['query']->result_array();
-			//var_dump($CantArticulo); exit();
 			foreach ($CantArticulo as $z => $x) {
 				$requerimientoDet = [
 					'idRequerimiento' => $idRequerimiento,
@@ -6030,12 +6111,11 @@ class Cotizacion extends MY_Controller
 					'horaReg' => getSoloHora(),
 				];
 				$this->db->insert('VisualImpact.logistica.requerimiento_det', $requerimientoDet);
-				}
-			
+			}
+
 			array_push($idOperCod, $idOperlog);
 
 			$cabOperLogDetalle = $this->model->datosOperLogDetalle($d['idCotizacionDetalle'])['query']->result_array();
-			// echo $this->db->last_query();exit();
 			foreach ($cabOperLogDetalle as $p => $q) {
 				$cabOperLogDetalleSub = $this->model->datosOperLogDetalleSub($q['idCotizacionDetalle'])['query']->result_array();
 
@@ -6074,7 +6154,7 @@ class Cotizacion extends MY_Controller
 		}
 
 		$this->db->update('compras.cotizacion', ['flagOperlog' => 1], ['idCotizacion' => $post['idCotizacion']]);
-		
+
 		$codConcat = "";
 		if (count($idOperCod) === 1) {
 			$codConcat = "Log-" . $idOperCod[0];
@@ -6105,8 +6185,6 @@ class Cotizacion extends MY_Controller
 		//	$datos = $this->model->obtenerItemExcel()['query']->result_array();
 		//$post = $this->input->post('data');
 		$post = json_decode($this->input->post('data'), true);
-		//echo $post['id']; exit();
-
 
 		/**ESTILOS**/
 		$estilo_cabecera =
@@ -6134,9 +6212,9 @@ class Cotizacion extends MY_Controller
 				'type' => PHPExcel_Style_Fill::FILL_SOLID,
 				'startcolor' => ['rgb' => '00A985']
 			],
-			'font'  => [
+			'font' => [
 				'size' => 12,
-				'name'  => 'Calibri',
+				'name' => 'Calibri',
 				'color' => array('rgb' => 'FFFFFF'),
 			],
 			'borders' => [
@@ -6210,9 +6288,8 @@ class Cotizacion extends MY_Controller
 				$row++;
 				$celda = $col . $row;
 				$row2 = $row;
-				$col2 =  "A";
+				$col2 = "A";
 				$zonasOper = $this->model->zonaOperLogDetalleSub($d['idCotizacionDetalle'])['query']->result_array();
-				//echo $this->db->last_query(); exit();
 				foreach ($zonasOper as $z => $a) {
 					//$tituDet = $col2 . $row2;
 					$objPHPExcel->setActiveSheetIndex(0)
@@ -6224,7 +6301,6 @@ class Cotizacion extends MY_Controller
 
 					$row2++;
 					$detOper = $this->model->detalleOperLogDetalleSub($d['idCotizacionDetalle'], $m['idItem'], $a['idZona'])['query']->result_array();
-					//	echo $this->db->last_query(); exit();
 					$objPHPExcel->setActiveSheetIndex(0)
 						->setCellValue($celda, $detOper[0]['cantidad']);
 					$objPHPExcel->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
@@ -6242,7 +6318,6 @@ class Cotizacion extends MY_Controller
 
 		$nIni = 2;
 		$objPHPExcel->getActiveSheet()->setTitle('FORMATO');
-
 
 		header('Content-Type: application/vnd.ms-excel');
 		header('Content-Disposition: attachment;filename="Formato.xls"');

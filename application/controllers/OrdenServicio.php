@@ -211,7 +211,7 @@ class OrdenServicio extends MY_Controller
 								$valorMax[$kc] = floatval($presupuestoDetalleSubCargo[$kc]['cantidad']);
 
 							$calculoCargoFechaServicio[$k1][$k2][$kf] += floatval($v2['precioUnitario']) * floatval($v2['split']) * (floatval($v2['gap']) + 100) / 100 * $valorMax[$kc];
-						} elseif ($v2['idFrecuencia'] == '2') { // BIMENSUAL
+						} elseif ($v2['idFrecuencia'] == '2') { // BIMESTRAL
 							if ($nroMes == 1 || ($nroMes - 1) % 2 == 0) $keyCode = $kf;
 							if (floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']) > $valorMax[$kc])
 								$valorMax[$kc] = floatval($presupuestoCargoFecha[$kc][$kf]['cantidad']);
@@ -549,15 +549,14 @@ class OrdenServicio extends MY_Controller
 
 				$datosHt[$k] = $v;
 				$v['gap'] = 0;
-				// if (empty($v['gap'])) $datosHt[$k]['gap'] = 0;
 
 				if ($v['costoAereo'] == '') $datosHt[$k]['costoAereo'] = floatval(verificarEmpty($tpdm['precioAereo'], 2));
 				if ($v['costoTransporte'] == '') $datosHt[$k]['costoTransporte'] = floatval(verificarEmpty($tpdm['precioBus'], 2));
-				if ($v['costoMovilidadInternaDia'] == '') $datosHt[$k]['costoMovilidadInternaDia'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2));
+				if (empty($v['costoMovilidadInternaDia']) || $v['costoMovilidadInternaDia'] == '') $datosHt[$k]['costoMovilidadInternaDia'] = floatval(verificarEmpty($tpdm['precioMovilidadInterna'], 2));
 				$datosHt[$k]['costoMovilidadInterna'] = $datosHt[$k]['costoMovilidadInternaDia'] * floatval($v['dias']);
-				if ($v['costoViaticosDia'] == '') $datosHt[$k]['costoViaticosDia'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2));
+				if (empty($v['costoViaticosDia']) || $v['costoViaticosDia'] == '') $datosHt[$k]['costoViaticosDia'] = floatval(verificarEmpty($tpdm['precioViaticos'], 2));
 				$datosHt[$k]['costoViaticos'] = $datosHt[$k]['costoViaticosDia'] * floatval($v['dias']);
-				if ($v['costoAlojamientoDia'] == '') $datosHt[$k]['costoAlojamientoDia'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2));
+				if (empty($v['costoAlojamientoDia']) || $v['costoAlojamientoDia'] == '') $datosHt[$k]['costoAlojamientoDia'] = floatval(verificarEmpty($tpdm['precioHospedaje'], 2));
 				$datosHt[$k]['costoAlojamiento'] = $datosHt[$k]['costoAlojamientoDia'] * floatval($v['dias']);
 
 				$datosHt[$k]['subtotal'] =
@@ -623,7 +622,6 @@ class OrdenServicio extends MY_Controller
 				$datosHt[0]['cuenta'] =
 				$datosHt[0]['tipo_movil'] = NULL;
 		}
-
 
 		// HEADER & COLUMN & DATOS
 		$header[] = 'ORIGEN';
@@ -737,7 +735,6 @@ class OrdenServicio extends MY_Controller
 				]
 			)->row_array();
 
-
 			if (!empty($tpdm)) $idTipoPresupuestoDetalleMovilidad = $tpdm['idTipoPresupuestoDetalleMovilidad'];
 			else {
 				// * Buscar si hay un id con estado 0;
@@ -775,10 +772,15 @@ class OrdenServicio extends MY_Controller
 				}
 			}
 
-
 			// $item = $this->model_item->obtenerItemsCuenta2($cuenta, $v['itemLogistica'])->row_array();
 			$arrayDatos[$n] = $v;
-			$arrayDatos[$n]['idFrecuencia'] = $this->db->get_where('dbo.frecuencia', ['nombre' => $v['frecuencia']])->row_array()['idFrecuencia'];
+			$frecuenciaData = $this->db->get_where('dbo.frecuencia', ['nombre' => $v['frecuencia']])->row_array();
+			if (empty($frecuenciaData)) {
+				$result['result'] = 0;
+				$result['msg']['content'] = createMessage(['type' => 2, 'message' => 'Error con una frecuencia indicada']);
+				goto Respuesta;
+			}
+			$arrayDatos[$n]['idFrecuencia'] = $frecuenciaData['idFrecuencia'];
 			$arrayDatos[$n]['idTPDM'] = $idTipoPresupuestoDetalleMovilidad;
 			$n++;
 		}
@@ -986,7 +988,6 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista = [];
 
 		$dataParaVista['detalleMovilidad'] = $this->model->obtenerDetalleMovilidad()->result_array();
-		//var_dump($dataParaVista['detalleAlmacen']);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Movilidad';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioEditarEditarMovilidad", $dataParaVista, true);
@@ -1000,7 +1001,6 @@ class OrdenServicio extends MY_Controller
 		$dataParaVista = [];
 
 		$dataParaVista['detalleAlmacen'] = $this->model->obtenerDetalleAlmacen()->result_array();
-		//var_dump($dataParaVista['detalleAlmacen']);
 		$result['result'] = 1;
 		$result['msg']['title'] = 'Editar Almacenes';
 		$result['data']['html'] = $this->load->view("modulos/OrdenServicio/formularioEditarEditarAlmacen", $dataParaVista, true);
@@ -1065,7 +1065,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		//var_dump($post);
 		if ($post['estado'] == 1) {
 			$estado = 0;
 		} else {
@@ -1087,7 +1086,6 @@ class OrdenServicio extends MY_Controller
 		$this->db->trans_start();
 		$result = $this->result;
 		$post = json_decode($this->input->post('data'), true);
-		//var_dump($post);
 		if ($post['estado'] == 1) {
 			$estado = 0;
 		} else {
@@ -1398,7 +1396,6 @@ class OrdenServicio extends MY_Controller
 		respuesta:
 		echo json_encode($result);
 	}
-
 
 	public function formularioActualizacionOrdenServicio()
 	{
@@ -2131,8 +2128,11 @@ class OrdenServicio extends MY_Controller
 		foreach ($dMov as $k => $v) {
 			$v['costoAereo'] = $v['precioAereo'];
 			$v['costoTransporte'] = $v['precioBus'];
+			$v['costoMovilidadInternaDia'] = $v['precioMovilidadInterna'] / floatval($v['dias']);
 			$v['costoMovilidadInterna'] = $v['precioMovilidadInterna'];
+			$v['costoViaticosDia'] = $v['precioViaticos'] / floatval($v['dias']);
 			$v['costoViaticos'] = $v['precioViaticos'];
+			$v['costoAlojamientoDia'] = $v['precioHospedaje'] / floatval($v['dias']);
 			$v['costoAlojamiento'] = $v['precioHospedaje'];
 			$v['cantidadViajes'] = $v['frecuencia'];
 			$v['frecuencia'] = RESULT_FRECUENCIA[$v['split']];
@@ -2173,7 +2173,6 @@ class OrdenServicio extends MY_Controller
 					$dataParaVista['cargoZona'][$vcz['idCargo']]['departamento'][] = $vq['cod_departamento'];
 					$dataParaVista['cargoZona'][$vcz['idCargo']]['provincia'][] = $vq['cod_provincia'];
 					$dataParaVista['cargoZona'][$vcz['idCargo']]['distrito'][] = $vq['cod_distrito'];
-
 
 					foreach ($this->db->distinct()->select('idCargo, idPresupuesto, idPresupuestoHistorico, ordFecha, cantidad, cod_departamento, cod_provincia, cod_distrito')
 						->get_where(
@@ -2704,7 +2703,6 @@ class OrdenServicio extends MY_Controller
 
 		$dataParaVista['tipoPresupuestoDetalle'] = $this->model->tipoPresupuestoDetalleCostoItem($post['detalle'])->result_array();
 		// $dataParaVista['tipoPresupuestoDetalle'] = $this->db->order_by('nombre')->get_where('compras.tipoPresupuestoDetalle', ['idTipoPresupuesto' => $post['detalle']])->result_array();
-		//	echo $this->db->last_query(); exit();
 		$dataParaVista['cargos'] = $post['cargos'];
 
 		$dataParaVista['idTipoPresupuesto'] = $post['detalle'];

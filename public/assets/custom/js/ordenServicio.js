@@ -1364,7 +1364,7 @@ var OrdenServicio = {
 					totalFinalAcumulado += parseFloat(totalFinalClm);
 					$('#montoLDS_' + detalle + '_' + detalleSub + '_' + f).val(totalFinalClm.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")).trigger('change');
 					f = f + 0;
-				} else if (frecuencia == 2) { // BIMENSUAL
+				} else if (frecuencia == 2) { // BIMESTRAL
 					// Inicio: Calcular el valor máximo dentro del rango de tiempo.
 					maxFor = 2;
 					if (valorPorColumna.length - f < maxFor) maxFor = valorPorColumna.length - f;
