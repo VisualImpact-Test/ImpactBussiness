@@ -176,7 +176,7 @@
 								<div class="ui-widget">
 									<div class="ui right action left icon input w-100 dbldisable">
 										<i class="semaforoForm flag link icon"></i>
-										<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item">
+										<input class="items" type='text' name='nameItem' patron="requerido" placeholder="Buscar item" readonly>
 										<div class="ui basic floating flagCuentaSelect dropdown button simpleDropdown read-only">
 											<input type="hidden" class="flagCuentaForm" name="flagCuenta" value="0" patron="requerido">
 											<div class="text">Cuenta</div>

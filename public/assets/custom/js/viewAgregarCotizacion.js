@@ -415,6 +415,13 @@ var Cotizacion = {
 			});
 		});
 
+
+		document.addEventListener('keydown', function(event) {
+			if (event.key === 'Tab') {
+			  event.preventDefault();
+			}
+		  });
+
 		$(document).on('click', '.btn-add-row', function (e) {
 			e.preventDefault();
 			let defaultItem = $('.default-item');
@@ -431,6 +438,8 @@ var Cotizacion = {
 			var cuentaFrom = $("#cuentaForm").val();
 			if (cuentaFrom != '') {
 				childInserted.find('.idTipoItem').removeClass('read-only');
+				childInserted.find('.items').removeAttr('readonly');
+				
 			}
 
 			childInserted.find('.personal_detalle').removeClass('personal_1');
@@ -2477,6 +2486,7 @@ var Cotizacion = {
 
 		$(document).on('change', '#cuentaForm', function () {
 			$('.idTipoItem').removeClass('read-only');
+			$('.items').removeAttr('readonly');
 			$('#ordenServicioSelect').closest('.dropdown').removeClass('read-only');
 			$('.feeForm').val(0);
 			$('.fee2Form').val(0);

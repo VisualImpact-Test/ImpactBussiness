@@ -59,11 +59,7 @@
 								<?php if ($row['cantidadTransporte'] >= 1 && $row['flagOperlog'] == 0) :  ?>
 									<a href="javascript:;" class="btn btn-outline-secondary border-0 btn-operlog" data-id="<?= $row['idCotizacion']; ?>"><i class="fa fa-lg fa-truck" title="Ver Oper LOG"></i></a>
 								<?php endif; ?>
-								
-
-
-								
-							</div>
+						</div>
 							<?php if ($row['idCotizacionEstado'] <= ESTADO_ENVIADO_CLIENTE) : ?>
 								<button class=" btn btn-outline-danger border-0 btnAnularCotizacion" data-id="<?= $row['idCotizacion'] ?>"><i class="fas fa-trash" title="Anular Cotizacion"></i></button>
 							<?php endif; ?>
