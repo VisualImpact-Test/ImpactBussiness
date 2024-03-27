@@ -535,6 +535,17 @@ var Cotizacion = {
 			//Para ordenar los select2 que se descuadran
 			$('.my_select2').select2();
 		});
+		$(document).on('click', '.btn-bloquear-detalle', function (e) {
+			e.preventDefault();
+			let body = $(this).parents('.body-item');
+			let div_locked = body.find('.btn-bloquear-detalle');
+			if (div_locked.find('i').hasClass('lock')) {
+				body.find('.items ').attr('disabled','disabled');
+			}else{
+				body.find('.items ').removeAttr('disabled');
+			}
+			
+		});
 
 		$(document).on('click', '.btneliminarfila', function (e) {
 			e.preventDefault();
@@ -2409,30 +2420,7 @@ var Cotizacion = {
 			}
 			
 		});
-
-
-
-
-		// $(document).on('dblclick', '.dblclick', function (event) {
-		// 	if ($(event.target).is('.items:disabled')) {
-		// 		console.log("Doble clic en un elemento disabled");
-		// 		// Tu código aquí
-		// 	}
-		// });
-	// 	$(document).ready(function() {
-	// 	$(document).on('dblclick', '.dbldisable', function (event) {
-	// 		if ($(event.target).is('.items:disabled')) {
-	// 			console.log(" clic ");
-	// 			// Tu código aquí
-	// 		}
-	// 		if ($(event.target).is('.items')) {
-	// 			console.log(" dat ");
-	// 			// Tu código aquí
-	// 		}
-	// 		console.log("Doble");
-	// 	});
-	// });
-		
+				
 		$(document).on('change', '#cuentaCentroCostoForm', function () {
 			var idCuenta = $('#cuentaForm').val();
 			var idCosto = $('#cuentaCentroCostoForm').val();
@@ -3372,7 +3360,9 @@ var Cotizacion = {
 			select: function (event, ui) {
 				event.preventDefault();
 				let control = $(this).parents(".nuevo");
-			//	$(this).attr("disabled", "disabled");
+				$(this).attr("disabled", "disabled");
+				control.find(".btn-bloquear-detalle").click();
+				
 				//Tipo de Item
 				control.find(".idTipoItem").val(ui.item.tipo);
 				// control.find(".idTipoItem").addClass('read-only');
